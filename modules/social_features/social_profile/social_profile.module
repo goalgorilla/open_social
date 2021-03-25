@@ -22,7 +22,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
-use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitTerms;
+use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\social_profile\SocialProfileUserFormAlter;
@@ -847,7 +847,7 @@ function social_profile_entity_form_display_alter(EntityFormDisplayInterface $fo
   if ($form_display->id() === 'profile.profile.default') {
     $content = $form_display->get('content');
     if (isset($content['field_profile_profile_tag'])) {
-      $content['field_profile_profile_tag']['type'] = 'social_split_tag';
+      $content['field_profile_profile_tag']['type'] = 'social_profile_tag_split';
       $form_display->set('content', $content);
     }
   }
@@ -884,5 +884,5 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  * Implements hook_views_plugins_filter_alter().
  */
 function social_profile_views_plugins_filter_alter(array &$plugins) {
-  $plugins['search_api_term']['class'] = SocialSearchApiSplitTerms::class;
+  $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
 }

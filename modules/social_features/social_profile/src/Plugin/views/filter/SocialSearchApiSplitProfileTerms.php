@@ -1,26 +1,20 @@
 <?php
 
-namespace Drupal\social_profile\Plugin\Field\FieldWidget;
+namespace Drupal\social_profile\Plugin\views\filter;
 
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
+use Drupal\search_api\Plugin\views\filter\SearchApiTerm;
 use Drupal\social_profile\SocialProfileTagServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialSplitTagWidget.
+ * Defines a filter for filtering on taxonomy term references.
  *
- * @FieldWidget (
- *   id = "social_split_tag",
- *   label = @Translation("Social Split Tag"),
- *   field_types = {
- *     "entity_reference",
- *   },
- *   multiple_values = TRUE
- * )
+ * @ingroup views_filter_handlers
+ *
+ * @ViewsFilter("social_search_api_split_profile_terms")
  */
-class SocialSplitTagWidget extends Select2EntityReferenceWidget {
+class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
 
   /**
    * The social profile tag service.
@@ -33,9 +27,9 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $widget = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $widget->setSocialProfileTagService($container->get('social_profile.tag_service'));
-    return $widget;
+    $filter = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $filter->setSocialProfileTagService($container->get('social_profile.tag_service'));
+    return $filter;
   }
 
   /**
@@ -51,8 +45,15 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element = parent::formElement($items, $delta, $element, $form, $form_state);
+  protected function valueForm(&$form, FormStateInterface $form_state) {
+    parent::valueForm($form, $form_state);
+
+    // Use only for profile tag field.
+    if ($this->field !== 'field_profile_profile_tag') {
+      return;
+    }
+
+    $element = &$form['value'];
 
     // Do not render field if no options or not active.
     if (
@@ -60,32 +61,28 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
       !$this->profileTagService->hasContent() ||
       empty($element['#options'])
     ) {
-      return [];
-    }
-
-    // Only for fields related to taxonomy terms.
-    if ($element['#target_type'] !== 'taxonomy_term') {
-      return $element;
+      $element = [];
     }
 
     // Render all value if split tag disabled.
     if (!$this->profileTagService->allowSplit()) {
+      $element['#type'] = 'select2';
       $options = [];
       foreach ($this->profileTagService->getCategories() as $key => $value) {
         $options[$value] = $this->profileTagService->getChildrens($key);
       }
       $element['#options'] = $options;
-      return $element;
+      return;
     }
 
-    // Get default values.
-    $default_value = $element['#default_value'];
+    // Get selected values.
+    $identifier = $this->options['expose']['identifier'];
+    $default_value = $form_state->getUserInput()[$identifier];
 
+    // Wrapper.
     $element = [
       '#type' => 'details',
       '#open' => TRUE,
-      '#title' => $element['#title'],
-      '#element_validate' => [[get_class($this), 'validateElement']],
       '#access' => FALSE,
     ];
 
@@ -108,40 +105,46 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
           '#type' => 'select2',
           '#title' => $category,
           '#multiple' => TRUE,
-          '#default_value' => $default_value,
+          '#value' => $default_value,
           '#options' => $options,
+          '#name' => 'profile_tag',
         ];
 
         $element['#access'] = TRUE;
       }
     }
-    return $element;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
-    /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $profile_tag_service */
-    $profile_tag_service = \Drupal::service('social_profile.tag_service');
-    if ($profile_tag_service->allowSplit()) {
-      $build_info = $form_state->getBuildInfo();
-      if ($build_info['form_id'] === 'user_register_form') {
-        $field_element = ['entity_profile', $element['#field_name']];
-      }
-      else {
-        $field_element = $element['#field_name'];
-      }
-      $value = $form_state->getValue($field_element);
-      $field_value = [];
-      // Get the main categories.
-      $categories = $profile_tag_service->getCategories();
-      foreach ($categories as $tid => $category) {
-        $field_name = 'profile_tagging_' . $profile_tag_service->tagLabelToMachineName($category);
-        $field_value += $value[$field_name];
-      }
-      $form_state->setValue($field_element, $field_value);
+  public function validateExposed(&$form, FormStateInterface $form_state) {
+    if (
+      $this->field !== 'field_profile_profile_tag' ||
+      !$this->profileTagService->allowSplit()
+    ) {
+      parent::validateExposed($form, $form_state);
+      return;
     }
+
+    $profile_tag_values = [];
+    $identifier = $this->options['expose']['identifier'];
+
+    // Get the main categories.
+    $categories = $this->profileTagService->getCategories();
+
+    // Get form values.
+    $form_values = $form_state->getValues();
+    foreach ($categories as $tid => $category) {
+      $field_name = 'profile_tagging_' . $this->profileTagService->tagLabelToMachineName($category);
+      if (isset($form_values[$field_name])) {
+        $profile_tag_values += $form_values[$field_name];
+        unset($form_values[$field_name]);
+      }
+    }
+    $form_values[$identifier] = $profile_tag_values;
+    $form_state->setValues($form_values);
+    parent::validateExposed($form, $form_state);
   }
 
 }

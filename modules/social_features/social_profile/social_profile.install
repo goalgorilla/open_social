@@ -433,14 +433,3 @@ function social_profile_update_8803() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
-
-/**
- * Updates profile configuration.
- */
-function social_profile_update_8804(&$sandbox) {
-  $config = \Drupal::configFactory()->getEditable('social_profile.settings');
-  $config->set('enable_profile_tagging', TRUE);
-  $config->set('allow_category_split', TRUE);
-  $config->set('use_category_parent', TRUE);
-  $config->save();
-}
