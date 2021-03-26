@@ -158,8 +158,8 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                     $group = $group->getTranslation($curr_langcode);
                   }
 
-                  if ($name === 'gtrimmed-title' && strlen($group->label()) > 40) {
-                    $label = substr($group->label(), 0, 40) . ' ...';
+                  if ($name === 'gtrimmed-title' && strlen($group->label()) > 80) {
+                    $label = substr($group->label(), 0, 80) . ' ...';
                   }
 
                   // If we have "gtrimmed-title" token, then we will display a
