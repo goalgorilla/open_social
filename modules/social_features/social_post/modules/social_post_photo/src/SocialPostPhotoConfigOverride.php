@@ -3,13 +3,42 @@
 namespace Drupal\social_post_photo;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Example configuration override.
  */
 class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * SocialPostPhotoConfigOverride constructor.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   */
+  public function __construct(RouteMatchInterface $route_match, ConfigFactoryInterface $config_factory) {
+    $this->routeMatch = $route_match;
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Returns config overrides.
@@ -25,7 +54,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     // @codingStandardsIgnoreEnd
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Override postblocks on activity streams.
     $config_names = [
@@ -50,7 +78,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
 
         $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
         // Only override if the configuration for posts exist.
@@ -71,7 +99,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     // Override like and dislike settings.
     $config_name = 'like_and_dislike.settings';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
       // Get enabled post bundles.
       $post_types = $config->get('enabled_types.post');
       $post_types['photo'] = 'photo';
@@ -90,8 +118,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $route_match = \Drupal::routeMatch();
-        if ($route_match->getRouteName() === 'entity.node.canonical' && $route_match->getParameter('node')->bundle() === 'dashboard') {
+        if ($this->routeMatch->getRouteName() === 'entity.node.canonical' && $this->routeMatch->getParameter('node')->bundle() === 'dashboard') {
           $overrides[$config_name] = [
             'content' => [
               'field_post' => [
@@ -137,7 +164,15 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Creates a configuration object for use during install and synchronization.
+   *
+   * @param string $name
+   *   The configuration object name.
+   * @param string $collection
+   *   The configuration collection.
+   *
+   * @return \Drupal\Core\Config\StorableConfigBase|null
+   *   The configuration object for the provided name and collection.
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;

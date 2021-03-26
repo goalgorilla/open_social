@@ -5,11 +5,30 @@ namespace Drupal\social_comment;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Example configuration override.
  */
 class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+
+  /**
+   * SocialPostPhotoConfigOverride constructor.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   */
+  public function __construct(RouteMatchInterface $route_match) {
+    $this->routeMatch = $route_match;
+  }
 
   /**
    * Returns config overrides.
@@ -28,8 +47,7 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
     $config_name = 'core.entity_view_display.comment.comment.activity_comment';
 
     if (in_array($config_name, $names)) {
-      $route_match = \Drupal::routeMatch();
-      if ($route_match->getRouteName() === 'entity.node.canonical' && $route_match->getParameter('node')->bundle() === 'dashboard') {
+      if ($this->routeMatch->getRouteName() === 'entity.node.canonical' && $this->routeMatch->getParameter('node')->bundle() === 'dashboard') {
         $overrides[$config_name] = [
           'content' => [
             'field_comment_body' => [

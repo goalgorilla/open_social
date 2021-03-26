@@ -1,5 +1,6 @@
 services:
   social_post_photo.override:
     class: Drupal\social_post_photo\SocialPostPhotoConfigOverride
+    arguments: ['@current_route_match', '@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}

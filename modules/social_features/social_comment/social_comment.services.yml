@@ -17,5 +17,6 @@ services:
       - '@module_handler'
   social_comment.override:
     class: Drupal\social_comment\SocialCommentConfigOverride
+    arguments: ['@current_route_match']
     tags:
       - {name: config.factory.override, priority: 5}
