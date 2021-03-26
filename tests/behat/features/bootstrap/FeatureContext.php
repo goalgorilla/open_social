@@ -10,6 +10,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
 use Behat\Mink\Selector\Xpath\Escaper;
@@ -643,6 +644,32 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * @param $group_title
+     * @param $mail
+     *
+     * @return null
+     */
+    public function getGroupContentIdFromGroupTitle($group_title, $mail) {
+
+      $properties = [
+        'gid' => $this->getGroupIdFromTitle($group_title),
+        'invitation_status' => 0,
+        'invitee_mail' => $mail
+      ];
+      $loader = \Drupal::service('ginvite.invitation_loader');
+      $invitations = $loader->loadByProperties($properties);
+
+      if ($invitations > 0) {
+        $invitation = reset($invitations);
+
+        if ($invitation instanceof GroupInvitationWrapper) {
+          $group_content = $invitation->getGroupContent();
+          return $group_content->id();
+        }
+      }
+    }
+
+    /**
      * Opens specified node page of type and with title.
      *
      * @Given /^(?:|I )open the "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
@@ -668,6 +695,72 @@ class FeatureContext extends RawMinkContext implements Context
         }
         else {
           throw new \Exception(sprintf("Node of type '%s' with title '%s' does not exist.", $type, $title));
+        }
+      }
+    }
+
+    /**
+     * Opens register page with destination to invited group.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationGroup($mail, $group_title)
+    {
+      $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accept';
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Opens register page with destination to invited node.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited node "(?P<node_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationNode($mail, $node_title)
+    {
+      $nodes = \Drupal::entityTypeManager()->getStorage('node')
+        ->loadByProperties(['title' => $node_title]);
+      $node = reset($nodes);
+
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/node/' . $node->id();
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Keep track of intended user names so they can be cleaned up.
+     *
+     * @var array
+     */
+    protected $intended_user_names = [];
+
+    /**
+     * Stores the user's name in $this->intended_user_names.
+     *
+     * This goes before a register form manipulation and submission.
+     *
+     * @Given I intend to create a user named :name
+     *
+     * @see cleanUsers()
+     */
+    public function intendUserName($name) {
+      $this->intended_user_names[] = $name;
+    }
+
+    /**
+     * Remove any groups that were created.
+     *
+     * @AfterScenario
+     */
+    public function cleanupUser(AfterScenarioScope $scope)
+    {
+      if (!empty($this->intended_user_names)) {
+        foreach ($this->intended_user_names as $name) {
+          $user_obj = user_load_by_name($name);
+          \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
         }
       }
     }
