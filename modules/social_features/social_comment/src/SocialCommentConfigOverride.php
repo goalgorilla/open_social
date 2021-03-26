@@ -19,7 +19,6 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
    */
   protected $routeMatch;
 
-
   /**
    * SocialPostPhotoConfigOverride constructor.
    *
@@ -95,7 +94,15 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Creates a configuration object for use during install and synchronization.
+   *
+   * @param string $name
+   *   The configuration object name.
+   * @param string $collection
+   *   The configuration collection.
+   *
+   * @return \Drupal\Core\Config\StorableConfigBase|null
+   *   The configuration object for the provided name and collection.
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
