@@ -15,3 +15,7 @@ services:
       - '@entity_type.manager'
       - '@current_route_match'
       - '@module_handler'
+  social_comment.override:
+    class: Drupal\social_comment\SocialCommentConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}

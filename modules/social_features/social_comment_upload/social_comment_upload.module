@@ -8,7 +8,6 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
-use Drupal\Core\Link;
 use Drupal\node\NodeInterface;
 
 /**
@@ -77,7 +76,14 @@ function social_comment_upload_preprocess_comment(&$variables) {
       }
 
       if (($topic = $comment->getCommentedEntity()) instanceof NodeInterface) {
-        $variables['comment_count'] = $topic->hasField('field_topic_comments') ? $topic->getFieldValue('field_topic_comments', 'comment_count') : 0;
+        $reply_count = \Drupal::entityQuery('comment')
+          ->condition('entity_type', $comment->getCommentedEntityTypeId())
+          ->condition('entity_id', $comment->getCommentedEntityId())
+          ->condition('pid', $comment->id())
+          ->count()
+          ->execute();
+
+        $variables['comment_count'] = $reply_count;
         $variables['comment_url'] = $topic->toUrl()->toString();
       }
 

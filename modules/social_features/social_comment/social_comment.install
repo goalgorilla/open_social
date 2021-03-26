@@ -150,15 +150,10 @@ function social_comment_update_8901() {
 }
 
 /**
- * Use smart trimmed format for the activity comment.
+ * Install the smart_trim module if not already installed.
  */
 function social_comment_update_8902() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_comment', 'social_comment_update_8902');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+  if (!\Drupal::moduleHandler()->moduleExists('smart_trim')) {
+    \Drupal::service('module_installer')->install(['smart_trim']);
+  }
 }

@@ -83,6 +83,42 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
       ];
     }
 
+    $config_names = [
+      'core.entity_view_display.post.photo.activity',
+      'core.entity_view_display.post.photo.featured',
+    ];
+
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $route_match = \Drupal::routeMatch();
+        if ($route_match->getRouteName() === 'entity.node.canonical' && $route_match->getParameter('node')->bundle() === 'dashboard') {
+          $overrides[$config_name] = [
+            'content' => [
+              'field_post' => [
+                'type' => 'smart_trim',
+                'settings' => [
+                  'more_class' => 'more-link',
+                  'more_link' => TRUE,
+                  'more_text' => '',
+                  'summary_handler' => 'full',
+                  'trim_length' => 250,
+                  'trim_options' =>
+                    [
+                      'text' => FALSE,
+                      'trim_zero' => FALSE,
+                    ],
+                  'trim_suffix' => '...',
+                  'trim_type' => 'chars',
+                  'wrap_class' => 'trimmed',
+                  'wrap_output' => FALSE,
+                ],
+              ],
+            ],
+          ];
+        }
+      }
+    }
+
     return $overrides;
   }
 
