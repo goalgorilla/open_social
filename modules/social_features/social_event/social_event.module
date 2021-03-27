@@ -651,7 +651,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Add the all day event checkbox.
     $form['event_all_day'] = [
       '#type' => 'checkbox',
-      '#title' => t('All day'),
+      '#title' => t('All day event'),
     ];
 
     // Set default value and fieldgroup for all day checkbox.
@@ -1245,4 +1245,12 @@ function social_event_preprocess_fieldset(&$variables) {
       $variables['popover'] = social_event_render_tooltip('field_enroll_method', t('Enroll method'), $description);
     }
   }
+}
+
+/**
+ * Implements hook_social_core_compatible_content_forms_alter().
+ */
+function social_event_social_core_compatible_content_forms_alter(array &$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_event_form';
+  $compatible_content_type_forms[] = 'node_event_edit_form';
 }

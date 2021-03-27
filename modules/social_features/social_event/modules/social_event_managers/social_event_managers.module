@@ -367,7 +367,8 @@ function social_event_managers_form_node_event_form_alter(&$form, FormStateInter
     }
   }
   // Update the field event managers widget form.
-  if (isset($form['field_event_managers']['widget']['add_more'])) {
+  if (isset($form['field_event_managers'])) {
+    $form['field_event_managers']['widget']['#description'] = '';
     $form['field_event_managers']['widget']['add_more']['#value'] = t('Add another organizer');
   }
 }

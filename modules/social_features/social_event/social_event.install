@@ -1796,3 +1796,17 @@ function social_event_update_8915() {
     }
   }
 }
+
+/**
+ * Update "Title" label for "Event" node type.
+ */
+function social_event_update_8917() {
+  $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'event');
+  $title_field = $fields['title'];
+  $title_field->getConfig('event')->setLabel('Name')->save();
+
+  // Update label for field group.
+  $config = \Drupal::configFactory()->getEditable('core.entity_form_display.node.event.default');
+  $config->set('third_party_settings.field_group.group_date_time.label', 'Date and time');
+  $config->save();
+}
