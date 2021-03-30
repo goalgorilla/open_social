@@ -1114,4 +1114,17 @@ class FeatureContext extends RawMinkContext implements Context
     public function iFillNextInWithAndSelect($field, $text, $item) {
       $this->fillAutocompleteField($field, $text, $item, TRUE);
     }
+
+    /**
+     * @When /^I click "([^"]*)" on the row containing "([^"]*)"$/
+     */
+    public function iClickOnOnTheRowContaining($linkName, $rowText) {
+      /** @var $row \Behat\Mink\Element\NodeElement */
+      $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $rowText));
+      if (!$row) {
+        throw new \Exception(sprintf('Cannot find any row on the page containing the text "%s"', $rowText));
+      }
+
+      $row->clickLink($linkName);
+    }
 }
