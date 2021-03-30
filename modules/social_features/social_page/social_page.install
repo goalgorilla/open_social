@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_page module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
@@ -190,4 +191,18 @@ function social_page_update_8907() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Add small_teaser view mode for page.
+ */
+function social_page_update_8908() {
+  $config_path = drupal_get_path('module', 'social_page') . '/config/static';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write(
+    'core.entity_view_display.node.page.small_teaser',
+    $source->read('social_page_static_update_8908')
+  );
 }

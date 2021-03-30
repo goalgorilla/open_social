@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/goalgorilla/open_social.svg?branch=8.x-5.x)](https://travis-ci.org/goalgorilla/open_social)
+[![Build Status](https://travis-ci.com/goalgorilla/open_social.svg?branch=10.1.x)](https://travis-ci.com/goalgorilla/open_social)
 [![Packagist Version](https://img.shields.io/packagist/v/goalgorilla/open_social.svg)](https://packagist.org/packages/goalgorilla/open_social)
 [![Twitter Follow](https://img.shields.io/twitter/follow/OpenSocialHQ.svg)](https://twitter.com/OpenSocialHQ)
 

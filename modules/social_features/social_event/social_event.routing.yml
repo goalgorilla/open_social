@@ -25,9 +25,9 @@ social_event.update_enrollment_request:
         type: entity:node
       event_enrollment:
         type: entity:event_enrollment
-      approve: '[0-1]+'
   requirements:
     _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
+    approve: '[0-1]+'
 
 social_event.enrollment_request_decline_form:
   path: '/node/{node}/all-enrollment-requests/confirm-decline/{event_enrollment}'
