@@ -1,0 +1,11 @@
+social_group_invite.invitation.accept:
+  path: '/social-group-invite/{group_content}/accept'
+  defaults:
+    _controller: '\Drupal\social_group_invite\Controller\SocialGroupInvitationOperations::accepted'
+    _title: 'Accept invitation and join group'
+  requirements:
+    _custom_access: '\Drupal\social_group_invite\Controller\SocialGroupInvitationOperations::checkAccess'
+  options:
+    parameters:
+      group_content:
+        type: entity:group_content
