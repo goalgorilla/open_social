@@ -68,9 +68,6 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
                 'wrap_output' => FALSE,
               ],
             ],
-            'links' => [
-              'region' => 'hidden',
-            ],
           ],
         ];
       }
