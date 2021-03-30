@@ -1118,13 +1118,13 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I click "([^"]*)" on the row containing "([^"]*)"$/
      */
-    public function iClickOnOnTheRowContaining($linkName, $rowText) {
+    public function iClickOnOnTheRowContaining($link_name, $row_text) {
       /** @var $row \Behat\Mink\Element\NodeElement */
-      $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $rowText));
+      $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $row_text));
       if (!$row) {
-        throw new \Exception(sprintf('Cannot find any row on the page containing the text "%s"', $rowText));
+        throw new \Exception(sprintf('Cannot find any row on the page containing the text "%s"', $row_text));
       }
 
-      $row->clickLink($linkName);
+      $row->clickLink($link_name);
     }
 }
