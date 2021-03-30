@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_book module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
@@ -240,4 +241,18 @@ function social_book_update_8902() {
   $config->setData($config_data)->save();
   // Make sure we clear cached definitions for the fields.
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Add small_teaser view mode for book.
+ */
+function social_book_update_8903() {
+  $config_path = drupal_get_path('module', 'social_book') . '/config/static';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write(
+    'core.entity_view_display.node.book.small_teaser',
+    $source->read('social_book_static_update_8903')
+  );
 }

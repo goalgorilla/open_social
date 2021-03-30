@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.small_teaser
+    - field.field.node.book.body
+    - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
+    - field.field.node.book.field_content_visibility
+    - field.field.node.book.field_files
+    - image.style.social_medium
+    - node.type.book
+  module:
+    - image
+    - user
+third_party_settings:
+  layout_builder:
+    allow_custom: false
+    enabled: false
+id: node.book.small_teaser
+targetEntityType: node
+bundle: book
+mode: small_teaser
+content:
+  field_book_image:
+    type: image
+    weight: 5
+    region: content
+    label: hidden
+    settings:
+      image_style: social_medium
+      image_link: content
+    third_party_settings:
+      lazy:
+        lazy_image: 0
+hidden:
+  body: true
+  field_book_comments: true
+  field_content_visibility: true
+  field_files: true
+  flag_follow_content: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
