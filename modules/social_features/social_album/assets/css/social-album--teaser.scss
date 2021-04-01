@@ -30,6 +30,8 @@
   .teaser {
     margin: 0 1% 20px;
     flex: 0 0 98%;
+    flex-direction: column;
+    height: auto;
     max-width: 98%;
     overflow: hidden;
 
@@ -47,7 +49,10 @@
 
     .teaser__image {
       background: #f3f3f3;
-      height: 200px;
+      border-radius: 0;
+      display: block;
+      flex-basis: auto;
+      height: auto;
 
       .no-feature-image {
         display: none;
@@ -59,6 +64,18 @@
         height: 100%;
         object-fit: cover;
       }
+    }
+
+    .teaser__teaser-type {
+      border-radius: 0 0 10px 0;
+      position: absolute;
+      left: 0;
+    }
+
+    .teaser__body {
+      flex-basis: auto;
+      flex-shrink: 0;
+      max-width: 100%;
     }
 
     .teaser__content {
