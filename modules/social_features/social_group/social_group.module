@@ -434,6 +434,22 @@ function _social_group_get_join_methods(GroupInterface $group) {
   $group_type_id = $group_type->id();
   $join_methods = [];
 
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // Try to retrieve join methods from Group directly.
+    if ($group->hasField('field_group_allowed_join_method')) {
+      $allowed_options = $group->get('field_group_allowed_join_method')->getValue();
+      foreach ($allowed_options as $option) {
+        // Lets grab the value from the selected radio item.
+        if (!empty($option['value']) && is_string($option['value'])) {
+          $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
+        }
+      }
+    }
+  }
+
   // Get join method based on group type. TODO get it programmatically.
   switch ($group_type_id) {
     case 'secret_group':
@@ -445,18 +461,6 @@ function _social_group_get_join_methods(GroupInterface $group) {
     case 'open_group':
       $join_methods['direct'] = social_group_allowed_join_method_description('direct');
       $join_methods['added'] = social_group_allowed_join_method_description('added');
-      break;
-
-    case 'flexible_group':
-      // Try to retrieve join methods from Group directly.
-      $allowed_options = $group->get('field_group_allowed_join_method')
-        ->getValue();
-      foreach ($allowed_options as $option) {
-        // Lets grab the value from the selected radio item.
-        if (!empty($option['value']) && is_string($option['value'])) {
-          $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
-        }
-      }
       break;
   }
 
@@ -479,6 +483,39 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
   $group_type_id = $group_type->id();
   $group_visibility = [];
 
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // By default we ship with the below field, lets grab its value(s).
+    if ($group->hasField('field_flexible_group_visibility')) {
+      $visibility_values = $group->get('field_flexible_group_visibility')->getValue();
+      // Lets grab the rendered description for the group visibility.
+      if (!empty($visibility_values)) {
+        foreach ($visibility_values as $visibility_value) {
+          if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+            $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
+          }
+        }
+      }
+      return $group_visibility;
+    }
+    // If the above field doesn't exist the user might have a different one
+    // so lets see if it's given as argument and get it's description.
+    if ($field_name !== NULL && $group->hasField($field_name)) {
+      $visibility_values = $group->get($field_name)->getValue();
+      // Lets grab the rendered description for the group visibility.
+      if (!empty($visibility_values)) {
+        foreach ($visibility_values as $visibility_value) {
+          if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+            $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
+          }
+        }
+      }
+      return $group_visibility;
+    }
+  }
+
   // Get join method based on group type.
   switch ($group_type_id) {
     case 'secret_group':
@@ -487,36 +524,6 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
     case 'open_group':
       return $group_visibility;
 
-    case 'flexible_group':
-      // By default we ship with the below field, lets grab its value(s).
-      if ($group->hasField('field_flexible_group_visibility')) {
-        $visibility_values = $group->get('field_flexible_group_visibility')->getValue();
-        // Lets grab the rendered description for the group visibility.
-        if (!empty($visibility_values)) {
-          foreach ($visibility_values as $visibility_value) {
-            if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
-              $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
-            }
-          }
-        }
-        return $group_visibility;
-      }
-      // If the above field doesn't exist the user might have a different one
-      // so lets see if it's given as argument and get it's description.
-      if ($field_name !== NULL && $group->hasField($field_name)) {
-        $visibility_values = $group->get($field_name)->getValue();
-        // Lets grab the rendered description for the group visibility.
-        if (!empty($visibility_values)) {
-          foreach ($visibility_values as $visibility_value) {
-            if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
-              $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
-            }
-          }
-        }
-        return $group_visibility;
-      }
-      break;
-
     default:
       // For non Open Social group types, we can allow developers to pass
       // a field name to return a label instead.
@@ -524,10 +531,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
         $group_visibility = $group->get($field_name)->getValue();
       }
       return $group_visibility;
-
   }
-
-  return $group_visibility;
 }
 
 /**
@@ -544,6 +548,20 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
   $group_type_id = $group_type->id();
   $allowed_visibility = [];
 
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // Try to retrieve allowed visibility from Group directly.
+    $allowed_options = $group->get('field_group_allowed_visibility')
+      ->getValue();
+    foreach ($allowed_options as $option) {
+      if (!empty($option['value']) && is_string($option['value'])) {
+        $allowed_visibility[$option['value']] = social_group_allowed_visibility_description($option['value']);
+      }
+    }
+  }
+
   // Get allowed visibility based on group type. TODO get it programmatically.
   switch ($group_type_id) {
     case 'secret_group':
@@ -557,17 +575,6 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 
     case 'public_group':
       $allowed_visibility['public'] = social_group_allowed_visibility_description('public');
-      break;
-
-    case 'flexible_group':
-      // Try to retrieve allowed visibility from Group directly.
-      $allowed_options = $group->get('field_group_allowed_visibility')
-        ->getValue();
-      foreach ($allowed_options as $option) {
-        if (!empty($option['value']) && is_string($option['value'])) {
-          $allowed_visibility[$option['value']] = social_group_allowed_visibility_description($option['value']);
-        }
-      }
       break;
   }
 
@@ -956,7 +963,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $group_form_ids[] = 'group_' . $group_type . '_add_form';
   }
 
-  if (in_array($form_id, $group_form_ids)) {
+  if (isset($form['field_group_allowed_join_method']) && in_array($form_id, $group_form_ids)) {
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
@@ -1028,8 +1035,10 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
   // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
-  if (!empty($form['group_type'])
-  && (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+  if (
+    $group instanceof GroupInterface &&
+    !empty($form['group_type']) &&
+    (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
   ) {
     $default_type = $form['group_type']['widget']['#default_value'];
     $new_type = $form_state->getValue('group_type')[0]['value'];
@@ -1571,18 +1580,16 @@ function social_group_preprocess_profile(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_group_preprocess_views_view(&$variables) {
-  if (!\Drupal::moduleHandler()->moduleExists('social_group_invite')) {
-    /** @var \Drupal\views\ViewExecutable $view */
-    $view = &$variables['view'];
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
 
-    if ($view->id() === 'group_manage_members') {
-      $entity = \Drupal::entityTypeManager()->getStorage('block')
-        ->load('socialblue_local_actions');
+  if ($view->id() === 'group_manage_members') {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialblue_local_actions');
 
-      $variables['header']['actions'] = \Drupal::entityTypeManager()
-        ->getViewBuilder('block')
-        ->view($entity);
-    }
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($entity);
   }
 }
 
@@ -2089,7 +2096,7 @@ function social_group_social_user_account_header_create_links($context) {
  * site manager.
  */
 function social_group_social_user_account_header_items(array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== TRUE) {
     return [];
   }
 

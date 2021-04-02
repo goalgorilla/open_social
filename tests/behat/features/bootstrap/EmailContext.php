@@ -5,6 +5,7 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\ultimate_cron\Entity\CronJob;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
@@ -177,6 +178,15 @@ class EmailContext implements Context {
     \Drupal::state()->set('digest.' . $frequency . '.last_run', 1);
 
     \Drupal::service('cron')->run();
+
+    if (\Drupal::moduleHandler()->moduleExists('ultimate_cron')) {
+      $jobs = CronJob::loadMultiple();
+
+      /** @var CronJob $job */
+      foreach($jobs as $job) {
+        $job->run(t('Launched by drush'));
+      }
+    }
   }
 
   /**

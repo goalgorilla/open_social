@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_graphql module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_graphql_install() {
+  // Ensure users can use GraphQL powered applications with our default server.
+  // We rely on normal access rules for authorization.
+  user_role_grant_permissions('anonymous', ['execute open_social_graphql arbitrary graphql requests']);
+  user_role_grant_permissions('authenticated', ['execute open_social_graphql arbitrary graphql requests']);
+}
