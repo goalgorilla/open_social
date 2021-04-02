@@ -38,6 +38,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.group_topics',
       'views.view.group_events',
       'views.view.newest_groups',
+      'views.view.newest_users',
       'core.entity_view_display.profile.profile.default',
     ];
 
@@ -237,6 +238,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
+    if ($tag_service->profileActive()) {
+      $config_overviews['views.view.newest_users'] = 'default';
+    }
+
     foreach ($config_overviews as $config_name => $display) {
       if (in_array($config_name, $names)) {
 
@@ -253,6 +258,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
         $relationship = ($config_name === 'views.view.group_topics' || $config_name === 'views.view.group_events') ? 'gc__node' : 'none';
         $table = ($config_name === 'views.view.newest_groups') ? 'group__social_tagging' : 'node__social_tagging';
+
+        if ($tag_service->profileActive()) {
+          $table = 'profile__social_tagging';
+        }
 
         foreach ($fields as $field => $data) {
           $overrides[$config_name]['display'][$display]['display_options']['filters'][$field] = [
