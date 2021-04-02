@@ -86,10 +86,10 @@ function social_profile_fields_update_8003() {
     'field.field.profile.profile.field_profile_' => 'field_config',
   ];
 
-  $path = drupal_get_path('module', 'social_profile_fields') . '/config/install/';
+  $path = drupal_get_path('module', 'social_profile_fields') . '/config/static/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
-    $config_file = $path . $prefix . 'nationality.yml';
+    $config_file = $path . $prefix . 'nationality_8003.yml';
     $settings = Yaml::parseFile($config_file);
 
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
