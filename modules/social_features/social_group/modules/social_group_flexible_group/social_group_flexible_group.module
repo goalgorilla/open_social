@@ -105,16 +105,9 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       ];
     }
   }
-
-  $group_types = ['flexible_group'];
-  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
-
-  foreach ($group_types as $group_type) {
-    $form_ids[] = 'group-' . str_replace('_', '-', $group_type) . '-add-form';
-    $form_ids[] = 'group-' . str_replace('_', '-', $group_type) . '-edit-form';
-  }
   // For adding or editing a flexible group, we alter the visibility fields.
-  if (in_array($form['#id'], $form_ids ?? [])) {
+  if ($form['#id'] === 'group-flexible-group-add-form' ||
+    $form['#id'] === 'group-flexible-group-edit-form') {
     // Change the group visibility on flexible groups.
     if (!empty($form['field_group_allowed_visibility'])) {
       if (!empty($form['field_group_allowed_visibility']['widget']['#title'])) {
