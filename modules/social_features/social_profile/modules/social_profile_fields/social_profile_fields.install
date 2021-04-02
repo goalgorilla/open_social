@@ -19,7 +19,7 @@ function social_profile_fields_install() {
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
-  _social_profile_fields_countries();
+  _social_profile_fields_nationalities();
 }
 
 /**
@@ -98,20 +98,22 @@ function social_profile_fields_update_8003() {
     $storage->createFromStorageRecord($settings)->save();
   }
 
-  _social_profile_fields_countries();
+  _social_profile_fields_nationalities();
 }
 
 /**
- * Create taxonomy terms for countries in the "Nationality" vocabulary.
+ * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
  */
-function _social_profile_fields_countries() {
-  $countries = \Drupal::service('address.country_repository')->getList();
+function _social_profile_fields_nationalities() {
+  $path = drupal_get_path('module', 'social_profile_fields') . '/content/';
+  $data = Yaml::parseFile($path . 'nationalities.yml');
+
   $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
-  foreach ($countries as $country) {
+  foreach ($data['nationalities'] as $nationality) {
     /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $storage->create(['vid' => 'nationality']);
 
-    $term->setName($country)->save();
+    $term->setName($nationality)->save();
   }
 }
