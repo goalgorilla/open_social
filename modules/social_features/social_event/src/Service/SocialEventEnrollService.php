@@ -48,7 +48,7 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
 
       // Make an exception for the invite enroll method.
       // This doesn't allow people to enroll themselves, but get invited.
-      if ((int) $is_enabled === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
+      if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
         $is_enabled = TRUE;
       }
 
