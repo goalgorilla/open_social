@@ -1,0 +1,71 @@
+core.entity_form_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    add:
+      content:
+        field_event_enable_enrollment:
+          weight: 8
+          settings:
+            display_label: true
+          third_party_settings: { }
+          type: boolean_checkbox
+          region: content
+      third_party_settings:
+        field_group:
+          group_enrollment:
+            children:
+              - field_event_enable_enrollment
+          group_enrollment_methods:
+            format_settings:
+              open: true
+              classes: enrollment-methods
+              description: ''
+              id: ''
+              required_fields: false
+    change:
+      third_party_settings:
+        field_group:
+          group_enrollment_methods:
+            format_type: details
+core.entity_view_display.node.event.activity:
+  expected_config: {  }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.activity_comment:
+  expected_config: {  }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.hero:
+  expected_config: { }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.search_index:
+  expected_config: { }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.small_teaser:
+  expected_config: { }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
+core.entity_view_display.node.event.teaser:
+  expected_config: { }
+  update_actions:
+    add:
+      hidden:
+        field_event_enable_enrollment: true
