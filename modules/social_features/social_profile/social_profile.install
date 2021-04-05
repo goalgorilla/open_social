@@ -471,3 +471,13 @@ function social_profile_update_8902() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Sets default profile settings.
+ */
+function social_profile_update_8903() {
+  \Drupal::configFactory()
+    ->getEditable('social_profile.settings')
+    ->set('enable_profile_tagging', TRUE)
+    ->save();
+}

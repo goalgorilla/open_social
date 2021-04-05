@@ -193,6 +193,24 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getTermOptionNames(array $term_ids) {
+    $options = [];
+    if (empty($term_ids)) {
+      return $options;
+    }
+
+    /** @var \Drupal\taxonomy\TermInterface[] $terms */
+    $terms = $this->taxonomyStorage->loadMultiple($term_ids);
+    foreach ($terms as $term) {
+      $options[$term->id()] = $term->label();
+    }
+
+    return $options;
+  }
+
+  /**
    * Helper function to prepare term options.
    *
    * @param array $terms

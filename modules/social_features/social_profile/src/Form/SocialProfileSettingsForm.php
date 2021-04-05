@@ -9,6 +9,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Language\LanguageManager;
+use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -104,12 +105,18 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       '#open' => TRUE,
     ];
 
+    // Get profile vocabulary overview page link.
+    $profile_tags = Link::createFromRoute('profile tags', 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'profile_tag']);
+
     $form['tagging']['enable_profile_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow users to tag in profile.'),
+      '#title' => $this->t('Allow content managers to tag in profile.'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether users are allowed to tag profiles, view tags and filter on tags in profiles.'),
+      '#description' => $this->t('Determine whether CM are allowed to add @profile_tags terms to the users\' profile',
+        [
+          '@profile_tags' => $profile_tags->toString(),
+        ]),
     ];
 
     $form['tagging']['allow_category_split'] = [

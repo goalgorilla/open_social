@@ -70,11 +70,9 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
 
     // Render all value if split tag disabled.
     if (!$this->profileTagService->allowSplit()) {
-      $options = [];
-      foreach ($this->profileTagService->getCategories() as $key => $value) {
-        $options[$value] = $this->profileTagService->getChildrens($key);
-      }
-      $element['#options'] = $options;
+      $options = &$element['#options'];
+      $term_ids = array_keys($options);
+      $options = $this->profileTagService->getTermOptionNames($term_ids);
       return $element;
     }
 
