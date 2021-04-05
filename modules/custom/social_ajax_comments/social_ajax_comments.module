@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
@@ -144,6 +145,22 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
       $field_name,
       $commented_entity->id()
     ));
+  }
+}
+
+/**
+ * Implements hook_ajax_render_alter().
+ */
+function social_ajax_comments_ajax_render_alter(array &$data) {
+  if (
+    count($data) === 2 &&
+    $data[0]['command'] === 'settings' &&
+    $data[1]['command'] === 'insert' &&
+    $data[1]['method'] === NULL &&
+    \Drupal::request()->query->has('page')
+  ) {
+    $command = new HtmlCommand('#block-socialblue-content', $data[1]['data']);
+    $data[1] = $command->render();
   }
 }
 
