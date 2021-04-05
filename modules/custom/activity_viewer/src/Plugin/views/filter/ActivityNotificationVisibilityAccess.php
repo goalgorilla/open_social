@@ -231,8 +231,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
   public function getCacheContexts() {
     $contexts = parent::getCacheContexts();
 
-    $contexts[] = 'user';
-    $contexts[] = 'group';
+    $contexts[] = 'user.permissions';
     $contexts[] = 'route.group';
 
     return $contexts;
