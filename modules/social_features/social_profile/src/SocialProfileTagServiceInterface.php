@@ -82,7 +82,6 @@ interface SocialProfileTagServiceInterface {
    */
   public function buildHierarchy(array $term_ids);
 
-
   /**
    * Returns list of term names as option list.
    *
