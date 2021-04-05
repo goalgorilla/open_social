@@ -183,22 +183,59 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $or->condition($comments_on_content);
     }
 
-    // If the recipient user is the current logged in user,
-    // we can safely allow likes, group content (eg memberships) and
-    // event enrollment notifications as long as the recipient user
-    // is the current logged in user.
+    // For likes we can safely assume these end up only in the recipient user,
+    // which is usually the entity owner which got liked.
     if ($account->isAuthenticated()) {
-      $recipient_related = new Condition('AND');
-      $types = ['node', 'post', 'comment'];
-      $recipient_related->condition('activity__field_activity_entity.field_activity_entity_target_type', $types, 'NOT IN');
-      $recipient_related->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $vote_access = new Condition('AND');
+      $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'vote');
+      $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $or->condition($vote_access);
+    }
 
-      $or->condition($recipient_related);
+    // For an enrollment we match the recipient uid for enrollments
+    // activities are only created for those with the OrganizerActivityContext
+    // see getRecipientOrganizerFromEntity.
+    if ($account->isAuthenticated()) {
+      $enrollment_access = new Condition('AND');
+      $enrollment_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'event_enrollment');
+      $enrollment_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $or->condition($enrollment_access);
+    }
+
+    // For group_content
+    // we match the field_activity_recipient_user_target_id for
+    // GroupContentInMyGroupActivityContext &
+    // ContentInMyGroupActivityContext to ensure only users who are GM
+    // or actual members get the message.
+    // Or.
+    // We match field_activity_recipient_group_target_id
+    // see GroupActivityContext so we can match our own memberships against it.
+    if ($account->isAuthenticated()) {
+      $membership_access = new Condition('AND');
+      $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
+      $membership_or_node = new Condition('OR');
+      $membership_or_node->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $membership_or_node->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
+      $membership_access->condition($membership_or_node);
+      $or->condition($membership_access);
     }
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);
     $this->query->addWhere('visibility', $and_wrapper);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $contexts = parent::getCacheContexts();
+
+    $contexts[] = 'user';
+    $contexts[] = 'group';
+    $contexts[] = 'route.group';
+
+    return $contexts;
   }
 
 }
