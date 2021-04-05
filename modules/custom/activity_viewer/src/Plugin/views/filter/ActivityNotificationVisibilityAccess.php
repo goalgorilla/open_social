@@ -188,7 +188,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     if ($account->isAuthenticated()) {
       $vote_access = new Condition('AND');
       $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'vote');
-      $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
       $or->condition($vote_access);
     }
 
@@ -198,7 +198,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     if ($account->isAuthenticated()) {
       $enrollment_access = new Condition('AND');
       $enrollment_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'event_enrollment');
-      $enrollment_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $enrollment_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
       $or->condition($enrollment_access);
     }
 
@@ -214,7 +214,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $membership_access = new Condition('AND');
       $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
       $membership_or_node = new Condition('OR');
-      $membership_or_node->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $membership_or_node->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
       $membership_or_node->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
       $membership_access->condition($membership_or_node);
       $or->condition($membership_access);
