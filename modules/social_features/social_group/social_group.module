@@ -886,9 +886,16 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
     }
     else {
-      // If node don't belong to any group we don't need group visibility field.
-      if (!empty($form['groups'])) {
-        unset($form['groups']);
+      // If node don't belong to any group as a group content plugin
+      // we don't need group visibility field.
+      if (method_exists($form_state->getFormObject(), 'getEntity')) {
+        /** @var \Drupal\Core\Entity\EntityInterface $node */
+        $node = $form_state->getFormObject()->getEntity();
+        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $node->bundle())) {
+          unset($form['groups']);
+        }
       }
     }
   }
