@@ -255,7 +255,6 @@ Feature: Create flexible Group
 
     # And a GM receives a notification about the joined user.
     When I am logged in as "GivenUserOne"
-    And I run cron
     And I wait for the queue to be empty
     And I am at "notifications"
     Then I should see text matching "GivenUserTwo joined the Test flexible group"

@@ -51,7 +51,6 @@ Feature: Manage event enrollment
 
     # as EO we should also get a notification about this enrollment.Ability:
     When I am logged in as "event_organiser"
-    And I run cron
     And I wait for the queue to be empty
     And I am at "notifications"
     Then I should see text matching "event_enrollee has enrolled to the event My Behat Event you are organizing"
