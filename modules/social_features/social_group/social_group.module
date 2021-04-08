@@ -885,6 +885,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // We don't want to override the form::save in group.
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
     }
+    else {
+      // If node don't belong to any group as a group content plugin
+      // we don't need group visibility field.
+      if (method_exists($form_state->getFormObject(), 'getEntity')) {
+        /** @var \Drupal\Core\Entity\EntityInterface $node */
+        $node = $form_state->getFormObject()->getEntity();
+        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $node->bundle())) {
+          unset($form['groups']);
+        }
+      }
+    }
   }
 
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['delete'])) {
