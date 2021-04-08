@@ -129,6 +129,7 @@ class AjaxCommentsController extends ContribController {
     // Build the comment entity form.
     // This approach is very similar to the one taken in
     // \Drupal\comment\CommentLazyBuilders::renderForm().
+    /** @var \Drupal\comment\CommentInterface $comment */
     $comment = $this->entityTypeManager()->getStorage('comment')->create([
       'entity_id' => $entity->id(),
       'pid' => $pid,
@@ -180,17 +181,19 @@ class AjaxCommentsController extends ContribController {
       }
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
-      else {
-        $selector = $comment->get('pid')->target_id;
+      elseif ($comment->hasParentComment()) {
+        $selector = $comment->getParentComment()->id();
         $position = 'after';
       }
 
-      $response = $this->addMessages(
-        $request,
-        $response,
-        static::getCommentSelectorPrefix() . $selector,
-        $position
-      );
+      if (isset($selector, $position)) {
+        $response = $this->addMessages(
+          $request,
+          $response,
+          static::getCommentSelectorPrefix() . $selector,
+          $position
+        );
+      }
     }
 
     // Clear out the tempStore variables.
