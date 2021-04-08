@@ -1802,7 +1802,7 @@ function social_event_update_8915() {
  * Add the 'enable event enrolment' field.
  */
 function social_event_update_8916() {
-  $config_path = drupal_get_path('module', 'social_event') . '/config/install';
+  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -1811,7 +1811,7 @@ function social_event_update_8916() {
 
   // Create field storages.
   $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
-  $data = $source->read('field.storage.node.field_event_enable_enrollment');
+  $data = $source->read('field.storage.node.field_event_enable_enrollment_8916');
   $class = $field_type_manager->getPluginClass($data['type']);
   if (is_null($field_storage_config_storage->load($data['id']))) {
     $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
@@ -1821,7 +1821,7 @@ function social_event_update_8916() {
   /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
   $field_config_storage = $entity_type_manager->getStorage('field_config');
   // Create field settings.
-  $data = $source->read('field.field.node.event.field_event_enable_enrollment');
+  $data = $source->read('field.field.node.event.field_event_enable_enrollment_8916');
   if (is_null($field_config_storage->load($data['id']))) {
     $field_config_storage->create($data)->save();
   }
