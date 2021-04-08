@@ -162,6 +162,14 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
     $command = new HtmlCommand('#block-socialblue-content', $data[1]['data']);
     $data[1] = $command->render();
   }
+
+  // Delete content before wrapper of the comments section of AJAX response
+  // during adding a new comment to resolve the issue with creating nesting of
+  // comments section wrapper in itself after adding each comment.
+  if (\Drupal::routeMatch()->getRouteName() === 'ajax_comments.add') {
+    $content = &$data[2]['data'];
+    $content = substr($content, strrpos(substr($content, 0, strpos($content, substr($data[2]['selector'], 1))), '<'));
+  }
 }
 
 /**
