@@ -140,6 +140,48 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       $builder->produce('edge_node')
         ->map('edge', $builder->fromParent())
     );
+
+    // File fields.
+    $registry->addFieldResolver('File', 'id',
+      $builder->produce('entity_uuid')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('File', 'url',
+      $builder->compose(
+        $builder->fromPath('entity:file', 'uri.value'),
+        $builder->produce('file_url')
+          ->map('uri', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('File', 'filename',
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:file'))
+        ->map('value', $builder->fromParent())
+        ->map('path', $builder->fromValue('filename.value'))
+    );
+
+    $registry->addFieldResolver('File', 'filemime',
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:file'))
+        ->map('value', $builder->fromParent())
+        ->map('path', $builder->fromValue('filemime.value'))
+    );
+
+    $registry->addFieldResolver('File', 'filesize',
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:file'))
+        ->map('value', $builder->fromParent())
+        ->map('path', $builder->fromValue('filesize.value'))
+    );
+
+    $registry->addFieldResolver('File', 'created',
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:file'))
+        ->map('value', $builder->fromParent())
+        ->map('path', $builder->fromValue('created.value'))
+    );
   }
 
 }

@@ -1,0 +1,72 @@
+"""
+An Open Social Comment.
+"""
+type Comment implements Node {
+  """
+  The unique identifier for the comment.
+  """
+  id: ID!
+  """
+  The message of the comment with HTML.
+  """
+  body: BodyHTML!
+  """
+  The timestamp indicating when the comment was created.
+  """
+  created: DateTime!
+  """
+  One or more attachments such as pdf, csv, doc and etc.
+  """
+  attachments(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: CommentAttachmentSortKeys = CREATED_AT
+  ): CommentAttachmentConnection!
+}
+
+type CommentEdge implements Edge {
+  cursor: Cursor!
+  node: Comment!
+}
+
+type CommentConnection implements Connection {
+  edges: [CommentEdge!]!
+  nodes: [Comment!]!
+  pageInfo: PageInfo!
+}
+
+type CommentAttachmentConnection implements Connection {
+  edges: [CommentAttachmentEdge!]!
+  nodes: [File!]!
+  pageInfo: PageInfo!
+}
+
+type CommentAttachmentEdge implements Edge {
+  cursor: Cursor!
+  node: File!
+}
+
+"""
+The set of valid sort keys for the attchments query.
+"""
+enum CommentAttachmentSortKeys {
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
+
+"""
+The set of valid sort keys for the comment query.
+"""
+enum CommentSortKeys {
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
