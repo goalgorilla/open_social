@@ -110,10 +110,10 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['enable_profile_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow content managers to tag in profile.'),
+      '#title' => $this->t('Allow to tag in profile'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether CM are allowed to add @profile_tags terms to the users\' profile',
+      '#description' => $this->t('Determine whether CM+ are allowed to add @profile_tags terms to the users profile',
         [
           '@profile_tags' => $profile_tags->toString(),
         ]),
@@ -121,7 +121,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['allow_category_split'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow category split.'),
+      '#title' => $this->t('Allow category split'),
       '#default_value' => $config->get('allow_category_split'),
       '#required' => FALSE,
       '#description' => $this->t("Determine if the main categories of the vocabulary will be used as separate tag fields or as a single tag field when using tags on profile."),
@@ -129,7 +129,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['use_category_parent'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow use a parent of category.'),
+      '#title' => $this->t('Allow use a parent of category'),
       '#default_value' => $config->get('use_category_parent'),
       '#required' => FALSE,
       '#description' => $this->t("Determine if the parent of categories will be used with children tags."),
