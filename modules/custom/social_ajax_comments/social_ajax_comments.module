@@ -6,7 +6,6 @@
  */
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
@@ -156,19 +155,39 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
     count($data) === 2 &&
     $data[0]['command'] === 'settings' &&
     $data[1]['command'] === 'insert' &&
-    $data[1]['method'] === NULL &&
+    $data[1]['selector'] === NULL &&
     \Drupal::request()->query->has('page')
   ) {
-    $command = new HtmlCommand('#block-socialblue-content', $data[1]['data']);
-    $data[1] = $command->render();
+    if ($data[1]['method'] === NULL) {
+      $data[1]['method'] = 'replaceWith';
+      $data[1]['selector'] = '#block-socialblue-content';
+    }
+    elseif (
+      $data[1]['method'] === 'replaceWith' &&
+      preg_match('/<section[^>]+id="([^"]+)/', $data[1]['data'], $matches)
+    ) {
+      $data[1]['selector'] = '#' . $matches[1];
+    }
   }
 
   // Delete content before wrapper of the comments section of AJAX response
   // during adding a new comment to resolve the issue with creating nesting of
   // comments section wrapper in itself after adding each comment.
-  if (\Drupal::routeMatch()->getRouteName() === 'ajax_comments.add') {
-    $content = &$data[2]['data'];
-    $content = substr($content, strrpos(substr($content, 0, strpos($content, substr($data[2]['selector'], 1))), '<'));
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'ajax_comments.add' &&
+    \Drupal::request()->request->has('social_ajax_comments')
+  ) {
+    foreach ($data as &$item) {
+      if (
+        $item['command'] === 'insert' &&
+        $item['method'] === 'replaceWith' &&
+        preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
+      ) {
+        $content = &$item['data'];
+        $content = substr($content, strrpos(substr($content, 0, strpos($content, $matches[1])), '<'));
+        return;
+      }
+    }
   }
 }
 

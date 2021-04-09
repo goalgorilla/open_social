@@ -38,6 +38,13 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
   protected $renderer;
 
   /**
+   * TRUE if the request is a XMLHttpRequest.
+   *
+   * @var bool
+   */
+  private $isXmlHttpRequest;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -54,7 +61,8 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       $container->get('entity.form_builder'),
       $container->get('current_route_match'),
       $container->get('entity_display.repository'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('request_stack')->getCurrentRequest()->isXmlHttpRequest()
     );
   }
 
@@ -87,11 +95,42 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
    *   The entity display repository.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer interface.
+   * @param bool $is_xml_http_request
+   *   TRUE if the request is a XMLHttpRequest.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityFormBuilderInterface $entity_form_builder, RouteMatchInterface $route_match, EntityDisplayRepositoryInterface $entity_display_repository, RendererInterface $renderer) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $current_user, $entity_type_manager, $entity_form_builder, $route_match, $entity_display_repository);
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    AccountInterface $current_user,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityFormBuilderInterface $entity_form_builder,
+    RouteMatchInterface $route_match,
+    EntityDisplayRepositoryInterface $entity_display_repository,
+    RendererInterface $renderer,
+    $is_xml_http_request
+  ) {
+    parent::__construct(
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $label,
+      $view_mode,
+      $third_party_settings,
+      $current_user,
+      $entity_type_manager,
+      $entity_form_builder,
+      $route_match,
+      $entity_display_repository
+    );
 
     $this->renderer = $renderer;
+    $this->isXmlHttpRequest = $is_xml_http_request;
   }
 
   /**
@@ -206,7 +245,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     }
 
-    if (!empty($output[0]['comments'])) {
+    if (!empty($output[0]['comments']) && !$this->isXmlHttpRequest) {
       $comment_settings = $this->getFieldSettings();
       $output[0]['comments'] = [
         '#lazy_builder' => [
