@@ -137,6 +137,7 @@ class EventSettingsForm extends ConfigFormBase {
     $form['event_enrolment']['allow_to_disable_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow event organizers to disable event enrollments'),
+      '#description' => $this->t('If enabled, event organizers can disable event enrollment. In another case, enrollment will be disabled for all events as default'),
       '#default_value' => $social_event_config->get('allow_to_disable_enroll'),
     ];
 
