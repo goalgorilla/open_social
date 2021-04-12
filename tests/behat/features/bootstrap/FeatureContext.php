@@ -673,6 +673,96 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * Opens register page with destination to invited group.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationGroup($mail, $group_title)
+    {
+      $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accept';
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Opens register page with destination to invited node.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited node "(?P<node_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationNode($mail, $node_title)
+    {
+      $nodes = \Drupal::entityTypeManager()->getStorage('node')
+        ->loadByProperties(['title' => $node_title]);
+      $node = reset($nodes);
+
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/node/' . $node->id();
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Keep track of intended user names so they can be cleaned up.
+     *
+     * @var array
+     */
+    protected $intended_user_names = [];
+
+    /**
+     * Stores the user's name in $this->intended_user_names.
+     *
+     * This goes before a register form manipulation and submission.
+     *
+     * @Given I intend to create a user named :name
+     *
+     * @see cleanUsers()
+     */
+    public function intendUserName($name) {
+      $this->intended_user_names[] = $name;
+    }
+
+    /**
+     * Remove any queue items that were created.
+     *
+     * @AfterScenario
+     */
+    public function cleanupQueue(AfterScenarioScope $scope)
+    {
+      $workerManager = \Drupal::service('plugin.manager.queue_worker');
+      /** @var Drupal\Core\Queue\QueueFactory; $queue */
+      $queue = \Drupal::service('queue');
+
+      foreach ($workerManager->getDefinitions() as $name => $info) {
+        /** @var Drupal\Core\Queue\QueueInterface $worker */
+        $worker = $queue->get($name);
+
+        if ($worker->numberOfItems() > 0) {
+          while ($item = $worker->claimItem()) {
+            // If we don't just delete them, process the item first.
+            $worker->deleteItem($item);
+          }
+        }
+      }
+    }
+
+  /**
+   * Remove any groups that were created.
+   *
+   * @AfterScenario
+   */
+  public function cleanupUser(AfterScenarioScope $scope)
+  {
+    if (!empty($this->intended_user_names)) {
+      foreach ($this->intended_user_names as $name) {
+        $user_obj = user_load_by_name($name);
+        \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
+      }
+    }
+  }
+
+    /**
      * Checks if correct amount of uploaded files by user are private.
      *
      * @Then /User "(?P<username>[^"]+)" should have uploaded "(?P<private>[^"]+)" private files and "(?P<public>[^"]+)" public files$/
