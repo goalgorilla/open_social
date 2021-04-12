@@ -15,6 +15,7 @@ use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -429,6 +430,43 @@ function social_profile_update_8803() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_profile', 'social_profile_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add a new block to display filters (social_tagging) on all-members page.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ */
+function social_profile_update_8901() {
+  $config_files = [
+    'block.block.exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.exposedformnewest_userspage_newest_users_8901.yml',
+    'block.block.socialblue_exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
+  ];
+
+  foreach ($config_files as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = \Drupal::configFactory()
+          ->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Enable exposed filters block on all-members views.
+ */
+function social_profile_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8902');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
