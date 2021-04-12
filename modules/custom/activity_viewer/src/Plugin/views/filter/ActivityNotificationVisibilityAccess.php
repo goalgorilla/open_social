@@ -111,6 +111,9 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $and_wrapper = new Condition('AND');
     $or = new Condition('OR');
 
+    // Allow us to check for authenticated users.
+    $authenticated = $account->isAuthenticated();
+
     // Nodes: retrieve all the nodes 'created' activity by node access grants.
     $node_access = new Condition('AND');
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
@@ -134,7 +137,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $or->condition($node_access);
 
     // Posts: retrieve all the posts in groups the user is a member of.
-    if ($account->isAuthenticated() && count($groups_unique) > 0) {
+    if ($authenticated && count($groups_unique) > 0) {
       $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
@@ -185,7 +188,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
 
     // For likes we can safely assume these end up only in the recipient user,
     // which is usually the entity owner which got liked.
-    if ($account->isAuthenticated()) {
+    if ($authenticated) {
       $vote_access = new Condition('AND');
       $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'vote');
       $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
@@ -195,7 +198,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     // For an enrollment we match the recipient uid for enrollments
     // activities are only created for those with the OrganizerActivityContext
     // see getRecipientOrganizerFromEntity.
-    if ($account->isAuthenticated()) {
+    if ($authenticated) {
       $enrollment_access = new Condition('AND');
       $enrollment_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'event_enrollment');
       $enrollment_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
@@ -210,7 +213,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     // Or.
     // We match field_activity_recipient_group_target_id
     // see GroupActivityContext so we can match our own memberships against it.
-    if ($account->isAuthenticated()) {
+    if ($authenticated) {
       $membership_access = new Condition('AND');
       $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
       $membership_or_node = new Condition('OR');
