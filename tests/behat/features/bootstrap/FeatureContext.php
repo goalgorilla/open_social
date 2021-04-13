@@ -751,19 +751,43 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * Remove any groups that were created.
+     * Remove any queue items that were created.
      *
      * @AfterScenario
      */
-    public function cleanupUser(AfterScenarioScope $scope)
+    public function cleanupQueue(AfterScenarioScope $scope)
     {
-      if (!empty($this->intended_user_names)) {
-        foreach ($this->intended_user_names as $name) {
-          $user_obj = user_load_by_name($name);
-          \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
+      $workerManager = \Drupal::service('plugin.manager.queue_worker');
+      /** @var Drupal\Core\Queue\QueueFactory; $queue */
+      $queue = \Drupal::service('queue');
+
+      foreach ($workerManager->getDefinitions() as $name => $info) {
+        /** @var Drupal\Core\Queue\QueueInterface $worker */
+        $worker = $queue->get($name);
+
+        if ($worker->numberOfItems() > 0) {
+          while ($item = $worker->claimItem()) {
+            // If we don't just delete them, process the item first.
+            $worker->deleteItem($item);
+          }
         }
       }
     }
+
+  /**
+   * Remove any groups that were created.
+   *
+   * @AfterScenario
+   */
+  public function cleanupUser(AfterScenarioScope $scope)
+  {
+    if (!empty($this->intended_user_names)) {
+      foreach ($this->intended_user_names as $name) {
+        $user_obj = user_load_by_name($name);
+        \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
+      }
+    }
+  }
 
     /**
      * Checks if correct amount of uploaded files by user are private.
