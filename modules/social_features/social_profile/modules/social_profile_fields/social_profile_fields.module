@@ -6,11 +6,16 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityFormInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -41,6 +46,73 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
   }
 
   return $access_result;
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  if ($context['entity_type'] !== 'profile' || $context['form_mode'] !== 'edit') {
+    return;
+  }
+
+  $form_display->setComponent('field_profile_nationality', [
+    'weight' => 8,
+    'settings' => [
+      'match_operator' => 'CONTAINS',
+      'size' => 60,
+      'placeholder' => '',
+      'match_limit' => 10,
+    ],
+    'third_party_settings' => [],
+    'type' => 'entity_reference_autocomplete_tags',
+    'region' => 'content',
+  ]);
+
+  $settings = $form_display->getThirdPartySetting('field_group', 'group_profile_contact_info');
+
+  if (!in_array('field_profile_nationality', $settings['children'])) {
+    $settings['children'][] = 'field_profile_nationality';
+    $form_display->setThirdPartySetting('field_group', 'group_profile_contact_info', $settings);
+  }
+
+  $form_display->save();
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if (
+    $context['entity_type'] === 'profile' &&
+    $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
+  ) {
+    $display->setComponent('field_profile_nationality', [
+      'weight' => 0,
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+      'third_party_settings' => [],
+      'type' => 'entity_reference_label',
+      'region' => 'content',
+    ]);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_fields_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_object = $form_state->getFormObject();
+
+  if (
+    $form_object instanceof ContentEntityFormInterface &&
+    $form_object->getEntity()->getEntityTypeId() === 'profile' &&
+    isset($form['field_profile_nationality']['widget']['target_id'])
+  ) {
+    $form['field_profile_nationality']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
+  }
 }
 
 /**
@@ -287,6 +359,20 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
       }
     }
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_fields_theme() {
+  return [
+    'field__field_profile_nationality' => [
+      'base hook' => 'field',
+    ],
+    'field__field_profile_nationality__sky' => [
+      'base hook' => 'field',
+    ],
+  ];
 }
 
 /**

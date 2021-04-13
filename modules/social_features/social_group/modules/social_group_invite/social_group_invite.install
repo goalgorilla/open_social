@@ -99,3 +99,17 @@ function social_group_invite_update_8006() {
     $config_storage->write($config, $source->read($config));
   }
 }
+
+/**
+ * Update a text of invited_to_join_group message template.
+ */
+function social_group_invite_update_8007() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', 'social_group_invite_update_8007');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

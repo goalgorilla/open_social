@@ -192,6 +192,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           'immediately',
           'daily',
           'weekly',
+          'none',
         ];
 
         // Let's store the users IDs which will be processed by the loop.
