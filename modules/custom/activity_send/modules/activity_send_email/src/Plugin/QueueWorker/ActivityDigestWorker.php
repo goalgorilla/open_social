@@ -2,8 +2,8 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
-use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -13,8 +13,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\message\Entity\Message;
-use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -110,10 +108,11 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
       $user_storage = $this->entityTypeManager->getStorage('user');
       $message_storage = $this->entityTypeManager->getStorage('message');
       // Get target account.
+      /** @var \Drupal\user\Entity\User $target */
       $target = $user_storage->load($data['uid']);
 
       // Make sure we have an actual user account to work with.
-      if (!is_null($target) && $target->isActive()) {
+      if (is_object($target) && $target->isActive()) {
         $langcode = $target->getPreferredLangcode();
         $digest_notifications = [
           '#theme' => 'digestmail',
@@ -121,12 +120,13 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
         $activity_storage = $this->entityTypeManager->getStorage('activity');
 
         foreach ($data['activities'] as $activity_id) {
+          /** @var \Drupal\activity_creator\Entity\Activity $activity */
           $activity = $activity_storage->load($activity_id);
 
           // Only for users that have access to related content.
           if (
-            $activity &&
-            !is_null($activity->getRelatedEntity()) &&
+          ($activity instanceof Activity) &&
+            ($activity->getRelatedEntity() !== NULL) &&
             !$activity->getRelatedEntity()->access('view', $target)
           ) {
             continue;
@@ -135,6 +135,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
           // Continue if we have text to send.
           if (isset($activity->field_activity_output_text)) {
             // Load the message.
+            /** @var \Drupal\message\Entity\Message $message */
             $message = $message_storage->load($activity->field_activity_message->target_id);
             $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
 
@@ -157,7 +158,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             ['langcode' => $langcode]
           );
 
-          /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+          /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $this->emailFrequencyManager->createInstance($data['frequency']);
 
           // Translating frequency instance in the language of the user.
@@ -174,11 +175,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             [
               '@settings' => Link::fromTextAndUrl(
                 t('email notification settings'),
-                Url::fromRoute(
-                  'entity.user.edit_form', [
-                    'user' => $target->id(),
-                  ]
-                )->setAbsolute())->toString(),
+                Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
               ':frequency' => $frequency_translated,
             ],
             ['langcode' => $langcode]
