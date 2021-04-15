@@ -1258,7 +1258,7 @@ function social_event_field_group_form_process_build_alter(array &$element, Form
   $event_settings = \Drupal::config('social_event.settings');
   if (
     isset($element['group_enrollment']) &&
-    !$event_settings->get('allow_to_disable_enroll')
+    $event_settings->get('disable_event_enroll')
   ) {
     $element['group_enrollment']['#access'] = FALSE;
   }

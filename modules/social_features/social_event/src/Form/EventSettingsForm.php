@@ -134,11 +134,11 @@ class EventSettingsForm extends ConfigFormBase {
       '#open' => TRUE,
     ];
 
-    $form['event_enrolment']['allow_to_disable_enroll'] = [
+    $form['event_enrolment']['disable_event_enroll'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow event organizers to disable event enrollments'),
-      '#description' => $this->t('If enabled, event organizers can disable event enrollment. In another case, enrollment will be disabled for all events as default'),
-      '#default_value' => $social_event_config->get('allow_to_disable_enroll'),
+      '#title' => $this->t('Disable all event enrollments on your community.'),
+      '#description' => $this->t('If disabled, event organizers can decide to disable or enable event enrollments when creating or editing an event.'),
+      '#default_value' => $social_event_config->get('disable_event_enroll'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -162,7 +162,7 @@ class EventSettingsForm extends ConfigFormBase {
       ->set('enroll', $group_type_ids)
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->set('show_user_timezone', $form_state->getValue('show_user_timezone'))
-      ->set('allow_to_disable_enroll', $form_state->getValue('allow_to_disable_enroll'))
+      ->set('disable_event_enroll', $form_state->getValue('disable_event_enroll'))
       ->save();
 
     // Invalidate cache tags to refresh blocks of list of events.
