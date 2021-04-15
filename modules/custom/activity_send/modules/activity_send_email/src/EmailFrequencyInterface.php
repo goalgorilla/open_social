@@ -45,7 +45,9 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    *   The Message object.
    * @param \Drupal\user\Entity\User $target
    *   The target user account.
+   * @param string|null $body_text
+   *   The output text of message.
    */
-  public function processItem(Activity $activity, Message $message, User $target);
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL);
 
 }
