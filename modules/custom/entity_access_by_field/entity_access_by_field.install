@@ -100,3 +100,10 @@ function _entity_access_by_field_get_permissions($role) {
   }
   return [];
 }
+
+/**
+ * Rebuild node access.
+ */
+function entity_access_by_field_update_8004() {
+  node_access_rebuild(TRUE);
+}
