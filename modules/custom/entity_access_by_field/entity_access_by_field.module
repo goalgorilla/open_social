@@ -98,7 +98,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                 'priority' => 0,
               ];
 
-              // Load group contents for this node.
+              /* @var \Drupal\group\Entity\GroupContentInterface $group_contents */
               $group_contents = \Drupal::entityTypeManager()
                 ->getStorage('group_content')
                 ->loadByEntity($node);
@@ -106,7 +106,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
               // Continue in case if the node does belong to any group.
               if (!empty($group_contents)) {
                 foreach ($group_contents as $group_content) {
-                  /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+                  /** @var \Drupal\group\Entity\GroupInterface $group */
                   $group = $group_content->getGroup();
                   if ($group instanceof GroupInterface) {
                     $grants[] = [
@@ -120,7 +120,6 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                   }
                 }
               }
-
             }
             $grants[] = [
               'realm' => $realm . '_author',
