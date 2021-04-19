@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\Wrappers;
 
+use Drupal\Component\Uuid\Uuid;
+use Drupal\social_graphql\GraphQL\Violation;
+
 /**
  * Provides a base class for input types.
  *
@@ -43,8 +46,13 @@ abstract class InputBase implements RelayMutationInputInterface {
    * {@inheritdoc}
    */
   public function setValues(array $input) : void {
-    if (isset($input['clientMutationId']) && trim($input['clientMutationId']) !== "") {
-      $this->clientMutationId = trim($input['clientMutationId']);
+    if (!empty($input['clientMutationId'])) {
+      if (Uuid::isValid($input['clientMutationId'])) {
+        $this->clientMutationId = $input['clientMutationId'];
+      }
+      else {
+        $this->violations[] = new Violation("INVALID_CLIENT_MUTATION_ID");
+      }
     }
   }
 

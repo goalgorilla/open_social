@@ -182,5 +182,17 @@ function hook_social_group_allowed_join_method_description_alter($key, &$descrip
 }
 
 /**
+ * Provide a method to extend group and content visibility to other group types.
+ *
+ * @param string $social_group_types
+ *   The group type id.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_settings_alter(&$social_group_types) {
+  $social_group_types[] = 'flexible_group';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

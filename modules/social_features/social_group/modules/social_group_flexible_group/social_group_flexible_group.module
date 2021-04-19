@@ -220,11 +220,19 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
  *   The form array containing the default values & states.
  */
 function social_group_flexible_group_flexible_group_add_after_build(array $form, FormStateInterface $form_state) {
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  foreach ($group_types as $group_type) {
+    $form_ids[] = 'group-' . str_replace('_', '-', $group_type) . '-add-form';
+  }
   // Add states for content visibility based on group visibility.
   // Only on the add page. On edit we want users to be able to consciously
   // decide what allowed visibility to select.
-  if ($form['#id'] === 'group-flexible-group-add-form' &&
-    isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_visibility']['widget']['#options'])) {
+  if (
+    in_array($form['#id'], $form_ids ?? []) &&
+    isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_visibility']['widget']['#options'])
+  ) {
     // If group visibility is public. All content visibility is selected.
     $form['field_group_allowed_visibility']['widget']['public']['#states'] = [
       'checked' => [
@@ -456,13 +464,15 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
   if (!empty($changed_visibility)) {
     $group = _social_group_get_current_group();
 
-    // Update the default visibility of all the content.
-    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
+    if ($group instanceof GroupInterface) {
+      // Update the default visibility of all the content.
+      FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
 
-    // Make sure we clear cache tags accordingly.
-    $cache_tags = _social_group_cache_tags($group);
-    foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags([$cache_tag]);
+      // Make sure we clear cache tags accordingly.
+      $cache_tags = _social_group_cache_tags($group);
+      foreach ($cache_tags as $cache_tag) {
+        Cache::invalidateTags([$cache_tag]);
+      }
     }
   }
 }

@@ -22,7 +22,14 @@ schema {
 The schema's entry-point for queries. This acts as the public, top-level API
 from which all queries must start.
 """
-type Query
+type Query {
+  """
+  Get information about the currently authenticated user.
+
+  NULL if you're not authenticated.
+  """
+  viewer : Actor
+}
 
 """
 The schema's entry-point for subscriptions. This acts as the public, top-level
@@ -35,6 +42,20 @@ type Subscription
 ################################################################################
 #                                Basic Types                                   #
 ################################################################################
+"""
+A concrete fetchable type that is addressable by an id.
+"""
+interface Node {
+  id: ID!
+}
+
+"""
+A valid version 4 UUID
+"""
+# This should not be used for entity UUIDs which should use ID instead.
+# This can be used for user provided strings such as a clientMutationId.
+scalar UUIDv4
+
 """
 An access role for a user
 
@@ -51,6 +72,13 @@ scalar Email
 A valid URL
 """
 scalar Url
+
+"""
+A UNIX timestamp.
+
+The number of seconds since the Unix Epoch on January 1st, 1970 at UTC.
+"""
+scalar Timestamp
 
 """
 A phone number.
@@ -108,11 +136,23 @@ A date and time.
 type DateTime {
   """
   The date and time as UNIX timestamp.
-
-  A UNIX timestamp is the number of seconds since the Unix Epoch
-  on January 1st, 1970 at UTC.
   """
-  timestamp: Int!
+  timestamp: Timestamp!
+}
+
+"""
+An actor is an entity that can perform actions and own content within Open Social.
+"""
+interface Actor implements Node {
+  """
+  The uuid of the Actor
+  """
+  id: ID!
+
+  """
+  The display name of the actor.
+  """
+  displayName: String!
 }
 
 ################################################################################
@@ -167,13 +207,6 @@ type Image implements Media & Node {
 A cursor for use in pagination.
 """
 scalar Cursor
-
-"""
-A node on an edge.
-"""
-interface Node {
-  id: ID!
-}
 
 """
 An edge in a connection.

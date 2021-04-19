@@ -39,7 +39,7 @@ class EmailFrequencyBase extends PluginBase implements EmailFrequencyInterface {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target) {
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
     $db = Database::getConnection();
 
     // Insert incoming activities in our digest table.
