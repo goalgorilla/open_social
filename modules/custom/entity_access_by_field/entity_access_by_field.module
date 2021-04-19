@@ -98,10 +98,10 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                 'priority' => 0,
               ];
 
+              /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+              $group_content_storage = \Drupal::entityTypeManager()->getStorage('group_content');
               /* @var \Drupal\group\Entity\GroupContentInterface $group_contents */
-              $group_contents = \Drupal::entityTypeManager()
-                ->getStorage('group_content')
-                ->loadByEntity($node);
+              $group_contents = $group_content_storage->loadByEntity($node);
 
               // Continue in case if the node does belong to any group.
               if (!empty($group_contents)) {
