@@ -129,7 +129,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['use_category_parent'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow use a parent of category'),
+      '#title' => $this->t('Allow parents to be used as tag'),
       '#default_value' => $config->get('use_category_parent'),
       '#required' => FALSE,
       '#description' => $this->t("Determine if the parent of categories will be used with children tags."),
