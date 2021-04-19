@@ -110,7 +110,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['enable_profile_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow to tag in profile'),
+      '#title' => $this->t('Allow profiles to be tagged'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
       '#description' => $this->t('Determine whether CM+ are allowed to add @profile_tags terms to the users profile',
