@@ -32,7 +32,10 @@ class EntityAccessHelper {
   public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
     if ($op === 'view') {
       // Check published status.
-      if (isset($node->status) && $node->status->value === NodeInterface::NOT_PUBLISHED) {
+      if (!$node->isPublished()) {
+        if ($account->hasPermission('administer nodes')) {
+          return 2;
+        }
         $unpublished_own = $account->hasPermission('view own unpublished content');
         if (($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)) {
           return 1;
