@@ -40,15 +40,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_color_settings'] = [
-        '#type' => 'details',
-        '#group' => 'open_social_settings',
-        '#title' => t('Border radius'),
-        '#weight' => 20,
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-      ];
-
+      // Font Tab.
       $form['os_font_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
@@ -58,69 +50,6 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_color_settings']['card_radius'] = [
-        '#type' => 'number',
-        '#title' => t('Card border radius (px)'),
-        '#default_value' => $config->get('card_radius'),
-        '#description' => t('Define the roundness of cards corners.'),
-      ];
-
-      $form['os_color_settings']['form_control_radius'] = [
-        '#type' => 'number',
-        '#title' => t('Form control border radius (px)'),
-        '#default_value' => $config->get('form_control_radius'),
-        '#description' => t('Define the roundness of the corners of form-controls, like <code>input</code>, <code>textarea</code> and <code>select</code>'),
-      ];
-
-      $form['os_color_settings']['button_radius'] = [
-        '#type' => 'number',
-        '#title' => t('Button border radius (px)'),
-        '#default_value' => $config->get('button_radius'),
-        '#description' => t('Define the roundness of buttons corners.'),
-      ];
-
-      $form['os_email_settings'] = [
-        '#type' => 'details',
-        '#group' => 'open_social_settings',
-        '#title' => t('E-mail'),
-        '#weight' => 30,
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-      ];
-
-      $form['os_email_settings']['email_logo'] = [
-        '#type' => 'managed_file',
-        '#title' => t('Logo for e-mails'),
-        '#description' => t('Upload a logo which is shown in e-mail sent by the platform. This overrides the default logo that is also used in e-mails when no logo is provided here.'),
-        '#default_value' => $config->get('email_logo'),
-        '#upload_location' => 'public://',
-        '#upload_validators' => [
-          'file_validate_is_image' => [],
-          'file_validate_extensions' => ['gif png jpg jpeg'],
-        ],
-      ];
-      // Ensure we save the file permanently.
-      $form['#submit'][] = 'socialblue_save_email_logo';
-
-      $form['os_hero_settings'] = [
-        '#type' => 'details',
-        '#group' => 'open_social_settings',
-        '#title' => t('Hero'),
-        '#weight' => 30,
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-      ];
-
-      $form['os_hero_settings']['hero_gradient_opacity'] = [
-        '#type' => 'range',
-        '#title' => t('Hero gradient'),
-        '#default_value' => $config->get('hero_gradient_opacity'),
-        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
-        '#min' => 0,
-        '#max' => 100,
-      ];
-
-      // Font tab.
       $fonts = [];
       if (\Drupal::service('module_handler')->moduleExists('social_font')) {
         /** @var \Drupal\social_font\Entity\Font $font_entities */
@@ -137,11 +66,157 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#description' => t('The font family to use.'),
       ];
 
+      // Box shadow tab.
+      $form['os_box_shadow_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Cards box shadow'),
+        '#weight' => 20,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_box_shadow_settings']['override_box_shadow'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Override default box shadow for cards'),
+        '#default_value' => $config->get('override_box_shadow'),
+        '#description' => t('Unselect this to disable box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details'] = [
+        '#type' => 'details',
+        '#title' => t('Card box shadow details'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#states' => [
+          'invisible' => [
+            ':input[name="override_box_shadow"]' => ['checked' => FALSE],
+          ],
+        ],
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_color'] = [
+        '#type' => 'color',
+        '#title' => t('Box shadow color'),
+        '#description' => t('Select box shadow color.'),
+        '#default_value' => $config->get('box_shadow_color'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_opacity'] = [
+        '#type' => 'range',
+        '#title' => t('Box shadow opacity'),
+        '#default_value' => $config->get('box_shadow_opacity'),
+        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_x_offset'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow X offset'),
+        '#default_value' => $config->get('box_shadow_x_offset'),
+        '#description' => t('Define the X offset for the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_y_offset'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow Y offset'),
+        '#default_value' => $config->get('box_shadow_y_offset'),
+        '#description' => t('Define the Y offset for the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_spread'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow spread value (px)'),
+        '#default_value' => $config->get('box_shadow_spread'),
+        '#description' => t('Define the spread value of the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_blur'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow blur value'),
+        '#default_value' => $config->get('box_shadow_blur'),
+        '#description' => t('Define the blur value of the box shadow.'),
+      ];
+
+      // Border radius tab.
+      $form['os_border_radius_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Border radius'),
+        '#weight' => 30,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_border_radius_settings']['card_radius'] = [
+        '#type' => 'number',
+        '#title' => t('Card border radius (px)'),
+        '#default_value' => $config->get('card_radius'),
+        '#description' => t('Define the roundness of cards corners.'),
+      ];
+
+      $form['os_border_radius_settings']['form_control_radius'] = [
+        '#type' => 'number',
+        '#title' => t('Form control border radius (px)'),
+        '#default_value' => $config->get('form_control_radius'),
+        '#description' => t('Define the roundness of the corners of form-controls, like <code>input</code>, <code>textarea</code> and <code>select</code>'),
+      ];
+
+      $form['os_border_radius_settings']['button_radius'] = [
+        '#type' => 'number',
+        '#title' => t('Button border radius (px)'),
+        '#default_value' => $config->get('button_radius'),
+        '#description' => t('Define the roundness of buttons corners.'),
+      ];
+
+      // Email Tab.
+      $form['os_email_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('E-mail'),
+        '#weight' => 40,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_email_settings']['email_logo'] = [
+        '#type' => 'managed_file',
+        '#title' => t('Logo for e-mails'),
+        '#description' => t('Upload a logo which is shown in e-mail sent by the platform. This overrides the default logo that is also used in e-mails when no logo is provided here.'),
+        '#default_value' => $config->get('email_logo'),
+        '#upload_location' => 'public://',
+        '#upload_validators' => [
+          'file_validate_is_image' => [],
+          'file_validate_extensions' => ['gif png jpg jpeg'],
+        ],
+      ];
+
+      // Hero tab.
+      $form['os_hero_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Hero'),
+        '#weight' => 50,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_hero_settings']['hero_gradient_opacity'] = [
+        '#type' => 'range',
+        '#title' => t('Hero gradient'),
+        '#default_value' => $config->get('hero_gradient_opacity'),
+        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
+      ];
+
+      // Styles tab.
       $form['os_style_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Style'),
-        '#weight' => 40,
+        '#weight' => 60,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
         '#access' => \Drupal::currentUser()->hasPermission('administer improved theme settings'),
@@ -161,6 +236,10 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin') {
         $form['#submit'][] = 'socialblue_update_gin_color_settings';
       }
+
+      // Ensure we save the file permanently.
+      $form['#submit'][] = 'socialblue_save_email_logo';
+
     }
 
   }
