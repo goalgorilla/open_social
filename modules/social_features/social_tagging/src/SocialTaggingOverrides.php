@@ -264,7 +264,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
-    if ($tag_service->profileActive()) {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    if ($tag_service->profileActive() && $route_name == 'view.newest_users.page_newest_users') {
       $config_overviews['views.view.newest_users'] = 'page_newest_users';
     }
 
