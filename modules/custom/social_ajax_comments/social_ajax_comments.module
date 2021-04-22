@@ -152,14 +152,22 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
  */
 function social_ajax_comments_ajax_render_alter(array &$data) {
   if (
-    count($data) === 2 &&
+    (
+      // In case when the current page is (re)loaded and the response contains a
+      // command with settings and a command with new content.
+      count($data) === 2 ||
+      // In case when a user tries to switch to another page of pagination after
+      // adding a new comment and the response contains two commands from the
+      // previous case and command with messages.
+      count($data) === 3
+    ) &&
     $data[0]['command'] === 'settings' &&
     $data[1]['command'] === 'insert' &&
     $data[1]['selector'] === NULL &&
     \Drupal::request()->query->has('page')
   ) {
     if ($data[1]['method'] === NULL) {
-      $data[1]['method'] = 'replaceWith';
+      $data[1]['method'] = 'html';
       $data[1]['selector'] = '#block-socialblue-content';
     }
     elseif (
@@ -180,7 +188,7 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
     foreach ($data as &$item) {
       if (
         $item['command'] === 'insert' &&
-        $item['method'] === 'replaceWith' &&
+        $item['method'] === 'html' &&
         preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
       ) {
         $content = &$item['data'];
