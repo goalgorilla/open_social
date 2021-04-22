@@ -10,7 +10,7 @@ Feature: Add profile tags to the user profiles
       | Member | 1      | 999 |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I uncheck the box "Allow to tag in profile"
+    And I uncheck the box "Allow profiles to be tagged"
     And I press "Save configuration"
     And I go to "/user/999/profile"
     Then I should not see the text "Profile tag"
@@ -25,7 +25,7 @@ Feature: Add profile tags to the user profiles
       | Member | 1      | 999 |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow to tag in profile"
+    And I check the box "Allow profiles to be tagged"
     And I uncheck the box "Allow category split"
     And I press "Save configuration"
     Then I am logged in as an "contentmanager"
@@ -52,7 +52,7 @@ Feature: Add profile tags to the user profiles
       | Member | 1      | 999 |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow to tag in profile"
+    And I check the box "Allow profiles to be tagged"
     And I check the box "Allow category split"
     And I press "Save configuration"
     Then I am logged in as an "contentmanager"
@@ -82,9 +82,9 @@ Feature: Add profile tags to the user profiles
       | Member | 1      | 999 |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow to tag in profile"
+    And I check the box "Allow profiles to be tagged"
     And I check the box "Allow category split"
-    And I check the box "Allow use a parent of category"
+    And I check the box "Allow parents to be used as tag"
     And I press "Save configuration"
     Then I am logged in as an "contentmanager"
     And I go to "/user/999/profile"
