@@ -187,24 +187,28 @@ class AjaxCommentsController extends ContribController {
         !$this->errors &&
         $this->currentUser()->hasPermission('skip comment approval')
       ) {
-        $selector = $cid;
+        $selector = static::getCommentSelectorPrefix() . $cid;
         $position = 'before';
       }
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
       elseif ($comment->hasParentComment()) {
-        $selector = $comment->getParentComment()->id();
+        $selector = static::getCommentSelectorPrefix() . $comment->getParentComment()->id();
         $position = 'after';
       }
-
-      if (isset($selector, $position)) {
-        $response = $this->addMessages(
-          $request,
-          $response,
-          static::getCommentSelectorPrefix() . $selector,
-          $position
-        );
+      else {
+        // If parent comment is not available insert messages to form.
+        $selectors = $this->tempStore->getSelectors($request);
+        $selector = $selectors['form_html_id'] ?? '';
+        $position = 'before';
       }
+
+      $response = $this->addMessages(
+        $request,
+        $response,
+        $selector,
+        $position
+      );
     }
 
     // Clear out the tempStore variables.
