@@ -114,9 +114,11 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
     // rather than the comment author.
     $user = $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
 
-    // We expect our bodyHtml to come out processed.
-    $raw_comment_body = "<a href='<front>'>Hello World!</a>";
-    $html_comment_body = "<a href='/'>Hello World!</a>";
+    // We expect our bodyHtml to come out processed. This includes a linebreak
+    // that seems to be added by the renderer for funsies.
+    $raw_comment_body = "This is a link test: https://social.localhost";
+    $html_comment_body = '<div><p>This is a link test: <a href="https://social.localhost">https://social.localhost</a></p>
+</div>';
     $comment = $this->createComment(
       $node,
       NULL,
@@ -154,8 +156,10 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultCacheMetaData()
+        ->addCacheableDependency($node)
         ->addCacheableDependency($user)
         ->addCacheableDependency($comment)
+        ->addCacheTags(['config:filter.format.plain_text', 'config:filter.settings'])
         // @todo It's unclear why this cache context is added.
         ->addCacheContexts(['languages:language_interface'])
     );
