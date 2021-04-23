@@ -166,9 +166,12 @@ class ActivityNotifications extends ControllerBase {
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN]);
-    $this->changeStatusOfActivity($ids, $account);
+    $ids = $this->getNotificationIds($account, [
+      ACTIVITY_STATUS_RECEIVED,
+      ACTIVITY_STATUS_SEEN,
+    ]);
 
+    $this->changeStatusOfActivity($ids, $account);
   }
 
   /**
