@@ -37,28 +37,22 @@ class CommentSchemaExtension extends SdlSchemaExtensionPluginBase {
    *   The resolver builder.
    */
   protected function addCommentFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
-    $registry->addFieldResolver('Comment', 'bodyHtml',
-      $builder->fromPath('entity:comment', 'field_comment_body.value')
-    );
-
     $registry->addFieldResolver('Comment', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Comment', 'created',
-      $builder->fromPath('entity:comment', 'created.value')
+    $registry->addFieldResolver('Comment', 'author',
+      $builder->produce('entity_owner')
+        ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Comment', 'attachments',
-      $builder->produce('social_comment_attachments')
-        ->map('parent', $builder->fromParent())
-        ->map('after', $builder->fromArgument('after'))
-        ->map('before', $builder->fromArgument('before'))
-        ->map('first', $builder->fromArgument('first'))
-        ->map('last', $builder->fromArgument('last'))
-        ->map('reverse', $builder->fromArgument('reverse'))
-        ->map('sortKey', $builder->fromArgument('sortKey'))
+    $registry->addFieldResolver('Comment', 'bodyHtml',
+      $builder->fromPath('entity:comment', 'field_comment_body.value')
+    );
+
+    $registry->addFieldResolver('Comment', 'created',
+      $builder->fromPath('entity:comment', 'created.value')
     );
   }
 
