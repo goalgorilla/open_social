@@ -122,6 +122,11 @@ function template_preprocess_activity(array &$variables) {
   switch ($status) {
     case ACTIVITY_STATUS_RECEIVED:
       $status_class = 'bg-gray-lightest';
+
+      if (\Drupal::routeMatch()->getRouteName() === 'view.activity_stream_notifications.page_1') {
+        $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ACTIVITY_STATUS_SEEN);
+      }
+
       break;
 
     default:

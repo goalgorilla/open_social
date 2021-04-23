@@ -184,7 +184,7 @@ class ActivityNotifications extends ControllerBase {
    * @return bool
    *   Status of update query.
    */
-  protected function changeStatusOfActivity(array $ids, AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED): bool {
+  public function changeStatusOfActivity(array $ids, AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED): bool {
     if (!empty($ids)) {
       // The transaction opens here.
       $txn = $this->database->startTransaction();
