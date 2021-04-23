@@ -74,6 +74,15 @@ A valid URL
 scalar Url
 
 """
+An HTML string
+
+Content of this type is deemed safe by the server for raw output given the
+origin and the context of its usage. The HTML can still contain scripts or style
+tags where the creating user had permission to input these.
+"""
+scalar Html
+
+"""
 A UNIX timestamp.
 
 The number of seconds since the Unix Epoch on January 1st, 1970 at UTC.
@@ -90,7 +99,6 @@ scalar PhoneNumber
 # TODO: Add descriptions.
 scalar TimeZone
 scalar Language
-scalar BodyHTML
 
 """
 A longer string of text that may contain markup.

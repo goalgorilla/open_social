@@ -166,7 +166,7 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
       query ($id: ID!) {
         comment(id: $id) {
           id
-          body
+          bodyHtml
           created {
             timestamp
           }
@@ -188,7 +188,7 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
     $expected_data = [
       'comment' => [
         'id' => $test_comment->uuid(),
-        'body' => $test_comment->field_comment_body->value,
+        'bodyHtml' => $test_comment->field_comment_body->value,
         'created' => [
           'timestamp' => $test_comment->getCreatedTime(),
         ],
