@@ -5,6 +5,7 @@ namespace Drupal\Tests\social_comment\Kernel\GraphQL;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -37,15 +38,22 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
+    // For the comment functionality.
     'social_comment',
     'comment',
-    'field',
-    'filter',
-    'node',
-    'text',
+    // For the comment author and viewer.
+    'social_user',
     'user',
-    'file',
+    // User creation in social_user requires a service in role_delegation.
+    "role_delegation",
+    // social_comment configures comments for nodes.
+    'node',
+    // The default comment config contains a body text field.
+    'field',
+    'text',
+    'filter',
   ];
+
 
   /**
    * The list of comments.
@@ -60,225 +68,131 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
   protected function setUp() : void {
     parent::setUp();
 
-    $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['filter', 'comment']);
-    $this->installEntitySchema('file');
-    $this->installSchema('file', ['file_usage']);
-
-    \Drupal::currentUser()->setAccount(User::load(1));
-
-    FieldStorageConfig::create([
-      'entity_type' => 'node',
-      'type' => 'comment',
-      'field_name' => 'comments',
-      'settings' => [
-        'comment_type' => 'comment',
-      ],
-    ])->save();
-
-    FieldStorageConfig::create([
-      'type' => 'text_long',
-      'entity_type' => 'comment',
-      'field_name' => 'field_comment_body',
-    ])->save();
-
-    FieldStorageConfig::create([
-      'type' => 'file',
-      'entity_type' => 'comment',
-      'field_name' => 'field_files',
-      'cardinality' => '-1',
-    ])->save();
-
-    NodeType::create(['type' => 'page'])->save();
-
-    CommentType::create([
-      'id' => 'comment',
-      'label' => 'comment',
-      'target_entity_type_id' => 'node',
-    ])->save();
-
-    FieldConfig::create([
-      'field_name' => 'comments',
-      'entity_type' => 'node',
-      'bundle' => 'page',
-      'label' => 'Comments',
-    ])->save();
-
-    FieldConfig::create([
-      'field_name' => 'field_comment_body',
-      'entity_type' => 'comment',
-      'bundle' => 'comment',
-      'label' => 'Comments',
-    ])->save();
-
-    FieldConfig::create([
-      'field_name' => 'field_files',
-      'entity_type' => 'comment',
-      'bundle' => 'comment',
-      'label' => 'Attachments',
-      'settings' => [
-        'file_extensions' => 'txt pdf doc docx xls xlsx ppt pptx csv',
-      ],
-    ])->save();
-
-    $this->addDefaultCommentField('node', 'page');
-    $account = $this->createUser();
-
-    $node_commented_by_account = $this->createNode([
-      'type' => 'page',
-      'title' => "commented by {$account->id()}",
-    ]);
-
-    for ($i = 0; $i < 10; ++$i) {
-      $this->comments[] = $this->createComment($account, $node_commented_by_account);
-    }
+    $this->installSchema('comment', 'comment_entity_statistics');
+    $this->installConfig(['filter', 'comment', 'social_comment']);
   }
 
   /**
-   * Test the filter for the comments query.
+   * Test that platform comments can be fetched using platform pagination.
    */
-  public function testCommentsQueryFilter(): void {
+  public function testPaginatedQueryComments(): void {
+    // Act as a user that can create and view published comments and contents.
+    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+
+    // Create a node to comment on.
+    $node = $this->createNode();
+
+    // Create a bunch of test comments for pagination testing.
+    $comments = [];
+    for ($i = 0; $i < 10; ++$i) {
+      $comments[] = $this->createComment($node);
+    }
+
+    $comment_uuids = array_map(
+      static fn ($comment) => $comment->uuid(),
+      $comments
+    );
+
     $this->assertEndpointSupportsPagination(
       'comments',
-      array_map(static fn ($comment) => $comment->uuid(), $this->comments)
+      $comment_uuids
     );
   }
 
   /**
-   * Ensure that the fields for the comment endpoint properly resolve.
-   *
-   * This test does not test the validity of the resolved data but merely that
-   * the API contract is adhered to.
+   * Test that a specific comment and its contents can be fetched by uuid.
    */
-  public function testCommentFieldsPresence() : void {
-    $account = $this->createUser();
-    $node_commented_by_account = $this->createNode([
-      'title' => "commented by {$account->id()}",
-    ]);
+  public function testCanQueryOwnPublishedComment() : void {
+    // Create a node to comment on.
+    $node = $this->createNode();
 
-    $this->setCurrentUser(User::load(1));
-    $test_comment = $this->createComment($account, $node_commented_by_account);
+    // Set up a user that can create a published comment and view it.
+    // The default publishing status for comments looks at the current user
+    // rather than the comment author.
+    $user = $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+
+    // We expect our bodyHtml to come out processed.
+    $raw_comment_body = "<a href='<front>'>Hello World!</a>";
+    $html_comment_body = "<a href='/'>Hello World!</a>";
+    $comment = $this->createComment(
+      $node,
+      NULL,
+      ['field_comment_body' => $raw_comment_body]
+    );
 
     $query = '
       query ($id: ID!) {
         comment(id: $id) {
           id
+          author {
+            displayName
+          }
           bodyHtml
           created {
             timestamp
           }
-          attachments(first: 10) {
-            nodes {
-              id
-              url
-              filename
-              filemime
-              filesize
-              created {
-                timestamp
-              }
-            }
-          }
         }
       }
     ';
-    $expected_data = [
-      'comment' => [
-        'id' => $test_comment->uuid(),
-        'bodyHtml' => $test_comment->field_comment_body->value,
-        'created' => [
-          'timestamp' => $test_comment->getCreatedTime(),
-        ],
-      ],
-    ];
-
-    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field_files */
-    $field_files = $test_comment->field_files;
-    /** @var \Drupal\file\Entity\File[] $files */
-    $files = $field_files->referencedEntities();
-
-    $metadata = $this->defaultCacheMetaData()
-      ->setCacheMaxAge(0)
-      ->addCacheableDependency($test_comment)
-      // @todo It's unclear why this cache context is added.
-      ->addCacheContexts(['languages:language_interface']);
-
-    foreach ($files as $id => $file) {
-      $metadata->addCacheableDependency($file);
-
-      $expected_data['comment']['attachments']['nodes'][] = [
-        'id' => $file->uuid(),
-        'url' => $file->createFileUrl(FALSE),
-        'filename' => $file->getFilename(),
-        'filemime' => $file->filemime->value,
-        'filesize' => $file->filesize->value,
-        'created' => [
-          'timestamp' => $file->getCreatedTime(),
-        ],
-      ];
-    }
 
     $this->assertResults(
       $query,
-      ['id' => $test_comment->uuid()],
-      $expected_data,
-      $metadata
+      ['id' => $comment->uuid()],
+      [
+        'comment' => [
+          'id' => $comment->uuid(),
+          'author' => [
+            'displayName' => $user->getDisplayName(),
+          ],
+          'bodyHtml' => $html_comment_body,
+          'created' => [
+            'timestamp' => $comment->getCreatedTime(),
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($user)
+        ->addCacheableDependency($comment)
+        // @todo It's unclear why this cache context is added.
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 
   /**
    * Create the comment entity.
    *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account object to get notifications for.
-   * @param \Drupal\node\NodeInterface $node_commented_by_account
-   *   The node object.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the comment is made on.
+   * @param \Drupal\Core\Session\AccountInterface|null $user
+   *   An optional user to create the comment as.
+   * @param mixed[] $values
+   *   An optional array of values to pass to Comment::create.
    *
    * @return \Drupal\comment\CommentInterface
    *   Created comment entity.
    */
-  private function createComment(AccountInterface $account, NodeInterface $node_commented_by_account) {
-    $comment = Comment::create([
-      'uid' => $account->id(),
-      'entity_id' => $node_commented_by_account->id(),
-      'entity_type' => 'node',
-      'comment_type' => 'comment',
-      'field_name' => 'comment',
-      'field_comment_body' => $this->randomString(32),
-      'field_files' => [$this->createFile()->id()],
-    ]);
+  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []) {
+    if ($user !== NULL) {
+      $values += ['uid' => $user->id()];
+    }
+
+    /** @var \Drupal\comment\CommentInterface $comment */
+    $comment = Comment::create(
+      $values +
+      [
+        'entity_id' => $entity->id(),
+        'entity_type' => $entity->getEntityTypeId(),
+        'comment_type' => 'comment',
+        'field_name' => 'comments',
+      ]
+    );
 
     $comment->save();
 
     return $comment;
-  }
-
-  /**
-   * Creates and saves a test file.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface
-   *   A file entity.
-   */
-  protected function createFile() {
-    // Create a new file entity.
-    $file = File::create([
-      'uid' => 1,
-      'filename' => 'druplicon.txt',
-      'uri' => 'public://druplicon.txt',
-      'filemime' => 'text/plain',
-      'created' => 1,
-      'changed' => 1,
-      'status' => FILE_STATUS_PERMANENT,
-    ]);
-    file_put_contents($file->getFileUri(), 'hello world');
-
-    // Save it, inserting a new record.
-    $file->save();
-
-    return $file;
   }
 
 }
