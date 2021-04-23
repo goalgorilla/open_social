@@ -390,7 +390,7 @@ function social_profile_privacy_social_user_name_display_suggestions(AccountInte
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-  if ($user_profile = $storage->loadByUser($account, 'profile')) {
+  if (!is_null($user_profile = $storage->loadByUser($account, 'profile'))) {
     $uid = $account->id();
     $fields = social_profile_privacy_private_fields_list($uid);
 
