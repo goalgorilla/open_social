@@ -700,9 +700,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#group_children']['timezone_indication'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
-
-    // Attach styling for the event date fields.
-    $form['#attached']['library'][] = 'social_event/admin';
   }
 
   // Specific alter for the event edit form.
@@ -801,7 +798,7 @@ function social_event_date_is_all_day(DrupalDateTime $date) {
 }
 
 /**
- * Implement hook_activity_send_email_notifications_alter().
+ * Implements hook_activity_send_email_notifications_alter().
  */
 function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
   // If a activity_on_events_im_organizing template is enabled then we add it in

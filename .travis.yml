@@ -47,17 +47,20 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
+  - git clone https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - export COMMIT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_COMMIT; else echo $TRAVIS_PULL_REQUEST_SHA; fi)
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
+  # Pull Open Social from GitHub instead of Drupal's Packagist so all our dev branches are available.
+  - composer config repositories.social git https://github.com/goalgorilla/open_social.git
   # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldnt release but helps us with testing our update path.
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
+  # For Pull Requests that are not from Open Social's own repo we must overwrite the repository we set earlier so we can pull in the work done by the external contributor.
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
-  # if its not a PR build, we need to composer require goalgorilla/open_social 10.0.x-dev#commithash instead of dev-10.0.x#commithash
+  # if its not a PR build, we need to composer require 10.0.x-dev#commithash instead of dev-10.0.x#commithash
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --prefer-dist; fi
 
   # Install docker and our docker containers.
@@ -67,7 +70,8 @@ before_install:
 install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional --localsettings; fi
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --localsettings; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash scripts/social/ci/build-install-update.sh goalgorilla/open_social:dev-${BRANCH}#${COMMIT}; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then bash scripts/social/ci/build-install-update.sh goalgorilla/open_social:${BRANCH}-dev#${COMMIT}; fi
 
 script:
   - set -e
