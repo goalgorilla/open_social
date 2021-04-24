@@ -365,8 +365,8 @@ function activity_send_email_form_social_swiftmail_form_alter(&$form, FormStateI
 
   $form['do_not_send_emails_new_users'] = [
     '#type' => 'checkbox',
-    '#title' => t("Don't send email notifications to new users who have never logged in"),
-    '#description' => t('When this setting is enabled, new users who have never logged in will still receive notification via the notification centre within the platform'),
+    '#title' => t("Don't send email notifications to users who have never logged in"),
+    '#description' => t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification centre within the community.'),
     '#default_value' => $config->get('do_not_send_emails_new_users'),
   ];
 
