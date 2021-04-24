@@ -269,7 +269,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           // If a site manager decides emails should not be sent to users
           // who have never logged in. We need to verify last accessed time,
           // so those users are not processed.
-          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && $target_account->getLastAccessedTime() === "0") {
+          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
             continue;
           }
           // Only for users that have access to related content.
