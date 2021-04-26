@@ -154,9 +154,12 @@ class QueryCommentTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test that a user can view their own unpublished comment.
+   * Test that a user can not view their own unpublished comment.
+   *
+   * This mirrors the functionality of the distribution at the time of writing
+   * the test.
    */
-  public function testUserCanViewOwnUnpublishedComment() {
+  public function testUserCanNotViewOwnUnpublishedComment() {
     // Create an unpublished comment on a node.
     $node = $this->createNode();
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
@@ -170,11 +173,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
         }
       ',
       ['id' => $comment->uuid()],
-      [
-        'comment' => [
-          'id' => $comment->uuid(),
-        ],
-      ],
+      ['comment' => NULL],
       $this->defaultCacheMetaData()
         ->addCacheableDependency($comment)
         ->addCacheContexts(['languages:language_interface'])
