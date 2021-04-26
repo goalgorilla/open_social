@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialProfileFieldsHelper.
+ * Defines the helper service.
  */
 class SocialProfileFieldsHelper {
 
@@ -51,7 +51,11 @@ class SocialProfileFieldsHelper {
 
     // Use storage to get only the profile fields of the current bundle type.
     try {
-      $profile_fields = $this->entityTypeManager->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => $profile_type_id]);
+      $profile_fields = $this->entityTypeManager->getStorage('field_config')
+        ->loadByProperties([
+          'entity_type' => 'profile',
+          'bundle' => $profile_type_id,
+        ]);
     }
     catch (\Exception $e) {
       return $fields;
