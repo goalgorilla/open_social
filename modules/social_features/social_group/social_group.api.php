@@ -26,6 +26,18 @@ function hook_social_group_types_alter(array &$social_group_types) {
 }
 
 /**
+ * Hide group types used in open social.
+ *
+ * @param array $hidden_types
+ *   List of group type id's which you want to see removed.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_hide_types_alter(array &$hidden_types) {
+  $hidden_types[] = 'challenge';
+}
+
+/**
  * Provide a method to alter the default content visibility for a group type.
  *
  * @param string $visibility
