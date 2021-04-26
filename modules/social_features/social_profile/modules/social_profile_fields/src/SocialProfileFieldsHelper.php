@@ -105,6 +105,7 @@ class SocialProfileFieldsHelper {
       'user_address_line1' => 'profile_address_field_address',
       'user_address_line2' => 'profile_profile_field_profile_address',
       'user_phone_number' => 'profile_profile_field_profile_phone_number',
+      'user_nationality' => 'profile_profile_field_profile_nationality',
       'user_organization' => 'profile_profile_field_profile_organization',
       'user_function' => 'profile_profile_field_profile_function',
       'user_skills' => 'profile_profile_field_profile_expertise',
