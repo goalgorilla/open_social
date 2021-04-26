@@ -213,7 +213,7 @@ class SocialGroupHelperService {
   /**
    * Count all group memberships for a certain user.
    *
-   * @param int $uid
+   * @param string $uid
    *   The UID for which we fetch the groups it is member of.
    *
    * @return int
