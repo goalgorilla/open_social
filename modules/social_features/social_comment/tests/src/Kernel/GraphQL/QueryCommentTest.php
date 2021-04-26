@@ -202,6 +202,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
       ['id' => $comment->uuid()],
       ['comment' => NULL],
       $this->defaultCacheMetaData()
+        ->addCacheableDependency($comment)
         ->addCacheContexts(['languages:language_interface'])
     );
   }
