@@ -148,6 +148,58 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
 }
 
 /**
+ * Implements hook_ajax_render_alter().
+ */
+function social_ajax_comments_ajax_render_alter(array &$data) {
+  if (
+    (
+      // In case when the current page is (re)loaded and the response contains a
+      // command with settings and a command with new content.
+      count($data) === 2 ||
+      // In case when a user tries to switch to another page of pagination after
+      // adding a new comment and the response contains two commands from the
+      // previous case and command with messages.
+      count($data) === 3
+    ) &&
+    $data[0]['command'] === 'settings' &&
+    $data[1]['command'] === 'insert' &&
+    $data[1]['selector'] === NULL &&
+    \Drupal::request()->query->has('page')
+  ) {
+    if ($data[1]['method'] === NULL) {
+      $data[1]['method'] = 'html';
+      $data[1]['selector'] = '#block-socialblue-content';
+    }
+    elseif (
+      $data[1]['method'] === 'replaceWith' &&
+      preg_match('/<section[^>]+id="([^"]+)/', $data[1]['data'], $matches)
+    ) {
+      $data[1]['selector'] = '#' . $matches[1];
+    }
+  }
+
+  // Delete content before wrapper of the comments section of AJAX response
+  // during adding a new comment to resolve the issue with creating nesting of
+  // comments section wrapper in itself after adding each comment.
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'ajax_comments.add' &&
+    \Drupal::request()->request->has('social_ajax_comments')
+  ) {
+    foreach ($data as &$item) {
+      if (
+        $item['command'] === 'insert' &&
+        $item['method'] === 'html' &&
+        preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
+      ) {
+        $content = &$item['data'];
+        $content = substr($content, strrpos(substr($content, 0, strpos($content, $matches[1])), '<'));
+        return;
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_ajax_comments_preprocess_pager(&$variables) {

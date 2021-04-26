@@ -69,6 +69,7 @@ Feature: Move content after creation
     Then I should not see "Motorboats"
     And I should not see "Kayaking"
 
+    And I run cron
     When I am logged in as "harry"
     And I am on the stream of group "Motorboats"
     Then I should not see "harry created a topic in Motorboats"
