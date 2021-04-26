@@ -3,19 +3,12 @@
 namespace Drupal\Tests\social_comment\Kernel\GraphQL;
 
 use Drupal\comment\Entity\Comment;
-use Drupal\comment\Entity\CommentType;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\file\Entity\File;
-use Drupal\node\Entity\NodeType;
-use Drupal\node\NodeInterface;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\Tests\user\Traits\UserCreationTrait;
-use Drupal\user\Entity\User;
 
 /**
  * Tests the comments endpoint added to the Open Social schema by this module.
@@ -161,6 +154,172 @@ class GraphQLCommentsEndpointTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($comment)
         ->addCacheTags(['config:filter.format.plain_text', 'config:filter.settings'])
         // @todo It's unclear why this cache context is added.
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that the comments endpoint respects the access comments permission.
+   */
+  public function testCommentListRequiresAccessCommentsPermission() {
+    // Create a published comment on a node.
+    $node = $this->createNode();
+    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->createComment($node);
+
+    // Create a user that is not allowed to view comments.
+    $this->setUpCurrentUser([], $this->userPermissions());
+
+    $this->assertResults('
+        query {
+          comments(first: 1) {
+            nodes {
+              id
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'comments' => [
+          'nodes' => [],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that the comment endpoint respects the access comments permission.
+   */
+  public function testCommentRequiresAccessCommentsPermission() {
+    // Create a published comment on a node.
+    $node = $this->createNode();
+    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $comment = $this->createComment($node);
+
+    // Create a user that is not allowed to view comments.
+    $this->setUpCurrentUser([], $this->userPermissions());
+
+    $this->assertResults('
+        query ($id: ID!) {
+          comment(id: $id) {
+            id
+          }
+        }
+      ',
+      ['id' => $comment->uuid()],
+      ['comment' => NULL],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($comment)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that a user can view their own unpublished comment.
+   */
+  public function testCanViewOwnUnpublishedComment() {
+    // Create an unpublished comment on a node.
+    $node = $this->createNode();
+    $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+    $comment = $this->createComment($node);
+
+    $this->assertResults('
+        query ($id: ID!) {
+          comment(id: $id) {
+            id
+          }
+        }
+      ',
+      ['id' => $comment->uuid()],
+      [
+        'comment' => [
+          'id' => $comment->uuid(),
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($comment)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that a user can not view another person's unpublished comment.
+   */
+  public function testCanNotViewOtherUnpublishedComment() {
+    // Create an unpublished comment on a node.
+    $node = $this->createNode();
+    $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+    $comment = $this->createComment($node);
+
+    // Create another user to try and view the comment.
+    $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+
+    $this->assertResults('
+        query ($id: ID!) {
+          comment(id: $id) {
+            id
+          }
+        }
+      ',
+      ['id' => $comment->uuid()],
+      ['comment' => NULL],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that a user can only see comments they're allowed to see in the list.
+   *
+   * - Any published comment
+   * - Their own unpublished comment.
+   */
+  public function testCommentListingAccessChecks() {
+    $node = $this->createNode();
+
+    // A user to create some other comments with.
+    $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+    /* $unpublished_comment = */$this->createComment($node);
+    $published_comment = $this->createComment($node);
+    $published_comment->setPublished(TRUE)->save();
+
+    // Create another user that can view published comments.
+    $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+    $own_unpublished_comment = $this->createComment($node);
+
+    $this->assertResults('
+        query {
+          comments(last: 3) {
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+            }
+            nodes {
+              id
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'comments' => [
+          'pageInfo' => [
+            'hasNextPage' => FALSE,
+            'hasPreviousPage' => FALSE,
+          ],
+          'nodes' => [
+            ['id' => $published_comment->uuid()],
+            ['id' => $own_unpublished_comment->uuid()],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($node)
+        ->addCacheableDependency($published_comment)
+        ->addCacheableDependency($own_unpublished_comment)
         ->addCacheContexts(['languages:language_interface'])
     );
   }
