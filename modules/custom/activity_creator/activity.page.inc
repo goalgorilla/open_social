@@ -129,6 +129,7 @@ function template_preprocess_activity(array &$variables) {
 
       if (\Drupal::routeMatch()->getRouteName() === 'view.activity_stream_notifications.page_1') {
         $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ACTIVITY_STATUS_SEEN);
+        $variables['#cache']['max-age'] = 0;
       }
 
       break;
