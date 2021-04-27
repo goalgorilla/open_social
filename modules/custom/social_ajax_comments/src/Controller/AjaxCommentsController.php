@@ -29,6 +29,13 @@ class AjaxCommentsController extends ContribController {
   protected $clearTempStore = TRUE;
 
   /**
+   * The parent comment's comment ID.
+   *
+   * @var int|null
+   */
+  protected $pid;
+
+  /**
    * Cancel handler for the cancel form.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -126,9 +133,12 @@ class AjaxCommentsController extends ContribController {
       return $response;
     }
 
+    $request->request->set('social_ajax_comments', TRUE);
+
     // Build the comment entity form.
     // This approach is very similar to the one taken in
     // \Drupal\comment\CommentLazyBuilders::renderForm().
+    /** @var \Drupal\comment\CommentInterface $comment */
     $comment = $this->entityTypeManager()->getStorage('comment')->create([
       'entity_id' => $entity->id(),
       'pid' => $pid,
@@ -144,6 +154,8 @@ class AjaxCommentsController extends ContribController {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
+
+      $this->pid = $pid;
 
       // Build the updated comment field and insert into a replaceWith
       // response.
@@ -180,17 +192,15 @@ class AjaxCommentsController extends ContribController {
       }
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
+      elseif ($comment->hasParentComment()) {
+        $selector = static::getCommentSelectorPrefix() . $comment->getParentComment()->id();
+        $position = 'after';
+      }
       else {
-        if (!empty($pid = $comment->get('pid')->target_id)) {
-          $selector = static::getCommentSelectorPrefix() . $pid;
-          $position = 'after';
-        }
-        else {
-          // If parent comment is not available insert messages to form.
-          $selectors = $this->tempStore->getSelectors($request);
-          $selector = $selectors['form_html_id'] ?? '';
-          $position = 'before';
-        }
+        // If parent comment is not available insert messages to form.
+        $selectors = $this->tempStore->getSelectors($request);
+        $selector = $selectors['form_html_id'] ?? '';
+        $position = 'before';
       }
 
       $response = $this->addMessages(
@@ -227,6 +237,21 @@ class AjaxCommentsController extends ContribController {
     $response->setAttachments($attachments);
 
     return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function renderCommentField(EntityInterface $entity, $field_name) {
+    $comment_display = parent::renderCommentField($entity, $field_name);
+
+    $parameters = &$comment_display[0]['comments']['pager']['#route_parameters'];
+    $parameters['entity_type'] = $entity->getEntityTypeId();
+    $parameters['entity'] = $entity->id();
+    $parameters['field_name'] = $field_name;
+    $parameters['pid'] = $this->pid;
+
+    return $comment_display;
   }
 
 }
