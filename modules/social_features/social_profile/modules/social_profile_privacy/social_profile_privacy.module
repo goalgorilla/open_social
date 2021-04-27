@@ -341,7 +341,7 @@ function social_profile_privacy_social_user_name_display_suggestions_alter(array
 
   // If First name and Last name are hidden then suggestion with check access
   // for those fields doesn't add for Full name.
-  // @see social_profile_privacy_social_user_name_display_suggestions()
+  // @see social_profile_social_user_name_display_suggestions()
   // So we need to remove the Full name suggestion if all of those fields are
   // hidden.
   if (isset($suggestions['full_name'])) {
@@ -369,59 +369,6 @@ function social_profile_privacy_social_user_name_display_suggestions_alter(array
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields') && isset($suggestions['nickname']) && in_array('field_profile_nick_name', $fields)) {
     unset($suggestions['nickname']);
   }
-}
-
-/**
- * Implements hook_social_user_name_display_suggestions().
- *
- * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
- * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
- */
-function social_profile_privacy_social_user_name_display_suggestions(AccountInterface $account) : array {
-  $current_user = \Drupal::currentUser();
-  // If the current user has whether permission to view full name or hidden
-  // fields then do nothing here.
-  if ($current_user->hasPermission('social profile privacy always show full name') || $current_user->hasPermission('social profile privacy view hidden fields')) {
-    return [];
-  }
-
-  $suggestions = [];
-
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  if (!is_null($user_profile = $storage->loadByUser($account, 'profile'))) {
-    $uid = $account->id();
-    $fields = social_profile_privacy_private_fields_list($uid);
-
-    $account_name = [];
-
-    // Profile fields which use for composing the full name.
-    $account_name_fields = [
-      'field_profile_first_name',
-      'field_profile_last_name',
-    ];
-
-    // Add field name to full name only in case it is no hidden.
-    foreach ($account_name_fields as $account_name_field) {
-      if (!in_array($account_name_field, $fields)) {
-        $account_name[] = trim($user_profile->get($account_name_field)->getString());
-      }
-    }
-
-    // Here we need to compose the full name.
-    $account_name = implode(' ', $account_name);
-
-    // If the full name is not empty we add suggestion.
-    if (strlen($account_name) > 0) {
-      // Add the full name with a default weight.
-      $suggestions['full_name'] = [
-        'name' => trim($account_name),
-      ];
-    }
-  }
-
-  return $suggestions;
 }
 
 /**
