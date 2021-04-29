@@ -254,6 +254,7 @@ function _social_search_retrigger_profile(User $user) {
   if (!$profile instanceof Profile) {
     return;
   }
+  /** @var Drupal\user\Entity\User $original_user */
   $original_user = $user->original;
   if ($user->isBlocked() && $original_user->isActive()) {
     \Drupal::service('search_api.entity_datasource.tracking_manager')->entityDelete($profile);
