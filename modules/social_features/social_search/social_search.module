@@ -273,7 +273,7 @@ function _social_search_retrigger_profile(User $user) {
       }
       elseif ($user->isActive() && $original_user->isBlocked()) {
         if (method_exists(ContentEntityFallback::class, 'filterValidItemIds')) {
-          $filtered_item_ids = ContentEntityFallback::filterValidItemIds($index, $datasource_id, $inserted_item_ids);
+          $filtered_item_ids = ContentEntityFallback::filterValidItemIds($index, $datasource_id, $profile_ids);
           $index->trackItemsInserted($datasource_id, $filtered_item_ids);
           continue;
         }
