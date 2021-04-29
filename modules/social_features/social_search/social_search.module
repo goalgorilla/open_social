@@ -272,8 +272,12 @@ function _social_search_retrigger_profile(User $user) {
         $index->trackItemsDeleted($datasource_id, $profile_ids);
       }
       elseif ($user->isActive() && $original_user->isBlocked()) {
-        $filtered_item_ids = ContentEntity::filterValidItemIds($index, $datasource_id, $profile_ids);
-        $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+        if (method_exists(ContentEntityFallback::class, 'filterValidItemIds')) {
+          $filtered_item_ids = ContentEntityFallback::filterValidItemIds($index, $datasource_id, $inserted_item_ids);
+          $index->trackItemsInserted($datasource_id, $filtered_item_ids);
+          continue;
+        }
+        $index->trackItemsInserted($datasource_id, $inserted_item_ids);
       }
       else {
         $index->trackItemsUpdated($datasource_id, $profile_ids);
