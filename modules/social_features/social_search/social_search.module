@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\profile\Entity\Profile;
 use Drupal\search_api\Entity\Index;
-use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\user\Entity\User;
 
 /**
@@ -255,34 +254,15 @@ function _social_search_retrigger_profile(User $user) {
   if (!$profile instanceof Profile) {
     return;
   }
-
-  // Loop over the indexes that need to be updated.
-  foreach ($indexes as $index_id) {
-    $index = Index::load($index_id);
-    if ($index instanceof Index) {
-      // Init.
-      $profile_ids = [];
-      /** @var \Drupal\user\Entity\User $original_user */
-      $original_user = $user->original;
-      foreach ($profile->getTranslationLanguages() as $langcode => $language) {
-        $profile_ids[] = $profile->id() . ':' . $langcode;
-      }
-      $datasource_id = 'entity:profile';
-      if ($user->isBlocked() && $original_user->isActive()) {
-        $index->trackItemsDeleted($datasource_id, $profile_ids);
-      }
-      elseif ($user->isActive() && $original_user->isBlocked()) {
-        if (method_exists(ContentEntityFallback::class, 'filterValidItemIds')) {
-          $filtered_item_ids = ContentEntityFallback::filterValidItemIds($index, $datasource_id, $profile_ids);
-          $index->trackItemsInserted($datasource_id, $filtered_item_ids);
-          continue;
-        }
-        $index->trackItemsInserted($datasource_id, $inserted_item_ids);
-      }
-      else {
-        $index->trackItemsUpdated($datasource_id, $profile_ids);
-      }
-    }
+  $original_user = $user->original;
+  if ($user->isBlocked() && $original_user->isActive()) {
+    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityDelete($profile);
+  }
+  elseif ($user->isActive() && $original_user->isBlocked()) {
+    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityInsert($profile);
+  }
+  else {
+    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityInsert($profile);
   }
 }
 
