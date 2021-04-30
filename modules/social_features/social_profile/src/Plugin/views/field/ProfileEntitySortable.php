@@ -2,6 +2,8 @@
 
 namespace Drupal\social_profile\Plugin\views\field;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\views\Plugin\views\field\RenderedEntity;
 use Drupal\views\Plugin\ViewsHandlerManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,10 +27,20 @@ class ProfileEntitySortable extends RenderedEntity {
   /**
    * Constructs an GroupContentToEntityBase object.
    *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity manager.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
    *   The views plugin join manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, ViewsHandlerManager $join_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, ViewsHandlerManager $join_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager);
     $this->joinManager = $join_manager;
   }

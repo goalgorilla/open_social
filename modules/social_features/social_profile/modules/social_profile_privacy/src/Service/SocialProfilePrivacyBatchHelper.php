@@ -46,6 +46,18 @@ class SocialProfilePrivacyBatchHelper {
     $this->moduleHandler = $module_handler;
   }
 
+  /**
+   * Get profile name.
+   *
+   * @param \Drupal\profile\Entity\ProfileInterface|null $profile
+   *   The profile.
+   *
+   * @return string|void
+   *   The generated profile name value.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
   public function getProfileName(ProfileInterface $profile = NULL) {
     /** @var \Drupal\user\UserStorageInterface $user_storage */
     $user_storage = $this->entityTypeManager->getStorage('user');
@@ -54,7 +66,7 @@ class SocialProfilePrivacyBatchHelper {
 
     // Do nothing if no account.
     if ($account == NULL) {
-      return;
+      return '';
     }
 
     // Set default profile name.
@@ -96,11 +108,13 @@ class SocialProfilePrivacyBatchHelper {
     // Define batch process to update profile names.
     $batch_builder = (new BatchBuilder())
       ->setTitle(t('Updating profile names...'))
-      ->setFinishCallback([SocialProfilePrivacyBatchHelper::class, 'finishProcess'])
+      ->setFinishCallback([
+        SocialProfilePrivacyBatchHelper::class,
+        'finishProcess',
+      ])
       ->addOperation([SocialProfilePrivacyBatchHelper::class, 'initOperation'], [
-          ['limit' => 50],
-        ]
-      )
+        ['limit' => 50],
+      ])
       ->addOperation([SocialProfilePrivacyBatchHelper::class, 'updateProcess'], [
         ['limit' => 50],
       ]);
@@ -162,6 +176,7 @@ class SocialProfilePrivacyBatchHelper {
       ]
     );
   }
+
   /**
    * Process operation to update content retrieved from init operation.
    *
@@ -226,12 +241,12 @@ class SocialProfilePrivacyBatchHelper {
    *
    * @param bool $success
    *   TRUE if the update was fully succeeded.
-   * @param array $results
+   * @param int $results
    *   Contains individual results per operation.
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, $results, $operations) {
+  public static function finishProcess($success, int $results, array $operations) {
     // Setup final message after process is done.
     $message = ($success) ?
       t('Update process of @count profiles was completed.',
