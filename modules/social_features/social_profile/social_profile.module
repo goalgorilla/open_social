@@ -35,12 +35,12 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
     case 'field_profile_phone_number':
-      // @todo: remove this when rule for .form-tel elements will be added.
+      // @todo remove this when rule for .form-tel elements will be added.
       $element['value']['#attributes']['class'][] = 'form-text';
       break;
 
     case 'field_profile_address':
-      // @todo: remove this when script for custom selects will be added.
+      // @todo remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
   }
@@ -131,7 +131,11 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Check if the Social Profile Fields module is on.
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
     // Load the profile fields and check if at least one of them can be changed.
-    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
+    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')
+      ->loadByProperties([
+        'entity_type' => 'profile',
+        'bundle' => 'profile',
+      ])) {
       $empty_profile = TRUE;
 
       /** @var \Drupal\field\Entity\FieldConfig $field_config */
@@ -399,7 +403,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')->countGroupMembershipsForUser($user->id());
   }
 }
 
@@ -529,7 +533,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
   $profile = _social_profile_get_profile_from_route();
 
   if ($profile instanceof Profile) {
-    // @TODO: Move privacy settings to a separate entity.
+    // @todo Move privacy settings to a separate entity.
     // Check what the global value is.
     $social_profile_settings_config = \Drupal::config('social_profile.settings');
     $global_values = [
@@ -602,7 +606,7 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
 
     $uid = $profile->get('uid')->target_id;
     // Save language info in the user data.
-    // @TODO: Move privacy settings to a separate entity.
+    // @todo Move privacy settings to a separate entity.
     $user_data = \Drupal::service('user.data');
     $user_data->set('social_profile_privacy', $uid, 'lang_info', $profile_privacy['social_profile_show_language']);
     // Invalidate profile cache tags.
@@ -816,6 +820,7 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
   // Provide a render array as image which will overrule the user icon.
   $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
     ->getViewBuilder('profile')
-    ->view($profile, 'small');;
+    ->view($profile, 'small');
+  ;
 
 }
