@@ -6,10 +6,12 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 
 /**
@@ -119,6 +121,11 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
   }
 
   $config->save();
+
+  // We need to update profile names.
+  /** @var \Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper $batch_helper */
+  $batch_helper = \Drupal::service('social_profile_privacy.batch.helper');
+  $batch_helper->bulkUpdateProfileNames();
 }
 
 /**
@@ -195,7 +202,10 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
     ];
   }
 
-  $form['actions']['submit']['#submit'][] = '_social_profile_privacy_fields_submit';
+  // Ensure submission happens first to be sure that that profile name will be
+  // updated correctly. In another case, the last one can be updated after the
+  // second submit only.
+  array_unshift($form['actions']['submit']['#submit'], '_social_profile_privacy_fields_submit');
 }
 
 /**
@@ -229,6 +239,21 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   }
 
   \Drupal::service('cache_tags.invalidator')->invalidateTags($tags);
+
+  if (!isset($profile)) {
+    return;
+  }
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($profile_storage)) {
+    $profile = $profile_storage->load($profile);
+    if ($profile instanceof ProfileInterface) {
+      // We need just save the profile. The profile name will be updated by
+      // hook "presave".
+      // @see social_profile_privacy_profile_presave()
+      $profile->save();
+    }
+  }
 }
 
 /**
@@ -360,5 +385,19 @@ function _social_profile_privacy_resave_search_indexes() {
       // has the chance to add the field.
       $index->save();
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct profile name.
+ */
+function social_profile_privacy_profile_presave(EntityInterface $profile) {
+  /** @var \Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper $batch_helper */
+  $batch_helper = \Drupal::service('social_profile_privacy.batch.helper');
+  if ($profile instanceof ProfileInterface) {
+    $profile_name = $batch_helper->getProfileName($profile);
+    $profile->set('profile_name', $profile_name);
   }
 }

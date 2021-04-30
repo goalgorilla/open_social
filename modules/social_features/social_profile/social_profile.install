@@ -5,11 +5,14 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Entity\Role;
 use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
@@ -29,6 +32,8 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image.
   _social_profile_add_default_profile_image();
+  // Update the field definitions.
+  _social_profile_field_definitions_update();
 
   // Create a profile for user 1.
   Profile::create([
@@ -470,4 +475,55 @@ function social_profile_update_8902() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update the field definitions on install, or in an update hook.
+ */
+function _social_profile_field_definitions_update() {
+  // Create field storage for the 'Highlight' base field.
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+}
+
+/**
+ * Install Profile name field to profile entity type.
+ */
+function social_profile_update_8903() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Profile name'))
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setReadOnly(TRUE);
+
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installFieldStorageDefinition('profile_name', 'profile', 'social_profile', $field_storage_definition);
+}
+
+/**
+ * Install Profile name field to profile entity type.
+ */
+function social_profile_update_8904() {
+  // Update field definitions.
+  _social_profile_field_definitions_update();
+}
+
+/**
+ * Update Profile names.
+ */
+function social_profile_update_8905() {
+  $profiles = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'type' => 'profile',
+    ]);
+
+  foreach ($profiles as $profile) {
+    if ($profile instanceof ProfileInterface) {
+      // We need just save the profile. The profile name will be updated by
+      // hook "presave".
+      // @see social_profile_profile_presave()
+      // @see social_profile_privacy_profile_presave()
+      $profile->save();
+    }
+  }
 }

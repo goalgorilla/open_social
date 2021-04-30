@@ -3,6 +3,8 @@
 namespace Drupal\social_profile\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\RenderedEntity;
+use Drupal\views\Plugin\ViewsHandlerManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Field handler to sort rendered profile entity in views.
@@ -14,13 +16,55 @@ use Drupal\views\Plugin\views\field\RenderedEntity;
 class ProfileEntitySortable extends RenderedEntity {
 
   /**
+   * The Views join plugin manager.
+   *
+   * @var \Drupal\views\Plugin\ViewsHandlerManager
+   */
+  protected $joinManager;
+
+  /**
+   * Constructs an GroupContentToEntityBase object.
+   *
+   * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
+   *   The views plugin join manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, ViewsHandlerManager $join_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager);
+    $this->joinManager = $join_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('language_manager'),
+      $container->get('plugin.manager.views.join'),
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function clickSort($order) {
     if (isset($this->field_alias)) {
       // If we want to sort on the profile name, add the correct alias.
       if ($this->table === 'profile' && $this->field === 'profile_entity_sortable') {
-        $this->field_alias = $this->view->relationship['profile']->tableAlias . '.name';
+        $definition = [
+          'table' => 'profile__profile_name',
+          'field' => 'entity_id',
+          'left_table' => $this->relationship,
+          'left_field' => 'profile_id',
+        ];
+
+        $join = $this->joinManager->createInstance('standard', $definition);
+        $this->query->addRelationship($definition['table'], $join, $this->relationship);
+
+        $this->field_alias = $definition['table'] . '.profile_name_value';
       }
       // Since fields should always have themselves already added, just
       // add a sort on the field.

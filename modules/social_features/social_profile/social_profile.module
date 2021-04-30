@@ -9,6 +9,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
@@ -890,4 +893,52 @@ function social_profile_block_access(Block $block, $operation, AccountInterface 
 
   // No opinion.
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_profile_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Check if we're dealing with the profile entity.
+  if ($entity_type->id() === 'profile') {
+    $fields['profile_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Profile name'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setReadOnly(TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct profile name.
+ */
+function social_profile_profile_presave(EntityInterface $entity) {
+  // Do nothing here if the module "Social Profile Privacy" installed since
+  // profile name will be updated by his hook "presave".
+  // @see social_profile_privacy_profile_presave()
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_privacy')) {
+    return;
+  }
+
+  /** @var \Drupal\profile\Entity\ProfileInterface $entity */
+  $user = User::load($entity->getOwnerId());
+  $profile_name = $user->getAccountName();
+
+  $profile_first_name = $entity->get('field_profile_first_name')->getString();
+  $profile_last_name = $entity->get('field_profile_last_name')->getString();
+
+  if (!empty($profile_first_name) || !empty($profile_last_name)) {
+    $profile_name = trim($profile_first_name . " " . $profile_last_name);
+  }
+
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields') && !empty($profile_nick_name = $entity->get('field_profile_nick_name')->getString())) {
+    $profile_name = $profile_nick_name;
+  }
+
+  $entity->set('profile_name', $profile_name);
 }
