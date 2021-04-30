@@ -129,6 +129,11 @@ function template_preprocess_activity(array &$variables) {
 
       if (\Drupal::routeMatch()->getRouteName() === 'view.activity_stream_notifications.page_1') {
         $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ACTIVITY_STATUS_SEEN);
+
+        // In case when a notification is unread then it should not be cached
+        // because when a page will be opened the second time then a styling of
+        // unread notification should be removed as the notification has been
+        // marked as read.
         $variables['#cache']['max-age'] = 0;
       }
 
