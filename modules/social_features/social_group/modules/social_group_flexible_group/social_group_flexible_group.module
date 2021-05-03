@@ -272,53 +272,7 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
       ],
     ];
   }
-  // Add states for join method based on group visibility.
-  // We do this for add and edit, we want to make sure if users make the
-  // decision to choose to only show a group to it's Members, the
-  // join method is selected to Invite only. Because there is no way
-  // for users to join or request to join in that case.
-  if (isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_join_method']['widget']['#options'])) {
-    // If group visibility is members. Select invite-only.
-    if (!empty($form['field_group_allowed_join_method']['widget']['added'])) {
-      $form['field_group_allowed_join_method']['widget']['added']['#states'] = [
-        'checked' => [
-          ':input[name="field_flexible_group_visibility"]' => [
-            ['value' => 'members'],
-          ],
-        ],
-      ];
-    }
-    // If group visibility is members. Disable and uncheck open to join.
-    if (!empty($form['field_group_allowed_join_method']['widget']['direct'])) {
-      $form['field_group_allowed_join_method']['widget']['direct']['#states'] = [
-        'disabled' => [
-          ':input[name="field_flexible_group_visibility"]' => [
-            ['value' => 'members'],
-          ],
-        ],
-        'unchecked' => [
-          ':input[name="field_flexible_group_visibility"]' => [
-            ['value' => 'members'],
-          ],
-        ],
-      ];
-    }
-    // If group visibility is members. Disable and uncheck open to join.
-    if (!empty($form['field_group_allowed_join_method']['widget']['request'])) {
-      $form['field_group_allowed_join_method']['widget']['request']['#states'] = [
-        'disabled' => [
-          ':input[name="field_flexible_group_visibility"]' => [
-            ['value' => 'members'],
-          ],
-        ],
-        'unchecked' => [
-          ':input[name="field_flexible_group_visibility"]' => [
-            ['value' => 'members'],
-          ],
-        ],
-      ];
-    }
-  }
+
   return $form;
 }
 
