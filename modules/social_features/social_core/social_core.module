@@ -925,7 +925,7 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
   // since we hide the element, and the default is checked,
   // the path will never be overridden if someone updates it.
   // So we need to check this in our custom submit handler.
-  $default_path = $form['path']['widget'][0]['alias']['#default_value'];
+  $default_path = isset($form['path']['widget'][0]['alias']['#default_value']) ? $form['path']['widget'][0]['alias']['#default_value'] : '';
   $input = $form_state->getUserInput();
   $updated_path = isset($input['path'][0]['alias']) ? $input['path'][0]['alias'] : '';
   // If we don't have a match, make sure we override the checkbox as well.
@@ -935,6 +935,13 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
     $form_state->setUserInput($input);
     // Override the value.
     $form_state->setValue(['path', '0', 'pathauto'], "0");
+
+    // If the updated path is empty, make it automatic again.
+    if (empty($updated_path)) {
+      $input['path'][0]['pathauto'] = "1";
+      $form_state->setUserInput($input);
+      $form_state->setValue(['path', '0', 'pathauto'], "1");
+    }
   }
 }
 
