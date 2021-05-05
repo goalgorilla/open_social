@@ -1,12 +1,6 @@
 langcode: en
 status: true
 dependencies:
-  module:
-    - profile
-    - taxonomy
-    - user
-    - search_api
-    - social_search
   config:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_first_name
@@ -15,19 +9,26 @@ dependencies:
     - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
+  module:
+    - taxonomy
+    - profile
+    - user
+    - search_api
+    - social_search
 id: social_users
 name: 'Social Users'
 description: 'Default users index created for the Social distribution.'
 read_only: false
 field_settings:
   created:
-    label: Created
+    label: 'Owner » User » Created'
     datasource_id: 'entity:profile'
-    property_path: created
+    property_path: 'uid:entity:created'
     type: date
     dependencies:
       module:
         - profile
+        - user
   field_profile_expertise:
     label: Expertise
     datasource_id: 'entity:profile'
