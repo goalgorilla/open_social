@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+  enforced:
+    module:
+      - social_follow_tag
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      node-event: node-event
+      node-topic: node-topic
+    activity_action: update_entity_action
+    activity_context: follow_taxonomy_activity_context
+    activity_destinations:
+      stream_home: stream_home
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: update_node_following_tag
+label: 'Update node with following tag'
+description: 'A person update content and add tag I am following'
+text:
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a>.</p>'
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

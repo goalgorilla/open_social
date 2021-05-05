@@ -200,45 +200,9 @@ function social_activity_update_8802() {
 
 /**
  * Create "Featured" view mode/display for post.
- *
- * @todo: should be moved into social_post module.
  */
 function social_activity_update_8803() {
-  // Create a new post featured entity view mode.
-  EntityViewMode::create([
-    'targetEntityType' => 'post',
-    'id' => 'post.featured',
-    'status' => TRUE,
-    'label' => t('Featured'),
-  ])->save();
-
-  // Create view display for post bundle of Post entity.
-  $display = EntityViewDisplay::load('post.post.default')->toArray();
-  unset(
-    $display['content']['field_post_comments'],
-    $display['hidden']['like_and_dislike']
-  );
-  $display['content']['like_and_dislike'] = [
-    'weight' => 3,
-    'region' => 'content',
-  ];
-  $display = array_merge($display, [
-    'uuid' => NULL,
-    '_core' => NULL,
-    'targetEntityType' => 'post',
-    'mode' => 'featured',
-  ]);
-  EntityViewDisplay::create($display)->save();
-
-  // Create view display for photo bundle of Post entity.
-  $display = EntityViewDisplay::load('post.photo.default')->toArray();
-  $display = array_merge($display, [
-    'uuid' => NULL,
-    '_core' => NULL,
-    'targetEntityType' => 'post',
-    'mode' => 'featured',
-  ]);
-  EntityViewDisplay::create($display)->save();
+  // The body of hook_update has been moved to into social_post module.
 }
 
 /**
@@ -250,6 +214,48 @@ function social_activity_update_8804() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_activity', 'social_activity_update_8804');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update display_title for activity stream blocks.
+ */
+function social_activity_update_8805() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_8005');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added new filter for activity_stream view's explore displays.
+ */
+function social_activity_update_8806() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_8806');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add filter for notifications.
+ */
+function social_activity_update_8807() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_8807');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

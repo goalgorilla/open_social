@@ -8,6 +8,8 @@
 use Drupal\Component\Utility\Xss;
 use Drupal\file\Entity\File;
 use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Preprocess swift template.
@@ -53,8 +55,21 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     }
   }
   else {
-    $variables['site_name'] = t('Open Social');
-    $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
+    // Create URL with UTM tags eg. https://www.getopensocial.com/
+    // ?utm_source=Distro&utm_medium=Email&utm_campaign=Footer-Link
+    $options = [
+      'query' => [
+        'utm_source' => 'Distro',
+        'utm_medium' => 'Email',
+        'utm_campaign' => 'Footer-link',
+      ],
+      'attributes' => [
+        'target' => '_blank',
+      ],
+    ];
+    $variables['site_name'] = Link::fromTextAndUrl(t('Open Social'), $url = Url::fromUri('https://www.getopensocial.com/', $options));
+    $variables['site_slogan'] = '"' . t('Create digital spaces that empower your members to share') . '"';
+    $variables['site_sub_slogan'] = Link::fromTextAndUrl(t('#MadeToShare'), $url = Url::fromUri('https://twitter.com/search?q=%23MadeToShare%20%23opensocial'));
   }
 
   // Check if a custom e-mail header is set and apply the configuration

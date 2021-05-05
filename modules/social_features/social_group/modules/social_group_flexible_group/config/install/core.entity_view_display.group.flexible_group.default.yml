@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.group.flexible_group.field_flexible_group_visibility
     - field.field.group.flexible_group.field_group_address
     - field.field.group.flexible_group.field_group_allowed_join_method
     - field.field.group.flexible_group.field_group_allowed_visibility
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
+    - field.field.group.flexible_group.field_group_type
     - group.type.flexible_group
   module:
     - options
-_core:
-  default_config_hash: EsUA6_KIKnFzDKnw4ta9Ca3D41YhSNqTY1ZH_U3HRi4
 id: group.flexible_group.default
 targetEntityType: group
 bundle: flexible_group
@@ -39,9 +39,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_group_type:
+    weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
 hidden:
   changed: true
   created: true
+  field_flexible_group_visibility: true
   field_group_address: true
   field_group_description: true
   field_group_image: true

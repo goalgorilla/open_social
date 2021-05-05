@@ -62,7 +62,7 @@ function social_activity_social_user_account_header_items(array $context) {
       ],
       'notifications' => [
         '#wrapper_attributes' => ['class' => 'js-notification-center-wrapper'],
-        // @todo: Change ajax throbber to opensocial spinner.
+        // @todo Change ajax throbber to opensocial spinner.
         // @see: https://www.drupal.org/project/social/issues/3074740
         '#markup' => '<div className="spinner">
       <div className="bounce1"></div>
@@ -288,6 +288,22 @@ function social_activity_preprocess_block(&$variables) {
           ],
         ],
       ];
+
+      // Set vocabulary ID from views filter.
+      if (isset($view->filter_vocabulary)) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          [$view->filter_vocabulary]
+        );
+      }
+
+      // Set taxonomy IDs from views filter.
+      if (isset($view->filter_tags) && is_array($view->filter_tags)) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          array_keys($view->filter_tags)
+        );
+      }
     }
   }
 }

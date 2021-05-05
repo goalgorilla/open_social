@@ -1,0 +1,44 @@
+{{ attach_library('social_follow_landing_page/paragraph_tag') }}
+
+{% if terms %}
+<div class="paragraph paragraph--featured social_follow_tax">
+  <div class="container">
+    <div class="card teaser">
+      <div class="teaser__body">
+        {% for term in terms %}
+          <div class="teaser__content">
+            <div class="teaser__left">
+              <div class="teaser__tag">
+                {% trans %}Tag{% endtrans %}
+              </div>
+
+              <div class="teaser__title">
+                <h5>{{ term.name }}</h5>
+              </div>
+
+              <div class="teaser__related-content">
+                {% trans %} 1 item{% plural term.related_entity_count %} @count items{% endtrans %}
+                {% if term.followers_count %}
+                  |
+                  <span class="teaser__followers-count">
+                  {% trans %} 1 follower {% plural term.followers_count %} @count followers{% endtrans %}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="actions">
+              {{ term.flag }}
+              {% if(term.url) %}
+                <a href="{{ term.url }}" class="btn btn-default">
+                  {% trans %}See related content{% endtrans %}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

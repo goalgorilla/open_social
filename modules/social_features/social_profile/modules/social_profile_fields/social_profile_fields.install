@@ -7,6 +7,7 @@
 
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -18,6 +19,7 @@ function social_profile_fields_install() {
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
+  _social_profile_fields_nationalities();
 }
 
 /**
@@ -48,7 +50,7 @@ function _social_profile_fields_set_permissions() {
  *   The search index ID.
  */
 function _social_profile_fields_update_search_index($index_id = 'social_users') {
-  /* @var \Drupal\search_api\IndexInterface $index */
+  /** @var \Drupal\search_api\IndexInterface $index */
   $index = Index::load($index_id);
 
   $logger = \Drupal::logger('social_profile_fields');
@@ -71,5 +73,47 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 
     // Restore user account.
     $accountSwitcher->switchBack();
+  }
+}
+
+/**
+ * Add a field for nationality.
+ */
+function social_profile_fields_update_8003() {
+  $entity_type_ids = [
+    'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
+    'field.storage.profile.field_profile_' => 'field_storage_config',
+    'field.field.profile.profile.field_profile_' => 'field_config',
+  ];
+
+  $path = drupal_get_path('module', 'social_profile_fields') . '/config/static/';
+
+  foreach ($entity_type_ids as $prefix => $entity_type_id) {
+    $config_file = $path . $prefix . 'nationality_8003.yml';
+    $settings = Yaml::parseFile($config_file);
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($settings)->save();
+  }
+
+  _social_profile_fields_nationalities();
+}
+
+/**
+ * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
+ */
+function _social_profile_fields_nationalities() {
+  $path = drupal_get_path('module', 'social_profile_fields') . '/content/';
+  $data = Yaml::parseFile($path . 'nationalities.yml');
+
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  foreach ($data['nationalities'] as $nationality) {
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    $term = $storage->create(['vid' => 'nationality']);
+
+    $term->setName($nationality)->save();
   }
 }

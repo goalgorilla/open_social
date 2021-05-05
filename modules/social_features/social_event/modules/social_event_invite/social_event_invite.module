@@ -195,7 +195,7 @@ function social_event_invite_theme_registry_alter(&$theme_registry) {
  */
 function social_event_invite_preprocess_node(array &$variables) {
   if (!empty($variables['event_enrollment'])) {
-    /* @var $node \Drupal\node\Entity\Node */
+    /** @var \Drupal\node\Entity\Node $node */
     $node = $variables['node'];
 
     // Since the Enroll action form for EventInviteEnrollActionForm doesn't
@@ -210,7 +210,7 @@ function social_event_invite_preprocess_node(array &$variables) {
         'enroll_action_form' => $form,
       ];
       // Vary per user, because one user can be enrolled or have more rights.
-      // @TODO create a better cache context custom. Based on the enrollment
+      // @todo create a better cache context custom. Based on the enrollment
       // method OR the fact if a user is enrolled or not.
       $variables['#cache']['contexts'][] = 'user';
     }
@@ -221,7 +221,7 @@ function social_event_invite_preprocess_node(array &$variables) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_event_invite_user_insert(UserInterface $entity) {
-  // @todo: implement a better, more specific way to invalidate cache.
+  // @todo implement a better, more specific way to invalidate cache.
   // - config:field.storage.event_enrollment.field_request_or_invite_status.
   // - config:views.view.event_manage_enrollment_invites.
   // - event_enrollment_list.

@@ -25,7 +25,8 @@ class Immediately extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target) {
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
+    // If the user is blocked, we don't want to process this item further.
     if ($target->isBlocked()) {
       return;
     }
@@ -33,7 +34,11 @@ class Immediately extends EmailFrequencyBase {
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
-      $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
+
+      // If no body text is provided, get it from message for given language.
+      if (!$body_text) {
+        $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
+      }
 
       if ($langcode && !empty($body_text)) {
         $this->sendEmail($body_text, $langcode, $target);
@@ -51,7 +56,7 @@ class Immediately extends EmailFrequencyBase {
    * @param \Drupal\user\Entity\User $target
    *   The target account to send the email to.
    */
-  protected function sendEmail($body_text, $langcode, User $target) {
+  protected function sendEmail(string $body_text, string $langcode, User $target) {
     // Translating frequency instance in the language of the user.
     // @codingStandardsIgnoreStart
     $frequency_translated = t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
@@ -62,11 +67,12 @@ class Immediately extends EmailFrequencyBase {
       '#theme' => 'directmail',
       '#notification' => $body_text,
       '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
-        '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
+        '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
       ['langcode' => $langcode]),
     ];
+
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
     // Send the email.

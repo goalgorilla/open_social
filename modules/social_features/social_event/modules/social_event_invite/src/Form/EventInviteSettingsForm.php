@@ -74,6 +74,12 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#rows' => '2',
     ];
 
+    $form['email_verification'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Allow invited user to skip email verification'),
+      '#default_value' => $social_event_config->get('email_verification'),
+    ];
+
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#button_type' => 'primary',
@@ -100,6 +106,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
     $config->set('invite_message', $form_state->getValue('invite_message'));
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
     $config->set('invite_helper', $form_state->getValue('invite_helper'));
+    $config->set('email_verification', $form_state->getValue('email_verification'));
     $config->save();
   }
 
@@ -107,7 +114,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
    * Gets the configuration names that will be editable.
    */
   protected function getEditableConfigNames() {
-    // TODO: Implement getEditableConfigNames() method.
+    // @todo Implement getEditableConfigNames() method.
   }
 
 }

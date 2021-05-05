@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+  enforced:
+    module:
+      - social_follow_tag
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      node-event: node-event
+      node-topic: node-topic
+    activity_action: create_entitiy_action
+    activity_context: follow_tag_activity_context
+    activity_destinations:
+      notifications: notifications
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: create_node_following_tag
+label: 'Create node with following tag'
+description: 'A person create content with tag I am following'
+text:
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] with the tag(s) [social_taxonomy:taxonomy_i_follow] that you follow.</p>'
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

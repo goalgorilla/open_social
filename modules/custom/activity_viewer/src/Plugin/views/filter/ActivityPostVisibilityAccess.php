@@ -2,8 +2,11 @@
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
+use Drupal\Core\Database\Query\Condition;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity based on visibility settings.
@@ -13,6 +16,41 @@ use Drupal\views\Views;
  * @ViewsFilter("activity_post_visibility_access")
  */
 class ActivityPostVisibilityAccess extends FilterPluginBase {
+
+  /**
+   * The group helper.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $groupHelper;
+
+  /**
+   * Constructs a Handler object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   *   The group helper.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->groupHelper = $group_helper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration, $plugin_id, $plugin_definition,
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * Not exposable.
@@ -42,11 +80,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $open_groups = [];
     $group_memberships = [];
-    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
-      // TODO: This creates a dependency on Social Group which shouldn't exist,
+
+    if ($this->moduleHandler->moduleExists('social_group')) {
+      // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
       $open_groups = social_group_get_all_open_groups();
-      $group_memberships = social_group_get_all_group_members($account->id());
+      $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
     }
     $groups = array_merge($open_groups, $group_memberships);
     $groups_unique = array_unique($groups);
@@ -105,17 +144,18 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
 
     // Add queries.
-    $and_wrapper = db_and();
-    $or = db_or();
+    $and_wrapper = new Condition('AND');
+    $or = new Condition('OR');
 
     // Nodes: retrieve all the nodes 'created' activity by node access grants.
-    $node_access = db_and();
+    $node_access = new Condition('AND');
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
     $node_access_grants = node_access_grants('view', $account);
-    $grants = db_or();
+    $grants = new Condition('OR');
+
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
-        $and = db_and();
+        $and = new Condition('AND');
 
         if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
           $and->condition('node_field_data.uid', 0, '!=');
@@ -128,22 +168,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       }
     }
     $node_access->condition($grants);
-    // Get all nodes not posted in groups and in groups of user only.
-    if ($account->isAuthenticated() && count($groups_unique) > 0) {
-      $na_or = db_or();
-      $node_access->condition($na_or
-        ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
-        ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN')
-      );
-    }
-    else {
-      $node_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
-    }
     $or->condition($node_access);
 
     // Posts: retrieve all the posts in groups the user is a member of.
     if ($account->isAuthenticated() && count($groups_unique) > 0) {
-      $posts_in_groups = db_and();
+      $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
 
@@ -151,7 +180,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
 
     // Posts: all the posts the user has access to by permission.
-    $post_access = db_and();
+    $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
     $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
@@ -166,7 +195,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $or->condition($post_access);
 
-    $post_status = db_or();
+    $post_status = new Condition('OR');
     $post_status->condition('post.status', 1, '=');
 
     if ($account->hasPermission('view unpublished post entities')) {
@@ -179,13 +208,13 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     if ($account->hasPermission('access comments')) {
       // For comments in groups, the user must be a member of at least 1 group.
       if (count($groups_unique) > 0) {
-        $comments_on_content_in_groups = db_and();
+        $comments_on_content_in_groups = new Condition('AND');
         $comments_on_content_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
         $comments_on_content_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
         $or->condition($comments_on_content_in_groups);
       }
 
-      $comments_on_content = db_and();
+      $comments_on_content = new Condition('AND');
       $comments_on_content->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);

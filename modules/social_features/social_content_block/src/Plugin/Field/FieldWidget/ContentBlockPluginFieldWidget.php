@@ -116,44 +116,50 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
         $element[$plugin_id]['#default_value'] = $element['value']['#default_value'];
       }
 
-      foreach ($plugin_definition['fields'] as $field) {
-        if (isset($form[$field])) {
-          // Depending on the field type the field title to filter by is in
-          // different places.
-          // For entity reference fields.
-          if (isset($form[$field]['widget']['target_id']['#title'])) {
-            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
-          }
-          // For other field types (e.g. select)
-          elseif (isset($form[$field]['widget']['#title'])) {
-            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
-          }
-          // Otherwise we show a helpful message to the developer or QA that
-          // they should implement an additional clause.
-          else {
-            $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
-          }
+      if (!empty($plugin_definition['fields'])) {
+        foreach ($plugin_definition['fields'] as $field) {
+          if (isset($form[$field])) {
+            // Depending on the field type the field title to filter by is in
+            // different places.
+            // For entity reference fields.
+            if (isset($form[$field]['widget']['target_id']['#title'])) {
+              $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
+            }
+            // For other field types (e.g. select)
+            elseif (isset($form[$field]['widget']['#title'])) {
+              $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
+            }
+            // Otherwise we show a helpful message to the developer or QA that
+            // they should implement an additional clause.
+            else {
+              $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
+            }
 
-          $form[$field]['#states'] = [
-            'visible' => [
-              $selector => [
-                'value' => $plugin_id,
+            $form[$field]['#states'] = [
+              'visible' => [
+                $selector => [
+                  'value' => $plugin_id,
+                ],
+                $this->contentBlockManager->getSelector('field_plugin_field', $plugin_id) => [
+                  ['value' => 'all'],
+                  ['value' => $field],
+                ],
               ],
-              $this->contentBlockManager->getSelector('field_plugin_field', $plugin_id) => [
-                ['value' => 'all'],
-                ['value' => $field],
-              ],
-            ],
-          ];
-        }
-        elseif (in_array(self::CONFIG_PREFIX . $field, $this->fieldConfigs)) {
-          // Add the field machine name instead of the field label when the
-          // field still not added to the form structure. The field will be
-          // processed in the following place:
-          // @see \Drupal\social_content_block\ContentBuilder::processBlockForm()
-          $element[$plugin_id]['#options'][$field] = $field;
+            ];
+          }
+          elseif (in_array(self::CONFIG_PREFIX . $field, $this->fieldConfigs)) {
+            // Add the field machine name instead of the field label when the
+            // field still not added to the form structure. The field will be
+            // processed in the following place:
+            // @see \Drupal\social_content_block\ContentBuilder::processBlockForm()
+            $element[$plugin_id]['#options'][$field] = $field;
+          }
         }
       }
+      else {
+        $element[$plugin_id]['#options'] = [];
+      }
+
     }
 
     $element['#element_validate'][] = [get_class($this), 'validateElement'];

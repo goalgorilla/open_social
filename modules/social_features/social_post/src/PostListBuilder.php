@@ -4,7 +4,6 @@ namespace Drupal\social_post;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
 
 /**
  * Defines a class to build a listing of Post entities.
@@ -12,12 +11,12 @@ use Drupal\Core\Routing\LinkGeneratorTrait;
  * @ingroup social_post
  */
 class PostListBuilder extends EntityListBuilder {
-  use LinkGeneratorTrait;
 
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
+    $header = [];
     $header['id'] = $this->t('Post ID');
     $header['post'] = $this->t('Post');
     $header['author'] = $this->t('Author');
@@ -31,7 +30,8 @@ class PostListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\social_post\Entity\Post */
+    $row = [];
+    /** @var \Drupal\social_post\Entity\Post $entity */
     $row['id'] = $entity->id();
     $row['post'] = '';
     if ($entity->hasField('field_post')) {

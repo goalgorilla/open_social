@@ -27,8 +27,8 @@ Feature: Move content after creation
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Do you to?"
     And I select group "Kayaking"
     And I wait for AJAX to finish
-    Then I should see "Changing the group may have impact on the visibility settings."
-    And I press "Save"
+    Then I should see "Changing the group may have impact on the visibility settings and may cause author/co-authors to lose access."
+    And I press "Create topic"
     And I should see "Kayaking"
     And I wait for "2" seconds
 
@@ -69,6 +69,7 @@ Feature: Move content after creation
     Then I should not see "Motorboats"
     And I should not see "Kayaking"
 
+    And I run cron
     When I am logged in as "harry"
     And I am on the stream of group "Motorboats"
     Then I should not see "harry created a topic in Motorboats"

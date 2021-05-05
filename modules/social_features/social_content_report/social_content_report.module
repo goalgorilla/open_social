@@ -5,8 +5,9 @@
  * The Social Content Report module file.
  */
 
-use Drupal\comment\CommentInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\comment\CommentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -14,6 +15,12 @@ use Drupal\social_post\Entity\PostInterface;
  * Implements hook_form_alter().
  */
 function social_content_report_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // No need to do anything here, if it's not a flagging related form.
+  if (strpos($form_id, 'flagging_') === FALSE) {
+    return;
+  }
+
   // Get all 'report_' flags.
   $report_types = \Drupal::service('social_content_report.content_report_service')->getReportFlagTypes();
 
@@ -47,6 +54,13 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
     if ($config->get('mandatory_reason')) {
       $form['#validate'][] = 'social_content_report_mandatory_reason_validate';
     }
+
+    $headers = \Drupal::request()->headers;
+
+    if ($headers->has('referer')) {
+      $form_state->set('referer', $headers->get('referer'));
+      $form['actions']['submit']['#submit'][] = '_social_content_report_submit';
+    }
   }
 }
 
@@ -64,6 +78,18 @@ function social_content_report_mandatory_reason_validate(array $form, FormStateI
   if (in_array($form_state->getValue('field_reason')[0]['target_id'], $terms) && empty($form_state->getValue('field_other_reason')[0]['value'])) {
     $form_state->setErrorByName('field_other_reason', t('A description of your report is mandatory.'));
   }
+}
+
+/**
+ * Back to the last page which isn't loaded from a modal window.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_content_report_submit(array $form, FormStateInterface $form_state) {
+  $form_state->setRedirectUrl(Url::fromUri($form_state->get('referer')));
 }
 
 /**

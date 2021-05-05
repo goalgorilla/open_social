@@ -1,0 +1,211 @@
+<?php
+
+/**
+ * @file
+ * The Social post album module.
+ */
+
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\social_post\Entity\PostInterface;
+use Drupal\social_post_album\Controller\SocialPostAlbumAjaxCommentsController;
+
+/**
+ * Implements hook_theme().
+ */
+function social_post_album_theme($existing, $type, $theme, $path) {
+  return [
+    'album_post_popup' => [
+      'variables' => [
+        'urls' => NULL,
+        'pid' => NULL,
+      ],
+    ],
+    'field__post__type__image__album' => [
+      'base hook' => 'field',
+      'render element' => 'element',
+    ],
+    'image_widget__album' => [
+      'render element' => 'element',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_post_album_preprocess_field__post__type__image__album(&$variables) {
+  $post = $variables['element']['#object'];
+
+  if ($post instanceof PostInterface) {
+    $all_post_fids = \Drupal::database()
+      ->select('post__field_post_image', 'fpi')
+      ->fields('fpi', ['field_post_image_target_id'])
+      ->condition('entity_id', $post->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+
+    $visible_fids_count = $post->field_post_image->count();
+    $variables['more_posts_count'] = $all_post_fids - $visible_fids_count;
+    $variables['total_post_image_count'] = $all_post_fids;
+
+    foreach ($variables['items'] as $item) {
+      /** @var \Drupal\Core\Template\Attribute $attributes */
+      $attributes = $item['attributes'];
+
+      $url = Url::fromRoute('social_post_album.image_popup_render_original', [
+        'post' => $post->id(),
+        'first_fid' => $item['content']['#item']->entity->fid->value,
+      ]);
+
+      $attributes
+        ->setAttribute('href', $url->toString())
+        ->setAttribute('data-dialog-type', 'modal')
+        ->setAttribute('data-dialog-options', JSON::encode([
+          'width' => '100%',
+          'dialogClass' => 'post',
+        ]))
+        ->addClass('use-ajax');
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_field__field_post_comments(&$variables) {
+  if (
+    $variables['element']['#view_mode'] === 'album' &&
+    \Drupal::routeMatch()->getRouteName() === 'social_post_album.image_popup_render_original' &&
+    \Drupal::moduleHandler()->moduleExists('social_ajax_comments')
+  ) {
+    $variables['attributes']['id'] .= SocialPostAlbumAjaxCommentsController::WRAPPER_ID_SUFFIX;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_album_post_popup(&$variables) {
+  $variables['post'] = [
+    '#lazy_builder' => [
+      'social_post_album.lazy_renderer:getPost',
+      [
+        'post',
+        $variables['pid'],
+        'album',
+      ],
+    ],
+    '#create_placeholder' => TRUE,
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_activity(&$variables, $hook) {
+  $variables['extra_stream_class'] = 'social-post-album--post';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_post__activity(&$variables, $hook) {
+  $variables['post_image_without_wrapper'] = TRUE;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_block__social_post(&$variables, $hook) {
+  $variables['extra_stream_class'] = 'social-post-album--form';
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_post_album_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+
+  if ($element['#field_name'] === 'field_post_image') {
+    $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'] . '__album';
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_post_album_theme_suggestions_image_widget_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($element['#field_name'] === 'field_post_image' && $route_name !== 'entity.post.edit_form') {
+    $suggestions[] = 'image_widget__album';
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_post_album_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_post_album_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#submit'][] = 'social_post_album_comment_redirect';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_post_album_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $route_names = [
+    'social_post_album.ajax_comments.add',
+    'social_post_album.image_popup_render_original',
+  ];
+
+  if (
+    \Drupal::moduleHandler()->moduleExists('social_ajax_comments') &&
+    in_array(\Drupal::routeMatch()->getRouteName(), $route_names)
+  ) {
+    /** @var \Drupal\Core\Url $url */
+    $url = &$form['actions']['submit']['#ajax']['url'];
+
+    if ($url->getRouteName() === 'ajax_comments.add') {
+      $url = Url::fromRoute(
+        'social_post_album.ajax_comments.add',
+        $url->getRouteParameters(),
+        $url->getOptions()
+      );
+    }
+  }
+}
+
+/**
+ * Submit callback for the user comment form to redirect without ajax module.
+ */
+function social_post_album_comment_redirect($form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
+  $module_handler = \Drupal::service('module_handler');
+
+  if (!$module_handler->moduleExists('social_ajax_comments') || !$module_handler->moduleExists('ajax_comments')) {
+    $redirect_after_save = \Drupal::request()->request->get('redirect_after_save');
+    if (strpos($redirect_after_save, '/open/images/') !== FALSE) {
+      /** @var \Drupal\comment\CommentInterface $comment */
+      $comment = $form_state->getFormObject()->getEntity();
+      /** @var \Drupal\social_post\Entity\PostInterface $post */
+      $post = $comment->getCommentedEntity();
+
+      $form_state->setRedirect('entity.post.canonical', ['post' => $post->id()], ['fragment' => 'comment-' . $comment->id()]);
+    }
+  }
+}

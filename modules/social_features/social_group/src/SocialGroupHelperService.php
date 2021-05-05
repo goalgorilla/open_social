@@ -66,7 +66,7 @@ class SocialGroupHelperService {
     $cache_type = $entity['target_type'];
     $cache_id = $entity['target_id'];
 
-    if ($read_cache && is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
+    if ($read_cache && is_array($this->cache) && is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
       return $this->cache[$cache_type][$cache_id];
     }
 
@@ -82,7 +82,7 @@ class SocialGroupHelperService {
     }
 
     if ($entity['target_type'] === 'post') {
-      /* @var /Drupal/social_post/Entity/Post $post */
+      /** @var /Drupal/social_post/Entity/Post $post */
       $post = Post::load($entity['target_id']);
       $recipient_group = $post->get('field_recipient_group')->getValue();
       if (!empty($recipient_group)) {

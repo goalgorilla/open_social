@@ -8,6 +8,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
@@ -214,6 +215,40 @@ class SocialGroupController extends ControllerBase {
    */
   public function otherGroupPage($group) {
     return $this->redirect('entity.group.canonical', ['group' => $group]);
+  }
+
+  /**
+   * The _title_callback for the entity.group_content.create_form route.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group to create the group content in.
+   * @param string $plugin_id
+   *   The group content enabler to create content with.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function createFormTitle(GroupInterface $group, $plugin_id) {
+    /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
+    $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+    $group_content_type = GroupContentType::load($plugin->getContentTypeConfigId());
+
+    // The node_types that have a different article than a.
+    $node_types = [
+      'event' => 'an',
+    ];
+
+    // Make sure extensions can change this as well.
+    \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
+
+    if ($group_content_type !== NULL && array_key_exists($group_content_type->label(), $node_types)) {
+      return $this->t('Create @article @name', [
+        '@article' => $node_types[$group_content_type->label()],
+        '@name' => $group_content_type->label(),
+      ]);
+    }
+
+    return $this->t('Create a @name', ['@name' => $group_content_type->label()]);
   }
 
 }

@@ -1,0 +1,59 @@
+core.entity_form_display.group.flexible_group.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_content:
+            children:
+              - field_group_description
+          group_settings:
+            children:
+              - field_flexible_group_visibility
+              - field_group_allowed_visibility
+              - field_group_allowed_join_method
+    add:
+      third_party_settings:
+        field_group:
+          group_access_permissions:
+            children:
+              - field_flexible_group_visibility
+              - field_group_allowed_visibility
+              - field_group_allowed_join_method
+            format_settings:
+              classes: ''
+              description: ''
+              id: ''
+              required_fields: true
+            format_type: fieldset
+            label: 'Access permissions'
+            parent_name: ''
+            region: content
+            weight: 1
+          group_content:
+            children:
+              - label
+              - field_group_description
+          group_settings:
+            format_settings:
+              open: false
+    change:
+      content:
+        field_group_description:
+          weight: 103
+        field_group_image:
+          weight: 102
+        path:
+          weight: 4
+      third_party_settings:
+        field_group:
+          group_content:
+            label: 'Basic information'
+            weight: 0
+          group_settings:
+            children:
+              - path
+            format_settings:
+              classes: social-collapsible-fieldset
+            format_type: details
+            weight: 3

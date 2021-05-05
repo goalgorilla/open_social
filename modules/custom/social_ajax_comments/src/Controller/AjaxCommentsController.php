@@ -15,6 +15,27 @@ use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
 class AjaxCommentsController extends ContribController {
 
   /**
+   * The number of errors.
+   *
+   * @var int|null
+   */
+  protected $errors = NULL;
+
+  /**
+   * TRUE if temporary storage should be cleared.
+   *
+   * @var bool
+   */
+  protected $clearTempStore = TRUE;
+
+  /**
+   * The parent comment's comment ID.
+   *
+   * @var int|null
+   */
+  protected $pid;
+
+  /**
    * Cancel handler for the cancel form.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -33,16 +54,23 @@ class AjaxCommentsController extends ContribController {
     $response = new AjaxResponse();
 
     // Get the selectors.
-    $selectors = $this->tempStore->getSelectors($request, $overwrite = TRUE);
+    $selectors = $this->tempStore->getSelectors($request, TRUE);
     $wrapper_html_id = $selectors['wrapper_html_id'];
     $form_html_id = $selectors['form_html_id'];
 
     if ($cid != 0) {
-      // Show the hidden anchor.
-      $response->addCommand(new InvokeCommand('a#comment-' . $cid, 'show', [200, 'linear']));
+      $prefixes = [
+        // Show the hidden anchor.
+        'a#comment-',
 
-      // Show the hidden comment.
-      $response->addCommand(new InvokeCommand(static::getCommentSelectorPrefix() . $cid, 'show', [200, 'linear']));
+        // Show the hidden comment.
+        static::getCommentSelectorPrefix(),
+      ];
+
+      foreach ($prefixes as $prefix) {
+        $command = new InvokeCommand($prefix . $cid, 'show', [200, 'linear']);
+        $response->addCommand($command);
+      }
     }
 
     // Replace the # from the form_html_id selector and add .social_ so we know
@@ -90,7 +118,7 @@ class AjaxCommentsController extends ContribController {
     // Store the selectors from the incoming request, if applicable.
     // If the selectors are not in the request, the stored ones will
     // not be overwritten.
-    $this->tempStore->getSelectors($request, $overwrite = TRUE);
+    $this->tempStore->getSelectors($request, TRUE);
 
     // Check the user's access to reply.
     // The user should not have made it this far without proper permission,
@@ -105,9 +133,12 @@ class AjaxCommentsController extends ContribController {
       return $response;
     }
 
+    $request->request->set('social_ajax_comments', TRUE);
+
     // Build the comment entity form.
     // This approach is very similar to the one taken in
     // \Drupal\comment\CommentLazyBuilders::renderForm().
+    /** @var \Drupal\comment\CommentInterface $comment */
     $comment = $this->entityTypeManager()->getStorage('comment')->create([
       'entity_id' => $entity->id(),
       'pid' => $pid,
@@ -119,10 +150,12 @@ class AjaxCommentsController extends ContribController {
     $form = $this->entityFormBuilder()->getForm($comment);
 
     // Check for errors.
-    if (empty(drupal_get_messages('error', FALSE))) {
+    if (!($this->errors = count($this->messenger()->messagesByType('error')))) {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
+
+      $this->pid = $pid;
 
       // Build the updated comment field and insert into a replaceWith
       // response.
@@ -135,7 +168,7 @@ class AjaxCommentsController extends ContribController {
     }
     else {
       // Retrieve the selector values for use in building the response.
-      $selectors = $this->tempStore->getSelectors($request, $overwrite = TRUE);
+      $selectors = $this->tempStore->getSelectors($request, TRUE);
       $wrapper_html_id = $selectors['wrapper_html_id'];
 
       // If there are errors, remove old messages.
@@ -149,29 +182,39 @@ class AjaxCommentsController extends ContribController {
       $cid = $this->tempStore->getCid();
 
       // Try to insert the message above the new comment.
-      if (!empty($cid) && !$errors && \Drupal::currentUser()->hasPermission('skip comment approval')) {
+      if (
+        !empty($cid) &&
+        !$this->errors &&
+        $this->currentUser()->hasPermission('skip comment approval')
+      ) {
         $selector = static::getCommentSelectorPrefix() . $cid;
-        $response = $this->addMessages(
-          $request,
-          $response,
-          $selector,
-          'before'
-        );
+        $position = 'before';
       }
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
-      else {
-        $response = $this->addMessages(
-          $request,
-          $response,
-          static::getCommentSelectorPrefix() . $comment->get('pid')->target_id,
-          'after'
-        );
+      elseif ($comment->hasParentComment()) {
+        $selector = static::getCommentSelectorPrefix() . $comment->getParentComment()->id();
+        $position = 'after';
       }
+      else {
+        // If parent comment is not available insert messages to form.
+        $selectors = $this->tempStore->getSelectors($request);
+        $selector = $selectors['form_html_id'] ?? '';
+        $position = 'before';
+      }
+
+      $response = $this->addMessages(
+        $request,
+        $response,
+        $selector,
+        $position
+      );
     }
 
     // Clear out the tempStore variables.
-    $this->tempStore->deleteAll();
+    if ($this->clearTempStore) {
+      $this->tempStore->deleteAll();
+    }
 
     // Remove the libraries from the response, otherwise when
     // core/misc/drupal.js is reinserted into the DOM, the following line of
@@ -194,6 +237,21 @@ class AjaxCommentsController extends ContribController {
     $response->setAttachments($attachments);
 
     return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function renderCommentField(EntityInterface $entity, $field_name) {
+    $comment_display = parent::renderCommentField($entity, $field_name);
+
+    $parameters = &$comment_display[0]['comments']['pager']['#route_parameters'];
+    $parameters['entity_type'] = $entity->getEntityTypeId();
+    $parameters['entity'] = $entity->id();
+    $parameters['field_name'] = $field_name;
+    $parameters['pid'] = $this->pid;
+
+    return $comment_display;
   }
 
 }

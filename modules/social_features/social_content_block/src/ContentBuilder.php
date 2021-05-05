@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -21,7 +22,7 @@ use Drupal\Core\Url;
  *
  * @package Drupal\social_content_block
  */
-class ContentBuilder implements ContentBuilderInterface {
+class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterface {
 
   use StringTranslationTrait;
 
@@ -82,12 +83,17 @@ class ContentBuilder implements ContentBuilderInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['getEntities', 'build'];
+  }
+
+  /**
    * Function to get all the entities based on the filters.
    *
    * @param string|int $block_id
    *   The block id where we get the settings from.
-   * @param string $entity_bundle
-   *   The bundle of the entity.
    *
    * @return array
    *   Returns the entities found.
@@ -96,7 +102,7 @@ class ContentBuilder implements ContentBuilderInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEntities($block_id, $entity_bundle) {
+  public function getEntities($block_id) {
     $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
 
     $plugin_id = $block_content->field_plugin_id->value;

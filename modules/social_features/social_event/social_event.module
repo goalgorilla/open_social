@@ -6,6 +6,8 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\bootstrap\Bootstrap;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
@@ -187,10 +189,10 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
-        'value' => NODE_PUBLISHED,
+        'value' => NodeInterface::PUBLISHED,
         'operator' => '=',
       ];
     }
@@ -663,7 +665,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     $timezone_label = t('Time zone');
     $markup = '<div class="control-label margin-bottom-s">' . $timezone_label . '</div>';
     $markup .= '<div class="bg-gray-lightest btn btn-lg">' . $user_timezone . '</div>';
-    // Check if user has access to change his timezone.
+    // Check if user has access to change its timezone.
     $date_config = Drupal::config('system.date');
     if ($date_config->get('timezone.user.configurable')) {
       $description = t('The event date and time are set based on your timezone. @change_timezone.', [
@@ -698,9 +700,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#group_children']['timezone_indication'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
-
-    // Attach styling for the event date fields.
-    $form['#attached']['library'][] = 'social_event/admin';
   }
 
   // Specific alter for the event edit form.
@@ -799,15 +798,7 @@ function social_event_date_is_all_day(DrupalDateTime $date) {
 }
 
 /**
- * Add notification settings display on user Profile for the EO notification.
- *
- * @param array &$items
- *   An array of groups that contain a title and an array of templates that are
- *   contained in this settings group.
- * @param array $email_message_templates
- *   Message templates enabled for sending by email.
- *
- * @see activity_send_email_form_user_form_alter()
+ * Implements hook_activity_send_email_notifications_alter().
  */
 function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
   // If a activity_on_events_im_organizing template is enabled then we add it in
@@ -866,7 +857,7 @@ function social_event_get_current_event() {
  *   Which state do you want for the form field. Defaults to visibility.
  */
 function social_event_field_visibility(array &$form, $field_name, array $fields, $state = 'visible') {
-  // Todo: Refactor outside of an alter when going to React.
+  // @todo Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
     ':input[name="' . $field_name . '[value]"]' => ['checked' => TRUE],
@@ -1125,4 +1116,130 @@ function _social_event_views_update($view_config, $display) {
   // Save new configs.
   $data['display'][$display]['display_options']['filters'] = $new_filters;
   $config->setData($data)->save();
+}
+
+/**
+ * Returns a description array for the field_enroll_method options.
+ *
+ * @return string
+ *   The render array containing the description.
+ */
+function social_event_enroll_method_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Add explanatory descriptive text.
+  switch ($key) {
+    case EventEnrollmentInterface::ENROLL_METHOD_JOIN:
+      $description = '<p><strong>' . t('Open to enroll')->render() . '</strong>';
+      $description .= ' - ' . t('users can enroll for this event without approval')->render();
+      $description .= '</p>';
+      break;
+
+    case EventEnrollmentInterface::ENROLL_METHOD_REQUEST:
+      $description = '<p><strong>' . t('Request to enroll')->render() . '</strong>';
+      $description .= ' - ' . t('users can "request to enroll" for this event which event organisers approve/decline')->render();
+      $description .= '</p>';
+      break;
+
+    case EventEnrollmentInterface::ENROLL_METHOD_INVITE:
+      $description = '<strong>' . t('Invite-only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only enroll for this event if they are added/invited by event organisers')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // event enroll method #options array.
+  \Drupal::moduleHandler()->alter('social_event_enroll_method_description', $key, $description);
+
+  return $description;
+}
+
+/**
+ * Returns a new popover tooltip based on a descriptive text and field name.
+ *
+ * @param string $field_name
+ *   The field name to create a unique id for.
+ * @param string $data_title
+ *   The title of the pop-up.
+ * @param string $description
+ *   A string containing the description, this needs to be rendered markup.
+ *
+ * @return array
+ *   The render array containing the tooltip.
+ */
+function social_event_render_tooltip($field_name, $data_title, $description) {
+  $build = [];
+  $id = Html::getUniqueId('tooltip-' . $field_name);
+  $build['toggle'] = [
+    '#type' => 'link',
+    '#url' => Url::fromUserInput("#$id"),
+    '#icon' => Bootstrap::glyphicon('question-sign'),
+    '#attributes' => [
+      'class' => ['icon-before'],
+      'data-toggle' => 'popover',
+      'data-container' => 'body',
+      'data-html' => 'true',
+      'data-placement' => 'bottom',
+      'data-title' => $data_title ?: '',
+    ],
+  ];
+  $build['requirements'] = [
+    '#type' => 'container',
+    '#theme_wrappers' => ['container__file_upload_help'],
+    '#attributes' => [
+      'id' => $id,
+      'class' => ['hidden', 'help-block'],
+      'aria-hidden' => 'true',
+    ],
+  ];
+  // As documented in Render API, Note that the value is passed through
+  // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
+  // vectors while allowing a permissive list of HTML tags.
+  $build['requirements']['descriptions'] = [
+    '#markup' => $description,
+    '#allowed_tags' => [
+      'strong',
+      'span',
+      'svg',
+      'p',
+      'div',
+      'em',
+      'img',
+      'a',
+      'span',
+      'use',
+    ],
+  ];
+
+  $variables['popover'] = $build;
+
+  return $build;
+}
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function social_event_preprocess_fieldset(&$variables) {
+  // Make sure our event enroll method field renders a tooltip, since
+  // this field is rendered as fieldset with legend and radios as children
+  // we need to do it in this preprocess.
+  $element = $variables['element'];
+  if (!empty($element['#field_name'])) {
+    if ($element['#field_name'] === 'field_enroll_method') {
+      $description = '';
+      foreach ($element['#options'] as $key => $label) {
+        $description .= social_event_enroll_method_description($key);
+      }
+
+      // Render a specific tooltip based on a field name and description.
+      // This is done in the fieldset, next to the <legend>.
+      $variables['popover'] = social_event_render_tooltip('field_enroll_method', t('Enroll method'), $description);
+    }
+  }
 }

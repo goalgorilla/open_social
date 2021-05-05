@@ -69,7 +69,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                 // Check if the post has been posted in a group.
                 $group_id = $entity->field_recipient_group->target_id;
                 if ($group_id) {
-                  $group = entity_load('group', $group_id);
+                  $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
                   if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                     return AccessResult::allowed();
                   }
@@ -103,8 +103,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
               $group_id = $entity->field_recipient_group->target_id;
 
               if ($group_id !== NULL) {
-                /* @var \Drupal\group\Entity\Group $group */
-                $group = entity_load('group', $group_id);
+                /** @var \Drupal\group\Entity\Group $group */
+                $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
               }
 
               if ($group !== NULL) {
@@ -156,7 +156,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
-        return AccessResult::forbidden();
+        return AccessResult::neutral();
 
       case 'delete':
         // Check if the user has permission to delete any or own post entities.

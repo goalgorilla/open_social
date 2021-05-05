@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Class AutocompleteController.
  *
- * TODO Add parameters here to prevent referencing users without access to node.
+ * @todo Add parameters here to prevent referencing users without access to node.
  *
  * @package Drupal\social_mentions\Controller
  */
@@ -91,7 +91,7 @@ class AutocompleteController extends ControllerBase {
     $storage = $this->entityTypeManager->getStorage('profile');
     $view_builder = $this->entityTypeManager->getViewBuilder('profile');
 
-    /* @var \Drupal\Core\Session\AccountInterface $account */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     foreach ($accounts as $account) {
       $item = [
         'uid' => $account->id(),

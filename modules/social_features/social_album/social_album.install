@@ -1,0 +1,292 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_album module.
+ */
+
+use Drupal\block\BlockInterface;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ */
+function social_album_install() {
+  // Set some default permissions.
+  _social_album_set_permissions();
+  _social_album_set_group_permissions();
+
+  module_set_weight('social_album', 5);
+
+  _social_album_blocks('_social_album_install_blocks');
+}
+
+/**
+ * Add new paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_album_install_blocks($pages, array $paths) {
+  return $pages . "\r\n" . implode("\r\n", $paths);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_album_uninstall() {
+  _social_album_blocks(function ($pages, array $paths) {
+    $pages = explode("\r\n", $pages);
+
+    foreach ($pages as $delta => $page) {
+      if (in_array($page, $paths)) {
+        unset($pages[$delta]);
+      }
+    }
+
+    return implode("\r\n", $pages);
+  });
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_album_set_permissions() {
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->execute();
+
+  foreach ($roles as $role) {
+    $permissions = _social_album_get_permissions($role);
+    user_role_grant_permissions($role, $permissions);
+  }
+}
+
+/**
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
+ * @return array
+ *   A list of permissions.
+ */
+function _social_album_get_permissions($role) {
+  // Anonymous.
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
+
+  // Authenticated.
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
+    'create album content',
+    'delete own album content',
+    'edit own album content',
+    'override album published option',
+    'view node.album.field_content_visibility:public content',
+    'view node.album.field_content_visibility:community content',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer social_album settings',
+  ]);
+
+  return $permissions[$role] ?? [];
+}
+
+/**
+ * Function to set group permissions.
+ */
+function _social_album_set_group_permissions() {
+  $common_permissions = [
+    'anonymous' => [],
+    'outsider' => [
+      'update own group_node:album entity',
+    ],
+    'member' => [
+      'create group_node:album entity',
+      'delete own group_node:album entity',
+      'view group_node:album entity',
+      'view group_node:album content',
+    ],
+    'group_manager' => [
+      'delete any group_node:album entity',
+    ],
+    'group_admin' => [
+      'update any group_node:album entity',
+      'view unpublished group_node:album entity',
+      'create group_node:album content',
+      'delete any group_node:album content',
+      'delete own group_node:album content',
+      'update any group_node:album content',
+      'update own group_node:album content',
+    ],
+    // Content manager.
+    '83776d798' => [],
+    // Site manager.
+    'ba5854c29' => [],
+    // Administrator.
+    'a416e6833' => [],
+  ];
+
+  $previous = [];
+
+  foreach ($common_permissions as &$current) {
+    $current = $previous = array_merge($previous, $current);
+  }
+
+  $permissions = [
+    'open_group' => [
+      'outsider' => [
+        'view group_node:album entity',
+        'view group_node:album content',
+      ],
+    ],
+    'public_group' => [
+      'anonymous' => [
+        'view group_node:album entity',
+        'view group_node:album content',
+      ],
+    ],
+  ];
+
+  foreach ($permissions as &$type_permissions) {
+    $all_type_permissions = $previous = [];
+
+    foreach ($common_permissions as $role_id => $common_permissions_list) {
+      if (isset($type_permissions[$role_id])) {
+        $previous = array_merge($previous, $type_permissions[$role_id]);
+      }
+
+      $all_type_permissions[$role_id] = array_unique(array_merge($common_permissions_list, $previous));
+    }
+
+    $type_permissions = $all_type_permissions;
+  }
+
+  $type_storage = \Drupal::entityTypeManager()->getStorage('group_type');
+
+  /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
+  $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
+
+  foreach (\Drupal::entityQuery('group_type')->execute() as $type_id) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $type */
+    $type = $type_storage->load($type_id);
+
+    if (!$type->hasContentPlugin('group_node:album')) {
+      continue;
+    }
+
+    foreach ($type->getRoleIds() as $type_role_id) {
+      $role_id = explode('-', $type_role_id)[1];
+
+      if (isset($common_permissions[$role_id])) {
+        /** @var \Drupal\group\Entity\GroupRoleInterface $role */
+        $role = $role_storage->load($type_role_id);
+
+        $role
+          ->grantPermissions($permissions[$type_id][$role_id] ?? $common_permissions[$role_id])
+          ->save();
+      }
+    }
+  }
+}
+
+/**
+ * Process list of pages where chosen blocks should be shown.
+ *
+ * @param callable $function
+ *   The function which updates the pages set.
+ * @param array $items
+ *   Paths of blocks.
+ */
+function _social_album_blocks(callable $function, array $items = [
+  'socialblue_profile_hero_block' => '/user/*/albums',
+  'socialblue_pagetitleblock_content' => [
+    '/user/*/albums',
+    '/group/*/albums',
+    '/group/*/albums/add',
+  ],
+  'socialblue_profile_statistic_block' => '/user/*/albums',
+  'socialblue_groupheroblock' => '/group/*/albums',
+  'socialblue_group_statistic_block' => '/group/*/albums',
+]) {
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+
+  foreach ($items as $id => $paths) {
+    $block = $storage->load($id);
+
+    if (!$block instanceof BlockInterface) {
+      continue;
+    }
+
+    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
+    $visibility = $block->getVisibilityCondition('request_path');
+
+    $configuration = $visibility->getConfiguration();
+    $pages = $function($configuration['pages'], (array) $paths);
+
+    if ($configuration['pages'] !== $pages) {
+      $configuration['pages'] = $pages;
+      $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
+  }
+}
+
+/**
+ * Set some default group permissions and check them on the group albums page.
+ */
+function social_album_update_8901() {
+  // Set some default group permissions.
+  _social_album_set_group_permissions();
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_album', 'social_album_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Delete references to not exists albums in posts.
+ */
+function social_album_update_8902() {
+  \Drupal::database()->delete('post__field_album')
+    ->condition('field_album_target_id', "0")
+    ->execute();
+}
+
+/**
+ * Limitate styling for modal windows only by post modal windows.
+ */
+function social_album_update_8903() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_album', 'social_album_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Delete duplicate of title from the group album creation page.
+ */
+function social_album_update_8904() {
+  _social_album_blocks('_social_album_install_blocks', [
+    'socialblue_pagetitleblock_content' => [
+      '/group/*/albums/add',
+    ],
+  ]);
+}

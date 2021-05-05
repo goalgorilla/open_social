@@ -161,14 +161,17 @@ class ActivityNotifications extends ControllerBase {
    *   \Drupal\activity_creator\ActivityNotifications
    * ::markEntityNotificationsAsSeen() instead.
    *
-   * TODO: Change @see to point to a change record.
+   * @todo Change @see to point to a change record.
    * @see https://www.drupal.org/project/social/issues/3087083
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN]);
-    $this->changeStatusOfActivity($ids, $account);
+    $ids = $this->getNotificationIds($account, [
+      ACTIVITY_STATUS_RECEIVED,
+      ACTIVITY_STATUS_SEEN,
+    ]);
 
+    $this->changeStatusOfActivity($ids, $account);
   }
 
   /**
@@ -184,7 +187,7 @@ class ActivityNotifications extends ControllerBase {
    * @return bool
    *   Status of update query.
    */
-  protected function changeStatusOfActivity(array $ids, AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED): bool {
+  public function changeStatusOfActivity(array $ids, AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED): bool {
     if (!empty($ids)) {
       // The transaction opens here.
       $txn = $this->database->startTransaction();
@@ -235,11 +238,10 @@ class ActivityNotifications extends ControllerBase {
       catch (\Exception $exception) {
         // Log the exception to watchdog.
         $this->getLogger('default')->error($exception->getMessage());
+        return [];
       }
     }
-    else {
-      return [];
-    }
+    return [];
   }
 
   /**

@@ -4,6 +4,7 @@ namespace Drupal\social_user\Plugin\Block;
 
 use Drupal\user\Plugin\Block\UserLoginBlock;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
 
 /**
  * Provides a 'SocialUserLoginBlock' block.
@@ -40,7 +41,7 @@ class SocialUserLoginBlock extends UserLoginBlock {
 
     // Build action links.
     $items = [];
-    if (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+    if (\Drupal::config('user.settings')->get('register') !== UserInterface::REGISTER_ADMINISTRATORS_ONLY) {
       $items['create_account'] = [
         '#type' => 'link',
         '#title' => $this->t('Create new account'),

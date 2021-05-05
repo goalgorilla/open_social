@@ -5,10 +5,18 @@
  * Contains activity_basics.module..
  */
 
-use Drupal\Core\Database\Database;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Email frequencies.
+ */
+const FREQUENCY_DAILY = 'daily';
+const FREQUENCY_IMMEDIATELY = 'immediately';
+const FREQUENCY_NONE = 'none';
+const FREQUENCY_WEEKLY = 'weekly';
 
 /**
  * Implements hook_cron().
@@ -23,7 +31,7 @@ function activity_send_email_cron() {
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
     $instance = $emailfrequencymanager->createInstance($frequency['id']);
-    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+    /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $interval = $instance->getInterval();
 
     // If the interval of the EmailFrequency plugin is more than 0, we should
@@ -106,6 +114,7 @@ function activity_send_email_theme() {
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
 function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\social_user\Entity\User $account */
   $account = $form_state->getFormObject()->getEntity();
 
   // Only expose these settings to existing users so it's not shown on the
@@ -142,38 +151,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     '#value' => t('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.'),
   ];
 
-  $items = [
-    'message_to_me' => [
-      'title' => t('Message to me'),
-      'templates' => [
-        'create_post_profile',
-        'create_mention_post',
-        'create_mention_comment',
-        'create_comment_reply_mention',
-        'create_comment_reply',
-        'create_comment_post_profile',
-        'create_like_node_or_post',
-      ],
-    ],
-    'what_manage' => [
-      'title' => t('What I manage'),
-      'templates' => [
-        'create_comment_author_node_post',
-        'join_to_group',
-      ],
-    ],
-    'what_follow' => [
-      'title' => t('What I follow'),
-      'templates' => [
-        'create_comment_following_node',
-        'create_content_in_joined_group',
-      ],
-    ],
-    'system_notifications' => [
-      'title' => t('System notifications'),
-      'templates' => [],
-    ],
-  ];
+  $items = _activity_send_email_default_template_items();
 
   $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
 
@@ -220,12 +198,16 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#open' => TRUE,
     ];
 
+    $mail_configs = Drupal::config('social_swiftmail.settings');
+    $template_frequencies = $mail_configs->get('template_frequencies') ?: [];
+
     foreach ($item['templates'] as $template) {
+      $default_frequency = isset($template_frequencies[$template]) ? $template_frequencies[$template] : FREQUENCY_IMMEDIATELY;
       $form['email_notifications'][$item_id][$template] = [
         '#type' => 'select',
         '#title' => $email_message_templates[$template],
         '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$template]) ? $user_email_settings[$template] : 'immediately',
+        '#default_value' => isset($user_email_settings[$template]) ? $user_email_settings[$template] : $default_frequency,
       ];
     }
   }
@@ -276,7 +258,7 @@ function sort_email_frequency_options() {
 
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
-    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+    /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $instance = $emailfrequencymanager->createInstance($frequency['id']);
     $emailfrequencies[] = [
       'id' => $frequency['id'],
@@ -286,7 +268,10 @@ function sort_email_frequency_options() {
   }
 
   // Sort the email frequencies by their weight.
-  uasort($emailfrequencies, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
+  uasort($emailfrequencies, [
+    'Drupal\Component\Utility\SortArray',
+    'sortByWeightElement',
+  ]);
 
   return $emailfrequencies;
 }
@@ -321,11 +306,53 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
     return;
   }
 
-  /* @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
+  /** @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
   $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
 
   // Trigger the create action for entities.
-  /* @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
+  /** @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
   $create_action = $activity_send_factory->createInstance('email_activity_send');
   $create_action->create($activity);
+}
+
+/**
+ * Returns default templates grouped by specific category.
+ *
+ * @return array[]
+ *   Grouped default templates.
+ */
+function _activity_send_email_default_template_items() {
+  return [
+    'message_to_me' => [
+      'title' => t('Message to me'),
+      'templates' => [
+        'create_post_profile',
+        'create_mention_post',
+        'create_mention_comment',
+        'create_comment_reply_mention',
+        'create_comment_reply',
+        'create_comment_post_profile',
+        'create_like_node_or_post',
+      ],
+    ],
+    'what_manage' => [
+      'title' => t('What I manage'),
+      'templates' => [
+        'create_comment_author_node_post',
+        'join_to_group',
+        'request_event_enrollment',
+      ],
+    ],
+    'what_follow' => [
+      'title' => t('What I follow'),
+      'templates' => [
+        'create_comment_following_node',
+        'create_content_in_joined_group',
+      ],
+    ],
+    'system_notifications' => [
+      'title' => t('System notifications'),
+      'templates' => [],
+    ],
+  ];
 }

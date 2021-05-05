@@ -60,7 +60,7 @@ function social_group_install() {
   $group_settings->save();
 
   // Disable group nodes.
-  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  $view = \Drupal::service('entity_type.manager')->getStorage('view')->load('group_nodes');
   if (!is_null($view)) {
     $view->setStatus(FALSE);
     $view->save();
@@ -120,6 +120,7 @@ function _social_group_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'bypass create group access',
     'manage all groups',
     'view node.book.field_content_visibility:group content',
     'view node.event.field_content_visibility:group content',
@@ -183,7 +184,7 @@ function social_group_update_8001() {
  * Make sure the group nodes view is disabled.
  */
 function social_group_update_8002() {
-  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  $view = \Drupal::service('entity_type.manager')->getStorage('view')->load('group_nodes');
   if (!is_null($view)) {
     $view->setStatus(FALSE);
     $view->save();
@@ -242,7 +243,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update entity view display.
   $display_id = "{$entity}.{$bundle}.$display_mode";
-  $view_display = \Drupal::entityManager()->getStorage('entity_view_display')->load($display_id);
+  $view_display = \Drupal::service('entity_type.manager')->getStorage('entity_view_display')->load($display_id);
   if ($component = $view_display->getComponent($field_name)) {
     $view_display->setComponent($field_name, [
       'type' => 'basic_string',
@@ -280,8 +281,8 @@ function social_group_update_8005() {
     $config_factory->getEditable("$module.settings")->delete();
 
     // Remove cache tables.
-    if (db_table_exists("cache_$module")) {
-      db_drop_table("cache_$module");
+    if (Database::getConnection()->schema()->tableExists("cache_$module")) {
+      Database::getConnection()->schema()->dropTable("cache_$module");
     }
 
     // Remove data from system.schema.
@@ -572,4 +573,43 @@ function social_group_update_8902() {
 
   // Update views configuration.
   _social_event_views_update('views.view.group_events', 'default');
+}
+
+/**
+ * Allow creating groups by default.
+ */
+function social_group_update_8903() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+
+  if (($setting = $config->get('address_visibility_settings')) !== NULL) {
+    $config->set('address_visibility_settings', $setting['street_code_private']);
+  }
+
+  $config->set('allow_group_create', TRUE)->save();
+
+  foreach (['contentmanager', 'sitemanager'] as $role) {
+    user_role_grant_permissions($role, ['bypass create group access']);
+  }
+}
+
+/**
+ * Make sure flexible group, group type is not required by default.
+ */
+function social_group_update_8904() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('social_group_type_required', FALSE)->save();
+}
+
+/**
+ * Update form displays for group types according new 10.x UX design.
+ */
+function social_group_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

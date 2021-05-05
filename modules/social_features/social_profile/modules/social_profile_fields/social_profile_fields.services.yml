@@ -5,4 +5,4 @@ services:
       - {name: config.factory.override, priority: 5}
   social_profile_fields.helper:
     class: Drupal\social_profile_fields\SocialProfileFieldsHelper
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@module_handler']

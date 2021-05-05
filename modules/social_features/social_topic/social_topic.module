@@ -8,16 +8,22 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Prepares variables for node templates.
@@ -35,23 +41,30 @@ use Drupal\Core\Language\LanguageInterface;
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_topic_preprocess_node(array &$variables) {
-  /* @var \Drupal\node\NodeInterface $node */
+  /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'topic') {
     $topic_type = $node->get('field_topic_type');
     $topic_type_entities = $topic_type->referencedEntities();
     if (count($topic_type_entities) === 1) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+      /** @var \Drupal\node\NodeInterface $topic */
       foreach ($topic_type_entities as $topic) {
         if ($topic->isTranslatable() && $topic->hasTranslation($curr_langcode)) {
           $topic = $topic->getTranslation($curr_langcode);
         }
-        $variables['metadata'] = t('in @topic', ['@topic' => $topic->link()]);
+        $variables['metadata'] = t('in @topic', ['@topic' => $topic->toLink()->toString()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
         $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
           ->toString();
         $variables['topic_type'] = $topic_type_link;
+
+        if ($topic->hasField('field_topic_type_icon') && !$topic->get('field_topic_type_icon')->isEmpty()) {
+          $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;
+        }
+
+        $variables['#cache']['tags'][] = $topic->getEntityTypeId() . ':' . $topic->id();
       }
     }
     else {
@@ -144,10 +157,10 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   if ($view->id() == 'topics' && $view->getDisplay()->display['id'] == 'page_profile') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
-        'value' => NODE_PUBLISHED,
+        'value' => NodeInterface::PUBLISHED,
         'operator' => '=',
       ];
     }
@@ -165,10 +178,10 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
     // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"
     // (see form alter when published is selected).
-    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NODE_PUBLISHED || !$membership) {
+    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || !$membership) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data_group_content_field_data.status',
-        'value' => NODE_PUBLISHED,
+        'value' => NodeInterface::PUBLISHED,
         'operator' => '=',
       ];
     }
@@ -278,4 +291,74 @@ function social_topic_block_access(Block $block, $operation, AccountInterface $a
  */
 function social_topic_social_follow_content_types_alter(array &$types) {
   $types[] = 'topic';
+}
+
+/**
+ * Sets dynamic allowed values for the topic type icon field.
+ */
+function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  $theme_path = drupal_get_path('theme', 'socialbase');
+  $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+
+  $options = [];
+  foreach ($icon_files as $file) {
+    $options[$file->name] = $file->name;
+  }
+
+  return $options;
+}
+
+/**
+ * Sets the default value for the topic type icon field.
+ */
+function social_topic_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+  return [
+    ['value' => 'icon-topic'],
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (!isset($form['field_topic_type_icon'])) {
+    return;
+  }
+
+  $form['#attached']['library'][] = 'social_topic/admin';
+
+  $default_icon = $form['field_topic_type_icon']['widget']['#default_value'][0];
+
+  $form['field_topic_type_icon']['preview'] = [
+    '#type' => 'inline_template',
+    '#template' => '<div class="icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
+    '#context' => [
+      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+    ],
+  ];
+
+  $form['field_topic_type_icon']['widget']['#ajax'] = [
+    'callback' => '_social_topic_change_topic_icon_ajax',
+    'event' => 'change',
+  ];
+}
+
+/**
+ * Ajax callback to change topic type icon.
+ */
+function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $form_state) {
+  $response = new AjaxResponse();
+
+  $icon = $form_state->getValue('field_topic_type_icon')[0]['value'];
+  $replaced = [
+    '#type' => 'inline_template',
+    '#template' => '<div class="icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
+    '#context' => [
+      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+    ],
+  ];
+
+  $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
+
+  return $response;
 }

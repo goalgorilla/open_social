@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Hook install and update functions for social_footer.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_footer_install() {
+  // Add default permission.
+  user_role_grant_permissions('sitemanager', ['administer social_footer_block settings']);
+}

@@ -115,7 +115,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
           foreach ($users as $user) {
             // Attempt sending mail.
             if ($user->getEmail()) {
-              $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage);
+              $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage, $user->getDisplayName());
             }
           }
         }

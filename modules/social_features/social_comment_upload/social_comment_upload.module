@@ -61,7 +61,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
     // For comments in activities we show the amount of attachments.
     if ($variables['elements']['#view_mode'] === 'activity' ||
       $variables['elements']['#view_mode'] === 'activity_comment') {
-      /* @var \Drupal\comment\Entity\Comment $comment */
+      /** @var \Drupal\comment\Entity\Comment $comment */
       if ($comment->hasField('field_comment_files')) {
         foreach ($comment->field_comment_files as $value) {
           if (isset($value->target_id)) {
