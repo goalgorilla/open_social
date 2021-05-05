@@ -114,6 +114,16 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns the filter query condition.
+   *
+   * @return string
+   *   Returns OR or AND.
+   */
+  public function queryCondition() {
+    return (string) ($this->configFactory->get('social_tagging.settings')->get('use_and_condition') ? 'AND' : 'OR');
+  }
+
+  /**
    * Returns whether using a parent of categories is allowed.
    *
    * @return bool
