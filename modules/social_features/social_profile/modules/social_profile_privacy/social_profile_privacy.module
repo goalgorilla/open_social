@@ -316,58 +316,17 @@ function social_profile_privacy_entity_field_access($operation, FieldDefinitionI
  * users that are allowed to see a full name even when there's a nickname.
  */
 function social_profile_privacy_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
-  $current_user = \Drupal::currentUser();
   $config = \Drupal::config('social_profile_privacy.settings');
 
   if (
     $config->get('limit_search_and_mention')
     && isset($suggestions['full_name'], $suggestions['nickname'])
-    && $current_user->hasPermission('social profile privacy always show full name')
+    && \Drupal::currentUser()->hasPermission('social profile privacy always show full name')
   ) {
     $suggestions['nickname_with_full_name'] = [
       'weight' => -PHP_INT_MAX,
       'name' => $suggestions['nickname']['name'] . ' (' . $suggestions['full_name']['name'] . ')',
     ];
-  }
-
-  // If the current user has whether permission to view full name or hidden
-  // fields then do nothing here.
-  if ($current_user->hasPermission('social profile privacy always show full name') || $current_user->hasPermission('social profile privacy view hidden fields')) {
-    return;
-  }
-
-  $uid = $account->id();
-  $fields = social_profile_privacy_private_fields_list($uid);
-
-  // If First name and Last name are hidden then suggestion with check access
-  // for those fields doesn't add for Full name.
-  // @see social_profile_social_user_name_display_suggestions()
-  // So we need to remove the Full name suggestion if all of those fields are
-  // hidden.
-  if (isset($suggestions['full_name'])) {
-    // Profile fields which use for composing the full name.
-    $account_name_fields = [
-      'field_profile_first_name',
-      'field_profile_last_name',
-    ];
-    $account_name_hidden = TRUE;
-    // If at least one field is not hidden then we don't need to remove the
-    // Full name suggestion.
-    foreach ($account_name_fields as $account_name_field) {
-      if (!in_array($account_name_field, $fields)) {
-        $account_name_hidden = FALSE;
-        break;
-      }
-    }
-    if ($account_name_hidden) {
-      unset($suggestions['full_name']);
-    }
-  }
-
-  // Remove nickname suggestion if module social_profile_fields are installed
-  // and field is hidden.
-  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields') && isset($suggestions['nickname']) && in_array('field_profile_nick_name', $fields)) {
-    unset($suggestions['nickname']);
   }
 }
 
