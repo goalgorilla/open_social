@@ -214,60 +214,6 @@ function social_block_view_search_hero_block_alter(array &$build, BlockPluginInt
 }
 
 /**
- * Implements hook_ENTITY_TYPE_update().
- *
- * Update the profile index when user is updated or delete entry when blocked.
- */
-function social_search_user_update(EntityInterface $entity) {
-  /** @var \Drupal\user\Entity\User $entity */
-  _social_search_retrigger_profile($entity);
-}
-
-/**
- * Retriggers the profile in the search when a user has ben changed.
- *
- * @param \Drupal\user\Entity\User $user
- *   The user whose profile we want to retrigger.
- */
-function _social_search_retrigger_profile(User $user) {
-  // These indices need to be updated.
-  $indexes = [
-    'social_all',
-    'social_users',
-  ];
-
-  try {
-    /** @var \Drupal\profile\ProfileStorage $profile_storage */
-    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  }
-  catch (InvalidPluginDefinitionException $e) {
-    return;
-  }
-  catch (PluginNotFoundException $e) {
-    return;
-  }
-
-  /** @var \Drupal\profile\Entity\Profile $profile */
-  $profile = $profile_storage->loadByUser($user, 'profile');
-
-  // Must be a profile, otherwise we can leave.
-  if (!$profile instanceof Profile) {
-    return;
-  }
-  /** @var Drupal\user\Entity\User $original_user */
-  $original_user = $user->original;
-  if ($user->isBlocked() && $original_user->isActive()) {
-    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityDelete($profile);
-  }
-  elseif ($user->isActive() && $original_user->isBlocked()) {
-    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityInsert($profile);
-  }
-  else {
-    \Drupal::service('search_api.entity_datasource.tracking_manager')->entityInsert($profile);
-  }
-}
-
-/**
  * Re-saves search indices.
  *
  * This triggers the save for all search indexes which triggers updates of
