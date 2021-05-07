@@ -8,7 +8,7 @@ on:
 # Create
 jobs:
   composer:
-    name: Composer ${{ matrix.php-versions }}
+    name: Install Composer & PHP ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -20,7 +20,7 @@ jobs:
       - name: Cache Composer dependencies
         uses: actions/cache@v2
         with:
-          path: /tmp/composer-cache/${{ matrix.php-versions }}
+          path: /tmp/composer-cache/
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Setup PHP and composer install
@@ -32,13 +32,13 @@ jobs:
           args: --ignore-platform-reqs
 
       - name: Archive build
-        run: mkdir /tmp/github-actions/${{ matrix.php-versions }} && tar -cvf /tmp/github-actions/${{ matrix.php-versions }}/build.tar ./
+        run: mkdir /tmp/github-actions && tar -cvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: Upload build archive for test runners
         uses: actions/upload-artifact@v2
         with:
           name: build-artifact
-          path: /tmp/github-actions/${{ matrix.php-versions }}
+          path: /tmp/github-actions
 
   phpunit:
     runs-on: ubuntu-latest
@@ -51,10 +51,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build-artifact
-          path: /tmp/github-actions/${{ matrix.php-versions }}
+          path: /tmp/github-actions
 
       - name: Extract build archive
-        run: tar -xvf /tmp/github-actions/${{ matrix.php-versions }}/build.tar ./
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: Run PHPUnit
         uses: php-actions/phpunit@v2
@@ -74,10 +74,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build-artifact
-          path: /tmp/github-actions/${{ matrix.php-versions }}
+          path: /tmp/github-actions
 
       - name: Extract build archive
-        run: tar -xvf /tmp/github-actions/${{ matrix.php-versions }}/build.tar ./
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: PHP Static Analysis
         uses: php-actions/phpstan@v2
@@ -95,10 +95,10 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: build-artifact
-          path: /tmp/github-actions/${{ matrix.php-versions }}
+          path: /tmp/github-actions
 
       - name: Extract build archive
-        run: tar -xvf /tmp/github-actions/${{ matrix.php-versions }}/build.tar ./
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
