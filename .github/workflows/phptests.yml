@@ -80,10 +80,7 @@ jobs:
         run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: PHP Static Analysis
-        uses: php-actions/phpstan@v2
-        with:
-          configuration: phpstan.neon
-          path: ['src', 'modules/custom', 'modules/social_features']
+        run: vendor/bin/phpstan analyse -c phpstan.neon
 
   phpcs:
     runs-on: ubuntu-latest
