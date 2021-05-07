@@ -21,21 +21,24 @@ For any other information be sure to checkout our
 <a target="_blank" href="https://www.drupal.org/docs/8/distributions/open-social">
 Documentation</a>.
 
-# GitHub Open Social PR flow
-![Open Social - Distro flow - Old](https://user-images.githubusercontent.com/16667281/117428390-508d7d00-af26-11eb-8340-115ab04b518e.jpg)
+# PR flow in Open Social
+![Open Social - Distro flow - New](https://user-images.githubusercontent.com/16667281/117429026-e75a3980-af26-11eb-8cd5-668b9fa61f4b.jpg)
 
-Whenever someone creates a PR within goalgorilla/open_social the following steps are triggered:
+## Automated
+Not only will we have manual PR's created, we use [dependabot](https://dependabot.com/) to automatically create dependency updates of the Drupal modules we use.
+
+## Webhook/Mirror [WIP]
+We want to see if we can mirror this repository with Drupal's GitLab. To ensure the work we are doing here is also automatically visible on GitLab and if there is any way to do it vice versa, so whenever a merge requests is created on GitLab we also have it in here.
+
+## Tugboat [WIP]
+We are testing [Tugboat](https://www.tugboat.qa/) to achieve the following:
+
+1. Create a live preview of every PR with the changes reflected
+2. Use this live preview to run Behat tests on
+3. Use this live preview to run Cypress tests on
 
 ## GitHub actions
 We use github actions to trigger
 1. PHPStan for static analysis of the code being contributed
 2. PHPCS for coding standards of the code being contributed
-
-## TravisCI
-We use TravisCI to run
-3. PHPUnit tests
-4. Behat tests
-
-After all checks are completed, including a manual review we can merge our PR's.
-
-**However - We are currently migrating to a new PR flow.**
+3. PHPUnit for our unit tests instead of running it in Travis CI 
