@@ -33,7 +33,7 @@ jobs:
       - name: Run PHPUnit
         uses: php-actions/phpunit@v2
         with:
-          configuration: phpunit.xml.dist
+          configuration: ./tests/phpunit/phpunit.xml
           php_version: ${{ matrix.php-versions }}
           php_extensions: mbstring
 
