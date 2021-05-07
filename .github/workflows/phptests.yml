@@ -24,7 +24,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Setup PHP and composer install
-        uses: php-actions/composer@v4
+        uses: php-actions/composer@v5
         with:
           php_version: ${{ matrix.php-versions }}
           php_extensions: mbstring
