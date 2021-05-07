@@ -1,4 +1,4 @@
-name: PHPUnit PHPStan PHPCS
+name: PHPStan & PHPUnit & PHPCS
 on:
   push:
     branches:
@@ -29,7 +29,11 @@ jobs:
           version: '2'
           args: --ignore-platform-reqs
       - name: Run PHPUnit
-        run: vendor/bin/phpunit -c ./phpunit.xml.dist
+        uses: php-actions/phpunit@v2
+        with:
+          configuration: ./phpunit.xml.dist
+          php_version: ${{ matrix.php-versions }}
+          php_extensions: mbstring
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse -c phpstan.neon
       - name: PHPCS check
