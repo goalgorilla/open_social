@@ -1,0 +1,78 @@
+{
+    "name": "goalgorilla/open_social_tugboat",
+    "description": "Tugboat project set-up for Open Social previews.",
+    "type": "project",
+    "license": "UNLICENSED",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {},
+    "require-dev": {
+        "drupal/coder": "8.3.x-dev",
+        "dealerdirect/phpcodesniffer-composer-installer": "dev-master",
+        "drush/drush": "^8",
+        "mikey179/vfsstream": "^1.6",
+        "mglaman/phpstan-drupal": "^0.12",
+        "phpstan/extension-installer": "^1.1.0",
+        "phpstan/phpstan-deprecation-rules": "^0.12",
+        "phpstan/phpstan-phpunit": "^0.12",
+        "phpunit/phpunit": "^7.5",
+        "squizlabs/php_codesniffer": "^3.6.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/goalgorilla/open_social"
+        },
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "extra": {
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "html/"
+            }
+        },
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "installer-paths": {
+            "html/core": [
+                "type:drupal-core"
+            ],
+            "html/modules/contrib/{$name}": [
+                "type:drupal-module",
+                "type:drupal-module-custom"
+            ],
+            "html/profiles/contrib/social": [
+                "goalgorilla/open_social"
+            ],
+            "html/profiles/contrib/${name}": [
+                "type:drupal-profile"
+            ],
+            "html/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "scripts/{$name}": [
+                "goalgorilla/open_social_scripts",
+                "goalgorilla/gpi_scripts",
+                "goalgorilla/enterprise_scripts"
+            ],
+            "html/libraries/{$name}": [
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "enable-patching": true
+    }
+}
