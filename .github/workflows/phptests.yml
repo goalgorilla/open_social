@@ -83,11 +83,7 @@ jobs:
         uses: php-actions/phpstan@v2
         with:
           configuration: phpstan.neon
-          path:
-            - src
-            - modules/custom
-            - modules/social_features
-
+          path: ['src', 'modules/custom', 'modules/social_features']
 
   phpcs:
     runs-on: ubuntu-latest
