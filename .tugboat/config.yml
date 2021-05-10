@@ -22,6 +22,9 @@ services:
         mkdir -p $DOCROOT/../config/sync
         # Create a private file path.
         mkdir -p $DOCROOT/../files_private
+        # Find the branch name regardless of preview type. This does fail for
+        # non-GitHub PRs or branches until Tugboat provdes a better way.
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" == "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
         # Find the project name from the root composer.json file
         export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
         # Copy the composer.json test project file.
@@ -29,7 +32,7 @@ services:
         # Add the GitHub repository that the branch is in.
         composer config repositories.open_social git "https://github.com/$TUGBOAT_GITHUB_OWNER/$TUGBOAT_GITHUB_REPO"
         # Install our preview version through private packagist from BitBucket.
-        composer require $COMPOSER_PROJECT_NAME:dev-$TUGBOAT_GITHUB_HEAD#$TUGBOAT_PREVIEW_SHA
+        composer require $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
         # Use the tugboat-specific Drupal settings.
         cat $DOCROOT/sites/default/default.settings.php | \
           sed -z "s@#\n# if (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n#   include \$app_root . '/' . \$site_path . '/settings.local.php';\n# }@if (file_exists(__DIR__ . '/settings.local.php')) {\n  include __DIR__ . '/settings.local.php';\n}@" \
@@ -63,8 +66,9 @@ services:
         chown -R www-data:www-data $DOCROOT
       build: |
         cd $DOCROOT/..
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" == "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
         export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
-        composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$TUGBOAT_GITHUB_HEAD#$TUGBOAT_PREVIEW_SHA
+        composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
         composer install --optimize-autoloader
         cd html && ../vendor/bin/drush updatedb -y
 
