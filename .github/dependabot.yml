@@ -1,0 +1,38 @@
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions - Update once every week.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    labels:
+      - "type: update"
+      - "team: nucleus"  
+
+  # Maintain dependencies for Composer.
+  - package-ecosystem: "composer"
+    directory: "/"
+    # Make sure we don't clog our automated tests, so we runt it after midnight.
+    schedule:
+      interval: "daily"
+      time: "01:00"
+      timezone: "Europe/Amsterdam"
+    labels:
+      - "type: update"
+      - "team: nucleus"
+    # Let core team maintainers review it.
+    reviewers:
+      - "goalgorilla/maintainers"
+    # Allow updates for all Drupal modules, lets leave the rest for now.  
+    allow:
+      - dependency-name: "drupal*"
+    ignore:
+      - dependency-name: "npm*"
+    # Prefix all commit messages with "Composer"
+    # include a list of updated dependencies
+    commit-message:
+      prefix: "Updates: "
+      include: "scope"
+    # Allow up to 5 open pull requests for Drupal dependencies as we have some to go.
+    open-pull-requests-limit: 5  

@@ -20,3 +20,22 @@ Github</a>
 For any other information be sure to checkout our
 <a target="_blank" href="https://www.drupal.org/docs/8/distributions/open-social">
 Documentation</a>.
+
+# GitHub Open Social PR flow
+![Open Social - Distro flow - Old](https://user-images.githubusercontent.com/16667281/117428390-508d7d00-af26-11eb-8340-115ab04b518e.jpg)
+
+Whenever someone creates a PR within goalgorilla/open_social the following steps are triggered:
+
+## GitHub actions
+We use github actions to trigger
+1. PHPStan for static analysis of the code being contributed
+2. PHPCS for coding standards of the code being contributed
+
+## TravisCI
+We use TravisCI to run
+3. PHPUnit tests
+4. Behat tests
+
+After all checks are completed, including a manual review we can merge our PR's.
+
+**However - We are currently migrating to a new PR flow.**
