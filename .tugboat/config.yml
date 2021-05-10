@@ -24,7 +24,7 @@ services:
         mkdir -p $DOCROOT/../files_private
         # Find the branch name regardless of preview type. This does fail for
         # non-GitHub PRs or branches until Tugboat provdes a better way.
-        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" == "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" = "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
         # Find the project name from the root composer.json file
         export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
         # Copy the composer.json test project file.
@@ -66,7 +66,7 @@ services:
         chown -R www-data:www-data $DOCROOT
       build: |
         cd $DOCROOT/..
-        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" == "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" = "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
         export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
         composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
         composer install --optimize-autoloader
