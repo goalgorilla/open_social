@@ -65,7 +65,7 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
   /**
-   * @AfterScenario
+   * @AfterScenario @tour
    *
    * @param $event
    */
