@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
 
@@ -214,8 +215,9 @@ function social_search_update_10001() {
  */
 function social_search_update_10002() {
   try {
+    $social_user_update_indexes = Settings::get('social_user_update_indexes', TRUE);
     $index = Index::load('social_users');
-    if ($index !== NULL && $index->status()) {
+    if ($index !== NULL && $index->status() && $social_user_update_indexes) {
       $index->save();
       $index->clear();
       $index->reindex();
