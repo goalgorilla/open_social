@@ -41,7 +41,11 @@ function template_preprocess_activity(array &$variables) {
 
   // Display activity created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($activity->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
+    ->formatTimeDiffSince($activity->getCreatedTime(), [
+      'granularity' => 1,
+      'return_as_object' => TRUE,
+    ]);
+
   $date = t('@time ago', ['@time' => $created_time_ago->getString()]);
   if (isset($variables['elements']['#view_mode']) && in_array($variables['content']['field_activity_output_text']['#view_mode'], [
     'notification',
@@ -122,6 +126,17 @@ function template_preprocess_activity(array &$variables) {
   switch ($status) {
     case ACTIVITY_STATUS_RECEIVED:
       $status_class = 'bg-gray-lightest';
+
+      if (\Drupal::routeMatch()->getRouteName() === 'view.activity_stream_notifications.page_1') {
+        $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ACTIVITY_STATUS_SEEN);
+
+        // In case when a notification is unread then it should not be cached
+        // because when a page will be opened the second time then a styling of
+        // unread notification should be removed as the notification has been
+        // marked as read.
+        $variables['#cache']['max-age'] = 0;
+      }
+
       break;
 
     default:
