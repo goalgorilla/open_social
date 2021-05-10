@@ -126,19 +126,32 @@ function social_profile_fields_form_alter(&$form, FormStateInterface $form_state
 function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
+  $entityTypeManager = \Drupal::entityTypeManager();
+
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $storage = $entityTypeManager->getStorage('profile');
 
   if (!$user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
     return $suggestions;
   }
 
-  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->field_profile_nick_name->isEmpty()) {
-    // Add the nickname with a low weight so it's shown before the full name.
-    $suggestions['nickname'] = [
-      'weight' => -100,
-      'name' => $user_profile->field_profile_nick_name->value,
-    ];
+  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->get('field_profile_nick_name')->isEmpty()) {
+    /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
+    $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
+
+    $nick_name_field = $user_profile->get('field_profile_nick_name');
+
+    $nick_name = $accessControlHandler->fieldAccess('view', $nick_name_field->getFieldDefinition(), NULL, $nick_name_field, FALSE)
+      ? $nick_name_field->getString()
+      : "";
+
+    if ($nick_name !== '') {
+      // Add the nickname with a low weight so it's shown before the full name.
+      $suggestions['nickname'] = [
+        'weight' => -100,
+        'name' => $nick_name,
+      ];
+    }
   }
 
   return $suggestions;
