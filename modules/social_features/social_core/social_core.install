@@ -1313,10 +1313,27 @@ function social_core_update_8908() {
 /**
  * Install ultimate cron module.
  */
-function social_core_update_10101() {
+function social_core_update_10102() {
   $modules = [
     'ultimate_cron',
     'social_advanced_queue'
   ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Add a OS favicon on the admin pages.
+ */
+function social_core_update_10103() {
+  $config_file = drupal_get_path('module', 'social_core') . '/config/install/gin.settings.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('gin.settings');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

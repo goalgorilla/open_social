@@ -30,6 +30,9 @@ use Drupal\user\UserInterface;
 function social_core_page_attachments(array &$attachments) {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_core/accessibility';
+
+  // The library with logo improvements on the top of the gin toolbar.
+  $attachments['#attached']['library'][] = 'social_core/admin-toolbar';
 }
 
 /**
