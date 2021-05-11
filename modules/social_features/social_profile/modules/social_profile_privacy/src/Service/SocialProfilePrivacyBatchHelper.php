@@ -67,10 +67,8 @@ class SocialProfilePrivacyBatchHelper {
       return '';
     }
 
-    // Do nothing if no account.
-    if (!$account = $user_storage->load($profile->getOwnerId())) {
-      return '';
-    }
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $user_storage->load($profile->getOwnerId());
 
     // Set default profile name.
     $account_name = $account->getAccountName();
