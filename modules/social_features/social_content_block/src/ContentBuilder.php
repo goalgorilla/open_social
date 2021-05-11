@@ -182,6 +182,12 @@ class ContentBuilder implements ContentBuilderInterface {
         ->getStorage($definition['entityTypeId'])
         ->loadMultiple($entities);
 
+      foreach ($entities as $key => $entity) {
+        if ($entity->access('view') === FALSE) {
+          unset($entities[$key]);
+        }
+      }
+
       return $this->entityTypeManager
         ->getViewBuilder($definition['entityTypeId'])
         ->viewMultiple($entities, 'small_teaser');
