@@ -61,11 +61,14 @@ class SocialProfilePrivacyBatchHelper {
   public function getProfileName(ProfileInterface $profile = NULL) {
     /** @var \Drupal\user\UserStorageInterface $user_storage */
     $user_storage = $this->entityTypeManager->getStorage('user');
-    /** @var \Drupal\user\UserInterface $account */
-    $account = $user_storage->load($profile->getOwnerId());
+
+    // Do nothing if no profile.
+    if ($profile == NULL) {
+      return '';
+    }
 
     // Do nothing if no account.
-    if ($account == NULL) {
+    if (!$account = $user_storage->load($profile->getOwnerId())) {
       return '';
     }
 
@@ -133,8 +136,7 @@ class SocialProfilePrivacyBatchHelper {
   public static function initOperation(array $args, array &$context) {
     // Init variables.
     $limit = $args['limit'];
-    $offset = (!empty($context['sandbox']['offset'])) ?
-      $context['sandbox']['offset'] : 0;
+    $offset = $context['sandbox'] ?? 0;
 
     $userStorage = \Drupal::entityTypeManager()->getStorage('user');
 

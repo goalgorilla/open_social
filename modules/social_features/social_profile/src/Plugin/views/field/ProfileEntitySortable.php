@@ -74,7 +74,9 @@ class ProfileEntitySortable extends RenderedEntity {
         ];
 
         $join = $this->joinManager->createInstance('standard', $definition);
-        $this->query->addRelationship($definition['table'], $join, $this->relationship);
+        /** @var \Drupal\views\Plugin\views\query\Sql $query */
+        $query = $this->query;
+        $query->addRelationship($definition['table'], $join, $this->relationship);
 
         $this->field_alias = $definition['table'] . '.profile_name_value';
       }
