@@ -1280,11 +1280,10 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
  * Implements hook_field_widget_form_alter().
  */
 function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
-  // Unset the public options on visibility field.
+  // Unset the visibility field options which are not enabled.
   if ($field_definition->getType() == 'entity_access_field') {
     $default_value = $context['items']->getValue();
     if (isset($default_value[0]['value'])) {
@@ -1301,6 +1300,8 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
+      // If it's an existing entity we dont need to set the default
+      // rather follow the saved one.
       if (!$entity->id()) {
         $element['#default_value'] = \Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group_type_id);
       }
@@ -1316,8 +1317,38 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
     }
-  }
 
+    // This contains the group that is passed back from the form_state as
+    // chosen by selecting a group in the $form['groups'] select widget.
+    // With this we can ensure that on validation the content visibility
+    // field is disabling the correct values based on the selected group.
+    if (!empty($form_state->getValue('groups'))) {
+      $group_id = NULL;
+      $group_value = $form_state->getValue('groups');
+      if (is_array($group_value)) {
+        $group_id = $group_value[0]['target_id'];
+      }
+      if (is_string($group_value)) {
+        $group_id = (int) $group_value;
+      }
+      // Load the correct group.
+      $selected_groups = Group::loadMultiple([$group_id]);
+
+      // Ensure we disable the correct visibility options.
+      foreach ($selected_groups as $current_group) {
+        if (!empty($current_group)) {
+          $group_type = $current_group->getGroupType();
+          $group_type_id = $group_type->id();
+
+          $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, NULL, $current_group);
+
+          foreach ($visibility_options as $visibility => $allowed) {
+            $element[$visibility]['#disabled'] = !$allowed;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
