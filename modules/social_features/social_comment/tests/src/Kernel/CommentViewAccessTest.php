@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\social_comment\Kernel;
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
@@ -69,18 +70,28 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   *
+   * Until https://www.drupal.org/project/drupal/issues/3039955 is fixed.
+   */
+  protected function setUpCurrentUser(array $values = [], array $permissions = [], $admin = FALSE) {
+    self::assertFalse($admin, "The current setUpCurrentUser workaround doesn't support admin users.");
+    $user = $this->createUser($values, $permissions);
+    $this->setCurrentUser($user);
+    return $user;
+  }
+
+  /**
    * Test that a user can view only published comment.
    */
   public function testUserCanViewOnlyPublishedComment() {
-    $user = $this->setUpCurrentUser([], ['access comments']);
-
-    $this->createComment($this->node, $user);
-    $this->createComment($this->node, $user, ['status' => 1]);
-    $this->createComment($this->node, $user, ['status' => 1]);
+    $this->setUpCurrentUser([], ['access comments']);
+    $this->createComment($this->node);
+    $this->createComment($this->node, ['status' => 1]);
+    $this->createComment($this->node, ['status' => 1]);
 
     // Create another user to try and view the comment.
-    $user = $this->createUser([], ['access comments']);
-    $this->setCurrentUser($user);
+    $this->setUpCurrentUser([], ['access comments']);
 
     $all_comments = $this->storage
       ->getQuery()
@@ -105,14 +116,13 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    * Test that a user can not view comment without permission.
    */
   public function testUserCanNotViewCommentWithoutPermission() {
-    $user = $this->setUpCurrentUser([], ['access comments']);
+    $this->setUpCurrentUser([], ['access comments']);
 
-    $this->createComment($this->node, $user);
-    $this->createComment($this->node, $user, ['status' => 1]);
+    $this->createComment($this->node);
+    $this->createComment($this->node, ['status' => 1]);
 
     // Create another user to try and view the comment.
-    $user = $this->createUser();
-    $this->setCurrentUser($user);
+    $this->setUpCurrentUser();
 
     $all_comments = $this->storage
       ->getQuery()
@@ -134,23 +144,21 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
-   * Create the comment entity.
+   * Create and save a comment entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity the comment is made on.
-   * @param \Drupal\Core\Session\AccountInterface|null $user
-   *   An optional user to create the comment as.
    * @param mixed[] $values
    *   An optional array of values to pass to Comment::create.
    *
+   * @return \Drupal\comment\CommentInterface
+   *   The created comment.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []): void {
-    if ($user !== NULL) {
-      $values += ['uid' => $user->id()];
-    }
-
-    $this->storage->create(
+  private function createComment(EntityInterface $entity, array $values = []): CommentInterface {
+    /** @var \Drupal\comment\CommentInterface $comment */
+    $comment = $this->storage->create(
       $values +
       [
         'entity_id' => $entity->id(),
@@ -158,7 +166,10 @@ class CommentViewAccessTest extends EntityKernelTestBase {
         'comment_type' => 'comment',
         'field_name' => 'comments',
       ]
-    )->save();
+    );
+    $comment->save();
+
+    return $comment;
   }
 
 }
