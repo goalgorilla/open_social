@@ -23,7 +23,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
     // For the comment functionality.
     'social_comment',
     'comment',
-    // For checking access to comments.
+    // For checking access to a comment.
     'entity',
     // For the comment author and viewer.
     'social_user',
@@ -69,63 +69,68 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   }
 
   /**
-   * Test that a user can not view their own unpublished comment.
-   *
-   * This mirrors the functionality of the distribution at the time of writing
-   * the test.
+   * Test that a user can view only published comment.
    */
-  public function testUserCanNotViewOwnUnpublishedComment() {
-    // Create an unpublished comment on a node.
-    $user = $this->createUser([], ['access comments']);
-    $this->setCurrentUser($user);
-    $this->createComment($this->node, $user, ['status' => 0]);
+  public function testUserCanViewOnlyPublishedComment() {
+    $user = $this->setUpCurrentUser([], ['access comments']);
 
-    $this->assertEmpty($this->getCommentIds($this->node, $user));
-  }
-
-  /**
-   * Test that a user can view their own published comment.
-   *
-   * This mirrors the functionality of the distribution at the time of writing
-   * the test.
-   */
-  public function testUserCanViewOwnPublishedComment() {
-    // Create an unpublished comment on a node.
-    $user = $this->createUser([], ['access comments']);
-    $this->setCurrentUser($user);
+    $this->createComment($this->node, $user);
+    $this->createComment($this->node, $user, ['status' => 1]);
     $this->createComment($this->node, $user, ['status' => 1]);
 
-    $this->assertNotEmpty($this->getCommentIds($this->node, $user));
+    // Create another user to try and view the comment.
+    $user = $this->createUser([], ['access comments']);
+    $this->setCurrentUser($user);
+
+    $all_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_id', $this->node->id())
+      ->condition('comment_type', 'comment')
+      ->execute();
+
+    self::assertCount(3, $all_comments);
+
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('entity_id', $this->node->id())
+      ->condition('comment_type', 'comment')
+      ->execute();
+
+    self::assertCount(2, $visible_comments);
   }
 
   /**
-   * Test that a user can not view another person's unpublished comment.
+   * Test that a user can not view comment without permission.
    */
-  public function testUserCanNotViewOtherUnpublishedComment() {
-    // Create an unpublished comment on a node.
-    $first_user = $this->createUser([], ['access comments']);
-    $this->createComment($this->node, $first_user, ['status' => 0]);
+  public function testUserCanNotViewCommentWithoutPermission() {
+    $user = $this->setUpCurrentUser([], ['access comments']);
+
+    $this->createComment($this->node, $user);
+    $this->createComment($this->node, $user, ['status' => 1]);
 
     // Create another user to try and view the comment.
-    $second_user = $this->createUser([], ['access comments']);
-    $this->setCurrentUser($second_user);
+    $user = $this->createUser();
+    $this->setCurrentUser($user);
 
-    $this->assertEmpty($this->getCommentIds($this->node, $first_user));
-  }
+    $all_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_id', $this->node->id())
+      ->condition('comment_type', 'comment')
+      ->execute();
 
-  /**
-   * Test that a user can view another person's published comment.
-   */
-  public function testUserCanViewOtherPublishedComment() {
-    // Create an unpublished comment on a node.
-    $first_user = $this->createUser([], ['access comments']);
-    $this->createComment($this->node, $first_user, ['status' => 1]);
+    self::assertCount(2, $all_comments);
 
-    // Create another user to try and view the comment.
-    $second_user = $this->createUser([], ['access comments']);
-    $this->setCurrentUser($second_user);
+    $visible_comments = $this->storage
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('entity_id', $this->node->id())
+      ->condition('comment_type', 'comment')
+      ->execute();
 
-    $this->assertNotEmpty($this->getCommentIds($this->node, $first_user));
+    self::assertEmpty($visible_comments);
   }
 
   /**
@@ -154,28 +159,6 @@ class CommentViewAccessTest extends EntityKernelTestBase {
         'field_name' => 'comments',
       ]
     )->save();
-  }
-
-  /**
-   * Get a list of comment IDs whose user have access.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity the comment is made on.
-   * @param \Drupal\Core\Session\AccountInterface $user
-   *   The user to create the comment as.
-   *
-   * @return array
-   *   An array of comment IDs.
-   */
-  private function getCommentIds(EntityInterface $entity, AccountInterface $user): array {
-    return $this->storage
-      ->getQuery()
-      ->currentRevision()
-      ->accessCheck()
-      ->condition('entity_id', $entity->id())
-      ->condition('comment_type', 'comment')
-      ->condition('uid', $user->id())
-      ->execute();
   }
 
 }
