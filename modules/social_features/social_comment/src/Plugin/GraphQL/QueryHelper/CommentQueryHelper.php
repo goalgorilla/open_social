@@ -61,7 +61,7 @@ class CommentQueryHelper implements ConnectionQueryHelperInterface {
     $query = $this->entityTypeManager->getStorage('comment')
       ->getQuery()
       ->currentRevision()
-      ->accessCheck();
+      ->accessCheck(TRUE);
 
     if ($this->parent instanceof NodeInterface) {
       $query->condition('entity_id', $this->parent->id());

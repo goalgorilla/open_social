@@ -29,6 +29,8 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     // For the comment functionality.
     'social_comment',
     'comment',
+    // For checking access to a comment.
+    'entity',
     // For the comment author and viewer.
     'social_user',
     'user',
@@ -118,6 +120,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultCacheMetaData()
+        ->setCacheMaxAge(0)
         ->addCacheContexts(['languages:language_interface'])
     );
   }
@@ -130,12 +133,12 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    */
   public function testUserCanViewOnlyOwnOrOtherPublishedComments() {
     $node = $this->createNode();
-
     // A user to create some other comments with.
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
-    /* $unpublished_comment = */$this->createComment($node);
-    $published_comment = $this->createComment($node);
-    $published_comment->setPublished(TRUE)->save();
+    // Unpublished comment.
+    $this->createComment($node);
+    // Published comment.
+    $published_comment = $this->createComment($node, NULL, ['status' => 1]);
 
     // Create another user that can view published comments.
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
@@ -163,14 +166,12 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
           ],
           'nodes' => [
             ['id' => $published_comment->uuid()],
-            ['id' => $own_unpublished_comment->uuid()],
           ],
         ],
       ],
       $this->defaultCacheMetaData()
-        ->addCacheableDependency($node)
+        ->setCacheMaxAge(0)
         ->addCacheableDependency($published_comment)
-        ->addCacheableDependency($own_unpublished_comment)
         ->addCacheContexts(['languages:language_interface'])
     );
   }

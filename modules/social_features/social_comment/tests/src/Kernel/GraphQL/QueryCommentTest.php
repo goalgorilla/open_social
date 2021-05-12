@@ -29,6 +29,8 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     // For the comment functionality.
     'social_comment',
     'comment',
+    // For checking access to a comment.
+    'entity',
     // For the comment author and viewer.
     'social_user',
     'user',
