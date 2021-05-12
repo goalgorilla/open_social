@@ -7,8 +7,8 @@ on:
 
 # Create
 jobs:
-  testing:
-    name: PHP Actions for PHP ${{ matrix.php-versions }}
+  composer:
+    name: Install Composer & PHP ${{ matrix.php-versions }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,30 +17,90 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup PHP and composer install
-        uses: php-actions/composer@v4
-        with:
-          php_version: ${{ matrix.php-versions }}
-          composer_version: '2'
-
       - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
           path: /tmp/composer-cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
+          key: ${{ runner.os }}-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Archive build
+        run: mkdir /tmp/github-actions && tar -cvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
+
+      - name: Upload build archive for test runners
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: /tmp/github-actions
+
+  phpunit:
+    runs-on: ubuntu-latest
+    needs: [composer]
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.3', '7.4']
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: /tmp/github-actions
+
+      - name: Extract build archive
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
+
+      - name: Run PHPUnit
+        uses: php-actions/phpunit@v2
+        with:
+          configuration: phpunit.xml.dist
+          php_version: ${{ matrix.php-versions }}
+          php_extensions: mbstring
+
+  phpstan:
+    runs-on: ubuntu-latest
+    needs: [composer]
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.3', '7.4']
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: /tmp/github-actions
+
+      - name: Extract build archive
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: PHP Static Analysis
         run: vendor/bin/phpstan analyse -c phpstan.neon
+
+  phpcs:
+    runs-on: ubuntu-latest
+    needs: [composer]
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.3', '7.4']
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: /tmp/github-actions
+
+      - name: Extract build archive
+        run: tar -xvf /tmp/github-actions/build-${{ matrix.php-versions }}.tar ./
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
         with:
           phpcs_bin_path: './vendor/bin/phpcs'
-
-      - name: Run PHPUnit
-        uses: php-actions/phpunit@v2
-        with:
-          configuration: ./tests/phpunit/phpunit.xml
-          php_version: ${{ matrix.php-versions }}
-          php_extensions: mbstring
