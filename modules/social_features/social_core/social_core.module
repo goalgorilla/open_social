@@ -1021,6 +1021,9 @@ function _social_core_set_default_email_logo_for_socialblue() {
   }
 }
 
+/**
+ * Used to set the favicon of GIN to open socials logo.
+ */
 function _social_core_set_favicon() {
   $config = \Drupal::configFactory()->getEditable('gin.settings');
   if (!empty($config->getRawData())) {
