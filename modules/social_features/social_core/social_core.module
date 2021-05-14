@@ -1022,6 +1022,22 @@ function _social_core_set_default_email_logo_for_socialblue() {
 }
 
 /**
+ * Used to set the favicon of GIN to open socials logo.
+ */
+function _social_core_set_favicon() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    // Update the favicon in GIN.
+    $gin_config['favicon']['use_default'] = FALSE;
+    $gin_config['favicon']['path'] = 'themes/contrib/socialblue/favicon.ico';
+    $gin_config['favicon']['mimetype'] = 'image/vnd.microsoft.icon';
+    $config->setData($gin_config);
+    $config->save();
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for status_messages.
  */
 function social_core_preprocess_status_messages(&$variables) {
