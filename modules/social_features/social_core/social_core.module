@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -77,6 +78,33 @@ function social_core_modules_installed($modules) {
     (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
       ->moduleExists('social_book'))) {
     \Drupal::service('module_installer')->install(['social_book_featured']);
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  $field_groups = $form_display->getThirdPartySettings('field_group');
+
+  if (!isset($field_groups['group_settings'])) {
+    return;
+  }
+
+  $fields = [];
+
+  foreach ($field_groups as $field_group) {
+    $fields = array_merge($fields, $field_group['children']);
+  }
+
+  $fields = array_diff(array_keys($form_display->getComponents()), $fields);
+
+  if ($fields) {
+    $field_groups['group_settings']['children'] += $fields;
+
+    $form_display
+      ->setThirdPartySetting('field_group', 'group_settings', $field_groups['group_settings'])
+      ->save();
   }
 }
 
@@ -864,6 +892,22 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           $form['created']['widget'][0]['value']['#description'] = '';
           $form['author_info']['created'] = $form['created'];
           unset($form['created']);
+        }
+
+        $has_option_fields = FALSE;
+
+        foreach (['promote', 'sticky'] as $field) {
+          if (isset($form[$field])) {
+            $form['options'][$field] = $form[$field];
+            unset($form[$field]);
+            $has_option_fields = TRUE;
+          }
+        }
+
+        if ($has_option_fields) {
+          $form['options']['#group'] = 'group_settings';
+          $form['options']['#weight'] = 120;
+          $form['options']['#optional'] = FALSE;
         }
       }
 
