@@ -142,3 +142,294 @@ Feature: I want to restrict full name visibility when nickname is used
     And I disable the module "social_profile_privacy"
 
   # TODO: Add test for mentioning using Javascript?
+
+  Scenario: Successfully show First Name only
+    # Globally enable the Firstname field and disable the Lastname, Nickname
+    # fields access.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name"
+    And I click the element with css selector "#edit-fields-field-profile-last-name--3"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name--3"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Check the profile of myself, and I should see Firstname and Lastname even
+    # if the Lastname is hidden.
+    Given I am logged in as "user_1"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Open User"
+
+    # Check my topic, and I should see Firstname and Lastname of the author even
+    # if the Lastname is hidden.
+    And I am on "user"
+    And I click "Topics"
+    And I click "Create Topic"
+    When I fill in the following:
+      | Title | Ressinel's Topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click radio button "Discussion"
+    And I press "Create topic"
+    Then I should see "Ressinel's Topic has been created."
+    Then I should see "Open User"
+
+    # Check the profile of someone else, and now I should see the Firstname
+    # only.
+    And I am on the profile of "user_2"
+    And I click "Information"
+    Then I should not see "Secretive Person"
+    But I should see "Secretive"
+
+    # Check the topic of someone else, and I should see only the Firstname of
+    # the author.
+    Given I am logged in as "user_2"
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Open"
+
+    # We provide the ability to edit access to the Firstname, Lastname, and
+    # Nickname fields for each user separately.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-last-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name--2"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Enable the Firstname field and disable the Lastname, Nickname fields
+    # access on my profile.
+    Given I am logged in as "user_1"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "Settings"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-first-name-1]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-last-name-0]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-nick-name-0]"
+    And I press "Save"
+
+    # Check the profile of myself, and I should see Firstname and Lastname even
+    # if the Lastname is hidden.
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Open User"
+
+    # Check my topic, and I should see Firstname and Lastname of the author even
+    # if the Lastname is hidden.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Open User"
+
+    # Check the profile by someone else, and I should see the Firstname only.
+    Given I am logged in as "user_2"
+    Then I am on the profile of "user_1"
+    And I click "Information"
+    And I should not see "Open User"
+    But I should see "Open"
+
+    # Check the topic of someone else, and I should see only the Firstname of
+    # the author.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Open"
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"
+
+  Scenario: Successfully show Last Name only
+    # Globally enable the Firstname field and disable the Lastname, Nickname
+    # fields access.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name--3"
+    And I click the element with css selector "#edit-fields-field-profile-last-name"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name--3"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Check the profile of myself, and I should see Firstname and Lastname even
+    # if the Lastname is hidden.
+    Given I am logged in as "user_1"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Open User"
+
+    # Check my topic, and I should see Firstname and Lastname of the author even
+    # if the Lastname is hidden.
+    And I am on "user"
+    And I click "Topics"
+    And I click "Create Topic"
+    When I fill in the following:
+      | Title | Ressinel's Topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click radio button "Discussion"
+    And I press "Create topic"
+    Then I should see "Ressinel's Topic has been created."
+    Then I should see "Open User"
+
+    # Check the profile of someone else, and now I should see the Firstname
+    # only.
+    And I am on the profile of "user_2"
+    And I click "Information"
+    Then I should not see "Secretive Person"
+    But I should see "Person"
+
+    # Check the topic of someone else, and I should see only the Firstname of
+    # the author.
+    Given I am logged in as "user_2"
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "User"
+
+    # We provide the ability to edit access to the Firstname, Lastname, and
+    # Nickname fields for each user separately.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-last-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name--2"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Enable the Firstname field and disable the Lastname, Nickname fields
+    # access on my profile.
+    Given I am logged in as "user_1"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "Settings"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-first-name-0]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-last-name-1]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-nick-name-0]"
+    And I press "Save"
+
+    # Check the profile of myself, and I should see Firstname and Lastname even
+    # if the Lastname is hidden.
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Open User"
+
+    # Check my topic, and I should see Firstname and Lastname of the author even
+    # if the Lastname is hidden.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Open User"
+
+    # Check the profile by someone else, and I should see the Firstname only.
+    Given I am logged in as "user_2"
+    Then I am on the profile of "user_1"
+    And I click "Information"
+    And I should not see "Open User"
+    But I should see "User"
+
+    # Check the topic of someone else, and I should see only the Firstname of
+    # the author.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "User"
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"
+
+  Scenario: Successfully show Nick Name only
+    # Globally enable the Nickname field and disable the Firstname, Lastname
+    # fields access.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name--3"
+    And I click the element with css selector "#edit-fields-field-profile-last-name--3"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Check the profile of myself, and I should see the Nickname.
+    Given I am logged in as "user_2"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Hide my name"
+
+    # Check my topic, and I should see the Nickname of the author.
+    And I am on "user"
+    And I click "Topics"
+    And I click "Create Topic"
+    When I fill in the following:
+      | Title | Ressinel's Topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click radio button "Discussion"
+    And I press "Create topic"
+    Then I should see "Ressinel's Topic has been created."
+    Then I should see "Hide my name"
+
+    # Check the profile of someone else, and I should see the Nickname or
+    # default username if Nickname is empty.
+    And I am on the profile of "user_1"
+    And I click "Information"
+    And I should not see "Open User"
+    But I should see "user_1"
+
+    # Check the topic of someone else, and I should see the Nickname of the
+    # author or default username if Nickname is empty.
+    Given I am logged in as "user_1"
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Hide my name"
+
+    # We provide the ability to edit access to the Firstname, Lastname, and
+    # Nickname fields for each user separately.
+    Given I am logged in as an "administrator"
+    And I am on "admin/config/people/social-profile"
+    And I click the element with css selector "#edit-fields-field-profile-first-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-last-name--2"
+    And I click the element with css selector "#edit-fields-field-profile-nick-name--2"
+    And I press "Save configuration"
+    Then I wait for the batch job to finish
+
+    # Enable the Nickname field and disable the Firstname, Lastname fields
+    # access on my profile.
+    Given I am logged in as "user_2"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "Settings"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-first-name-0]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-last-name-0]"
+    And I click the element with css selector "label[for=edit-profile-privacy-fields-field-profile-nick-name-1]"
+    And I press "Save"
+
+    # Check the profile of myself, and I should see the Nickname or default
+    # username if Nickname is empty.
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    Then I should see "Hide my name"
+
+    # Check my topic, and I should see the Nickname of the author or default
+    # username if Nickname is empty.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should see "Hide my name"
+
+    # Check the profile by someone else, and I should see the Nickname or
+    # default username if Nickname is empty.
+    Given I am logged in as "user_1"
+    Then I am on the profile of "user_2"
+    And I click "Information"
+    And I should not see "Secretive Person"
+    But I should see "Hide my name"
+
+    # Check the topic of someone else, and I should see the Nickname of the
+    # author or default username if Nickname is empty.
+    When I am on "all-topics"
+    Then I should see "Ressinel's Topic"
+    And I click "Ressinel's Topic"
+    Then I should not see "Secretive Person"
+    But I should see "Hide my name"
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"

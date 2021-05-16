@@ -907,14 +907,14 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
  * Delete the event enrollments request if type is changed to directly.
  */
 function social_event_node_update(EntityInterface $entity) {
-  if ($entity->getType() === 'event') {
+  if ($entity instanceof NodeInterface && $entity->getType() === 'event') {
     $enroll_state_original = $entity->original->get('field_enroll_method')->getString();
-
+    $enroll_new_state = $entity->get('field_enroll_method')->getString();
     // If the request to enroll was turned off then delete the request.
-    if ((int) $enroll_state_original === 2) {
+    if ((int) $enroll_state_original === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && (int) $enroll_new_state !== EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
       /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
-
+      /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
       foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
         // Check if the field is not empty before getting the value,
         // Since (int) will otherwise return 0 and give false positives.
