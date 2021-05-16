@@ -729,16 +729,30 @@ function social_profile_get_default_image() {
 function social_profile_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
+  $entityTypeManager = \Drupal::entityTypeManager();
+
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $storage = $entityTypeManager->getStorage('profile');
 
-  if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-    $accountname = trim($user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value);
+  if ($user_profile = $storage->loadByUser($account, 'profile')) {
+    /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
+    $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
 
-    if (strlen($accountname) > 0) {
+    $first_name_field = $user_profile->get('field_profile_first_name');
+    $last_name_field = $user_profile->get('field_profile_last_name');
+
+    $first_name = $accessControlHandler->fieldAccess('view', $first_name_field->getFieldDefinition(), NULL, $first_name_field, FALSE)
+      ? $first_name_field->getString()
+      : "";
+    $last_name = $accessControlHandler->fieldAccess('view', $last_name_field->getFieldDefinition(), NULL, $last_name_field, FALSE)
+      ? $last_name_field->getString()
+      : "";
+
+    $account_name = trim($first_name . " " . $last_name);
+    if ($account_name !== '') {
       // Add the full name with a default weight.
       $suggestions['full_name'] = [
-        'name' => trim($accountname),
+        'name' => $account_name,
       ];
     }
   }
