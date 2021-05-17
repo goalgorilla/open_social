@@ -1,0 +1,77 @@
+services:
+  # The main webserver contains our Open Social distribution.
+  webserver:
+    image: kingdutch/social-docker-php:latest
+    default: true
+    depends:
+      - db
+    commands:
+      init:
+        - composer config --global github-protocols https
+        # Undo the weird symlink in the default Tugboat image.
+        - rm -rf $DOCROOT/html.original $DOCROOT/html
+      # Update is run as single string rather than individual steps since
+      # individual steps are executed in separate shell instances.
+      update: |
+        set -e
+        # Docroot for the PHP image points to /var/www/html so we set-up Open
+        # Social one folder up so that our web files are in the html folder.
+        cd $DOCROOT/..
+        # Create a config/sync directory so Drupal stops complaining, even if we
+        # don't need it.
+        mkdir -p $DOCROOT/../config/sync
+        # Create a private file path.
+        mkdir -p $DOCROOT/../files_private
+        # Find the branch name regardless of preview type. This does fail for
+        # non-GitHub PRs or branches until Tugboat provdes a better way.
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" = "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
+        # Find the project name from the root composer.json file
+        export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
+        # Copy the composer.json test project file.
+        cp $TUGBOAT_ROOT/.tugboat/composer.json .
+        # Add the GitHub repository that the branch is in.
+        composer config repositories.open_social git "https://github.com/$TUGBOAT_GITHUB_OWNER/$TUGBOAT_GITHUB_REPO"
+        # Install our preview version through private packagist from BitBucket.
+        composer require $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
+        # Use the tugboat-specific Drupal settings.
+        cat $DOCROOT/sites/default/default.settings.php | \
+          sed -z "s@#\n# if (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n#   include \$app_root . '/' . \$site_path . '/settings.local.php';\n# }@if (file_exists(__DIR__ . '/settings.local.php')) {\n  include __DIR__ . '/settings.local.php';\n}@" \
+          > $DOCROOT/sites/default/settings.php
+        cp "${TUGBOAT_ROOT}/.tugboat/settings.local.php" "${DOCROOT}/sites/default/"
+        mkdir -p ${DOCROOT}/sites/default/files && chmod -R 755 ${DOCROOT}/sites/default/files
+        chown -R www-data:www-data $DOCROOT/..
+        # Install Open Social.
+        cd html
+        ../vendor/bin/drush \
+          --yes \
+          --site-name="Open Social QA" \
+          --account-pass=${ADMIN_PASSWORD} \
+          site:install social
+        # Install the database log, it's bad for performance but helps in quickly
+        # capturing errors while testing.
+        ../vendor/bin/drush \
+          --yes \
+          en dblog
+        # Enable the demo content.
+        ../vendor/bin/drush \
+          --yes \
+          en social_demo
+        ../vendor/bin/drush \
+          sda \
+          file user group topic event eventenrollment post comment like
+        # Allow site managers to enable modules so developers can change the
+        # set-up during testing.
+        ../vendor/bin/drush role:add:perm --yes 'sitemanager' 'administer modules'
+        # Change file owner again because of the way demo content is copied.
+        chown -R www-data:www-data $DOCROOT
+      build: |
+        cd $DOCROOT/..
+        export BRANCH_NAME=$([ "$TUGBOAT_PREVIEW_TYPE" = "pullrequest" ] && echo "$TUGBOAT_GITHUB_HEAD" || echo "$TUGBOAT_PREVIEW_REF")
+        export COMPOSER_PROJECT_NAME=`cat "$TUGBOAT_ROOT/composer.json" | jq -r '.name'`
+        composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
+        composer install --optimize-autoloader
+        cd html && ../vendor/bin/drush updatedb -y
+
+  # A database for storage of Open Social data.
+  db:
+    image: tugboatqa/mariadb:latest
