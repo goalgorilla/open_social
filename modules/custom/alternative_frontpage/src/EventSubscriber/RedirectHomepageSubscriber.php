@@ -13,11 +13,15 @@ use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Installer\InstallerKernel;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class RedirectHomepageSubscriber.
  */
 class RedirectHomepageSubscriber implements EventSubscriberInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Protected var UserData.
@@ -62,6 +66,13 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $state;
 
   /**
+   * Drupal\Core\Messenger\MessengerInterface definition.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructor for the RedirectHomepageSubscriber.
    *
    * @param \Drupal\user\UserData $user_data
@@ -74,8 +85,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *   The path matcher.
    * @param \Drupal\Core\State\State $state
    *   The state.
+   * @param \\Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state) {
+  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state, MessengerInterface $messenger) {
     // We needs it.
     $this->userData = $user_data;
     $this->alternativeFrontpageSettings = $config_factory->get('alternative_frontpage.settings');
@@ -83,6 +96,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
     $this->state = $state;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -126,6 +140,16 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
         return;
       }
       if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
+        // Don't redirect site_manager, so they can preview/edit the page.
+        if ($this->currentUser->id() == 1 || in_array('sitemanager', $this->currentUser->getRoles())) {
+          $this->messenger->addWarning($this->t(
+            "This page is redirected to @url_link, but we deferred the redirect to give you an opportunity to edit the content.",
+            [
+              '@url_link' => $frontpage_lu
+            ]));
+          return;
+        }
+
         $cache_contexts = new CacheableMetadata();
         $cache_contexts->setCacheContexts(['user.roles:anonymous']);
 
