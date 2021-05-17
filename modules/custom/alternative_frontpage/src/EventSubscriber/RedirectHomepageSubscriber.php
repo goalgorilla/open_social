@@ -85,7 +85,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *   The path matcher.
    * @param \Drupal\Core\State\State $state
    *   The state.
-   * @param \\Drupal\Core\Messenger\MessengerInterface $messenger
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    */
   public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state, MessengerInterface $messenger) {
