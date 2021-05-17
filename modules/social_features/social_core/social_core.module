@@ -30,6 +30,9 @@ use Drupal\user\UserInterface;
 function social_core_page_attachments(array &$attachments) {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_core/accessibility';
+
+  // The library with logo improvements on the top of the gin toolbar.
+  $attachments['#attached']['library'][] = 'social_core/admin-toolbar';
 }
 
 /**
@@ -925,7 +928,7 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
   // since we hide the element, and the default is checked,
   // the path will never be overridden if someone updates it.
   // So we need to check this in our custom submit handler.
-  $default_path = $form['path']['widget'][0]['alias']['#default_value'];
+  $default_path = isset($form['path']['widget'][0]['alias']['#default_value']) ? $form['path']['widget'][0]['alias']['#default_value'] : '';
   $input = $form_state->getUserInput();
   $updated_path = isset($input['path'][0]['alias']) ? $input['path'][0]['alias'] : '';
   // If we don't have a match, make sure we override the checkbox as well.
@@ -935,6 +938,13 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
     $form_state->setUserInput($input);
     // Override the value.
     $form_state->setValue(['path', '0', 'pathauto'], "0");
+
+    // If the updated path is empty, make it automatic again.
+    if (empty($updated_path)) {
+      $input['path'][0]['pathauto'] = "1";
+      $form_state->setUserInput($input);
+      $form_state->setValue(['path', '0', 'pathauto'], "1");
+    }
   }
 }
 
@@ -1008,6 +1018,22 @@ function _social_core_set_default_email_logo_for_socialblue() {
         $socialblue_settings->set('email_logo', $default_image)->save();
       }
     }
+  }
+}
+
+/**
+ * Used to set the favicon of GIN to open socials logo.
+ */
+function _social_core_set_favicon() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    // Update the favicon in GIN.
+    $gin_config['favicon']['use_default'] = FALSE;
+    $gin_config['favicon']['path'] = 'themes/contrib/socialblue/favicon.ico';
+    $gin_config['favicon']['mimetype'] = 'image/vnd.microsoft.icon';
+    $config->setData($gin_config);
+    $config->save();
   }
 }
 

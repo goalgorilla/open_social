@@ -79,8 +79,10 @@ function social_core_install() {
   $config->set('jpeg_quality', 90)->save();
 
   // If social blue is enabled, and default image is still Open Social.
-  // Lets add the default e-mail logo for open social aswell.
+  // Lets add the default e-mail logo for open social as well.
   _social_core_set_default_email_logo_for_socialblue();
+  // Add favicon to GIN.
+  _social_core_set_favicon();
 }
 
 /**
@@ -1316,7 +1318,30 @@ function social_core_update_8908() {
 function social_core_update_10101() {
   $modules = [
     'ultimate_cron',
-    'social_advanced_queue'
+    'social_advanced_queue',
   ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Empty update hook.
+ */
+function social_core_update_10102() {
+  // Removed as it was an incorrect update hook use 10103 instead.
+}
+
+/**
+ * Add a OS favicon on the admin pages.
+ */
+function social_core_update_10103() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    // Update the favicon in GIN.
+    $gin_config['favicon']['use_default'] = FALSE;
+    $gin_config['favicon']['path'] = 'themes/contrib/socialblue/favicon.ico';
+    $gin_config['favicon']['mimetype'] = 'image/vnd.microsoft.icon';
+    $config->setData($gin_config);
+    $config->save();
+  }
 }
