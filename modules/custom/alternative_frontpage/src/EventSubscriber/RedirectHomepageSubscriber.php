@@ -147,7 +147,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
           $this->messenger->addWarning($this->t(
             "This page is redirected to @url_link, but we deferred the redirect to give you an opportunity to edit the content.",
             [
-              '@url_link' => $frontpage_lu
+              '@url_link' => $frontpage_lu,
             ]));
           return;
         }
