@@ -4,13 +4,12 @@ dependencies:
   module:
     - node
     - search_api
+    - entity_access_by_field
   config:
     - field.storage.node.field_event_date
     - field.storage.node.field_event_date_end
     - search_api.server.social_database
     - core.entity_view_mode.node.search_index
-_core:
-  default_config_hash: MbX9nCJS7GUDX3vfIkeKB6-6wVbLokpUUXwFaw2oO58
 id: social_content
 name: 'Social Content'
 description: 'Default content index created for the Social distribution.'
@@ -108,31 +107,25 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  rendered_item:
-    plugin_id: rendered_item
+  entity_access_by_field:
     weights:
-      add_properties: 0
-      pre_index_save: -10
-  add_url:
-    plugin_id: add_url
-    weights:
-      preprocess_index: -30
-  aggregated_field:
-    plugin_id: aggregated_field
-    weights:
-      add_properties: 20
-  tokenizer:
-    plugin_id: tokenizer
+      preprocess_query: -30
+  ignorecase:
+    plugin_id: ignorecase
     all_fields: true
     fields:
       - rendered_item
       - title
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
+      - type
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -10
+      preprocess_query: -10
+  content_access:
+    plugin_id: content_access
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  language_with_fallback: {  }
   stopwords:
     plugin_id: stopwords
     all_fields: false
@@ -178,32 +171,6 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  ignorecase:
-    plugin_id: ignorecase
-    all_fields: true
-    fields:
-      - rendered_item
-      - title
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  transliteration:
-    plugin_id: transliteration
-    all_fields: true
-    fields:
-      - rendered_item
-      - title
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  content_access:
-    plugin_id: content_access
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  entity_access_by_field:
-    weights:
-      preprocess_query: -30
   html_filter:
     plugin_id: html_filter
     all_fields: false
@@ -222,6 +189,43 @@ processor_settings:
     weights:
       preprocess_index: -15
       preprocess_query: -10
+  transliteration:
+    plugin_id: transliteration
+    all_fields: true
+    fields:
+      - rendered_item
+      - title
+      - type
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  rendered_item:
+    plugin_id: rendered_item
+    weights:
+      add_properties: 0
+      pre_index_save: -10
+  add_url:
+    plugin_id: add_url
+    weights:
+      preprocess_index: -30
+  aggregated_field:
+    plugin_id: aggregated_field
+    weights:
+      add_properties: 20
+  tokenizer:
+    plugin_id: tokenizer
+    all_fields: true
+    fields:
+      - rendered_item
+      - title
+      - type
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
+    ignored: ._-
 tracker_settings:
   default:
     indexing_order: fifo
