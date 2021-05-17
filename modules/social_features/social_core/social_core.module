@@ -100,7 +100,10 @@ function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_
   $fields = array_diff(array_keys($form_display->getComponents()), $fields);
 
   if ($fields) {
-    $field_groups['group_settings']['children'] += $fields;
+    $field_groups['group_settings']['children'] = array_merge(
+      $field_groups['group_settings']['children'],
+      $fields
+    );
 
     $form_display
       ->setThirdPartySetting('field_group', 'group_settings', $field_groups['group_settings'])
