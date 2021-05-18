@@ -133,8 +133,8 @@ class SocialProfilePrivacyBatchHelper {
    */
   public static function initOperation(array $args, array &$context) {
     // Init variables.
-    $limit = $args['limit'];
-    $offset = $context['sandbox'] ?? 0;
+    $limit = (int) $args['limit'];
+    $offset = (int) $context['sandbox'] ?? 0;
 
     $userStorage = \Drupal::entityTypeManager()->getStorage('user');
 
