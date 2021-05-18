@@ -51,6 +51,12 @@ function social_group_update_dependencies() {
     'views_bulk_operations' => 8034,
   ];
 
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group'][10202] = [
+    'views_bulk_operations' => 8034,
+  ];
+
   return $dependencies;
 }
 
