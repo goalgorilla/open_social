@@ -188,17 +188,16 @@ display:
           clear_on_exposed: false
           action_title: Action
           selected_actions:
-            comment_delete_action: 0
-            views_bulk_operations_delete_entity: 0
-            social_group_change_member_role_action: social_group_change_member_role_action
-            social_group_delete_group_content_action: social_group_delete_group_content_action
-            social_group_send_email_action: social_group_send_email_action
-            'entity:save_action:group_content': 0
-          preconfiguration:
-            social_group_change_member_role_action:
-              label_override: 'Change the role'
-            social_group_delete_group_content_action:
-              label_override: Remove
+            -
+              action_id: social_group_change_member_role_action
+              preconfiguration:
+                label_override: 'Change the role'
+            -
+              action_id: social_group_delete_group_content_action
+              preconfiguration:
+                label_override: Remove
+            -
+              action_id: social_group_send_email_action
           plugin_id: social_views_bulk_operations_bulk_form_group
         profile_entity_sortable:
           id: profile_entity_sortable

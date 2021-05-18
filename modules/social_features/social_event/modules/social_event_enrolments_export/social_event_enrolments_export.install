@@ -13,6 +13,7 @@ function social_event_enrolments_export_update_dependencies() {
   // the structure of views.
   $dependencies['social_event_enrolments_export'][10201] = [
     'views_bulk_operations' => 8034,
+    'social_event_managers' => 10201,
   ];
 
   return $dependencies;
@@ -36,7 +37,7 @@ function social_event_enrolments_export_install() {
  */
 function _social_event_enrolments_export_alter_event_manage_enrollments_view() {
   $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
-  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
   $selected_actions[] = [
     'action_id' => 'social_event_enrolments_export_enrollments_action',
     'preconfiguration' => [

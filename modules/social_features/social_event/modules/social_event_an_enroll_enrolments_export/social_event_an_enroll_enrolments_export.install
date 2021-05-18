@@ -110,7 +110,7 @@ function _enrolments_export_plugin_mapping($reverse = FALSE) :array {
  */
 function _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view() {
   $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
-  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions = $config->get('display.default.display_options.fields.social_event_enrolments_export_enrollments_action.selected_actions');
 
   // Remove 'social_event_enrolments_export_enrollments_action' action.
   // This is added via
