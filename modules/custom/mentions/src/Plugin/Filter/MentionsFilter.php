@@ -24,7 +24,7 @@ use Drupal\filter\Entity\FilterFormat;
  * id = "filter_mentions",
  * title = @Translation("Mentions Filter"),
  * description = @Translation("Configure via the <a href='/admin/structure/mentions'>Mention types</a> page."),
- * type = Drupal\filter\Plugin\FilterInterface::TYPE_HTML_RESTRICTOR,
+ * type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE,
  * settings = {
  *   "mentions_filter" = {}
  * },
