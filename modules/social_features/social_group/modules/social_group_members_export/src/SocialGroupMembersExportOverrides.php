@@ -20,20 +20,20 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
     $config_name = 'views.view.group_manage_members';
 
     if (in_array($config_name, $names)) {
+      $selected_actions['social_group_members_export_member_action'] = [
+        'action_id' => 'social_group_members_export_member_action',
+        'preconfiguration' => [
+          'label_override' => 'Export',
+        ],
+      ];
+
       $overrides[$config_name] = [
         'display' => [
           'default' => [
             'display_options' => [
               'fields' => [
                 'social_views_bulk_operations_bulk_form_group' => [
-                  'selected_actions' => [
-                    'social_group_members_export_member_action' => 'social_group_members_export_member_action',
-                  ],
-                  'preconfiguration' => [
-                    'social_group_members_export_member_action' => [
-                      'label_override' => 'Export',
-                    ],
-                  ],
+                  'selected_actions' => $selected_actions,
                 ],
               ],
             ],
