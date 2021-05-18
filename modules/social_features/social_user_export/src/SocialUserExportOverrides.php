@@ -8,6 +8,8 @@ use Drupal\Core\Config\StorageInterface;
 
 /**
  * Configuration override.
+ *
+ * @deprecated in social:10.2.x and is removed from social:11.0.x
  */
 class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
 
@@ -16,32 +18,8 @@ class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = [];
-
-    $config_name = 'views.view.user_admin_people';
-
-    if (in_array($config_name, $names, TRUE)) {
-      $selected_actions['social_user_export_user_action'] = [
-        'action_id' => 'social_user_export_user_action',
-        'preconfiguration' => [
-          'label_override' => '',
-        ],
-      ];
-
-      $overrides[$config_name] = [
-        'display' => [
-          'default' => [
-            'display_options' => [
-              'fields' => [
-                'views_bulk_operations_bulk_form' => [
-                  'selected_actions' => $selected_actions,
-                ],
-              ],
-            ],
-          ],
-        ],
-      ];
-    }
-
+    // Code has been moved to
+    // _social_user_export_alter_user_admin_people_view().
     return $overrides;
   }
 
