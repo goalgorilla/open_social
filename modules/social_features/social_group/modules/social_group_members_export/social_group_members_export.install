@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions.
+ */
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_members_export_update_dependencies() {
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group_members_export'][10201] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_group.
+ */
+function social_group_members_export_install() {
+  // Add changes to group_manage_members view.
+  _social_group_members_export_alter_group_manage_members_view();
+}
+
+/**
+ * Adds custom action in 'views.view.group_manage_members'.
+ *
+ * Action ID: 'social_group_members_export_member_action'
+ */
+function _social_group_members_export_alter_group_manage_members_view() {
+  $config = \Drupal::configFactory()->getEditable('views.view.group_manage_members');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_group_members_export_member_action',
+    'preconfiguration' => [
+      'label_override' => t('Export'),
+    ],
+  ];
+  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
+  $config->save();
+}
+
+/**
+ * Adds custom action in 'views.view.group_manage_members' after VBO updates.
+ *
+ * Action ID: 'social_group_members_export_member_action'.
+ */
+function social_group_members_export_update_10201(&$sandbox) {
+  _social_group_members_export_alter_group_manage_members_view();
+}

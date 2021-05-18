@@ -39,6 +39,12 @@ function social_group_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group'][10201] = [
+    'views_bulk_operations' => 8034,
+  ];
+
   return $dependencies;
 }
 
@@ -126,6 +132,9 @@ function social_group_install() {
 
   // Set module weight.
   module_set_weight('social_group', 2);
+
+  // Add changes to Admin people overview view.
+  _social_group_alter_admin_people_view();
 }
 
 /**
@@ -228,6 +237,21 @@ function _social_group_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
+}
+
+/**
+ * Update the user admin view with our custom action.
+ *
+ * Action ID: 'social_group_add_members_to_group_action'.
+ */
+function _social_group_alter_admin_people_view() {
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_group_add_members_to_group_action',
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
 }
 
 /**
@@ -894,4 +918,13 @@ function social_group_update_11001(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add 'social_group_add_members_to_group_action'.
+ *
+ * Update 'views.view.user_admin_people' after VBO module updates.
+ */
+function social_group_update_10201(&$sandbox) {
+  _social_group_alter_admin_people_view();
 }

@@ -8,6 +8,8 @@ use Drupal\Core\Config\StorageInterface;
 
 /**
  * Configuration override.
+ *
+ * @deprecated in social:10.2.x and is removed from social:11.0.x
  */
 class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterface {
 
@@ -16,32 +18,8 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
    */
   public function loadOverrides($names) {
     $overrides = [];
-
-    $config_name = 'views.view.group_manage_members';
-
-    if (in_array($config_name, $names)) {
-      $selected_actions['social_group_members_export_member_action'] = [
-        'action_id' => 'social_group_members_export_member_action',
-        'preconfiguration' => [
-          'label_override' => 'Export',
-        ],
-      ];
-
-      $overrides[$config_name] = [
-        'display' => [
-          'default' => [
-            'display_options' => [
-              'fields' => [
-                'social_views_bulk_operations_bulk_form_group' => [
-                  'selected_actions' => $selected_actions,
-                ],
-              ],
-            ],
-          ],
-        ],
-      ];
-    }
-
+    // Code has been moved to
+    // _social_group_members_export_alter_group_manage_members_view().
     return $overrides;
   }
 
