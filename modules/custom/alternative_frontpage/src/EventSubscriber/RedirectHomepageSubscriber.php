@@ -143,7 +143,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
         // Don't redirect site managers,content managers so they
         // can preview the page.
         $roles = ['sitemanager', 'contentmananger'];
-        if ($this->currentUser->id() === 1 || array_intersect($roles, $this->currentUser->getRoles())) {
+        if ($this->currentUser->id() == "1" || array_intersect($roles, $this->currentUser->getRoles())) {
           $this->messenger->addWarning($this->t(
             "This page is redirected to @url_link, but we deferred the redirect to give you an opportunity to edit the content.",
             [
