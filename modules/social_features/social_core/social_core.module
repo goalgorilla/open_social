@@ -93,10 +93,12 @@ function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_
 
   $fields = [];
 
+  // List of all fields which are split by section.
   foreach ($field_groups as $field_group) {
     $fields = array_merge($fields, $field_group['children']);
   }
 
+  // List of all fields which aren't split by section.
   $fields = array_diff(array_keys($form_display->getComponents()), $fields);
 
   if ($fields) {
@@ -907,9 +909,18 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           }
         }
 
+        // When the "Promoted to front page" field or the "Sticky at top of
+        // lists" field is enabled then move their wrapper (the "Promotion
+        // options" sub-section) to the "Settings" section.
+        // @see \Drupal\node\NodeForm::form().
         if ($has_option_fields) {
           $form['options']['#group'] = 'group_settings';
+
+          // Place the "Promotion options" sub-section after the "Publish
+          // status" sub-section.
           $form['options']['#weight'] = 120;
+
+          // Display sub-section as expanded.
           $form['options']['#optional'] = FALSE;
         }
       }
