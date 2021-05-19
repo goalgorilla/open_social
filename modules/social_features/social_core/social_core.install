@@ -1313,6 +1313,14 @@ function social_core_update_8908() {
 }
 
 /**
+ * Set default settings to use entity access API as FALSE.
+ */
+function social_core_update_10103() {
+  $config = \Drupal::configFactory()->getEditable('social_core.settings');
+  $config->set('use_entity_access_api', 0)->save();
+}
+
+/**
  * Install ultimate cron module.
  */
 function social_core_update_10101() {
