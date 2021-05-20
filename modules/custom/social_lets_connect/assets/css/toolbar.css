@@ -1,7 +1,39 @@
-.toolbar-icon-social-lets-connect-main:before {
-  background-image: url('../images/os_logo_darker.svg');
-}
+/* The logo on the default admin theme */
+.toolbar-icon-social-lets-connect-main:before,
 .toolbar-icon-social-lets-connect-main:active:before,
 .toolbar-icon-social-lets-connect-main.is-active:before {
-  background-image: url('../images/os_logo_darker.svg');
+  -webkit-mask-size: none;
+  mask-size: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  background: url('../images/os-logo-no-gin.svg') no-repeat;
+}
+
+
+/**
+ * General styles for the OS logo on the gin theme.
+ *
+ * Selectors on the gin theme.
+ */
+body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
+body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
+body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before {
+  width: 80px;
+  left: 6px;
+  -webkit-mask-size: none;
+  mask-size: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+  background: url('../images/os-logo.svg') no-repeat;
+}
+
+/* Media query from Gin theme */
+@media (max-width: 975px) {
+  body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
+  body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
+  body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before {
+    width: 30px;
+    top: 18px;
+    left: 6px;
+  }
 }

@@ -167,8 +167,9 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
     \Drupal::request()->query->has('page')
   ) {
     if ($data[1]['method'] === NULL) {
+      $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
       $data[1]['method'] = 'html';
-      $data[1]['selector'] = '#block-socialblue-content';
+      $data[1]['selector'] = '#block-' . $theme . '-content';
     }
     elseif (
       $data[1]['method'] === 'replaceWith' &&
