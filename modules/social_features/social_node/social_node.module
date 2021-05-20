@@ -5,9 +5,11 @@
  * The social node module alterations.
  */
 
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\social_node\Entity\Access\NodeQueryAccessHandler;
 use Drupal\social_node\Entity\Node;
-use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
+use Drupal\social_node\SocialNodeForm;
 
 /**
  * Implements hook_entity_type_alter().
@@ -20,6 +22,78 @@ function social_node_entity_type_alter(array &$entity_types) {
 
     foreach (['default', 'edit'] as $operation) {
       $entity_types['node']->setFormClass($operation, SocialNodeForm::class);
+    }
+    $entity_types['node']->setHandlerClass('query_access', NodeQueryAccessHandler::class);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_node_query_entity_query_alter(SelectInterface $query) {
+  if ($query->getTables()['base_table']['table'] == 'node') {
+    $account = \Drupal::currentUser();
+
+    if ($account->isValidOauth2Account()) {
+      /** @var \Drupal\oauth2_server\OAuth2Storage $storage */
+      $storage = \Drupal::service('oauth2_server.storage');
+      $client_scope = $storage->getClientScope($account->getAccountAccessToken()['client_id']);
+      $request_scope = $account->getAccountAccessToken()['scope'];
+
+      $request_scopes = explode(' ', $request_scope);
+      $client_scopes = explode(' ', $client_scope ?? '');
+
+      foreach ($request_scopes as $scope) {
+        if (in_array($scope, $client_scopes)) {
+          $scope_with_access[] = $scope;
+        }
+      }
+
+      $node_types = \Drupal::entityTypeManager()
+        ->getStorage('node_type')
+        ->getQuery()
+        ->execute();
+
+      $public_bundles = [];
+      $community_bundles = [];
+      foreach ($scope_with_access ?? [] as $element) {
+        $scopes = explode(':', $element);
+        [$bundle, $visibility] = $scopes;
+
+        if ($visibility === 'public' && in_array($bundle, $node_types) && !in_array($bundle, $community_bundles)) {
+          $public_bundles[] = $bundle;
+        }
+        elseif ($visibility === 'community' && in_array($bundle, $node_types) && !in_array($bundle, $public_bundles)) {
+          $community_bundles[] = $bundle;
+        }
+      }
+
+      if (!empty($public_bundles) || !empty($community_bundles)) {
+        $query->innerJoin('node__field_content_visibility', 'nfv');
+
+        $and1 = $query->andConditionGroup();
+        $and2 = $query->andConditionGroup();
+
+        $or = $query->orConditionGroup();
+        if (!empty($public_bundles)) {
+          $and1->condition('nfv.field_content_visibility_value', 'public');
+          $and1->condition('node_field_data.type', $public_bundles, 'IN');
+
+          $or->condition($and1);
+        }
+        if (!empty($community_bundles)) {
+          $and2->condition('nfv.field_content_visibility_value', ['public', 'community'], 'IN');
+          $and2->condition('node_field_data.type', $community_bundles, 'IN');
+
+          $or->condition($and2);
+        }
+
+        $query->condition($or);
+        $query->where('node_field_data.nid=nfv.entity_id');
+      }
+      else {
+        $query->where('1 = 0');
+      }
     }
   }
 }
