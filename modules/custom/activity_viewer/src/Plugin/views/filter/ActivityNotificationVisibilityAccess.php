@@ -218,7 +218,12 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
       $membership_or_node = new Condition('OR');
       $membership_or_node->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
-      $membership_or_node->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
+
+      // Check if the user is part of any groups.
+      if ($groups_unique) {
+        $membership_or_node->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
+      }
+
       $membership_access->condition($membership_or_node);
       $or->condition($membership_access);
     }
