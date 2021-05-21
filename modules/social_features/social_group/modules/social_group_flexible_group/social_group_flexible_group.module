@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
@@ -887,4 +888,30 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
   $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
 
   return $response;
+}
+
+/**
+ * Implements hook_preprocess_group().
+ */
+function social_group_flexible_group_preprocess_group(&$variables) {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['group'];
+  $group_type = $group->getGroupType();
+
+  $account = \Drupal::currentUser();
+  // If the user is already a member we don't bother processing any further.
+  if ($group->getMember($account)) {
+    return;
+  }
+
+  // Non logged in users should still see "join" button on a group page.
+  if ($account->isAnonymous() && $group_type->id() === 'flexible_group') {
+    $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+
+    $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
+    if ($direct_option) {
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+      return;
+    }
+  }
 }
