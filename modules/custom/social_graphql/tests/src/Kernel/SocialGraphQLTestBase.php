@@ -19,6 +19,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
+    "entity",
     "social_graphql",
   ];
 
