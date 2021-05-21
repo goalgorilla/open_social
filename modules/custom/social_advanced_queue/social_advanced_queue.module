@@ -5,9 +5,7 @@
  * Module file for  Social Advanced Queue.
  */
 
-use Drupal\social_swiftmail_sendgrid\Plugin\AdvancedQueue\JobType\MassUserMailQueueJob;
 use Drupal\social_user\Plugin\Action\SocialSendEmail;
-use Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend;
 use Drupal\social_advanced_queue\Plugin\Action\SocialSendEmailAdvancedQueue;
 use Drupal\social_advanced_queue\Plugin\ActivitySend\EmailActivitySendAdvancedQueue;
 
@@ -30,7 +28,9 @@ function social_advanced_queue_action_info_alter(&$definitions) {
 function social_advanced_queue_activity_send_info_alter(&$info) {
   // The Send Email Action needs a new Queue Job instead of Core Queue.
   // So we override it and create Advanced Queue Jobs instead of Queue Items.
-  if (!empty($info['email_activity_send'])) {
-    $info['email_activity_send']['class'] = EmailActivitySendAdvancedQueue::class;
+  foreach ($info as &$definition) {
+    if ($definition['id'] === 'email_activity_send') {
+      $definition['class'] = EmailActivitySendAdvancedQueue::class;
+    }
   }
 }
