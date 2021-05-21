@@ -10,7 +10,7 @@ Feature: Create flexible Group
       | name           | mail                     | status |
       | GivenUserOne   | group_user_1@example.com | 1      |
       | GivenUserTwo   | group_user_2@example.com | 1      |
-      | GivenUserThree | group_user_2@example.com | 1      |
+      | GivenUserThree | group_user_3@example.com | 1      |
     Given "event_types" terms:
       | name     |
       | Webinar  |

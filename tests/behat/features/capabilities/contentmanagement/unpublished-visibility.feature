@@ -23,18 +23,6 @@ Feature: Un/publish a node
     And I go to "unpublished-topic"
     Then I should see "Access denied. You must log in to view this page."
 
-    When I am logged in as an "contentmanager"
-    And I go to "unpublished-topic"
-    And I click "Edit content"
-    And I click the element with css selector "#edit-group-settings .card__title"
-    And I check the box "Published"
-    And I press "Save"
-    When I logout
-    And I go to "unpublished-topic"
-    And I should see "Unpublished topic" in the "Hero block"
-    And I should see "Discussion"
-    And I should see "Body description text" in the "Main content"
-
   @community
   Scenario: Unsuccessfully get access to unpublished content as LU
     Given I am logged in as an "contentmanager"
@@ -53,15 +41,3 @@ Feature: Un/publish a node
     And I go to "unpublished-topic"
     Then I should see "Access denied"
     Then I should see "You are not authorized to access this page."
-
-    When I am logged in as an "contentmanager"
-    And I go to "unpublished-topic"
-    And I click "Edit content"
-    And I click the element with css selector "#edit-group-settings .card__title"
-    And I check the box "Published"
-    And I press "Save"
-    When I am logged in as an "authenticated user"
-    And I go to "unpublished-topic"
-    And I should see "Unpublished topic" in the "Hero block"
-    And I should see "Discussion"
-    And I should see "Body description text" in the "Main content"
