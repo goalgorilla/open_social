@@ -1486,8 +1486,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2021-05-05 00:17+0000\n"
-"PO-Revision-Date: 2021-05-23 18:45+0000\n"
-"Last-Translator: Ales Pirnova <apirnova@greenpeace.org>\n"
+"PO-Revision-Date: 2021-05-23 20:31+0000\n"
+"Last-Translator: Tadej Turnsek <tadejturnsek@gmail.com>\n"
 "Language-Team: Slovenian <https://translate.getopensocial.com/projects/gpcee/"
 "distribution/sl/>\n"
 "Language: sl\n"
@@ -2578,13 +2578,15 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
-msgstr ""
+msgstr "<p>@total oseb se je prijavilo anonimno</p>"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0;0;0
 msgid ""
 "<p>Background process \"[queue_storage_entity:mail_task_subject]\" has "
 "finished.</p>"
 msgstr ""
+"<p>Proces v ozadju \"[queue_storage_entity:mail_task_subject]\" je "
+"dokončan.</p>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
@@ -2649,6 +2651,24 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Živjo,</p>\n"
+"\n"
+"<p>vabim te, da se pridružiš skupini [message:gtitle] na strani "
+"[site:name].</p>\n"
+"\n"
+"<p>Lep pozdrav,<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Sprejmi vabilo</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Več o strani [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 msgid ""
@@ -2668,6 +2688,22 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Živjo,</p>\n"
+"<p>vabim te na dogodek <strong>[node:title]</strong> na strani "
+"<strong>[site:name]</strong>.</p>\n"
+"<p>Lep pozdrav, [user:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:register_link]\">Oglej si dogodek</a></td>"
+"\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Več o strani[site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/social_group_invite.settings.yml:0
@@ -2683,18 +2719,24 @@ msgid ""
 "<p>You have been invited for the even [social_event:event_iam_organizing] by "
 "[message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Uporabnik [message:author:display-name] te je povabil na dogodek "
+"[social_event:event_iam_organizing]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the event [social_event:event_iam_organizing] "
 "by [message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Uporabnik [message:author:display-name] te je povabil na dogodek "
+"[social_event:event_iam_organizing]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0;0
 msgid ""
 "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]"
 "</a></p>\r\n"
 msgstr ""
+"<p>Povabljen/a si bil/a v skupino <a href=\"gurl]\">[message:gtitle]</a></p>"
+"\n"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:67
 msgid ""
@@ -2706,12 +2748,21 @@ msgid ""
 "browser to go back where you came from or click <a href=\":url\">here</a> to "
 "go to the homepage</p>"
 msgstr ""
+"<p>Nimaš zadostnih dovoljenj za ogled strani, ki jo želiš obiskati. Razlogov "
+"za to je lahko več:</p><ul><li>Poskušaš urejati vsebino, za katero nimaš "
+"dovoljenja za urejanje.</li><li>Poskušaš si ogledati vsebino (v skupini), do "
+"katere nimaš dostopa.</li><li>Poskušaš dostopati do administratorskih "
+"strani.</li></ul><p>Klikni gumb za nazaj v brskalniku, da se vrneš na "
+"prejšnjo stran, ali klikni <a href=\":url\">na to povezavo</a>, da se vrneš "
+"na osnovno stran</p>"
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0;0;0
 msgid ""
 "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a "
 "href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 msgstr ""
+"<p>Prejel/a si sporočilo <a href=\"[message:pmt-url]\"></a> od uporabnika <a "
+"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid ""
@@ -2727,12 +2778,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Tvoja zahteva za pridružitev skupini <a href=\"[message:gurl]\""
+">[message:gtitle]</a> je bila sprejeta</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Obišči skupino</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
 "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
 "group has been approved</p>\r\n"
 msgstr ""
+"<p>Tvoja zahteva za pridružitev skupini <a href=\"gurl]\">[message:gtitle]</"
+"a> je bila sprejeta</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/install/social_profile_privacy.settings.yml:0
 msgid ""
@@ -2757,58 +2821,67 @@ msgid ""
 "indexing. This <strong>cannot be undone</strong>. Are you sure you want to "
 "continue?"
 msgstr ""
+"<strong>OPOZORILO</strong>: Z izbrisom podatkov profila bodo "
+"<strong>izbrisani vsi podatki</strong> iz naslednjih polj v bazi podatkov: "
+"%fields. Izbriše se lahko tudi iskalni indeks, in potrebno bo ponovno "
+"indeksiranje. Tega <strong>ni mogoče razveljaviti</strong>. Si prepričan/a, "
+"da želiš nadaljevati?"
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
-msgstr ""
+msgstr "@amount všečkov"
 
 #: modules/custom/activity_creator/activity_creator.post_update.php:70
 msgid ""
 "@count activities data has been migrated to activity_notification_table."
 msgstr ""
+"@count podatkov o aktivnostih je bilo premaknjenih v "
+"activity_notification_table."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:124
 msgid "@count new member is enrolled to this event."
 msgid_plural "@count new members are enrolled to this event."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Na dogodek se je prijavil @count nov uporabnik."
+msgstr[1] "Na dogodek sta se prijavila @count nova uporabnika."
+msgstr[2] "Na dogodek so se prijavili @count novi uporabniki."
+msgstr[3] "Na dogodek se je prijavilo @count novih uporabnikov."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:127
 msgid "@count new member is enrolled to your event."
 msgid_plural "@count new members are enrolled to your event."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Na tvoj dogodek se je prijavil @count nov član."
+msgstr[1] "Na tvoj dogodek sta se prijavila @count nova člana."
+msgstr[2] "Na tvoj dogodek so se prijavili @count novi člani."
+msgstr[3] "Na tvoj dogodek se je prijavilo @count novih članov."
 
 #: modules/social_features/social_group/social_group.module:1132
 msgid "@count new member joined the group."
 msgid_plural "@count new members joined the group."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Skupini se je pridružil @count nov član."
+msgstr[1] "Skupini sta se pridružila @count nova člana."
+msgstr[2] "Skupini so se pridružili @count novi člani."
+msgstr[3] "Skupini se je pridružilo @count novih članov."
 
 #: modules/social_features/social_content_report/src/EventSubscriber/FlagSubscriber.php:116
 msgid ""
 "@entity_type @entity_id could not be unpublished after a user reported it."
 msgstr ""
+"Objave @entity_type @entity_id ni bilo mogoče izbrisati, potem ko jo je "
+"nekdo prijavil kot neprimerno."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:262
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:130
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:436
 msgid "@err"
-msgstr ""
+msgstr "@err"
 
 #: translations.php:63
 msgid "@interval ago"
-msgstr ""
+msgstr "Pred @interval"
 
 #: translations.php:62
 msgid "@interval hence"
-msgstr ""
+msgstr "po @interval"
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldWidget/DropdownWidgetType.php:158
 msgid "@name field is required."
@@ -2816,7 +2889,7 @@ msgstr "Potrebno je polje @name."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:88
 msgid "@node"
-msgstr ""
+msgstr "@node"
 
 #: modules/custom/activity_creator/activity.page.inc:49
 msgid "@time ago"
@@ -2832,7 +2905,7 @@ msgstr "@total udeležencev"
 
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 msgid "@total members"
-msgstr ""
+msgstr "@total članov"
 
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 msgid "@total people have enrolled"
@@ -2841,42 +2914,53 @@ msgstr "Prijavilo se je @total ljudi"
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:204
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Prijavila se je @total oseba @spots_left"
+msgstr[1] "Prijavili sta se @total osebi @spots_left"
+msgstr[2] "Prijavile so se @total osebe @spots_left"
+msgstr[3] "Prijavilo se je @total oseb @spots_left"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php:118
 msgid "@usernames is already enrolled, you can't add them again"
 msgid_plural "@usernames are already enrolled, you can't add them again"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Uporabnik @usernames je že prijavljen, ne moreš ga ponovno dodati"
+msgstr[1] "Uporabnika @usernames sta že prijavljena, ne moreš ju ponovno dodati"
+msgstr[2] "Uporabniki @usernames so že prijavljeni, ne moreš jih ponovno dodati"
+msgstr[3] "Uporabniki @usernames so že prijavljeni, ne moreš jih ponovno dodati"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php:125
 msgid "@usernames is already invited or enrolled, you can't invite them again"
 msgid_plural ""
 "@usernames are already invited or enrolled, you can't invite them again"
 msgstr[0] ""
+"Uporabnik @usernames je že povabljen oziroma prijavljen, ne moreš ga ponovno "
+"povabiti"
 msgstr[1] ""
+"Uporabnika @usernames sta že povabljena oziroma prijavljena, ne moreš "
+"juponovno povabiti"
 msgstr[2] ""
+"Uporabniki @usernames so že povabljeni oziroma prijavljeni, ne moreš jih "
+"ponovno povabiti"
 msgstr[3] ""
+"Uporabniki @usernames so že povabljeni oziroma prijavljeni, ne moreš jih "
+"ponovno povabiti"
 
 #: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php:85
 msgid "@usernames is already member of the group, you can't add them again"
 msgid_plural ""
 "@usernames are already members of the group, you can't add them again"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Uporabnik @usernames je že član skupine, ne moreš ga ponovno dodati"
+msgstr[1] "Uporabnika @usernames sta že člana skupine, ne moreš ju ponovno dodati"
+msgstr[2] "Uporabniki @usernames so že člani skupine, ne moreš jih ponovno dodati"
+msgstr[3] "Uporabniki @usernames so že člani skupine, ne moreš jih ponovno dodati"
 
 #: translations.php:57;97
 msgid ""
 "A Reply-To address is the email address that receives messages sent from "
 "those who select Reply in their email clients."
 msgstr ""
+"Naslov za odgovor je e-poštni naslov, na katerega pridejo sporočila "
+"uporabnikov, ki v svojih e-poštnih odjemalcih izberejo možnost »Odgovori« "
+"(»Reply«)."
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "A background process (e.g. sending bulk emails) has finished"
@@ -2884,27 +2968,27 @@ msgstr "Postopek v ozadju (npr. pošiljanje množičnih e-sporočil) je končan"
 
 #: modules/social_features/social_core/config/install/block_content.type.basic.yml:0
 msgid "A basic block contains a title and a body."
-msgstr "Osnovni blok je sestavljen iz naslova in sporočila"
+msgstr "Osnovni blok je sestavljen iz naslova in sporočila."
 
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.section.yml:0
 msgid "A block section where can be selected a block or a paragraph"
-msgstr ""
+msgstr "Predel bloka, kjer je mogoče izbrati blok ali odstavek"
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:174
 msgid "A boolean indicating whether the Activity is published."
-msgstr ""
+msgstr "Logična vrednost, ki kaže, ali je aktivnost objavljena."
 
 #: modules/social_features/social_event/src/Entity/EventEnrollment.php:245
 msgid "A boolean indicating whether the Event enrollment is published."
-msgstr ""
+msgstr "Logična vrednost, ki kaže, ali je prijava na dogodek objavljena."
 
 #: modules/custom/social_font/src/Entity/Font.php:198
 msgid "A boolean indicating whether the Font is published."
-msgstr ""
+msgstr "Logična vrednost, ki kaže, ali je pisava objavljena."
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserFromWrapper.php:9
 msgid "A class instance containing user information."
-msgstr ""
+msgstr "Instanca razreda, ki vsebuje podatke o uporabnikih."
 
 #: modules/social_features/social_content_block/social_content_block.info.yml:0
 #: modules/social_features/social_content_block/config/install/block_content.type.custom_content_list.yml:0
@@ -2912,22 +2996,28 @@ msgid ""
 "A custom block to generate a list of content dynamically according to "
 "specific filters."
 msgstr ""
+"Personalizirani blok za dinamično generiranje seznama vsebine glede na "
+"specfične filtre."
 
 #: modules/social_features/social_content_report/social_content_report.module:79
 msgid "A description of your report is mandatory."
-msgstr ""
+msgstr "Opis poročila je obvezen."
 
 #: modules/social_features/social_featured_content/config/install/block_content.type.featured.yml:0
 msgid ""
 "A list of featured content that can have a title, link, group/node/profile, "
 "and description."
 msgstr ""
+"Seznam predstavljene vsebine, ki lahko vsebuje naslov, povezavo, skupino/"
+"vsebino/profil ter opis."
 
 #: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
 msgid ""
 "A list of featured items that can have a title, link, image/icon, and "
 "description."
 msgstr ""
+"Seznam predstavljenih elementov, ki lahko vsebuje naslov, povezavo, skupino/"
+"vsebino/profil ter opis."
 
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
 msgid "A list of reasons users can choose from for reporting content."
@@ -2953,7 +3043,7 @@ msgstr "Nekdo je komentiral vsebino, ki sem jo ustvaril oziroma organiziral"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.create_node_following_tag.yml:0
 msgid "A person create content with tag I am following"
-msgstr ""
+msgstr "Nekdo je ustvaril vsebino z oznako, ki ji sledim"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid "A person created a post on my profile"
@@ -3154,7 +3244,7 @@ msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Accent style"
-msgstr ""
+msgstr "Poudarjen stil"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:55
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
@@ -3249,7 +3339,7 @@ msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.accordion.yml:0
 msgid "Accordion"
-msgstr ""
+msgstr "Spustni meni"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_item.yml:0
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.accordion_item.yml:0
