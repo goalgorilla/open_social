@@ -203,6 +203,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             'immediately',
             'daily',
             'weekly',
+            'none',
           ];
 
           // Let's store the users IDs which will be processed by the loop.
