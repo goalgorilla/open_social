@@ -187,7 +187,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
           // Get Message Template id.
           $message_storage = $this->entityTypeManager->getStorage('message');
           /** @var \Drupal\message\Entity\Message $message */
-          $message = $message_storage->load($activity->field_activity_message->target_id);
+          $message = $message_storage->load($activity->getFieldValue('field_activity_message', 'target_id'));
           $message_template_id = $message->getTemplate()->id();
 
           // Prepare an array of all details required to process the item.
@@ -281,7 +281,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     }
 
     // We load all the target accounts.
-    if ($target_accounts = $user_storage->loadMultiple($parameters['target_recipients'])) {
+    $target_accounts = $user_storage->loadMultiple($parameters['target_recipients']);
+    if (!empty($target_accounts)) {
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
@@ -300,11 +301,10 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             // Send item to EmailFrequency instance.
             $instance = $this->frequencyManager->createInstance($parameters['frequency']);
             $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
-            // By default mark the Job as failed.
-            return JobResult::success('We have successfully scheduled items to be processed by the Frequency Manager.');
           }
         }
       }
+      return JobResult::success('We have successfully scheduled items to be processed by the Frequency Manager.');
     }
   }
 
