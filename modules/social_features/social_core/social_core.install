@@ -1345,3 +1345,11 @@ function social_core_update_10103() {
     $config->save();
   }
 }
+
+/**
+ * Set default settings to use entity access API as FALSE.
+ */
+function social_core_update_10104() {
+  $config = \Drupal::configFactory()->getEditable('social_core.settings');
+  $config->set('use_entity_access_api', 0)->save();
+}
