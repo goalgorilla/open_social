@@ -18,7 +18,7 @@ use GraphQL\Executor\Promise\Adapter\SyncPromise;
 class CommentQueryHelper implements ConnectionQueryHelperInterface {
 
   /**
-   * The conversations for which participants are being fetched.
+   * The node for which comments are being fetched.
    *
    * @var \Drupal\node\NodeInterface|null
    */
@@ -42,7 +42,7 @@ class CommentQueryHelper implements ConnectionQueryHelperInterface {
    * CommentQueryHelper constructor.
    *
    * @param \Drupal\node\NodeInterface|null $parent
-   *   The conversations for which participants are being fetched.
+   *   The node for which comments are being fetched.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The Drupal entity type manager.
    * @param string $sort_key

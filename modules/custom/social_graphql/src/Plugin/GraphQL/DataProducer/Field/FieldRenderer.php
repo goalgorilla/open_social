@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class Renderer extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The Drupal renderer service.
