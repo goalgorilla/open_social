@@ -1,0 +1,18 @@
+social_core.settings:
+  type: config_object
+  label: 'Social Core Settings'
+  mapping:
+    use_entity_access_api:
+      type: boolean
+      label: 'Opt-in to Entity Access API'
+      description: >-
+        Whether to opt-in to Open Social's implementation for the query access handlers.
+        This alters query_access handler's for Drupal's built-in entities to work with Open Social.
+        This is opt-in because it may interfere with custom query_access handlers platforms already
+        have in place. This is required when using the GraphQL API.
+      deprecated: >-
+        The 'use_entity_access_api' setting is deprecated in social:10.2.0 and is removed from social:11.0.0
+        at which point custom query_access handlers should extend or decorate the query_access handlers from
+        Open Social and the Open Social query_access handlers will be unconditionally enabled.
+        See: https://www.drupal.org/project/social/issues/3210685
+

@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\social_comment\Entity\Access\CommentQueryAccessHandler;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentFieldItemList;
 use Drupal\social_comment\SocialCommentViewBuilder;
@@ -24,6 +25,13 @@ function social_comment_entity_type_alter(array &$entity_types) {
   if (isset($entity_types['comment'])) {
     $entity_types['comment']->setClass(Comment::class);
     $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
+
+    // When the platform has opted in to using the entity_access api we set our
+    // custom handler. This ensures we don't break existing projects who may
+    // already have their own query_access handlers.
+    if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
+      $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
+    }
   }
 }
 

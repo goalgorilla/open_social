@@ -3,6 +3,8 @@
 
 namespace Drupal\social\Behat;
 
+use Drupal\advancedqueue\Annotation\AdvancedQueueJobType;
+use Drupal\advancedqueue\Commands\AdvancedQueueCommands;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\user\Entity\User;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
@@ -292,6 +294,14 @@ class SocialDrupalContext extends DrupalContext {
           }
         }
       }
+    }
+    if (\Drupal::moduleHandler()->moduleExists('advancedqueue')) {
+      $queue_storage = \Drupal::service("entity_type.manager")->getStorage('advancedqueue_queue');
+      /** @var \Drupal\advancedqueue\Entity\QueueInterface $queue */
+      $queue = $queue_storage->load('default');
+      /** @var \Drupal\advancedqueue\Processor $processor */
+      $processor = \Drupal::service('advancedqueue.processor');
+      $processor->processQueue($queue);
     }
   }
 

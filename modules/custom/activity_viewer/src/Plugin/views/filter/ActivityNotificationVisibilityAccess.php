@@ -186,11 +186,17 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $or->condition($comments_on_content);
     }
 
-    // For likes we can safely assume these end up only in the recipient user,
-    // which is usually the entity owner which got liked.
+    // For likes, mentions, private messages and background tasks we can safely
+    // assume these end up only in the recipient user. The context takes care
+    // of only sending notifications if they have actual access.
     if ($authenticated) {
       $vote_access = new Condition('AND');
-      $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'vote');
+      $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', [
+        'vote',
+        'mentions',
+        'private_message',
+        'queue_storage_entity',
+      ], 'IN');
       $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
       $or->condition($vote_access);
     }
