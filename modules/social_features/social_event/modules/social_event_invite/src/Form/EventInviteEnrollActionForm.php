@@ -32,6 +32,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $uid = $current_user->id();
 
     if (!$current_user->isAnonymous()) {
+      // Check if enrollment is enabled.
+      if (!$this->eventEnrollService->isEnabled($node)) {
+        return [];
+      }
       $conditions = [
         'field_account' => $uid,
         'field_event' => $nid,

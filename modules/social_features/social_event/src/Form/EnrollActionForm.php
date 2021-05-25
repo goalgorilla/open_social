@@ -6,7 +6,6 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,8 +16,8 @@ use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Drupal\user\UserInterface;
-use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -80,6 +79,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $moduleHandler;
 
   /**
+   * The event enroll service.
+   *
+   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
+   */
+  protected $eventEnrollService;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -91,27 +97,33 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The entity storage.
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   *   The user storage.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_event\Service\SocialEventEnrollServiceInterface $event_enroll_service
+   *   The event enroll service.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(
+    RouteMatchInterface $route_match,
+    EntityTypeManagerInterface $entity_type_manager,
+    AccountProxyInterface $current_user,
+    ConfigFactoryInterface $config_factory,
+    ModuleHandlerInterface $module_handler,
+     SocialEventEnrollServiceInterface $event_enroll_service
+  ) {
     $this->routeMatch = $route_match;
-    $this->entityStorage = $entity_storage;
-    $this->userStorage = $user_storage;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->currentUser = $currentUser;
-    $this->configFactory = $configFactory;
-    $this->moduleHandler = $moduleHandler;
+    $this->entityStorage = $entity_type_manager->getStorage('event_enrollment');
+    $this->userStorage = $entity_type_manager->getStorage('user');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->currentUser = $current_user;
+    $this->configFactory = $config_factory;
+    $this->moduleHandler = $module_handler;
+    $this->eventEnrollService = $event_enroll_service;
   }
 
   /**
@@ -120,12 +132,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity_type.manager')->getStorage('event_enrollment'),
-      $container->get('entity_type.manager')->getStorage('user'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('social_event.enroll')
     );
   }
 
