@@ -328,7 +328,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       if ($commented_entity_type === 'post') {
         $comment_field_name = 'field_post_comments';
       }
-      elseif ($commented_entity_type === 'node' && $node->bundle() !== 'dashboard') {
+      elseif ($node instanceof NodeInterface && $commented_entity_type === 'node' && $node->bundle() !== 'dashboard') {
         $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
 
         // Prepare the "Comments" link.
