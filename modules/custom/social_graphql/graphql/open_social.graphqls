@@ -49,6 +49,12 @@ interface Node {
   id: ID!
 }
 
+"""
+A valid version 4 UUID
+"""
+# This should not be used for entity UUIDs which should use ID instead.
+# This can be used for user provided strings such as a clientMutationId.
+scalar UUIDv4
 
 """
 An access role for a user

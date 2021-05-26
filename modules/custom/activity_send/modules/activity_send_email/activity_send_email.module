@@ -11,6 +11,14 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Email frequencies.
+ */
+const FREQUENCY_DAILY = 'daily';
+const FREQUENCY_IMMEDIATELY = 'immediately';
+const FREQUENCY_NONE = 'none';
+const FREQUENCY_WEEKLY = 'weekly';
+
+/**
  * Implements hook_cron().
  *
  * This cronjob handles creating digest queue items to process.
@@ -106,6 +114,7 @@ function activity_send_email_theme() {
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
 function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\social_user\Entity\User $account */
   $account = $form_state->getFormObject()->getEntity();
 
   // Only expose these settings to existing users so it's not shown on the
@@ -193,7 +202,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     $template_frequencies = $mail_configs->get('template_frequencies') ?: [];
 
     foreach ($item['templates'] as $template) {
-      $default_frequency = isset($template_frequencies[$template]) ? $template_frequencies[$template] : 'immediately';
+      $default_frequency = isset($template_frequencies[$template]) ? $template_frequencies[$template] : FREQUENCY_IMMEDIATELY;
       $form['email_notifications'][$item_id][$template] = [
         '#type' => 'select',
         '#title' => $email_message_templates[$template],
@@ -259,7 +268,10 @@ function sort_email_frequency_options() {
   }
 
   // Sort the email frequencies by their weight.
-  uasort($emailfrequencies, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
+  uasort($emailfrequencies, [
+    'Drupal\Component\Utility\SortArray',
+    'sortByWeightElement',
+  ]);
 
   return $emailfrequencies;
 }
