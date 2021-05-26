@@ -141,8 +141,11 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     $published_comment = $this->createComment($node, NULL, ['status' => 1]);
 
     // Create another user that can view published comments.
+    // Users in Open Social can't view their own unpublished comments as they
+    // may be unpublished as moderation action (and LU in Open Social have the
+    // `bypass moderation` permission).
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
-    $own_unpublished_comment = $this->createComment($node);
+    $this->createComment($node);
 
     $this->assertResults('
         query {
