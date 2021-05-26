@@ -72,7 +72,7 @@ class CommentSchemaExtension extends SdlSchemaExtensionPluginBase {
    */
   protected function addQueryFields(ResolverRegistryInterface $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('Query', 'comments',
-      $builder->produce('social_comments')
+      $builder->produce('query_comments')
         ->map('after', $builder->fromArgument('after'))
         ->map('before', $builder->fromArgument('before'))
         ->map('first', $builder->fromArgument('first'))

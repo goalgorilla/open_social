@@ -12,7 +12,7 @@ use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
  * Queries the comments on the platform.
  *
  * @DataProducer(
- *   id = "social_comments",
+ *   id = "query_comments",
  *   name = @Translation("Social Comments"),
  *   description = @Translation("Loads the comments."),
  *   produces = @ContextDefinition("any",
@@ -52,7 +52,7 @@ use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
  *   }
  * )
  */
-class SocialComments extends EntityDataProducerPluginBase {
+class QueryComments extends EntityDataProducerPluginBase {
 
   /**
    * Resolves the request to the requested values.
