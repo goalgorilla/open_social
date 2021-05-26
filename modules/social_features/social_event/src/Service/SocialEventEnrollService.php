@@ -42,23 +42,17 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
     ) {
       return FALSE;
     }
-    if (
-      $node->bundle() === 'event' &&
-      $node->hasField('field_event_enroll') &&
-      !$node->get('field_event_enroll')->isEmpty()
-    ) {
-      $is_enabled = (bool) $node->get('field_event_enroll')->first()->getValue()['value'];
+    if ($node->bundle() === 'event' && $node->hasField('field_event_enroll')) {
+      $was_not_changed = $node->get('field_event_enroll')->isEmpty();
+      $is_enabled = $node->get('field_event_enroll')->first()->getValue()['value'];
 
       // Make an exception for the invite enroll method.
       // This doesn't allow people to enroll themselves, but get invited.
-      if (
-        !$node->get('field_enroll_method')->isEmpty() &&
-        (int) $node->get('field_enroll_method')->first()->getValue()['value'] === EventEnrollmentInterface::ENROLL_METHOD_INVITE
-      ) {
+      if (!$node->get('field_enroll_method')->isEmpty() && (int) $node->get('field_enroll_method')->first()->getValue()['value'] === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
         $is_enabled = TRUE;
       }
 
-      return $is_enabled;
+      return $was_not_changed || $is_enabled;
     }
 
     return FALSE;
