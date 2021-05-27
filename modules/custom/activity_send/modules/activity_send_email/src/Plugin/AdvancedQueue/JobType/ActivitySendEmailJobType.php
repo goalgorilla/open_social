@@ -246,8 +246,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
         }
       }
 
-      // By default mark the Job as failed.
-      $this->getLogger('activity_send_email_worker')->error('The job was finished correctly.');
+      // Mark the Job as successful.
+      $this->getLogger('activity_send_email_worker')->notice('The job was finished correctly.');
       return JobResult::success('The job was finished correctly.');
     }
     catch (\Exception $e) {
