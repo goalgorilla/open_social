@@ -8,6 +8,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Token;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
@@ -137,7 +138,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public function setContext(array &$context) {
     parent::setContext($context);
     // @todo make the batch size configurable.
-    $context['batch_size'] = 25;
+    $context['batch_size'] = Settings::get('social_mail_batch_size', 25);
   }
 
   /**
@@ -147,7 +148,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo make the chunk size configurable or dependable on the batch size.
-    $chunk_size = 10;
+    $chunk_size = Settings::get('social_mail_chunk_size', 10);
     $chunks = array_chunk($objects, $chunk_size);
     $data = [];
     foreach ($chunks as $chunk) {
