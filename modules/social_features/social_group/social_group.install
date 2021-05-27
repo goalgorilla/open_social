@@ -110,6 +110,8 @@ function _social_group_get_permissions($role) {
     'view groups on my profile',
     'view groups on other profiles',
     'create public_group group',
+    'flag mute_group_notify',
+    'unflag mute_group_notify',
   ]);
 
   $config = \Drupal::config('entity_access_by_field.settings');
@@ -613,3 +615,34 @@ function social_group_update_8905() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Import Group Mute Notifications flag configurations.
+ */
+function social_group_update_8906() {
+  $config_files = [
+    'flag.flag.mute_group_notify',
+  ];
+
+  foreach ($config_files as $config_file) {
+    $config = drupal_get_path('module', 'social_group') . '/config/install/' . $config_file . '.yml';
+
+    if (is_file($config)) {
+      $settings = Yaml::parse(file_get_contents($config));
+      if (is_array($settings)) {
+        $update_config = \Drupal::configFactory()
+          ->getEditable($config_file);
+
+        $update_config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Update the permissions for social_group.
+ */
+function social_group_update_8907() {
+  _social_group_set_permissions();
+}
+

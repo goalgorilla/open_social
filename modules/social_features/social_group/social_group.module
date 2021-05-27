@@ -267,6 +267,11 @@ function social_group_preprocess_group(array &$variables) {
         $variables['cta'] = t('Invitation only');
       }
     }
+
+    // Prevent access to mute group notifications if user is not a group member.
+    if (isset($variables['elements']['flag_mute_group_notify'])) {
+      $variables['elements']['flag_mute_group_notify']['#access'] = FALSE;
+    }
   }
   // If the group type is a closed_group.
   elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {

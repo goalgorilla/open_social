@@ -13,6 +13,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\GroupMuteNotify;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -79,6 +82,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $languageManager;
 
   /**
+   * The group mute notifications.
+   *
+   * @var \Drupal\social_group\GroupMuteNotify
+   */
+  protected $groupMuteNotify;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -91,7 +101,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     QueueFactory $queue_factory,
-    LanguageManager $language_manager
+    LanguageManager $language_manager,
+    GroupMuteNotify $group_mute_notify
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
@@ -101,6 +112,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
+    $this->groupMuteNotify = $group_mute_notify;
   }
 
   /**
@@ -117,7 +129,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('queue'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('social_group.group_mute_notify')
     );
   }
 
@@ -262,9 +275,31 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
     // We load all the target accounts.
     if ($target_accounts = $user_storage->loadMultiple($parameters['target_recipients'])) {
+      // Get the group from the activity.
+      $activity = $parameters['activity'];
+      $related_entity = $activity->getRelatedEntity();
+      if ($related_entity instanceof GroupContentInterface) {
+        /** @var \Drupal\group\Entity\GroupInterface $group */
+        $group = $related_entity->getGroup();
+      }
+      elseif ($related_entity->getEntityTypeId() === 'post') {
+        if (!$related_entity->get('field_recipient_group')->isEmpty()) {
+          /** @var \Drupal\group\Entity\GroupInterface $group */
+          $group = $related_entity->get('field_recipient_group')->first()->get('entity')->getTarget()->getValue();
+        }
+      }
+
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
+          // Need check if we have the group.
+          if (isset($group) && $group instanceof GroupInterface) {
+            // Only for users that didn't mute group notification.
+            if ($this->groupMuteNotify->groupNotifyIsMuted($group, $target_account)) {
+              continue;
+            }
+          }
+
           // Only for users that have access to related content.
           if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
             // If the website is multilingual, get the body text in

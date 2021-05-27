@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\social_group\GroupMuteNotify;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +29,13 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   protected $currentUser;
 
   /**
+   * The group mute notifications.
+   *
+   * @var \Drupal\social_group\GroupMuteNotify
+   */
+  protected $groupMuteNotify;
+
+  /**
    * Constructs a GroupContentInMyGroupActivityContext object.
    *
    * @param array $configuration
@@ -44,6 +52,8 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
    *   The activity factory service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
+   * @param \Drupal\social_group\GroupMuteNotify $group_mute_notify
+   *   The group mute notifications.
    */
   public function __construct(
     array $configuration,
@@ -52,11 +62,13 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
+    GroupMuteNotify $group_mute_notify
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->currentUser = $current_user;
+    $this->groupMuteNotify = $group_mute_notify;
   }
 
   /**
@@ -70,7 +82,8 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
       $container->get('activity_creator.activity_factory'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('social_group.group_mute_notify')
     );
   }
 
@@ -101,7 +114,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
 
       // List of managers which shouldn't receive notifications.
       $account_ids = [
-        // The current user when he/she is a manager.
+        // The current user when is a manager.
         $this->currentUser->id(),
         // New group member with the "Group manager" role.
         $group_content->getEntity()->id(),
@@ -109,7 +122,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
 
       /** @var \Drupal\group\GroupMembership $membership */
       foreach ($memberships as $membership) {
-        if (!in_array($membership->getUser()->id(), $account_ids)) {
+        if (!in_array($membership->getUser()->id(), $account_ids) && !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())) {
           $recipients[] = [
             'target_type' => 'user',
             'target_id' => $membership->getUser()->id(),
