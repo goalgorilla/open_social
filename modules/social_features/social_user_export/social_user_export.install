@@ -19,3 +19,53 @@ function social_user_export_update_8001() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_export.settings');
   $config->set('plugins', $plugins)->save();
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_user_export_update_dependencies() {
+  // New config changes should run after the VBO module changes the structure
+  // of views.
+  $dependencies['social_user_export'][10201] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_user_export.
+ */
+function social_user_export_install() {
+  // Add changes to user_admin_people view.
+  _social_user_export_alter_user_admin_people_view();
+}
+
+/**
+ * Adds custom action in user_admin_people.
+ *
+ * Action ID: 'social_user_export_enrollments_action' action.
+ */
+function _social_user_export_alter_user_admin_people_view() {
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_user_export_user_action',
+    'preconfiguration' => [
+      'label_override' => '',
+    ],
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
+}
+
+/**
+ * Adds custom action in views.view.user_admin_people after VBO updates.
+ *
+ * Action ID: 'social_user_export_enrollments_action' action.
+ */
+function social_user_export_update_10201(&$sandbox) {
+  _social_user_export_alter_user_admin_people_view();
+}

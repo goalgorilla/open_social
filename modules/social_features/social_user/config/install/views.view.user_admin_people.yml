@@ -10,8 +10,6 @@ dependencies:
     - social_user
     - user
     - views_bulk_operations
-_core:
-  default_config_hash: l6kPjP6UEcgKd3sAfozWD9fqcKqYhOdNIKFaJ8WmxU8
 id: user_admin_people
 label: People
 module: user
@@ -219,26 +217,28 @@ display:
           clear_on_exposed: true
           action_title: Action
           selected_actions:
-            comment_delete_action: 0
-            social_user_send_email: social_user_send_email
-            user_unblock_user_action: user_unblock_user_action
-            user_block_user_action: user_block_user_action
-            user_remove_role_action: user_remove_role_action
-            user_add_role_action: user_add_role_action
-            vbo_cancel_user_action: vbo_cancel_user_action
-            views_bulk_operations_delete_entity: 0
-            'entity:save_action:user': 0
-          preconfiguration:
-            user_unblock_user_action:
-              label_override: ''
-            user_block_user_action:
-              label_override: ''
-            user_remove_role_action:
-              label_override: ''
-            user_add_role_action:
-              label_override: ''
-            vbo_cancel_user_action:
-              label_override: ''
+            -
+              action_id: social_user_send_email
+            -
+              action_id: user_unblock_user_action
+              preconfiguration:
+                label_override: ''
+            -
+              action_id: user_block_user_action
+              preconfiguration:
+                label_override: ''
+            -
+              action_id: user_remove_role_action
+              preconfiguration:
+                label_override: ''
+            -
+              action_id: user_add_role_action
+              preconfiguration:
+                label_override: ''
+            -
+              action_id: vbo_cancel_user_action
+              preconfiguration:
+                label_override: ''
           plugin_id: views_bulk_operations_bulk_form
         name:
           id: name

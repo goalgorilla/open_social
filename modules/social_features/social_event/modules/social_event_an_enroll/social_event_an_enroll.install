@@ -18,6 +18,9 @@ function social_event_an_enroll_install() {
   module_set_weight('social_event_an_enroll', 10);
   _social_event_an_enroll_set_permissions();
   _social_event_an_enroll_fix_blocks();
+
+  // Add changes to event_manage_enrollments view.
+  _social_event_an_enroll_alter_event_manage_enrollments_view();
 }
 
 /**
@@ -33,6 +36,20 @@ function social_event_an_enroll_uninstall() {
       $field->delete();
     }
   }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_event_an_enroll_update_dependencies() {
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_event_an_enroll'][10201] = [
+    'views_bulk_operations' => 8034,
+    'social_event_managers' => 10201,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -102,6 +119,36 @@ function _social_event_an_enroll_fix_blocks() {
 }
 
 /**
+ * Add a custom action to 'views.view.event_manage_enrollments'.
+ *
+ * Action ID: 'social_event_an_enroll_send_email_action'.
+ */
+function _social_event_an_enroll_alter_event_manage_enrollments_view() {
+  $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
+
+  // Get the preconfiguration of social_event_managers_send_email_action.
+  foreach ($selected_actions as $key => $value) {
+    if ($value['action_id'] === 'social_event_managers_send_email_action') {
+      $preconfiguration = $value['preconfiguration'];
+    }
+  }
+
+  // Remove regular 'social_event_managers_send_email_action' action.
+  if (!empty($selected_actions)) {
+    $selected_actions = _social_core_remove_element_with_value($selected_actions, 'action_id', 'social_event_managers_send_email_action') ?? $selected_actions;
+  }
+
+  $selected_actions[] = [
+    'action_id' => 'social_event_an_enroll_send_email_action',
+    'preconfiguration' => $preconfiguration,
+  ];
+
+  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions', $selected_actions);
+  $config->save();
+}
+
+/**
  * Fix text of AU Enrollment Confirmation Email.
  */
 function social_event_an_enroll_update_8001() {
@@ -142,4 +189,13 @@ function social_event_an_enroll_update_8004() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add a custom action to 'views.view.event_manage_enrollments'.
+ *
+ * Action ID: 'social_event_an_enroll_send_email_action'.
+ */
+function social_event_an_enroll_update_10201(&$sandbox) {
+  _social_event_an_enroll_alter_event_manage_enrollments_view();
 }

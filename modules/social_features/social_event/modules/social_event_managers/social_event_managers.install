@@ -41,6 +41,19 @@ function social_event_managers_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_managers_update_dependencies() {
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_event_managers'][10201] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Perform actions related to the installation of social_event_managers.
  */
 function social_event_managers_update_8001() {
@@ -105,5 +118,22 @@ function social_event_managers_update_8005() {
     $config->setData($config_data)->save();
     // Make sure we clear cached definitions for the fields.
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Update 'views.view.event_manage_enrollments' after VBO module updates.
+ */
+function social_event_managers_update_10201(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_event_managers') . '/config/update/social_event_managers_update_10201.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollments');
+
+      $config->setData($settings)->save(TRUE);
+    }
   }
 }
