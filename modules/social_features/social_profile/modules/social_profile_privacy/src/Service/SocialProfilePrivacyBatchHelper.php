@@ -136,13 +136,13 @@ class SocialProfilePrivacyBatchHelper {
     $limit = (int) $args['limit'];
     $offset = (int) $context['sandbox'] ?? 0;
 
-    $userStorage = \Drupal::entityTypeManager()->getStorage('user');
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    $uids = $userStorage->getQuery()
-      ->condition('status', '1')
-      ->execute();
     /** @var array $results */
-    $results = $userStorage->loadMultiple($uids);
+    $results = $profile_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->execute();
 
     // Define total on first call.
     if (!isset($context['sandbox']['total'])) {
@@ -151,9 +151,9 @@ class SocialProfilePrivacyBatchHelper {
 
     // Setup results based on retrieved objects.
     $context['results'] = array_reduce($results,
-      function ($carry, $object) {
+      function ($carry, $pid) {
         // Map object results extracted from previous query.
-        $carry[$object->id()] = $object;
+        $carry[$pid] = $pid;
         return $carry;
       }, $context['results']
     );
@@ -200,15 +200,15 @@ class SocialProfilePrivacyBatchHelper {
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    foreach ($context['results'] as $key => $account) {
-      if (!empty($profile_storage)) {
-        $profile = $profile_storage->loadByUser($account, 'profile');
-        if ($profile instanceof ProfileInterface) {
-          // We need just save the profile. The profile name will be updated by
-          // hook "presave".
-          // @see social_profile_privacy_profile_presave()
-          $profile->save();
-        }
+    // Load profiles by profiles IDs.
+    $profiles = $profile_storage->loadMultiple($context['results']);
+
+    foreach ($profiles as $key => $profile) {
+      if ($profile instanceof ProfileInterface) {
+        // We need just save the profile. The profile name will be updated by
+        // hook "presave".
+        // @see social_profile_privacy_profile_presave()
+        $profile->save();
       }
 
       // Increment count at one.

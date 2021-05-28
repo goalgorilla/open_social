@@ -96,6 +96,24 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
     '#format' => $config->get('disclaimer.format'),
   ];
 
+  // Add warning to inform about update all profiles after submit form.
+  $form['social_profile_privacy_warning_message'] = [
+    '#theme' => 'status_messages',
+    '#message_list' => [
+      'warning' => [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => t('Once you submit this form, all the profiles of all the users on the platform will be updated.'),
+        ],
+      ],
+    ],
+    '#status_headings' => [
+      'warning' => t('Attention!'),
+    ],
+    '#weight' => -1,
+  ];
+
   $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
 }
 
@@ -125,7 +143,7 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
   // We need to update profile names.
   /** @var \Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper $batch_helper */
   $batch_helper = \Drupal::service('social_profile_privacy.batch.helper');
-  $batch_helper->bulkUpdateProfileNames();
+  $batch_helper::bulkUpdateProfileNames();
 }
 
 /**

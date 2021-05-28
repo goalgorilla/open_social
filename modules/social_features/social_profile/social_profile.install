@@ -12,7 +12,6 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\Entity\Role;
 use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
@@ -515,36 +514,4 @@ function social_profile_update_8904() {
 function social_profile_update_8905() {
   // Update field definitions.
   _social_profile_field_definitions_update();
-}
-
-/**
- * Update Profile names.
- */
-function social_profile_update_8906(&$sandbox) {
-  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  if (!isset($sandbox['count'])) {
-    $sandbox['ids'] = \Drupal::entityQuery('profile')
-      ->condition('type', 'profile')
-      ->accessCheck(FALSE)
-      ->execute();
-    $sandbox['count'] = count($sandbox['ids']);
-  }
-
-  $ids = array_splice($sandbox['ids'], 0, 50);
-
-  foreach ($ids as $id) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $profile_storage->load($id);
-    if ($profile instanceof ProfileInterface) {
-      // We need just save the profile. The profile name will be updated by
-      // hook "presave".
-      // @see social_profile_profile_presave()
-      // @see social_profile_privacy_profile_presave()
-      $profile->save();
-    }
-  }
-
-  $sandbox['#finished'] = empty($sandbox['ids']) ? 1 : ($sandbox['count'] - count($sandbox['ids'])) / $sandbox['count'];
 }
