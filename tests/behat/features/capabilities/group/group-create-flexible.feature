@@ -233,8 +233,8 @@ Feature: Create flexible Group
     Then I should see the link "Stream"
     And I should see the link "About"
     And I should see the link "Members"
-    And I should not see the link "Events"
-    And I should not see the link "Topics"
+    And I should see the link "Events"
+    And I should see the link "Topics"
 
     # Test flexible group with community visibility and members only / invite for closed group.
     Given I am logged in as "GivenUserOne"
@@ -254,7 +254,7 @@ Feature: Create flexible Group
     Then I am on "all-groups"
     And I should not see "Flexible group - Closed option"
 
-    # Check this as an user with SM permissions.
+    # Check this as an user with LU permissions.
     Given I am logged in as an "authenticated user"
     When I am on "all-groups"
     And I should see "Flexible group - Closed option"
@@ -262,8 +262,8 @@ Feature: Create flexible Group
     Then I should not see the link "Stream"
     And I should see the link "About"
     And I should see the link "Members"
-    And I should see the link "Events"
-    And I should see the link "Topics"
+    And I should not see the link "Events"
+    And I should not see the link "Topics"
 
     # And a GM receives a notification about the joined user.
     When I am logged in as "GivenUserOne"
