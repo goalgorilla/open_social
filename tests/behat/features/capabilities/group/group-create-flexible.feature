@@ -262,8 +262,8 @@ Feature: Create flexible Group
     Then I should not see the link "Stream"
     And I should see the link "About"
     And I should see the link "Members"
-    And I should not see the link "Events"
-    And I should not see the link "Topics"
+    And I should see the link "Events"
+    And I should see the link "Topics"
 
     # And a GM receives a notification about the joined user.
     When I am logged in as "GivenUserOne"
