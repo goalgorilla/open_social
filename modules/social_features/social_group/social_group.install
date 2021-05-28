@@ -617,23 +617,30 @@ function social_group_update_8905() {
 }
 
 /**
- * Import Group Mute Notifications flag configurations.
+ * Import new Group configurations.
  */
 function social_group_update_8906() {
-  $config_files = [
-    'flag.flag.mute_group_notify',
+  $configs = [
+    'install' => [
+      'flag.flag.mute_group_notify',
+    ],
+    'optional' => [
+      'block.block.exposed_form_groups_page_user_groups',
+    ],
   ];
 
-  foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_group') . '/config/install/' . $config_file . '.yml';
+  foreach ($configs as $folder => $config_files) {
+    foreach ($config_files as $config_file) {
+      $config = drupal_get_path('module', 'social_group') . "/config/install/{$folder}/{$config_file}.yml";
 
-    if (is_file($config)) {
-      $settings = Yaml::parse(file_get_contents($config));
-      if (is_array($settings)) {
-        $update_config = \Drupal::configFactory()
-          ->getEditable($config_file);
+      if (is_file($config)) {
+        $settings = Yaml::parse(file_get_contents($config));
+        if (is_array($settings)) {
+          $update_config = \Drupal::configFactory()
+            ->getEditable($config_file);
 
-        $update_config->setData($settings)->save(TRUE);
+          $update_config->setData($settings)->save(TRUE);
+        }
       }
     }
   }
@@ -646,3 +653,16 @@ function social_group_update_8907() {
   _social_group_set_permissions();
 }
 
+/**
+ * Update User Groups view.
+ */
+function social_group_update_8908() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8908');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

@@ -2039,6 +2039,20 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // User Groups view.
+  if ($view->id() == 'groups' && $view->getDisplay()->display['id'] == 'page_user_groups') {
+    // Change Join type if we want to see muted groups.
+    // @todo: Remove when will be fixed issue where exposed flag filter can't
+    // show unflagged groups.
+    if (isset($query->where[1]['conditions'][0]['operator']) && $query->where[1]['conditions'][0]['operator'] === 'IS NOT NULL') {
+      $table = $query->getTableInfo('flagging_groups_field_data');
+      if (isset($table['join']->type) && $table['join']->type === 'LEFT') {
+        // Change Join type.
+        $table['join']->type = 'INNER';
+      }
+    }
+  }
+
   if (\Drupal::currentUser()->isAuthenticated()) {
     return;
   }
