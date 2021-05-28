@@ -74,6 +74,15 @@ A valid URL
 scalar Url
 
 """
+An HTML string
+
+Content of this type is deemed safe by the server for raw output given the
+origin and the context of its usage. The HTML can still contain scripts or style
+tags where the creating user had permission to input these.
+"""
+scalar Html
+
+"""
 A UNIX timestamp.
 
 The number of seconds since the Unix Epoch on January 1st, 1970 at UTC.
@@ -194,6 +203,34 @@ type Image implements Media & Node {
   alt: String!
   # @todo https://www.drupal.org/project/social/issues/3191640
 }
+
+"""
+The file, can be used in attachments (txt, pdf, doc, docx, xls, xlsx, ppt, pptx, csv and etc.).
+"""
+type File implements Media & Node {
+  id: ID!
+  """
+  The url at which the original file can be downloaded.
+  """
+  url: Url!
+  """
+  The name of the file.
+  """
+  filename: String!
+  """
+  The filemime type of the file.
+  """
+  filemime: String
+  """
+  The file size in bytes.
+  """
+  filesize: String
+  """
+  The timestamp indicating when the file was created.
+  """
+  created: DateTime!
+}
+
 
 # @todo https://www.drupal.org/project/social/issues/3191642
 

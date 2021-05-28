@@ -168,7 +168,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
 
     // Merge all managers of the group to recipients array.
-    $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
+    $recipients = array_merge($g_admins_users, $g_managers_users);
 
     // Add the joined user to the already existing recipients array.
     $recipients[] = $account;
