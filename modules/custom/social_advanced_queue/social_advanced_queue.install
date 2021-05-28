@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for Social Swiftmailer.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_advanced_queue.
+ */
+function social_advanced_queue_install() {
+  // Get ultimate_cron.job.advancedqueue_cron settings.
+  $os_default_crons = [
+    'advancedqueue_cron',
+    'activity_send_email_cron',
+    'activity_creator_cron',
+  ];
+
+  // Update the default scheduler time to 1 minute for activity related cron.
+  foreach ($os_default_crons as $config_name) {
+    $ultimate_cron_config = \Drupal::configFactory()->getEditable('ultimate_cron.job.' . $config_name);
+
+    if ($ultimate_cron_config !== NULL) {
+      // Set default cron time for advanced queue.
+      $data = $ultimate_cron_config->getRawData();
+      if (!empty($data['scheduler'])) {
+        $data['scheduler'] = [
+          'id' => 'simple',
+          'configuration' => [
+            'rules' => [
+              '* * * * *',
+            ],
+          ],
+        ];
+      }
+      $ultimate_cron_config->setData($data)->save();
+    }
+  }
+}
+
+/**
+ * Update default cron settings.
+ */
+function social_advanced_queue_update_10201() {
+  // Get ultimate_cron.job.advancedqueue_cron settings.
+  $os_default_crons = [
+    'advancedqueue_cron',
+    'activity_send_email_cron',
+    'activity_creator_cron',
+  ];
+
+  // Update the default scheduler time to 1 minute for activity related cron.
+  foreach ($os_default_crons as $config_name) {
+    $ultimate_cron_config = \Drupal::configFactory()->getEditable('ultimate_cron.job.' . $config_name);
+
+    if ($ultimate_cron_config !== NULL) {
+      // Set default cron time for advanced queue.
+      $data = $ultimate_cron_config->getRawData();
+      if (!empty($data['scheduler'])) {
+        $data['scheduler'] = [
+          'id' => 'simple',
+          'configuration' => [
+            'rules' => [
+              '* * * * *',
+            ],
+          ],
+        ];
+      }
+      $ultimate_cron_config->setData($data)->save();
+    }
+  }
+}

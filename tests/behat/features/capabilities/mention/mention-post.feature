@@ -19,5 +19,9 @@ Feature: Create Mention in a Post
     And I should see the link "user_3"
     When I click "user_2"
     Then I should see "Isaac Newton"
-#    Then I should see "Albert Einstein mentioned Isaac Newton in a post"
-#    And I should see "Hello user_2, user_3!"
+
+    # Test if the user gets a notification.
+    When I am logged in as "user_2"
+    And I wait for the queue to be empty
+    And I am at "notifications"
+    Then I should see text matching "Albert Einstein mentioned you in a post"

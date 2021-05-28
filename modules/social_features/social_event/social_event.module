@@ -1243,3 +1243,23 @@ function social_event_preprocess_fieldset(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_field_group_form_process_build_alter().
+ */
+function social_event_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form) {
+  if ($field_group = &$element['group_enrollment_methods']) {
+    $field_group['#states']['visible'] = [
+      ':input[name="field_event_enable_enrollment[value]"]' => ['checked' => TRUE],
+    ];
+    $field_group['#title'] = '';
+  }
+
+  $event_settings = \Drupal::config('social_event.settings');
+  if (
+    isset($element['group_enrollment']) &&
+    $event_settings->get('disable_event_enroll')
+  ) {
+    $element['group_enrollment']['#access'] = FALSE;
+  }
+}

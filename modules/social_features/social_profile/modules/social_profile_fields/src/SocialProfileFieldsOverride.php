@@ -24,9 +24,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
     // Add field_group and field_comment_files.
     $config_name = 'core.entity_form_display.profile.profile.default';
-    if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
-
+    if (in_array($config_name, $names, TRUE)) {
       // Add the nick name field to the profile.
       $overrides[$config_name]['content']['field_profile_nick_name'] = [
         'weight' => 0,
@@ -40,12 +38,9 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       ];
 
       // If there is a profile names and image field_group we move the field.
-      $third_party = $config->get('third_party_settings');
+      $third_party = $config_factory->getEditable($config_name)->get('third_party_settings');
       if (isset($third_party['field_group']['group_profile_names_image'])) {
-        // Append to the numeric array by using an index not in the range of
-        // 0..(size-1). This limits our override to what's absolutely necessary.
-        $next_index = count($third_party['field_group']['group_profile_names_image']['children']);
-        $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children'][$next_index] = 'field_profile_nick_name';
+        $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children']['field_profile_nick_name'] = 'field_profile_nick_name';
       }
     }
 
@@ -56,16 +51,15 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
     ];
 
     foreach ($config_names as $config_name) {
-      if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
+      if (in_array($config_name, $names, TRUE)) {
 
-        // Add our field as config dependency.
-        $config_dependencies = $config->get('dependencies.config');
-        $config_dependencies_next_index = count($config_dependencies);
-        $overrides[$config_name]['dependencies']['config'][$config_dependencies_next_index] = 'field.storage.profile.field_profile_nick_name';
-
-        // Add our field itself to the index.
+        // Add the config overrides (deeply merged) needed to add the field.
         $overrides[$config_name] = [
+          'dependencies' => [
+            'config' => [
+              'field.storage.profile.field_profile_nick_name' => 'field.storage.profile.field_profile_nick_name',
+            ],
+          ],
           'field_settings' => [
             'field_profile_nick_name' => [
               'label' => 'Nickname',
@@ -82,7 +76,13 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
         ];
 
         // Configure the relevant processors for our field.
-        $processor_settings = $config->get('processor_settings');
+        $processor_settings = $config_factory->getEditable($config_name)
+          ->get('processor_settings');
+        // In some scenarios (e.g. site install) this setting may not exist and
+        // be a NULL value.
+        if (empty($processor_settings)) {
+          $processor_settings = [];
+        }
         $enabled_processors = array_intersect(
           // We want to configure the following processors if they're enabled.
           ['ignorecase', 'tokenizer', 'transliteration'],
@@ -90,12 +90,12 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
         );
 
         foreach ($enabled_processors as $processor) {
-          // Check if the fields are in this particular array.
+          // If this processor has not specified specific fields then our field
+          // is already automatically included.
           if (!isset($processor_settings[$processor]['fields'])) {
             continue;
           }
-          $next_index = count($processor_settings[$processor]['fields']);
-          $overrides[$config_name]['processor_settings'][$processor]['fields'][$next_index] = 'field_profile_nick_name';
+          $overrides[$config_name]['processor_settings'][$processor]['fields']['field_profile_nick_name'] = 'field_profile_nick_name';
         }
       }
     }
