@@ -49,6 +49,11 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::allowed();
     }
 
+    // A user with this access can definitely do everything.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::allowed();
+    }
+
     // Handling the visibility of a group.
     if ($group->hasField('field_flexible_group_visibility')) {
       $group_visibility_value = $group->getFieldValue('field_flexible_group_visibility', 'value');
@@ -72,11 +77,6 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
     if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
-      return AccessResult::allowed();
-    }
-
-    // A user with this access can definitely do everything.
-    if ($account->hasPermission('manage all groups')) {
       return AccessResult::allowed();
     }
 
