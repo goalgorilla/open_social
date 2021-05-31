@@ -7,10 +7,11 @@ Feature: Create flexible Group
   Scenario: Successfully create flexible group
     Given I enable the module "social_group_flexible_group"
     Given users:
-      | name           | mail                     | status |
-      | GivenUserOne   | group_user_1@example.com | 1      |
-      | GivenUserTwo   | group_user_2@example.com | 1      |
-      | GivenUserThree | group_user_2@example.com | 1      |
+      | name           | mail                     | status | roles |
+      | GivenUserOne   | group_user_1@example.com | 1      |       |
+      | GivenUserTwo   | group_user_2@example.com | 1      |       |
+      | GivenUserThree | group_user_2@example.com | 1      |       |
+      | SiteManagerOne | site_manager@example.com | 1      | sitemanager  |
     Given "event_types" terms:
       | name     |
       | Webinar  |
@@ -194,7 +195,7 @@ Feature: Create flexible Group
     And I should see the link "Events"
     And I should see the link "Topics"
     And I should see the link "Members"
-    # Check this as an user with SM permissions.
+    # Check this as an user with LU permissions.
     Given I am logged in as an "authenticated user"
     When I am on "all-groups"
     And I click "Cheesy test of flexible group"
@@ -219,10 +220,21 @@ Feature: Create flexible Group
     Then I am on "all-groups"
     And I should not see "Flexible group - Secret option"
 
-    # Check this as an user with SM permissions.
+    # Check this as an user with LU permissions.
     Given I am logged in as an "authenticated user"
     When I am on "all-groups"
     And I should not see "Flexible group - Secret option"
+
+    # Check this as an user with SM permissions.
+    Given I am logged in as "SiteManagerOne"
+    When I am on "all-groups"
+    Then I should see "Flexible group - Secret option"
+    When I click "Flexible group - Secret option"
+    Then I should see the link "Stream"
+    And I should see the link "About"
+    And I should see the link "Members"
+    And I should see the link "Events"
+    And I should see the link "Topics"
 
     # Test flexible group with community visibility and members only / invite for closed group.
     Given I am logged in as "GivenUserOne"
@@ -242,7 +254,7 @@ Feature: Create flexible Group
     Then I am on "all-groups"
     And I should not see "Flexible group - Closed option"
 
-    # Check this as an user with SM permissions.
+    # Check this as an user with LU permissions.
     Given I am logged in as an "authenticated user"
     When I am on "all-groups"
     And I should see "Flexible group - Closed option"
