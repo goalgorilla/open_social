@@ -106,6 +106,13 @@ class SocialProfilePrivacyBatchHelper {
    * Update profile names in a batch.
    */
   public static function bulkUpdateProfileNames() {
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+    $pids = $profile_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->execute();
+
     // Define batch process to update profile names.
     $batch_builder = (new BatchBuilder())
       ->setTitle(t('Updating profile names...'))
@@ -113,126 +120,65 @@ class SocialProfilePrivacyBatchHelper {
         SocialProfilePrivacyBatchHelper::class,
         'finishProcess',
       ])
-      ->addOperation([SocialProfilePrivacyBatchHelper::class, 'initOperation'], [
-        ['limit' => 50],
-      ])
-      ->addOperation([SocialProfilePrivacyBatchHelper::class, 'updateProcess'], [
-        ['limit' => 50],
-      ]);
+      ->addOperation([SocialProfilePrivacyBatchHelper::class, 'updateProcess'], [$pids]);
 
     batch_set($batch_builder->toArray());
   }
 
   /**
-   * Init operation task by retrieving all content to be updated.
-   *
-   * @param array $args
-   *   Arguments.
-   * @param array $context
-   *   An array that may or may not contain placeholder variables.
-   */
-  public static function initOperation(array $args, array &$context) {
-    // Init variables.
-    $limit = (int) $args['limit'];
-    $offset = (int) $context['sandbox'] ?? 0;
-
-    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-    /** @var array $results */
-    $results = $profile_storage->getQuery()
-      ->accessCheck(FALSE)
-      ->execute();
-
-    // Define total on first call.
-    if (!isset($context['sandbox']['total'])) {
-      $context['sandbox']['total'] = count($results);
-    }
-
-    // Setup results based on retrieved objects.
-    $context['results'] = array_reduce($results,
-      function ($carry, $pid) {
-        // Map object results extracted from previous query.
-        $carry[$pid] = $pid;
-        return $carry;
-      }, $context['results']
-    );
-
-    // Redefine offset value.
-    $context['sandbox']['offset'] = $offset + $limit;
-
-    // Set current step as unfinished until offset is greater than total.
-    $context['finished'] = 0;
-    if ($context['sandbox']['offset'] >= $context['sandbox']['total']) {
-      $context['finished'] = 1;
-    }
-
-    // Setup info message to notify about current progress.
-    $context['message'] = t(
-      'Retrieved @consumed of @total available profiles',
-      [
-        '@consumed' => $context['sandbox']['offset'],
-        '@total' => $context['sandbox']['total'],
-      ]
-    );
-  }
-
-  /**
    * Process operation to update content retrieved from init operation.
    *
-   * @param array $args
-   *   Arguments.
+   * @param array $items
+   *   Items.
    * @param array $context
    *   An array that may or may not contain placeholder variables.
    */
-  public static function updateProcess(array $args, array &$context) {
-    // Define total on first call.
-    if (!isset($context['sandbox']['total'])) {
-      $context['sandbox']['total'] = count($context['results']);
+  public static function updateProcess(array $items, array &$context) {
+    // Elements per operation.
+    $limit = 5;
+
+    // Set default progress values.
+    if (empty($context['sandbox']['progress'])) {
+      $context['sandbox']['progress'] = 0;
+      $context['sandbox']['max'] = count($items);
     }
 
-    // Init limit variable.
-    $limit = $args['limit'];
+    // Save items to array which will be changed during processing.
+    if (empty($context['sandbox']['items'])) {
+      $context['sandbox']['items'] = $items;
+    }
 
-    // Walk-through all results in order to update them.
-    $count = 0;
+    if (!empty($context['sandbox']['items'])) {
+      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+      $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+      // Get items for processing.
+      $current_pids = array_splice($context['sandbox']['items'], 0, $limit);
 
-    // Load profiles by profiles IDs.
-    $profiles = $profile_storage->loadMultiple($context['results']);
+      // Load profiles by profiles IDs.
+      $profiles = $profile_storage->loadMultiple($current_pids);
 
-    foreach ($profiles as $key => $profile) {
-      if ($profile instanceof ProfileInterface) {
-        // We need just save the profile. The profile name will be updated by
-        // hook "presave".
-        // @see social_profile_privacy_profile_presave()
-        $profile->save();
-      }
+      foreach ($profiles as $profile) {
+        if ($profile instanceof ProfileInterface) {
+          SocialProfilePrivacyBatchHelper::updateProfile($profile);
+        }
 
-      // Increment count at one.
-      $count++;
+        $context['sandbox']['progress']++;
 
-      // Remove current result.
-      unset($context['results'][$key]);
-      if ($count >= $limit) {
-        break;
+        $context['message'] = t('Now processing profile :progress of :count', [
+          ':progress' => $context['sandbox']['progress'],
+          ':count' => $context['sandbox']['max'],
+        ]);
+
+        // Increment total processed item values. Will be used in finished
+        // callback.
+        $context['results']['processed'] = $context['sandbox']['progress'];
       }
     }
 
-    // Setup message to notify how many remaining profiles.
-    $context['message'] = t(
-      'Updating profile names... @total pending...',
-      ['@total' => count($context['results'])]
-    );
-
-    // Set current step as unfinished until there's not results.
-    $context['finished'] = (empty($context['results']));
-
-    // When it is completed, then setup result as total amount updated.
-    if ($context['finished']) {
-      $context['results'] = $context['sandbox']['total'];
+    // If not finished all tasks, we count percentage of process. 1 = 100%.
+    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
     }
   }
 
@@ -241,18 +187,50 @@ class SocialProfilePrivacyBatchHelper {
    *
    * @param bool $success
    *   TRUE if the update was fully succeeded.
-   * @param int $results
+   * @param array $results
    *   Contains individual results per operation.
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, int $results, array $operations) {
-    // Setup final message after process is done.
-    $message = ($success) ?
-      t('Update process of @count profiles was completed.',
-        ['@count' => $results]) :
-      t('Finished with an error.');
-    \Drupal::messenger()->addMessage($message);
+  public static function finishProcess($success, array $results, array $operations) {
+    $message = t('Number of profiles affected by batch: @count', [
+      '@count' => $results['processed'],
+    ]);
+
+    \Drupal::messenger()
+      ->addStatus($message);
+  }
+
+  /**
+   * Update single Profile.
+   *
+   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *   The profile.
+   */
+  public static function updateProfile(ProfileInterface $profile) {
+    if ($profile instanceof ProfileInterface) {
+      // We just need to save on the profile. The profile name will be updated
+      // by hook "presave".
+      // @see social_profile_privacy_profile_presave()
+      $profile->save();
+    }
+  }
+
+  /**
+   * Get the list of the fields which can contain in the Profile name field.
+   *
+   * @return string[]
+   *   List of the names of the fields.
+   */
+  public static function getProfileNameFields(): array {
+    $fields = [
+      'field_profile_first_name',
+      'field_profile_last_name',
+    ];
+    if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
+      $fields[] = 'field_profile_nick_name';
+    }
+    return $fields;
   }
 
 }

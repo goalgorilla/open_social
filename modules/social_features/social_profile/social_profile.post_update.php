@@ -10,7 +10,7 @@ use Drupal\profile\Entity\ProfileInterface;
 /**
  * Update Profile names.
  */
-function social_profile_post_update_0001(&$sandbox) {
+function social_profile_post_update_10101_profile_names_update(&$sandbox) {
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 
@@ -24,9 +24,11 @@ function social_profile_post_update_0001(&$sandbox) {
 
   $ids = array_splice($sandbox['ids'], 0, 50);
 
-  foreach ($ids as $id) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $profile_storage->load($id);
+  // Load profiles by profiles IDs.
+  $profiles = $profile_storage->loadMultiple($ids);
+
+  /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+  foreach ($profiles as $profile) {
     if ($profile instanceof ProfileInterface) {
       // We need just save the profile. The profile name will be updated by
       // hook "presave".
