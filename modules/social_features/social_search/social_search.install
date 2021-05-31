@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
 
@@ -188,6 +189,38 @@ function social_search_update_8905() {
         $index->clear();
         $index->reindex();
       }
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_search')->info($e->getMessage());
+  }
+}
+
+/**
+ * Removed created field for profile and added 'Owner » User » Created' field.
+ */
+function social_search_update_10001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_10001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update search users with new 'created' field.
+ */
+function social_search_update_10002() {
+  try {
+    $social_user_update_indexes = Settings::get('social_user_update_indexes', TRUE);
+    $index = Index::load('social_users');
+    if ($index !== NULL && $index->status() && $social_user_update_indexes) {
+      $index->save();
+      $index->clear();
+      $index->reindex();
     }
   }
   catch (EntityStorageException $e) {

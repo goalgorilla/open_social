@@ -258,14 +258,13 @@ function social_group_preprocess_group(array &$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
 
-    if (in_array($group_type_id, $group_types)) {
-      $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-      $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-      if (!$direct_option) {
-        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-        $variables['closed_group'] = TRUE;
-        $variables['cta'] = t('Invitation only');
-      }
+    if (
+      in_array($group_type_id, $group_types) &&
+      !social_group_flexible_group_can_join_directly($group)
+    ) {
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+      $variables['closed_group'] = TRUE;
+      $variables['cta'] = t('Invitation only');
     }
 
     // Prevent access to mute group notifications if user is not a group member.
@@ -279,6 +278,15 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     $variables['closed_group'] = TRUE;
     $variables['cta'] = t('Invitation only');
+  }
+  // Non logged in users should still see "join" button on a group page.
+  if (
+    $account->isAnonymous() &&
+    (in_array($group_type_id, $group_types) &&
+    social_group_flexible_group_can_join_directly($group) ||
+    in_array($group_type_id, ['public_group']))
+  ) {
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
   }
 
   // Add the hero styled image.
