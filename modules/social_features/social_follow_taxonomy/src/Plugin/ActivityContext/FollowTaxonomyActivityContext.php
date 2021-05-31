@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -38,6 +39,13 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   protected $connection;
 
   /**
+   * The group helper service.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $groupHelperService;
+
+  /**
    * ActivityContextBase constructor.
    *
    * @param array $configuration
@@ -56,6 +64,8 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    *   The module handler.
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper_service
+   *   The group helper service.
    */
   public function __construct(
     array $configuration,
@@ -65,12 +75,14 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
     ModuleHandlerInterface $module_handler,
-    Connection $connection
+    Connection $connection,
+    SocialGroupHelperService $group_helper_service
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->moduleHandler = $module_handler;
     $this->connection = $connection;
+    $this->groupHelperService = $group_helper_service;
   }
 
   /**
@@ -85,7 +97,8 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       $container->get('entity_type.manager'),
       $container->get('activity_creator.activity_factory'),
       $container->get('module_handler'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('social_group.helper_service')
     );
   }
 
@@ -172,7 +185,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       }
 
       // Check if user have access to view node.
-      if (!$this->haveAccessToNode($recipient, $entity->id())){
+      if (!$this->haveAccessToNode($recipient, $entity->id())) {
         continue;
       }
 
@@ -244,7 +257,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       ->isNull('gcfd.entity_id');
     $or->condition($community_access);
     // Node visibility by group.
-    $memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($recipient->id());
+    $memberships = $this->groupHelperService->getAllGroupsForUser($recipient->id());
     if (count($memberships) > 0) {
       $access_by_group = $or->andConditionGroup();
       $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');

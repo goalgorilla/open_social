@@ -71,7 +71,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       }
 
       // Check if user have access to view node.
-      if (!$this->haveAccessToNode($recipient, $entity->id())){
+      if (!$this->haveAccessToNode($recipient, $entity->id())) {
         continue;
       }
 
