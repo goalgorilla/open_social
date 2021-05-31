@@ -30,7 +30,7 @@ function social_profile_post_update_10101_profile_names_update(&$sandbox) {
   /** @var \Drupal\profile\Entity\ProfileInterface $profile */
   foreach ($profiles as $profile) {
     if ($profile instanceof ProfileInterface) {
-      // We need just save the profile. The profile name will be updated by
+      // We just need to save on the profile. The profile name will be updated by
       // hook "presave".
       // @see social_profile_profile_presave()
       // @see social_profile_privacy_profile_presave()
