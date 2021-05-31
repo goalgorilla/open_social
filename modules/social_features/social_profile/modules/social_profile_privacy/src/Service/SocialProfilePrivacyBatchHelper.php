@@ -135,7 +135,7 @@ class SocialProfilePrivacyBatchHelper {
    */
   public static function updateProcess(array $items, array &$context) {
     // Elements per operation.
-    $limit = 5;
+    $limit = 50;
 
     // Set default progress values.
     if (empty($context['sandbox']['progress'])) {
