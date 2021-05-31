@@ -89,7 +89,6 @@ Feature: Create flexible Group
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
-    And I wait for "5" seconds
     And I fill in the following:
       | Title | Test group event |
       | edit-field-event-date-0-value-date | 2025-01-01 |
