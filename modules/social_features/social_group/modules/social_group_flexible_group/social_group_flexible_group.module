@@ -377,6 +377,10 @@ function social_group_flexible_group_preprocess_form_element(&$variables) {
   // Make sure our flexible group visibility field renders icons in the radio
   // labels. We add a new property to the form element label render array.
   // This is used in FormElementLabel.php to add data for templating.
+  if (!isset($variables['element']['#type'])) {
+    return;
+  }
+
   if ($variables['element']['#type'] === 'radio' &&
     !empty($variables['name']) &&
     $variables['name'] === 'field_flexible_group_visibility') {
