@@ -1321,9 +1321,16 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     }
 
     $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $current_group);
-
+    // Based on the allowed visibility options for a group type,
+    // we disable the options which are not valid for the group.
+    // Remember for flexible groups we can have multiple options.
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
+      // If the element is disabled, we also need to move it from
+      // the default value.
+      if (!$allowed && $element['#default_value'] === $visibility) {
+        $element['#default_value'] = NULL;
+      }
     }
 
     // This contains the group that is passed back from the form_state as
@@ -1352,8 +1359,31 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
 
           foreach ($visibility_options as $visibility => $allowed) {
             $element[$visibility]['#disabled'] = !$allowed;
+            // If the element is disabled, we also need to move it from
+            // the default value.
+            if (!$allowed && $element['#default_value'] === $visibility) {
+              $element['#default_value'] = NULL;
+            }
           }
         }
+      }
+    }
+
+    // For flexible groups it could potentially still be empty.
+    // But in any way, from the available options, if its empty
+    // lets choose the most safe one.
+    if ($element['#default_value'] === NULL) {
+      // So if public isn't disabled, it will become public.
+      if (!$element['public']['#disabled']) {
+        $element['#default_value'] = 'public';
+      }
+      // So if community isn't disabled, it will become community.
+      if (!$element['community']['#disabled']) {
+        $element['#default_value'] = 'community';
+      }
+      // And if members isn't disabled, it will become members.
+      if (!$element['group']['#disabled']) {
+        $element['#default_value'] = 'group';
       }
     }
   }

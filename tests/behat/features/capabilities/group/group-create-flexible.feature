@@ -1,4 +1,4 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible
+@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible @javascript
 Feature: Create flexible Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
