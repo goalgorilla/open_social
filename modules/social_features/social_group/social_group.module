@@ -246,6 +246,10 @@ function social_group_preprocess_group(array &$variables) {
 
   $account = \Drupal::currentUser();
 
+  // Prevent access to mute group notifications if user is not a group member.
+  if (!$group->getMember($account)) {
+    unset($variables['content']['flag_mute_group_notify']);
+  }
   // Set joined to true for teaser when current logged in
   // user is member of the group.
   if ($group->getMember($account)) {
@@ -265,11 +269,6 @@ function social_group_preprocess_group(array &$variables) {
       $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
       $variables['closed_group'] = TRUE;
       $variables['cta'] = t('Invitation only');
-    }
-
-    // Prevent access to mute group notifications if user is not a group member.
-    if (isset($variables['elements']['flag_mute_group_notify'])) {
-      $variables['elements']['flag_mute_group_notify']['#access'] = FALSE;
     }
   }
   // If the group type is a closed_group.
@@ -2108,6 +2107,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     // Change Join type if we want to see muted groups.
     // @todo: Remove when will be fixed issue where exposed flag filter can't
     // show unflagged groups.
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
     if (isset($query->where[1]['conditions'][0]['operator']) && $query->where[1]['conditions'][0]['operator'] === 'IS NOT NULL') {
       $table = $query->getTableInfo('flagging_groups_field_data');
       if (isset($table['join']->type) && $table['join']->type === 'LEFT') {

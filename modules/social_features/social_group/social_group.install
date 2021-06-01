@@ -617,21 +617,15 @@ function social_group_update_8905() {
 }
 
 /**
- * Import new Group configurations.
+ * Helper function to import configurations.
+ *
+ * @param array $configs
+ *   Array of configuration file names and their folders.
  */
-function social_group_update_8906() {
-  $configs = [
-    'install' => [
-      'flag.flag.mute_group_notify',
-    ],
-    'optional' => [
-      'block.block.exposed_form_groups_page_user_groups',
-    ],
-  ];
-
+function _social_group_features_import_config_helper(array $configs) {
   foreach ($configs as $folder => $config_files) {
     foreach ($config_files as $config_file) {
-      $config = drupal_get_path('module', 'social_group') . "/config/install/{$folder}/{$config_file}.yml";
+      $config = drupal_get_path('module', 'social_group') . "/config/{$folder}/{$config_file}.yml";
 
       if (is_file($config)) {
         $settings = Yaml::parse(file_get_contents($config));
@@ -647,6 +641,19 @@ function social_group_update_8906() {
 }
 
 /**
+ * Import flag "Mute Group Notifications" configurations.
+ */
+function social_group_update_8906() {
+  $configs = [
+    'install' => [
+      'flag.flag.mute_group_notify',
+    ],
+  ];
+
+  _social_group_features_import_config_helper($configs);
+}
+
+/**
  * Update the permissions for social_group.
  */
 function social_group_update_8907() {
@@ -654,7 +661,7 @@ function social_group_update_8907() {
 }
 
 /**
- * Update User Groups view.
+ * Update User Groups view configurations.
  */
 function social_group_update_8908() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
@@ -665,4 +672,17 @@ function social_group_update_8908() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Import exposed block filter configurations of User Groups view.
+ */
+function social_group_update_8909() {
+  $configs = [
+    'optional' => [
+      'block.block.exposed_form_groups_page_user_groups',
+    ],
+  ];
+
+  _social_group_features_import_config_helper($configs);
 }

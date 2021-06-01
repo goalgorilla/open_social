@@ -10,7 +10,7 @@ entity_type: group
 global: false
 weight: 0
 flag_short: 'Mute notify'
-flag_long: 'Muting the group notifications will result in their notifications not being send to you anymore.'
+flag_long: 'Muting the group notifications will result in their notifications not being send you anymore.'
 flag_message: ''
 unflag_short: 'Unmute notify'
 unflag_long: 'Receive the notifications of this group again.'
@@ -19,7 +19,9 @@ unflag_denied_text: ''
 flag_type: 'entity:group'
 link_type: ajax_link
 flagTypeConfig:
-  show_in_links: {  }
+  show_in_links:
+    hero: hero
+    teaser: teaser
   show_as_field: true
   show_on_form: false
   show_contextual_link: false
