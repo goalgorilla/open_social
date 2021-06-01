@@ -10,7 +10,7 @@ Feature: Create flexible Group
       | name           | mail                     | status | roles |
       | GivenUserOne   | group_user_1@example.com | 1      |       |
       | GivenUserTwo   | group_user_2@example.com | 1      |       |
-      | GivenUserThree | group_user_2@example.com | 1      |       |
+      | GivenUserThree | group_user_3@example.com | 1      |       |
       | SiteManagerOne | site_manager@example.com | 1      | sitemanager  |
     Given "event_types" terms:
       | name     |
