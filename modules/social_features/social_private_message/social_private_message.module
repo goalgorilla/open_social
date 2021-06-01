@@ -493,7 +493,7 @@ function social_private_message_activity_send_email_notifications_alter(array &$
  * it's enabled by the site manager.
  */
 function social_private_message_social_user_account_header_items(array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== TRUE) {
     return [];
   }
 

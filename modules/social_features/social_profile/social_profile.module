@@ -7,10 +7,12 @@
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -20,6 +22,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\social_profile\SocialProfileUserFormAlter;
@@ -69,11 +72,6 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
   if (!$user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
   }
-  // We hide the label and form field when there are no options. This is the
-  // case by default. Since we provide an empty vocabulary.
-  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
-    unset($form['field_profile_profile_tag']);
-  }
 
   // Remove the save and set default submit button on profile creation.
   if (isset($form['actions']['set_default'])) {
@@ -106,15 +104,6 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // actually edit a users profile and add profile tags there.
   if (!$viewing_user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
-  }
-  // We hide the label and form field when there are no options. This is the
-  // case by default. Since we provide an empty vocabulary.
-  // We also check for a fieldset, used by our special widget which doesn't use
-  // #options.
-  if (!empty($form['field_profile_profile_tag']['widget']) &&
-    (empty($form['field_profile_profile_tag']['widget']['#options'])
-      && $form['field_profile_profile_tag']['widget']['#type'] !== 'container')) {
-    unset($form['field_profile_profile_tag']);
   }
 
   // Remove the save and set default submit button on profile edit.
@@ -242,32 +231,6 @@ function social_profile_local_tasks_alter(&$local_tasks) {
 function social_profile_menu_local_tasks_alter(&$data, $route_name) {
   if (isset($data['tabs'][0]['profile.user_page:profile'])) {
     unset($data['tabs'][0]['profile.user_page:profile']);
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form['#id'] === 'views-exposed-form-search-users-page') {
-    if (!empty($form['profile_tag']['#options'])) {
-      $form['profile_tag']['#type'] = 'checkboxes';
-      // If the view is configured to preserve hierarchy we need to do a bit
-      // more to make checkboxes work.
-      if (is_object($form['profile_tag']['#options'][0])) {
-        $options = [];
-        // The #options array is an array of stdClass objects with an array in
-        // the option key that has the tid as key and label as value.
-        foreach ($form['profile_tag']['#options'] as $option) {
-          $options[key($option->option)] = reset($option->option);
-        }
-        // Set the options array to the format expected for checkboxes.
-        $form['profile_tag']['#options'] = $options;
-      }
-    }
-    else {
-      unset($form['profile_tag']);
-    }
   }
 }
 
@@ -408,6 +371,16 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
     $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
   }
+
+  /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
+  $tag_service = \Drupal::service('social_profile.tag_service');
+  $variables['profile_tagging_active'] = $tag_service->isActive();
+  $variables['profile_tagging_allow_split'] = $tag_service->allowSplit();
+
+  if (!$profile->get('field_profile_profile_tag')->isEmpty()) {
+    $tags = $profile->get('field_profile_profile_tag')->getValue();
+    $variables['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
+  }
 }
 
 /**
@@ -453,9 +426,7 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
 
       // Prepare some variables for checking on the language access.
       $global_show_lang = \Drupal::config('social_profile.settings')->get('social_profile_show_language');
-      $profile_show_lang = \Drupal::service('user.data')
-        ->get('social_profile_privacy',
-            $profile->get('uid')->target_id, 'lang_info') ?? NULL;
+      $profile_show_lang = \Drupal::service('user.data')->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? NULL;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
@@ -729,16 +700,30 @@ function social_profile_get_default_image() {
 function social_profile_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
+  $entityTypeManager = \Drupal::entityTypeManager();
+
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $storage = $entityTypeManager->getStorage('profile');
 
-  if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-    $accountname = trim($user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value);
+  if ($user_profile = $storage->loadByUser($account, 'profile')) {
+    /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
+    $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
 
-    if (strlen($accountname) > 0) {
+    $first_name_field = $user_profile->get('field_profile_first_name');
+    $last_name_field = $user_profile->get('field_profile_last_name');
+
+    $first_name = $accessControlHandler->fieldAccess('view', $first_name_field->getFieldDefinition(), NULL, $first_name_field, FALSE)
+      ? $first_name_field->getString()
+      : "";
+    $last_name = $accessControlHandler->fieldAccess('view', $last_name_field->getFieldDefinition(), NULL, $last_name_field, FALSE)
+      ? $last_name_field->getString()
+      : "";
+
+    $account_name = trim($first_name . " " . $last_name);
+    if ($account_name !== '') {
       // Add the full name with a default weight.
       $suggestions['full_name'] = [
-        'name' => trim($accountname),
+        'name' => $account_name,
       ];
     }
   }
@@ -890,4 +875,51 @@ function social_profile_block_access(Block $block, $operation, AccountInterface 
 
   // No opinion.
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_profile_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  if ($form_display->id() === 'profile.profile.default') {
+    $content = $form_display->get('content');
+    if (isset($content['field_profile_profile_tag'])) {
+      $content['field_profile_profile_tag']['type'] = 'social_profile_tag_split';
+      $form_display->set('content', $content);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::service('social_profile.tag_service')->allowSplit()) {
+    $storage = $form_state->getStorage();
+    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+    $vocabulary = $storage['taxonomy']['vocabulary'];
+
+    if ($vocabulary->id() === 'profile_tag') {
+      // Remove edit/delete links.
+      foreach (Element::children($form['terms']) as $name) {
+        unset($form['terms'][$name]['weight']);
+      }
+
+      // Hide Save button.
+      $form['actions']['submit']['#access'] = FALSE;
+
+      // Remove tableDrag.
+      unset($form['terms']['#tabledrag']);
+
+      // Remove Weight column.
+      unset($form['terms']['#header'][1]);
+    }
+  }
+}
+
+/**
+ * Implements hook_views_plugins_filter_alter().
+ */
+function social_profile_views_plugins_filter_alter(array &$plugins) {
+  $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
 }

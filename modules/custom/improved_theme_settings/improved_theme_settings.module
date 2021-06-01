@@ -133,9 +133,13 @@ function improved_theme_settings_page_attachments(array &$page) {
             border-radius: 0 !important;
           }
 
-          .input-group .form-control:first-child, .input-group-addon:first-child {
-            border-bottom-right-radius: 0 !important;
-            border-top-right-radius: 0 !important;
+          .input-group .form-control:first-child, .input-group-addon:first-child,
+          .input-group-addon {
+            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important
+          }
+          
+          .input-group-addon {
+            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important
           }
 
           .input-group .form-control:last-child, .input-group-addon:last-child {

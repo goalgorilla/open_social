@@ -17,8 +17,8 @@ interface PayloadInterface {
    * @param \Drupal\social_graphql\GraphQL\ViolationInterface $violation
    *   A violation.
    *
-   * @return \Drupal\social_graphql\GraphQL\Payload\PayloadInterface
-   *   This response.
+   * @return $this
+   *   This payload.
    */
   public function addViolation(ViolationInterface $violation): self;
 
@@ -28,8 +28,8 @@ interface PayloadInterface {
    * @param array $violations
    *   An array of violations.
    *
-   * @return \Drupal\social_graphql\GraphQL\Payload\PayloadInterface
-   *   This response.
+   * @return $this
+   *   This payload.
    */
   public function addViolations(array $violations): self;
 

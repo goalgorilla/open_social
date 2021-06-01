@@ -340,6 +340,11 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $query->fields('cfd', ['cid']);
     $or = $query->orConditionGroup();
 
+    // Return empty array if any nodes or posts are not available.
+    if (empty($node_ids) && empty($post_ids)) {
+      return [];
+    }
+
     // Comments related to available nodes.
     if (!empty($node_ids)) {
       $node_access = $or->andConditionGroup();
