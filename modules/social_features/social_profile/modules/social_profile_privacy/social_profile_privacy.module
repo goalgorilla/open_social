@@ -6,12 +6,12 @@
  */
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_profile\SocialProfileNameService;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 
@@ -242,7 +242,7 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
     if (!$form['profile_privacy']['fields'][$field]['#disabled']) {
       // We need to check if the setting of the current field was changed and
       // add the field to the appropriate array if so.
-      if (empty($values[$field]) || $values[$field] !== $value) {
+      if (!isset($values[$field]) || $values[$field] !== $value) {
         $updated_fields[] = $field;
       }
 
@@ -266,7 +266,7 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
 
   \Drupal::service('cache_tags.invalidator')->invalidateTags($tags);
 
-  if (!isset($profile) || empty($updated_fields) || empty(array_intersect(SocialProfilePrivacyBatchHelper::getProfileNameFields(), $updated_fields))) {
+  if (!isset($profile) || empty($updated_fields) || empty(array_intersect(SocialProfileNameService::getProfileNameFields(), $updated_fields))) {
     return;
   }
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
@@ -274,7 +274,7 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   if (!empty($profile_storage)) {
     $profile = $profile_storage->load($profile);
     if ($profile instanceof ProfileInterface) {
-      SocialProfilePrivacyBatchHelper::updateProfile($profile);
+      SocialProfilePrivacyBatchHelper::updateProfileName($profile);
     }
   }
 }
@@ -408,19 +408,5 @@ function _social_profile_privacy_resave_search_indexes() {
       // has the chance to add the field.
       $index->save();
     }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- *
- * Set the correct profile name.
- */
-function social_profile_privacy_profile_presave(EntityInterface $profile) {
-  /** @var \Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper $batch_helper */
-  $batch_helper = \Drupal::service('social_profile_privacy.batch.helper');
-  if ($profile instanceof ProfileInterface) {
-    $profile_name = $batch_helper->getProfileName($profile);
-    $profile->set('profile_name', $profile_name);
   }
 }

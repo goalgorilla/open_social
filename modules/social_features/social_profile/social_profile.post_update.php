@@ -27,13 +27,16 @@ function social_profile_post_update_10101_profile_names_update(&$sandbox) {
   // Load profiles by profiles IDs.
   $profiles = $profile_storage->loadMultiple($ids);
 
+  /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
+  $profile_name_service = \Drupal::service('social_profile.name_service');
+
   /** @var \Drupal\profile\Entity\ProfileInterface $profile */
   foreach ($profiles as $profile) {
     if ($profile instanceof ProfileInterface) {
-      // We just need to save on the profile. The profile name will be updated by
-      // hook "presave".
-      // @see social_profile_profile_presave()
-      // @see social_profile_privacy_profile_presave()
+      // Get generated profile name.
+      $profile_name = $profile_name_service->getProfileName($profile);
+      // Update profile name and save.
+      $profile->set('profile_name', $profile_name);
       $profile->save();
     }
   }
