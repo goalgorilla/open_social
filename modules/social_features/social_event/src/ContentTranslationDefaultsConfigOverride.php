@@ -120,6 +120,9 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'field.field.node.event.body' => [
         'translatable' => TRUE,
       ],
+      'field.field.node.event.field_event_location' => [
+        'translatable' => TRUE,
+      ],
       'field.field.node.event.field_event_address' => [
         'translatable' => TRUE,
       ],
