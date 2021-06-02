@@ -181,7 +181,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $and_wrapper->condition($or);
     }
 
-    // For anonymous show only activities which don't have direct user and group.
+    // Only activities which don't have direct user and group.
     if ($account->isAnonymous()) {
       $an_access = new Condition('AND');
       $an_user_target = new Condition('OR');
@@ -196,7 +196,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       // Only activities which targeted to current user.
       $lu_access = new Condition('AND');
       $lu_user_target = new Condition('OR');
-      $lu_user_target->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $lu_user_target->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
       $lu_user_target->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
       $lu_access->condition($lu_user_target);
 
