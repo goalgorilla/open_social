@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -1795,4 +1796,56 @@ function social_event_update_8915() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Add the 'enable event enrolment' field.
+ */
+function social_event_update_8916() {
+  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.node.field_event_enable_enrollment_8916');
+  $class = $field_type_manager->getPluginClass($data['type']);
+  if (is_null($field_storage_config_storage->load($data['id']))) {
+    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+    $field_storage_config_storage->create($data)->save();
+  }
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  // Create field settings.
+  $data = $source->read('field.field.node.event.field_event_enable_enrollment_8916');
+  if (is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
+}
+
+/**
+ * Update event display.
+ */
+function social_event_update_8917() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8917');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Set default configs for event.
+ */
+function social_event_update_8918() {
+  \Drupal::configFactory()->getEditable('social_event.settings')
+    ->set('disable_event_enroll', FALSE)
+    ->save();
 }

@@ -5,6 +5,8 @@ namespace Drupal\social_profile\Plugin\GraphQL\DataProducer;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RenderContext;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
@@ -47,6 +49,13 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
   protected $entityBuffer;
 
   /**
+   * The Drupal renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  private $renderer;
+
+  /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
@@ -57,7 +66,8 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('graphql.buffer.entity')
+      $container->get('graphql.buffer.entity'),
+      $container->get('renderer')
     );
   }
 
@@ -74,6 +84,8 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
    *   The entity type manager service.
    * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $entityBuffer
    *   The entity buffer service.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
    *
    * @codeCoverageIgnore
    */
@@ -82,11 +94,13 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
     $pluginId,
     array $pluginDefinition,
     EntityTypeManagerInterface $entityTypeManager,
-    EntityBuffer $entityBuffer
+    EntityBuffer $entityBuffer,
+    RendererInterface $renderer
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityTypeManager = $entityTypeManager;
     $this->entityBuffer = $entityBuffer;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -117,7 +131,18 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
     $metadata->addCacheTags($type->getListCacheTags());
     $metadata->addCacheContexts($type->getListCacheContexts());
 
-    $result = $query->execute();
+    // Queries using the Entity Access API may have cacheability information
+    // that must be captured until we have a better way from Drupal core
+    // see https://www.drupal.org/project/drupal/issues/3028976.
+    $query_context = new RenderContext();
+    $result = $this->renderer->executeInRenderContext(
+      $query_context,
+      fn () => $query->execute()
+    );
+
+    if (!$query_context->isEmpty()) {
+      $metadata->addCacheableDependency($query_context->pop());
+    }
 
     if (empty($result)) {
       return NULL;

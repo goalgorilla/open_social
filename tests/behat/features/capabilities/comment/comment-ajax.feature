@@ -1,4 +1,4 @@
-@api @comment @stability @YANG-4950 @stability-2 @comment-ajax
+@api @comment @stability @YANG-4950 @YANG-5030 @stability-2 @comment-ajax
 Feature: See Comments
   Benefit: In order to interact with people on the platform
   Role: As a LU
@@ -16,10 +16,12 @@ Feature: See Comments
     When I am logged in as "Behat User"
     And I click "Behat Topic 15"
     Then I should see the text "Behat Comment 1"
+    And I should not see the text "Behat Comment 51"
 
     When I click "next"
     And I wait for AJAX to finish
-    Then I should see the text "Behat Comment 1"
+    Then I should not see the text "Behat Comment 1"
+    And I should see the text "Behat Comment 51"
 
     When I click "Behat User"
     And I click "My topics"

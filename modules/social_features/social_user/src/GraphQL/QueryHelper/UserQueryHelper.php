@@ -4,6 +4,7 @@ namespace Drupal\social_user\GraphQL\QueryHelper;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface;
 use Drupal\social_graphql\Wrappers\Cursor;
 use Drupal\social_graphql\Wrappers\Edge;
@@ -25,6 +26,13 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
+   * The GraphQL entity buffer.
+   *
+   * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
+   */
+  protected EntityBuffer $graphqlEntityBuffer;
+
+  /**
    * The key that is used for sorting.
    *
    * @var string
@@ -34,12 +42,15 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
   /**
    * UserQueryHelper constructor.
    *
+   * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
+   *   The GraphQL entity buffer.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The Drupal entity type manager.
    * @param string $sort_key
    *   The key that is used for sorting.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, string $sort_key) {
+  public function __construct(EntityBuffer $graphql_entity_buffer, EntityTypeManagerInterface $entity_type_manager, string $sort_key) {
+    $this->graphqlEntityBuffer = $graphql_entity_buffer;
     $this->entityTypeManager = $entity_type_manager;
     $this->sortKey = $sort_key;
   }
@@ -109,8 +120,7 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
     // ensure the entities for this query are only loaded once. Even if the
     // results are used multiple times.
     else {
-      $buffer = \Drupal::service('graphql.buffer.entity');
-      $callback = $buffer->add('user', array_values($result));
+      $callback = $this->graphqlEntityBuffer->add('user', array_values($result));
     }
 
     return new Deferred(
