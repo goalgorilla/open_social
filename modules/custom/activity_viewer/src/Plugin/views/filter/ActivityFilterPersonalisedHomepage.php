@@ -202,7 +202,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
       // Only activities which targeted to current user's groups.
       $lu_group_target = new Condition('OR');
-      $lu_group_target->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+      if (!empty($group_memberships)) {
+        $lu_group_target->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+      }
       $lu_group_target->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $lu_access->condition($lu_group_target);
 
