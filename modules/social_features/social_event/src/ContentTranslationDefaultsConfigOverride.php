@@ -57,8 +57,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         'use_operator' => FALSE,
         'operator' => '',
         'operator_limit_selection' => FALSE,
-        'operator_list' => [
-        ],
+        'operator_list' => [],
         'identifier' => '',
         'required' => FALSE,
         'remember' => FALSE,
@@ -78,10 +77,8 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         'multiple' => FALSE,
         'remember' => FALSE,
         'default_group' => 'All',
-        'default_group_multiple' => [
-        ],
-        'group_items' => [
-        ],
+        'default_group_multiple' => [],
+        'group_items' => [],
       ],
       'entity_type' => 'node',
       'entity_field' => 'langcode',
