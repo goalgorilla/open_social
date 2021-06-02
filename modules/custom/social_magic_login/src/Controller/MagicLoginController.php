@@ -116,7 +116,7 @@ class MagicLoginController extends ControllerBase {
     }
 
     // Ensure the hash from the route is checked.
-    if (hash_equals($hash, user_pass_rehash($user, $timestamp))) {
+    if (!hash_equals($hash, user_pass_rehash($user, $timestamp))) {
       $this->messenger()->addError($this->t('You have tried to use a one-time link that is invalid.'));
 
       return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
