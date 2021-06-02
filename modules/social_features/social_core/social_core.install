@@ -1345,3 +1345,24 @@ function social_core_update_10103() {
     $config->save();
   }
 }
+
+/**
+ * Set default settings to use entity access API as FALSE.
+ */
+function social_core_update_10104() {
+  $config = \Drupal::configFactory()->getEditable('social_core.settings');
+  $config->set('use_entity_access_api', 0)->save();
+}
+
+/**
+ * Add default classic_toolbar of the Gin theme.
+ */
+function social_core_update_10105() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    $gin_config['classic_toolbar'] = 'vertical';
+    $config->setData($gin_config);
+    $config->save();
+  }
+}

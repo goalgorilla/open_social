@@ -1,0 +1,11 @@
+search_api.index.social_users:
+  expected_config: {  }
+  update_actions:
+    change:
+      field_settings:
+        created:
+          dependencies:
+            module:
+              - user
+          label: 'Owner » User » Created'
+          property_path: 'uid:entity:created'
