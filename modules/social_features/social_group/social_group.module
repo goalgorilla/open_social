@@ -247,7 +247,7 @@ function social_group_preprocess_group(array &$variables) {
   $account = \Drupal::currentUser();
 
   // Prevent access to mute group notifications if user is not a group member.
-  if (!$group->getMember($account)) {
+  if (!$group->getMember($account) || !in_array($variables['view_mode'], ['hero', 'teaser'])) {
     unset($variables['content']['flag_mute_group_notify']);
   }
   // Set joined to true for teaser when current logged in
