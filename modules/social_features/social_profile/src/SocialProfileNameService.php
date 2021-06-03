@@ -44,16 +44,6 @@ class SocialProfileNameService {
   }
 
   /**
-   * Nickname is available.
-   *
-   * @return bool
-   *   Whether or not the Nickname is available.
-   */
-  private function availableNickname(): bool {
-    return $this->moduleHandler->moduleExists('social_profile_fields');
-  }
-
-  /**
    * Whether or not need to update the Profile name.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
@@ -134,7 +124,7 @@ class SocialProfileNameService {
     $account_name = $account->getAccountName();
 
     // If enable module social_profile_privacy we need get hidden fields and
-    // later check if Profile name fields are there.
+    // later check if the Profile name fields are there.
     $private_fields_list = [];
     if ($this->moduleHandler->moduleExists('social_profile_privacy')) {
       // Get profile private fields list.
@@ -144,7 +134,7 @@ class SocialProfileNameService {
 
     $account_name_fields = SocialProfileNameService::getProfileNameFields();
 
-    // We do nothing further if all fields of a profile name are hidden.
+    // We do nothing further if all fields of the Profile name are hidden.
     if (count(array_intersect($private_fields_list, $account_name_fields)) == count($account_name_fields)) {
       return $account_name;
     }

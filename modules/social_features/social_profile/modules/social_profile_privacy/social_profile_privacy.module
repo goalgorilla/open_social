@@ -66,7 +66,10 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
   /** @var \Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface $helper */
   $helper = \Drupal::service('social_profile_privacy.helper');
 
-  foreach ($helper->getFieldOptions() as $field => $options) {
+  // Fields options.
+  $field_options = $helper->getFieldOptions();
+
+  foreach ($field_options as $field => $options) {
     $row = [['#plain_text' => $options['label']]];
 
     if ($options['access']) {
@@ -99,22 +102,47 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
 
   // Add warning for site_manager to inform about updating all the profiles
   // after form is submitted.
-  $form['social_profile_privacy_warning_message'] = [
-    '#theme' => 'status_messages',
-    '#message_list' => [
-      'warning' => [
-        [
-          '#type' => 'html_tag',
-          '#tag' => 'strong',
-          '#value' => t('Once you submit this form, all the profiles of all the users on the platform will be updated.'),
+  // We need to get Profile name fields.
+  $account_name_fields = SocialProfileNameService::getProfileNameFields();
+  // Var where will we stack the Profile name fields labels.
+  $profile_name_fields_labels = [];
+  // Getting the Profile name fields labels.
+  foreach ($account_name_fields as $account_name_field) {
+    if (isset($field_options[$account_name_field]) && !empty($label = $field_options[$account_name_field]['label'])) {
+      $profile_name_fields_labels[] = $label;
+    }
+  }
+  // We need to add a warning message only if the Profile name fields settings
+  // available.
+  if (!empty($profile_name_fields_labels)) {
+    // Make string with a list of the Profile name fields labels.
+    if (count($profile_name_fields_labels) > 1) {
+      $last_label = array_pop($profile_name_fields_labels);
+      $profile_name_fields_labels = implode(', ', $profile_name_fields_labels);
+      $profile_name_fields_labels .= " and, {$last_label}";
+    }
+    else {
+      $profile_name_fields_labels = $profile_name_fields_labels[0];
+    }
+
+    // Add warning message.
+    $form['social_profile_privacy_warning_message'] = [
+      '#theme' => 'status_messages',
+      '#message_list' => [
+        'warning' => [
+          [
+            '#type' => 'html_tag',
+            '#tag' => 'strong',
+            '#value' => t('If visibility settings of the fields %labels will be changed, then once you submit this form, all the user profiles on the platform will be updated.', ['%labels' => $profile_name_fields_labels]),
+          ],
         ],
       ],
-    ],
-    '#status_headings' => [
-      'warning' => t('Attention!'),
-    ],
-    '#weight' => -1,
-  ];
+      '#status_headings' => [
+        'warning' => t('Attention!'),
+      ],
+      '#weight' => -1,
+    ];
+  }
 
   $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
 }
@@ -134,16 +162,30 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
 
   unset($fields['disclaimer'], $fields['list']);
 
+  // An array with fields, visibility settings that have been changed.
+  $updated_fields = [];
+
   foreach ($fields as $field => $state) {
     if ($state !== '') {
+      // Check if field settings have been changed.
+      $current_value = $config->get('fields.' . $field);
+      if (is_null($current_value) || ((int) $current_value !== (int) $state)) {
+        $updated_fields[] = $field;
+      }
+
       $config->set('fields.' . $field, $state);
     }
   }
 
   $config->save();
 
-  // We need to update profile names.
-  SocialProfilePrivacyBatchHelper::bulkUpdateProfileNames();
+  // We need to get Profile name fields.
+  $account_name_fields = SocialProfileNameService::getProfileNameFields();
+  // If at least one field setting of the Profile name has been updated we need
+  // to update all profiles.
+  if (array_intersect($account_name_fields, $updated_fields)) {
+    SocialProfilePrivacyBatchHelper::bulkUpdateProfileNames();
+  }
 }
 
 /**
