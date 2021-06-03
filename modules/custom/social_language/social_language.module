@@ -5,7 +5,9 @@
  * Contains social_language.module.
  */
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 
 /**
@@ -47,4 +49,27 @@ function social_language_form_user_form_alter(&$form, FormStateInterface $form_s
 function social_language_social_group_default_route_tabs_alter(&$tabs) {
   // Unset some tabs created by group.
   unset($tabs['content_translation.local_tasks:entity.group.content_translation_overview']);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_language_form_alter(&$form, FormStateInterface $form_state) {
+  // We need to set correct default value for "langcode" as users can
+  // create content in different then default language.
+  if (method_exists($form_state->getFormObject(), 'getEntity')) {
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity instanceof ContentEntityInterface) {
+      // We need to set "langcode" only to new values
+      // and if user doesn't set it manually with UI.
+      if ($entity->isNew()) {
+        if (!empty($form['langcode']) && !Element::isVisibleElement($form['langcode'])) {
+          if (isset($form['langcode']['widget'][0]['value']['#default_value'])) {
+            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+            $form['langcode']['widget'][0]['value']['#default_value'] = $language;
+          }
+        }
+      }
+    }
+  }
 }
