@@ -213,6 +213,11 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
             '#title' => $this->t('Postal code'),
             '#default_value' => is_null($config->get('profile_address_field_postalcode')) ? TRUE : $config->get('profile_address_field_postalcode'),
           ];
+          $form[$type]['profile_profile_field_profile_address_wrapper']['address_settings']['profile_address_field_administrative_area'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Administrative area'),
+            '#default_value' => is_null($config->get('profile_address_field_administrative_area')) ? TRUE : $config->get('profile_address_field_administrative_area'),
+          ];
         }
       }
     }
@@ -255,6 +260,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $config->set('profile_address_field_city', $main_address_value ? $form_state->getValue('profile_address_field_city') : FALSE);
     $config->set('profile_address_field_address', $main_address_value ? $form_state->getValue('profile_address_field_address') : FALSE);
     $config->set('profile_address_field_postalcode', $main_address_value ? $form_state->getValue('profile_address_field_postalcode') : FALSE);
+    $config->set('profile_address_field_administrative_area', $main_address_value ? $form_state->getValue('profile_address_field_administrative_area') : FALSE);
 
     $config->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'));
     $config->save();
