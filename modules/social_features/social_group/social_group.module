@@ -1024,18 +1024,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   if (!empty($form['#entity_type']) && $form['#entity_type'] === 'group') {
-    // Modify "Group type" field widget.
-    if (!empty($form['group_type']) && !empty($form['group_type']['widget']['#default_value'])) {
-      $default_value = $form['group_type']['widget']['#default_value'];
-      // User should see only the current group type and can't change it.
-      foreach ($form['group_type']['widget']['#options'] as $type => $label) {
-        if ($type !== $default_value) {
-          unset($form['group_type']['widget']['#options'][$type]);
-          $form['group_type']['widget'][$type] = [
-            '#disabled' => TRUE,
-          ];
-        }
-      }
+    // Hide "Group type" field widget.
+    if (!empty($form['group_type'])) {
+      $form['group_type']['#access'] = FALSE;
     }
   }
 }
