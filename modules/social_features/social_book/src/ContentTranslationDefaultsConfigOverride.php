@@ -54,6 +54,9 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'field.field.node.book.body' => [
         'translatable' => TRUE,
       ],
+      'field.field.node.book.field_files' => [
+        'translatable' => TRUE,
+      ],
       'field.field.node.book.field_book_image' => [
         'third_party_settings' => [
           'content_translation' => [
