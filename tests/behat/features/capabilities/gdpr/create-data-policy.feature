@@ -16,7 +16,7 @@ Feature: Create data policy and view new policy
     And I am on "admin/config/people/data-policy"
 
     # Create a new data policy entity, since now it is possible to use multiple checkboxes and multiple entities
-    And I should see the link "Add new entity"
+    And I should see "Add new entity"
     When I click "Add new entity"
     Then I should be on "/admin/config/people/data-policy/add"
     And I should see the text "Name"
