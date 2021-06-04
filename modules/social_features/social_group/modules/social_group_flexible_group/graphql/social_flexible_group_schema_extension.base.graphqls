@@ -1,0 +1,57 @@
+type FlexibleGroup implements Group & Node {
+  """
+  The unique identifier for the group.
+  """
+  id: ID!
+  """
+  The display title of the group.
+  """
+  title: String!
+  """
+  The author of the group or NULL if it was placed anonymously.
+  """
+  author: Actor
+  """
+  A hero image for the group.
+  """
+  image: Image
+  """
+  The description of the group as rendered HTML.
+  """
+  bodyHtml: Html!
+  """
+  The url to the group.
+  """
+  url: Url!
+  """
+  When the group was created.
+  """
+  created: DateTime!
+}
+
+"""
+The set of valid sort keys for the group query.
+"""
+enum FlexibleGroupSortKeys {
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
+
+type FlexibleGroupEdge implements Edge {
+  cursor: Cursor!
+  node: FlexibleGroup!
+}
+
+type FlexibleGroupConnection implements Connection {
+  edges: [FlexibleGroupEdge!]!
+  nodes: [FlexibleGroup!]!
+  pageInfo: PageInfo!
+}
+
+# Not sore if it is a good idea to implements Node interface
+interface Group implements Node {
+  id: ID!
+  title: String!
+  author: Actor
+  url: Url!
+}
