@@ -11,12 +11,13 @@ Feature: Create data policy and view new policy
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
       | behatuser        | behatuser@example.com        | 1      |             |
 
+    Given I enable the module "data_policy"
     Given I enable the module "social_gdpr"
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/config/people/data-policy"
 
     # Create a new data policy entity, since now it is possible to use multiple checkboxes and multiple entities
-    And I should see "Add new entity"
+    And I should see the link "Add new entity"
     When I click "Add new entity"
     Then I should be on "/admin/config/people/data-policy/add"
     And I should see the text "Name"
