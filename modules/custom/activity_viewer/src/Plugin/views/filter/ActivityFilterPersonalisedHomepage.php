@@ -187,7 +187,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $an_user_target = new Condition('OR');
       $an_user_target->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', '0');
       $an_user_target->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
-      $an_access->condition($an_access);
+      $an_access->condition($an_user_target);
 
       $an_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $and_wrapper->condition($an_access);
