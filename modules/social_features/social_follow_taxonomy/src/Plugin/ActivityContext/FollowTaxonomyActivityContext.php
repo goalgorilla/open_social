@@ -209,6 +209,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     // Check entity type.
     switch ($entity->getEntityTypeId()) {
       case 'node':
+      case 'post':
         foreach ($this->getListOfTagsFields() as $field_name) {
           if (
             $entity->hasField($field_name) &&
