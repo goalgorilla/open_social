@@ -5,6 +5,7 @@
  * Contains social_tagging.module.
  */
 
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -180,14 +181,14 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
       ];
 
       // We want to move the tagging field in new fieldset
-      // "Additional information". Only when the theme settings are updated.
+      // "Tags". Only when the theme settings are updated.
       $use_social_content_forms = theme_get_setting('content_entity_form_style');
-      if (isset($form['#fieldgroups']['group_attachments']) &&
+      if (isset($form['#fieldgroups']['group_social_tags']) &&
         $use_social_content_forms === 'open_social') {
         $form['tagging']['#type'] = 'details';
-        $form['tagging']['#title'] = t('Tags');
-        $form['#fieldgroups']['group_attachments']->children[] = 'tagging';
-        $form['#group_children']['tagging'] = 'group_attachments';
+        $form['tagging']['#title'] = '';
+        $form['#fieldgroups']['group_social_tags']->children[] = 'tagging';
+        $form['#group_children']['tagging'] = 'group_social_tags';
       }
 
       // Add Tags in flexible groups if enabled.
@@ -557,4 +558,34 @@ function social_tagging_preprocess_profile(array &$variables) {
       $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
     }
   }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+
+  // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
+  // will be attached in that section when a user enable tagging options.
+  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
+    return;
+  }
+
+  $settings = [
+    "children" => [],
+    "parent_name" => "",
+    "weight" => '1',
+    "label" => "Tags",
+    "format_type" => "fieldset",
+    "format_settings" => [
+      "required_fields" => TRUE,
+      "id" => "tags",
+      "classes" => "card",
+      "label" => "Tags",
+    ],
+    "region" => "hidden",
+  ];
+
+  $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
+  $form_display->save();
 }
