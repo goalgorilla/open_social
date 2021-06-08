@@ -12,3 +12,11 @@ function social_footer_install() {
   // Add default permission.
   user_role_grant_permissions('sitemanager', ['administer social_footer_block settings']);
 }
+
+/**
+ * Add required permissions for sitemanagers for editing footer block settings.
+ */
+function social_footer_update_10014() {
+  // Add default permission.
+  user_role_grant_permissions('sitemanager', ['administer social_footer_block settings']);
+}
