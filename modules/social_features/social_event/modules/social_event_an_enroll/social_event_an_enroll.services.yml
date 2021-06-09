@@ -11,3 +11,11 @@ services:
       - '@current_user'
       - '@current_route_match'
       - '@database'
+
+  # We added a custom context in order to manage cache of enrollment button.
+  # This is specially for AN enrollment routes.
+  cache_context.event_an_enroll_route:
+    class: Drupal\social_event_an_enroll\EventAnEnrollCacheContext
+    arguments: ['@current_route_match']
+    tags:
+      - { name: cache.context }

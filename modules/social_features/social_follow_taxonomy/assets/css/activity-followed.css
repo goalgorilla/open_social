@@ -1,0 +1,92 @@
+.card__activity-followed,
+.card__activity-followed .activity-followed {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card__activity-followed {
+  font-size: 12px;
+  line-height: 18px;
+  color: #555;
+}
+.card__activity-followed > span {
+  margin-right: 6px;
+}
+@media (max-width: 599px) {
+  .card__activity-followed > span {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+.card__activity-followed .activity-followed {
+  position: relative;
+  padding: 0 2px;
+}
+@media (max-width: 599px) {
+  .card__activity-followed .activity-followed {
+    margin-left: -2px;
+  }
+}
+.card__activity-followed .activity-followed .tag__name {
+  margin: 0;
+}
+.card__activity-followed .activity-followed + .activity-followed {
+  margin-left: 4px;
+}
+.card__activity-followed .activity-followed .tag__arrow,
+.card__activity-followed .activity-followed svg {
+  width: 18px;
+  height: 14px;
+}
+.card__activity-followed .activity-followed svg {
+  width: 18px;
+  height: 14px;
+  fill: #555;
+}
+.card__activity-followed .activity-followed .flag,
+.card__activity-followed .activity-followed .flag > *,
+.card__activity-followed .activity-followed .flag.open > * {
+  font-size: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.card__activity-followed .activity-followed .flag {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.card__activity-followed .activity-followed .flag button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+.card__activity-followed .activity-followed .flag .caret {
+  display: none;
+}
+.card__activity-followed .activity-followed .flag .dropdown-menu {
+  min-width: 175px;
+  margin-top: 4px;
+}
+@media (max-width: 599px) {
+  .card__activity-followed .activity-followed .flag .dropdown-menu {
+    min-width: 100px;
+    margin-top: 0;
+  }
+}
+.card__activity-followed .activity-followed .flag .dropdown-menu a {
+  font-weight: 700;
+}
+.card__activity-followed .activity-followed .flag.open + svg {
+  transform: rotate(180deg);
+}
+
+/*# sourceMappingURL=activity-followed.css.map */

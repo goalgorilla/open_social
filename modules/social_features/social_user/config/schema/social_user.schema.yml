@@ -1,5 +1,5 @@
-settings:
-  type: mapping
+social_user.settings:
+  type: config_object
   label: "Social User Settings"
   mapping:
     signup_help:
@@ -11,3 +11,14 @@ settings:
     social_user_profile_landingpage:
       type: string
       label: "A valid route name that is used as default user profile page"
+
+social_user.navigation.settings:
+  type: config_object
+  label: "Social User Navigation Bar Settings"
+  mapping:
+    display_social_private_message_icon:
+      type: boolean
+      label: "Display the private message icon in the navigation bar"
+    display_my_groups_icon:
+      type: boolean
+      label: "Display the groups icon in the navigation bar"

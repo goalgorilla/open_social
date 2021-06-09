@@ -1,0 +1,49 @@
+field.storage.group.field_group_type:
+  langcode: en
+  status: true
+  dependencies:
+    module:
+      - group
+      - taxonomy
+  id: group.field_group_type
+  field_name: field_group_type
+  entity_type: group
+  type: entity_reference
+  settings:
+    target_type: taxonomy_term
+  module: core
+  locked: false
+  cardinality: 1
+  translatable: true
+  indexes: { }
+  persist_with_no_fields: false
+  custom_storage: false
+field.field.group.flexible_group.field_group_type:
+  langcode: en
+  status: true
+  dependencies:
+    config:
+      - field.storage.group.field_group_type
+      - group.type.flexible_group
+      - taxonomy.vocabulary.group_type
+  id: group.flexible_group.field_group_type
+  field_name: field_group_type
+  entity_type: group
+  bundle: flexible_group
+  label: Type
+  description: ''
+  required: false
+  translatable: false
+  default_value: { }
+  default_value_callback: ''
+  settings:
+    handler: 'default:taxonomy_term'
+    handler_settings:
+      target_bundles:
+        group_type: group_type
+      sort:
+        field: name
+        direction: asc
+      auto_create: false
+      auto_create_bundle: ''
+  field_type: entity_reference

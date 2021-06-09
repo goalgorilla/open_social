@@ -3,24 +3,36 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.group.small_teaser
+    - field.field.group.flexible_group.field_flexible_group_visibility
     - field.field.group.flexible_group.field_group_address
     - field.field.group.flexible_group.field_group_allowed_join_method
     - field.field.group.flexible_group.field_group_allowed_visibility
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
+    - field.field.group.flexible_group.field_group_type
     - group.type.flexible_group
-_core:
-  default_config_hash: 0kwgcPYDqYEFC39GVQd3CoTM_FDtPTChw4STiiVM3oI
+    - image.style.social_medium
+  module:
+    - image
 id: group.flexible_group.small_teaser
 targetEntityType: group
 bundle: flexible_group
 mode: small_teaser
 content:
+  field_group_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: social_medium
+      image_link: content
+    third_party_settings: {  }
   label:
     label: hidden
     type: string
-    weight: -5
+    weight: 1
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -28,11 +40,12 @@ content:
 hidden:
   changed: true
   created: true
+  field_flexible_group_visibility: true
   field_group_address: true
   field_group_allowed_join_method: true
   field_group_allowed_visibility: true
   field_group_description: true
-  field_group_image: true
   field_group_location: true
+  field_group_type: true
   search_api_excerpt: true
   uid: true

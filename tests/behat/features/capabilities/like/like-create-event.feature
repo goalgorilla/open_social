@@ -21,7 +21,7 @@ Feature: Create event like
       | Time | 11:00:00 |
       | Location name | GG HQ |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-     And I press "Save"
+     And I press "Create event"
     Then I should see "Event for likes has been created."
 
    Given I am logged in as "user_2"

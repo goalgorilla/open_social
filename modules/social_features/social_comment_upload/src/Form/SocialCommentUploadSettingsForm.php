@@ -68,7 +68,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
       '#title' => $this->t('Allow file uploads in comments.'),
       '#default_value' => $config->get('allow_upload_comments'),
       '#required' => FALSE,
-      '#description' => $this->t("Determine wether users can upload documents to comments."),
+      '#description' => $this->t("Determine whether users can upload documents to comments."),
     ];
 
     return parent::buildForm($form, $form_state);

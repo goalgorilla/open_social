@@ -2,6 +2,7 @@
 
 namespace Drupal\social_book;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
@@ -10,6 +11,8 @@ use Drupal\social_core\ContentTranslationConfigOverrideBase;
  * @package Drupal\social_book
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -24,7 +27,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   protected function getDisplayName() {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
-    return \Drupal::translation()->translate('Book Pages');
+    return $this->t('Book Pages');
   }
 
   /**

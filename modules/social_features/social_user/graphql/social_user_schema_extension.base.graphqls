@@ -1,0 +1,83 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
+"""
+An Open Social user.
+"""
+type User implements Node & Actor {
+  """
+  The Universally Unique Identifier for the user.
+  """
+  id: ID!
+  """
+  The display name of the user.
+
+  The specific format of the display name could depend on permissions of the
+  requesting user or application.
+  """
+  displayName: String!
+  """
+  The e-mail of the user.
+
+  Can be null if the user has not filled in an e-mail or if the user/application
+  making the request is not allowed to view this user's e-mail.
+  """
+  mail: Email
+  """
+  The timestamp indicating when the user was created.
+  """
+  created: Int!
+  """
+  The timestamp indicating when the user was last updated.
+  """
+  updated: Int!
+  """
+  The status of the user account.
+  """
+  status: UserStatus!
+  """
+  The roles that the user has.
+  """
+  roles: [UserRole!]!
+}
+
+"""
+The status of a user on a platform.
+"""
+enum UserStatus {
+  """
+  An active user is able to login on the platform and view content
+  """
+  ACTIVE
+  """
+  A blocked user is unable to access the platform, although their content will
+  still be visible until it's deleted.
+  """
+  BLOCKED
+}
+
+################################################################################
+#                                Query Types                                   #
+################################################################################
+"""
+The set of valid sort keys for the user query.
+"""
+enum UserSortKeys {
+  """Sort by the `first_name` value"""
+  FIRST_NAME
+  """Sort by the `last_name` value"""
+  LAST_NAME
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
+
+type UserEdge implements Edge {
+  cursor: Cursor!
+  node: User!
+}
+
+type UserConnection implements Connection {
+  edges: [UserEdge!]!
+  nodes: [User!]!
+  pageInfo: PageInfo!
+}

@@ -9,6 +9,8 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
+use Drupal\Core\Cache\Cache;
+use Drupal\node\NodeInterface;
 
 /**
  * Defines the Event enrollment entity.
@@ -67,6 +69,34 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    $tags = [
+      'event_content_list:user:' . $this->getAccount(),
+      'event_enrollment_list:' . $this->getFieldValue('field_event', 'target_id'),
+    ];
+    Cache::invalidateTags($tags);
+    parent::preSave($storage);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+    if (!empty($entities)) {
+      $tags = [];
+      foreach ($entities as $enrollment) {
+        $tags = [
+          'event_content_list:user:' . $enrollment->getAccount(),
+          'event_enrollment_list:' . $enrollment->getFieldValue('field_event', 'target_id'),
+        ];
+      }
+      Cache::invalidateTags($tags);
+    }
   }
 
   /**
@@ -147,7 +177,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function setPublished($published) {
-    $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
+    $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
 
@@ -170,7 +200,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
+      ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',

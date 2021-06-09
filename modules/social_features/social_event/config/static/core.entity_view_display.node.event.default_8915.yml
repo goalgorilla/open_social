@@ -1,0 +1,106 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment.default
+    - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_enroll_method
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enroll
+    - field.field.node.event.field_event_enroll_outside_group
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - field.field.node.event.field_files
+    - image.style.social_file_thumbnails
+    - node.type.event
+  module:
+    - address
+    - group_core_comments
+    - social_core
+    - text
+    - user
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_event_address:
+    type: address_plain
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_event_comments:
+    weight: 3
+    label: above
+    settings:
+      pager_id: 0
+      view_mode: default
+    third_party_settings: {  }
+    type: comment_group_content
+    region: content
+  field_event_location:
+    type: string
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_files:
+    weight: 4
+    label: above
+    settings:
+      image_style: social_file_thumbnails
+      image_link: file
+    third_party_settings: {  }
+    type: file_image_default
+    region: content
+  flag_follow_content:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  like_and_dislike:
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_content_visibility: true
+  field_enroll_method: true
+  field_event_date: true
+  field_event_date_end: true
+  field_event_enroll: true
+  field_event_enroll_outside_group: true
+  field_event_image: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
+  private_message_link: true
+  search_api_excerpt: true

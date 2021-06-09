@@ -1,53 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- TODO set checkForUnintentionallyCoveredCode="true" once https://www.drupal.org/node/2626832 is resolved. -->
-<phpunit bootstrap="../../../core/tests/bootstrap.php" colors="true"
-         beStrictAboutTestsThatDoNotTestAnything="true"
-         beStrictAboutOutputDuringTests="true"
-         beStrictAboutChangesToGlobalState="true"
-         checkForUnintentionallyCoveredCode="false">
+<phpunit
+  bootstrap="../../../core/tests/bootstrap.php"
+  colors="true"
+  beStrictAboutTestsThatDoNotTestAnything="true"
+  beStrictAboutOutputDuringTests="true"
+  beStrictAboutChangesToGlobalState="true"
+>
   <php>
     <!-- Set error reporting to E_ALL. -->
     <ini name="error_reporting" value="32767"/>
     <!-- Do not limit the amount of memory tests take to run. -->
     <ini name="memory_limit" value="-1"/>
+    <!-- The base URL of the Open Social web container -->
+    <env name="SIMPLETEST_BASE_URL" value="http://social.localhost" />
+    <!-- The URI that connects to the database -->
+    <env name="SIMPLETEST_DB" value="mysql://root:root@db/social#testing" />
+    <!-- Put any browser test output in a place where we can view it -->
+    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/var/www/html/sites/simpletest/browser_output"/>
   </php>
   <testsuites>
-    <testsuite name="unit-core">
-      <directory>../../../core/tests/Drupal/Tests</directory>
-      <directory>../../../core/modules/*/tests/src/Unit</directory>
-      <directory>../../../modules/*/tests/src/Unit</directory>
-      <!-- Exclude core test suites, we've got our own for now. -->
-      <exclude>../../../core/tests/Drupal/Tests/TestSuites</exclude>
-      <!-- Exclude Composer's vendor directory so we don't run tests there. -->
-      <exclude>../../../core/vendor</exclude>
-      <!-- Exclude Drush tests. -->
-      <exclude>../../../core/drush/tests</exclude>
-      <exclude>
-        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
-      </exclude>
-    </testsuite>
-    <testsuite name="social">
+    <testsuite name="unit">
       <directory>modules/*/*/tests/src/Unit</directory>
-      <directory>modules/*/*/*/tests/src/Unit</directory>
-      <exclude>
-        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
-      </exclude>
+      <directory>modules/*/*/modules/*/tests/src/Unit</directory>
     </testsuite>
-    <testsuite name="core-contrib">
-      <directory>../../../core/tests/Drupal/Tests</directory>
-      <directory>../../../core/modules/*/tests/src/Unit</directory>
-      <directory>../../../modules/*/tests/src/Unit</directory>
-      <directory>modules/*/*/tests/src/Unit</directory>
-      <!-- Exclude core test suites, we've got our own for now. -->
-      <exclude>../../../core/tests/Drupal/Tests/TestSuites</exclude>
-      <!-- Exclude Composer's vendor directory so we don't run tests there. -->
-      <exclude>../../../core/vendor</exclude>
-      <!-- Exclude Drush tests. -->
-      <exclude>../../../core/drush/tests</exclude>
-      <exclude>
-        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
-      </exclude>
+    <testsuite name="kernel">
+      <directory>modules/*/*/tests/src/Kernel</directory>
+      <directory>modules/*/*/modules/*/tests/src/Kernel</directory>
     </testsuite>
   </testsuites>
   <listeners>

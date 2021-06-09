@@ -6,6 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembership;
 use Drupal\Core\Cache\Cache;
 use Drupal\social_post\Entity\Post;
@@ -50,14 +51,14 @@ class GroupContentVisibilityUpdate {
   /**
    * Update Group content after Group changed.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group we've updated.
    * @param string $new_type
    *   The Group's new group type.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(Group $group, $new_type) {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, $new_type) {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to Memberships to content.
     $entities = $group->getContentEntities();
@@ -181,13 +182,13 @@ class GroupContentVisibilityUpdate {
   /**
    * Load all Posts based on a certain group.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group where we should check our posts for.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(Group $group) {
+  public static function getPostsFromGroup(GroupInterface $group) {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.

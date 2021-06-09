@@ -45,3 +45,11 @@ function social_book_social_user_account_header_create_links($context) {
     ] + Url::fromRoute('node.add', ['node_type' => 'book'])->toRenderArray(),
   ];
 }
+
+/**
+ * Implements hook_social_core_compatible_content_forms_alter().
+ */
+function social_book_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_book_form';
+  $compatible_content_type_forms[] = 'node_book_edit_form';
+}

@@ -1,0 +1,60 @@
+{% extends 'node--featured.html.twig' %}
+
+{% set attributes = attributes.addClass('teaser-profile') %}
+
+{% block card_image %}
+  <div
+  {% if profile_hero_styled_image_url %}
+    style="background-image: url('{{ profile_hero_styled_image_url }}')"
+  {% endif %}
+    class="teaser__image"
+    aria-hidden="true"
+    >
+      {% block card_hero_image %}
+        <div class="img_wrapper">
+          <a href="{{ profile_home }}">
+            {{ content.field_profile_image }}
+          </a>
+        </div>
+      {% endblock %}
+    </div>
+{% endblock %}
+
+{% block card_teaser_type %}
+  <a href="{{ profile_home }}">
+    <div class="teaser__teaser-type">
+      <svg class="teaser__teaser-type-icon">
+        <use xlink:href="#icon-account_circle"></use>
+      </svg>
+    </div>
+  </a>
+{% endblock %}
+
+{% block card_title %}
+  <h4 class="teaser__title">
+    <a href="{{ profile_home }}">
+      <span class="sr-only">{% trans%}User{% endtrans %}: </span>
+      {{ profile_name }} {{ profile_name_extra }}
+    </a>
+  </h4>
+{% endblock %}
+
+{% block card_body %}
+  {% if content.field_profile_function|render or content.field_profile_organization|render %}
+    <div class="teaser__content-line">
+      <span class="teaser__content-text">
+        <span>{{ content.field_profile_function|render }}</span>
+        <span>{{ content.field_profile_organization|render }}</span>
+      </span>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block card_link %}
+  {% if not hide_card_link %}
+    <a href="{{ profile_stream_url }}" class="card__link" rel="bookmark">
+      {{ 'Read more'|t }}
+      <span class="visually-hidden">{% trans %}about {{ profile_name }} {{ profile_name_extra }}{% endtrans %} </span>
+    </a>
+  {% endif %}
+{% endblock %}

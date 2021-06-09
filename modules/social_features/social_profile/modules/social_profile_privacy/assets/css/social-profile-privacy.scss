@@ -1,0 +1,48 @@
+.user-form {
+  #edit-profile-privacy {
+    > .card__block {
+      > .form-group {
+        margin-top: 28px;
+      }
+
+      > p {
+        font-size: 14px;
+        line-height: 21px;
+        margin-bottom: 0;
+      }
+    }
+
+    #edit-profile-privacy-fields {
+      > fieldset {
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e6e6e6;
+
+        @media(min-width: 600px) {
+          > .control-label {
+            float: left;
+          }
+
+          > .fieldset-wrapper {
+            float: right;
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .fieldset-wrapper {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          margin: 0 -13px;
+
+          > * {
+            padding: 0 13px;
+            margin-top: 0;
+          }
+        }
+      }
+    }
+  }
+}

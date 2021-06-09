@@ -7,12 +7,14 @@ use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\State\State;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Installer\InstallerKernel;
 
 /**
  * Class RedirectHomepageSubscriber.
@@ -62,14 +64,37 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $languageManager;
 
   /**
-   * Constructor for the RedirectHomepageSubscriber.
+   * The state.
+   *
+   * @var \Drupal\Core\State\State
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
+  protected $state;
+
+  /**
+   * Constructor for the RedirectHomepageSubscriber.
+   *
+   * @param \Drupal\user\UserData $user_data
+   *   User data.
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   Config factory.
+   * @param \Drupal\Core\Session\AccountProxy $current_user
+   *   The current user.
+   * @param \Drupal\Core\Path\PathMatcher $path_matcher
+   *   The path matcher.
+   * @param \Drupal\Core\State\State $state
+   *   The state.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   */
+  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
     // We needs it.
     $this->userData = $user_data;
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
+    $this->state = $state;
     $this->entityTypeManager = $entity_type_manager;
     $this->languageManager = $language_manager;
   }
@@ -92,11 +117,11 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   public function checkForHomepageRedirect(Event $event) {
 
     // Make sure front page module is not run when using cli or doing install.
-    if (PHP_SAPI === 'cli' || drupal_installation_attempted()) {
+    if (PHP_SAPI === 'cli' || InstallerKernel::installationAttempted()) {
       return;
     }
     // Don't run when site is in maintenance mode.
-    if (\Drupal::state()->get('system.maintenance_mode')) {
+    if ($this->state->get('system.maintenance_mode')) {
       return;
     }
 

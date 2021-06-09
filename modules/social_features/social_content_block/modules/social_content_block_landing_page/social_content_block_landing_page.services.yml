@@ -1,0 +1,10 @@
+services:
+  social_content_block_landing_page.content_builder:
+    class: Drupal\social_content_block_landing_page\Service\SocialContentBlockLandingPageContentBuilder
+    parent: social_content_block.content_builder
+
+  social_content_block_landing_page.overrider:
+    class: Drupal\social_content_block_landing_page\SocialContentBlockLandingPageConfigOverride
+    arguments: ['@config.factory']
+    tags:
+      - { name: config.factory.override, priority: 5 }

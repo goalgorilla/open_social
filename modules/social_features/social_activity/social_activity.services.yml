@@ -1,0 +1,6 @@
+services:
+  social_activity.lazy_builder:
+    class: Drupal\social_activity\SocialActivityLazyBuilder
+    arguments:
+      - '@entity_type.manager'
+      - '@views.executable'

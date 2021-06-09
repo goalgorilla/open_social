@@ -22,23 +22,23 @@ class PostCommentController extends SocialCommentController {
       // $pid indicates that this is a reply to a comment.
       if ($pid) {
         // Load the parent comment.
-        $comment = $this->entityManager()->getStorage('comment')->load($pid);
+        $comment = $this->entityTypeManager()->getStorage('comment')->load($pid);
       }
     }
 
     if ($entity->getEntityTypeId() === 'post') {
       // Check if the post has been posted in a group.
-      /* @var \Drupal\social_post\Entity\Post $entity */
+      /** @var \Drupal\social_post\Entity\Post $entity */
       $group_id = $entity->field_recipient_group->target_id;
       if ($group_id) {
         /** @var \Drupal\group\Entity\Group $group */
-        $group = entity_load('group', $group_id);
+        $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
         if (!$group->hasPermission('access posts in group', $account)|| !$group->hasPermission('add post entities in group', $account)) {
           if (!isset($comment)) {
             $comment = NULL;
           }
-          /* @var \Drupal\Core\Url $url*/
-          if ($url = $entity->urlInfo('canonical')) {
+          /** @var \Drupal\Core\Url $url*/
+          if ($url = $entity->toUrl('canonical')) {
             // Redirect the user to the correct entity.
             return $this->redirectToOriginalEntity($url, $comment, $entity);
           }

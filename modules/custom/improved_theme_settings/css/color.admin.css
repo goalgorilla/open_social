@@ -19,3 +19,28 @@
 .form-type-vertical-tabs .color-palette__hook {
   display: none;
 }
+
+.color-form .color-palette .form-item,
+.color-form .form-item.form-item--scheme {
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+@media(max-width: 767px) {
+  .color-form .color-palette .form-item,
+  .color-form .form-item.form-item--scheme {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .color-form .color-palette .form-item .form-text,
+  .color-form .form-item.form-item--scheme .form-text {
+    width: 100%;
+  }
+}
+
+.color-form .color-palette .form-item label,
+.color-form .form-item.form-item--scheme label {
+  float: none;
+}

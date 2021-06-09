@@ -3,7 +3,6 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
 
 /**
  * Provides a 'OwnerActivityContext' activity context.
@@ -23,7 +22,7 @@ class OwnerActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $allowed_entity_types = ['node', 'post', 'comment'];
       if (in_array($related_entity['target_type'], $allowed_entity_types)) {
         $recipients += $this->getRecipientOwnerFromEntity($related_entity, $data);
@@ -82,6 +81,13 @@ class OwnerActivityContext extends ActivityContextBase {
     if (isset($original_related_object['target_type']) && $original_related_object['target_type'] === 'event_enrollment') {
       $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
       $original_related_entity = $storage->load($original_related_object['target_id']);
+
+      // In the case where a user is added by an event manager we'll need to
+      // check on the enrollment status. If the user is not really enrolled we
+      // should skip sending the notification.
+      if ($original_related_entity->get('field_enrollment_status')->value === '0') {
+        return $recipients;
+      }
 
       if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {
         $recipients[] = [

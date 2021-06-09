@@ -17,6 +17,13 @@ function activity_basics_entity_insert(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_update().
+ */
+function activity_basics_entity_update(EntityInterface $entity) {
+  _activity_basics_entity_action($entity, 'update_entity_action');
+}
+
+/**
  * Implements hook_social_group_move().
  */
 function activity_basics_social_group_move(NodeInterface $node) {

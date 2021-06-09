@@ -1,10 +1,11 @@
 services:
   social_book.overrider:
-    class: \Drupal\social_book\SocialBookConfigOverride
+    class: Drupal\social_book\SocialBookConfigOverride
+    arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
   social_book.translation_defaults:
-    class: \Drupal\social_book\ContentTranslationDefaultsConfigOverride
+    class: Drupal\social_book\ContentTranslationDefaultsConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
       - {name: social_language_defaults}

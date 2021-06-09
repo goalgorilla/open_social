@@ -30,7 +30,7 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
   // Add node type to page suggestions.
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
     if (!is_object($node)) {
-      $node = node_load($node);
+      $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
     }
   }
 

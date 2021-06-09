@@ -7,6 +7,7 @@ dependencies:
     - profile
     - user
     - search_api
+    - entity_access_by_field
     - social_search
   config:
     - field.storage.group.field_group_description
@@ -20,8 +21,6 @@ dependencies:
     - core.entity_view_mode.group.teaser
     - core.entity_view_mode.node.search_index
     - core.entity_view_mode.profile.search_index
-_core:
-  default_config_hash: 23JByI5ueZJnZX3kInKd9F_KoHrx6fZZyhSc4AtvSrI
 id: social_all
 name: 'Social all'
 description: 'All content index created for the Social distribution.'
@@ -120,7 +119,6 @@ field_settings:
       module:
         - profile
         - user
-        - user
   node_grants:
     label: 'Node access information'
     property_path: search_api_node_grants
@@ -217,7 +215,6 @@ field_settings:
       module:
         - profile
         - user
-        - user
 datasource_settings:
   'entity:group':
     bundles:
@@ -238,22 +235,29 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  rendered_item: {  }
-  add_url: {  }
-  aggregated_field: {  }
-  tokenizer:
+  entity_access_by_field:
+    weights:
+      preprocess_query: -30
+  ignorecase:
     all_fields: true
     fields:
       - field_group_description
+      - field_group_location
       - field_profile_first_name
       - field_profile_last_name
+      - label
+      - name
       - rendered_item
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
+      - title
+      - type
+      - type_1
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -20
+      preprocess_query: -20
+  content_access:
+    weights:
+      preprocess_query: -30
+  language_with_fallback: {  }
   stopwords:
     all_fields: false
     fields:
@@ -298,39 +302,6 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  ignorecase:
-    all_fields: true
-    fields:
-      - field_group_description
-      - field_group_location
-      - field_profile_first_name
-      - field_profile_last_name
-      - label
-      - name
-      - rendered_item
-      - title
-      - type
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
-  transliteration:
-    all_fields: true
-    fields:
-      - field_group_description
-      - field_group_location
-      - field_profile_first_name
-      - field_profile_last_name
-      - label
-      - name
-      - rendered_item
-      - title
-      - type
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
-  content_access:
-    weights:
-      preprocess_query: -30
   html_filter:
     all_fields: false
     fields:
@@ -352,8 +323,45 @@ processor_settings:
       strong: 2
       u: 1
     weights:
-      preprocess_index: -15
+      preprocess_index: -25
       preprocess_query: -15
+  transliteration:
+    all_fields: true
+    fields:
+      - field_group_description
+      - field_group_location
+      - field_profile_first_name
+      - field_profile_last_name
+      - label
+      - name
+      - rendered_item
+      - title
+      - type
+      - type_1
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+  rendered_item: {  }
+  add_url: {  }
+  aggregated_field: {  }
+  tokenizer:
+    all_fields: true
+    fields:
+      - field_group_description
+      - field_profile_first_name
+      - field_profile_last_name
+      - label
+      - name
+      - rendered_item
+      - title
+      - type_1
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
+    ignored: ._-
   blocked_users:
     weights:
       preprocess_query: -30

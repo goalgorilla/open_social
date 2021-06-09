@@ -1,9 +1,14 @@
 services:
+  plugin.manager.content_block:
+    class: Drupal\social_content_block\ContentBlockManager
+    parent: default_plugin_manager
+
   social_content_block.override:
     class: Drupal\social_content_block\SocialContentBlockOverride
     arguments: ['@config.factory']
     tags:
-      - {name: config.factory.override, priority: 5}
+      - { name: config.factory.override, priority: 5 }
+
   social_content_block.content_builder:
     class: Drupal\social_content_block\ContentBuilder
     arguments:
@@ -11,3 +16,9 @@ services:
       - '@database'
       - '@module_handler'
       - '@string_translation'
+      - '@plugin.manager.content_block'
+
+  social_content_block.route_subscriber:
+    class: Drupal\social_content_block\Routing\RouteSubscriber
+    tags:
+      - { name: 'event_subscriber' }

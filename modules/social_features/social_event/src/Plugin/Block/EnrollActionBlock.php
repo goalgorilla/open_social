@@ -83,7 +83,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
     if (in_array($route_name, $routes_to_check)) {
       $node = $this->routeMatch->getParameter('node');
       if (!is_null($node) && !is_object($node)) {
-        $node = node_load($node);
+        $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
       }
 
       if (is_object($node) && $node->getType() === 'event') {
@@ -97,7 +97,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
           }
         }
         else {
-          // @TODO Always show the block when the user is already enrolled.
+          // @todo Always show the block when the user is already enrolled.
           return AccessResult::allowed();
         }
       }
@@ -144,9 +144,9 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /* @var \Drupal\group\Entity\Group $group*/
+        /** @var \Drupal\group\Entity\Group $group*/
         $groups[] = $group;
       }
     }

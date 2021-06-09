@@ -6,7 +6,6 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,7 +15,9 @@ use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
-use Drupal\user\UserStorageInterface;
+use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
+use Drupal\user\UserInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -78,6 +79,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $moduleHandler;
 
   /**
+   * The event enroll service.
+   *
+   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
+   */
+  protected $eventEnrollService;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -89,27 +97,33 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The entity storage.
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   *   The user storage.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_event\Service\SocialEventEnrollServiceInterface $event_enroll_service
+   *   The event enroll service.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(
+    RouteMatchInterface $route_match,
+    EntityTypeManagerInterface $entity_type_manager,
+    AccountProxyInterface $current_user,
+    ConfigFactoryInterface $config_factory,
+    ModuleHandlerInterface $module_handler,
+     SocialEventEnrollServiceInterface $event_enroll_service
+  ) {
     $this->routeMatch = $route_match;
-    $this->entityStorage = $entity_storage;
-    $this->userStorage = $user_storage;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->currentUser = $currentUser;
-    $this->configFactory = $configFactory;
-    $this->moduleHandler = $moduleHandler;
+    $this->entityStorage = $entity_type_manager->getStorage('event_enrollment');
+    $this->userStorage = $entity_type_manager->getStorage('user');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->currentUser = $current_user;
+    $this->configFactory = $config_factory;
+    $this->moduleHandler = $module_handler;
+    $this->eventEnrollService = $event_enroll_service;
   }
 
   /**
@@ -118,12 +132,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity.manager')->getStorage('event_enrollment'),
-      $container->get('entity.manager')->getStorage('user'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('social_event.enroll')
     );
   }
 
@@ -145,7 +158,21 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
 
       $groups = $this->getGroups($node);
-      if (!empty($groups)) {
+
+      // If the user is invited to an event
+      // it shouldn't care about group permissions.
+      $conditions = [
+        'field_account' => $current_user->id(),
+        'field_event' => $node->id(),
+      ];
+
+      $enrollments = $this->entityStorage->loadByProperties($conditions);
+
+      // Check if groups are not empty, or that the outsiders are able to join.
+      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1'
+        && empty($enrollments)
+        && social_event_manager_or_organizer() === FALSE) {
+
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
 
@@ -175,6 +202,47 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $submit_text = $this->t('Enroll');
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
+    $request_to_join = FALSE;
+    $isNodeOwner = ($node->getOwnerId() === $uid);
+
+    // Initialise the default attributes for the "Enroll" button
+    // if the event enroll method is request to enroll, this will
+    // be overwritten because of the modal.
+    $attributes = [
+      'class' => [
+        'btn',
+        'btn-accent brand-bg-accent',
+        'btn-lg btn-raised',
+        'dropdown-toggle',
+        'waves-effect',
+      ],
+    ];
+
+    // Add request to join event.
+    if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
+      $submit_text = $this->t('Request to enroll');
+      $to_enroll_status = '2';
+
+      if ($current_user->isAnonymous()) {
+        $attributes = [
+          'class' => [
+            'use-ajax',
+            'js-form-submit',
+            'form-submit',
+            'btn',
+            'btn-accent',
+            'btn-lg',
+          ],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'title' => t('Request to enroll'),
+            'width' => 'auto',
+          ]),
+        ];
+
+        $request_to_join = TRUE;
+      }
+    }
 
     // Add the enrollment closed label.
     if ($this->eventHasBeenFinished($node)) {
@@ -195,6 +263,38 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $submit_text = $this->t('Enrolled');
           $to_enroll_status = '0';
         }
+        // If someone requested to join the event.
+        elseif ($node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
+          $event_request_ajax = TRUE;
+          if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
+            $submit_text = $this->t('Pending');
+            $event_request_ajax = FALSE;
+          }
+        }
+      }
+
+      // Use the ajax submit if the enrollments are empty, or if the
+      // user cancelled his enrollment and tries again.
+      if ($enrollment_open === TRUE) {
+        if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST)
+          || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+          $attributes = [
+            'class' => [
+              'use-ajax',
+              'js-form-submit',
+              'form-submit',
+              'btn',
+              'btn-accent',
+              'btn-lg',
+            ],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => json_encode([
+              'title' => t('Request to enroll'),
+              'width' => 'auto',
+            ]),
+          ];
+          $request_to_join = TRUE;
+        }
       }
     }
 
@@ -207,11 +307,23 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#type' => 'submit',
       '#value' => $submit_text,
       '#disabled' => !$enrollment_open,
+      '#attributes' => $attributes,
     ];
+
+    if ($request_to_join === TRUE) {
+      $form['enroll_for_this_event'] = [
+        '#type' => 'link',
+        '#title' => $submit_text,
+        '#url' => Url::fromRoute('social_event.request_enroll_dialog', ['node' => $nid]),
+        '#attributes' => $attributes,
+      ];
+    }
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
-    if (isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1') {
+    if ((isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1')
+      || (isset($enrollment->field_request_or_invite_status->value)
+      && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING)) {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_for_this_event']['#attributes'] = [
@@ -276,24 +388,21 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-
-    $nid = $form_state->getValue('event');
+    $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
+    $node = $this->entityTypeManager->getStorage('node')->load($nid);
 
     // Redirect anonymous use to login page before enrolling to an event.
     if ($current_user->isAnonymous()) {
-      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
-        ->toString();
-      $form_state->setRedirect('user.login',
-        [],
-        [
-          'query' => [
-            'destination' => $node_url,
-          ],
-        ]
-      );
+      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
+      $destination = $node_url;
+      // If the request enroll method is set, alter the destination for AN.
+      if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
+        $destination = $node_url . '?requested-enrollment=TRUE';
+      }
+      $form_state->setRedirect('user.login', [], ['query' => ['destination' => $destination]]);
 
       // Check if user can register accounts.
-      if ($this->configFactory->get('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+      if ($this->configFactory->get('user.settings')->get('register') !== UserInterface::REGISTER_ADMINISTRATORS_ONLY) {
         $log_in_url = Url::fromUserInput('/user/login');
         $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $create_account_url = Url::fromUserInput('/user/register');
@@ -311,7 +420,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         ]);
       }
 
-      drupal_set_message($message);
+      $this->messenger()->addStatus($message);
       return;
     }
 
@@ -331,23 +440,55 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      // The user is enrolled, but cancels his enrollment.
       if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
-        $enrollment->field_enrollment_status->value = '0';
-        $enrollment->save();
+        // The user is enrolled by invited or request, but either the user or
+        // event manager is declining or invalidating the enrollment.
+        if ($enrollment->field_request_or_invite_status
+          && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
+          // Mark this user his enrollment as declined.
+          $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          // If the user is cancelling, un-enroll.
+          $current_enrollment_status = $enrollment->field_enrollment_status->value;
+          if ($current_enrollment_status === '1') {
+            $enrollment->field_enrollment_status->value = '0';
+          }
+          $enrollment->save();
+        }
+        // Else, the user simply wants to cancel his enrollment, so at
+        // this point we can safely delete the enrollment record as well.
+        else {
+          $enrollment->delete();
+        }
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->save();
       }
+      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
+        if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
+          $enrollment->delete();
+        }
+      }
+
     }
     else {
-      // Create a new enrollment for the event.
-      $enrollment = EventEnrollment::create([
+      // Default event enrollment field set.
+      $fields = [
         'user_id' => $uid,
         'field_event' => $nid,
         'field_enrollment_status' => '1',
         'field_account' => $uid,
-      ]);
+      ];
+
+      // If request to join is on, alter fields.
+      if ($to_enroll_status === '2') {
+        $fields['field_enrollment_status'] = '0';
+        $fields['field_request_or_invite_status'] = EventEnrollmentInterface::REQUEST_PENDING;
+      }
+
+      // Create a new enrollment for the event.
+      $enrollment = EventEnrollment::create($fields);
       $enrollment->save();
     }
   }
@@ -361,16 +502,15 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   Array of group entities.
    */
   public function getGroups($node) {
-
     $groupcontents = GroupContent::loadByEntity($node);
 
     $groups = [];
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /* @var \Drupal\group\Entity\Group $group */
+        /** @var \Drupal\group\Entity\Group $group */
         $groups[] = $group;
       }
     }

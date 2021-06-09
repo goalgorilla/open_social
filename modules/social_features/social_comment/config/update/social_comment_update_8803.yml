@@ -1,0 +1,12 @@
+core.entity_view_display.comment.comment.activity_comment:
+  expected_config:
+    content:
+      field_comment_body:
+        type: text_default
+  update_actions:
+    change:
+      content:
+        field_comment_body:
+          type: text_trimmed
+          settings:
+            trim_length: 300

@@ -3,7 +3,8 @@
 namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
+use Drupal\social_comment\Entity\Comment;
+use Drupal\social_node\Entity\Node;
 use Drupal\user\UserInterface;
 
 /**
@@ -24,7 +25,7 @@ class FollowContentActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($related_entity['target_type'] == 'node') {
         $recipients += $this->getRecipientsWhoFollowContent($related_entity, $data);
@@ -64,13 +65,24 @@ class FollowContentActivityContext extends ActivityContextBase {
     $original_related_entity = $storage->load($original_related_object['target_id']);
 
     foreach ($flaggings as $flagging) {
-      /* @var $flagging \Drupal\flag\FlaggingInterface */
+      /** @var \Drupal\flag\FlaggingInterface $flagging */
       $recipient = $flagging->getOwner();
 
       // It could happen that a notification has been queued but the content or
       // account has since been deleted. In that case we can find no recipient.
       if (!$recipient instanceof UserInterface) {
         break;
+      }
+
+      // The owner of a node automatically follows his / her own content.
+      // Because of this, we do not want to send a follow notification.
+      if ($original_related_entity instanceof Comment) {
+        // We need to compare the owner ID of the original node to the one
+        // being the current recipient.
+        $original_node = $original_related_entity->getCommentedEntity();
+        if ($original_node instanceof Node && $recipient->id() !== $original_node->getOwnerId()) {
+          break;
+        }
       }
 
       if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {
@@ -80,7 +92,6 @@ class FollowContentActivityContext extends ActivityContextBase {
         ];
       }
     }
-
     return $recipients;
   }
 

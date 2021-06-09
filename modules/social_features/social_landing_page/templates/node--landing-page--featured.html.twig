@@ -1,0 +1,15 @@
+{% extends "node--featured.html.twig" %}
+
+{% block card_hero_image %}
+    <div class="img_wrapper">
+        {% if content.field_landing_page_image|render %}
+            {{ content.field_landing_page_image }}
+        {% else %}
+            <hr class="no-feature-image">
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block card_body %}
+
+{% endblock %}

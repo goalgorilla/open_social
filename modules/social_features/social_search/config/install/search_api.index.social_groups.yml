@@ -6,11 +6,10 @@ dependencies:
     - user
     - search_api
   config:
+    - field.storage.group.field_group_allowed_join_method
     - field.storage.group.field_group_description
     - search_api.server.social_database
     - core.entity_view_mode.group.teaser
-_core:
-  default_config_hash: Ed3QodM_5VMVirtscZV64UyLSBVNL0B4_UJSKAMhC00
 id: social_groups
 name: 'Social Groups'
 description: 'Default group index created for the Social distribution.'
@@ -24,6 +23,14 @@ field_settings:
     dependencies:
       module:
         - group
+  field_group_allowed_join_method:
+    label: 'Allowed join method'
+    datasource_id: 'entity:group'
+    property_path: field_group_allowed_join_method
+    type: string
+    dependencies:
+      config:
+        - field.storage.group.field_group_allowed_join_method
   field_group_description:
     label: Description
     datasource_id: 'entity:group'
@@ -50,7 +57,6 @@ field_settings:
       module:
         - group
         - user
-        - user
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -62,6 +68,7 @@ field_settings:
         'entity:group':
           closed_group: teaser
           open_group: teaser
+          secret_group: teaser
   type:
     label: Type
     datasource_id: 'entity:group'
@@ -80,31 +87,20 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  rendered_item:
-    plugin_id: rendered_item
-    weights:
-      add_properties: 0
-      pre_index_save: -10
-  add_url:
-    plugin_id: add_url
-    weights:
-      preprocess_index: -30
-  aggregated_field:
-    plugin_id: aggregated_field
-    weights:
-      add_properties: 20
-  tokenizer:
-    plugin_id: tokenizer
+  ignorecase:
+    plugin_id: ignorecase
     all_fields: true
     fields:
+      - field_group_allowed_join_method
       - field_group_description
+      - label
+      - name
       - rendered_item
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
+      - type
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -10
+      preprocess_query: -10
+  language_with_fallback: {  }
   stopwords:
     plugin_id: stopwords
     all_fields: false
@@ -150,27 +146,24 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  ignorecase:
-    plugin_id: ignorecase
-    all_fields: true
+  html_filter:
+    plugin_id: html_filter
+    all_fields: false
     fields:
       - field_group_description
-      - label
-      - name
       - rendered_item
-      - type
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
     weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  transliteration:
-    plugin_id: transliteration
-    all_fields: true
-    fields:
-      - field_group_description
-      - label
-      - rendered_item
-    weights:
-      preprocess_index: -10
+      preprocess_index: -15
       preprocess_query: -10
   ignore_character:
     plugin_id: ignore_character
@@ -201,25 +194,46 @@ processor_settings:
       - Pi
       - Po
       - Ps
-  html_filter:
-    plugin_id: html_filter
-    all_fields: false
+  transliteration:
+    plugin_id: transliteration
+    all_fields: true
     fields:
+      - field_group_allowed_join_method
       - field_group_description
+      - label
+      - name
       - rendered_item
-    title: true
-    alt: true
-    tags:
-      b: 2
-      em: 1
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      u: 1
+      - type
     weights:
       preprocess_index: -10
       preprocess_query: -10
+  rendered_item:
+    plugin_id: rendered_item
+    weights:
+      add_properties: 0
+      pre_index_save: -10
+  add_url:
+    plugin_id: add_url
+    weights:
+      preprocess_index: -30
+  aggregated_field:
+    plugin_id: aggregated_field
+    weights:
+      add_properties: 20
+  tokenizer:
+    plugin_id: tokenizer
+    all_fields: true
+    fields:
+      - field_group_description
+      - label
+      - rendered_item
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
+    ignored: ._-
 tracker_settings:
   default:
     indexing_order: fifo

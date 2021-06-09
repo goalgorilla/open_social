@@ -13,8 +13,6 @@ dependencies:
     - social_post
     - text
     - user
-_core:
-  default_config_hash: b44BGhIgbu5CKjG8HZzvz1Ecdls6TA5KaBHBOzRJFso
 id: post.post.activity
 targetEntityType: post
 bundle: post
@@ -29,13 +27,18 @@ content:
     region: content
   field_post_comments:
     type: comment_post_activity
-    weight: 3
+    weight: 2
     label: hidden
     settings:
       num_comments: '2'
       order: ASC
     third_party_settings: {  }
     region: content
+  like_and_dislike:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   user_id:
     label: hidden
     type: author

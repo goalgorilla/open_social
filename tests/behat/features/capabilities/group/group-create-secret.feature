@@ -51,19 +51,19 @@ Feature: Create Secret Group
 
   # Create a topic inside the secret group
     When I click "Topics"
-    And I should see the link "Create Topic" in the "Sidebar second"
+    And I should see the link "Create Topic"
     And I click "Create Topic"
     When I fill in the following:
       | Title | Test secret group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Test secret group topic"
 
   # Create an event inside the secret group
     And I click "Test secret group"
     When I click "Events"
-    And I should see the link "Create Event" in the "Sidebar second"
+    And I should see the link "Create Event"
     And I click "Create Event"
     And I fill in the following:
       | Title | Test secret group event |
@@ -72,14 +72,15 @@ Feature: Create Secret Group
       | Time  | 11:00:00    |
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I press "Save"
+    And I press "Create event"
     And I should see "Test secret group event"
 
   # Lets add another user on the Manage members tab.
     When I click "Test secret group"
     And I click "Manage members"
-    And I click "Add members"
-    And I fill in "SecretGroup User Two" for "Select members to add"
+    And I click the group member dropdown
+    And I click "Add directly"
+    And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
     And I press "Save"
     Then I click "Members"
     And I should see "SecretGroup User Two"

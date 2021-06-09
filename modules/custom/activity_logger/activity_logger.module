@@ -138,7 +138,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     '#required' => TRUE,
     '#description' => t('Select destinations where to display this message.'),
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
-    // @TODO activity_creator allowed_values function overlap (should be plugin)
+    // @todo activity_creator allowed_values function overlap (should be plugin)
     '#options' => $destination_options,
   ];
 

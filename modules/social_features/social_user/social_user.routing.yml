@@ -38,6 +38,7 @@ social_user.user_home:
     _entity_view: 'user.stream'
   requirements:
     _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\social_user\Controller\SocialUserController::accessUsersPages'
 
 social_user.stream:
   path: '/user/{user}/stream'
@@ -45,3 +46,4 @@ social_user.stream:
     _entity_view: 'user.stream'
   requirements:
     _user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\social_user\Controller\SocialUserController::accessUsersPages'

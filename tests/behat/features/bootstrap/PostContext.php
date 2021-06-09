@@ -5,19 +5,12 @@ namespace Drupal\social\Behat;
 
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit_Framework_Assert as PHPUnit;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 
 /**
 * Defines application features from the specific context.
 */
-class PostContext extends RawDrupalContext implements Context, SnippetAcceptingContext {
+class PostContext extends RawDrupalContext implements Context {
 
 
   /**
@@ -32,7 +25,7 @@ class PostContext extends RawDrupalContext implements Context, SnippetAcceptingC
 
     $post_ids = $query->execute();
 
-    $posts = entity_load_multiple('post', $post_ids);
+    $posts = \Drupal::entityTypeManager()->getStorage('post')->loadMultiple($post_ids);
 
     foreach ($posts as $post) {
       $post->delete();

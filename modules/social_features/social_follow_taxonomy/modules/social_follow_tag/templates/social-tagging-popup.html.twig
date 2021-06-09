@@ -1,0 +1,50 @@
+{#
+/**
+ * @social-tagging-popup.html.twig
+ * Default theme implementation to present follow taxonomy popup.
+ *
+ * This template is used when viewing follow tag block.
+ *
+ *
+ * Available variables:
+ * - url: Lisk to search page with related entities.
+ * - name: Taxonomy term name.
+ * - flag: Link to follow/unfollow tag.
+ * - followers_count: Countt of users tthat follow that tag.
+ * - related_entity_count: Count of related entities.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="popup-info">
+  <div class="card teaser">
+    <div class="teaser__body">
+      <div class="teaser__content">
+        <div class="teaser__tag">{% trans %}TAG{% endtrans %}</div>
+
+        <h4 class="teaser__title">
+          {{ name }}
+        </h4>
+
+        <div class="teaser__related-content">
+          {% trans %} 1 item {% plural related_entity_count %} @count items{% endtrans %}
+          {% if followers_count %}
+            |
+            <span class="teaser__followers-count">
+                      {% trans %} 1 follower {% plural followers_count %} @count followers{% endtrans %}
+                      </span>
+          {% endif %}
+        </div>
+
+        <div class="actions">
+          {{ flag }}
+          {% if(url) %}
+            <a href="{{ url }}" class="btn btn-default">
+              {% trans %}See related content{% endtrans %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

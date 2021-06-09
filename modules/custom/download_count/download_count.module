@@ -7,7 +7,6 @@
  * Using the private files setting or custom private filefield.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\Cache;
@@ -48,9 +47,9 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
     }
 
     // Validate file has extension that should be counted, if not return.
-    $extensions = explode(' ', Unicode::strtolower(trim($config->get('download_count_excluded_file_extensions'))));
+    $extensions = explode(' ', mb_strtolower(trim($config->get('download_count_excluded_file_extensions'))));
     if (count($extensions)) {
-      $extension = Unicode::strtolower(pathinfo($entity->getFilename(), PATHINFO_EXTENSION));
+      $extension = mb_strtolower(pathinfo($entity->getFilename(), PATHINFO_EXTENSION));
       if (in_array($extension, $extensions)) {
         return;
       }

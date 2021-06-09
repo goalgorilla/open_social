@@ -380,7 +380,8 @@
       MentionsCKEditor.prototype.createHiddenField = function() {
         this.hidden = $("<input />", {
           type: "hidden",
-          name: this.element.attr("name")
+          name: this.element.attr("name"),
+          value: this.element.text()
         });
         return this.element.after(this.hidden).removeAttr("name");
       };

@@ -3,10 +3,10 @@
 namespace Drupal\activity_basics\Plugin\ActivityAction;
 
 use Drupal\activity_creator\Plugin\ActivityActionBase;
-use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
- * Provides a 'CreateActivityAction' acitivy action.
+ * Provides a 'CreateActivityAction' activity action.
  *
  * @ActivityAction(
  *  id = "create_entitiy_action",
@@ -24,7 +24,7 @@ class CreateActivityAction extends ActivityActionBase {
 
       // For nodes we make an exception, since they are potentially placed in
       // groups, which we cannot know here yet.
-      if ($entity instanceof Node) {
+      if ($entity instanceof NodeInterface) {
         $data['entity_id'] = $entity->id();
         $queue = \Drupal::queue('activity_logger_message');
         $queue->createItem($data);

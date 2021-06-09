@@ -2,18 +2,21 @@
 
 /**
  * @file
- * Social AJAX comments module file.
+ * The Social AJAX comments module.
  */
 
-use Drupal\ajax_comments\Utility;
-use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\ajax_comments\Utility;
+use Drupal\comment\CommentInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\social_comment\SocialCommentViewBuilder;
 use Drupal\social_post\Entity\Post;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_entity_display_build_alter().
@@ -86,45 +89,6 @@ function social_ajax_comments_form_comment_comment_delete_form_alter(&$form, For
 }
 
 /**
- * Implements hook_entity_view_mode_alter().
- */
-function social_ajax_comments_entity_view_mode_alter(&$view_mode, EntityInterface $entity, $context) {
-  // We need this to alter the view modes for Nodes as ajax_comments
-  // doesn't handle this correctly. And will add it as activity.
-  /** @var \Drupal\ajax_comments\FieldSettingsHelper $field_settings_helper */
-  $field_settings_helper = \Drupal::service('ajax_comments.field_settings_helper');
-
-  // We lookup through the node fields
-  // and check out that the attached file was provided.
-  $nodeFields = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
-  foreach ($nodeFields as $nodeField) {
-    if ($nodeField->getType() === 'comment') {
-      // Load the configuration entity for the entity's view display settings.
-      /** @var \Drupal\Core\Entity\Display\EntityDisplayInterface $view_display */
-      $view_display = \Drupal::service('entity_type.manager')
-        ->getStorage('entity_view_display')
-        ->load($entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $view_mode);
-
-      if (empty($view_display)) {
-        continue;
-      }
-      $comment_formatter = $field_settings_helper->getFieldFormatter($view_display, $nodeField->getName(), $nodeField, $view_mode);
-
-      if (!empty($comment_formatter) && $field_settings_helper->isEnabled($comment_formatter)) {
-        /** @var \Drupal\ajax_comments\TempStore $tempStore */
-        $tempStore = \Drupal::service('ajax_comments.temp_store');
-        $route_match = \Drupal::routeMatch();
-        if ($entity instanceof Node && $route_match->getRouteName() === 'entity.node.canonical') {
-          $view_mode = 'default';
-        }
-        $tempStore->setViewMode($entity->getEntityType()->getLabel(), $view_mode);
-      }
-    }
-  }
-
-}
-
-/**
  * Implements hook_comment_links_alter().
  *
  * Alter the links of a comment.
@@ -158,14 +122,110 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
  * Implements hook_ajax_comments_wrapper_id_alter().
  */
 function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
-  if ($commented_entity instanceof Node && $field_name === 'field_topic_comments') {
-    $wrapper_html_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . $field_name
-    );
+  if (
+    $commented_entity instanceof NodeInterface &&
+    $field_name === 'field_topic_comments'
+  ) {
+    $wrapper_html_id = Html::getId(sprintf(
+      '%s-%s-%s',
+      $commented_entity->getEntityTypeId(),
+      $commented_entity->bundle(),
+      $field_name
+    ));
   }
-  if ($commented_entity instanceof Post && $field_name === 'field_post_comments') {
-    $wrapper_html_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
-    );
+  elseif (
+    $commented_entity instanceof PostInterface &&
+    $field_name === 'field_post_comments'
+  ) {
+    $wrapper_html_id = Html::getId(sprintf(
+      '%s-%s-%s-%s',
+      $commented_entity->getEntityTypeId(),
+      $commented_entity->bundle(),
+      $field_name,
+      $commented_entity->id()
+    ));
+  }
+}
+
+/**
+ * Implements hook_ajax_render_alter().
+ */
+function social_ajax_comments_ajax_render_alter(array &$data) {
+  if (
+    (
+      // In case when the current page is (re)loaded and the response contains a
+      // command with settings and a command with new content.
+      count($data) === 2 ||
+      // In case when a user tries to switch to another page of pagination after
+      // adding a new comment and the response contains two commands from the
+      // previous case and command with messages.
+      count($data) === 3
+    ) &&
+    $data[0]['command'] === 'settings' &&
+    $data[1]['command'] === 'insert' &&
+    $data[1]['selector'] === NULL &&
+    \Drupal::request()->query->has('page')
+  ) {
+    if ($data[1]['method'] === NULL) {
+      $theme = \Drupal::service('theme.manager')->getActiveTheme()->getName();
+      $data[1]['method'] = 'html';
+      $data[1]['selector'] = '#block-' . $theme . '-content';
+    }
+    elseif (
+      $data[1]['method'] === 'replaceWith' &&
+      preg_match('/<section[^>]+id="([^"]+)/', $data[1]['data'], $matches)
+    ) {
+      $data[1]['selector'] = '#' . $matches[1];
+    }
+  }
+
+  // Delete content before wrapper of the comments section of AJAX response
+  // during adding a new comment to resolve the issue with creating nesting of
+  // comments section wrapper in itself after adding each comment.
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'ajax_comments.add' &&
+    \Drupal::request()->request->has('social_ajax_comments')
+  ) {
+    foreach ($data as &$item) {
+      if (
+        $item['command'] === 'insert' &&
+        $item['method'] === 'html' &&
+        preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
+      ) {
+        $content = &$item['data'];
+        $content = substr($content, strrpos(substr($content, 0, strpos($content, $matches[1])), '<'));
+        return;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_ajax_comments_preprocess_pager(&$variables) {
+  if (
+    isset($variables['pager']['#tags']) &&
+    in_array(SocialCommentViewBuilder::PAGER_TAG, $variables['pager']['#tags']) &&
+    ($items = &$variables['items'])
+  ) {
+    _social_ajax_comments_pager($items);
+    _social_ajax_comments_pager($items['pages']);
+  }
+}
+
+/**
+ * Add the CSS class to each element of a pager.
+ *
+ * @param array $items
+ *   The pager sub-elements.
+ */
+function _social_ajax_comments_pager(array &$items) {
+  foreach ($items as &$item) {
+    if (isset($item['href'])) {
+      $attributes = $item['attributes'] ?? new Attribute([]);
+      $attributes->addClass('use-ajax');
+      $item['attributes'] = $attributes;
+    }
   }
 }

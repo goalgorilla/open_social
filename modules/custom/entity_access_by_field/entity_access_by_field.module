@@ -4,8 +4,8 @@
  * @file
  * Entity Access By Field module file.
  *
- * @todo: Prevent creating multiple visibility fields on one node.
- * @todo: Add support for multiple entity types.
+ * @todo Prevent creating multiple visibility fields on one node.
+ * @todo Add support for multiple entity types.
  */
 
 use Drupal\entity_access_by_field\EntityAccessHelper;
@@ -37,7 +37,7 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
   $grants = [];
   if ($op === 'view') {
 
-    // @TODO Check performance hit, this is not cached.
+    // @todo Check performance hit, this is not cached.
     $entityAccessPermissions = \Drupal::getContainer()
       ->get('entity_access_by_field.permissions');
     $permissions = $entityAccessPermissions->getRealmWithPermission();
@@ -63,7 +63,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
-  /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
   foreach ($field_definitions as $field_name => $field_definition) {
     // Lets add a node access realm if the field is implemented.
     if ($field_definition->getType() === 'entity_access_field') {
@@ -143,7 +143,7 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
-  /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
   foreach ($field_definitions as $field_name => $field_definition) {
     // Lets add a node access realm if the field is implemented.
     if ($field_definition->getType() === 'entity_access_field') {

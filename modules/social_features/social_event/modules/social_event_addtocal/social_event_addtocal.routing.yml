@@ -1,0 +1,17 @@
+social_event_addtocal.settings:
+  path: '/admin/config/opensocial/event-addtocal'
+  defaults:
+    _form: '\Drupal\social_event_addtocal\Form\SocialAddToCalendarSettingsForm'
+    _title: 'Add to calendar settings'
+  requirements:
+    _permission: 'administer social_event settings'
+  options:
+    _admin_route: TRUE
+
+social_event_addtocal.add_to_calendar_ics:
+  path: '/add-to-calendar/ics'
+  defaults:
+    _controller: '\Drupal\social_event_addtocal\Controller\AddToCalendarIcsController::downloadIcs'
+    _title: 'Add event to Calendar'
+  requirements:
+    _user_is_logged_in: 'TRUE'

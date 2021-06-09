@@ -9,6 +9,7 @@ Feature: Create Public Group
       | name         | mail                     | status |
       | GivenUserOne | group_user_1@example.com | 1      |
       | GivenUserTwo | group_user_2@example.com | 1      |
+      | Outsider     | outsider@example.com     | 1      |
     Given "event_types" terms:
       | name     |
       | Webinar  |
@@ -90,7 +91,7 @@ Feature: Create Public Group
       | edit-field-event-date-end-0-value-time | 11:00:00 |
       | Location name | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I press "Save"
+    And I press "Create event"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -106,7 +107,7 @@ Feature: Create Public Group
     When I fill in "Title" with "Test group topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
     And I should see the link "Test public group"
@@ -127,7 +128,9 @@ Feature: Create Public Group
     And I should see "Groups"
     And I should not see "Test public group"
 
-    When I click "Events"
+    # DS-722 As an outsider I am not allowed to enrol to an event in group
+    Given I am logged in as "Outsider"
+    When I am on "/community-events"
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero buttons"
 

@@ -12,9 +12,10 @@ Feature: Move content after creation
       | sally | 1234 | sally@example.com | 1      |               |
       | smith | 1234 | sm@example.com    | 1      |  sitemanager  |
     Given groups:
-      | title      | description    | author | type       | language |
-      | Motorboats | Vroem vroem..  | sally  | open_group | en       |
-      | Kayaking   | Kayaking in NY | harry  | open_group | en       |
+      | title      | description    | author | type         | language |
+      | Motorboats | Vroem vroem..  | sally  | open_group   | en       |
+      | Kayaking   | Kayaking in NY | harry  | open_group   | en       |
+      | Closed one | Kayaking in NY | harry  | closed_group | en       |
     # Create a new topic
     When I am logged in as "harry"
     And I am on "/all-groups"
@@ -22,13 +23,23 @@ Feature: Move content after creation
     And I click "Join"
     And I press "Join group"
     And I am on "node/add/topic"
-    And I click radio button "Discussion"
+    And I select group "Closed one"
+    And I wait for AJAX to finish
+    Then I should see "Changing the group may have impact on the visibility settings and may cause author/co-authors to lose access."
+    # Ensure we trigger validation to see if our group is still selected with the correct visibility.
+    And I press "Create topic"
+    Then I should see "Type field is required."
+    And I should see "Title field is required."
+    And I should see "Description field is required."
+    And I should see checked the box "Group members"
+
     And I fill in "Title" with "I love this sport"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Do you to?"
     And I select group "Kayaking"
     And I wait for AJAX to finish
-    Then I should see "Changing the group may have impact on the visibility settings."
-    And I press "Save"
+    Then I should see "Changing the group may have impact on the visibility settings and may cause author/co-authors to lose access."
+    And I click radio button "Discussion"
+    And I press "Create topic"
     And I should see "Kayaking"
     And I wait for "2" seconds
 
@@ -69,6 +80,7 @@ Feature: Move content after creation
     Then I should not see "Motorboats"
     And I should not see "Kayaking"
 
+    And I run cron
     When I am logged in as "harry"
     And I am on the stream of group "Motorboats"
     Then I should not see "harry created a topic in Motorboats"

@@ -1,0 +1,384 @@
+views.view.activity_stream:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        block_stream_explore:
+          cache_metadata:
+            contexts:
+              - user
+          display_options:
+            allow:
+              items_per_page: true
+            filters:
+              activity_filter_tags:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_filter_tags
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_filter_tags
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_filter_tags
+                relationship: none
+                table: activity
+                value: ''
+            override_tags_filter: 1
+        block_stream_homepage:
+          display_options:
+            allow:
+              items_per_page: true
+            filters:
+              activity_filter_tags:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_filter_tags
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_filter_tags
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_filter_tags
+                relationship: none
+                table: activity
+                value: ''
+            override_tags_filter: 1
+        block_stream_homepage_without_post:
+          display_options:
+            allow:
+              items_per_page: true
+            filters:
+              activity_filter_tags:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_filter_tags
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_filter_tags
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_filter_tags
+                relationship: none
+                table: activity
+                value: ''
+            override_tags_filter: 1
+views.view.community_activities:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        block_stream_landing:
+          cache_metadata:
+            contexts:
+              - user
+            tags:
+              - 'config:core.entity_view_display.activity.activity.featured'
+          display_options:
+            allow:
+              items_per_page: true
+            defaults:
+              filter_groups: false
+              filters: false
+            filter_groups:
+              groups:
+                1: AND
+              operator: AND
+            filters:
+              activity_filter_tags:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_filter_tags
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_filter_tags
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_filter_tags
+                relationship: none
+                table: activity
+                value: ''
+              activity_post_visibility_access_filter:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_post_visibility_access_filter
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_post_visibility_access_filter
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_post_visibility_access
+                relationship: none
+                table: activity
+                value: ''
+              field_activity_destinations_value:
+                admin_label: ''
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  reduce: false
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: field_activity_destinations_value
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: field_activity_destinations_value
+                is_grouped: false
+                operator: or
+                plugin_id: list_field
+                reduce_duplicates: false
+                relationship: none
+                table: activity__field_activity_destinations
+                value:
+                  stream_home: stream_home
+            override_tags_filter: 1
+        block_stream_landing_with_post:
+          cache_metadata:
+            contexts:
+              - url.query_args
+            tags:
+              - 'config:core.entity_view_display.activity.activity.featured'
+          display_options:
+            defaults:
+              filter_groups: false
+              filters: false
+            filter_groups:
+              groups:
+                1: AND
+              operator: AND
+            filters:
+              activity_post_visibility_access_filter:
+                admin_label: ''
+                entity_type: activity
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: activity_post_visibility_access_filter
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: activity_post_visibility_access_filter
+                is_grouped: false
+                operator: '='
+                plugin_id: activity_post_visibility_access
+                relationship: none
+                table: activity
+                value: ''
+              field_activity_destinations_value:
+                admin_label: ''
+                expose:
+                  description: ''
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  operator: ''
+                  operator_id: ''
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  reduce: false
+                  remember: false
+                  remember_roles:
+                    authenticated: authenticated
+                  required: false
+                  use_operator: false
+                exposed: false
+                field: field_activity_destinations_value
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                id: field_activity_destinations_value
+                is_grouped: false
+                operator: or
+                plugin_id: list_field
+                reduce_duplicates: false
+                relationship: none
+                table: activity__field_activity_destinations
+                value:
+                  stream_home: stream_home
+        default:
+          cache_metadata:
+            tags:
+              - 'config:core.entity_view_display.activity.activity.featured'

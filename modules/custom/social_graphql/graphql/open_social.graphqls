@@ -1,0 +1,327 @@
+################################################################################
+# The base Open Social schema                                                  #
+#                                                                              #
+# This file contains the basis of the Open Social GraphQL API Schema. It       #
+# provides base types that can be used by individual Open Social features.     #
+# Additionally it contains common interfaces for things such as pagination.    #
+#                                                                              #
+# Comments aimed at schema developers are prefixed with `#` and comments       #
+# exposed to schema consumers are contained in `"""`.                          #
+#                                                                              #
+# If you're new to GraphQL I recommend starting at: https://graphql.org/learn/ #
+################################################################################
+
+# The actual GraphQL schema
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"""
+The schema's entry-point for queries. This acts as the public, top-level API
+from which all queries must start.
+"""
+type Query {
+  """
+  Get information about the currently authenticated user.
+
+  NULL if you're not authenticated.
+  """
+  viewer : Actor
+}
+
+"""
+The schema's entry-point for subscriptions. This acts as the public, top-level
+API from which all subscriptions must start.
+
+A real-time process must be implemented and deployed to support subscriptions.
+"""
+type Subscription
+
+################################################################################
+#                                Basic Types                                   #
+################################################################################
+"""
+A concrete fetchable type that is addressable by an id.
+"""
+interface Node {
+  id: ID!
+}
+
+"""
+A valid version 4 UUID
+"""
+# This should not be used for entity UUIDs which should use ID instead.
+# This can be used for user provided strings such as a clientMutationId.
+scalar UUIDv4
+
+"""
+An access role for a user
+
+Roles are used to assign groups of permissions to users on the platform.
+"""
+scalar UserRole
+
+"""
+A valid email address.
+"""
+scalar Email
+
+"""
+A valid URL
+"""
+scalar Url
+
+"""
+An HTML string
+
+Content of this type is deemed safe by the server for raw output given the
+origin and the context of its usage. The HTML can still contain scripts or style
+tags where the creating user had permission to input these.
+"""
+scalar Html
+
+"""
+A UNIX timestamp.
+
+The number of seconds since the Unix Epoch on January 1st, 1970 at UTC.
+"""
+scalar Timestamp
+
+"""
+A phone number.
+"""
+# For now we treat PhoneNumber as a special string but we may want to build it
+# out to a proper type containing an country code and local number separately.
+scalar PhoneNumber
+
+# TODO: Add descriptions.
+scalar TimeZone
+scalar Language
+
+"""
+A longer string of text that may contain markup.
+"""
+type FormattedText {
+  """
+  The text format used by Open Social to process the input text.
+
+  A text format provides information about what markup is allowed in the text.
+  """
+  format: TextFormat!
+  """
+  The raw string as used by an editor.
+  """
+  raw: String!
+  """
+  The string processed according to the text format.
+
+  For a properly configured text format this string should be save to display
+  to users.
+  """
+  processed: String!
+}
+
+"""
+An Open Social text format.
+"""
+# Declared as separate type so that individual configurations may be exposed
+# in the future if needed.
+type TextFormat {
+  """
+  The machine name of the text format.
+  """
+  name: String!
+#  """
+#  The human readable name of the text format.
+#  """
+#  label: String!
+}
+
+"""
+A date and time.
+"""
+type DateTime {
+  """
+  The date and time as UNIX timestamp.
+  """
+  timestamp: Timestamp!
+}
+
+"""
+An actor is an entity that can perform actions and own content within Open Social.
+"""
+interface Actor implements Node {
+  """
+  The uuid of the Actor
+  """
+  id: ID!
+
+  """
+  The display name of the actor.
+  """
+  displayName: String!
+}
+
+################################################################################
+#                                Media Types                                   #
+#                                                                              #
+# Media types provide the tools needed to manage media such as (video, image,  #
+# audio and files).                                                            #
+################################################################################
+"""
+Media managed by the Open Social platform.
+"""
+interface Media implements Node {
+  id: ID!
+  """
+  The url at which the original media can be downloaded.
+  """
+  url: Url!
+}
+
+type Image implements Media & Node {
+  id: ID!
+  """
+  The url at which the original image can be downloaded.
+
+  Applications requesting the image for display to users should use one of the
+  dedicated selectors to select a suitable image format instead.
+  """
+  url: Url!
+  """
+  Image Title
+  """
+  title: String!
+  """
+  Alt-text
+
+  A description of the image that can be displayed as alternative when the image
+  can't be loaded or to users who are unable to see the image itself.
+  """
+  alt: String!
+  # @todo https://www.drupal.org/project/social/issues/3191640
+}
+
+"""
+The file, can be used in attachments (txt, pdf, doc, docx, xls, xlsx, ppt, pptx, csv and etc.).
+"""
+type File implements Media & Node {
+  id: ID!
+  """
+  The url at which the original file can be downloaded.
+  """
+  url: Url!
+  """
+  The name of the file.
+  """
+  filename: String!
+  """
+  The filemime type of the file.
+  """
+  filemime: String
+  """
+  The file size in bytes.
+  """
+  filesize: String
+  """
+  The timestamp indicating when the file was created.
+  """
+  created: DateTime!
+}
+
+
+# @todo https://www.drupal.org/project/social/issues/3191642
+
+################################################################################
+#                         Data Fetching Interfaces                             #
+#                                                                              #
+# All data fetching operations in Open Social should implement the Relay       #
+# Connection specification: https://relay.dev/graphql/connections.htm          #
+################################################################################
+"""
+A cursor for use in pagination.
+"""
+scalar Cursor
+
+"""
+An edge in a connection.
+
+Provides the cursor to fetch data based on the position of the associated node.
+Specific edge implementations may provide more information about the
+relationship they represent.
+"""
+interface Edge {
+  cursor: Cursor!
+  node: Node!
+}
+
+# PageInfo deviates from the current Relay spec as in the spec the
+# start-/endCursor fields may not be null. However, this is impractical because
+# it does not account for empty results.
+# See: https://github.com/facebook/relay/pull/2655
+"""
+Information about the page in a connection.
+"""
+type PageInfo {
+  """
+  Whether there are more pages in this connection.
+  """
+  hasNextPage: Boolean!
+  """
+  Whether there  are previous pages in this connection.
+  """
+  hasPreviousPage: Boolean!
+  """
+  The cursor for the first element in this page
+  """
+  startCursor: Cursor
+  """
+  The cursor for the last element in this page
+  """
+  endCursor: Cursor
+}
+
+"""
+A paginated set of results.
+"""
+interface Connection {
+  """
+  The edges of this connection.
+  """
+  edges: [Edge!]!
+  """
+  The nodes of the edges of this connection.
+
+  Provides direct access to the nodes in case other edge information
+  isn't needed.
+  """
+  nodes: [Node!]!
+  """
+  Information to aid in pagination
+  """
+  pageInfo: PageInfo!
+}
+
+
+################################################################################
+#                         Data Creation Interfaces                             #
+################################################################################
+"""
+The base mutation type.
+"""
+type Mutation
+
+"""
+A violation indicates an error in the GraphQL query or other incorrect
+circumstances such as missing permissions.
+"""
+scalar Violation
+
+"""
+The base GraphQL Response class
+"""
+interface Response {
+  errors: [Violation]
+}

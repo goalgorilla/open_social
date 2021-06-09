@@ -1,0 +1,15 @@
+core.entity_view_display.comment.comment.activity_comment:
+  expected_config:
+    hidden:
+      like_and_dislike: true
+  update_actions:
+    delete:
+      hidden:
+        like_and_dislike: true
+    add:
+      content:
+        like_and_dislike:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 2

@@ -2,7 +2,7 @@
 
 namespace Drupal\social_core\Service;
 
-use Drupal\core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
 
 /**

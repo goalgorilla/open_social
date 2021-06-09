@@ -35,8 +35,16 @@ class RedirectSubscriber implements EventSubscriberInterface {
   public function checkForRedirection(GetResponseEvent $event) {
     // Check if there is a group object on the current route.
     $group = _social_group_get_current_group();
+
     // Get the current route name for the checks being performed below.
     $routeMatch = \Drupal::routeMatch()->getRouteName();
+
+    // Redirect the group content collection index to the group canonical URL.
+    if ($routeMatch === 'entity.group_content.collection') {
+      $event->setResponse(new RedirectResponse(Url::fromRoute('entity.group.canonical', ['group' => $group->id()])
+        ->toString()));
+    }
+
     // Get the current user.
     $user = \Drupal::currentUser();
     // The array of forbidden routes.

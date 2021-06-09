@@ -2,9 +2,9 @@
 
 namespace Drupal\social_font;
 
+use Drupal\Core\Link;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
 
 /**
@@ -14,12 +14,11 @@ use Drupal\Core\Url;
  */
 class FontListBuilder extends EntityListBuilder {
 
-  use LinkGeneratorTrait;
-
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
+    $header = [];
     $header['id'] = $this->t('Font ID');
     $header['name'] = $this->t('Name');
     return $header + parent::buildHeader();
@@ -29,16 +28,14 @@ class FontListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\social_font\Entity\Font */
+    $row = [];
+    /** @var \Drupal\social_font\Entity\Font $entity */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
-      new Url(
-        'entity.font.edit_form', [
-          'font' => $entity->id(),
-        ]
-      )
-    );
+    $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
+      'entity.font.edit_form', [
+        'font' => $entity->id(),
+      ]
+    ));
     return $row + parent::buildRow($entity);
   }
 

@@ -67,3 +67,29 @@ function _social_follow_content_get_permissions($role) {
   }
   return [];
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_follow_content_update_dependencies() {
+  // New config changes should run after the Update Helper module is enabled.
+  $dependencies['social_follow_content'][8801] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Remove follow content button from Topic small teasers.
+ */
+function social_follow_content_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_follow_content', 'social_follow_content_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

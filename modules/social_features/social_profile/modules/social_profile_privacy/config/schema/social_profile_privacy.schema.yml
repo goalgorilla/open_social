@@ -1,0 +1,25 @@
+# Schema for the configuration files of the Social Profile Privacy module.
+
+social_profile_privacy.settings:
+  type: config_object
+  label: 'Social Profile Privacy settings'
+  mapping:
+    limit_search_and_mention:
+      type: boolean
+      label: 'Limit search and mention'
+    fields:
+      type: sequence
+      label: 'Fields'
+      sequence:
+        type: integer
+        label: 'State'
+    disclaimer:
+      type: mapping
+      label: 'Disclaimer'
+      mapping:
+        value:
+          type: text
+          label: 'Value'
+        format:
+          type: string
+          label: 'Format'

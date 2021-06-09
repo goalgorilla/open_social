@@ -33,8 +33,10 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
 
     // Add a (hidden) card for the tabs.
     $form['tab_settings'] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Tab Management'),
+      '#group' => 'group_settings',
+      '#weight' => '3',
     ];
 
     // Define options for default route.

@@ -24,8 +24,8 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    */
   public function testValidate($items, $expected_violation, $expected_definition_result = NULL, $name = NULL) {
     // Mock our typed data interface.
-    $manager = $this->getMock('Drupal\Core\TypedData\TypedDataManagerInterface');
-    $definition = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
+    $manager = $this->createMock('Drupal\Core\TypedData\TypedDataManagerInterface');
+    $definition = $this->createMock('Drupal\Core\TypedData\TypedDataInterface');
 
     if ($expected_definition_result !== NULL) {
       $manager->expects($this->any())
@@ -49,7 +49,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
 
     // If a violation is expected, then the context's addViolation method will
     // be called, otherwise it should not be called.
-    $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+    $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
     if ($expected_violation) {
       $context->expects($this->any())
@@ -88,8 +88,8 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     $cases[] = [NULL, FALSE];
 
     // Case 2: Empty user should be ignored.
-    $field_definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
-    $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+    $field_definition = $this->createMock('Drupal\Core\Field\FieldDefinitionInterface');
+    $items = $this->createMock('Drupal\Core\Field\FieldItemListInterface');
     $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
@@ -107,11 +107,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
       'other.email-with-dash@example.com',
       '"much.more unusual"@example.com',
       '"very.unusual.@.unusual.com"@example.com',
-      'admin@mailserver1 (local domain name with no TLD)',
       '#!$%&\'*+-/=?^_`{}|~@example.org',
-      '" "@example.org (space between the quotes)',
-      'example@s.solutions (see the List of Internet top-level domains)',
-      'example@s.solutions (see the List of Internet top-level domains)',
       'user@com',
       'user@localserver',
       'user@[IPv6:2001:db8::1]',
@@ -173,13 +169,13 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function itemsMock($name) {
-    $name_field = $this->getMock('Drupal\Core\Field\FieldItemInterface');
+    $name_field = $this->createMock('Drupal\Core\Field\FieldItemInterface');
     $name_field->expects($this->any())
       ->method('__get')
       ->willReturn($name);
 
-    $field_definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
-    $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+    $field_definition = $this->createMock('Drupal\Core\Field\FieldDefinitionInterface');
+    $items = $this->createMock('Drupal\Core\Field\FieldItemListInterface');
     $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
@@ -201,7 +197,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
   protected function buildViolationList($number_of_items) {
     $violationList = [];
     for ($count = 0; $count < $number_of_items; $count++) {
-      $violation = $this->getMock('Symfony\Component\Validator\ConstraintViolationInterface');
+      $violation = $this->createMock('Symfony\Component\Validator\ConstraintViolationInterface');
       $violationList[] = $violation;
     }
     return $violationList;

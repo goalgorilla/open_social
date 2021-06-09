@@ -2,6 +2,18 @@ social_group.settings:
   type: config_object
   label: 'Social Group Settings'
   mapping:
+    allow_group_create:
+      type: boolean
+      label: 'Allow regular users to create new groups'
     allow_group_selection_in_node:
       type: boolean
-      label: 'Allow logged-in users to change or remove a group when editing content.'
+      label: 'Allow regular users to change the group their content belong to'
+    address_visibility_settings:
+      type: boolean
+      label: 'Only show the group address to the group members'
+    default_hero:
+      type: string
+      label: 'Default group hero size'
+    social_group_type_required:
+      type: boolean
+      label: 'Enable and require a group type'

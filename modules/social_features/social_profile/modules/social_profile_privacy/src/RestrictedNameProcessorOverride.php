@@ -4,6 +4,7 @@ namespace Drupal\social_profile_privacy;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Adds the Restricted Name field to our required processors.
@@ -17,7 +18,7 @@ class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface 
    */
   public function loadOverrides($names) {
     $overrides = [];
-    // Set hero title block for book content type.
+    // Set processor settings for social all and users.
     $config_names = [
       'search_api.index.social_all',
       'search_api.index.social_users',

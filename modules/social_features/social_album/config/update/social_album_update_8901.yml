@@ -1,0 +1,22 @@
+views.view.albums:
+  expected_config:
+    display:
+      page_group_albums_overview:
+        display_options:
+          access:
+            options: {  }
+  update_actions:
+    add:
+      display:
+        page_group_albums_overview:
+          cache_metadata:
+            contexts:
+              - route.group
+              - user.group_permissions
+    change:
+      display:
+        page_group_albums_overview:
+          display_options:
+            access:
+              options:
+                group_permission: 'view group_node:album content'

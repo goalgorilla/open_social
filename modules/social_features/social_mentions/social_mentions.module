@@ -102,7 +102,7 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
   $field_name = $entity->getFieldName();
   $commented_entity = $entity->getCommentedEntity();
   if ($entity->hasParentComment() && $commented_entity->get($field_name)->status == CommentItemInterface::OPEN) {
-    /* @var \Drupal\Core\Session\AccountInterface $account */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $entity->getOwner();
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
     $config = \Drupal::config('mentions.settings');
@@ -117,7 +117,7 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
     ];
 
     if ($suggestions_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
-      /* @var \Drupal\profile\Entity\ProfileInterface $profile */
+      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
       if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE))) {
         $item['profile_id'] = $profile->id();
         $item['value'] = $account->getDisplayName();

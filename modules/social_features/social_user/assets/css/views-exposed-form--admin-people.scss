@@ -1,0 +1,29 @@
+.view-user-admin-people {
+  form.views-exposed-form {
+    display: block;
+
+    &:after {
+      display: table;
+      clear: both;
+      content: "";
+    }
+
+    > *:not(.form--inline),
+    > .fieldset .fieldset__wrapper > * {
+      float: left;
+    }
+
+    .form--inline:not(.clearfix) {
+      width: 100%;
+    }
+
+    > .fieldset,
+    > .fieldset .fieldset__wrapper > * {
+      margin-right: .5rem;
+    }
+
+    > .fieldset {
+      padding-top: 0;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - social_event_invite
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      event_enrollment-event_enrollment: event_enrollment-event_enrollment
+    activity_action: create_entitiy_action
+    activity_context: event_invite_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: invite_event_enrollment
+label: 'Invite event enrollment'
+description: 'A user got an invite for an event'
+text:
+  -
+    value: "<p>You have been invited for the even [social_event:event_iam_organizing] by [message:author:display-name]</p>\r\n"
+    format: full_html
+  -
+    value: "<p>You have been invited for the event [social_event:event_iam_organizing] by [message:author:display-name]</p>\r\n"
+    format: full_html
+  -
+    value: "<p>Hi,</p>\r\n\r\n<p>I would like to invite you to my event [social_event:event_iam_organizing] on [site:name].</p>\r\n\r\n<p>Kind regards,<br />\r\n[message:author:display-name]</p>\r\n\r\n<table class=\"btn-wrap\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[social_event_invite:user_login_event_destination]\">See event</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

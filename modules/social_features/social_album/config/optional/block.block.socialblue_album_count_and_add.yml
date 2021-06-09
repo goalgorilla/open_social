@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - social_album
+    - system
+  theme:
+    - socialblue
+id: socialblue_album_count_and_add
+theme: socialblue
+region: content
+weight: -14
+provider: null
+plugin: social_album_count_and_add_block
+settings:
+  id: social_album_count_and_add_block
+  label: Album
+  provider: social_album
+  label_display: '0'
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      album: album
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+  request_path:
+    id: request_path
+    pages: '/node/*'
+    negate: false
+    context_mapping: {  }

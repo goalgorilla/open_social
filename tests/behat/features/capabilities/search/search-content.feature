@@ -1,4 +1,4 @@
-@api @search @stability @DS-498 @DS-673 @stability-3 @search-content
+@api @enterprise @search @stability @DS-498 @DS-673 @stability-3 @search-content
 Feature: Search
   Benefit: In order to find specific content
   Role: As a LU
@@ -6,14 +6,25 @@ Feature: Search
 
   Scenario: Successfully search content
     Given "event" content:
-      | title             | body          |
-      | Event one         | Description   |
-      | Event two         | Description   |
+      | title             | body          | status | field_content_visibility |
+      | Event one         | Description   | 1      | public                   |
+      | Event two         | Description   | 1      | public                   |
     And "topic" content:
-      | title             | body          |
-      | Topic one         | Description   |
-      | Topic two         | Description   |
+      | title             | body          | status | field_content_visibility |
+      | Topic one         | Description   | 1      | public                   |
+      | Topic two         | Description   | 1      | community                |
     And Search indexes are up to date
+    And I am on "search/content"
+    When I fill in the following:
+      | search_input | one |
+    And I press "Search"
+    And I should see the heading "Search" in the "Hero block" region
+    And I should see "Event one"
+    And I should not see "Event second"
+    And I should see "Topic one"
+    And I should not see "Topic two"
+
+    # Now test with "authenticated user"
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"

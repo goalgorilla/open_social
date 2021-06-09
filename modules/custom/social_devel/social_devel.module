@@ -30,3 +30,11 @@ function social_devel_social_group_default_route_tabs_alter(&$tabs) {
   // Unset the 'Devel' option as default group tab.
   unset($tabs['devel.entities:group.devel_tab']);
 }
+
+/**
+ * Implements hook_social_path_manager_group_tabs_alter().
+ */
+function social_devel_social_path_manager_group_tabs_alter(array &$tabs) {
+  // Unset the 'Devel' option as default group tab.
+  unset($tabs['devel.entities:group.devel_tab']);
+}

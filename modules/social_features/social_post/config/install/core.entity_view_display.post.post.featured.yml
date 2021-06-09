@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.post.featured
+    - field.field.post.post.field_post
+    - field.field.post.post.field_post_comments
+    - field.field.post.post.field_recipient_group
+    - field.field.post.post.field_recipient_user
+    - field.field.post.post.field_visibility
+    - social_post.post_type.post
+  module:
+    - text
+    - user
+id: post.post.featured
+targetEntityType: post
+bundle: post
+mode: featured
+content:
+  field_post:
+    type: text_default
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  like_and_dislike:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_post_comments: true
+  field_recipient_group: true
+  field_recipient_user: true
+  field_visibility: true
+  search_api_excerpt: true

@@ -3,3 +3,6 @@ social_event_managers.add_member:
   route_name: 'social_event_managers.add_enrollees'
   appears_on:
     - view.event_manage_enrollments.page_manage_enrollments
+  cache_contexts:
+    - 'user.permissions'
+    - 'user.roles'

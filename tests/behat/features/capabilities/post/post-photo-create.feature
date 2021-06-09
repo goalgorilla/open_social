@@ -1,4 +1,4 @@
-@api @post @ @stability @perfect @critical @DS-1136 @database @stability-3 @post-photo-create
+@api @post @ @stability @perfect @critical @DS-1136 @YANG-4759 @database @stability-3 @post-photo-create
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
   Role: As a LU
@@ -15,7 +15,7 @@ Feature: Create Post with Photo
    When I attach the file "/files/opensocial.jpg" to hidden field "edit-field-post-image-0-upload"
     And I wait for AJAX to finish
 
-    When I fill in "Say something about this photo" with "This post with a photo."
+    When I fill in "Say something about these image(s)" with "This post with a photo."
     And I select post visibility "Public"
     And I press "Post"
    Then I should see the success message "Your post has been posted."

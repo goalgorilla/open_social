@@ -1,0 +1,41 @@
+search_api.index.social_users:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        field_profile_expertise_name:
+          datasource_id: 'entity:profile'
+          dependencies:
+            config:
+              - field.storage.profile.field_profile_expertise
+            module:
+              - taxonomy
+              - taxonomy
+          label: 'Expertise » Taxonomy term » Name'
+          property_path: 'field_profile_expertise:entity:name'
+          type: text
+        field_profile_interests_name:
+          datasource_id: 'entity:profile'
+          dependencies:
+            config:
+              - field.storage.profile.field_profile_interests
+            module:
+              - taxonomy
+              - taxonomy
+          label: 'Interests » Taxonomy term » Name'
+          property_path: 'field_profile_interests:entity:name'
+          type: text
+      processor_settings:
+        ignorecase:
+          fields:
+            - field_profile_expertise_name
+            - field_profile_interests_name
+        language_with_fallback: {  }
+        tokenizer:
+          fields:
+            - field_profile_expertise_name
+            - field_profile_interests_name
+        transliteration:
+          fields:
+            - field_profile_expertise_name
+            - field_profile_interests_name

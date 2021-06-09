@@ -65,6 +65,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
               'open' => FALSE,
             ],
             'label' => 'Add attachment',
+            'region' => 'content',
           ],
         ],
       ];

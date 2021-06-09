@@ -76,3 +76,30 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
 
   return $element;
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Removes class, id and rel attributes introduced by Editor Advanced Link.
+ *
+ * @see editor_advanced_link_form_editor_link_dialog_alter()
+ */
+function social_editor_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // This helps to keep the form clean and less confusing.
+  if (isset($form['attributes'])) {
+    // Unset un-required attribute's form elements.
+    unset($form['attributes']['class']);
+    unset($form['attributes']['id']);
+    unset($form['attributes']['rel']);
+
+    // Unset the group.
+    unset($form['advanced']);
+    unset($form['attributes']['target']['#group']);
+
+    // Add weight to target attribute to appear after title.
+    $form['attributes']['target']['#weight'] = 2;
+
+    // Change the description text to make it more human-friendly.
+    $form['attributes']['title']['#description'] = t('Give a title that will appear when hovering over this link.');
+  }
+}

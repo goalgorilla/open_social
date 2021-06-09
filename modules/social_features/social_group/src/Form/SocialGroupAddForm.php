@@ -112,10 +112,16 @@ class SocialGroupAddForm extends FormBase {
    *
    * Note this element is also used in the edit group form.
    *
+   * @param bool $container
+   *   Make this a containered radio element.
+   *
    * @return array
    *   Returns an array containing the group type element and descriptions.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getGroupTypeElement() {
+  public function getGroupTypeElement($container = FALSE) {
     $user = \Drupal::currentUser();
     $element = [
       '#type' => 'radios',
@@ -149,6 +155,60 @@ class SocialGroupAddForm extends FormBase {
     arsort($group_types_options);
 
     $element['#options'] = $group_types_options;
+
+    // If we want to render this radio as a #type => container
+    // check for the $container value, this is useful for
+    // group edit, where we add it as a container within a field group.
+    if ($container) {
+      $element = [
+        '#type' => 'container',
+        '#parents' => [
+          'field_group_group_type_wrapper',
+        ],
+        '#attributes' => [
+          'class' => [
+            'field--type-list-float',
+            'field--name-field-group-type',
+            'field--widget-options-buttons',
+          ],
+        ],
+        'widget' => [
+          '#title' => $this->t('Group type'),
+          '#description' => $this->t('In order to change the group type, 
+          please contact the content or site managers.'),
+          '#field_parents' => [],
+          '#required' => TRUE,
+          '#delta' => [],
+          '#element_validate' => [
+            [
+              'Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsButtonsWidget',
+              'validateElement',
+            ],
+          ],
+          '#key_column' => "value",
+          '#type' => "radios",
+          '#default_value' => 'open_group',
+          '#options' => $group_types_options,
+          '#after_build' => [
+            [
+              'Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsButtonsWidget',
+              'afterBuild',
+            ],
+          ],
+          '#field_name' => "group_type",
+          '#parents' => [
+            'group_type',
+          ],
+          '#tree' => TRUE,
+        ],
+        '#weight' => 100,
+      ];
+
+      $element['widget'] += $group_types_descriptions;
+
+      return $element;
+    }
+
     return $element + $group_types_descriptions;
   }
 

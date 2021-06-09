@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Module file for  Social Advanced Queue.
+ */
+
+use Drupal\social_user\Plugin\Action\SocialSendEmail;
+use Drupal\social_advanced_queue\Plugin\Action\SocialSendEmailAdvancedQueue;
+use Drupal\social_advanced_queue\Plugin\ActivitySend\EmailActivitySendAdvancedQueue;
+
+/**
+ * Implements hook_action_info_alter().
+ */
+function social_advanced_queue_action_info_alter(&$definitions) {
+  // The Send Email Action needs a new Queue Worker.
+  // So we override it and create Advanced Queue Jobs instead of Queue Items.
+  foreach ($definitions as &$definition) {
+    if ($definition['id'] === 'social_user_send_email' && $definition['class'] === SocialSendEmail::class) {
+      $definition['class'] = SocialSendEmailAdvancedQueue::class;
+    }
+  }
+}
+
+/**
+ * Implements hook_activity_send_info_alter().
+ */
+function social_advanced_queue_activity_send_info_alter(&$info) {
+  // The Send Email Action needs a new Queue Job instead of Core Queue.
+  // So we override it and create Advanced Queue Jobs instead of Queue Items.
+  foreach ($info as &$definition) {
+    if ($definition['id'] === 'email_activity_send') {
+      $definition['class'] = EmailActivitySendAdvancedQueue::class;
+    }
+  }
+}

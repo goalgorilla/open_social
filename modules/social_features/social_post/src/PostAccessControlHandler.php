@@ -69,7 +69,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                 // Check if the post has been posted in a group.
                 $group_id = $entity->field_recipient_group->target_id;
                 if ($group_id) {
-                  $group = entity_load('group', $group_id);
+                  $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
                   if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                     return AccessResult::allowed();
                   }
@@ -103,21 +103,28 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
               $group_id = $entity->field_recipient_group->target_id;
 
               if ($group_id !== NULL) {
-                /* @var \Drupal\group\Entity\Group $group */
-                $group = entity_load('group', $group_id);
+                /** @var \Drupal\group\Entity\Group $group */
+                $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
               }
 
               if ($group !== NULL) {
                 $permission = 'access posts in group';
                 if ($group->hasPermission($permission, $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                   if ($group->getGroupType()->id() === 'flexible_group') {
-                    // User has access if outsider with permission or is member.
+                    // User has access if outsider with manager role or member.
+                    $account_roles = $account->getRoles();
+                    foreach (['sitemanager', 'contentmanager', 'administrator'] as $manager_role) {
+                      if (in_array($manager_role, $account_roles)) {
+                        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                      }
+                    }
+
                     $group_role_storage = $this->entityTypeManager->getStorage('group_role');
                     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
                     /** @var \Drupal\group\Entity\GroupRoleInterface $group_role */
                     foreach ($group_roles as $group_role) {
-                      if ($group_role->isOutsider() && $group_role->hasPermission($permission)) {
-                        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                      if ($group_role->isOutsider()) {
+                        return AccessResult::forbidden()->cachePerUser()->addCacheableDependency($entity);
                       }
                     }
                     if ($group->getMember($account)) {
@@ -149,7 +156,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
-        return AccessResult::forbidden();
+        return AccessResult::neutral();
 
       case 'delete':
         // Check if the user has permission to delete any or own post entities.
@@ -212,8 +219,15 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         return AccessResult::forbidden();
       }
     }
+
     // Fallback.
-    return AccessResult::allowedIfHasPermission($account, 'add post entities');
+    $access = AccessResult::allowedIfHasPermission($account, 'add post entities');
+
+    if ($entity_bundle !== NULL) {
+      return $access->orIf(AccessResult::allowedIfHasPermission($account, "add $entity_bundle post entities"));
+    }
+
+    return $access;
   }
 
 }

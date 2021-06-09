@@ -1,0 +1,64 @@
+core.entity_form_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              label: Attachments
+          group_enrollment:
+            format_settings:
+              label: 'Enrollment options'
+          group_enrollment_methods:
+            format_settings:
+              label: 'Enrollment options fieldset'
+          group_event_visibility:
+            format_settings:
+              label: Visibility
+    add:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            region: hidden
+          group_date_time:
+            region: hidden
+          group_description:
+            region: hidden
+          group_enrollment:
+            region: hidden
+          group_event_visibility:
+            format_settings:
+              description: ''
+            region: hidden
+          group_location:
+            region: hidden
+          group_settings:
+            children: {  }
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: hidden
+            weight: 20
+          group_title_image:
+            region: hidden
+    change:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              open: false
+            format_type: details
+            label: 'Additional information'
+          group_event_visibility:
+            label: 'Access permissions'
+          group_title_image:
+            label: 'Basic information'

@@ -4,6 +4,7 @@ namespace Drupal\social_landing_page;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Class SocialLandingPageConfigOverride.
@@ -26,10 +27,7 @@ class SocialLandingPageConfigOverride implements ConfigFactoryOverrideInterface 
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = \Drupal::service('config.factory')->getEditable($config_name);
-        $bundles = $config->get('datasource_settings.entity:node.bundles.selected');
-        $bundles[] = 'landing_page';
-        $overrides[$config_name] = ['datasource_settings' => ['entity:node' => ['bundles' => ['selected' => $bundles]]]];
+        $overrides[$config_name]['datasource_settings']['entity:node']['bundles']['selected']['landing_page'] = 'landing_page';
       }
     }
     return $overrides;

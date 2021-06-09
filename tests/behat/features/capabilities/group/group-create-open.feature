@@ -9,6 +9,7 @@ Feature: Create Open Group
       | name           | mail                     | status |
       | Group User One | group_user_1@example.com | 1      |
       | Group User Two | group_user_2@example.com | 1      |
+      | Outsider       | outsider@example.com     | 1      |
     And I am logged in as "Group User One"
     And I am on "group/add"
     Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
@@ -85,8 +86,8 @@ Feature: Create Open Group
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
-    And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
-    And I press "Save"
+    And I click radio button "Community" with the id "edit-field-content-visibility-community"
+    And I press "Create event"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -108,8 +109,8 @@ Feature: Create Open Group
       | Title |Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
-    And I press "Save"
+    And I click radio button "Community" with the id "edit-field-content-visibility-community"
+    And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page
@@ -155,9 +156,11 @@ Feature: Create Open Group
     And I should see "Group User Two"
     And I should see "Groups"
     And I should not see "Test open group"
+    And I logout
 
   # DS-722 As an outsider I am not allowed to enrol to an event in group
-    When I click "Events"
+    Given I am logged in as "Outsider"
+    When I am on "/community-events"
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero buttons"
 

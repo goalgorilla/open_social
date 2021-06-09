@@ -11,32 +11,20 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
-use Drupal\user\Entity\User;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Group;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  if ($form_state->getFormObject()->getEntity()->isNew()) {
-    // Load current user.
-    $account = User::load(Drupal::currentUser()->id());
-    // Load compact notification view mode of the attached profile.
-    if ($account) {
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($account, 'profile');
-        if ($user_profile) {
-          $content = \Drupal::entityTypeManager()
-            ->getViewBuilder('profile')
-            ->view($user_profile, 'compact_notification');
-          // Add to a new field, so twig can render it.
-          $form['current_user_image'] = $content;
-        }
-      }
-    }
+  if (
+    $form_state->getFormObject()->getEntity()->isNew() &&
+    ($content = \Drupal::service('social_post.helper')->buildCurrentUserImage())
+  ) {
+    $form['current_user_image'] = $content;
   }
 
   // Reset title display.
@@ -124,28 +112,25 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @param string $visibility
  *   The current field_visibility value for the post.
  * @param string $return_value
- *   Icon or Title depending on what we should return.
+ *   (optional) Icon or Title depending on what we should return.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+ *   Post visibility detail.
  */
 function social_post_get_visibility_details($visibility, $return_value = 'icon') {
 
-  $return = &drupal_static(__FUNCTION__ . $visibility . $return_value);
+  $return = &drupal_static(__FUNCTION__ . $visibility);
 
-  if (!isset($return)) {
+  if (isset($return)) {
+    $icon = $return['icon'];
+    $title = $return['label'];
+  }
+  else {
     // Set the materialize icon.
     switch ($visibility) {
-      case '0':
-        $icon = 'community';
-        $title = t('Community');
-        break;
-
       case '1':
         $icon = 'public';
         $title = t('Public');
-        break;
-
-      case '2':
-        $icon = 'community';
-        $title = t('Community');
         break;
 
       case '3':
@@ -161,9 +146,14 @@ function social_post_get_visibility_details($visibility, $return_value = 'icon')
 
   \Drupal::moduleHandler()->alter('social_post_visibility_info_alter', $visibility, $icon, $title);
 
-  $return = ($return_value === 'icon') ? $icon : $title;
+  if (!isset($return)) {
+    $return = [
+      'icon' => $icon,
+      'label' => $title,
+    ];
+  }
 
-  return $return;
+  return $return[$return_value];
 }
 
 /**
@@ -209,8 +199,32 @@ function social_post_theme() {
       'file' => 'post.page.inc',
       'template' => 'post',
     ],
+    'post__featured' => [
+      'template' => 'post--featured',
+      'base hook' => 'post',
+    ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_preprocess_post(&$variables) {
+  if ($variables['elements']['#view_mode']) {
+    /** @var \Drupal\social_post\Entity\PostInterface $entity */
+    $entity = $variables['elements']['#post'];
+
+    if (
+      in_array($entity->bundle(), ['post', 'photo']) &&
+      \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+      \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
+    ) {
+      $variables['dashboard'] = TRUE;
+      $variables['comment_count'] = $entity->get('field_post_comments')->comment_count;
+      $variables['comment_url'] = $entity->toUrl()->toString();
+    }
+  }
 }
 
 /**
@@ -221,14 +235,14 @@ function social_post_preprocess_activity(&$variables) {
   if (!empty($variables['elements']['field_activity_entity'][0]['#post'])) {
     $post = $variables['elements']['field_activity_entity'][0]['#post'];
 
-    $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
-    $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
-
+    $visibility = $post->field_visibility->value;
+    $variables['visibility_icon'] = social_post_get_visibility_details($visibility);
+    $variables['visibility_label'] = social_post_get_visibility_details($visibility, 'label');
   }
 
   $activity = $variables['elements']['#activity'];
   $post = $activity->getRelatedEntity();
-  if (!empty($post) && $post->getEntityTypeId() === "post") {
+  if (!empty($post) && $post->getEntityTypeId() === 'post') {
     $variables['post'] = TRUE;
     $variables['published'] = $post->isPublished();
   }
@@ -306,7 +320,7 @@ function social_post_comment_create_access(AccountInterface $account, array $con
 /**
  * Implements hook_user_cancel().
  */
-function social_post_user_cancel($edit, $account, $method) {
+function social_post_user_cancel($edit, AccountInterface $account, $method) {
   $update = NULL;
 
   switch ($method) {
@@ -331,13 +345,21 @@ function social_post_user_cancel($edit, $account, $method) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ * Implements hook_ENTITY_TYPE_predelete().
  */
 function social_post_user_predelete($account) {
   // Delete posts.
-  $pids = \Drupal::entityQuery('post')
-    ->condition('user_id', $account->id())
-    ->accessCheck(FALSE)
-    ->execute();
-  entity_delete_multiple('post', $pids);
+  if ($account instanceof UserInterface) {
+    $pids = \Drupal::entityQuery('post')
+      ->condition('user_id', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $storage_handler = \Drupal::entityTypeManager()
+      ->getStorage('post');
+    $entities = $storage_handler
+      ->loadMultiple($pids);
+    $storage_handler
+      ->delete($entities);
+  }
 }

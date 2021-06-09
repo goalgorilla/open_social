@@ -52,34 +52,14 @@ function social_landing_page_theme() {
   $theme_templates['node__landing_page'] = [
     'base hook' => 'node',
   ];
-  $theme_templates['node__featured'] = [
+  $theme_templates['node__landing_page__featured'] = [
     'base hook' => 'node',
-  ];
-  $theme_templates['node__event__featured'] = [
-    'base hook' => 'node',
-  ];
-  // Group.
-  $theme_templates['group__featured'] = [
-    'base hook' => 'group',
-  ];
-  // Profile.
-  $theme_templates['profile__featured'] = [
-    'base hook' => 'profile',
   ];
   // Paragraphs.
   $theme_templates['paragraph__block__default'] = [
     'base hook' => 'paragraph',
   ];
   $theme_templates['paragraph__button__default'] = [
-    'base hook' => 'paragraph',
-  ];
-  $theme_templates['paragraph__featured__default'] = [
-    'base hook' => 'paragraph',
-  ];
-  $theme_templates['paragraph__featured_item__default'] = [
-    'base hook' => 'paragraph',
-  ];
-  $theme_templates['paragraph__featured_items__default'] = [
     'base hook' => 'paragraph',
   ];
   $theme_templates['paragraph__hero__default'] = [
@@ -102,10 +82,6 @@ function social_landing_page_theme() {
   ];
   // Fields.
   $theme_templates['field__paragraph__section'] = [
-    'base hook' => 'field',
-  ];
-  // Fields for feature item.
-  $theme_templates['field__paragraph__field_featured_items'] = [
     'base hook' => 'field',
   ];
   // Fields for hero buttons.
@@ -133,12 +109,9 @@ function social_landing_page_preprocess_page(&$variables) {
     $variables['node'] instanceof NodeInterface &&
     $variables['node']->bundle() === 'landing_page'
   ) {
-    if ($variables['content_attributes'] instanceof Attribute) {
-      $variables['content_attributes']->removeClass('layout--with-complementary');
-    }
-    else {
-      $variables['content_attributes'] = new Attribute();
-      $variables['content_attributes']->addClass('container');
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.node.edit_form') {
+      $variables['attributes'] = new Attribute();
+      $variables['attributes']->addClass('container');
     }
   }
 }
@@ -197,6 +170,13 @@ function social_landing_page_preprocess_node(&$variables) {
     // Add node edit url for management.
     if ($node instanceof NodeInterface && $node->access('update', $account)) {
       $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+    }
+
+    // A landing page has a different way of determining this.
+    $variables['no_image'] = FALSE;
+    $image = _social_landing_page_get_hero_image($node);
+    if (empty($image)) {
+      $variables['no_image'] = TRUE;
     }
   }
 }
@@ -307,4 +287,12 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
       $suggestions[] = 'page__node__landing_page';
     }
   }
+}
+
+/**
+ * Implements hook_social_core_compatible_content_forms_alter().
+ */
+function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_landing_page_form';
+  $compatible_content_type_forms[] = 'node_landing_page_edit_form';
 }

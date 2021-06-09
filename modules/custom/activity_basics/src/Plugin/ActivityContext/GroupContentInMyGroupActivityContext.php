@@ -40,6 +40,8 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
    *   The query factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
    */
@@ -49,9 +51,10 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     $plugin_definition,
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
     AccountProxyInterface $current_user
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->currentUser = $current_user;
   }
@@ -66,6 +69,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
       $plugin_definition,
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
       $container->get('current_user')
     );
   }
@@ -77,7 +81,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     $recipients = [];
 
     if (!empty($data['related_object'])) {
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
       $group_content = $this->entityTypeManager->getStorage('group_content')

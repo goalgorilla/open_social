@@ -21,3 +21,10 @@ social_core.admin.config.social:
     _title: 'Open Social Settings'
   requirements:
     _permission: 'access administration pages'
+
+social_core.my_invites:
+  path: '/my-invites'
+  defaults:
+    _controller: '\Drupal\social_core\Controller\SocialCoreController::myInvitesUserPage'
+  requirements:
+    _user_is_logged_in: 'TRUE'

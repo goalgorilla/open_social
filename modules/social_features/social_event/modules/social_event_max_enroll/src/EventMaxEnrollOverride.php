@@ -61,22 +61,18 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
           $config_name,
         ]);
 
-        $children = $parent_overrides[$config_name]['third_party_settings']['field_group']['group_enrollment']['children'];
+        $children = $parent_overrides[$config_name]['third_party_settings']['field_group']['group_enrollment_methods']['children'];
         $content = $parent_overrides[$config_name]['content'];
       }
       else {
         $config = $this->configFactory->getEditable($config_name);
-        $children = $config->get('third_party_settings.field_group.group_enrollment.children');
+        $children = $config->get('third_party_settings.field_group.group_enrollment_methods.children');
         $content = $config->get('content');
       }
 
-      // Add a field group.
-      $children[] = 'field_event_max_enroll';
-      $children[] = 'field_event_max_enroll_num';
-
       // Add the field to the content.
       $content['field_event_max_enroll'] = [
-        'weight' => 100,
+        'weight' => 124,
         'settings' => [
           'placeholder' => '',
         ],
@@ -86,7 +82,7 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
       ];
 
       $content['field_event_max_enroll_num'] = [
-        'weight' => 101,
+        'weight' => 125,
         'settings' => [
           'display_label' => TRUE,
         ],
@@ -98,7 +94,7 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
       $overrides[$config_name] = [
         'third_party_settings' => [
           'field_group' => [
-            'group_enrollment' => [
+            'group_enrollment_methods' => [
               'children' => $children,
             ],
           ],

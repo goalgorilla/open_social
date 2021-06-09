@@ -3,7 +3,6 @@
 namespace Drupal\social_group\Plugin\views\argument;
 
 use Drupal\Core\Database\Connection;
-use Drupal\views\Plugin\views\query;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

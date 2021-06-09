@@ -1,0 +1,132 @@
+.paragraph--section {
+  .paragraph--featured.social_follow_tax {
+    padding: 20px 1rem;
+
+    &.first {
+      padding-top: 20px;
+    }
+
+    &.multiple {
+      padding-left: 2em;
+      padding-right: 2em;
+    }
+
+    @media(min-width: 900px) {
+      padding-bottom: 40px;
+    }
+  }
+}
+
+.block-follow-tag-block.block-social-follow-tag.card,
+.block-follow-tag-block.block-social-follow-tag {
+  box-shadow: none;
+  background: transparent;
+  margin-bottom: 0;
+  padding: 20px 1rem 0;
+
+  @media(min-width: 900px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.paragraph--featured.social_follow_tax {
+  margin: 0 -1rem;
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    .region--content & {
+      @media(max-width: 899px) {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+
+  .teaser {
+    height: auto;
+    min-height: auto;
+  }
+
+  .teaser__content,
+  .teaser__left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .teaser__body {
+    padding: 0 20px;
+    overflow: visible;
+  }
+
+  .teaser__content {
+    padding: 0;
+    justify-content: space-between;
+  }
+
+  .teaser__left {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    > * {
+      margin-right: 16px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .actions {
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    > * {
+      margin-bottom: 10px;
+
+      + .btn {
+        min-width: 175px;
+      }
+    }
+  }
+
+  .teaser__tag,
+  .teaser__related-content {
+    font-size: .875rem;
+  }
+
+  .teaser__title,
+  .teaser__tag,
+  h5 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.page-node-type-dashboard {
+  .paragraph--featured.social_follow_tax {
+    .container {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .block--dashboard--follow-tags {
+    .card__title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      border-bottom: 1px solid #e6e6e6;
+      padding-bottom: .5rem;
+    }
+
+    .card {
+      box-shadow: none;
+    }
+  }
+}

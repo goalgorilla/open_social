@@ -10,7 +10,7 @@
  */
 function social_group_members_export_file_download($uri) {
   $scheme = \Drupal::service('file_system')->uriScheme($uri);
-  $target = file_uri_target($uri);
+  $target = \Drupal::service('stream_wrapper_manager')->getTarget($uri);
   $access = \Drupal::currentUser()->hasPermission('administer users');
 
   if ($scheme === 'private' && preg_match('/^csv\/export-members-([a-f0-9]{12})\.csv$/i', $target) && $access) {

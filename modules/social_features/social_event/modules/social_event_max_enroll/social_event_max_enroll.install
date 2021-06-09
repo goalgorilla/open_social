@@ -14,3 +14,17 @@ function social_event_max_enroll_install() {
   // Set higher weight.
   module_set_weight('social_event_max_enroll', 10);
 }
+
+/**
+ * Update description.
+ */
+function social_event_max_enroll_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_max_enroll', 'social_event_max_enroll_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
