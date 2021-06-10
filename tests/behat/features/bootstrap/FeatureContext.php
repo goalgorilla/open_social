@@ -1151,4 +1151,24 @@ class FeatureContext extends RawMinkContext implements Context
 
       $row->clickLink($link_name);
     }
+
+    /**
+     * Remove any user consents that were created.
+     *
+     * @AfterScenario @data-policy-create
+     */
+    public function deleteUserConsentEntities() {
+      $consents = \Drupal::entityTypeManager()
+        ->getStorage('user_consent')
+        ->loadMultiple();
+
+      foreach ($consents as $consent) {
+        try {
+          $consent->delete();
+        }
+        catch (\Throwable $e) {
+          // This can be fine.
+        }
+      }
+    }
 }
