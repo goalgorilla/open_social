@@ -53,7 +53,7 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
               'type' => 'smart_trim',
               'settings' => [
                 'more_class' => 'more-link',
-                'more_link' => TRUE,
+                'more_link' => FALSE,
                 'more_text' => '',
                 'summary_handler' => 'full',
                 'trim_length' => 250,
