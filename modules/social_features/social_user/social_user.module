@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\social_user\SocialUserSearchContentBlockAlter;
@@ -826,5 +827,27 @@ function social_user_user_insert(UserInterface $user) {
   if ($verified_immediately) {
     $user->addRole('verified');
     $user->save();
+  }
+}
+
+/**
+ * Implements hook_select2_autocomplete_matches_alter().
+ */
+function social_user_select2_autocomplete_matches_alter(array &$matches, array $options) {
+  // Do nothing if it is no User entity type.
+  if ($options['target_type'] !== 'user' && $options['handler'] !== 'social') {
+    return;
+  }
+
+  $entity_manager = \Drupal::entityTypeManager();
+  $accounts = $entity_manager->getStorage($options['target_type'])->loadMultiple(array_keys($matches));
+  /** @var \Drupal\user\UserInterface $account */
+  foreach ($accounts as $id => $account) {
+    // User roles.
+    $roles = $account->getRoles();
+    // Make sure can only select Verified+ users.
+    if (empty($roles) || (count($roles) === 1 && $roles[0] === RoleInterface::AUTHENTICATED_ID)) {
+      unset($matches[$id]);
+    }
   }
 }
