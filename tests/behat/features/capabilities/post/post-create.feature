@@ -1,14 +1,14 @@
 @api @post @stability @perfect @critical @DS-244 @DS-245 @DS-247 @DS-248 @DS-674 @DS-676 @database @stability-1 @post-create
 Feature: Create Post
   Benefit: In order to share knowledge with people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Posts
 
   Scenario: Successfully create, edit and delete post
   Given users:
-      | name      | status | pass |
-      | PostCreateUser1 |      1 | PostCreateUser1 |
-      | PostCreateUser2 |      1 | PostCreateUser2 |
+      | name            | status | pass            | roles    |
+      | PostCreateUser1 |      1 | PostCreateUser1 | verified |
+      | PostCreateUser2 |      1 | PostCreateUser2 | verified |
     And I am logged in as "PostCreateUser1"
     And I am on the homepage
   And I should not see "PostCreateUser1" in the "Main content front"

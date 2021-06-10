@@ -1,11 +1,11 @@
 @api @contentmanagement @stability @perfect @critical @DS-158 @stability-1 @node-visibility
 Feature: Visibility
   Benefit: In order to control the distribution of information and to secure my privacy
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to set the visibility of content I create
 
   Scenario: Successfully create topic visible for community and public
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "node/add/topic"
     When I fill in "Title" with "This is a topic for community"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for community"

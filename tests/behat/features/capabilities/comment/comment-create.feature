@@ -1,14 +1,14 @@
 @api @comment @stability @DS-459 @topic @stability-2 @comment-create
 Feature: Create Comments
   Benefit: Participate in discussions on the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create and see a comment
 
-  @LU @perfect
+  @verified @perfect
   Scenario: Successfully create and see a comment
     Given users:
-      | name              | mail                     | status |
-      | Comment view user | comment-view@example.com | 1      |
+      | name              | mail                     | status | roles    |
+      | Comment view user | comment-view@example.com | 1      | verified |
     And I am logged in as "Comment view user"
     And I am viewing a "topic" with the title "Comment test topic"
     When I fill in the following:
