@@ -10,6 +10,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -53,12 +54,15 @@ function _social_event_set_permissions() {
  */
 function _social_event_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'view node.event.field_content_visibility:public content',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'create event content',
     'delete own event content',
     'edit own event content',
@@ -69,7 +73,7 @@ function _social_event_get_permissions($role) {
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'delete any event content',
     'edit any event content',
     'revert event revisions',

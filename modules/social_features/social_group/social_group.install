@@ -12,6 +12,7 @@ use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -98,12 +99,15 @@ function _social_group_set_permissions() {
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access group search',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'create open_group group',
     'create closed_group group',
     'view group stream page',
@@ -115,11 +119,11 @@ function _social_group_get_permissions($role) {
   $config = \Drupal::config('entity_access_by_field.settings');
   $disable_public_visibility = $config->get('disable_public_visibility');
   if ($disable_public_visibility === 0) {
-    $permissions['authenticated'][] = 'create public_group group';
+    $permissions['verified'][] = 'create public_group group';
   }
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'bypass create group access',
     'manage all groups',
     'view node.book.field_content_visibility:group content',

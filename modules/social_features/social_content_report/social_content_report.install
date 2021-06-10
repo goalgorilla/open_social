@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_install().
@@ -85,17 +86,20 @@ function _social_content_report_set_permissions() {
  */
 function _social_content_report_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'flag report_comment',
     'flag report_node',
     'flag report_post',
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'view inappropriate reports',
     'close inappropriate reports',
   ]);

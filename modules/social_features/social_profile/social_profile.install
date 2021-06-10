@@ -15,6 +15,7 @@ use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -93,19 +94,23 @@ function _social_profile_set_permissions() {
  */
 function _social_profile_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
     'add own profile profile',
     'update own profile profile',
-    'view any profile profile',
     'view own profile profile',
     'view profile',
   ]);
 
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
+    'view any profile profile',
+  ]);
+
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'add any profile profile',
     'update any profile profile',
     'edit profile tags',
@@ -338,6 +343,12 @@ function social_profile_update_dependencies() {
   $dependencies['social_profile'][8808] = [
     'social_core' => 8805,
   ];
+  // Run the update hook with the "Grant Profile permissions for the
+  // Authenticated user role" only after an update hook "Resign permissions
+  // between roles" in social_core.
+  $dependencies['social_profile'][8904] = [
+    'social_core' => 10106,
+  ];
 
   return $dependencies;
 }
@@ -480,4 +491,13 @@ function social_profile_update_8903() {
     ->getEditable('social_profile.settings')
     ->set('enable_profile_tagging', TRUE)
     ->save();
+}
+
+/**
+ * Grant Profile permissions for the Authenticated user role.
+ */
+function social_profile_update_8904() {
+  // Authenticated user role permissions.
+  $auth_role_permissions = _social_profile_get_permissions(RoleInterface::AUTHENTICATED_ID);
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);
 }

@@ -5,6 +5,8 @@
  * Install and update hooks for Social Swiftmailer.
  */
 
+use Drupal\user\RoleInterface;
+
 /**
  * Implements hook_install().
  *
@@ -53,15 +55,18 @@ function _social_swiftmail_set_permissions() {
  */
 function _social_swiftmail_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'use text format mail_html',
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [

@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_install().
@@ -48,16 +49,19 @@ function _social_follow_taxonomy_set_permissions() {
  */
 function _social_follow_taxonomy_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'flag follow_term',
     'unflag follow_term',
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);

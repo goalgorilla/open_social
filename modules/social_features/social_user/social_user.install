@@ -154,18 +154,22 @@ function _social_user_set_permissions() {
  */
 function _social_user_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'access user profiles',
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
     'cancel account',
     'change own username',
     'select account cancellation method',
   ]);
 
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
+    'access user profiles',
+  ]);
+
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
@@ -205,4 +209,35 @@ function social_user_update_8810() {
   user_role_grant_permissions('sitemanager', [
     'view blocked user',
   ]);
+}
+
+/**
+ * Create the default configuration for the verified immediately site setting.
+ */
+function social_user_update_8811() {
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('verified_immediately', TRUE)->save();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_user_update_dependencies() {
+  // Run the update hook with the "Grant Profile permissions for the
+  // Authenticated user role" only after an update hook "Resign permissions
+  // between roles" in social_core.
+  $dependencies['social_user'][8812] = [
+    'social_core' => 10106,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Grant Profile permissions for the Authenticated user role.
+ */
+function social_user_update_8812() {
+  // Authenticated user role permissions.
+  $auth_role_permissions = _social_user_get_permissions(RoleInterface::AUTHENTICATED_ID);
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);
 }

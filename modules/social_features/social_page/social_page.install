@@ -7,6 +7,7 @@
 
 use Drupal\Core\Config\FileStorage;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -42,17 +43,20 @@ function _social_page_set_permissions() {
  */
 function _social_page_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'view node.page.field_content_visibility:public content',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'view node.page.field_content_visibility:community content',
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'create page content',
     'delete any page content',
     'delete own page content',

@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -49,15 +50,18 @@ function _social_group_flexible_group_set_permissions() {
  */
 function _social_group_flexible_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'create flexible_group group',
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);

@@ -10,6 +10,7 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -77,12 +78,15 @@ function _social_topic_set_permissions() {
  */
 function _social_topic_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'view node.topic.field_content_visibility:public content',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'create topic content',
     'delete own topic content',
     'edit own topic content',
@@ -93,7 +97,7 @@ function _social_topic_get_permissions($role) {
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'delete any topic content',
     'edit any topic content',
     'revert topic revisions',
