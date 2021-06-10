@@ -224,7 +224,7 @@ function social_post_preprocess_post(&$variables) {
       $variables['comment_count'] = $entity->get('field_post_comments')->comment_count;
       $variables['comment_url'] = $entity->toUrl()->toString();
 
-      if ($view_mode === 'activity') {
+      if (in_array($view_mode, ['activity', 'featured'])) {
         $variables['content']['field_post_comments'] = NULL;
         $more_button = $entity->toLink(t('Read more'))->toString();
         $variables['more_link'] = $more_button;
