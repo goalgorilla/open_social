@@ -12,6 +12,6 @@ interface ActivitySendInterface extends PluginInspectionInterface {
   /**
    * Create a new item in queue on the action with some logic behind it.
    */
-  public function create($entity);
+  public function process($entity);
 
 }

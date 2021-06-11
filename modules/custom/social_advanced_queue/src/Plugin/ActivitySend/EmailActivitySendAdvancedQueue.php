@@ -14,7 +14,7 @@ class EmailActivitySendAdvancedQueue extends EmailActivitySend {
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function process($entity) {
     $data = [];
     $data['entity_id'] = $entity->id();
     // Create a new Email Job and add to the "default" queue using
