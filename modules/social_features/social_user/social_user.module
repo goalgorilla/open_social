@@ -839,14 +839,15 @@ function social_user_select2_autocomplete_matches_alter(array &$matches, array $
     return;
   }
 
+  $user_helper = \Drupal::service('social_user.helper');
+
   $entity_manager = \Drupal::entityTypeManager();
   $accounts = $entity_manager->getStorage($options['target_type'])->loadMultiple(array_keys($matches));
+
   /** @var \Drupal\user\UserInterface $account */
   foreach ($accounts as $id => $account) {
-    // User roles.
-    $roles = $account->getRoles();
     // Make sure can only select Verified+ users.
-    if (empty($roles) || (count($roles) === 1 && $roles[0] === RoleInterface::AUTHENTICATED_ID)) {
+    if (!$user_helper->isVerifiedUser($account)) {
       unset($matches[$id]);
     }
   }
