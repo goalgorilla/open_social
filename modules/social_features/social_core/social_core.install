@@ -1372,9 +1372,46 @@ function social_core_update_10105() {
 }
 
 /**
- * Resign permissions between roles.
+ * Helper function to import configurations.
+ *
+ * @param array $configs
+ *   Array of configuration file names and their folders.
+ */
+function _social_core_features_import_config_helper(array $configs) {
+  foreach ($configs as $folder => $config_files) {
+    foreach ($config_files as $config_file) {
+      $config = drupal_get_path('module', 'social_core') . "/config/{$folder}/{$config_file}.yml";
+
+      if (is_file($config)) {
+        $settings = Yaml::parse(file_get_contents($config));
+        if (is_array($settings)) {
+          $update_config = \Drupal::configFactory()
+            ->getEditable($config_file);
+
+          $update_config->setData($settings)->save(TRUE);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Import configurations for the new Verified role.
  */
 function social_core_update_10106() {
+  $configs = [
+    'install' => [
+      'user.role.verified',
+    ],
+  ];
+
+  _social_core_features_import_config_helper($configs);
+}
+
+/**
+ * Resign permissions between roles.
+ */
+function social_core_update_10107() {
   /** @var \Drupal\user\RoleInterface $auth_role */
   $auth_role = \Drupal::entityTypeManager()->getStorage('user_role')->load(RoleInterface::AUTHENTICATED_ID);
   // Assign all permissions from Authenticated role to Verified role.
