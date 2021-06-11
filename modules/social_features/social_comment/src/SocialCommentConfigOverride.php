@@ -20,7 +20,7 @@ class SocialCommentConfigOverride implements ConfigFactoryOverrideInterface {
   protected $routeMatch;
 
   /**
-   * SocialPostPhotoConfigOverride constructor.
+   * SocialCommentConfigOverride constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The current route match.
