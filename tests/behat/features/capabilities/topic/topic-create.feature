@@ -1,11 +1,12 @@
+# NOT WORK EVEN WITH BEFORE DB!!!
 @api @topic @stability @perfect @critical @DS-341 @stability-2 @topic-create
 Feature: Create Topic
   Benefit: In order to share knowledge with people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Topics
 
   Scenario: Successfully create topic
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "user"
     And I click "Topics"
     And I click "Create Topic"

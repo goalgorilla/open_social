@@ -1,11 +1,12 @@
+# NOT WORK EVEN WITH BEFORE DB!!!
 @api @share @perfect @critical @DS-1829
 Feature: Social Sharing
   Benefit: In order to share my page with external people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to share my public content
 
   Scenario: Successfully create topic visible for community and public
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "node/add/topic"
     When I fill in "Title" with "This is a topic for community"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for community"
