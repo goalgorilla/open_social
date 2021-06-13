@@ -32,12 +32,10 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The current route match.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
    */
-  public function __construct(RouteMatchInterface $route_match, ConfigFactoryInterface $config_factory) {
+  public function __construct(RouteMatchInterface $route_match) {
     $this->routeMatch = $route_match;
-    $this->configFactory = $config_factory;
+    $this->configFactory = \Drupal::configFactory();
   }
 
   /**
