@@ -3,40 +3,13 @@
 namespace Drupal\social_post_photo;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Example configuration override.
  */
 class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
-
-  /**
-   * The current route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * SocialPostPhotoConfigOverride constructor.
-   *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The current route match.
-   */
-  public function __construct(RouteMatchInterface $route_match) {
-    $this->routeMatch = $route_match;
-    $this->configFactory = \Drupal::configFactory();
-  }
 
   /**
    * Returns config overrides.
@@ -52,6 +25,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     // @codingStandardsIgnoreEnd
     $overrides = [];
+    $config_factory = \Drupal::service('config.factory');
 
     // Override postblocks on activity streams.
     $config_names = [
@@ -76,7 +50,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $this->configFactory->getEditable($config_name);
+        $config = $config_factory->getEditable($config_name);
 
         $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
         // Only override if the configuration for posts exist.
@@ -97,7 +71,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     // Override like and dislike settings.
     $config_name = 'like_and_dislike.settings';
     if (in_array($config_name, $names)) {
-      $config = $this->configFactory->getEditable($config_name);
+      $config = $config_factory->getEditable($config_name);
       // Get enabled post bundles.
       $post_types = $config->get('enabled_types.post');
       $post_types['photo'] = 'photo';
@@ -107,41 +81,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
           'post' => $post_types,
         ],
       ];
-    }
-
-    $config_names = [
-      'core.entity_view_display.post.photo.activity',
-      'core.entity_view_display.post.photo.featured',
-    ];
-
-    foreach ($config_names as $config_name) {
-      if (in_array($config_name, $names)) {
-        if ($this->routeMatch->getRouteName() === 'entity.node.canonical' && $this->routeMatch->getParameter('node')->bundle() === 'dashboard') {
-          $overrides[$config_name] = [
-            'content' => [
-              'field_post' => [
-                'type' => 'smart_trim',
-                'settings' => [
-                  'more_class' => 'more-link',
-                  'more_link' => FALSE,
-                  'more_text' => '',
-                  'summary_handler' => 'full',
-                  'trim_length' => 250,
-                  'trim_options' =>
-                    [
-                      'text' => FALSE,
-                      'trim_zero' => FALSE,
-                    ],
-                  'trim_suffix' => '...',
-                  'trim_type' => 'chars',
-                  'wrap_class' => 'trimmed',
-                  'wrap_output' => FALSE,
-                ],
-              ],
-            ],
-          ];
-        }
-      }
     }
 
     return $overrides;
