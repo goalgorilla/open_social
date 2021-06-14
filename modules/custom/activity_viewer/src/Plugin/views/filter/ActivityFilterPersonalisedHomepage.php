@@ -181,12 +181,34 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $and_wrapper->condition($or);
     }
 
-    // For anonymous show only activities which don't have direct user.
+    // Only activities which don't have direct user and group.
     if ($account->isAnonymous()) {
-      $anonymous_access = new Condition('OR');
-      $anonymous_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', '0');
-      $anonymous_access->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
-      $and_wrapper->condition($anonymous_access);
+      $an_access = new Condition('AND');
+      $an_user_target = new Condition('OR');
+      $an_user_target->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', '0');
+      $an_user_target->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
+      $an_access->condition($an_user_target);
+
+      $an_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+      $and_wrapper->condition($an_access);
+    }
+    else {
+      // Only activities which targeted to current user.
+      $lu_access = new Condition('AND');
+      $lu_user_target = new Condition('OR');
+      $lu_user_target->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
+      $lu_user_target->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
+      $lu_access->condition($lu_user_target);
+
+      // Only activities which targeted to current user's groups.
+      $lu_group_target = new Condition('OR');
+      if (!empty($group_memberships)) {
+        $lu_group_target->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+      }
+      $lu_group_target->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+      $lu_access->condition($lu_group_target);
+
+      $and_wrapper->condition($lu_access);
     }
 
     if (!empty($and_wrapper->conditions()[0])) {
