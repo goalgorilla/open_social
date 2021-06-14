@@ -14,6 +14,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -89,6 +90,9 @@ function social_event_type_preprocess_node(array &$variables) {
           $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
             ->toString();
           $variables['event_type'] = $event_type_link;
+        }
+        elseif ($event instanceof Term) {
+          $variables['event_type'] = $event->label();
         }
 
         if (
