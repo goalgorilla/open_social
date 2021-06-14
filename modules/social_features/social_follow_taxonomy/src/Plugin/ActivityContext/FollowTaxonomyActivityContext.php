@@ -4,11 +4,13 @@ namespace Drupal\social_follow_taxonomy\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,6 +32,20 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   protected $moduleHandler;
 
   /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
+   * The group helper service.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $groupHelperService;
+
+  /**
    * ActivityContextBase constructor.
    *
    * @param array $configuration
@@ -46,6 +62,10 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    *   The activity factory service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The database connection.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper_service
+   *   The group helper service.
    */
   public function __construct(
     array $configuration,
@@ -54,11 +74,15 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ActivityFactory $activity_factory,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    Connection $connection,
+    SocialGroupHelperService $group_helper_service
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->moduleHandler = $module_handler;
+    $this->connection = $connection;
+    $this->groupHelperService = $group_helper_service;
   }
 
   /**
@@ -72,7 +96,9 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
       $container->get('activity_creator.activity_factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('database'),
+      $container->get('social_group.helper_service')
     );
   }
 
@@ -126,17 +152,19 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       return [];
     }
 
-    $storage = $this->entityTypeManager->getStorage('flagging');
-    $flaggings = $storage->loadByProperties([
-      'flag_id' => 'follow_term',
-      'entity_type' => 'taxonomy_term',
-      'entity_id' => $tids,
-    ]);
+    // Get followers.
+    $uids = $this->connection->select('flagging', 'f')
+      ->fields('f', ['uid'])
+      ->condition('flag_id', 'follow_term')
+      ->condition('entity_type', 'taxonomy_term')
+      ->condition('entity_id', $tids, 'IN')
+      ->groupBy('uid')
+      ->execute()->fetchCol();
 
-    foreach ($flaggings as $flagging) {
-      /** @var \Drupal\flag\FlaggingInterface $flagging */
-      $recipient = $flagging->getOwner();
+    /** @var \Drupal\user\UserInterface[] $users */
+    $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);
 
+    foreach ($users as $recipient) {
       // It could happen that a notification has been queued but the content or
       // account has since been deleted. In that case we can find no recipient.
       if (!$recipient instanceof UserInterface) {
@@ -152,14 +180,19 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       }
 
       // We don't send notifications to content creator.
-      if ($recipient->id() !== $entity->getOwnerId()) {
-        if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $recipient->id(),
-          ];
-        }
+      if ($recipient->id() === $entity->getOwnerId()) {
+        continue;
       }
+
+      // Check if user have access to view node.
+      if (!$this->haveAccessToNode($recipient, $entity->id())) {
+        continue;
+      }
+
+      $recipients[] = [
+        'target_type' => 'user',
+        'target_id' => $recipient->id(),
+      ];
     }
 
     return $recipients;
@@ -176,8 +209,12 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     // Check entity type.
     switch ($entity->getEntityTypeId()) {
       case 'node':
+      case 'post':
         foreach ($this->getListOfTagsFields() as $field_name) {
-          if ($entity->hasField($field_name)) {
+          if (
+            $entity->hasField($field_name) &&
+            !$entity->get($field_name)->isEmpty()
+          ) {
             return TRUE;
           }
         }
@@ -198,6 +235,45 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     ];
     $this->moduleHandler->alter('social_follow_taxonomy_fields', $fields_to_check);
     return $fields_to_check;
+  }
+
+  /**
+   * Checks if recipient have access to view related node.
+   *
+   * @param \Drupal\user\UserInterface $recipient
+   *   The user who receives the message.
+   * @param string|int $nid
+   *   Node ID.
+   *
+   * @return bool
+   *   Returns TRUE if have access.
+   */
+  protected function haveAccessToNode(UserInterface $recipient, $nid) {
+    $query = $this->connection->select('node_field_data', 'nfd');
+    $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
+    $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
+    $or = $query->orConditionGroup();
+    $community_access = $or->andConditionGroup()
+      ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
+      ->isNull('gcfd.entity_id');
+    $or->condition($community_access);
+    // Node visibility by group.
+    $memberships = $this->groupHelperService->getAllGroupsForUser($recipient->id());
+    if (count($memberships) > 0) {
+      $access_by_group = $or->andConditionGroup();
+      $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
+      $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
+      $access_by_group->condition('gcfd.gid', $memberships, 'IN');
+      $or->condition($access_by_group);
+    }
+    $or->isNull('nfcv.entity_id');
+    $query->condition($or);
+    $query->condition('nfd.nid', $nid);
+    $query->groupBy('nfd.nid');
+    $query->addExpression('COUNT(*)');
+    $nids = $query->execute()->fetchField();
+
+    return !empty($nids);
   }
 
 }
