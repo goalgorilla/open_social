@@ -1138,4 +1138,37 @@ class FeatureContext extends RawMinkContext implements Context
     public function iFillNextInWithAndSelect($field, $text, $item) {
       $this->fillAutocompleteField($field, $text, $item, TRUE);
     }
+
+    /**
+     * @When /^I click "([^"]*)" on the row containing "([^"]*)"$/
+     */
+    public function iClickOnOnTheRowContaining($link_name, $row_text) {
+      /** @var $row \Behat\Mink\Element\NodeElement */
+      $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $row_text));
+      if (!$row) {
+        throw new \Exception(sprintf('Cannot find any row on the page containing the text "%s"', $row_text));
+      }
+
+      $row->clickLink($link_name);
+    }
+
+    /**
+     * Remove any user consents that were created.
+     *
+     * @AfterScenario @data-policy-create
+     */
+    public function deleteUserConsentEntities() {
+      $consents = \Drupal::entityTypeManager()
+        ->getStorage('user_consent')
+        ->loadMultiple();
+
+      foreach ($consents as $consent) {
+        try {
+          $consent->delete();
+        }
+        catch (\Throwable $e) {
+          // This can be fine.
+        }
+      }
+    }
 }
