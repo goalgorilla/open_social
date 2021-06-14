@@ -57,6 +57,7 @@ function _social_gdpr_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer data policy settings',
+    'administer data policy entities',
     'edit data policy',
     'view all data policy revisions',
     'access data policy revisions',
@@ -73,4 +74,11 @@ function _social_gdpr_get_permissions($role) {
   }
 
   return [];
+}
+
+/**
+ * Update data policy permissions with new administer entities permission.
+ */
+function social_gdpr_update_8901() {
+  user_role_grant_permissions('sitemanager', ['administer data policy entities']);
 }

@@ -161,11 +161,11 @@ trait SocialProfileTrait {
       $name = substr($name, 1);
 
       $query->addExpression("
-    CASE WHEN fn.field_profile_first_name_value LIKE '$name' THEN 0
-      WHEN ln.field_profile_last_name_value LIKE '$name' THEN 1
+    CASE WHEN fn.field_profile_first_name_value LIKE :name THEN 0
+      WHEN ln.field_profile_last_name_value LIKE :name THEN 1
       ELSE 2
     END
-  ", 'mention_sort');
+  ", 'mention_sort', [':name' => $name]);
       $query->orderBy('mention_sort');
       $query->orderBy('fn.field_profile_first_name_value');
       $query->orderBy('ln.field_profile_last_name_value');

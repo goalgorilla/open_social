@@ -4,7 +4,7 @@ namespace Drupal\social_profile\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 
 /**
  * Adds user data to the Open Social GraphQL API.
@@ -16,7 +16,7 @@ use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
  *   schema = "open_social"
  * )
  */
-class ProfileSchemaExtension extends SdlSchemaExtensionPluginBase {
+class ProfileSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
