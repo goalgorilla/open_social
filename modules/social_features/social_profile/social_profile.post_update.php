@@ -8,7 +8,7 @@
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
- * Update Profile names.
+ * Add values to the new profile field "Profile name" for all existing users.
  */
 function social_profile_post_update_10101_profile_names_update(&$sandbox) {
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
