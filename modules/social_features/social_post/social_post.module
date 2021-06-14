@@ -214,10 +214,14 @@ function social_post_preprocess_post(&$variables) {
   if ($view_mode = $variables['elements']['#view_mode']) {
     /** @var \Drupal\social_post\Entity\PostInterface $entity */
     $entity = $variables['elements']['#post'];
+    $allowed_routes = [
+      'entity.node.canonical',
+      'layout_builder.overrides.node.view',
+    ];
 
     if (
       in_array($entity->bundle(), ['post', 'photo']) &&
-      \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+      in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
       \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
     ) {
       $variables['dashboard'] = TRUE;

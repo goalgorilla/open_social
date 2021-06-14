@@ -268,8 +268,13 @@ function social_comment_preprocess_comment(&$variables) {
     $variables['content']['links'] = [];
   }
 
+  $allowed_routes = [
+    'entity.node.canonical',
+    'layout_builder.overrides.node.view',
+  ];
+
   if (
-    \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+    in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
     \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
   ) {
     $variables['dashboard'] = TRUE;
