@@ -91,7 +91,9 @@ function social_event_type_preprocess_node(array &$variables) {
             ->toString();
           $variables['event_type'] = $event_type_link;
         }
-        elseif ($event instanceof Term) {
+
+        /** @var \Drupal\taxonomy\Entity\Term $event */
+        if ($event instanceof Term) {
           $variables['event_type'] = $event->label();
         }
 
