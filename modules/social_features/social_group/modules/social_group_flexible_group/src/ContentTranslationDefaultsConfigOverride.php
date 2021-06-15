@@ -34,12 +34,6 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    * {@inheritdoc}
    */
   protected function getTranslationOverrides() {
-    $views_plugin_content_translation_settings = [
-      'display_options' => [
-        'rendering_language' => '***LANGUAGE_language_interface***',
-      ],
-    ];
-
     return [
       'language.content_settings.group.flexible_group' => [
         'third_party_settings' => [
@@ -48,24 +42,10 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
           ],
         ],
       ],
-      'core.base_field_override.group.flexible_group.label' => [
-        'translatable' => TRUE,
-      ],
       'core.base_field_override.group.flexible_group.menu_link' => [
         'translatable' => TRUE,
       ],
-      'core.base_field_override.group.flexible_group.path' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.group.flexible_group.field_group_description' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.group.flexible_group.field_group_location' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.group.flexible_group.field_group_address' => [
-        'translatable' => TRUE,
-      ],
+
       'field.field.group.flexible_group.field_group_image' => [
         'third_party_settings' => [
           'content_translation' => [
@@ -75,12 +55,6 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
               'title' => '0',
             ],
           ],
-        ],
-        'translatable' => TRUE,
-      ],
-      'views.view.group_information' => [
-        'display' => [
-          'page_group_about' => $views_plugin_content_translation_settings,
         ],
       ],
     ];
