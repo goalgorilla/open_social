@@ -130,18 +130,9 @@ function social_post_photo_update_8901() {
 }
 
 /**
- * Install the smart_trim module if not already installed.
- */
-function social_post_photo_update_8902() {
-  if (!\Drupal::moduleHandler()->moduleExists('smart_trim')) {
-    \Drupal::service('module_installer')->install(['smart_trim']);
-  }
-}
-
-/**
  * Display field_album for post photo featured view mode.
  */
-function social_post_photo_update_8903() {
+function social_post_photo_update_8902() {
   $config = \Drupal::configFactory()->getEditable('core.entity_view_display.post.photo.featured');
   $content = $config->get('content');
   $hidden = $config->get('hidden');

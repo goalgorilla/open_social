@@ -148,12 +148,3 @@ function social_comment_update_8901() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
-
-/**
- * Install the smart_trim module if not already installed.
- */
-function social_comment_update_8902() {
-  if (!\Drupal::moduleHandler()->moduleExists('smart_trim')) {
-    \Drupal::service('module_installer')->install(['smart_trim']);
-  }
-}

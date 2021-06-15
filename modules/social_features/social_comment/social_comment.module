@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
 use Drupal\social_comment\Entity\Access\CommentQueryAccessHandler;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentFieldItemList;
@@ -256,29 +255,6 @@ function social_comment_preprocess_comment(&$variables) {
     $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
   }
 
-  $allowed_routes = [
-    'entity.node.canonical',
-    'layout_builder.overrides.node.view',
-  ];
-
-  /** @var \Drupal\node\NodeInterface $node */
-  $node = \Drupal::routeMatch()->getParameter('node');
-  $view_mode = $variables['elements']['#view_mode'];
-  if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) && $node->bundle() === 'dashboard' && $view_mode === 'activity_comment') {
-    $variables['content']['links'] = [];
-  }
-
-  $allowed_routes = [
-    'entity.node.canonical',
-    'layout_builder.overrides.node.view',
-  ];
-
-  if (
-    in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
-    \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
-  ) {
-    $variables['dashboard'] = TRUE;
-  }
 }
 
 /**
@@ -315,33 +291,16 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
 
-      // Define which display mode should be used for commented_entity.
-      $allowed_routes = [
-        'entity.node.canonical',
-        'layout_builder.overrides.node.view',
-      ];
-
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = \Drupal::routeMatch()->getParameter('node');
-      if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) && $node->bundle() === 'dashboard') {
-        $node_view_display = 'featured';
-      }
-      else {
-        $node_view_display = 'activity_comment';
-      }
-
-      if (!($node instanceof NodeInterface) || $node->bundle() !== 'dashboard') {
-        // Teaser of commented entity.
-        $build['commented_entity'] = \Drupal::entityTypeManager()
-          ->getViewBuilder($commented_entity_type)
-          ->view($commented_entity, $node_view_display);
-      }
+      // Teaser of commented entity.
+      $build['commented_entity'] = \Drupal::entityTypeManager()
+        ->getViewBuilder($commented_entity_type)
+        ->view($commented_entity, 'activity_comment');
 
       // Prepare the "Show all comments" link.
       if ($commented_entity_type === 'post') {
         $comment_field_name = 'field_post_comments';
       }
-      elseif ($node instanceof NodeInterface && $commented_entity_type === 'node' && $node->bundle() !== 'dashboard') {
+      elseif ($commented_entity_type === 'node') {
         $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
 
         // Prepare the "Comments" link.
@@ -356,12 +315,10 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
 
         $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
 
-        if (!($node instanceof NodeInterface) || $node->bundle() !== 'dashboard') {
-          $build['comment_link'] = Link::fromTextAndUrl(
-            t('Comment', [], ['context' => 'Comment Button']),
-            $commented_entity_url
-          )->toRenderable();
-        }
+        $build['comment_link'] = Link::fromTextAndUrl(
+          t('Comment', [], ['context' => 'Comment Button']),
+          $commented_entity_url
+        )->toRenderable();
       }
 
       $comment_count = isset($comment_field_name) ? $commented_entity->{$comment_field_name}->comment_count : '';
