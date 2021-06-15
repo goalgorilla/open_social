@@ -617,6 +617,33 @@ function social_group_update_8905() {
 }
 
 /**
+ * Make group creators as a group managers by default.
+ */
+function social_group_update_8906() {
+  $config_factory = \Drupal::configFactory();
+
+  $group_types = [
+    'public_group',
+    'open_group',
+    'closed_group',
+  ];
+
+  foreach ($group_types as $group_type) {
+    $config = $config_factory->getEditable('group.type.' . $group_type);
+    $config->set('creator_membership', TRUE);
+
+    $creator_roles = $config->get('creator_roles');
+    $group_role_id = $group_type . '-group_manager';
+    if (!in_array($group_role_id, $creator_roles)) {
+      $creator_roles[] = $group_role_id;
+      $config->set('creator_roles', $creator_roles);
+    }
+
+    $config->save(TRUE);
+  }
+}
+
+/**
  * Helper function to import configurations.
  *
  * @param array $configs
@@ -643,7 +670,7 @@ function _social_group_features_import_config_helper(array $configs) {
 /**
  * Import flag "Mute Group Notifications" configurations.
  */
-function social_group_update_8906() {
+function social_group_update_8907() {
   $configs = [
     'install' => [
       'flag.flag.mute_group_notify',
@@ -656,14 +683,14 @@ function social_group_update_8906() {
 /**
  * Update the permissions for social_group.
  */
-function social_group_update_8907() {
+function social_group_update_8908() {
   _social_group_set_permissions();
 }
 
 /**
  * Update User Groups view configurations.
  */
-function social_group_update_8908() {
+function social_group_update_8909() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -677,7 +704,7 @@ function social_group_update_8908() {
 /**
  * Import exposed block filter configurations of User Groups view.
  */
-function social_group_update_8909() {
+function social_group_update_8910() {
   $configs = [
     'optional' => [
       'block.block.exposed_form_groups_page_user_groups',

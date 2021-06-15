@@ -4,7 +4,7 @@ namespace Drupal\social_user\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 use Drupal\social_user\GraphQL\UserActorTypeResolver;
 
 /**
@@ -17,7 +17,7 @@ use Drupal\social_user\GraphQL\UserActorTypeResolver;
  *   schema = "open_social"
  * )
  */
-class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
+class UserSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
