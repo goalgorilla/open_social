@@ -4,7 +4,7 @@ namespace Drupal\social_comment\Plugin\GraphQL\SchemaExtension;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
 
 /**
  * Adds comment data to the Open Social GraphQL API.
@@ -16,7 +16,7 @@ use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
  *   schema = "open_social"
  * )
  */
-class CommentSchemaExtension extends SdlSchemaExtensionPluginBase {
+class CommentSchemaExtension extends SchemaExtensionPluginBase {
 
   /**
    * {@inheritdoc}
