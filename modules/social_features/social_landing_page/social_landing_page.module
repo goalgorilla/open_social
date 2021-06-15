@@ -113,6 +113,10 @@ function social_landing_page_preprocess_page(&$variables) {
       $variables['attributes'] = new Attribute();
       $variables['attributes']->addClass('container');
     }
+
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.node.content_translation_overview') {
+      $variables['container_wrapper'] = TRUE;
+    }
   }
 }
 
