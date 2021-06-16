@@ -83,7 +83,7 @@ class QueryComments extends EntityDataProducerPluginBase {
       $parent = reset($nodes);
     }
 
-    $query_helper = new CommentQueryHelper($parent, $this->entityTypeManager, $sortKey);
+    $query_helper = new CommentQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $parent);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);

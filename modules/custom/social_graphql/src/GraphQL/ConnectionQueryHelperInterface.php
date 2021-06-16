@@ -60,6 +60,22 @@ interface ConnectionQueryHelperInterface {
   public function getSortField() : string;
 
   /**
+   * Get the sort direction for normal searches.
+   *
+   * @return string
+   *   Either 'ASC' or 'DESC'.
+   */
+  public function getForwardSortDirection() : string;
+
+  /**
+   * Get the sort direction for reversed searches.
+   *
+   * @return string
+   *   Either 'ASC' or 'DESC'.
+   */
+  public function getReverseSortDirection() : string;
+
+  /**
    * The function to use for aggregate sorting.
    *
    * @return string|null

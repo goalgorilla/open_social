@@ -234,7 +234,8 @@ class EntityConnection implements ConnectionInterface {
     // The order is descending if
     // - we want the first results in a reversed query
     // - we want the last results in a non reversed query.
-    $query_order = (!is_null($this->first) && !$this->reverse) || (!is_null($this->last) && $this->reverse) ? 'ASC' : 'DESC';
+    $field_query_order = (!is_null($this->first) && !$this->reverse) || (!is_null($this->last) && $this->reverse) ? $this->queryHelper->getForwardSortDirection() : $this->queryHelper->getReverseSortDirection();
+    $id_query_order = (!is_null($this->first) && !$this->reverse) || (!is_null($this->last) && $this->reverse) ? 'ASC' : 'DESC';
 
     // If a cursor is provided then we alter the condition to select the
     // elements on the correct side of the cursor.
@@ -274,13 +275,13 @@ class EntityConnection implements ConnectionInterface {
       $query->sortAggregate(
         $sort_field,
         $function,
-        $query_order
+        $field_query_order
       );
     }
     else {
       $query->sort(
         $sort_field,
-        $query_order
+        $field_query_order
       );
 
       // @todo https://www.drupal.org/project/social/issues/3191638
@@ -291,7 +292,7 @@ class EntityConnection implements ConnectionInterface {
       if ($sort_field !== $id_field) {
         $query->sort(
           $id_field,
-          $query_order
+          $id_query_order
         );
       }
     }
