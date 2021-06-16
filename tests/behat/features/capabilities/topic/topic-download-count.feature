@@ -1,4 +1,3 @@
-# NOT WORK EVEN WITH BEFORE DB!!!
 @api @topic @stability @perfect @critical @DS-1933 @stability-4 @topic-download-count
 Feature: Download Topic
   Benefit: In order to see which files are popular
