@@ -42,6 +42,9 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
           ],
         ],
       ],
+      'core.base_field_override.node.event.title' => [
+        'translatable' => TRUE,
+      ],
       'core.base_field_override.node.event.menu_link' => [
         'translatable' => TRUE,
       ],
