@@ -1,4 +1,3 @@
-# NOT WORK EVEN WITH BEFORE DB!!!
 @api @topic @stability @perfect @critical @DS-341 @stability-2 @topic-create
 Feature: Create Topic
   Benefit: In order to share knowledge with people
@@ -33,3 +32,13 @@ Feature: Create Topic
     And I press "Save"
     Then I should see "Topic This is a test topic - edit has been updated"
     And I should see "This is a test topic - edit" in the "Hero block"
+
+    # LU should not be able to create topic.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+    And I am on "user"
+    Then I should not see the link "Topics"
+    When I am on "node/add/topic"
+    Then I should see "Access denied"
+    And I should see "You are not authorized to access this page."
+    And I enable that the registered users to be verified immediately

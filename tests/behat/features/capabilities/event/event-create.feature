@@ -47,3 +47,13 @@ Feature: Create Event
     And I should see "THIS IS A TEST EVENT - EDIT"
     And I should see "1 Jan '25"
     And I should not see "1 Jan '25 11:00"
+
+    # LU should not be able to create events.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on "user"
+    Then I should not see the link "Events"
+    When I am on "node/add/event"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately

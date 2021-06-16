@@ -19,6 +19,11 @@ Feature: Un/publish a node
     And I uncheck the box "Published"
     And I press "Create topic"
     Then I should see "Unpublished topic has been created."
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+    And I go to "unpublished-topic"
+    Then I should see "Access denied"
+    And I enable that the registered users to be verified immediately
     When I logout
     And I go to "unpublished-topic"
     Then I should see "Access denied. You must log in to view this page."
@@ -41,3 +46,9 @@ Feature: Un/publish a node
     And I go to "unpublished-topic"
     Then I should see "Access denied"
     Then I should see "You are not authorized to access this page."
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+    And I go to "unpublished-topic"
+    Then I should see "Access denied"
+    And I should see "You are not authorized to access this page."
+    And I enable that the registered users to be verified immediately

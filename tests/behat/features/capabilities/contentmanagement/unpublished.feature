@@ -35,3 +35,10 @@ Feature: Un/publish a node
       And I click "Topics"
       Then I should see "This is a test topic"
       And I should see "Discussion"
+
+    Given I disable that the registered users to be verified immediately
+      And I am logged in as an "authenticated user"
+      And I am on "node/add/topic"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately

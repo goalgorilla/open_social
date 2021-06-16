@@ -437,4 +437,22 @@ class SocialDrupalContext extends DrupalContext {
     $this->login($user);
   }
 
+  /**
+   * I enable that the registered users to be verified immediately.
+   *
+   * @When I enable that the registered users to be verified immediately
+   */
+  public function iEnableVerifiedImmediately() {
+    \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', TRUE)->save();
+  }
+
+  /**
+   * I disable that the registered users to be verified immediately.
+   *
+   * @When I disable that the registered users to be verified immediately
+   */
+  public function iDisableVerifiedImmediately() {
+    \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', FALSE)->save();
+  }
+
 }

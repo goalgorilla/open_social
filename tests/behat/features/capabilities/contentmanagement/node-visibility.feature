@@ -21,6 +21,17 @@ Feature: Visibility
     And I press "Create topic"
     Then I should see "Topic This is a topic for public has been created."
 
+    # Now visit the pages as authenticated user.
+    Given I disable that the registered users to be verified immediately
+      And I am logged in as an "authenticated user"
+      And I open the "topic" node with title "This is a topic for public"
+    Then I should see "This is a topic for public"
+    When I open the "topic" node with title "This is a topic for community"
+    Then I should not see "This is a topic for community"
+      And I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately
+
     # Now visit the pages as anonymous user.
     When I logout
     Given I open the "topic" node with title "This is a topic for public"

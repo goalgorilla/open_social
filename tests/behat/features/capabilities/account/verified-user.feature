@@ -59,3 +59,4 @@ Feature: User is Verified
     Then I should see "not_verified_dude"
       And I click "Edit account"
       And I should see unchecked the box "Verified user"
+      And I enable that the registered users to be verified immediately

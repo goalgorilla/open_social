@@ -66,6 +66,14 @@
       | Your message has been deleted. |
     And I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
 
+    # LU should not be able to create messages.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on "/user/inbox"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately
+
   # Create thread with multiple users.
   Scenario: Create thread with multiple users.
     Given I enable the module "social_private_message"

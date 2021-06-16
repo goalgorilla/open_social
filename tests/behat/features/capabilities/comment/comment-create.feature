@@ -10,6 +10,7 @@ Feature: Create Comments
       | name              | mail                     | status | roles    |
       | Comment view user | comment-view@example.com | 1      | verified |
     And I am logged in as "Comment view user"
+    And I should see an ".comment-post-comment-form" element
     And I am viewing a "topic" with the title "Comment test topic"
     When I fill in the following:
          | Add a comment | This is a test comment |
@@ -20,3 +21,9 @@ Feature: Create Comments
     And I should see "Comment view user"
     And I should see "second"
     And I should see "ago"
+
+    # Now try visit a topic as authenticated user.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+    Then I should not see an ".comment-post-comment-form" element
+      And I enable that the registered users to be verified immediately

@@ -94,3 +94,11 @@ Feature: Group access roles
     And I press "Save"
     And I click "Manage members"
     Then I should see "Group Admin"
+
+    # LU should not be able to create groups.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on "group/add"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately

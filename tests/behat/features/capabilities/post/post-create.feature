@@ -54,3 +54,10 @@ Feature: Create Post
     And I am on the homepage
    Then I should see "This is a public post."
    Then I should not see "This is a community post."
+
+    # LU should not be able to create posts.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on the homepage
+    Then I should not see an ".form--post-create" element
+      And I enable that the registered users to be verified immediately
