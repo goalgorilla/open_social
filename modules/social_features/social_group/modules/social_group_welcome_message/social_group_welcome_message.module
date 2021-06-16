@@ -132,14 +132,6 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
       return;
     }
 
-    // Get group admins entities.
-    $g_admins = $group->getMembers($g_type_id . '-group_admin');
-    $g_admins_users = [];
-    /** @var \Drupal\group\GroupMembership $member */
-    foreach ($g_admins as $key => $member) {
-      $g_admins_users[$key] = $member->getUser();
-    }
-
     // Get group managers entities.
     $g_managers = $group->getMembers($g_type_id . '-group_manager');
     $g_managers_users = [];
@@ -149,10 +141,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
 
     // Set sender (owner) of the pm.
-    if (count($g_admins_users) === 1) {
-      list($owner) = $g_admins_users;
-    }
-    elseif (count($g_managers_users) > 0) {
+    if (count($g_managers_users) > 0) {
       list($owner) = $g_managers_users;
     }
     else {
@@ -168,7 +157,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
 
     // Merge all managers of the group to recipients array.
-    $recipients = array_merge($g_admins_users, $g_managers_users);
+    $recipients = $g_managers_users;
 
     // Add the joined user to the already existing recipients array.
     $recipients[] = $account;

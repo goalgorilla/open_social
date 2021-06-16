@@ -638,60 +638,6 @@ function social_group_group_visibility_description($key) {
 }
 
 /**
- * Implements hook_entity_insert().
- */
-function social_group_group_insert(GroupInterface $group) {
-  // @todo Remove this when https://www.drupal.org/node/2702743 lands and make.
-  // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() === 'open_group' ||
-    $group->getGroupType()->id() === 'closed_group' ||
-    $group->getGroupType()->id() === 'flexible_group') {
-    // Get the group owner.
-    $account = $group->getOwner();
-    // Get membership.
-    $content = $group->getMember($account)->getGroupContent();
-    // Delete the initial created membership.
-    $content->delete();
-    $grant_group_admin = FALSE;
-    // If the user has this permission inside a group.
-    if ($group->hasPermission('manage all groups', $account)) {
-      // Then we grant this user de Group Admin role.
-      $grant_group_admin = TRUE;
-    }
-    // When a CM+ creates a group, it is given the group_manager role
-    // alongside the group_admin role to keep the full control over the group.
-    if ($grant_group_admin) {
-      // Delete the initial created membership.
-      $content->delete();
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = [
-        'group_roles' => [
-          $group->bundle() . '-group_admin',
-          $group->bundle() . '-group_manager',
-        ],
-      ];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
-    else {
-      // Create a new membership.
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_manager']];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
-  }
-}
-
-/**
  * Returns a description array for the field_group_allowed_join_method options.
  *
  * @param string $key
@@ -846,15 +792,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
-    // Remove the 'group_admin' role in a generic way
-    // for all (future) group types.
-    foreach ($form['group_roles']['widget']['#options'] as $key => $value) {
-      // Hide the submission for the Group Admin role.
-      if (strpos($key, 'group_admin') != FALSE) {
-        unset($form['group_roles']['widget']['#options'][$key]);
-      }
-    }
-
     $form['path']['#type'] = 'hidden';
   }
 
@@ -1203,20 +1140,6 @@ function _social_group_grant_admin_role($uid, $gid) {
  *   The group content.
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
-      _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
-    }
-  }
-}
-
-/**
- * When updating a group membership.
- *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *   The group content.
- */
-function social_group_group_content_update(GroupContentInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() == 'user') {
     if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
