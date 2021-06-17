@@ -15,7 +15,7 @@ Feature: Inform about personal data collection
 
     Given I am logged in as "behatadministrator"
     When I am on "admin/config/people/data-policy/settings"
-    And I uncheck the box "Enforce consent"
+    And I fill in "Consent text" with "I agree with the [id:1]"
     Then I press "Save configuration"
 
     When I am on "admin/structure/block/add/data_policy_inform_block/"
@@ -89,5 +89,5 @@ Feature: Inform about personal data collection
 
     When I am logged in as "behatadministrator"
     And I am on "admin/config/people/data-policy/settings"
-    And I check the box "Enforce consent"
+    And I fill in "Consent text" with "I agree with the [id:1*]"
     Then I press "Save configuration"
