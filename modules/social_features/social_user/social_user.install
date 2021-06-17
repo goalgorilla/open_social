@@ -179,6 +179,7 @@ function _social_user_get_permissions($role) {
     'administer social_user settings',
     'assign contentmanager role',
     'assign sitemanager role',
+    'assign verified role',
     'view blocked user',
   ]);
 
@@ -214,7 +215,7 @@ function social_user_update_8810() {
 /**
  * Create the default configuration for the verified immediately site setting.
  */
-function social_user_update_8811() {
+function social_user_update_11001() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
   $config->set('verified_immediately', TRUE)->save();
 }
@@ -226,8 +227,8 @@ function social_user_update_dependencies() {
   // Run the update hook with the "Grant Profile permissions for the
   // Authenticated user role" only after an update hook "Resign permissions
   // between roles" in social_core.
-  $dependencies['social_user'][8812] = [
-    'social_core' => 10107,
+  $dependencies['social_user'][11002] = [
+    'social_core' => 11002,
   ];
 
   return $dependencies;
@@ -236,8 +237,18 @@ function social_user_update_dependencies() {
 /**
  * Grant Profile permissions for the Authenticated user role.
  */
-function social_user_update_8812() {
+function social_user_update_11002() {
   // Authenticated user role permissions.
   $auth_role_permissions = _social_user_get_permissions(RoleInterface::AUTHENTICATED_ID);
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);
+}
+
+/**
+ * Update permissions for the sitemanager role.
+ */
+function social_user_update_11003() {
+  // Grant the sitemanagers new permissions.
+  user_role_grant_permissions('sitemanager', [
+    'assign verified role',
+  ]);
 }
