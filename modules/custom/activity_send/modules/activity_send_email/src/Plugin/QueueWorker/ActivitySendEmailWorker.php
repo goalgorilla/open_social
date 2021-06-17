@@ -13,7 +13,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\GroupMuteNotify;
 use Drupal\user\Entity\User;
@@ -273,35 +272,29 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message']);
     }
 
+    // Get the related entity from the activity.
+    $related_entity = $parameters['activity']->getRelatedEntity();
+
     // We load all the target accounts.
     if ($target_accounts = $user_storage->loadMultiple($parameters['target_recipients'])) {
-      // Get the group from the activity.
-      $activity = $parameters['activity'];
-      $related_entity = $activity->getRelatedEntity();
-      if ($related_entity instanceof GroupContentInterface) {
-        /** @var \Drupal\group\Entity\GroupInterface $group */
-        $group = $related_entity->getGroup();
-      }
-      elseif ($related_entity->getEntityTypeId() === 'post') {
-        if (!$related_entity->get('field_recipient_group')->isEmpty()) {
-          /** @var \Drupal\group\Entity\GroupInterface $group */
-          $group = $related_entity->get('field_recipient_group')->first()->get('entity')->getTarget()->getValue();
-        }
-      }
+      /** @var \Drupal\group\Entity\GroupInterface $group */
+      $group = $this->groupMuteNotify->getGroupByContent($related_entity);
 
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
-          // Need check if we have the group.
-          if (isset($group) && $group instanceof GroupInterface) {
-            // Only for users that didn't mute group notification.
+          // Check if we have $group set which means that this content was
+          // posted in a group.
+          if (!empty($group) && $group instanceof GroupInterface) {
+            // Skip the notification for users which have muted the group
+            // notification in which this content was posted.
             if ($this->groupMuteNotify->groupNotifyIsMuted($group, $target_account)) {
               continue;
             }
           }
 
           // Only for users that have access to related content.
-          if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
+          if ($related_entity->access('view', $target_account)) {
             // If the website is multilingual, get the body text in
             // users preferred language. This will happen when the queue item
             // is not processed in a batch and thus we can't be sure if all

@@ -2,8 +2,10 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagServiceInterface;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -49,6 +51,42 @@ class GroupMuteNotify {
     $flaggings = $this->flagService->getAllEntityFlaggings($group, $account);
 
     return !empty($flaggings);
+  }
+
+  /**
+   * Get group by content.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity object.
+   *
+   * @return \Drupal\group\Entity\GroupInterface|null
+   *   Returns the group object.
+   */
+  public function getGroupByContent(EntityInterface $entity = NULL): ?GroupInterface {
+    // Ensure the $entity is not NULL.
+    if ($entity == NULL) {
+      return NULL;
+    }
+
+    if ($entity instanceof GroupContentInterface) {
+      /** @var \Drupal\group\Entity\GroupInterface $group */
+      $group = $entity->getGroup();
+    }
+    elseif ($entity->getEntityTypeId() === 'post') {
+      /** @var \Drupal\social_post\Entity\Post $entity */
+      if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
+        /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $reference_item **/
+        $reference_item = $entity->get('field_recipient_group')->first();
+        /** @var \Drupal\Core\Entity\Plugin\DataType\EntityReference $entity_reference **/
+        $entity_reference = $reference_item->get('entity');
+        /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $entity_adapter **/
+        $entity_adapter = $entity_reference->getTarget();
+        /** @var \Drupal\group\Entity\GroupInterface $group */
+        $group = $entity_adapter->getValue();
+      }
+    }
+
+    return $group ?? NULL;
   }
 
 }
