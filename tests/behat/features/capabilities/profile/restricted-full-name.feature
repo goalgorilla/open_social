@@ -10,9 +10,9 @@ Feature: I want to restrict full name visibility when nickname is used
     And I enable the nickname field on profiles
     And users:
       | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name | roles       |
-      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         |             |
-      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            |             |
-      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |             |
+      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         | verified    |
+      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            | verified    |
+      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    | verified    |
       | sm     | site_manager@example.com | 1      |                          |                         |                         | sitemanager |
 
 
