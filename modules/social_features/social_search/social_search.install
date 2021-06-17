@@ -235,12 +235,12 @@ function social_search_update_10002() {
 /**
  * Add the processor "Skip not Verified users" to indexes.
  */
-function social_search_update_10003() {
+function social_search_update_11001() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_search', 'social_search_update_10003');
+  $updateHelper->executeUpdate('social_search', 'social_search_update_11001');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
