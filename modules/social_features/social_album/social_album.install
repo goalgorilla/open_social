@@ -302,8 +302,8 @@ function social_album_update_dependencies() {
   // Run the update hook with the "Grant Profile permissions for the
   // Authenticated user role" only after an update hook "Resign permissions
   // between roles" in social_core.
-  $dependencies['social_user'][8905] = [
-    'social_core' => 10107,
+  $dependencies['social_user'][11001] = [
+    'social_core' => 11002,
   ];
 
   return $dependencies;
@@ -312,7 +312,7 @@ function social_album_update_dependencies() {
 /**
  * Grant Profile permissions for the Authenticated user role.
  */
-function social_album_update_8905() {
+function social_album_update_11001() {
   // Authenticated user role permissions.
   $auth_role_permissions = _social_album_get_permissions(RoleInterface::AUTHENTICATED_ID);
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);

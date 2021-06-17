@@ -346,8 +346,8 @@ function social_profile_update_dependencies() {
   // Run the update hook with the "Grant Profile permissions for the
   // Authenticated user role" only after an update hook "Resign permissions
   // between roles" in social_core.
-  $dependencies['social_profile'][8904] = [
-    'social_core' => 10107,
+  $dependencies['social_profile'][11001] = [
+    'social_core' => 11002,
   ];
 
   return $dependencies;
@@ -496,7 +496,7 @@ function social_profile_update_8903() {
 /**
  * Grant Profile permissions for the Authenticated user role.
  */
-function social_profile_update_8904() {
+function social_profile_update_11001() {
   // Authenticated user role permissions.
   $auth_role_permissions = _social_profile_get_permissions(RoleInterface::AUTHENTICATED_ID);
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);
@@ -505,12 +505,12 @@ function social_profile_update_8904() {
 /**
  * Add roles filter to the Newest users views.
  */
-function social_profile_update_8905() {
+function social_profile_update_11002() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8905');
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_11002');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
