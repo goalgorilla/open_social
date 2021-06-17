@@ -8,8 +8,6 @@ dependencies:
     - group
     - social_group
     - user
-_core:
-  default_config_hash: j7pIbbkhq33FlY-AoeiglfeTG18bPehQSYti_JGti1E
 id: groups
 label: 'User Groups'
 module: views
@@ -35,7 +33,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -252,6 +250,7 @@ display:
       use_more: true
       use_more_always: true
       use_more_text: 'All groups'
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
@@ -277,6 +276,7 @@ display:
         weight: 0
         context: '0'
         menu_name: main
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:

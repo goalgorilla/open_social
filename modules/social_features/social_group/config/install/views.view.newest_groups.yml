@@ -7,8 +7,6 @@ dependencies:
   module:
     - group
     - user
-_core:
-  default_config_hash: m59mmgLMtOnt0MSyksk0IBtUNeEDnRLhyjKNf_aUWSU
 id: newest_groups
 label: 'Newest groups'
 module: views
@@ -34,7 +32,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -207,6 +205,7 @@ display:
       use_more: true
       use_more_always: true
       use_more_text: 'All groups'
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
@@ -277,6 +276,7 @@ display:
         groups:
           1: AND
       exposed_block: true
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
