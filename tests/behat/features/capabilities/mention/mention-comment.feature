@@ -15,7 +15,7 @@ Feature: Create Mention in a Comment
     When I fill in the following:
       | Add a comment | [~user_2], [~user_3], see my comment. |
     And I press "Comment"
-    And I should see "user_2 , user_3 , see my comment." in the "Main content"
+    And I should see "user_2, user_3, see my comment." in the "Main content"
     And I should see the link "user_2"
     When I click "user_3"
     Then I should see "Stephen Hawking"

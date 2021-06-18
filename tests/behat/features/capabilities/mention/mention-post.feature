@@ -15,7 +15,7 @@ Feature: Create Mention in a Post
     And I fill in "Say something to the Community" with "Hello [~user_2], [~user_3]!"
     And I press "Post"
     Then I should see "Albert Einstein posted"
-    And I should see "Hello user_2 , user_3 !"
+    And I should see "Hello user_2, user_3!"
     And I should see the link "user_3"
     When I click "user_2"
     Then I should see "Isaac Newton"
