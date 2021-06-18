@@ -10,6 +10,9 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -21,6 +24,7 @@ use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\user\Entity\User;
@@ -922,4 +926,43 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_profile_views_plugins_filter_alter(array &$plugins) {
   $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_profile_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Check if we're dealing with the profile entity.
+  if ($entity_type->id() === 'profile') {
+    $fields['profile_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Profile name'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setReadOnly(TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct profile name.
+ */
+function social_profile_profile_presave(EntityInterface $profile) {
+  if ($profile instanceof ProfileInterface) {
+    /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
+    $profile_name_service = \Drupal::service('social_profile.name_service');
+
+    // Check if we need update Profile name.
+    if (!$profile_name_service->needToUpdateProfileName($profile)) {
+      return;
+    }
+
+    // Get generated profile name.
+    $profile_name = $profile_name_service->getProfileName($profile);
+    // Update profile name.
+    $profile->set('profile_name', $profile_name);
+  }
 }
