@@ -18,12 +18,11 @@ Feature: Give user consent
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy/settings"
     Then I should see the heading "Data policy settings" in the "Admin page title block" region
-    And I should see checked the box "Enforce consent"
-    And I should see the text "A user should give your consent on data policy when he creates an account."
-    When I uncheck the box "Enforce consent"
-    And I press "Save configuration"
-    Then I should see the text "The configuration options have been saved."
-    And I should see unchecked the box "Enforce consent"
+    And I should see the text "I agree with the [id:1*]"
+    When I fill in "Consent text" with "I agree with the [id:1]"
+    Then I press "Save configuration"
+    And I should see the text "The configuration options have been saved."
+    And I should see the text "I agree with the [id:1]"
 
     When I am on "admin/reports/data-policy-agreements"
     Then I should see the heading "Data Policy Agreements" in the "Admin page title block" region
@@ -46,8 +45,10 @@ Feature: Give user consent
     And I should see "Undecided" in the "td.views-field-state" element
 
     When I am logged in as "behatuser1"
-    Then I should not see the success message "We published a new version of the data policy. You can review the data policy here."
-
+    # We changed the behavior. So now if a user visited the agreement page and leave it in the case when data policy
+    # is not required, then we still display a status link that we published a new version of data policy until the
+    # user saves the form.
+    Then I should see the success message "We published a new version of the data policy. You can review the data policy here."
     When I am on "data-policy-agreement"
     And I press "Save"
     Then I should be on the homepage
@@ -58,9 +59,10 @@ Feature: Give user consent
 
     When I am logged in as "behatuser1"
     And I am on "data-policy-agreement"
-    And I check the box "data_policy"
+    And I check the box "edit-data-policy-data-policy-1"
     And I press "Save"
     Then I should be on the homepage
+    Then I should not see the success message "We published a new version of the data policy. You can review the data policy here."
 
     When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
@@ -114,3 +116,8 @@ Feature: Give user consent
     Then I should see the link "behatuser1"
     And I should not see the link "behatuser2"
     And I should see the link "behatuser3"
+
+    Given I am logged in as "behatsitemanager" with the "without consent" permission
+    When I am on "admin/config/people/data-policy/settings"
+    And I should see the text "I agree with the [id:1]"
+    When I fill in "Consent text" with "I agree with the [id:1*]"

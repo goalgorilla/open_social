@@ -258,14 +258,13 @@ function social_group_preprocess_group(array &$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
 
-    if (in_array($group_type_id, $group_types)) {
-      $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-      $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-      if (!$direct_option) {
-        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-        $variables['closed_group'] = TRUE;
-        $variables['cta'] = t('Invitation only');
-      }
+    if (
+      in_array($group_type_id, $group_types) &&
+      !social_group_flexible_group_can_join_directly($group)
+    ) {
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+      $variables['closed_group'] = TRUE;
+      $variables['cta'] = t('Invitation only');
     }
   }
   // If the group type is a closed_group.
@@ -274,6 +273,15 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     $variables['closed_group'] = TRUE;
     $variables['cta'] = t('Invitation only');
+  }
+  // Non logged in users should still see "join" button on a group page.
+  if (
+    $account->isAnonymous() &&
+    (in_array($group_type_id, $group_types) &&
+    social_group_flexible_group_can_join_directly($group) ||
+    in_array($group_type_id, ['public_group']))
+  ) {
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
   }
 
   // Add the hero styled image.
@@ -630,60 +638,6 @@ function social_group_group_visibility_description($key) {
 }
 
 /**
- * Implements hook_entity_insert().
- */
-function social_group_group_insert(GroupInterface $group) {
-  // @todo Remove this when https://www.drupal.org/node/2702743 lands and make.
-  // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() === 'open_group' ||
-    $group->getGroupType()->id() === 'closed_group' ||
-    $group->getGroupType()->id() === 'flexible_group') {
-    // Get the group owner.
-    $account = $group->getOwner();
-    // Get membership.
-    $content = $group->getMember($account)->getGroupContent();
-    // Delete the initial created membership.
-    $content->delete();
-    $grant_group_admin = FALSE;
-    // If the user has this permission inside a group.
-    if ($group->hasPermission('manage all groups', $account)) {
-      // Then we grant this user de Group Admin role.
-      $grant_group_admin = TRUE;
-    }
-    // When a CM+ creates a group, it is given the group_manager role
-    // alongside the group_admin role to keep the full control over the group.
-    if ($grant_group_admin) {
-      // Delete the initial created membership.
-      $content->delete();
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = [
-        'group_roles' => [
-          $group->bundle() . '-group_admin',
-          $group->bundle() . '-group_manager',
-        ],
-      ];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
-    else {
-      // Create a new membership.
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_manager']];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
-  }
-}
-
-/**
  * Returns a description array for the field_group_allowed_join_method options.
  *
  * @param string $key
@@ -838,15 +792,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
-    // Remove the 'group_admin' role in a generic way
-    // for all (future) group types.
-    foreach ($form['group_roles']['widget']['#options'] as $key => $value) {
-      // Hide the submission for the Group Admin role.
-      if (strpos($key, 'group_admin') != FALSE) {
-        unset($form['group_roles']['widget']['#options'][$key]);
-      }
-    }
-
     $form['path']['#type'] = 'hidden';
   }
 
@@ -1203,20 +1148,6 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
 }
 
 /**
- * When updating a group membership.
- *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *   The group content.
- */
-function social_group_group_content_update(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
-      _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
-    }
-  }
-}
-
-/**
  * Form submit for membership edit form.
  *
  * @param array $form
@@ -1313,9 +1244,16 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     }
 
     $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $current_group);
-
+    // Based on the allowed visibility options for a group type,
+    // we disable the options which are not valid for the group.
+    // Remember for flexible groups we can have multiple options.
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
+      // If the element is disabled, we also need to move it from
+      // the default value.
+      if (!$allowed && $element['#default_value'] === $visibility) {
+        $element['#default_value'] = NULL;
+      }
     }
 
     // This contains the group that is passed back from the form_state as
@@ -1344,8 +1282,31 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
 
           foreach ($visibility_options as $visibility => $allowed) {
             $element[$visibility]['#disabled'] = !$allowed;
+            // If the element is disabled, we also need to move it from
+            // the default value.
+            if (!$allowed && $element['#default_value'] === $visibility) {
+              $element['#default_value'] = NULL;
+            }
           }
         }
+      }
+    }
+
+    // For flexible groups it could potentially still be empty.
+    // But in any way, from the available options, if its empty
+    // lets choose the most safe one.
+    if ($element['#default_value'] === NULL) {
+      // So if public isn't disabled, it will become public.
+      if (!$element['public']['#disabled']) {
+        $element['#default_value'] = 'public';
+      }
+      // So if community isn't disabled, it will become community.
+      if (!$element['community']['#disabled']) {
+        $element['#default_value'] = 'community';
+      }
+      // And if members isn't disabled, it will become members.
+      if (!$element['group']['#disabled']) {
+        $element['#default_value'] = 'group';
       }
     }
   }
@@ -1869,6 +1830,23 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
 function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     if (isset($form['groups'])) {
+      // Check if we are adding a translation or it's the default being editted.
+      /** @var \Drupal\Core\Entity\EntityForm $form_object */
+      $form_object = $form_state->getFormObject();
+      /** @var \Drupal\social_node\Entity\Node $node */
+      $node = $form_object->getEntity();
+      $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
+      // If it's not the original, we can safely say its a translation being
+      // added or editted. In that case we don't want users to override the
+      // group or visibility. We only allow those changes on the default as
+      // these can not change per language for now.
+      if (!$is_original_language) {
+        $form['field_content_visibility']['widget']['#disabled'] = TRUE;
+        $form['field_content_visibility']['widget']['#description'] = t('Changing visibility is disabled when translating.');
+        $form['groups']['widget']['#disabled'] = TRUE;
+        $form['groups']['widget']['#description'] = t('Changing groups is disabled when translating.');
+      }
+
       $change_fieldgroup_titles = [
         'group_topic_visibility',
         'group_event_visibility',
@@ -1907,8 +1885,12 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /** @var \Drupal\node\NodeInterface $node */
-  $node = $form_state->getFormObject()->getEntity();
+  // Check if we are adding a translation or it's the default being editted.
+  /** @var \Drupal\Core\Entity\EntityForm $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\social_node\Entity\Node $node */
+  $node = $form_object->getEntity();
+  $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
 
   // Check if the created node is new or updated.
   $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
@@ -1935,8 +1917,13 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   }
 
   // Now make sure the relevant GroupContent is removed or added.
-  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  // But only when we are on the original language, we don't want to update
+  // this when translating. The field is disabled for that scenario so no
+  // need to run this.
+  if ($is_original_language) {
+    $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+    $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  }
 }
 
 /**

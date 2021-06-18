@@ -9,10 +9,12 @@ Feature: I want to restrict full name visibility when nickname is used
     And I enable the module "social_profile_privacy"
     And I enable the nickname field on profiles
     And users:
-      | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name |
-      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         |
-      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            |
-      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |
+      | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name | roles       |
+      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         |             |
+      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            |             |
+      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |             |
+      | sm     | site_manager@example.com | 1      |                          |                         |                         | sitemanager |
+
 
   Scenario: Extra protection for real names
     Given I restrict real name usage
@@ -236,6 +238,51 @@ Feature: I want to restrict full name visibility when nickname is used
     And I click "Ressinel's Topic"
     Then I should see "Open"
 
+    # Check sorting members in group.
+    # First of all we need create a group.
+    And I am on "group/add"
+    And I press "Continue"
+    When I fill in "Title" with "Test open group"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I press "Save"
+    And I should see "Test open group" in the "Main content"
+    And I should see "Test open group" in the "Hero block"
+
+    # Adding members to a group.
+    And I click "Manage members"
+    Then I should see "Add members"
+    When I click the group member dropdown
+    And I click "Add directly"
+    And I fill in select2 input ".form-type-select" with "Open User" and select "Open"
+    And I wait for "3" seconds
+    And I should see the button "Cancel"
+    And I press "Save"
+
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Open" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Open" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # SM can view hidden fields, check if it works properly for him.
+    Given I am logged in as "sm"
+    And I am on "/all-groups"
+    And I click "Test open group"
+    And I click "Manage members"
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
     And I disable the module "social_profile_fields"
     And I disable the module "social_profile_privacy"
@@ -333,6 +380,51 @@ Feature: I want to restrict full name visibility when nickname is used
     And I click "Ressinel's Topic"
     Then I should see "User"
 
+    # Check sorting members in group.
+    # First of all we need create a group.
+    And I am on "group/add"
+    And I press "Continue"
+    When I fill in "Title" with "Test open group"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I press "Save"
+    And I should see "Test open group" in the "Main content"
+    And I should see "Test open group" in the "Hero block"
+
+    # Adding members to a group.
+    And I click "Manage members"
+    Then I should see "Add members"
+    When I click the group member dropdown
+    And I click "Add directly"
+    And I fill in select2 input ".form-type-select" with "Open User" and select "User"
+    And I wait for "3" seconds
+    And I should see the button "Cancel"
+    And I press "Save"
+
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # SM can view hidden fields, check if it works properly for him.
+    Given I am logged in as "sm"
+    And I am on "/all-groups"
+    And I click "Test open group"
+    And I click "Manage members"
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
     And I disable the module "social_profile_fields"
     And I disable the module "social_profile_privacy"
@@ -429,6 +521,51 @@ Feature: I want to restrict full name visibility when nickname is used
     And I click "Ressinel's Topic"
     Then I should not see "Secretive Person"
     But I should see "Hide my name"
+
+    # Check sorting members in group.
+    # First of all we need create a group.
+    And I am on "group/add"
+    And I press "Continue"
+    When I fill in "Title" with "Test open group"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I press "Save"
+    And I should see "Test open group" in the "Main content"
+    And I should see "Test open group" in the "Hero block"
+
+    # Adding members to a group.
+    And I click "Manage members"
+    Then I should see "Add members"
+    When I click the group member dropdown
+    And I click "Add directly"
+    And I fill in select2 input ".form-type-select" with "Hide my name" and select "Hide my name"
+    And I wait for "3" seconds
+    And I should see the button "Cancel"
+    And I press "Save"
+
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # SM can view hidden fields, check if it works properly for him.
+    Given I am logged in as "sm"
+    And I am on "/all-groups"
+    And I click "Test open group"
+    And I click "Manage members"
+    # Sorting members by ASC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
+
+    # Sorting members by DESC and checking if it works properly.
+    And I click the element with css selector "a[title='sort by Member']"
+    And I should see "Open User" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:first-of-type td.views-field-profile-entity-sortable" element
+    And I should see "Hide my name" in the ".view-display-id-page_group_manage_members .card__block--table tbody tr:last-of-type td.views-field-profile-entity-sortable" element
 
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
     And I disable the module "social_profile_fields"

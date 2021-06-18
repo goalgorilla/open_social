@@ -35,20 +35,30 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       return [];
     }
 
-    $storage = $this->entityTypeManager->getStorage('flagging');
-    $flaggings = $storage->loadByProperties([
-      'flag_id' => 'follow_term',
-      'entity_type' => 'taxonomy_term',
-      'entity_id' => $tids,
-    ]);
+    // Get entity group if exists.
+    $group = _social_group_get_current_group($entity);
 
-    foreach ($flaggings as $flagging) {
-      /** @var \Drupal\flag\FlaggingInterface $flagging */
-      $recipient = $flagging->getOwner();
+    // Get followers.
+    $uids = $this->connection->select('flagging', 'f')
+      ->fields('f', ['uid'])
+      ->condition('flag_id', 'follow_term')
+      ->condition('entity_type', 'taxonomy_term')
+      ->condition('entity_id', $tids, 'IN')
+      ->groupBy('uid')
+      ->execute()->fetchCol();
 
+    /** @var \Drupal\user\UserInterface[] $users */
+    $users = $this->entityTypeManager->getStorage('user')->loadMultiple($uids);
+
+    foreach ($users as $recipient) {
       // It could happen that a notification has been queued but the content or
       // account has since been deleted. In that case we can find no recipient.
       if (!$recipient instanceof UserInterface) {
+        continue;
+      }
+
+      // We don't send notifications to content creator.
+      if ($recipient->id() === $entity->getOwnerId()) {
         continue;
       }
 
@@ -60,19 +70,16 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
         continue;
       }
 
-      $group = _social_group_get_current_group($entity);
-      if ($group instanceof GroupInterface) {
-        if (!$group->getMember($recipient)) {
-          // We don't send notifications to content creator.
-          if ($recipient->id() !== $entity->getOwnerId()) {
-            if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
-              $recipients[] = [
-                'target_type' => 'user',
-                'target_id' => $recipient->id(),
-              ];
-            }
-          }
-        }
+      // Check if user have access to view node.
+      if (!$this->haveAccessToNode($recipient, $entity->id())) {
+        continue;
+      }
+
+      if (is_null($group) || !$group->getMember($recipient)) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $recipient->id(),
+        ];
       }
     }
 
