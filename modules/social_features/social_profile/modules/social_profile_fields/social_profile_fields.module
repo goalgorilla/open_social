@@ -344,7 +344,6 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
         $setting['postalCode'] = !$config->get('profile_address_field_postalcode') ? '0' : 'postalCode';
         $setting['administrativeArea'] = !$config->get('profile_address_field_administrative_area') ? '0' : 'administrativeArea';
 
-
         // Update the settings of address field.
         $fields['field_profile_address']->setSetting('fields', $setting);
       }
