@@ -30,9 +30,28 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     // PlatformTheme fields.
+    $registry->addFieldResolver('PlatformTheme', 'logo',
+      $builder->produce('platform_theme_logo')
+        ->map('platformTheme', $builder->fromParent())
+    );
     $registry->addFieldResolver('PlatformTheme', 'brandingColors',
       $builder->produce('platform_theme_branding_colors')
         ->map('platformTheme', $builder->fromParent())
+    );
+
+    // Image fields.
+    $registry->addFieldResolver('Image', 'alt',
+      $builder->fromValue('')
+    );
+    $registry->addFieldResolver('Image', 'id',
+      $builder->fromValue('')
+    );
+    $registry->addFieldResolver('Image', 'title',
+      $builder->fromValue('')
+    );
+    $registry->addFieldResolver('Image', 'url',
+      $builder->produce('logo_url')
+        ->map('logo', $builder->fromParent())
     );
 
     // PlatformBrandColorScheme fields.
