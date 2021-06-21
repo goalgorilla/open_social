@@ -2,14 +2,13 @@
 
 namespace Drupal\social_comment\Plugin\GraphQL\QueryHelper;
 
-use Drupal\comment\Entity\Comment;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\file\Entity\File;
-use Drupal\node\Entity\Node;
-use Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface;
+use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
+use Drupal\social_graphql\GraphQL\ConnectionQueryHelperBase;
 use Drupal\social_graphql\Wrappers\Cursor;
 use Drupal\social_graphql\Wrappers\Edge;
 use GraphQL\Deferred;
@@ -18,7 +17,7 @@ use GraphQL\Executor\Promise\Adapter\SyncPromise;
 /**
  * Loads files.
  */
-class CommentAttachmentsQueryHelper implements ConnectionQueryHelperInterface {
+class CommentAttachmentsQueryHelper extends ConnectionQueryHelperBase {
 
   /**
    * The conversations for which participants are being fetched.
@@ -49,22 +48,23 @@ class CommentAttachmentsQueryHelper implements ConnectionQueryHelperInterface {
   protected $database;
 
   /**
-   * FileQueryHelper constructor.
+   * Create a new connection query helper.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The conversations for which participants are being fetched.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The Drupal entity type manager.
    * @param string $sort_key
    *   The key that is used for sorting.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The Drupal entity type manager.
+   * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
+   *   The GraphQL entity buffer.
    * @param \Drupal\Core\Database\Connection $database
    *   Database Service Object.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The conversations for which participants are being fetched.
    */
-  public function __construct(EntityInterface $entity, EntityTypeManagerInterface $entity_type_manager, string $sort_key, Connection $database) {
-    $this->entity = $entity;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->sortKey = $sort_key;
+  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, Connection $database, EntityInterface $entity) {
+    parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
     $this->database = $database;
+    $this->entity = $entity;
   }
 
   /**
