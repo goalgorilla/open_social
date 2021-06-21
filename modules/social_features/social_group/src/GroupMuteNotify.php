@@ -5,8 +5,11 @@ namespace Drupal\social_group;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagServiceInterface;
+use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Class GroupMuteNotify.
@@ -72,18 +75,46 @@ class GroupMuteNotify {
       /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $entity->getGroup();
     }
-    elseif ($entity->getEntityTypeId() === 'post') {
-      /** @var \Drupal\social_post\Entity\Post $entity */
-      if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
-        /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $reference_item **/
-        $reference_item = $entity->get('field_recipient_group')->first();
-        /** @var \Drupal\Core\Entity\Plugin\DataType\EntityReference $entity_reference **/
-        $entity_reference = $reference_item->get('entity');
-        /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $entity_adapter **/
-        $entity_adapter = $entity_reference->getTarget();
+
+    $entity_type = $entity->getEntityTypeId();
+
+    switch ($entity_type) {
+      case 'post':
+        if ($entity instanceof PostInterface) {
+          /** @var \Drupal\social_post\Entity\Post $entity */
+          if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
+            /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $reference_item **/
+            $reference_item = $entity->get('field_recipient_group')->first();
+            /** @var \Drupal\Core\Entity\Plugin\DataType\EntityReference $entity_reference **/
+            $entity_reference = $reference_item->get('entity');
+            /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $entity_adapter **/
+            $entity_adapter = $entity_reference->getTarget();
+            /** @var \Drupal\group\Entity\GroupInterface $group */
+            $group = $entity_adapter->getValue();
+          }
+        }
+        break;
+
+      case 'node':
+        if ($entity instanceof NodeInterface) {
+          // Try to get the group.
+          $group_content = GroupContent::loadByEntity($entity);
+          if (!empty($group_content)) {
+            /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+            $group_content = reset($group_content);
+            /** @var \Drupal\group\Entity\GroupInterface $group */
+            $group = $group_content->getGroup();
+          }
+        }
+        break;
+
+      case 'comment':
+        /** @var \Drupal\comment\CommentInterface $entity */
+        $commented_entity = $entity->getCommentedEntity();
+
         /** @var \Drupal\group\Entity\GroupInterface $group */
-        $group = $entity_adapter->getValue();
-      }
+        $group = self::getGroupByContent($commented_entity);
+        break;
     }
 
     return $group ?? NULL;
