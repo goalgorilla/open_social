@@ -71,7 +71,7 @@ class FollowContentActivityContext extends ActivityContextBase {
       // It could happen that a notification has been queued but the content or
       // account has since been deleted. In that case we can find no recipient.
       if (!$recipient instanceof UserInterface) {
-        break;
+        continue;
       }
 
       // The owner of a node automatically follows his / her own content.
@@ -80,8 +80,8 @@ class FollowContentActivityContext extends ActivityContextBase {
         // We need to compare the owner ID of the original node to the one
         // being the current recipient.
         $original_node = $original_related_entity->getCommentedEntity();
-        if ($original_node instanceof Node && $recipient->id() !== $original_node->getOwnerId()) {
-          break;
+        if ($original_node instanceof Node && $recipient->id() === $original_node->getOwnerId()) {
+          continue;
         }
       }
 
