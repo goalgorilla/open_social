@@ -73,6 +73,9 @@ views.view.latest_topics:
   update_actions:
     add:
       display:
+        block_latest_topics:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
         default:
           display_options:
             filters:
@@ -116,8 +119,12 @@ views.view.latest_topics:
                 relationship: none
                 table: node_field_data
                 value: '1'
+        group_topics_block:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
         page_latest_topics:
           display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
             filters:
               default_langcode:
                 admin_label: ''
@@ -207,6 +214,7 @@ views.view.topics:
                 relationship: none
                 table: node_field_data
                 value: '1'
+            rendering_language: '***LANGUAGE_language_interface***'
         default:
           display_options:
             filters:
@@ -250,3 +258,6 @@ views.view.topics:
                 relationship: none
                 table: node_field_data
                 value: '1'
+        page_profile:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
