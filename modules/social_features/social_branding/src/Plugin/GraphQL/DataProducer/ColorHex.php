@@ -35,7 +35,7 @@ class ColorHex extends EntityDataProducerPluginBase {
    *   The branding color CSS codification.
    */
   public function resolve(Color $color) : string {
-    return $color->getHex();
+    return $color->hexRgb();
   }
 
 }

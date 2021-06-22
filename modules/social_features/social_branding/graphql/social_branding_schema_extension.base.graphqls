@@ -2,12 +2,12 @@
 #                              Type Information                                #
 ################################################################################
 """
-Information about the theming of the Platform.
+Information about the branding of the Platform.
 
 This provides access to branding information such as the logo or 
 colors configured by a site manager of the platform.
 """
-type PlatformTheme {
+type PlatformBranding {
   """
   The platform's logo.
   
@@ -20,16 +20,6 @@ type PlatformTheme {
   NULL if the platform has not configured a brand color scheme.
   """
   brandingColors: PlatformBrandColorScheme
-}
-
-"""
-The platform's logo.
-
-The logo is configured by site managers. This provides a way to change 
-the logo of an Open Social platform in broad strokes.
-"""
-type Logo {
-  url: Url
 }
 
 """
@@ -172,7 +162,7 @@ type Color {
   """
   The color as hexadecimal string.
   """
-  hex: HexRGBColor!
+  hexRGB: HexRGBColor!
   """
   The color as individual RGBA components.
   """

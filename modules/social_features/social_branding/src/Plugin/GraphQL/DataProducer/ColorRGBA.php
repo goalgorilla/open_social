@@ -3,7 +3,6 @@
 namespace Drupal\social_branding\Plugin\GraphQL\DataProducer;
 
 use Drupal\social_branding\Wrappers\Color;
-use Drupal\social_branding\Wrappers\RGBAColor;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 
 /**
@@ -11,10 +10,10 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  *
  * @DataProducer(
  *   id = "color_rgba",
- *   name = @Translation("RGBA Color"),
- *   description = @Translation("The RGBA color."),
+ *   name = @Translation("Color"),
+ *   description = @Translation("The color."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("RGBA Color")
+ *     label = @Translation("Color")
  *   ),
  *   consumes = {
  *     "color" = @ContextDefinition("any",
@@ -32,11 +31,11 @@ class ColorRGBA extends EntityDataProducerPluginBase {
    * @param \Drupal\social_branding\Wrappers\Color $color
    *   The branding color.
    *
-   * @return \Drupal\social_branding\Wrappers\RGBAColor
-   *   The branding color RGBA codification.
+   * @return \Drupal\social_branding\Wrappers\Color
+   *   The branding color.
    */
-  public function resolve(Color $color) : RGBAColor {
-    return $color->getRgba();
+  public function resolve(Color $color) : Color {
+    return $color;
   }
 
 }

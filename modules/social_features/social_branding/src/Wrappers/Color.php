@@ -10,38 +10,20 @@ use Spatie\Color\Hex;
 class Color {
 
   /**
-   * The color as hexadecimal string..
+   * The color as hexadecimal string.
    *
-   * @var string
+   * @var \Spatie\Color\Hex
    */
-  private string $hex;
-
-  /**
-   * The color representation as individual RGBA components.
-   *
-   * @var \Drupal\social_branding\Wrappers\RGBAColor
-   */
-  private RGBAColor $rgba;
-
-  /**
-   * The color representation that's valid in css style rules.
-   *
-   * @var string
-   */
-  private string $css;
+  private Hex $hex;
 
   /**
    * Create a new Color instance.
    *
    * @param string $color
-   *   The determined color.
+   *   The color as a hexadecimal RGB string: e.g. #FF33AA.
    */
   public function __construct(string $color) {
-    $hexColor = Hex::fromString($color);
-
-    $this->hex = $hexColor->red() . $hexColor->green() . $hexColor->blue();
-    $this->rgba = new RGBAColor($color);
-    $this->css = $hexColor->__toString();
+    $this->hex = Hex::fromString($color);
   }
 
   /**
@@ -50,18 +32,8 @@ class Color {
    * @return string
    *   The color as hexadecimal string.
    */
-  public function getHex() : string {
-    return $this->hex;
-  }
-
-  /**
-   * Get the RGBA color.
-   *
-   * @return \Drupal\social_branding\Wrappers\RGBAColor
-   *   The color representation as individual RGBA components.
-   */
-  public function getRgba() : RGBAColor {
-    return $this->rgba;
+  public function hexRgb() : string {
+    return $this->hex->red() . $this->hex->green() . $this->hex->blue();
   }
 
   /**
@@ -70,8 +42,48 @@ class Color {
    * @return string
    *   The color representation that's valid in css style rules.
    */
-  public function getCss() : string {
-    return $this->css;
+  public function css() : string {
+    return $this->hex->__toString();
+  }
+
+  /**
+   * Get red component.
+   *
+   * @return int
+   *   The red component value on a scale of 0-255.
+   */
+  public function red() : int {
+    return Hex::fromString($this->hex)->toRgba()->red();
+  }
+
+  /**
+   * Get green component.
+   *
+   * @return int
+   *   The green component value on a scale of 0-255.
+   */
+  public function green() : int {
+    return Hex::fromString($this->hex)->toRgba()->green();
+  }
+
+  /**
+   * Get blue component.
+   *
+   * @return int
+   *   The blue component value on a scale of 0-255.
+   */
+  public function blue() : int {
+    return Hex::fromString($this->hex)->toRgba()->blue();
+  }
+
+  /**
+   * Get alpha component.
+   *
+   * @return int
+   *   The alpha component value on a scale of 0-255.
+   */
+  public function alpha() : int {
+    return Hex::fromString($this->hex)->toRgba()->alpha();
   }
 
 }
