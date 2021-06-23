@@ -74,7 +74,7 @@ class QueryUser extends EntityDataProducerPluginBase {
    * @todo https://www.drupal.org/project/social/issues/3191637
    */
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $query_helper = new UserQueryHelper($this->graphqlEntityBuffer, $this->entityTypeManager, $sortKey);
+    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);
