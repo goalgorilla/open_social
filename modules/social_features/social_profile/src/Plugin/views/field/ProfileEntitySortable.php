@@ -125,8 +125,24 @@ class ProfileEntitySortable extends RenderedEntity {
           // We will have different expressions depending on is the Nickname
           // field provided or not.
           $field = in_array('field_profile_nick_name', $order_by_fields) ?
-            "CASE WHEN profile__field_profile_nick_name.field_profile_nick_name_value IS NULL THEN CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value)) ELSE TRIM(profile__field_profile_nick_name.field_profile_nick_name_value) END" :
-            "CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))";
+            "CASE WHEN
+              profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
+            THEN
+              TRIM(profile__field_profile_nick_name.field_profile_nick_name_value)
+            WHEN
+              (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+            THEN
+              CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))
+            ELSE
+              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+            END" :
+            "CASE WHEN
+              ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+            THEN
+              CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))
+            ELSE
+              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+            END";
           $query->addField(
             NULL,
             $field,
