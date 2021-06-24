@@ -124,6 +124,12 @@ class ProfileEntitySortable extends RenderedEntity {
           $this->field_alias = 'profile_full_name';
           // We will have different expressions depending on is the Nickname
           // field provided or not.
+          // Members will be sort by next queue:
+          // - Nickname
+          // - Firstname + Lastname (if Nickname is NULL)
+          // - Firstname (if Nickname and Lastname are NULL)
+          // - Lastname (if Nickname and Firstname are NULL)
+          // - Username (if all Name fields are NULL)
           $field = in_array('field_profile_nick_name', $order_by_fields) ?
             "CASE WHEN
               profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
@@ -132,14 +138,14 @@ class ProfileEntitySortable extends RenderedEntity {
             WHEN
               (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
             THEN
-              CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))
+              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
             ELSE
               TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
             END" :
             "CASE WHEN
               ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
             THEN
-              CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))
+              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
             ELSE
               TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
             END";
