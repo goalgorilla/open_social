@@ -13,62 +13,88 @@ use Drupal\Tests\UnitTestCase;
  */
 class ColorTest extends UnitTestCase {
 
-  const HEXRGB = 'ff22aa';
-
-  /**
-   * The color.
-   *
-   * @var \Drupal\social_branding\Wrappers\Color
-   */
-  protected $color;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    $this->color = new Color('#' . self::HEXRGB);
-  }
-
   /**
    * @covers ::hexRgb
    */
-  public function testHexRgb(): void {
-    $this->assertEquals(self::HEXRGB, $this->color->hexRgb());
+  public function testColorRepresentationAsHexRgbString(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals('ffffff', $color1->hexRgb());
+    $this->assertIsString($color1->hexRgb());
+
+    $color2 = new Color('#ff22aa');
+
+    $this->assertEquals('ff22aa', $color2->hexRgb());
   }
 
   /**
    * @covers ::css
    */
-  public function testCss(): void {
-    $this->assertEquals('#' . self::HEXRGB, $this->color->css());
+  public function testColorRepresentationAsCssString(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals('#ffffff', $color1->css());
+    $this->assertIsString($color1->css());
+
+    $color2 = new Color('#ff22aa');
+
+    $this->assertEquals('#ff22aa', $color2->css());
   }
 
   /**
    * @covers ::red
    */
-  public function testRed(): void {
-    $this->assertEquals(255, $this->color->red());
+  public function testColorRepresentationAsRedComponent(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals(255, $color1->red());
+    $this->assertIsInt($color1->red());
+
+    $color2 = new Color('#0022aa');
+
+    $this->assertEquals(0, $color2->red());
   }
 
   /**
    * @covers ::green
    */
-  public function testGreen(): void {
-    $this->assertEquals(34, $this->color->green());
+  public function testColorRepresentationAsGreenComponent(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals(255, $color1->green());
+    $this->assertIsInt($color1->green());
+
+    $color2 = new Color('#0022aa');
+
+    $this->assertEquals(34, $color2->green());
   }
 
   /**
    * @covers ::blue
    */
-  public function testBlue(): void {
-    $this->assertEquals(170, $this->color->blue());
+  public function testColorRepresentationAsBlueComponent(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals(255, $color1->blue());
+    $this->assertIsInt($color1->blue());
+
+    $color2 = new Color('#0022aa');
+
+    $this->assertEquals(170, $color2->blue());
   }
 
   /**
    * @covers ::alpha
    */
-  public function testAlpha(): void {
-    $this->assertEquals(1, $this->color->alpha());
+  public function testColorRepresentationAsAlphaComponent(): void {
+    $color1 = new Color('#ffffff');
+
+    $this->assertEquals(1, $color1->alpha());
+    $this->assertIsFloat($color1->alpha());
+
+    $color2 = new Color('#0022aa');
+
+    $this->assertEquals(1, $color2->alpha());
   }
 
 }

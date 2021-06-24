@@ -11,7 +11,7 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  * @DataProducer(
  *   id = "color_css",
  *   name = @Translation("CSS Color"),
- *   description = @Translation("The CSS color."),
+ *   description = @Translation("A color value that is valid for the CSS 'color' property. Any CSS spec compliant string."),
  *   produces = @ContextDefinition("string",
  *     label = @Translation("CSS Color")
  *   ),

@@ -79,10 +79,10 @@ class Color {
   /**
    * Get alpha component.
    *
-   * @return int
+   * @return float
    *   The alpha component value on a scale of 0-255.
    */
-  public function alpha() : int {
+  public function alpha() : float {
     return $this->hex->toRgba()->alpha();
   }
 

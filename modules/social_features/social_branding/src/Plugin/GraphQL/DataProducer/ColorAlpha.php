@@ -12,7 +12,7 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  *   id = "color_alpha",
  *   name = @Translation("Color alpha component"),
  *   description = @Translation("The color alpha component."),
- *   produces = @ContextDefinition("int",
+ *   produces = @ContextDefinition("float",
  *     label = @Translation("Color alpha component")
  *   ),
  *   consumes = {
@@ -31,10 +31,10 @@ class ColorAlpha extends EntityDataProducerPluginBase {
    * @param \Drupal\social_branding\Wrappers\Color $color
    *   The color.
    *
-   * @return int
+   * @return float
    *   The color alpha component.
    */
-  public function resolve(Color $color) : int {
+  public function resolve(Color $color) : float {
     return $color->alpha();
   }
 
