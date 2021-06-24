@@ -53,7 +53,7 @@ class Color {
    *   The red component value on a scale of 0-255.
    */
   public function red() : int {
-    return Hex::fromString($this->hex)->toRgba()->red();
+    return $this->hex->toRgba()->red();
   }
 
   /**
@@ -63,7 +63,7 @@ class Color {
    *   The green component value on a scale of 0-255.
    */
   public function green() : int {
-    return Hex::fromString($this->hex)->toRgba()->green();
+    return $this->hex->toRgba()->green();
   }
 
   /**
@@ -73,7 +73,7 @@ class Color {
    *   The blue component value on a scale of 0-255.
    */
   public function blue() : int {
-    return Hex::fromString($this->hex)->toRgba()->blue();
+    return $this->hex->toRgba()->blue();
   }
 
   /**
@@ -83,7 +83,7 @@ class Color {
    *   The alpha component value on a scale of 0-255.
    */
   public function alpha() : int {
-    return Hex::fromString($this->hex)->toRgba()->alpha();
+    return $this->hex->toRgba()->alpha();
   }
 
 }
