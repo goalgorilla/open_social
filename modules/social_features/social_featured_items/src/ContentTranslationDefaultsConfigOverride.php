@@ -2,8 +2,10 @@
 
 namespace Drupal\social_featured_items;
 
+use Drupal\social_core\ContentTranslationConfigOverrideBase;
+
 /**
- * Provides content translation for entities in the Social Featured Items module.
+ * Provides content translation for the Social Featured Items module.
  *
  * @package Drupal\social_featured_items
  */

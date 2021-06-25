@@ -5,7 +5,7 @@ namespace Drupal\social_content_block;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
- * Provides content translation for entities in the Social Content Block module.
+ * Provides content translation for the Social Content Block module.
  *
  * @package Drupal\social_content_block
  */

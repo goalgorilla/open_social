@@ -2,8 +2,10 @@
 
 namespace Drupal\social_follow_landing_page;
 
+use Drupal\social_core\ContentTranslationConfigOverrideBase;
+
 /**
- * Provides content translation for entities in the Social Follow Landing Page module.
+ * Provides content translation for the Social Follow Landing Page module.
  *
  * @package Drupal\social_follow_landing_page
  */

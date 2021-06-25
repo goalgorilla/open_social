@@ -3,7 +3,7 @@
 namespace Drupal\social_core;
 
 /**
- * Provides content translation for entities in the Social Core module.
+ * Provides content translation for the Social Core module.
  *
  * @package Drupal\social_core
  */
