@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides content translation for the Social Content Block module.
