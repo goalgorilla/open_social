@@ -75,15 +75,14 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   public function executeMultiple(array $objects) {
     $users = [];
     // Process the event enrollment chunks. These need to be converted to users.
-    foreach ($objects as $chunk) {
+    /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
+    foreach ($objects as $enrollment) {
       $entities = [];
-      /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
-      foreach ($chunk as $enrollment) {
-        // Get the user from the even enrollment.
-        /** @var \Drupal\user\Entity\User $user */
-        $user = User::load($enrollment->getAccount());
-        $entities[] = $this->execute($user);
-      }
+
+      // Get the user from the even enrollment.
+      /** @var \Drupal\user\Entity\User $user */
+      $user = User::load($enrollment->getAccount());
+      $entities[] = $this->execute($user);
 
       $users += $this->entityTypeManager->getStorage('user')->loadMultiple($entities);
     }
