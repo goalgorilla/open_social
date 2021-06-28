@@ -2,12 +2,32 @@
 
 namespace Drupal\social_core;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 /**
  * Provides content translation for the Social Core module.
  *
  * @package Drupal\social_core
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
+
+  use StringTranslationTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getModule() {
+    return 'social_core';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDisplayName() {
+    // We can't use dependency injection here because it causes a circular
+    // dependency for the configuration override.
+    return $this->t('Social Core');
+  }
 
   /**
    * {@inheritdoc}

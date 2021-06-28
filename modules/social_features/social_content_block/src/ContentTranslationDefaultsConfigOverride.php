@@ -11,6 +11,24 @@ use Drupal\social_core\ContentTranslationConfigOverrideBase;
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
 
+  use StringTranslationTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getModule() {
+    return 'social_content_block';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDisplayName() {
+    // We can't use dependency injection here because it causes a circular
+    // dependency for the configuration override.
+    return $this->t('Social Content Block');
+  }
+
   /**
    * {@inheritdoc}
    */
