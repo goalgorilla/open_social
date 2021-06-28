@@ -21,15 +21,6 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName() {
-    // We can't use dependency injection here because it causes a circular
-    // dependency for the configuration override.
-    return \Drupal::translation()->translate('Landing Pages');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getTranslationOverrides() {
     return [
       'language.content_settings.node.landing_page' => [

@@ -3,7 +3,6 @@
 namespace Drupal\social_event;
 
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides content translation defaults for the event content type.
@@ -12,22 +11,11 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
 
-  use StringTranslationTrait;
-
   /**
    * {@inheritdoc}
    */
   protected function getModule() {
     return 'social_event';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDisplayName() {
-    // We can't use dependency injection here because it causes a circular
-    // dependency for the configuration override.
-    return $this->t('Events');
   }
 
   /**

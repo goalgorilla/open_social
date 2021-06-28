@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_flexible_group;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
@@ -12,22 +11,11 @@ use Drupal\social_core\ContentTranslationConfigOverrideBase;
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
 
-  use StringTranslationTrait;
-
   /**
    * {@inheritdoc}
    */
   protected function getModule() {
     return 'social_group_flexible_group';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDisplayName() {
-    // We can't use dependency injection here because it causes a circular
-    // dependency for the configuration override.
-    return $this->t('Flexible group');
   }
 
   /**

@@ -28,25 +28,12 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * Returns the module that provides the overrides.
    *
-   * This is used as the social_contant_translation.settings configuration key
-   * as well as in the cache suffix for the overrides.
+   * This is used as the cache suffix for the overrides.
    *
    * @return string
    *   The module name providing the overrides.
    */
   abstract protected function getModule();
-
-  /**
-   * Returns the display name for this set of configuration overrides.
-   *
-   * This can be used in a user interface to let sitemanagers determine which
-   * parts of Open Social should be translatable. For consistency when
-   * displaying this should always be a plural string.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The (translatable) string that can be shown to the user.
-   */
-  abstract protected function getDisplayName();
 
   /**
    * {@inheritdoc}
@@ -56,10 +43,9 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
 
     // This setting can't be changed in an override because that would create
     // and endless loop in trying to apply the override.
-    $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
-    $is_enabled = $settings->getOriginal($this->getModule(), FALSE);
+    $is_content_translations_enabled = \Drupal::moduleHandler()->getModule('social_content_translation');
 
-    if ($is_enabled) {
+    if ($is_content_translations_enabled) {
       $translation_overrides = $this->getTranslationOverrides();
 
       foreach ($translation_overrides as $name => $override) {
@@ -93,11 +79,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
    * {@inheritdoc}
    */
   public function getCacheableMetadata($name) {
-    $metadata = new CacheableMetadata();
-    if (in_array($name, $this->getOverriddenConfigurations())) {
-      $metadata->addCacheTags(['config:social_content_translation.settings']);
-    }
-    return $metadata;
+    return new CacheableMetadata();
   }
 
   /**
