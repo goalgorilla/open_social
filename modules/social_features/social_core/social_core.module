@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,6 +31,9 @@ use Drupal\user\UserInterface;
 function social_core_page_attachments(array &$attachments) {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_core/accessibility';
+
+  // The library with logo improvements on the top of the gin toolbar.
+  $attachments['#attached']['library'][] = 'social_core/admin-toolbar';
 }
 
 /**
@@ -74,6 +78,38 @@ function social_core_modules_installed($modules) {
     (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
       ->moduleExists('social_book'))) {
     \Drupal::service('module_installer')->install(['social_book_featured']);
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  $field_groups = $form_display->getThirdPartySettings('field_group');
+
+  if (!isset($field_groups['group_settings'])) {
+    return;
+  }
+
+  $fields = [];
+
+  // List of all fields which are split by section.
+  foreach ($field_groups as $field_group) {
+    $fields = array_merge($fields, $field_group['children']);
+  }
+
+  // List of all fields which aren't split by section.
+  $fields = array_diff(array_keys($form_display->getComponents()), $fields);
+
+  if ($fields) {
+    $field_groups['group_settings']['children'] = array_merge(
+      $field_groups['group_settings']['children'],
+      $fields
+    );
+
+    $form_display
+      ->setThirdPartySetting('field_group', 'group_settings', $field_groups['group_settings'])
+      ->save();
   }
 }
 
@@ -862,6 +898,31 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           $form['author_info']['created'] = $form['created'];
           unset($form['created']);
         }
+
+        $has_option_fields = FALSE;
+
+        foreach (['promote', 'sticky'] as $field) {
+          if (isset($form[$field])) {
+            $form['options'][$field] = $form[$field];
+            unset($form[$field]);
+            $has_option_fields = TRUE;
+          }
+        }
+
+        // When the "Promoted to front page" field or the "Sticky at top of
+        // lists" field is enabled then move their wrapper (the "Promotion
+        // options" sub-section) to the "Settings" section.
+        // @see \Drupal\node\NodeForm::form().
+        if ($has_option_fields) {
+          $form['options']['#group'] = 'group_settings';
+
+          // Place the "Promotion options" sub-section after the "Publish
+          // status" sub-section.
+          $form['options']['#weight'] = 120;
+
+          // Display sub-section as expanded.
+          $form['options']['#optional'] = FALSE;
+        }
       }
 
       // According to FileWidget.php we cant use a widget form alter.
@@ -925,7 +986,7 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
   // since we hide the element, and the default is checked,
   // the path will never be overridden if someone updates it.
   // So we need to check this in our custom submit handler.
-  $default_path = $form['path']['widget'][0]['alias']['#default_value'];
+  $default_path = isset($form['path']['widget'][0]['alias']['#default_value']) ? $form['path']['widget'][0]['alias']['#default_value'] : '';
   $input = $form_state->getUserInput();
   $updated_path = isset($input['path'][0]['alias']) ? $input['path'][0]['alias'] : '';
   // If we don't have a match, make sure we override the checkbox as well.
@@ -935,6 +996,13 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
     $form_state->setUserInput($input);
     // Override the value.
     $form_state->setValue(['path', '0', 'pathauto'], "0");
+
+    // If the updated path is empty, make it automatic again.
+    if (empty($updated_path)) {
+      $input['path'][0]['pathauto'] = "1";
+      $form_state->setUserInput($input);
+      $form_state->setValue(['path', '0', 'pathauto'], "1");
+    }
   }
 }
 
@@ -1008,6 +1076,22 @@ function _social_core_set_default_email_logo_for_socialblue() {
         $socialblue_settings->set('email_logo', $default_image)->save();
       }
     }
+  }
+}
+
+/**
+ * Used to set the favicon of GIN to open socials logo.
+ */
+function _social_core_set_favicon() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    // Update the favicon in GIN.
+    $gin_config['favicon']['use_default'] = FALSE;
+    $gin_config['favicon']['path'] = 'themes/contrib/socialblue/favicon.ico';
+    $gin_config['favicon']['mimetype'] = 'image/vnd.microsoft.icon';
+    $config->setData($gin_config);
+    $config->save();
   }
 }
 
