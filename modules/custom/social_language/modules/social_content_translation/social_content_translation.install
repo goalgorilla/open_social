@@ -73,3 +73,19 @@ function social_content_translation_disable_field_translations() {
   \Drupal::service('entity_type.manager')->clearCachedDefinitions();
   \Drupal::service('router.builder')->setRebuildNeeded();
 }
+
+/**
+ * Add support translations for entities.
+ */
+function social_content_translation_update_8001() {
+  $module_names = [
+    'social_group_flexible_group',
+  ];
+
+  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
+
+  foreach ($module_names as $module_name) {
+    $config->set($module_name, TRUE);
+    $config->save(TRUE);
+  }
+}

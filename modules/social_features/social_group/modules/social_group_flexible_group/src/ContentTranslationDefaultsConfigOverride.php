@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\social_event;
+namespace Drupal\social_group_flexible_group;
 
-use Drupal\social_core\ContentTranslationConfigOverrideBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
- * Provides content translation defaults for the event content type.
+ * Provides content translation defaults for the flexible group type.
  *
- * @package Drupal\social_event
+ * @package Drupal\social_group_flexible_group
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
 
@@ -18,7 +18,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    * {@inheritdoc}
    */
   protected function getModule() {
-    return 'social_event';
+    return 'social_group_flexible_group';
   }
 
   /**
@@ -27,7 +27,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   protected function getDisplayName() {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
-    return $this->t('Events');
+    return $this->t('Flexible group');
   }
 
   /**
@@ -35,23 +35,18 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
-      'language.content_settings.node.event' => [
+      'language.content_settings.group.flexible_group' => [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
           ],
         ],
       ],
-      'core.base_field_override.node.event.title' => [
+      'core.base_field_override.group.flexible_group.menu_link' => [
         'translatable' => TRUE,
       ],
-      'core.base_field_override.node.event.menu_link' => [
-        'translatable' => TRUE,
-      ],
-      'core.base_field_override.node.event.path' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.event.field_event_image' => [
+
+      'field.field.group.flexible_group.field_group_image' => [
         'third_party_settings' => [
           'content_translation' => [
             'translation_sync' => [
