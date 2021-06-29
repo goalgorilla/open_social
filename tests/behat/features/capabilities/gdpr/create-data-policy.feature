@@ -12,83 +12,98 @@ Feature: Create data policy and view new policy
       | behatuser        | behatuser@example.com        | 1      |             |
 
     Given I enable the module "social_gdpr"
-
-    Given I am logged in as "behatuser"
-    Then I should be on the homepage
-
     Given I am logged in as "behatsitemanager" with the "without consent" permission
-    And I am on "admin/config/people/data-policy"
-    Then I should be on "data-policy/revisions"
-    And I should see the heading "Revisions" in the "Hero block" region
-    And I should see the link "Details" in the "Tabs" region
-    And I should see the link "Revisions" in the "Tabs" region
-    And I should see the text "Revision"
-    And I should see the text "Operations"
-    And I should see the text "List is empty."
-    And I should see the link "Add new revision" in the "Sidebar second" region
+    When I am on "admin/config/people/data-policy"
 
-    When I click "Details"
-    Then I should be on "data-policy"
-    And I should see the text "Data policy is not created."
-
-    When I click "Revisions"
-    And I click "Add new revision"
-    Then I should be on "data-policy/revisions/add"
+    # Create a new data policy entity, since now it is possible to use multiple checkboxes and multiple entities
+    Then I should see the link "Add new entity"
+    When I click "Add new entity"
+    Then I should be on "/admin/config/people/data-policy/add"
+    And I should see the text "Name"
     And I should see the text "Description"
-    And I should see the text "Active"
-    And I should see "Active" in the ".form-item-active-revision.form-disabled .control-label" element
+    And I fill in "Name" with "First version of the data policy"
+    When I fill in the "Description" WYSIWYG editor with "Description for the first version of the data policy"
+    And I press "Save"
+
+    # Create a new revision for the new data policy entity.
+    Then I should be on "/admin/config/people/data-policy"
+    And I should see the link "First version of the data policy"
+    And I should see "Revisions" in the "table" element
+    And I click "Revisions" on the row containing "First version of the data policy"
+    Then I should see the link "Add new revision"
+    And I click "Add new revision"
+    And I should see the text "Name"
+    And I should see the text "Description"
+    And I should see the text "Revision log message"
+    And I fill in "Name" with "Second version of the data policy"
+    When I fill in the "Description" WYSIWYG editor with "Description for the second version of the data policy"
+    And I press "Save"
+
+    # Active this new revision.
+    And I click the xth "0" element with the css ".dropbutton__toggle"
+    Then I should see "Edit"
+    When I click the xth "0" element with the css ".edit.dropbutton-action a"
+    Then I should see the text "Active"
     And I should see the text "When this field is checked, after submitting the form, a new revision will be created which will be marked active."
-    And I should see "Create new revision" in the ".form-item-new-revision.form-disabled .control-label" element
     And I should see the text "Revision log message"
     And I should see the text "Briefly describe the changes you have made."
-    And I should see "Save"
-
-    When I press "Save"
-    Then I should see the error message "1 error has been found: Description"
-
-    When I fill in the "Description" WYSIWYG editor with "First version of the data policy."
+    And I check the box "Active"
     And I press "Save"
-    Then I should be on "data-policy/revisions"
-    And I should see the success message "Created new revision."
-    And I should see "behatsitemanager" in the "Main content" region
-    And I should see the text "(current revision)"
-    And I should see "View"
 
-    When I press "View"
-    Then I should be on "data-policy/revisions/1?data_policy=1"
+    # Add mandatory checkbox.
+    When I am on "admin/config/people/data-policy/settings"
+    Then I should see "Consent text"
+    And I fill in "Consent text" with "I agree with the [id:1*]"
+    And I press "Save configuration"
+
+    # Create a new revision for the first entity, it can be our created entity or some existing entity.
+    When I am on "admin/config/people/data-policy"
+    Then I click the xth "0" element with the css ".revisions.dropbutton-action a"
+    And I should see the link "Add new revision"
+    And I click "Add new revision"
+    And I should see the text "Name"
     And I should see the text "Description"
-    And I should see the text "First version of the data policy."
-    And I should see the text "Authored by"
-    And I should see "behatsitemanager" in the "Main content" region
+    And I should see the text "Revision log message"
+    And I fill in "Name" with "Third version of the data policy"
+    When I fill in the "Description" WYSIWYG editor with "Description for the third version of the data policy"
+    And I press "Save"
 
-    When I am on "data-policy"
-    Then I should not see the text "Data policy is not created."
+    # Active this new revision for the first entity.
+    And I click the xth "0" element with the css ".dropbutton__toggle"
+    Then I should see "Edit"
+    When I click the xth "0" element with the css ".edit.dropbutton-action a"
+    Then I should see the text "Active"
+    And I should see the text "When this field is checked, after submitting the form, a new revision will be created which will be marked active."
+    And I should see the text "Revision log message"
+    And I should see the text "Briefly describe the changes you have made."
+    And I check the box "Active"
+    And I press "Save"
 
     Given I am logged in as "behatuser"
     Then I should be on "data-policy-agreement?destination=/stream"
-    And I should see the heading "Data policy agreement" in the "Page title block" region
+
     And I should see the text "Our data policy has been updated on"
     And I should see the text "Agreement to the data policy is required for continue using this platform. If you do not agree with the data policy, you will be guided to"
     And I should see the link "the account cancellation"
     And I should see the text "process."
     And I should see the text "I agree with the"
-    And I should see the link "data policy"
+    And I should see the link "third version of the data policy"
     And I should see "Save"
 
     When I click "the account cancellation"
     Then I should see the text "Are you sure you want to cancel your account?"
     When I click "Cancel"
-    And I click "data policy"
+    And I click "third version of the data policy"
     And I wait for AJAX to finish
-    Then I should see "Data policy" in the ".ui-dialog-title" element
-    And I should see the text "First version of the data policy."
+    Then I should see "Third version of the data policy" in the ".ui-dialog-title" element
+    And I should see the text "Description for the third version of the data policy"
 
     When I logout
-    And I click "Sign up"
+    And I am on "user/register"
     Then I should see the text "I agree with the"
-    And I should see the link "data policy"
+    And I should see the link "third version of the data policy"
 
-    When I click "data policy"
+    When I click "third version of the data policy"
     And I wait for AJAX to finish
-    Then I should see "Data policy" in the ".ui-dialog-title" element
-    And I should see the text "First version of the data policy."
+    Then I should see "Third version of the data policy" in the ".ui-dialog-title" element
+    And I should see the text "Description for the third version of the data policy"
