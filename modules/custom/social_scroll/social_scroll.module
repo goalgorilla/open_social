@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Contains social_scroll.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\social_scroll\SocialScrollManagerInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_scroll_form_view_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\social_scroll\SocialScrollManagerInterface $social_scroll_manager */
+  $social_scroll_manager = \Drupal::service('social_scroll.manager');
+  $enabled_views = array_keys($social_scroll_manager->getEnabledViewIds());
+  $display_id = $form_state->get('display_id');
+
+  foreach ($enabled_views as $view) {
+    $config_name = $social_scroll_manager->getConfigName($view);
+    $current_view = \Drupal::configFactory()->getEditable($config_name);
+    $displays = $current_view->getOriginal('display');
+    $pages = [];
+
+    if (is_array($displays)) {
+      foreach ($displays as $id => $display) {
+        if ($display['display_plugin'] !== 'block') {
+          $pages[] = $id;
+        }
+      }
+    }
+
+    if (in_array($display_id, $pages)) {
+      // Hide the pager block if this view is overridden by this module.
+      $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
+      /** @var \Drupal\views_ui\ViewEditForm $form_object */
+      $form_object = $form_state->getFormObject();
+      $module_name = \Drupal::moduleHandler()
+        ->getName(SocialScrollManagerInterface::MODULE_NAME);
+      $form_object->messenger()
+        ->addWarning(t('You cannot change the pager settings because it is overridden by the "@module_name" module. You can change the settings @here', [
+          '@module_name' => $module_name,
+          '@here' => Link::createFromRoute(t('here'), 'social_scroll.settings')
+            ->toString(),
+        ]));
+    }
+  }
+}
