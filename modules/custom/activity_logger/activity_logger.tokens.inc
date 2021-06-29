@@ -6,12 +6,12 @@
  */
 
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_token_info().
@@ -28,10 +28,6 @@ function activity_logger_token_info() {
     'description' => t("The related node title."),
   ];
 
-  $message['gtrimmed-title'] = [
-    'name' => t("Groups trimmed title"),
-    'description' => t("The related group trimmed title."),
-  ];
   $message['gtitle'] = [
     'name' => t("Groups title"),
     'description' => t("The related group title."),
@@ -81,7 +77,6 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'node-title':
         case 'gtitle':
-        case 'gtrimmed-title':
         case 'gurl':
         case 'recipient-user':
         case 'recipient-user-url':
@@ -151,20 +146,12 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
-                if ($name === 'gtitle' || $name === 'gtrimmed-title') {
+                if ($name === 'gtitle') {
                   $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-
                   if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
                     $group = $group->getTranslation($curr_langcode);
                   }
-
-                  if ($name === 'gtrimmed-title' && strlen($group->label()) > 80) {
-                    $label = substr($group->label(), 0, 80) . ' ...';
-                  }
-
-                  // If we have "gtrimmed-title" token, then we will display a
-                  // trimmed group label, if no, then a normal group label.
-                  $replacements[$original] = $label ?? $group->label();
+                  $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
                   $gurl = Url::fromRoute('entity.group.canonical',
