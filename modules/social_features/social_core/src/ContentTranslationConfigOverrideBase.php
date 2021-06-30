@@ -43,7 +43,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
 
     // This setting can't be changed in an override because that would create
     // and endless loop in trying to apply the override.
-    $is_content_translations_enabled = \Drupal::moduleHandler()->getModule('social_content_translation');
+    $is_content_translations_enabled = \Drupal::moduleHandler()->moduleExists('social_content_translation');
 
     if ($is_content_translations_enabled) {
       $translation_overrides = $this->getTranslationOverrides();
