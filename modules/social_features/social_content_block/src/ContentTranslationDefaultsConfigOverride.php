@@ -35,6 +35,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Custom content list block" custom block.
       'language.content_settings.block_content.custom_content_list' => [
         'third_party_settings' => [
           'content_translation' => [

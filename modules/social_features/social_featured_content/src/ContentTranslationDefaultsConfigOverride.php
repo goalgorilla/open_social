@@ -35,6 +35,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Featured Content" custom block.
       'language.content_settings.block_content.featured' => [
         'third_party_settings' => [
           'content_translation' => [
@@ -43,6 +44,17 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         ],
       ],
       'core.base_field_override.block_content.featured.info' => [
+        'translatable' => TRUE,
+      ],
+      // Translations for "Featured Content" paragraph type.
+      'paragraphs.paragraphs_type.featured' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
+      'core.base_field_override.paragraph.featured.status' => [
         'translatable' => TRUE,
       ],
     ];

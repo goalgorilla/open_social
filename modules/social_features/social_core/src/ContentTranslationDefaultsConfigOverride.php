@@ -34,21 +34,8 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Basic block" custom block.
       'language.content_settings.block_content.basic' => [
-        'third_party_settings' => [
-          'content_translation' => [
-            'enabled' => TRUE,
-          ],
-        ],
-      ],
-      'language.content_settings.block_content.hero_call_to_action_block' => [
-        'third_party_settings' => [
-          'content_translation' => [
-            'enabled' => TRUE,
-          ],
-        ],
-      ],
-      'language.content_settings.block_content.platform_intro' => [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
@@ -58,10 +45,15 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'core.base_field_override.block_content.basic.info' => [
         'translatable' => TRUE,
       ],
-      'core.base_field_override.block_content.hero_call_to_action_block.info' => [
-        'translatable' => TRUE,
+      // Translations for "Hero call to action block" custom block.
+      'language.content_settings.block_content.hero_call_to_action_block' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'core.base_field_override.block_content.platform_intro.info' => [
+      'core.base_field_override.block_content.hero_call_to_action_block.info' => [
         'translatable' => TRUE,
       ],
       'field.field.block_content.hero_call_to_action_block.field_hero_image' => [
@@ -74,6 +66,17 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
             ],
           ],
         ],
+      ],
+      // Translations for "Platform introduction" custom block.
+      'language.content_settings.block_content.platform_intro' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
+      'core.base_field_override.block_content.platform_intro.info' => [
+        'translatable' => TRUE,
       ],
     ];
   }

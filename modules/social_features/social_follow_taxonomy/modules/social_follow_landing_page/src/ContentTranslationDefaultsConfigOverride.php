@@ -35,6 +35,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Follow tags" custom block.
       'language.content_settings.block_content.follow_tags' => [
         'third_party_settings' => [
           'content_translation' => [
