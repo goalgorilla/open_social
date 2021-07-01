@@ -101,25 +101,25 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('platform_branding_colors_load_color_by_name')
         ->map('brandingColors', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-active-bg'))
-        ->map('configName', $builder->fromValue('navbar_active_bg'))
+        ->map('configName', $builder->fromValue("navbar_active_bg'"))
     );
     $registry->addFieldResolver('PlatformBrandColorScheme', 'navbarActiveText',
       $builder->produce('platform_branding_colors_load_color_by_name')
         ->map('brandingColors', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-active-text'))
-        ->map('configName', $builder->fromValue('navbar_active_text'))
+        ->map('configName', $builder->fromValue("navbar_active_text'"))
     );
     $registry->addFieldResolver('PlatformBrandColorScheme', 'navbarSecondaryBackground',
       $builder->produce('platform_branding_colors_load_color_by_name')
         ->map('brandingColors', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-sec-bg'))
-        ->map('configName', $builder->fromValue('navbar_sec_bg'))
+        ->map('configName', $builder->fromValue("navbar_sec_bg'"))
     );
     $registry->addFieldResolver('PlatformBrandColorScheme', 'navbarSecondaryText',
       $builder->produce('platform_branding_colors_load_color_by_name')
         ->map('brandingColors', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-sec-text'))
-        ->map('configName', $builder->fromValue('navbar_sec_text'))
+        ->map('configName', $builder->fromValue("navbar_sec_text'"))
     );
 
     // Color fields.
