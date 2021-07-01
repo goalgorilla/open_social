@@ -59,6 +59,24 @@ class SocialSendEmail extends SocialSendEmailBase {
         ],
         '#value' => $subtitle,
       ];
+      $form['group'] = [
+        '#type' => 'hidden',
+        '#value' => $this->context['group_id'],
+      ];
+      // Add the token tree UI.
+      $token_types = ['group',
+                      'user'
+                     ];
+      if (\Drupal::service('module_handler')->moduleExists('social_magic_login')) {
+        $token_types[] = 'auto-login';
+      }
+      $form['token_help'] = array(
+        '#theme' => 'token_tree_link',
+        '#token_types' => $token_types,
+        '#show_restricted' => TRUE,
+        '#global_types' => FALSE,
+        '#weight' => 50,
+      );
     }
 
     return parent::buildConfigurationForm($form, $form_state);

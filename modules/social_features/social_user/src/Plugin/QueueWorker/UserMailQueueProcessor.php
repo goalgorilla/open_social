@@ -13,6 +13,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\group\Entity\Group;
 use Drupal\social_queue_storage\Entity\QueueStorageEntity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -107,7 +108,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       // Check if it's from the configured email bundle type.
       if ($queue_storage->bundle() === 'email') {
         // When there are user ID's configured.
-        if ($data['users']) {
+        if (isset ($data['users']) && $data['users']) {
           // Load the users that are in the batch.
           $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
 
@@ -121,7 +122,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
         }
 
         // When there are email addresses configured.
-        if ($data['user_mail_addresses']) {
+        if (isset ($data['user_mail_addresses']) && $data['user_mail_addresses']) {
           foreach ($data['user_mail_addresses'] as $mail_address) {
             if ($this->emailValidator->isValid($mail_address['email_address'])) {
               // Attempt sending mail.
@@ -160,7 +161,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param string $display_name
    *   In case of anonymous users a display name will be given.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL, $group_id = NULL) {
     $context = [
       'subject' => $mail_params->get('field_subject')->value,
       'message' => $mail_params->get('field_message')->value,
@@ -168,6 +169,14 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
 
     if ($display_name) {
       $context['display_name'] = $display_name;
+    }
+
+    if ($user = user_load_by_mail($user_mail)) {
+      $context['user'] = $user;
+    }
+
+    if ($group_id = $mail_params->get('field_group_id')->target_id) {
+      $context['group'] = Group::load($group_id);
     }
 
     // Attempt sending mail.
