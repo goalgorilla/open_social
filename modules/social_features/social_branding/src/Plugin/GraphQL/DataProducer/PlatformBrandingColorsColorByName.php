@@ -7,7 +7,12 @@ use Drupal\social_branding\Wrappers\Color;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 
 /**
- * The branding color.
+ * Get the proper branding color by given color name.
+ *
+ * The color name is the related configuration key we use in the configuration
+ * files, so we use different consumers to get it dynamically:
+ * - configName: socialblue.settings (socialblue theme settings by default)
+ * - paletteName: color.theme.socialblue (socialblue theme settings customized)
  *
  * @DataProducer(
  *   id = "platform_branding_colors_load_color_by_name",
