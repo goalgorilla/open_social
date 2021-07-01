@@ -47,7 +47,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         'translatable' => TRUE,
       ],
       // Translations for "Featured Item" paragraph type.
-      'paragraphs.paragraphs_type.featured_item' => [
+      'language.content_settings.paragraph.featured_item' => [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
@@ -69,7 +69,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         ],
       ],
       // Translations for "Featured Items" paragraph type.
-      'paragraphs.paragraphs_type.featured_items' => [
+      'language.content_settings.paragraph.featured_items' => [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,

@@ -47,7 +47,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         'translatable' => TRUE,
       ],
       // Translations for "Featured Content" paragraph type.
-      'paragraphs.paragraphs_type.featured' => [
+      'language.content_settings.paragraph.featured' => [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
