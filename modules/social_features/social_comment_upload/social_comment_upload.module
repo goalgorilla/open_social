@@ -75,7 +75,9 @@ function social_comment_upload_preprocess_comment(&$variables) {
         }
       }
 
-      if (($topic = $comment->getCommentedEntity()) instanceof NodeInterface) {
+      // In case when the comment has replies then we should display the count
+      // of replies for that comment.
+      if (($node = $comment->getCommentedEntity()) instanceof NodeInterface) {
         $reply_count = \Drupal::entityQuery('comment')
           ->condition('entity_type', $comment->getCommentedEntityTypeId())
           ->condition('entity_id', $comment->getCommentedEntityId())
@@ -84,7 +86,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
           ->execute();
 
         $variables['comment_count'] = $reply_count;
-        $variables['comment_url'] = $topic->toUrl()->toString();
+        $variables['comment_url'] = $node->toUrl()->toString();
       }
 
       $more_button = $comment->toLink(t('Read more'))->toString();
