@@ -290,7 +290,7 @@ function social_activity_update_10301() {
     $view->save(TRUE);
     // Log the updates.
     foreach ($updated as $display_name) {
-      \Drupal::logger('system')->info(dt('Filter removed from display: @name', ['@name' => $display_name]));
+      \Drupal::logger('system')->info('Filter removed from display: %name', ['%name' => $display_name]);
     }
   }
 }
