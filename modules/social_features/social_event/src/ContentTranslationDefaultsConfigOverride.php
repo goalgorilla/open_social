@@ -2,7 +2,7 @@
 
 namespace Drupal\social_event;
 
-use Drupal\social_core\ContentTranslationConfigOverrideBase;
+use Drupal\social_content_translation\ContentTranslationConfigOverrideBase;
 
 /**
  * Provides content translation defaults for the event content type.

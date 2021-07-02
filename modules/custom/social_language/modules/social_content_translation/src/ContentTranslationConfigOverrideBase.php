@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_core;
+namespace Drupal\social_content_translation;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
@@ -9,7 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Provides a base class for configurable content translation config overrides.
  *
- * @package Drupal\social_core
+ * @package Drupal\social_content_translation
  */
 abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOverrideInterface {
 
