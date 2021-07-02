@@ -2,10 +2,8 @@
 
 namespace Drupal\social_user\GraphQL\QueryHelper;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
-use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
-use Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface;
+use Drupal\social_graphql\GraphQL\ConnectionQueryHelperBase;
 use Drupal\social_graphql\Wrappers\Cursor;
 use Drupal\social_graphql\Wrappers\Edge;
 use Drupal\user\Entity\User;
@@ -16,44 +14,7 @@ use GraphQL\Executor\Promise\Adapter\SyncPromise;
 /**
  * Loads users.
  */
-class UserQueryHelper implements ConnectionQueryHelperInterface {
-
-  /**
-   * The Drupal entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The GraphQL entity buffer.
-   *
-   * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
-   */
-  protected EntityBuffer $graphqlEntityBuffer;
-
-  /**
-   * The key that is used for sorting.
-   *
-   * @var string
-   */
-  protected string $sortKey;
-
-  /**
-   * UserQueryHelper constructor.
-   *
-   * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
-   *   The GraphQL entity buffer.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The Drupal entity type manager.
-   * @param string $sort_key
-   *   The key that is used for sorting.
-   */
-  public function __construct(EntityBuffer $graphql_entity_buffer, EntityTypeManagerInterface $entity_type_manager, string $sort_key) {
-    $this->graphqlEntityBuffer = $graphql_entity_buffer;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->sortKey = $sort_key;
-  }
+class UserQueryHelper extends ConnectionQueryHelperBase {
 
   /**
    * {@inheritdoc}
@@ -99,13 +60,6 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
       default:
         throw new \InvalidArgumentException("Unsupported sortKey for sorting '{$this->sortKey}'");
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAggregateSortFunction() : ?string {
-    return NULL;
   }
 
   /**

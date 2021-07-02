@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Contains social_content_translation.module.
+ */
+
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_content_translation_form_alter(&$form, FormStateInterface $form_state) {
+  // We need to set correct default value for "langcode" as users can
+  // create content in different then default language.
+  if (method_exists($form_state->getFormObject(), 'getEntity')) {
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity instanceof ContentEntityInterface) {
+      // We need to set "langcode" only to new values
+      // and if user doesn't set it manually with UI.
+      if ($entity->isNew()) {
+        if (!empty($form['langcode']) && !Element::isVisibleElement($form['langcode'])) {
+          if (isset($form['langcode']['widget'][0]['value']['#default_value'])) {
+            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+            $form['langcode']['widget'][0]['value']['#default_value'] = $language;
+          }
+        }
+      }
+    }
+  }
+}
