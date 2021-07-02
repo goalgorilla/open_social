@@ -8,18 +8,18 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Gets the platform branding logo information.
+ * Gets the platform branding logo url.
  *
  * @DataProducer(
- *   id = "platform_branding_logo",
- *   name = @Translation("Platform Branding Logo"),
- *   description = @Translation("The Platform Branding Logo."),
+ *   id = "platform_branding_logo_url",
+ *   name = @Translation("Platform Branding Logo Url"),
+ *   description = @Translation("The Platform Branding Logo Url."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Platform Branding Logo")
+ *     label = @Translation("Platform Branding Logo Url")
  *   )
  * )
  */
-class PlatformBrandingLogo extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class PlatformBrandingLogoUrl extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
@@ -41,7 +41,7 @@ class PlatformBrandingLogo extends DataProducerPluginBase implements ContainerFa
   }
 
   /**
-   * PlatformBrandingLogo constructor.
+   * PlatformBrandingLogoUrl constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -58,14 +58,16 @@ class PlatformBrandingLogo extends DataProducerPluginBase implements ContainerFa
   }
 
   /**
-   * Returns platform branding logo information.
+   * Returns platform branding logo url.
    *
    * @return string|null
-   *   The platform branding logo configuration.
+   *   The string with platform branding logo url.
    */
   public function resolve() : ?string {
     if ($this->config->get('socialblue.settings')->get('logo.path')) {
-      return $this->config->get('socialblue.settings')->get('logo.path');
+      $wrapper = \Drupal::service('stream_wrapper_manager')
+        ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
+      return $wrapper->getExternalUrl();
     }
     return NULL;
   }
