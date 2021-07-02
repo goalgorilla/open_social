@@ -65,11 +65,7 @@ class PlatformBranding extends DataProducerPluginBase implements ContainerFactor
    *   The platform branding configuration.
    */
   public function resolve() : ?ImmutableConfig {
-    if ($this->config->get('color.theme.socialblue')->get('palette.brand-primary')) {
-      return $this->config->get('color.theme.socialblue');
-    }
-
-    return $this->config->get('socialblue.settings');
+    return $this->config->get('system.theme');
   }
 
 }

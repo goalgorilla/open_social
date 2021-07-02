@@ -24,6 +24,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     'bootstrap.settings',
     // Delete it from exclusions when the schema is added.
     // @see https://www.drupal.org/project/socialbase/issues/3221046
+    // @see https://www.drupal.org/project/socialblue/issues/3221047
     'socialbase.settings',
     'socialblue.settings',
   ];
@@ -51,15 +52,19 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
    * Ensure the platform branding fields are properly added to the endpoint.
    */
   public function testPlatformBrandingFieldsPresence() : void {
+    $system_theme = $this->config('system.theme');
     $config = $this->config('socialblue.settings');
+    // Prepare logo url.
+    $config->set('logo.path', 'public://logo.png')->save();
+    $expected_logo_url = 'http://localhost/' . $this->siteDirectory . '/files/logo.png';
     // Set anonymous user.
     $this->setUpCurrentUser();
 
-    $expected_url = 'http://localhost/' . $this->siteDirectory . '/files/screenshot_0.png';
     $this->assertResults(
       '
         query {
           platformBranding {
+            logoUrl
             brandingColors {
               primary {
                 css
@@ -178,6 +183,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       [],
       [
         'platformBranding' => [
+          'logoUrl' => $expected_logo_url,
           'brandingColors' => [
             'primary' => [
               'css' => $this->getColor($config->get('color_primary'))->css(),
@@ -293,7 +299,75 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_theme)
         ->addCacheableDependency($config)
+    );
+  }
+
+  /**
+   * Test that the platform branding logo url can return null.
+   */
+  public function testLogoUrlCanReturnNull(): void {
+    $system_theme = $this->config('system.theme');
+    // Set anonymous user.
+    $this->setUpCurrentUser();
+
+    $this->assertResults(
+      '
+        query {
+          platformBranding {
+            logoUrl
+          }
+        }
+      ',
+      [],
+      [
+        'platformBranding' => [
+          'logoUrl' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_theme)
+    );
+  }
+
+  /**
+   * Test that the platform branding colors can return null.
+   */
+  public function testBrandingColorsCanReturnNull(): void {
+    $system_theme = $this->config('system.theme');
+    // Change default theme.
+    $system_theme->set('default', 'bootstrap')->save();
+    // Set anonymous user.
+    $this->setUpCurrentUser();
+
+    $this->assertResults(
+      '
+        query {
+          platformBranding {
+            brandingColors {
+              primary {
+                hexRGB
+                css
+                rgba {
+                  alpha
+                  blue
+                  green
+                  red
+                }
+              }
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'platformBranding' => [
+          'brandingColors' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_theme)
     );
   }
 

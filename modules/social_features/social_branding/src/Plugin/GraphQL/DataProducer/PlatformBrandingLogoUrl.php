@@ -3,6 +3,7 @@
 namespace Drupal\social_branding\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,7 +17,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("The Platform Branding Logo Url."),
  *   produces = @ContextDefinition("string",
  *     label = @Translation("Platform Branding Logo Url")
- *   )
+ *   ),
+ *   consumes = {
+ *     "platformBranding" = @ContextDefinition("any",
+ *       label = @Translation("Platform Branding"),
+ *       required = TRUE
+ *     )
+ *   }
  * )
  */
 class PlatformBrandingLogoUrl extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
@@ -60,15 +67,21 @@ class PlatformBrandingLogoUrl extends DataProducerPluginBase implements Containe
   /**
    * Returns platform branding logo url.
    *
+   * @param \Drupal\Core\Config\ImmutableConfig $platform_branding
+   *   The platform branding configuration.
+   *
    * @return string|null
    *   The string with platform branding logo url.
    */
-  public function resolve() : ?string {
-    if ($this->config->get('socialblue.settings')->get('logo.path')) {
-      $wrapper = \Drupal::service('stream_wrapper_manager')
-        ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
-      return $wrapper->getExternalUrl();
+  public function resolve(ImmutableConfig $platform_branding) : ?string {
+    if ($platform_branding->get('default') === 'socialblue') {
+      if ($this->config->get('socialblue.settings')->get('logo.path')) {
+        $wrapper = \Drupal::service('stream_wrapper_manager')
+          ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
+        return $wrapper->getExternalUrl();
+      }
     }
+
     return NULL;
   }
 
