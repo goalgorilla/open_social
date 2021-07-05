@@ -8,7 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
-use Drupal\Core\Link;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -71,13 +71,26 @@ function social_comment_upload_preprocess_comment(&$variables) {
 
         // Add the amount of attachments to the comment.
         if (!empty($count_arr)) {
-          $text = \Drupal::translation()->formatPlural(count($count_arr),
-            '1 attachment.',
-            '@count attachments.'
-          );
-          $variables['comment_attachments_count'] = Link::fromTextAndUrl($text, $comment->permalink());
+          $variables['comment_attachments_count'] = count($count_arr);
         }
       }
+
+      // In case when the comment has replies then we should display the count
+      // of replies for that comment.
+      if (($node = $comment->getCommentedEntity()) instanceof NodeInterface) {
+        $reply_count = \Drupal::entityQuery('comment')
+          ->condition('entity_type', $comment->getCommentedEntityTypeId())
+          ->condition('entity_id', $comment->getCommentedEntityId())
+          ->condition('pid', $comment->id())
+          ->count()
+          ->execute();
+
+        $variables['comment_count'] = $reply_count;
+        $variables['comment_url'] = $node->toUrl()->toString();
+      }
+
+      $more_button = $comment->toLink(t('Read more'))->toString();
+      $variables['more_link'] = $more_button;
     }
   }
 }
