@@ -2,6 +2,8 @@
 
 namespace Drupal\social_core;
 
+use Drupal\social_content_translation\ContentTranslationConfigOverrideBase;
+
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
