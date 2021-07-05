@@ -19,3 +19,23 @@ social_event.settings:
       label: 'Language code'
     _core:
       type: _core_config_info
+
+views.sort.social_event_date_sort:
+  type: views_sort
+  label: 'Date sort'
+  mapping:
+    granularity:
+      type: string
+      label: 'Granularity'
+
+views.filter.social_event_date_filter:
+  type: views_filter
+  label: 'IN operator'
+  mapping:
+    expose:
+      type: mapping
+      label: 'Expose'
+      mapping:
+        reduce:
+          type: boolean
+          label: 'Reduce'
