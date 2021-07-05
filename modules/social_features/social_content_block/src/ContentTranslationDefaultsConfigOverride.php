@@ -2,7 +2,7 @@
 
 namespace Drupal\social_content_block;
 
-use Drupal\social_core\ContentTranslationConfigOverrideBase;
+use Drupal\social_content_translation\ContentTranslationConfigOverrideBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
