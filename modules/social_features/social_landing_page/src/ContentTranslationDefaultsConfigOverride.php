@@ -2,7 +2,7 @@
 
 namespace Drupal\social_landing_page;
 
-use Drupal\social_content_translation\ContentTranslationConfigOverrideBase;
+use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
  * Provides content translation defaults for the landing page content type.
