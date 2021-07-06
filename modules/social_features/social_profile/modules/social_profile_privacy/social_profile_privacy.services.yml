@@ -16,3 +16,6 @@ services:
   social_profile_privacy.helper:
     class: Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelper
     arguments: ['@entity_type.manager', '@entity_field.manager']
+
+  social_profile_privacy.batch.helper:
+    class: Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper

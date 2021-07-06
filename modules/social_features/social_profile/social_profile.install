@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
@@ -29,6 +31,8 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image.
   _social_profile_add_default_profile_image();
+  // Update the field definitions.
+  _social_profile_field_definitions_update();
 
   // Create a profile for user 1.
   Profile::create([
@@ -480,4 +484,33 @@ function social_profile_update_8903() {
     ->getEditable('social_profile.settings')
     ->set('enable_profile_tagging', TRUE)
     ->save();
+}
+
+/**
+ * Update the field definitions on install, or in an update hook.
+ */
+function _social_profile_field_definitions_update() {
+  // Create field storage for the 'Profile Name' base field.
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+}
+
+/**
+ * Install Profile name field to profile entity type.
+ */
+function social_profile_update_8904() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Profile name'))
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setReadOnly(TRUE);
+
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installFieldStorageDefinition('profile_name', 'profile', 'social_profile', $field_storage_definition);
+}
+
+/**
+ * Update field definitions.
+ */
+function social_profile_update_8905() {
+  _social_profile_field_definitions_update();
 }

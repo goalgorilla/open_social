@@ -15,6 +15,7 @@ third_party_settings:
     activity_context: follow_tag_activity_context
     activity_destinations:
       notifications: notifications
+      email: email
     activity_create_direct: false
     activity_aggregate: false
     activity_entity_condition: ''
@@ -23,7 +24,13 @@ label: 'Create node with following tag'
 description: 'A person create content with tag I am following'
 text:
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] with the tag(s) [social_taxonomy:taxonomy_i_follow] that you follow.</p>'
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
     format: full_html
 settings:
   'token options':

@@ -1,0 +1,50 @@
+views.view.event_manage_enrollments:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              langcode:
+                id: langcode
+                table: node_field_data
+                field: langcode
+                relationship: field_event
+                group_type: group
+                admin_label: ''
+                operator: in
+                value:
+                  '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                entity_type: node
+                entity_field: langcode
+                plugin_id: language

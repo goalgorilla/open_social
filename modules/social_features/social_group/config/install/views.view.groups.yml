@@ -8,8 +8,6 @@ dependencies:
     - group
     - social_group
     - user
-_core:
-  default_config_hash: j7pIbbkhq33FlY-AoeiglfeTG18bPehQSYti_JGti1E
 id: groups
 label: 'User Groups'
 module: views
@@ -139,7 +137,47 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-      filters: {  }
+      filters:
+        default_langcode:
+          id: default_langcode
+          table: groups_field_data
+          field: default_langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: group
+          entity_field: default_langcode
+          plugin_id: boolean
       sorts:
         created:
           id: created
@@ -252,6 +290,7 @@ display:
       use_more: true
       use_more_always: true
       use_more_text: 'All groups'
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
@@ -277,6 +316,7 @@ display:
         weight: 0
         context: '0'
         menu_name: main
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
