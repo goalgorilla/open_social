@@ -1863,3 +1863,31 @@ function social_event_update_8919() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_event_update_10301() {
+  $config_factory = \Drupal::configFactory();
+
+  $config_factory->getEditable('core.entity_view_display.node.event.activity')
+    ->set('content.field_event_comments.settings.always_show_all_comments', TRUE)
+    ->save();
+
+  $config_factory
+    ->getEditable('field.field.node.event.field_content_visibility')
+    ->set('default_value', [])
+    ->save();
+
+  $config_factory
+    ->getEditable('views.view.events')
+    ->set('display.events_overview.display_options.filters.event_date.value', NULL)
+    ->set('display.events_overview.display_options.filters.event_date.group_info.group_items.3.value', NULL)
+    ->save();
+
+  $config_factory
+    ->getEditable('views.view.upcoming_events')
+    ->set('display.page_community_events.display_options.filters.event_date.value', NULL)
+    ->set('display.page_community_events.display_options.filters.event_date.group_info.group_items.3.value', NULL)
+    ->save();
+}

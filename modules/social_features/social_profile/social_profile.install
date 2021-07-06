@@ -514,3 +514,13 @@ function social_profile_update_8904() {
 function social_profile_update_8905() {
   _social_profile_field_definitions_update();
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_profile_update_10301() {
+  \Drupal::configFactory()
+    ->getEditable('core.entity_view_display.profile.profile.medium_teaser')
+    ->set('content.field_profile_image.third_party_settings', [])
+    ->save();
+}

@@ -412,3 +412,20 @@ function social_topic_update_8909() {
     }
   }
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_topic_update_10301() {
+  $config_factory = \Drupal::configFactory();
+
+  $config_factory
+    ->getEditable('core.entity_view_display.node.topic.activity')
+    ->set('content.field_topic_comments.settings.always_show_all_comments', TRUE)
+    ->save();
+
+  $config_factory
+    ->getEditable('field.field.node.topic.field_content_visibility')
+    ->set('default_value', [])
+    ->save();
+}

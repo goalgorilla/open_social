@@ -668,3 +668,24 @@ function social_group_update_10201() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_group_update_10301() {
+  $config_factory = \Drupal::configFactory();
+
+  $config_factory
+    ->getEditable('views.view.group_events')
+    ->set('display.default.display_options.filters.event_date.value', NULL)
+    ->set('display.default.display_options.filters.event_date.group_info.group_items.3.value', NULL)
+    ->save();
+
+  $config_factory
+    ->getEditable('views.view.group_manage_members')
+    ->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.batch', TRUE)
+    ->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.batch_size', 10)
+    ->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.buttons', FALSE)
+    ->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.clear_on_exposed', FALSE)
+    ->save();
+}
