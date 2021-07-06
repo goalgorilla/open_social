@@ -2,7 +2,7 @@
 
 namespace Drupal\social_page;
 
-use Drupal\social_content_translation\ContentTranslationConfigOverrideBase;
+use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
  * Provides content translation defaults for the basic page content type.
