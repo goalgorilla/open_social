@@ -1,0 +1,115 @@
+views.view.groups:
+  expected_config: {  }
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              default_langcode:
+                id: default_langcode
+                table: groups_field_data
+                field: default_langcode
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                entity_type: group
+                entity_field: default_langcode
+                plugin_id: boolean
+        block_user_groups:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+        page_user_groups:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+views.view.newest_groups:
+  expected_config: {  }
+  update_actions:
+    change:
+      display:
+        page_all_groups:
+          display_options:
+            defaults:
+              filters: true
+              filter_groups: true
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              default_langcode:
+                id: default_langcode
+                table: groups_field_data
+                field: default_langcode
+                relationship: none
+                group_type: group
+                admin_label: ''
+                operator: '='
+                value: '1'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                entity_type: group
+                entity_field: default_langcode
+                plugin_id: boolean
+        block_newest_groups:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'
+        page_all_groups:
+          display_options:
+            rendering_language: '***LANGUAGE_language_interface***'

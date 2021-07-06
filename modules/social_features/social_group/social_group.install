@@ -657,9 +657,24 @@ function social_group_update_8907() {
 }
 
 /**
- * Import flag "Mute Group Notifications" configurations.
+ * Add translations support for views with groups.
  */
 function social_group_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+
+/**
+ * Import flag "Mute Group Notifications" configurations.
+ */
+function social_group_update_10202() {
   $configs = [
     'install' => [
       'flag.flag.mute_group_notifications',
@@ -672,7 +687,7 @@ function social_group_update_10201() {
 /**
  * Update the permissions for social_group.
  */
-function social_group_update_10202() {
+function social_group_update_10203() {
   $permissions = [
     'flag mute_group_notifications',
     'unflag mute_group_notifications',
@@ -693,12 +708,12 @@ function social_group_update_10202() {
 /**
  * Update User Groups view configurations.
  */
-function social_group_update_10203() {
+function social_group_update_10204() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group', 'social_group_update_10203');
+  $updateHelper->executeUpdate('social_group', 'social_group_update_10204');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
@@ -707,7 +722,7 @@ function social_group_update_10203() {
 /**
  * Import exposed block filter configurations of User Groups view.
  */
-function social_group_update_10204() {
+function social_group_update_10205() {
   $configs = [
     'optional' => [
       'block.block.exposed_form_groups_page_user_groups',
