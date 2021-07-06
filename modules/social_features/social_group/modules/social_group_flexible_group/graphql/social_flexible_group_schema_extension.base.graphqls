@@ -14,7 +14,7 @@ type FlexibleGroup implements Group & Node {
   """
   A hero image for the group.
   """
-  image: Image
+  heroImage: Image
   """
   The description of the group as rendered HTML.
   """
@@ -33,7 +33,7 @@ type FlexibleGroup implements Group & Node {
 The set of valid sort keys for the group query.
 """
 enum FlexibleGroupSortKeys {
-  """Sort by the `created_at` value"""
+  """Sort by flexible group creation date"""
   CREATED_AT
 }
 

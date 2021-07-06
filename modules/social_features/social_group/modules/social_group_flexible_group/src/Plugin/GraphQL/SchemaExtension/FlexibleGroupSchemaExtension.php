@@ -60,10 +60,13 @@ class FlexibleGroupSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->fromPath('entity:group', 'field_group_description.0.value')
     );
 
-    $registry->addFieldResolver('Event', 'image',
-      $builder->produce('field')
-        ->map('entity', $builder->fromParent())
-        ->map('field', $builder->fromValue('field_event_image'))
+    $registry->addFieldResolver('FlexibleGroup', 'heroImage',
+      $builder->compose(
+        $builder->fromPath('entity:group:flexible_group', 'field_group_image.value'),
+        $builder->produce('field')
+          //          ->map('entity', $builderСалоРо->fromParent())
+          ->map('field', $builder->fromParent())
+      )
     );
 
     $registry->addFieldResolver('FlexibleGroup', 'created',

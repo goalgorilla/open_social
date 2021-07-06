@@ -3,7 +3,6 @@
 namespace Drupal\social_group_flexible_group\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\social_event\Plugin\GraphQL\QueryHelper\EventQueryHelper;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 use Drupal\social_group_flexible_group\Plugin\GraphQL\QueryHelper\GroupQueryHelper;
@@ -76,7 +75,7 @@ class QueryGroup extends EntityDataProducerPluginBase {
    *   An entity connection with results and data about the paginated results.
    */
   public function resolve($type, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $query_helper = new GroupQueryHelper($this->entityTypeManager, $sortKey, $type);
+    $query_helper = new GroupQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $type);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);
