@@ -128,3 +128,30 @@ function social_post_photo_update_8901() {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Display field_album for post photo featured view mode.
+ */
+function social_post_photo_update_10201() {
+  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.post.photo.featured');
+  $content = $config->get('content');
+  $hidden = $config->get('hidden');
+
+  $content['field_album'] = [
+    'type' => 'social_album_entity_reference_label',
+    'weight' => 4,
+    'region' => 'content',
+    'label' => 'hidden',
+    'settings' => ['link' => TRUE],
+    'third_party_settings' => [],
+  ];
+
+  if (in_array('field_album', $hidden)) {
+    unset($hidden['field_album']);
+  }
+
+  $config
+    ->set('content', $content)
+    ->set('hidden', $hidden)
+    ->save();
+}

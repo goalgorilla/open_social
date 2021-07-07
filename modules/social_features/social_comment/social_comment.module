@@ -291,26 +291,10 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
 
-      // Define which display mode should be used for commented_entity.
-      $allowed_routes = [
-        'entity.node.canonical',
-        'layout_builder.overrides.node.view',
-      ];
-
-      if (
-        in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
-        \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
-      ) {
-        $node_view_display = 'featured';
-      }
-      else {
-        $node_view_display = 'activity_comment';
-      }
-
       // Teaser of commented entity.
       $build['commented_entity'] = \Drupal::entityTypeManager()
         ->getViewBuilder($commented_entity_type)
-        ->view($commented_entity, $node_view_display);
+        ->view($commented_entity, 'activity_comment');
 
       // Prepare the "Show all comments" link.
       if ($commented_entity_type === 'post') {
@@ -337,7 +321,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         )->toRenderable();
       }
 
-      $comment_count = $commented_entity->{$comment_field_name}->comment_count;
+      $comment_count = isset($comment_field_name) ? $commented_entity->{$comment_field_name}->comment_count : '';
       $t_args = [':num_comments' => $comment_count];
 
       if ($comment_count > 1) {
