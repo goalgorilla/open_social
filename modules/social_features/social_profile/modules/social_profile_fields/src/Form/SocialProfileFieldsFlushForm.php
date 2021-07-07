@@ -170,6 +170,11 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
         if (isset($postalcode_val) && $postalcode_val == FALSE) {
           $empty[] = 'postalCode';
         }
+
+        $administrativearea_val = $settings->get('profile_address_field_administrative_area');
+        if (isset($administrativearea_val) && $administrativearea_val == FALSE) {
+          $empty[] = 'administrativeArea';
+        }
       }
     }
     return $empty;

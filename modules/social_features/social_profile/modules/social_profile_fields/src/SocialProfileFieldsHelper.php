@@ -106,6 +106,7 @@ class SocialProfileFieldsHelper {
       'user_address_administrative' => 'profile_profile_field_profile_address',
       'user_address_locality' => 'profile_address_field_city',
       'user_address_postal_code' => 'profile_address_field_postalcode',
+      'user_address_administrative_area' => 'profile_address_field_administrative_area',
       'user_address_line1' => 'profile_address_field_address',
       'user_address_line2' => 'profile_profile_field_profile_address',
       'user_phone_number' => 'profile_profile_field_profile_phone_number',
