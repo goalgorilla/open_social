@@ -76,7 +76,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
       'public_group',
     ];
 
-    $this->moduleHandler->alter('social_group_types', $social_group_types);
+    $this->moduleHandler->alter('social_group_types_request_fieldset', $social_group_types);
 
     $default_form_display_configs = [];
     $outsider_role_configs = [];
