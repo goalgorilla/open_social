@@ -5,11 +5,39 @@ namespace Drupal\social_tagging;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Configuration override.
  */
 class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $currentRouteMatch;
+
+  /**
+   * Social tagging service.
+   *
+   * @var \Drupal\social_tagging\SocialTaggingService
+   */
+  protected $socialTaggingService;
+
+  /**
+   * Constructs the SocialTaggingOverrides.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $currentRouteMatch
+   *   The request stack.
+   * @param \Drupal\social_tagging\SocialTaggingService $socialTaggingService
+   *   The request stack.
+   */
+  public function __construct(RouteMatchInterface $currentRouteMatch, SocialTaggingService $socialTaggingService) {
+    $this->currentRouteMatch = $currentRouteMatch;
+    $this->socialTaggingService = $socialTaggingService;
+  }
 
   /**
    * Whether this config override should apply to the provided configurations.
@@ -65,7 +93,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $overrides = [];
 
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-    $tag_service = \Drupal::service('social_tagging.tag_service');
+    $tag_service = $this->socialTaggingService;
 
     // Check if tagging is active.
     if (!($tag_service->active() && $tag_service->hasContent())) {
@@ -238,7 +266,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
-    if ($tag_service->profileActive()) {
+    $route_name = $this->currentRouteMatch->getRouteName();
+    if ($tag_service->profileActive() && $route_name == 'view.newest_users.page_newest_users') {
       $config_overviews['views.view.newest_users'] = 'default';
     }
 
