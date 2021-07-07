@@ -44,13 +44,16 @@ function _social_language_set_permissions() {
  * Build the permissions.
  */
 function _social_language_get_permissions($role) {
-  // Site manager.
-  $permissions['sitemanager'] = [
+  // Content manager.
+  $permissions['contentmanager'] = [
     'create content translations',
     'delete content translations',
     'update content translations',
     'translate any entity',
   ];
+
+  // Site manager.
+  $permissions['sitemanager'] = $permissions['contentmanager'];
 
   return isset($permissions[$role]) ? $permissions[$role] : [];
 }
@@ -114,3 +117,12 @@ YAML;
     'translate topic_types taxonomy_term',
   ]);
 }
+
+/**
+ * Allow "Content Manager" role to manage translations.
+ */
+function social_language_update_10301() {
+  // The function grand permissions.
+  _social_language_set_permissions();
+}
+
