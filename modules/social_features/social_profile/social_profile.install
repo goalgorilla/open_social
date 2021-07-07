@@ -17,6 +17,7 @@ use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -106,13 +107,13 @@ function _social_profile_get_permissions($role) {
     'view any profile profile',
     'view own profile profile',
     'view profile',
+    'edit profile tags',
   ]);
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'add any profile profile',
     'update any profile profile',
-    'edit profile tags',
   ]);
 
   // Site manager.
@@ -513,4 +514,11 @@ function social_profile_update_8904() {
  */
 function social_profile_update_8905() {
   _social_profile_field_definitions_update();
+}
+
+/**
+ * Update LU permission.
+ */
+function social_profile_update_8906(&$sandbox) {
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, ['edit profile tags']);
 }
