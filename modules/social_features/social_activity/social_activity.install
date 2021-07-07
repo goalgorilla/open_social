@@ -276,11 +276,13 @@ function social_activity_update_10301() {
 
   // Remove the filter from any displays where it is used.
   $updated = [];
-  foreach ($displays as $display_name => &$display) {
-    // Remove the redundant filter.
-    if (isset($display['display_options']['filters'][$filter_to_remove])) {
-      unset($display['display_options']['filters'][$filter_to_remove]);
-      $updated[] = $display_name;
+  if (is_array($displays)) {
+    foreach ($displays as $display_name => &$display) {
+      // Remove the redundant filter.
+      if (isset($display['display_options']['filters'][$filter_to_remove])) {
+        unset($display['display_options']['filters'][$filter_to_remove]);
+        $updated[] = $display_name;
+      }
     }
   }
 
