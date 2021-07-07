@@ -1,0 +1,59 @@
+name: PHPUnit Testing
+
+on: [pull_request]
+
+jobs:
+  phpcs:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      # We checkout the code in a separate folder since we want to use the
+      # result of the merge rather than the pre-merged code.
+      # A separate path is used to keep our working directory clean.
+      - uses: actions/checkout@v2
+        with:
+          path: 'tmp/repository'
+          # Since composer must clone from this we require all the history.
+          fetch-depth: 0
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.json') }}
+
+      # Create a branch for the specific commit so that composer can check it
+      # out.
+      - name: Composerify local checkout
+        run: cd tmp/repository && git checkout -b $GITHUB_SHA
+
+      # Prepare our composer.json to do a full project set-up.
+      - name: Project Setup
+        run:  cp tmp/repository/tests/composer.json composer.json
+
+      # Set up composer with our desired PHP version.
+      - name: Composer Config
+        uses: php-actions/composer@v4
+        with:
+          php_version: '7.4'
+          composer_version: '2'
+          command: config
+          only_args: repositories.social vcs $GITHUB_WORKSPACE/tmp/repository
+
+      # Install the version of Open Social under test.
+      - name: Composer Install
+        uses: php-actions/composer@v4
+        with:
+          php_version: '7.4'
+          composer_version: '2'
+          command: require
+          only_args: goalgorilla/open_social:dev-$GITHUB_SHA#$GITHUB_SHA
+
+      - run: ls -al html/profiles/contrib/social
+      - run: ls -al html/
+      - run: ls -al html/core
+      - run: ls -al html/profiles/contrib/social/*
+
+      - name: PHPUnit
+        run: cd html/profiles/contrib/social && $GITHUB_WORKSPACE/vendor/bin/phpunit -c phpunit.xml.dist --log-junit $GITHUB_WORKSPACE/test-reports/phpunit.xml --testsuite social
+

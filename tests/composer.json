@@ -1,0 +1,71 @@
+{
+    "name": "goalgorilla/extension_test",
+    "description": "Test project for the Open Social distribution.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {},
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "~0.6 || ~0.7",
+        "drupal/coder": "8.3.13",
+        "phpstan/phpstan-deprecation-rules": "^0.12",
+        "mglaman/phpstan-drupal": "^0.12",
+        "phpstan/phpstan-phpunit": "^0.12",
+        "mglaman/drupal-check": "^1.0",
+        "phpunit/phpunit": "^7.5"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "extra": {
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "html/"
+            }
+        },
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "installer-paths": {
+            "html/core": [
+                "type:drupal-core"
+            ],
+            "html/modules/contrib/{$name}": [
+                "type:drupal-module",
+                "type:drupal-module-custom"
+            ],
+            "html/profiles/contrib/social": [
+                "goalgorilla/open_social"
+            ],
+            "html/profiles/contrib/${name}": [
+                "type:drupal-profile"
+            ],
+            "html/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "scripts/{$name}": [
+                "goalgorilla/open_social_scripts",
+                "goalgorilla/gpi_scripts",
+                "goalgorilla/enterprise_scripts"
+            ],
+            "html/libraries/{$name}": [
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "enable-patching": true
+    }
+}
