@@ -17,3 +17,9 @@ services:
     arguments: ['@current_route_match', '@current_user', '@config.factory']
     tags:
       - { name: event_subscriber }
+  social_user.current_user:
+    class: Drupal\social_user\SocialAccountProxy
+    decorates: current_user
+    decoration_priority: 5
+    public: false
+    arguments: ['@event_dispatcher', '@oauth2_server.oauth_helper', '@request_stack', '@oauth2_server.storage']
