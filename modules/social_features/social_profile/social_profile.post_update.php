@@ -30,16 +30,45 @@ function social_profile_post_update_10101_profile_names_update(&$sandbox) {
   /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
   $profile_name_service = \Drupal::service('social_profile.name_service');
 
+  /** @var \Drupal\Core\Database\Connection $connection */
+  $connection = \Drupal::service('database');
+
+  // Values of the Profiles names.
+  $values = [];
+
   /** @var \Drupal\profile\Entity\ProfileInterface $profile */
   foreach ($profiles as $profile) {
     if ($profile instanceof ProfileInterface) {
       // Get generated profile name.
       $profile_name = $profile_name_service->getProfileName($profile);
-      // Update profile name and save.
-      $profile->set('profile_name', $profile_name);
-      $profile->save();
+      // Add generated profile name.
+      $values[] = [
+        'profile',
+        0,
+        $profile->id(),
+        $profile->id(),
+        'und',
+        0,
+        $profile_name,
+      ];
     }
   }
+
+  // Add the Profile name field value directly by database insert to reduce
+  // the update time of a large number of profiles.
+  $query = $connection->insert('profile__profile_name')->fields([
+    'bundle',
+    'deleted',
+    'entity_id',
+    'revision_id',
+    'langcode',
+    'delta',
+    'profile_name_value',
+  ]);
+  foreach ($values as $record) {
+    $query->values($record);
+  }
+  $query->execute();
 
   $sandbox['#finished'] = empty($sandbox['ids']) ? 1 : ($sandbox['count'] - count($sandbox['ids'])) / $sandbox['count'];
 }
