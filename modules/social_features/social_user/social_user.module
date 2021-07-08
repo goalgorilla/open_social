@@ -320,6 +320,16 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 
   $form['timezone']['#title'] = '';
+
+  // Special handling for the inevitable "Verified user" role in case when
+  // "Verified immediately" setting is enabled.
+  $config = \Drupal::config('social_user.settings');
+  if ($config->get('verified_immediately')) {
+    $form['account']['roles']['verified'] = [
+      '#default_value' => TRUE,
+      '#disabled' => TRUE,
+    ];
+  }
 }
 
 /**
