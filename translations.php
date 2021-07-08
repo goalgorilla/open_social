@@ -136,3 +136,7 @@ new TranslatableMarkup('Changing the group may have impact on the <strong>visibi
 
 // String added because it was removed from the Group Join Confirmation Page.
 new TranslatableMarkup('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');
+
+// String added because activity view modes will display attachment count
+// instead of links.
+new PluralTranslatableMarkup(0, '1 attachment.', '@count attachments.');
