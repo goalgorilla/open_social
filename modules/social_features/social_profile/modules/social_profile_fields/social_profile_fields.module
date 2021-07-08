@@ -116,6 +116,37 @@ function social_profile_fields_form_alter(&$form, FormStateInterface $form_state
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_fields_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\profile\Entity\ProfileInterface $form_entity */
+  $form_entity = $form_object->getEntity();
+
+  $user = \Drupal::currentUser();
+  $hide_revision_field = FALSE;
+
+  // Don't show revision field, if the user can't edit all profiles.
+  if (!$user->hasPermission('update any profile profile')) {
+    $hide_revision_field = TRUE;
+  }
+
+  // Don't show the revision field, if user is editing it's own profile.
+  if (
+    $form_object instanceof ContentEntityFormInterface &&
+    $form_entity->getEntityTypeId() === 'profile' &&
+    $user->id() == $form_entity->getOwnerId()
+  ) {
+    $hide_revision_field = TRUE;
+  }
+
+  if ($hide_revision_field) {
+    $form['revision_log_message']['#access'] = FALSE;
+  }
+}
+
+/**
  * Implements hook_social_user_name_display_suggestions().
  *
  * Adds the nickname as a possible display name.
