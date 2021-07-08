@@ -50,7 +50,7 @@ class ProfileActivityContext extends ActivityContextBase {
       return FALSE;
     }
 
-    // Check if it's placed in a group (regardless off content type).
+    // Check if the content is placed in a group (regardless of content type).
     if (GroupContent::loadByEntity($entity)) {
       return FALSE;
     }

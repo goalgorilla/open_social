@@ -112,6 +112,13 @@ class SocialGroupHelperService {
         }
       }
     }
+    elseif ($entity['target_type'] === 'group_content') {
+      // Try to load the entity.
+      if ($groupcontent = GroupContent::load($entity['target_id'])) {
+        // Get group id.
+        $gid = $groupcontent->getGroup()->id();
+      }
+    }
 
     // Cache the group id for this entity to optimise future calls.
     $this->cache[$cache_type][$cache_id] = $gid;

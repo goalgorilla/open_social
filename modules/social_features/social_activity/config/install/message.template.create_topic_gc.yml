@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      group_content-closed_group-group_node-topic: group_content-closed_group-group_node-topic
+      group_content-flexible_group-group_node-topic: group_content-flexible_group-group_node-topic
+      group_content-open_group-group_node-topic: group_content-open_group-group_node-topic
+      group_content-public_group-group_node-topic: group_content-public_group-group_node-topic
+      group_content-secret_group-group_node-topic: group_content-secret_group-group_node-topic
+    activity_action: create_entitiy_action
+    activity_context: group_activity_context
+    activity_destinations:
+      stream_group: stream_group
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: create_topic_gc
+label: 'Create topic as group content'
+description: 'A user add (create) a topic to a group (or groups)'
+text:
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created a topic in <a href="[message:gurl]">[message:gtitle]</a></p>'
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

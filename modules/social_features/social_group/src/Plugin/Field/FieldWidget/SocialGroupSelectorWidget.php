@@ -12,7 +12,7 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
+use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -20,6 +20,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Plugin\GroupContentEnablerManager;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * A widget to select a group when creating an entity in a group.
@@ -36,7 +37,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   multiple_values = TRUE
  * )
  */
-class SocialGroupSelectorWidget extends OptionsSelectWidget implements ContainerFactoryPluginInterface {
+class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
+
+  /**
+   * The list of options.
+   *
+   * @var array
+   *
+   * @todo
+   *   Should be removed after merging patch in the core:
+   *   https://www.drupal.org/files/issues/2923353-5.patch
+   */
+  protected $options;
 
   protected $configFactory;
   protected $moduleHander;
@@ -155,6 +169,13 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
 
     array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
+    // Set required property for the current object.
+    // todo@: Should be removed after https://www.drupal.org/files/issues/2923353-5.patch will be merged in the core.
+    /* @see \Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsWidgetBase::getOptions() */
+    if (!isset($this->options)) {
+      $this->options = $options ?? parent::getOptions($entity);
+    }
+
     return $options;
   }
 
@@ -181,8 +202,18 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       '#value' => $default_visibility,
     ];
 
-    $change_group_node = $this->configFactory->get('social_group.settings')
-      ->get('allow_group_selection_in_node');
+    // Disable multi-selection if cross-posting is disabled or current entity
+    // type isn't in the allowed list.
+    $sg_settings = $this->configFactory->get('social_group.settings');
+    $disable_multi_selection = !$this->currentUser->hasPermission('access cross-group posting')
+      || !$sg_settings->get('cross_posting.status')
+      || !in_array($items->getEntity()->bundle(), $sg_settings->get('cross_posting.content_types'), TRUE);
+
+    if ($disable_multi_selection) {
+      $element['#multiple'] = FALSE;
+    }
+
+    $change_group_node = $sg_settings->get('allow_group_selection_in_node');
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -196,7 +227,15 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     else {
       if (!$change_group_node && !$this->currentUser->hasPermission('manage all groups')) {
         $element['#disabled'] = TRUE;
-        $element['#description'] = t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
+        $element['#description'] = $this->t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
+      }
+    }
+
+    // We don't allow to LU to edit field if there are multiple values.
+    if (count($element['#default_value']) > 1) {
+      if ($sg_settings->get('cross_posting.status') && !$this->currentUser->hasPermission('access cross-group posting')) {
+        $element['#disabled'] = TRUE;
+        $element['#description'] = $this->t('You are not allowed to edit this field!');
       }
     }
 

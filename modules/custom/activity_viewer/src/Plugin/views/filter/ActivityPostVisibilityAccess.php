@@ -120,6 +120,23 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
+    // Join group content table.
+    $configuration = [
+      'left_table' => 'activity__field_activity_entity',
+      'left_field' => 'field_activity_entity_target_id',
+      'table' => 'group_content_field_data',
+      'field' => 'id',
+      'operator' => '=',
+      'extra' => [
+        0 => [
+          'left_field' => 'field_activity_entity_target_type',
+          'value' => 'group_content',
+        ],
+      ],
+    ];
+    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $this->query->addRelationship('group_content', $join, 'group_content');
+
     // Join node table(s).
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
@@ -219,6 +236,13 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);
     }
+
+    // For "group content" entities we need to add the condition
+    // to check what groups user has access.
+    $membership_access = new Condition('AND');
+    $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
+    $membership_access->condition('group_content.gid', $groups_unique ?: [0], 'IN');
+    $or->condition($membership_access);
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);

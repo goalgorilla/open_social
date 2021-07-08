@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group_content.activity
+    - group.content_type.flexible_group-group_node-event
+id: group_content.flexible_group-group_node-event.activity
+targetEntityType: group_content
+bundle: flexible_group-group_node-event
+mode: activity
+content:
+  entity_id:
+    type: entity_reference_entity_view
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: activity
+      link: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true
+  search_api_excerpt: true
+  uid: true

@@ -28,7 +28,7 @@ Feature: Send invite group email notifications
 
     # Enable "Allow invited user to skip email verification" option for groups
     When I go to "/admin/config/opensocial/social-group"
-    Then I click the element with css selector ".claro-details__summary"
+    Then I click the element with css selector "#edit-group-invite"
     And I should see "Allow invited user to skip email verification"
     Then I check the box "email_verification"
     And I press "Save configuration"

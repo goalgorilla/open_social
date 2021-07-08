@@ -10,6 +10,7 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_install().
@@ -396,4 +397,23 @@ function social_group_flexible_group_update_8912() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Install display view modes for group contents for Flexible group type.
+ */
+function social_group_flexible_group_update_10301(&$sandbox) {
+  // Install new configs.
+  $config_path = drupal_get_path('module', 'social_group_flexible_group') . '/config/install';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $config_names = [
+    'core.entity_view_display.group_content.flexible_group-group_node-event.activity',
+    'core.entity_view_display.group_content.flexible_group-group_node-topic.activity',
+  ];
+
+  foreach ($config_names as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
 }

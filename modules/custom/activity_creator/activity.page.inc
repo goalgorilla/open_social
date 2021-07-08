@@ -9,6 +9,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
 
@@ -54,7 +55,9 @@ function template_preprocess_activity(array &$variables) {
     $variables['date'] = $date;
   }
   else {
-    $variables['date'] = Link::fromTextAndUrl($date, $full_url)->toRenderable();
+    if ($full_url instanceof Url) {
+      $variables['date'] = Link::fromTextAndUrl($date, $full_url)->toRenderable();
+    }
   }
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
