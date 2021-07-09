@@ -10,6 +10,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\profile\Entity\Profile;
 use GraphQL\Deferred;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -111,11 +112,11 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata.
    *
-   * @return \GraphQL\Deferred|null
-   *   A promise that resolves to the loaded profile or null if the user does
-   *   not have a published profile.
+   * @return \GraphQL\Deferred
+   *   A promise that resolves to the loaded profile. If the user has no default
+   *   profile an empty profile is returned instead.
    */
-  public function resolve(AccountInterface $account, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(AccountInterface $account, RefinableCacheableDependencyInterface $metadata) : Deferred {
     $storage = $this->entityTypeManager->getStorage('profile');
     $type = $storage->getEntityType();
     $query = $storage->getQuery()
@@ -145,7 +146,7 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
     }
 
     if (empty($result)) {
-      return NULL;
+      return new Deferred(fn () => Profile::create(['type' => 'profile']));
     }
 
     $resolver = $this->entityBuffer->add('profile', reset($result));
