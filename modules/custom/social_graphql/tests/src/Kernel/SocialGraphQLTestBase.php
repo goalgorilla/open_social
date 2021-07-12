@@ -214,6 +214,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     $parent_fields = array_map(static fn ($f) => explode('(', $f)[0], $parents);
     $data = NestedArray::getValue($executionResult->data, [...$parent_fields, $field]);
     self::assertNotNull($data, "No data for ${open_path}${field}(${filter})${close_path}");
+    self::assertNotEmpty($data['edges'], "No edges for ${open_path}${field}(${filter})${close_path}");
 
     $startCursor = $data['edges'][0]['cursor'];
     $endCursor = $data['edges'][count($first_page) - 1]['cursor'];

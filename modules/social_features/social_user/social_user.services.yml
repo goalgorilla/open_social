@@ -17,3 +17,7 @@ services:
     arguments: ['@current_route_match', '@current_user', '@config.factory']
     tags:
       - { name: event_subscriber }
+  social_user.user_entity_query_access_subscriber:
+    class: Drupal\social_user\EventSubscriber\UserEntityQueryAccessSubscriber
+    tags:
+      - { name: event_subscriber }
