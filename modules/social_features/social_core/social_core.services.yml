@@ -11,3 +11,5 @@ services:
     arguments: ['@social_core.invite', '@current_user', '@messenger', '@current_route_match', '@config.factory']
     tags:
       - {name: event_subscriber}
+  social_core.configurations:
+    class: Drupal\social_core\Service\ConfigurationsService
