@@ -4,6 +4,7 @@ namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Connection;
 
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 
 /**
@@ -28,13 +29,13 @@ class ConnectionPageInfo extends DataProducerPluginBase implements DataProducerP
   /**
    * Resolves the request.
    *
-   * @param \Drupal\social_graphql\GraphQL\EntityConnection $connection
+   * @param \Drupal\social_graphql\GraphQL\ConnectionInterface $connection
    *   The connection to return the page info for.
    *
    * @return mixed
    *   The page info for the connection.
    */
-  public function resolve(EntityConnection $connection) {
+  public function resolve(ConnectionInterface $connection) {
     return $connection->pageInfo();
   }
 

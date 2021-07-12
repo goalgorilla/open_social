@@ -5,7 +5,7 @@ services:
       - { name: event_subscriber }
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
-    arguments: ['@database']
+    arguments: ['@database', '@module_handler']
   social_group.set_groups_for_node_service:
     class: Drupal\social_group\SetGroupsForNodeService
     arguments: ['@entity_type.manager', '@module_handler']

@@ -91,3 +91,9 @@ Feature: Send invite group email notifications
     Then I go to "/my-invites"
     And I should see "1 group invite"
     And I should see "Test-invite-group"
+
+    # Make sure the invite is not shown as part of the "group membership count" when on SKY theme in the profile block.
+    Given I set the configuration item "socialblue.settings" with key "style" to "sky"
+    And I am on "/my-groups"
+    Then I should see "0" in the ".card__counter-quantity" element
+    And I set the configuration item "socialblue.settings" with key "style" to "default"
