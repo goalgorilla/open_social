@@ -113,7 +113,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       '#title' => $this->t('Allow profiles to be tagged'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether users are allowed to add @profile_tags terms to the profiles',
+      '#description' => $this->t('Determine whether CM+ are allowed to add @profile_tags terms to the users profile',
         [
           '@profile_tags' => $profile_tags->toString(),
         ]),
@@ -140,6 +140,19 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
+    $form['tagging']['allow_for_users'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow Profile tagging for LU'),
+      '#default_value' => $config->get('allow_for_users'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine whether LU are allowed to add profile tags to the profile"),
+      '#states' => [
+        'visible' => [
+          ':input[name="enable_profile_tagging"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -153,6 +166,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'));
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
     $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
+    $config->set('allow_for_users', $form_state->getValue('allow_for_users'));
     $config->save();
 
     // Check if the website is multilingual.
