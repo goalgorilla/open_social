@@ -38,15 +38,15 @@ class SocialEmbedIframeFilter extends FilterBase {
 
     $dom = Html::load($text);
 
-    $new_div = $dom->createElement('div');
-    $new_div->setAttribute('class', 'iframe-wrapper');
+    $wrapper = $dom->createElement('div');
+    $wrapper->setAttribute('class', 'iframe-wrapper');
 
     $iframes = $dom->getElementsByTagName('iframe');
 
     foreach ($iframes as $iframe) {
-      $new_div_clone = $new_div->cloneNode();
-      $iframe->parentNode->replaceChild($new_div_clone, $iframe);
-      $new_div_clone->appendChild($iframe);
+      $wrapperClone = $wrapper->cloneNode();
+      $iframe->parentNode->replaceChild($wrapperClone, $iframe);
+      $wrapperClone->appendChild($iframe);
     }
 
     $result->setProcessedText(Html::serialize($dom));
