@@ -49,11 +49,12 @@ function _social_language_get_permissions($role) {
     'create content translations',
     'delete content translations',
     'update content translations',
-    'translate any entity',
   ];
 
   // Site manager.
-  $permissions['sitemanager'] = $permissions['contentmanager'];
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'translate any entity',
+  ]);
 
   return isset($permissions[$role]) ? $permissions[$role] : [];
 }
