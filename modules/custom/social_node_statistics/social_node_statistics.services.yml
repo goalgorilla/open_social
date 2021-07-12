@@ -1,6 +1,0 @@
-services:
-  social_node_statistics.nodeview_subscriber:
-    class: Drupal\social_node_statistics\EventSubscriber\NodeViewSubscriber
-    arguments: ['@database', '@current_user', '@current_route_match', '@datetime.time']
-    tags:
-    - { name: event_subscriber }

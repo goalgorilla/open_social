@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_core module.
  */
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\crop\Entity\Crop;
@@ -76,6 +77,12 @@ function social_core_install() {
   // Set image quality defaults.
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
   $config->set('jpeg_quality', 90)->save();
+
+  // If social blue is enabled, and default image is still Open Social.
+  // Lets add the default e-mail logo for open social as well.
+  _social_core_set_default_email_logo_for_socialblue();
+  // Add favicon to GIN.
+  _social_core_set_favicon();
 }
 
 /**
@@ -174,11 +181,11 @@ function _social_core_get_permissions($role) {
  * Custom function to create the homepage block for AN users.
  */
 function _social_core_create_an_homepage_block() {
-  // TODO: use a better image from the theme.
+  // @todo use a better image from the theme.
   // Block image.
   $path = drupal_get_path('module', 'social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
-  $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
+  $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'langcode' => 'en',
@@ -509,10 +516,10 @@ function social_core_update_8009() {
     // @see _drupal_maintenance_theme()
     \Drupal::service('theme.manager')->resetActiveTheme();
 
-    drupal_set_message(t('Installed socialblue theme and made this the default. Please check release notes.'));
+    \Drupal::messenger()->addStatus(t('Installed socialblue theme and made this the default. Please check release notes.'));
   }
   else {
-    drupal_set_message(t('Skipped installing socialblue theme. Please check release notes.'));
+    \Drupal::messenger()->addStatus(t('Skipped installing socialblue theme. Please check release notes.'));
   }
 }
 
@@ -610,10 +617,10 @@ function social_core_update_8019() {
       'social_file_private',
     ];
     \Drupal::service('module_installer')->install($modules);
-    drupal_set_message(t('Installed the social_file_private module. Make sure to read: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
+    \Drupal::messenger()->addStatus(t('Installed the social_file_private module. Make sure to read: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
   }
   else {
-    drupal_set_message(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'), 'warning');
+    \Drupal::messenger()->addWarning(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
   }
 }
 
@@ -648,7 +655,7 @@ function social_core_update_8020() {
   $repo->setLastInstalledFieldStorageDefinition($storage_definition);
 
   // Update the stored field schema.
-  // @todo: There has to be a better way to do this.
+  // @todo There has to be a better way to do this.
   $kv_collection = 'entity.storage_schema.sql';
   $kv_name = 'flagging.field_schema_data.flag_id';
   $field_schema = $kv->get($kv_collection)->get($kv_name);
@@ -704,7 +711,12 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Update definitions and schema.
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($list['post'])) {
+    foreach ($list['post'] as $post) {
+      \Drupal::entityDefinitionUpdateManager()->updateEntityType($post);
+    }
+  }
 
   // Update config post_type.
   $path = drupal_get_path('module', 'social_post') . '/config/install';
@@ -738,8 +750,7 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Unset default value for post entity.
-  $schema->fieldSetNoDefault($table_data, 'type');
-  $schema->fieldSetNoDefault($table_data, 'type');
+  $schema->changeField($table_data, 'type', 'type', $spec);
 }
 
 /**
@@ -1187,5 +1198,171 @@ function social_core_update_8901() {
 
   foreach ($roles as $role) {
     user_role_grant_permissions($role, $permissions);
+  }
+}
+
+/**
+ * Update GIN theme settings based on SocialBlue primary secondary.
+ */
+function social_core_update_8902() {
+  // Only when GIN is the admin theme and SocialBlue is the active theme.
+  if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin' &&
+    \Drupal::theme()->getActiveTheme()->getName() === 'socialblue') {
+    // Grab the default socialblue colors, these are set if the color settings
+    // aren't overridden yet.
+    $default_colors = \Drupal::configFactory()->getEditable('socialblue.settings')->getRawData();
+    // Unfortunately the color module doesnt add the color details to the
+    // $form_state. So we need to grab it from the config once overridden.
+    // luckily color does set their submit function as first, so we can
+    // safely assume the config uses the updated colors.
+    $socialblue_colors = \Drupal::configFactory()->getEditable('color.theme.socialblue')->getRawData();
+
+    // The brand colors are first of all coming from the overridden color
+    // settings. But if that is not set, we will grab them from the
+    // default Social Blue settings.
+    $brand_primary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-primary'] : $default_colors['color_primary'];
+    $brand_secondary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-secondary'] : $default_colors['color_secondary'];
+
+    // See if we can update GIN settings with our brand colors.
+    if (isset($brand_primary, $brand_secondary)) {
+      $config = \Drupal::configFactory()->getEditable('gin.settings');
+      if (!empty($config->getRawData())) {
+        $gin_config = $config->getRawData();
+        // Override preset colors as custom so we can fill in the hex colors.
+        $gin_config['preset_accent_color'] = 'custom';
+        $gin_config['preset_focus_color'] = 'custom';
+        // Update the accent and focus with our branded colors.
+        $gin_config['accent_color'] = $brand_primary;
+        $gin_config['focus_color'] = $brand_secondary;
+        $config->setData($gin_config);
+        $config->save();
+      }
+    }
+  }
+}
+
+/**
+ * Install the redirect module to prevent index.php from being accessed.
+ */
+function social_core_update_8903() {
+  \Drupal::service('module_installer')->install(['redirect']);
+}
+
+/**
+ * Update Social Blue theme with new accent text color.
+ */
+function social_core_update_8904() {
+  $config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
+  if (!empty($config->getRawData())) {
+    $socialblue_colors = $config->getRawData();
+    $socialblue_colors['palette']['brand-accent-text'] = '#4d4d4d';
+    $config->setData($socialblue_colors);
+    $config->save();
+  }
+}
+
+/**
+ * Sets the Content Entity Forms to Open Social style.
+ */
+function social_core_update_8905() {
+  // Only when socialblue is default we set this.
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
+    try {
+      // Sets it to Open Social.
+      $config = \Drupal::configFactory()->getEditable('socialblue.settings');
+      $config->set('content_entity_form_style', 'open_social')->save();
+    }
+    catch (Exception $e) {
+      \Drupal::logger('social_core')->error('Could not install Content Entity forms as Open Social please do so manually in the Socialblue settings.');
+    }
+  }
+}
+
+/**
+ * Sets the Default E-mail logo to the rebranded version, if possible.
+ */
+function social_core_update_8906() {
+  _social_core_set_default_email_logo_for_socialblue();
+}
+
+/**
+ * Adds social_post_album.
+ */
+function social_core_update_8907() {
+  $modules = [
+    'social_post_album',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Add a new image thumbnail 'social_file_thumbnail' files field.
+ */
+function social_core_update_8908() {
+  $config_file = drupal_get_path('module', 'social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('image.style.social_file_thumbnails');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Install ultimate cron module.
+ */
+function social_core_update_10101() {
+  $modules = [
+    'ultimate_cron',
+    'social_advanced_queue',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Empty update hook.
+ */
+function social_core_update_10102() {
+  // Removed as it was an incorrect update hook use 10103 instead.
+}
+
+/**
+ * Add a OS favicon on the admin pages.
+ */
+function social_core_update_10103() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    // Update the favicon in GIN.
+    $gin_config['favicon']['use_default'] = FALSE;
+    $gin_config['favicon']['path'] = 'themes/contrib/socialblue/favicon.ico';
+    $gin_config['favicon']['mimetype'] = 'image/vnd.microsoft.icon';
+    $config->setData($gin_config);
+    $config->save();
+  }
+}
+
+/**
+ * Set default settings to use entity access API as FALSE.
+ */
+function social_core_update_10104() {
+  $config = \Drupal::configFactory()->getEditable('social_core.settings');
+  $config->set('use_entity_access_api', 0)->save();
+}
+
+/**
+ * Add default classic_toolbar of the Gin theme.
+ */
+function social_core_update_10105() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    $gin_config = $config->getRawData();
+    $gin_config['classic_toolbar'] = 'vertical';
+    $config->setData($gin_config);
+    $config->save();
   }
 }

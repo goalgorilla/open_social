@@ -9,7 +9,7 @@ services:
     arguments: ['@typed_data_manager']
   social_user.user_route_context:
     class: Drupal\social_user\ContextProvider\UserRouteContext
-    arguments: ['@current_route_match', '@entity.manager']
+    arguments: ['@current_route_match', '@entity_type.manager']
     tags:
       - { name: context_provider }
   social_user.redirect_subscriber:

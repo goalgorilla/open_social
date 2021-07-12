@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_book module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
@@ -187,4 +188,71 @@ function social_book_update_8803() {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_book')->info($e->getMessage());
   }
+}
+
+/**
+ * Hide image label in hero.
+ */
+function social_book_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_book', 'social_book_update_8804');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update Books to the new Config Form Open Social style.
+ */
+function social_book_update_8901() {
+  $config_file = drupal_get_path('module', 'social_book') . '/config/static/social_book_static_update_8901.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_form_display.node.book.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update labels and settings for node book body field.
+ */
+function social_book_update_8902() {
+  // Load the existing configuration.
+  $config_name = 'field.field.node.book.body';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['display_summary'])) {
+    $config_data['settings']['display_summary'] = FALSE;
+  }
+
+  if (!empty($config_data['label'])) {
+    $config_data['label'] = 'Description';
+  }
+
+  $config->setData($config_data)->save();
+  // Make sure we clear cached definitions for the fields.
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Add small_teaser view mode for book.
+ */
+function social_book_update_8903() {
+  $config_path = drupal_get_path('module', 'social_book') . '/config/static';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write(
+    'core.entity_view_display.node.book.small_teaser',
+    $source->read('social_book_static_update_8903')
+  );
 }

@@ -12,14 +12,14 @@ use Drupal\file\Entity\File;
  */
 function social_user_export_file_download($uri) {
   $scheme = \Drupal::service('file_system')->uriScheme($uri);
-  $target = file_uri_target($uri);
+  $target = \Drupal::service('stream_wrapper_manager')->getTarget($uri);
 
   // Get the file to see who the owner is.
   $query = \Drupal::entityQuery('file');
   $query->condition('uri', $uri);
   $fid = $query->execute();
 
-  /* @var \Drupal\file\FileInterface $file */
+  /** @var \Drupal\file\FileInterface $file */
   $file = File::load(reset($fid));
 
   $access = FALSE;

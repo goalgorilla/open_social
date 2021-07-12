@@ -34,7 +34,7 @@ class QueueStorageEntityForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+    /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     $form = parent::buildForm($form, $form_state);
 
     return $form;

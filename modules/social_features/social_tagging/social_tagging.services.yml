@@ -1,7 +1,7 @@
 services:
   social_tagging.tag_service:
     class: Drupal\social_tagging\SocialTaggingService
-    arguments: ['@entity_type.manager', '@config.factory']
+    arguments: ['@entity_type.manager', '@config.factory', '@language_manager']
   social_tagging.overrider:
     class: Drupal\social_tagging\SocialTaggingOverrides
     tags:

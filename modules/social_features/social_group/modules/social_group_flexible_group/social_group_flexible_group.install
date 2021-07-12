@@ -5,7 +5,11 @@
  * Install and update functions for the social_group_flexible_group module.
  */
 
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\FieldConfigInterface;
 use Drupal\search_api\Entity\Index;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -97,4 +101,299 @@ function social_group_flexible_group_update_8802() {
     $index->clear();
     $index->reindex();
   }
+}
+
+/**
+ * Add new field group visibility field to flexible groups.
+ */
+function social_group_flexible_group_update_8901(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8901.yml';
+
+  if (is_file($config_file)) {
+    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
+    if (!isset($sandbox['total'])) {
+      // Count the amount we need to add to cover batching..
+      $sandbox['total'] = count($sandbox['configs']);
+      $sandbox['current'] = 0;
+    }
+
+    $names = array_keys($sandbox['configs']);
+    $name = $names[$sandbox['current']++];
+    $data = $sandbox['configs'][$name];
+
+    $parts = explode('.', $name);
+
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        $entity_type = \Drupal::service('config.manager')
+          ->getEntityTypeIdByName($name);
+
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+        $entity = $storage->createFromStorageRecord($data);
+        $entity->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if ($field_config instanceof FieldConfigInterface) {
+          $field_config->setDescription($data);
+        }
+        else {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+    }
+
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  }
+}
+
+/**
+ * Add the new group visibility field.
+ */
+function social_group_flexible_group_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Configuration update.
+ */
+function social_group_flexible_group_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8903');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Updated fieldsets labels and re-arranged existing fields.
+ */
+function social_group_flexible_group_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added "Additional information" fieldset to flexible groups.
+ */
+function social_group_flexible_group_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update label for field_group_image field.
+ */
+function social_group_flexible_group_update_8906() {
+  // Load the existing configuration.
+  $config_name = 'field.field.group.flexible_group.field_group_image';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['label'])) {
+    // This to ensure any custom added values are not affected.
+    if (strpos($config_data['label'], 'Group Image') !== FALSE) {
+      $config_data['label'] = 'Image';
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Create new vocabulary called 'Group types'.
+ */
+function social_group_flexible_group_update_8907() {
+  $vid = 'group_type';
+  $vocabularies = Vocabulary::loadMultiple();
+  if (!isset($vocabularies[$vid])) {
+    $vocabulary = Vocabulary::create([
+      'vid' => $vid,
+      'description' => 'Group types',
+      'name' => 'Group type',
+    ]);
+    $vocabulary->save();
+  }
+}
+
+/**
+ * Create new field & field storage configuration for new group type field.
+ */
+function social_group_flexible_group_update_8908(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8908.yml';
+
+  if (is_file($config_file)) {
+    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
+    if (!isset($sandbox['total'])) {
+      // Count the amount we need to add to cover batching..
+      $sandbox['total'] = count($sandbox['configs']);
+      $sandbox['current'] = 0;
+    }
+
+    $names = array_keys($sandbox['configs']);
+    $name = $names[$sandbox['current']++];
+    $data = $sandbox['configs'][$name];
+
+    $parts = explode('.', $name);
+
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        $entity_type = \Drupal::service('config.manager')
+          ->getEntityTypeIdByName($name);
+
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+        $entity = $storage->createFromStorageRecord($data);
+        $entity->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if ($field_config instanceof FieldConfigInterface) {
+          $field_config->setDescription($data);
+        }
+        else {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+    }
+
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  }
+}
+
+/**
+ * Added a new entity reference field called 'Type' in Flexible groups.
+ */
+function social_group_flexible_group_update_8909() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8909');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Create new field & field storage configuration for new group type icon field.
+ */
+function social_group_flexible_group_update_8910(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8910.yml';
+
+  if (is_file($config_file)) {
+    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
+    if (!isset($sandbox['total'])) {
+      // Count the amount we need to add to cover batching..
+      $sandbox['total'] = count($sandbox['configs']);
+      $sandbox['current'] = 0;
+    }
+
+    $names = array_keys($sandbox['configs']);
+    $name = $names[$sandbox['current']++];
+    $data = $sandbox['configs'][$name];
+
+    $parts = explode('.', $name);
+
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        $entity_type = \Drupal::service('config.manager')
+          ->getEntityTypeIdByName($name);
+
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+        $entity = $storage->createFromStorageRecord($data);
+        $entity->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if ($field_config instanceof FieldConfigInterface) {
+          $field_config->setDescription($data);
+        }
+        else {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+
+      default:
+        // Fallback similar to before.
+        \Drupal::configFactory()
+          ->getEditable($name)
+          ->setData($data)
+          ->save(TRUE);
+    }
+
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  }
+}
+
+/**
+ * Make group creators as a group managers by default.
+ */
+function social_group_flexible_group_update_8911() {
+  $config_factory = \Drupal::configFactory();
+  $group_type = 'flexible_group';
+
+  $config = $config_factory->getEditable('group.type.' . $group_type);
+  $config->set('creator_membership', TRUE);
+
+  $creator_roles = $config->get('creator_roles');
+  $group_role_id = $group_type . '-group_manager';
+  if (!in_array($group_role_id, $creator_roles)) {
+    $creator_roles[] = $group_role_id;
+    $config->set('creator_roles', $creator_roles);
+  }
+
+  $config->save(TRUE);
+}
+
+/**
+ * Make group creators as a group managers by default.
+ */
+function social_group_flexible_group_update_8912() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8912');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

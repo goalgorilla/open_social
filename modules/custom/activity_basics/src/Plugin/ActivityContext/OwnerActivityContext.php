@@ -3,7 +3,6 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
 
 /**
  * Provides a 'OwnerActivityContext' activity context.
@@ -23,7 +22,7 @@ class OwnerActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $allowed_entity_types = ['node', 'post', 'comment'];
       if (in_array($related_entity['target_type'], $allowed_entity_types)) {
         $recipients += $this->getRecipientOwnerFromEntity($related_entity, $data);

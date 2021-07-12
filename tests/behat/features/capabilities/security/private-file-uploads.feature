@@ -1,4 +1,4 @@
-@api @security @stability @perfect @critical @DS-3605 @DS-5350 @stability-1 @private-file-uploads
+@api @security @stability @perfect @critical @DS-3605 @DS-5350 @YANG-4759 @private-file-uploads
 Feature: Private files
   Benefit: Upload files to private file directory
   Role: As a LU
@@ -21,9 +21,9 @@ Feature: Private files
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Private: topic text"
     And I attach the file "/files/opensocial.jpg" to "Image"
     And I wait for AJAX to finish
-    And I attach the file "/files/humans.txt" to "Add a new file"
+    And I attach the file "/files/humans.txt" to "edit-field-files-0-upload"
     And I wait for AJAX to finish
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Topic Private: topic has been created."
     And I should see "Private: topic" in the "Hero block"
 
@@ -47,7 +47,7 @@ Feature: Private files
     Given I am on the homepage
     When I attach the file "/files/opensocial.jpg" to hidden field "edit-field-post-image-0-upload"
     And I wait for AJAX to finish
-    And I fill in "Say something about this photo" with "Private: post photo"
+    And I fill in "Say something about these image(s)" with "Private: post photo"
     And I select post visibility "Community"
     And I press "Post"
     Then I should see the success message "Your post has been posted."
@@ -79,7 +79,7 @@ Feature: Private files
     And I click the xth "0" element with the css ".editor-image-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Topic Private WYSIWYG: topic has been created."
     And I should see "Private WYSIWYG: topic" in the "Hero block"
     And The image path in the body description should be private

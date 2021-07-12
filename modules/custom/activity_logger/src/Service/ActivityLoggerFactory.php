@@ -2,7 +2,11 @@
 
 namespace Drupal\activity_logger\Service;
 
+use Drupal\activity_creator\Plugin\ActivityContextManager;
+use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
 use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\user\EntityOwnerInterface;
 
@@ -13,6 +17,57 @@ use Drupal\user\EntityOwnerInterface;
  * Service that determines which actions need to be performed.
  */
 class ActivityLoggerFactory {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The condition manager.
+   *
+   * @var \Drupal\activity_creator\Plugin\ActivityEntityConditionManager
+   */
+  protected $activityEntityConditionManager;
+
+  /**
+   * The context manager.
+   *
+   * @var \Drupal\activity_creator\Plugin\ActivityContextManager
+   */
+  protected $activityContextManager;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * ActivityLoggerFactory constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\activity_creator\Plugin\ActivityEntityConditionManager $activityEntityConditionManager
+   *   The condition manager.
+   * @param \Drupal\activity_creator\Plugin\ActivityContextManager $activityContextManager
+   *   The context manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    ActivityEntityConditionManager $activityEntityConditionManager,
+    ActivityContextManager $activityContextManager,
+    ModuleHandlerInterface $moduleHandler) {
+    $this->entityTypeManager = $entityTypeManager;
+    $this->activityEntityConditionManager = $activityEntityConditionManager;
+    $this->activityContextManager = $activityContextManager;
+    $this->moduleHandler = $moduleHandler;
+  }
 
   /**
    * Create message entities.
@@ -94,15 +149,17 @@ class ActivityLoggerFactory {
    *
    * @return array
    *   Array of message types.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function getMessageTypes($action, EntityBase $entity) {
     // Init.
     $messagetypes = [];
 
-    // We need the entitytype manager.
-    $entity_type_manager = \Drupal::service('entity_type.manager');
     // Message type storage.
-    $message_storage = $entity_type_manager->getStorage('message_template');
+    $message_storage = $this->entityTypeManager->getStorage('message_template');
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $messagetype) {
@@ -113,16 +170,14 @@ class ActivityLoggerFactory {
       $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
       if (!empty($mt_entity_condition)) {
-        $entity_condition_factory = \Drupal::service('plugin.manager.activity_entity_condition.processor');
-        $entity_condition_plugin = $entity_condition_factory->createInstance($mt_entity_condition);
+        $entity_condition_plugin = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
         $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
       }
       else {
         $entity_condition = TRUE;
       }
 
-      $activity_context_factory = \Drupal::service('plugin.manager.activity_context.processor');
-      $context_plugin = $activity_context_factory->createInstance($mt_context);
+      $context_plugin = $this->activityContextManager->createInstance($mt_context);
 
       $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
       if (in_array($entity_bundle_name, $mt_entity_bundles)
@@ -153,7 +208,7 @@ class ActivityLoggerFactory {
   protected function createFieldInstances($message_type, array $fields) {
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
-      $config_storage = \Drupal::entityTypeManager()
+      $config_storage = $this->entityTypeManager
         ->getStorage('field_config');
       // Create field instances if they do not exists.
       if ($config_storage->load($id) === NULL) {
@@ -211,7 +266,7 @@ class ActivityLoggerFactory {
   public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid) {
     $exists = FALSE;
 
-    $query = \Drupal::entityQuery('message');
+    $query = $this->entityTypeManager->getStorage('message')->getQuery();
     $query->condition('template', $message_type);
     $query->condition('field_message_related_object.target_id', $related_object['target_id']);
     $query->condition('field_message_related_object.target_type', $related_object['target_type']);
@@ -236,7 +291,7 @@ class ActivityLoggerFactory {
     ];
 
     if (in_array($message_type, $types, TRUE)) {
-      $query = \Drupal::entityQuery('message');
+      $query = $this->entityTypeManager->getStorage('message')->getQuery();
       $query->condition('template', $types, 'IN');
       $query->condition('field_message_related_object.target_id', $related_object['target_id']);
       $query->condition('field_message_related_object.target_type', $related_object['target_type']);
@@ -248,7 +303,7 @@ class ActivityLoggerFactory {
     $ids = $query->execute();
 
     $allowed_duplicates = ['moved_content_between_groups'];
-    \Drupal::moduleHandler()->alter('activity_allowed_duplicates', $allowed_duplicates);
+    $this->moduleHandler->alter('activity_allowed_duplicates', $allowed_duplicates);
 
     if (!empty($ids) && !in_array($message_type, $allowed_duplicates)) {
       $exists = TRUE;

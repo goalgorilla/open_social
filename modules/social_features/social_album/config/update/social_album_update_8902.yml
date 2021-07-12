@@ -1,0 +1,18 @@
+views.view.albums:
+  expected_config:
+    display:
+      embed_album_overview:
+        display_options:
+          fields:
+            field_post_image:
+              alter:
+                text: '<a href="/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ field_post_image__target_id }}" class="use-ajax" data-dialog-type="modal" data-dialog-options=''{"width":"80%"}''>{{ field_post_image }}</a>'
+  update_actions:
+    change:
+      display:
+        embed_album_overview:
+          display_options:
+            fields:
+              field_post_image:
+                alter:
+                  text: '<a href="/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ field_post_image__target_id }}" class="use-ajax" data-dialog-type="modal" data-dialog-options=''{"width":"100%","dialogClass":"post"}''>{{ field_post_image }}</a>'

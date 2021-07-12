@@ -133,9 +133,13 @@ function improved_theme_settings_page_attachments(array &$page) {
             border-radius: 0 !important;
           }
 
-          .input-group .form-control:first-child, .input-group-addon:first-child {
-            border-bottom-right-radius: 0 !important;
-            border-top-right-radius: 0 !important;
+          .input-group .form-control:first-child, .input-group-addon:first-child,
+          .input-group-addon {
+            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important
+          }
+          
+          .input-group-addon {
+            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important
           }
 
           .input-group .form-control:last-child, .input-group-addon:last-child {
@@ -191,6 +195,11 @@ function improved_theme_settings_page_attachments(array &$page) {
           background: linear-gradient(rgba(0, 0, 0, ' . $hero_gradient_opacity_start . ') 0%, rgba(34, 34, 34, ' . $hero_gradient_opacity_end . ') 100%) !important;
         }
       ';
+
+      // Add any styles from modules that define selector with configurable
+      // styles.
+      $module_styles = \Drupal::moduleHandler()->invokeAll('improved_theme_settings_add', [$system_theme_settings]);
+      $style_to_add .= implode("\n", $module_styles);
 
       if (!empty($style_to_add)) {
         $page['#attached']['html_head'][] = [

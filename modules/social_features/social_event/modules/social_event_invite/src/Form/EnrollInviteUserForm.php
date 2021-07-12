@@ -79,7 +79,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       '#target_type' => 'user',
       '#tags' => TRUE,
       '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
-      '#title' => $this->t('Select members to add'),
+      '#title' => $this->t('Select members to add by name or email address'),
       '#weight' => -1,
     ];
 

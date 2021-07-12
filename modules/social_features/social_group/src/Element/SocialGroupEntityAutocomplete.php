@@ -27,13 +27,11 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
 
-    // If we use the select 2 widget then we already got a nice array.
-    if ($select2 === TRUE) {
-      $input_values = $element['#value'];
+    if ($select2 !== TRUE) {
+      $input_values = Tags::explode($element['#value']);
     }
     else {
-      // Grab all the input values so we can get the ID's out of them.
-      $input_values = Tags::explode($element['#value']);
+      $input_values = $element['#value'];
     }
 
     foreach ($input_values as $input) {
@@ -48,7 +46,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
           'handler' => $element['#selection_handler'],
         ];
 
-        /* @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
+        /** @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
         $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
         $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
         // Try to get a match from the input string when the user didn't use
@@ -68,7 +66,11 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         if ($group->getMember($account)) {
           $duplicated_values[] = $account->getDisplayName();
         }
-
+        // We need set "validate_reference" for element to prevent
+        // receive notice Undefined index #validate_reference.
+        if (!isset($element['#validate_reference'])) {
+          $element['#validate_reference'] = FALSE;
+        }
         // Validate input for every single user. This way we make sure that
         // The element validates one, or more users added in the autocomplete.
         // This is because Group doesn't allow adding multiple users at once,

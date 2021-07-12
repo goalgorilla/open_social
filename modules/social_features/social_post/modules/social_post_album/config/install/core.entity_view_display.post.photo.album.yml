@@ -1,0 +1,55 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.post.album
+    - field.field.post.photo.field_post
+    - field.field.post.photo.field_post_comments
+    - field.field.post.photo.field_post_image
+    - field.field.post.photo.field_recipient_group
+    - field.field.post.photo.field_recipient_user
+    - field.field.post.photo.field_visibility
+    - social_post.post_type.photo
+  module:
+    - social_post
+    - text
+    - user
+id: post.photo.album
+targetEntityType: post
+bundle: photo
+mode: album
+content:
+  field_post:
+    type: text_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_post_comments:
+    type: comment_post
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      num_comments: '0'
+      order: ASC
+    third_party_settings: {  }
+  like_and_dislike:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  user_id:
+    type: author
+    weight: 0
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_post_image: true
+  field_recipient_group: true
+  field_recipient_user: true
+  field_visibility: true
+  search_api_excerpt: true

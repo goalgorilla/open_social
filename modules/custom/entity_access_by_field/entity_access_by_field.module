@@ -4,11 +4,12 @@
  * @file
  * Entity Access By Field module file.
  *
- * @todo: Prevent creating multiple visibility fields on one node.
- * @todo: Add support for multiple entity types.
+ * @todo Prevent creating multiple visibility fields on one node.
+ * @todo Add support for multiple entity types.
  */
 
 use Drupal\entity_access_by_field\EntityAccessHelper;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\Cache;
@@ -37,7 +38,7 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
   $grants = [];
   if ($op === 'view') {
 
-    // @TODO Check performance hit, this is not cached.
+    // @todo Check performance hit, this is not cached.
     $entityAccessPermissions = \Drupal::getContainer()
       ->get('entity_access_by_field.permissions');
     $permissions = $entityAccessPermissions->getRealmWithPermission();
@@ -48,6 +49,19 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
           $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
         }
         $grants[$realm . '_author'] = [$account->id()];
+
+        // Check if it is "Group members - visible only to group members" realm.
+        $needle = '_group';
+        if (substr($realm, -strlen($needle)) === $needle) {
+          // If user is a member of group he must have grant to access to that
+          // group content.
+          $service = \Drupal::service('group.membership_loader');
+          /** @var \Drupal\group\GroupMembership $membership */
+          foreach ($service->loadByUser($account) as $membership) {
+            $gid = $membership->getGroup()->id();
+            $grants["{$realm}:{$gid}"][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
+          }
+        }
       }
     }
   }
@@ -63,7 +77,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
-  /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
   foreach ($field_definitions as $field_name => $field_definition) {
     // Lets add a node access realm if the field is implemented.
     if ($field_definition->getType() === 'entity_access_field') {
@@ -83,6 +97,29 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                 'grant_delete' => 0,
                 'priority' => 0,
               ];
+
+              /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+              $group_content_storage = \Drupal::entityTypeManager()->getStorage('group_content');
+              /* @var \Drupal\group\Entity\GroupContentInterface $group_contents */
+              $group_contents = $group_content_storage->loadByEntity($node);
+
+              // Continue in case if the node does belong to any group.
+              if (!empty($group_contents)) {
+                foreach ($group_contents as $group_content) {
+                  /** @var \Drupal\group\Entity\GroupInterface $group */
+                  $group = $group_content->getGroup();
+                  if ($group instanceof GroupInterface) {
+                    $grants[] = [
+                      'realm' => $realm . ':' . $group->id(),
+                      'gid' => ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM,
+                      'grant_view' => 1,
+                      'grant_update' => 0,
+                      'grant_delete' => 0,
+                      'priority' => 0,
+                    ];
+                  }
+                }
+              }
             }
             $grants[] = [
               'realm' => $realm . '_author',
@@ -143,7 +180,7 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
 
   // Get the field definitions of the node.
   $field_definitions = $node->getFieldDefinitions();
-  /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+  /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
   foreach ($field_definitions as $field_name => $field_definition) {
     // Lets add a node access realm if the field is implemented.
     if ($field_definition->getType() === 'entity_access_field') {

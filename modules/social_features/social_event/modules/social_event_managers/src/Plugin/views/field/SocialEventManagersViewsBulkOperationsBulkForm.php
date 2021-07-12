@@ -12,7 +12,7 @@ use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
-use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\node\NodeInterface;
@@ -42,7 +42,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface $viewData
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface $viewData
    *   The VBO View Data provider service.
    * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager $actionManager
    *   Extended action manager object.
@@ -61,7 +61,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    ViewsbulkOperationsViewDataInterface $viewData,
+    ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
     PrivateTempStoreFactory $tempStoreFactory,
@@ -356,6 +356,25 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     $label = $profile->label();
 
     return $label->getArguments()['@name'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getTempstoreData($view_id = NULL, $display_id = NULL) {
+    $data = parent::getTempstoreData($view_id, $display_id);
+
+    if (is_array($data) && $data) {
+      if ($view_id && !isset($data['view_id'])) {
+        $data['view_id'] = $view_id;
+      }
+
+      if ($display_id && !isset($data['display_id'])) {
+        $data['display_id'] = $display_id;
+      }
+    }
+
+    return $data;
   }
 
 }

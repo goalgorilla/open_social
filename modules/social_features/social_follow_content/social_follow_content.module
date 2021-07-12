@@ -90,7 +90,7 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
         // No need to set a message if the user got enrolled by someone else.
         if ($account->id() === $entity->field_account->target_id) {
           $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
-          drupal_set_message($message);
+          \Drupal::messenger()->addStatus($message);
         }
       }
     }
@@ -130,7 +130,7 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
 
   \Drupal::moduleHandler()->alter('social_follow_content_types', $types);
 
-  if (empty($types)) {
+  if (!in_array($entity->bundle(), $types)) {
     return;
   }
 
@@ -156,7 +156,7 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
       ]);
       $flag_link = Link::fromTextAndUrl(t('Unfollow this content'), $url)->toString();
 
-      drupal_set_message(t('You are now automatically following this @type. @unfollow_link.', [
+      \Drupal::messenger()->addStatus(t('You are now automatically following this @type. @unfollow_link.', [
         '@type' => $entity->getType(),
         '@unfollow_link' => $flag_link,
       ]));

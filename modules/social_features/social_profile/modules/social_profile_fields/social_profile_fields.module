@@ -6,11 +6,16 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityFormInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -44,6 +49,73 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
 }
 
 /**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  if ($context['entity_type'] !== 'profile' || $context['form_mode'] !== 'edit') {
+    return;
+  }
+
+  $form_display->setComponent('field_profile_nationality', [
+    'weight' => 8,
+    'settings' => [
+      'match_operator' => 'CONTAINS',
+      'size' => 60,
+      'placeholder' => '',
+      'match_limit' => 10,
+    ],
+    'third_party_settings' => [],
+    'type' => 'entity_reference_autocomplete_tags',
+    'region' => 'content',
+  ]);
+
+  $settings = $form_display->getThirdPartySetting('field_group', 'group_profile_contact_info');
+
+  if (!in_array('field_profile_nationality', $settings['children'])) {
+    $settings['children'][] = 'field_profile_nationality';
+    $form_display->setThirdPartySetting('field_group', 'group_profile_contact_info', $settings);
+  }
+
+  $form_display->save();
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if (
+    $context['entity_type'] === 'profile' &&
+    $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
+  ) {
+    $display->setComponent('field_profile_nationality', [
+      'weight' => 0,
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+      'third_party_settings' => [],
+      'type' => 'entity_reference_label',
+      'region' => 'content',
+    ]);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_fields_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_object = $form_state->getFormObject();
+
+  if (
+    $form_object instanceof ContentEntityFormInterface &&
+    $form_object->getEntity()->getEntityTypeId() === 'profile' &&
+    isset($form['field_profile_nationality']['widget']['target_id'])
+  ) {
+    $form['field_profile_nationality']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
+  }
+}
+
+/**
  * Implements hook_social_user_name_display_suggestions().
  *
  * Adds the nickname as a possible display name.
@@ -54,19 +126,32 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
 function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
+  $entityTypeManager = \Drupal::entityTypeManager();
+
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $storage = $entityTypeManager->getStorage('profile');
 
   if (!$user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
     return $suggestions;
   }
 
-  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->field_profile_nick_name->isEmpty()) {
-    // Add the nickname with a low weight so it's shown before the full name.
-    $suggestions['nickname'] = [
-      'weight' => -100,
-      'name' => $user_profile->field_profile_nick_name->value,
-    ];
+  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->get('field_profile_nick_name')->isEmpty()) {
+    /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
+    $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
+
+    $nick_name_field = $user_profile->get('field_profile_nick_name');
+
+    $nick_name = $accessControlHandler->fieldAccess('view', $nick_name_field->getFieldDefinition(), NULL, $nick_name_field, FALSE)
+      ? $nick_name_field->getString()
+      : "";
+
+    if ($nick_name !== '') {
+      // Add the nickname with a low weight so it's shown before the full name.
+      $suggestions['nickname'] = [
+        'weight' => -100,
+        'name' => $nick_name,
+      ];
+    }
   }
 
   return $suggestions;
@@ -287,6 +372,20 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
       }
     }
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_fields_theme() {
+  return [
+    'field__field_profile_nationality' => [
+      'base hook' => 'field',
+    ],
+    'field__field_profile_nationality__sky' => [
+      'base hook' => 'field',
+    ],
+  ];
 }
 
 /**

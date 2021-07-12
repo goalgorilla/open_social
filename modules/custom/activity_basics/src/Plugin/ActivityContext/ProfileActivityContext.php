@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContent;
@@ -25,7 +24,7 @@ class ProfileActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($referenced_entity['target_type'] === 'post') {
         $recipients += $this->getRecipientsFromPost($referenced_entity);

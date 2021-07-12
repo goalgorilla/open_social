@@ -28,7 +28,7 @@ class QueueStorageEntityListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+    /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     $row['id'] = $entity->id();
     $row['name'] = $entity->bundle();
     $row['owner'] = $entity->getOwner()->getDisplayName();

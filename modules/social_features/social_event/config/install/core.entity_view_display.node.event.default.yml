@@ -10,20 +10,20 @@ dependencies:
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enable_enrollment
     - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_enroll_outside_group
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
+    - image.style.social_file_thumbnails
     - node.type.event
   module:
     - address
-    - file
     - group_core_comments
+    - social_core
     - text
     - user
-_core:
-  default_config_hash: wa-Fywd3Q-rIzT9o4Rn2NC0Jm2Q3QEhNjMJ_hqzfga4
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -63,15 +63,17 @@ content:
   field_files:
     weight: 4
     label: above
-    settings: {  }
+    settings:
+      image_style: social_file_thumbnails
+      image_link: file
     third_party_settings: {  }
-    type: file_default
+    type: file_image_default
     region: content
   flag_follow_content:
     weight: 5
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   groups_type_public_group:
     label: above
     weight: -5
@@ -82,9 +84,9 @@ content:
     type: entity_reference_label
   like_and_dislike:
     weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   links:
     weight: 7
     region: content
@@ -103,3 +105,4 @@ hidden:
   groups_type_open_group: true
   private_message_link: true
   search_api_excerpt: true
+  field_event_enable_enrollment: true

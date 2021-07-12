@@ -27,6 +27,14 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_controller'] = '\Drupal\social_core\Controller\SocialCoreController::updateSelection';
       $route->setDefaults($defaults);
     }
+
+    // Write our own page title resolver for creation pages.
+    if ($route = $collection->get('node.add')) {
+      $defaults = $route->getDefaults();
+      $defaults['_title_callback'] = '\Drupal\social_core\Controller\SocialCoreController::addPageTitle';
+      $route->setDefaults($defaults);
+    }
+
   }
 
 }

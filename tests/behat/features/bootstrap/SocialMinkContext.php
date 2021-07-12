@@ -149,8 +149,9 @@ class SocialMinkContext extends MinkContext {
    */
   public function attachFileToHiddenField($field, $path) {
     $field = $this->fixStepArgument($field);
+    $id = $this->getSession()->getPage()->findField($field)->getAttribute('id');
 
-    $javascript = "jQuery('#".$field."').parent().removeClass('hidden')";
+    $javascript = "jQuery('#$id').parent().removeClass('hidden')";
     $this->getSession()->executeScript($javascript);
 
     $this->attachFileToField($field, $path);
@@ -191,43 +192,6 @@ class SocialMinkContext extends MinkContext {
       }
     }
   }
-  
-  
-  /**
-   * Wait for AJAX to finish.
-   *
-   * Overwrites the default iWaitForAjaxToFinish step to increase the time-out to 
-   * allow tests to pass with longer running ajax requests.
-   *
-   * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
-   * @see \Drupal\DrupalExtension\Context\MinkContext::iWaitForAjaxToFinish()
-   *
-   * This overrides "Given I wait for AJAX to finish"
-   */
-  public function iWaitForAjaxToFinish() {
-    $condition = <<<JS
-    (function() {
-      function isAjaxing(instance) {
-        return instance && instance.ajaxing === true;
-      }
-      var d7_not_ajaxing = true;
-      if (typeof Drupal !== 'undefined' && typeof Drupal.ajax !== 'undefined' && typeof Drupal.ajax.instances === 'undefined') {
-        for(var i in Drupal.ajax) { if (isAjaxing(Drupal.ajax[i])) { d7_not_ajaxing = false; } }
-      }
-      var d8_not_ajaxing = (typeof Drupal === 'undefined' || typeof Drupal.ajax === 'undefined' || typeof Drupal.ajax.instances === 'undefined' || !Drupal.ajax.instances.some(isAjaxing))
-      return (
-        // Assert no AJAX request is running (via jQuery or Drupal) and no
-        // animation is running.
-        (typeof jQuery === 'undefined' || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
-        d7_not_ajaxing && d8_not_ajaxing
-      );
-    }());
-JS;
-    $result = $this->getSession()->wait(20000, $condition);
-    if (!$result) {
-      throw new \RuntimeException('Unable to complete AJAX request.');
-    }
-  }
 
   /**
    * Set alias field as specified value
@@ -242,7 +206,7 @@ JS;
       $this->getSession()->getPage()->uncheckField($option);
     }
     // Fill in "URL alias" field with given value
-    $field = $this->fixStepArgument('URL alias');
+    $field = $this->fixStepArgument('path[0][alias]');
     $value = $this->fixStepArgument($value);
     $this->getSession()->getPage()->fillField($field, $value);
   }

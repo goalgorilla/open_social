@@ -34,6 +34,20 @@ class EmailActivityDestination extends SendActivityDestinationBase {
   /**
    * {@inheritdoc}
    */
+  public static function getSendEmailAllUsersSetting($account_ids, $message_template_id) {
+    return parent::getSendAllUsersSetting('email', $account_ids, $message_template_id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getSendEmailUsersIdsByFrequency($account_ids, $message_template_id, $frequency = 'immediately') {
+    return parent::getSendUserIdsByFrequency('email', $account_ids, $frequency, $message_template_id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function setSendEmailUserSettings($account, $values) {
     parent::setSendUserSettings('email', $account, $values);
   }

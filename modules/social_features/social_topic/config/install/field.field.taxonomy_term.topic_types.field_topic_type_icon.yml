@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_topic_type_icon
+    - taxonomy.vocabulary.topic_types
+  module:
+    - options
+id: taxonomy_term.topic_types.field_topic_type_icon
+field_name: field_topic_type_icon
+entity_type: taxonomy_term
+bundle: topic_types
+label: Icon
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: 'social_topic_default_value_function'
+settings: {  }
+field_type: list_string

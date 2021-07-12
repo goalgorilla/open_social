@@ -148,7 +148,7 @@ class Dropdown extends FieldItemBase {
     $lines = [];
     foreach ($values as $key => $value) {
       if (is_array($value)) {
-        $lines[$key] = implode("|", $value);;
+        $lines[$key] = implode("|", $value);
       }
     }
     return implode("\n", $lines);
@@ -177,7 +177,7 @@ class Dropdown extends FieldItemBase {
     foreach ($list as $position => $text) {
       // Check for an explicit key.
       $matches = [];
-      // @TODO Explicit key is necessary !
+      // @todo Explicit key is necessary !
       if (preg_match('/(.*)\|(.*)\|(.*)/', $text, $matches)) {
         // Trim key and value to avoid unwanted spaces issues.
         $value = trim($matches[1]);

@@ -55,10 +55,10 @@ class Topic extends DemoNode {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('file'),
-      $container->get('entity.manager')->getStorage('taxonomy_term')
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('entity_type.manager')->getStorage('taxonomy_term')
     );
   }
 

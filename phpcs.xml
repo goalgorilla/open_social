@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="drupal">
+    <description>PHP CodeSniffer configuration for Drupal coding standards in Open Social.</description>
+    <file>./modules/custom</file>
+    <file>./modules/social_features</file>
+    <file>./social.profile</file>
+    <file>./social.install</file>
+    <file>./themes/socialbase</file>
+    <file>./themes/socialblue</file>
+    <config name="ignore_errors_on_exit" value="0"/>
+    <config name="ignore_warnings_on_exit" value="0"/>
+    <config name="default_standard" value="Drupal"/>
+
+    <arg name="extensions" value="php,module,inc,install,test,profile,theme" />
+
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*.css</exclude-pattern>
+    <exclude-pattern>*/assets/*</exclude-pattern>
+    <exclude-pattern>*/components/*</exclude-pattern>
+    <exclude-pattern>social.info.yml</exclude-pattern>
+    <exclude-pattern>*.md</exclude-pattern>
+    <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
+
+    <config name="drupal_core_version" value="9" />
+    <!--  Include all Drupal related rules but exclude some so we can gradually fix these. -->
+    <rule ref="Drupal">
+        <exclude name="Drupal.Commenting.GenderNeutralComment.GenderNeutral"/>
+        <exclude name="Drupal.Commenting.VariableComment.Missing"/>
+        <exclude name="Drupal.Commenting.ClassComment.Short"/>
+        <exclude name="Drupal.Commenting.Deprecated.IncorrectTextLayout"/>
+        <exclude name="Drupal.Commenting.Deprecated.DeprecatedPeriodAfterSeeUrl"/>
+        <exclude name="Drupal.Commenting.Deprecated.DeprecatedWrongSeeUrlFormat"/>
+        <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
+        <exclude name="Drupal.Semantics.FunctionTriggerError.TriggerErrorTextLayoutStrict"/>
+    </rule>
+
+    <!-- We need to fix the DateTime and DateTimeZone in this class. -->
+    <rule ref="Drupal.Classes.UseGlobalClass.RedundantUseStatement">
+        <exclude-pattern>SocialAddToCalendarBase\.php</exclude-pattern>
+    </rule>
+
+    <!--
+      The social_graphql module expects PHP 7.4 but the Drupal coding standards does not yet allow
+      nullable class property types. See https://www.drupal.org/project/coder/issues/3191651
+
+      Similarly we ignore missing variable annotation warnings because we use class property types
+      that already contain that information.
+    -->
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing.NoSpaceAfter">
+      <exclude-pattern>./modules/custom/social_graphql/*</exclude-pattern>
+    </rule>
+    <rule ref="Drupal.Commenting.VariableComment.MissingVar">
+      <exclude-pattern>./modules/custom/social_graphql/*</exclude-pattern>
+    </rule>
+
+</ruleset>

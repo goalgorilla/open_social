@@ -78,6 +78,20 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $configFactory;
 
   /**
+   * The Membership Loader.
+   *
+   * @var \Drupal\group\GroupMembershipLoaderInterface
+   */
+  protected $groupMembershipLoader;
+
+  /**
+   * The Config factory.
+   *
+   * @var \Drupal\ginvite\GroupInvitationLoader
+   */
+  protected $groupInvitationLoader;
+
+  /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
@@ -132,6 +146,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $this->pluginManager = $plugin_manager;
     $this->configFactory = $config_factory;
     $this->token = $token;
+    $this->groupInvitationLoader = $group_membership_loader;
+    $this->groupMembershipLoader = $invitation_loader;
   }
 
   /**
@@ -211,8 +227,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $group_plugin_collection = $this->pluginManager->getInstalled($group->getGroupType());
     $group_invite_config = $group_plugin_collection->getConfiguration()['group_invitation'];
 
-    $invitation_subject = $group_invite_config['invitation_subject'];
-    $invitation_body = $group_invite_config['invitation_body'];
+    // Get invite settings.
+    $invite_settings = $this->configFactory->get('social_group.settings')->get('group_invite');
+
+    // Set preview subject and message.
+    $invitation_subject = $invite_settings['invite_subject'] ?? $group_invite_config['invitation_subject'];
+    $invitation_body = $invite_settings['invite_message'] ?? $group_invite_config['invitation_body'];
 
     // Cleanup message body and replace any links on preview page.
     $invitation_body = $this->token->replace($invitation_body, $params);
@@ -301,15 +321,19 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           }
         }
         else {
+          /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+          $group_content_storage = $this->entityTypeManager->getStorage('group_content');
           // If the invitation has already been send, unset it from the list.
-          if ($this->groupInvitationLoader->loadByGroup($this->group, NULL, $email)) {
+          // For some reason groupInvitationLoader service doesn't work
+          // properly.
+          if (!empty($group_content_storage->loadByGroup($this->group, 'group_invitation', ['invitee_mail' => $email]))) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
           }
         }
       }
       else {
         // Load the user by userId.
-        $account = user::load($user);
+        $account = User::load($user);
 
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);
@@ -429,6 +453,11 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     // Remove select2 ID parameter.
     $string = str_replace('$ID:', '', $string);
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
+
+    if (is_array($matches[0]) && count($matches[0]) === 1) {
+      return reset($matches[0]);
+    }
+
     return $matches[0];
   }
 

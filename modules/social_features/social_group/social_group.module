@@ -6,6 +6,8 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\bootstrap\Bootstrap;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -23,6 +25,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
+use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\views\ViewExecutable;
@@ -60,9 +63,12 @@ function social_group_theme() {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (isset($entity_types['group'])) {
-    $entity_types['group']->setClass(Group::class);
-    $entity_types['group']->setListBuilderClass(SocialGroupListBuilder::class);
+    $entity_types['group']
+      ->setClass(Group::class)
+      ->setListBuilderClass(SocialGroupListBuilder::class)
+      ->setAccessClass(SocialGroupAccessControlHandler::class);
   }
 }
 
@@ -78,40 +84,6 @@ function social_group_entity_type_alter(array &$entity_types) {
  *   - allowed_visibility: The allowed visibilities.
  */
 function template_preprocess_group_settings_help(array &$variables) {
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_public_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $group = $form_state->getFormObject()->getEntity();
-  $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
-  $form['group_type']['#default_value'] = $group->bundle();
-
-  // If user doesn't have permission to change group types disable it.
-  // Or if group types can't be edited due to visibility issues.
-  if (!social_group_group_type_permission_check()) {
-    $form['group_type']['#disabled'] = TRUE;
-  }
-  else {
-    $form['group_type']['#prefix'] = '<div id="group-type-result"></div>';
-    $group_type_element['#ajax'] = [
-      'callback' => '_social_group_inform_group_type_selection',
-      'effect' => 'fade',
-      'event' => 'change',
-    ];
-  }
-
-  // Disable all group types that can't be edited. Because they don't have
-  // a visibility.
-  foreach ($form['group_type']['#options'] as $type => $label) {
-    if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-      $form['group_type'][$type] = [
-        '#disabled' => TRUE,
-      ];
-    }
-  }
-  $form['#group_children']['group_type'] = 'group_content';
 }
 
 /**
@@ -133,7 +105,7 @@ function social_group_group_type_permission_check() {
   }
 
   // Otherwise return true when we are able to edit the current group type.
-  return TRUE;
+  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
 }
 
 /**
@@ -257,12 +229,19 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_type_id'] = $group_type_id;
   $variables['group_type'] = $group->getGroupType()->label();
 
-  $group_settings_help = [
-    '#theme' => 'group_settings_help',
-    '#group_type' => $group->getGroupType()->label(),
-    '#join_method' => _social_group_get_join_methods($group),
-    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
-  ];
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+  if (in_array($group_type_id, $group_types)
+    && $group->hasField('field_group_type')
+    && !empty($term = $group->get('field_group_type')->entity)
+    && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
+    $variables['group_type'] = $term->getName();
+    $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
+  }
+
+  // Render the group settings help, gear icon with popover.
+  $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
 
   $account = \Drupal::currentUser();
@@ -278,14 +257,14 @@ function social_group_preprocess_group(array &$variables) {
   elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-    if ($group_type_id === 'flexible_group') {
-      $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-      $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-      if (!$direct_option) {
-        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-        $variables['closed_group'] = TRUE;
-        $variables['cta'] = t('Invitation only');
-      }
+
+    if (
+      in_array($group_type_id, $group_types) &&
+      !social_group_flexible_group_can_join_directly($group)
+    ) {
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+      $variables['closed_group'] = TRUE;
+      $variables['cta'] = t('Invitation only');
     }
   }
   // If the group type is a closed_group.
@@ -294,6 +273,15 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     $variables['closed_group'] = TRUE;
     $variables['cta'] = t('Invitation only');
+  }
+  // Non logged in users should still see "join" button on a group page.
+  if (
+    $account->isAnonymous() &&
+    (in_array($group_type_id, $group_types) &&
+    social_group_flexible_group_can_join_directly($group) ||
+    in_array($group_type_id, ['public_group']))
+  ) {
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
   }
 
   // Add the hero styled image.
@@ -324,7 +312,10 @@ function social_group_preprocess_group(array &$variables) {
     // Get the current route name to check if
     // the user is on the edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
-    if (!in_array($route, ['entity.group.edit_form', 'entity.group.delete_form'])) {
+    if (!in_array($route, [
+      'entity.group.edit_form',
+      'entity.group.delete_form',
+    ])) {
       if ($group->access('update', $account)) {
         $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
         $variables['#cache']['contexts'][] = 'route.name';
@@ -348,6 +339,10 @@ function social_group_preprocess_group(array &$variables) {
     // Add context, since we render join / invite only etc links in the block.
     $variables['#cache']['contexts'][] = 'group';
     $variables['#cache']['contexts'][] = 'user';
+    $about_url = Url::fromRoute('view.group_information.page_group_about', [
+      'group' => $group->id(),
+    ]);
+    $variables['about_url'] = $about_url;
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()->formatPlural($variables['group_events'],
@@ -383,13 +378,54 @@ function social_group_preprocess_group__hero(array &$variables) {
     ])->toString();
   }
 
-  $group_settings_help = [
-    '#theme' => 'group_settings_help',
-    '#group_type' => $group->getGroupType()->label(),
-    '#join_method' => _social_group_get_join_methods($group),
-    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
-  ];
+  // Render the group settings help, gear icon with popover.
+  $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
+}
+
+/**
+ * Renders the group settings based on available fields for the hero.
+ *
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   the Group interface.
+ *
+ * @return array
+ *   the actual tooltip render array.
+ */
+function _social_group_render_group_settings_hero(GroupInterface $group) {
+  $description = '';
+  // Optional after 10.0.x we can render the group visibility.
+  if ($group_visibility_option = _social_group_get_group_visibility($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Group visibility') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($group_visibility_option as $key => $group_visibility_string) {
+      $description .= $group_visibility_string;
+    }
+    $description .= '</div>';
+  }
+  // Optional after 9.x we can render the allowed content visibility.
+  if ($allowed_visibility_option = _social_group_get_allowed_visibility($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Group content visibility') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($allowed_visibility_option as $key => $allowed_visibility_string) {
+      $description .= $allowed_visibility_string;
+    }
+    $description .= '</div>';
+  }
+  // Optional after 9.x we can render the join methods.
+  if ($join_methods_option = _social_group_get_join_methods($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Join method') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($join_methods_option as $key => $join_methods_string) {
+      $description .= $join_methods_string;
+    }
+    $description .= '</div>';
+  }
+
+  return social_group_render_tooltip('group_hero', t('Access permissions'), $description);
 }
 
 /**
@@ -406,40 +442,104 @@ function _social_group_get_join_methods(GroupInterface $group) {
   $group_type_id = $group_type->id();
   $join_methods = [];
 
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // Try to retrieve join methods from Group directly.
+    if ($group->hasField('field_group_allowed_join_method')) {
+      $allowed_options = $group->get('field_group_allowed_join_method')->getValue();
+      foreach ($allowed_options as $option) {
+        // Lets grab the value from the selected radio item.
+        if (!empty($option['value']) && is_string($option['value'])) {
+          $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
+        }
+      }
+    }
+  }
+
   // Get join method based on group type. TODO get it programmatically.
   switch ($group_type_id) {
     case 'secret_group':
     case 'closed_group':
-      $join_methods = [
-        'added' => t('Be added by group managers'),
-      ];
+      $join_methods['added'] = social_group_allowed_join_method_description('added');
       break;
 
     case 'public_group':
     case 'open_group':
-      $join_methods = [
-        'direct' => t('Free to join'),
-        'added' => t('Be added by group managers'),
-      ];
-      break;
-
-    case 'flexible_group':
-      // Try to retrieve join methods from Group directly.
-      $allowed_options = $group->get('field_group_allowed_join_method')
-        ->getValue();
-      foreach ($allowed_options as $option) {
-        $value = $option['value'];
-        if ($value === 'direct') {
-          $join_methods['direct'] = t('Free to join');
-        }
-        if ($value === 'added') {
-          $join_methods['added'] = t('Be added by group managers');
-        }
-      }
+      $join_methods['direct'] = social_group_allowed_join_method_description('direct');
+      $join_methods['added'] = social_group_allowed_join_method_description('added');
       break;
   }
 
   return $join_methods;
+}
+
+/**
+ * Get the group visibility label of a group.
+ *
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   the Group interface.
+ * @param string $field_name
+ *   The field name of the visibility field for a group type.
+ *
+ * @return array
+ *   Returns the visibility options of a group.
+ */
+function _social_group_get_group_visibility(GroupInterface $group, $field_name = NULL) {
+  $group_type = $group->getGroupType();
+  $group_type_id = $group_type->id();
+  $group_visibility = [];
+
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // By default we ship with the below field, lets grab its value(s).
+    if ($group->hasField('field_flexible_group_visibility')) {
+      $visibility_values = $group->get('field_flexible_group_visibility')->getValue();
+      // Lets grab the rendered description for the group visibility.
+      if (!empty($visibility_values)) {
+        foreach ($visibility_values as $visibility_value) {
+          if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+            $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
+          }
+        }
+      }
+      return $group_visibility;
+    }
+    // If the above field doesn't exist the user might have a different one
+    // so lets see if it's given as argument and get it's description.
+    if ($field_name !== NULL && $group->hasField($field_name)) {
+      $visibility_values = $group->get($field_name)->getValue();
+      // Lets grab the rendered description for the group visibility.
+      if (!empty($visibility_values)) {
+        foreach ($visibility_values as $visibility_value) {
+          if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+            $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
+          }
+        }
+      }
+      return $group_visibility;
+    }
+  }
+
+  // Get join method based on group type.
+  switch ($group_type_id) {
+    case 'secret_group':
+    case 'closed_group':
+    case 'public_group':
+    case 'open_group':
+      return $group_visibility;
+
+    default:
+      // For non Open Social group types, we can allow developers to pass
+      // a field name to return a label instead.
+      if ($field_name !== NULL && $group->hasField($field_name)) {
+        $group_visibility = $group->get($field_name)->getValue();
+      }
+      return $group_visibility;
+  }
 }
 
 /**
@@ -456,43 +556,33 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
   $group_type_id = $group_type->id();
   $allowed_visibility = [];
 
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_settings', $group_types);
+
+  if (in_array($group_type_id, $group_types)) {
+    // Try to retrieve allowed visibility from Group directly.
+    $allowed_options = $group->get('field_group_allowed_visibility')
+      ->getValue();
+    foreach ($allowed_options as $option) {
+      if (!empty($option['value']) && is_string($option['value'])) {
+        $allowed_visibility[$option['value']] = social_group_allowed_visibility_description($option['value']);
+      }
+    }
+  }
+
   // Get allowed visibility based on group type. TODO get it programmatically.
   switch ($group_type_id) {
     case 'secret_group':
     case 'closed_group':
-      $allowed_visibility = [
-        'group' => t('Group members'),
-      ];
+      $allowed_visibility['group'] = social_group_allowed_visibility_description('group');
       break;
 
     case 'open_group':
-      $allowed_visibility = [
-        'community' => t('Community'),
-      ];
+      $allowed_visibility['community'] = social_group_allowed_visibility_description('community');
       break;
 
     case 'public_group':
-      $allowed_visibility = [
-        'public' => t('Public'),
-      ];
-      break;
-
-    case 'flexible_group':
-      // Try to retrieve allowed visibility from Group directly.
-      $allowed_options = $group->get('field_group_allowed_visibility')
-        ->getValue();
-      foreach ($allowed_options as $option) {
-        $value = $option['value'];
-        if ($value === 'public') {
-          $allowed_visibility['public'] = t('Public');
-        }
-        if ($value === 'community') {
-          $allowed_visibility['community'] = t('Community');
-        }
-        if ($value === 'group') {
-          $allowed_visibility['group'] = t('Group members');
-        }
-      }
+      $allowed_visibility['public'] = social_group_allowed_visibility_description('public');
       break;
   }
 
@@ -500,55 +590,96 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 }
 
 /**
- * Implements hook_entity_insert().
+ * Returns a description array for the field_flexible_group_visibility options.
  *
- * On a new group insert, from the type
- * open_group or closed_group the Owner gets the group manager role by default.
+ * @return string
+ *   The render array containing the description.
  */
-function social_group_group_insert(GroupInterface $group) {
-  // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
-  // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() === 'open_group' ||
-    $group->getGroupType()->id() === 'closed_group' ||
-    $group->getGroupType()->id() === 'flexible_group') {
-    // Get the group owner.
-    $account = $group->getOwner();
-    // Get membership.
-    $content = $group->getMember($account)->getGroupContent();
-    // Delete the initial created membership.
-    $content->delete();
-    $grant_group_admin = FALSE;
-    // If the user has this permission inside a group.
-    if ($group->hasPermission('manage all groups', $account)) {
-      // Then we grant this user de Group Admin role.
-      $grant_group_admin = TRUE;
-    }
-    // When a CM+ creates a group, it is given the group_manager role
-    // alongside the group_admin role to keep the full control over the group.
-    if ($grant_group_admin) {
-      // Delete the initial created membership.
-      $content->delete();
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_admin', $group->bundle() . '-group_manager']];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
-    else {
-      // Create a new membership.
-      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_manager']];
-      $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values);
-      $group_content->save();
-    }
+function social_group_group_visibility_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
   }
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'public':
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
+      $description .= '<strong>' . t('Public')->render() . '</strong>';
+      $description .= ' - ' . t('All visitors of the platform can see this group')->render();
+      $description .= '</p>';
+      break;
+
+    case 'community':
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      $description .= '<strong>' . t('Community')->render() . '</strong>';
+      $description .= ' - ' . t('Only members who are logged in can see this group')->render();
+      $description .= '</p>';
+      break;
+
+    case 'members':
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
+      $description .= ' - ' . t('Only group members can see this group')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // group_visibility #options array.
+  \Drupal::moduleHandler()->alter('social_group_group_visibility_description', $key, $description);
+
+  return $description;
+}
+
+/**
+ * Returns a description array for the field_group_allowed_join_method options.
+ *
+ * @param string $key
+ *   The join method key.
+ *
+ * @return string
+ *   The render array containing the description.
+ */
+function social_group_allowed_join_method_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'added':
+      $description = '<p><strong>' . t('Invite only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'direct':
+      $description = '<p><strong>' . t('Open to join')->render() . '</strong>';
+      $description .= ' - ' . t('users can join this group without approval.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'request':
+      $description = '<p><strong>' . t('Request to join')->render() . '</strong>';
+      $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // join method #options array.
+  \Drupal::moduleHandler()->alter('social_group_allowed_join_method_description', $key, $description);
+
+  return $description;
 }
 
 /**
@@ -579,7 +710,6 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
  * Implements hook_form_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -613,7 +743,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_delete_forms)) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
 
-    list($name, $group) = _social_group_get_group_labels();
+    [$name, $group] = _social_group_get_group_labels();
 
     // Give a better title, description and submit button value.
     $form['#title'] = t('Remove %name from %group', [
@@ -629,7 +759,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   // Set some helpful text on the group join form now it's there.
   if (in_array($form_id, $join_forms)) {
-    $markup = t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');
+    $markup = t('By submitting this form you will become a member of the group. As a member of the group you will begin to receive notifications about changes and interactions within the group. Your profile will also be included in group membership.');
 
     // When the user is accepting an invite, change the text to something more
     // meaningful.
@@ -662,15 +792,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
-    // Remove the 'group_admin' role in a generic way
-    // for all (future) group types.
-    foreach ($form['group_roles']['widget']['#options'] as $key => $value) {
-      // Hide the submission for the Group Admin role.
-      if (strpos($key, 'group_admin') != FALSE) {
-        unset($form['group_roles']['widget']['#options'][$key]);
-      }
-    }
-
     $form['path']['#type'] = 'hidden';
   }
 
@@ -678,9 +799,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
     // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name'),
+      '#title' => t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -710,6 +830,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // We don't want to override the form::save in group.
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
     }
+    else {
+      // If node don't belong to any group as a group content plugin
+      // we don't need group visibility field.
+      if (method_exists($form_state->getFormObject(), 'getEntity')) {
+        /** @var \Drupal\Core\Entity\EntityInterface $node */
+        $node = $form_state->getFormObject()->getEntity();
+        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $node->bundle())) {
+          unset($form['groups']);
+        }
+      }
+    }
   }
 
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['delete'])) {
@@ -727,11 +860,11 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
     if (in_array($form_id, $group_forms['edit'])) {
       $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
-      $group_type_element = $social_group_form->getGroupTypeElement();
+      $group_type_element = $social_group_form->getGroupTypeElement(TRUE);
       // Get the current group.
       $group = _social_group_get_current_group();
       // Set the default value in the form.
-      $group_type_element['#default_value'] = $group->getGroupType()->id();
+      $group_type_element['widget']['#default_value'] = $group->getGroupType()->id();
 
       // If user doesn't have permission to change group types disable it.
       // Or if group types can't be edited due to visibility issues.
@@ -740,7 +873,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
       else {
         $group_type_element['#prefix'] = '<div id="group-type-result"></div>';
-        $group_type_element['#ajax'] = [
+        $group_type_element['widget']['#ajax'] = [
           'callback' => '_social_group_inform_group_type_selection',
           'effect' => 'fade',
           'event' => 'change',
@@ -748,17 +881,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['group_type'] = $group_type_element;
-      $form['#group_children']['group_type'] = 'group_settings';
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
-      foreach (array_keys($form['group_type']['#options']) as $type) {
+      foreach (array_keys($form['group_type']['widget']['#options']) as $type) {
         if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-          $form['group_type'][$type] = [
+          $form['group_type']['widget'][$type] = [
             '#disabled' => TRUE,
           ];
         }
       }
+
+      $form['#fieldgroups']['group_settings']->children[] = 'group_type';
+      $form['#group_children']['group_type'] = 'group_settings';
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
     }
@@ -776,14 +911,24 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
-  if (in_array($form_id, ['group_flexible_group_edit_form', 'group_flexible_group_add_form'])) {
+
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+  $group_form_ids = [];
+  foreach ($group_types as $group_type) {
+    $group_form_ids[] = 'group_' . $group_type . '_edit_form';
+    $group_form_ids[] = 'group_' . $group_type . '_add_form';
+  }
+
+  if (isset($form['field_group_allowed_join_method']) && in_array($form_id, $group_form_ids)) {
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite-only - users can only join this group if they are added/invited by group managers');
+      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite only');
     }
     if (array_key_exists('direct', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join - users can join this group without approval');
+      $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join');
     }
     // If directly exists it's becoming the default.
     if (in_array('direct', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
@@ -833,10 +978,8 @@ function _social_group_unique_members($element, &$form_state, $complete_form) {
 function _social_group_inform_group_type_selection() {
   $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
-  drupal_set_message($text, 'info');
-  $alert = ['#type' => 'status_messages'];
   $ajax_response = new AjaxResponse();
-  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $alert));
+  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $text));
 
   return $ajax_response;
 }
@@ -848,11 +991,15 @@ function _social_group_inform_group_type_selection() {
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
-  // Can be empty for flexible groups.
+  // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
-  if (!empty($form['group_type'])) {
-    $default_type = $form['group_type']['#default_value'];
-    $new_type = $form_state->getValue('group_type');
+  if (
+    $group instanceof GroupInterface &&
+    !empty($form['group_type']) &&
+    (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+  ) {
+    $default_type = $form['group_type']['widget']['#default_value'];
+    $new_type = $form_state->getValue('group_type')[0]['value'];
 
     // Update the Group entity and all it's content when the type changed.
     if ($new_type !== $default_type) {
@@ -900,7 +1047,10 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
-    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
+    if (in_array($complete_form['#form_id'], [
+      'group_content_' . $group->bundle() . '-group_membership_group-join_form',
+      'group_content_' . $group->bundle() . '-group_membership_add_form',
+    ])) {
       // Set redirect to group home page for people joining the group.
       $form_state->setRedirect(
         'entity.group.canonical',
@@ -998,20 +1148,6 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
 }
 
 /**
- * When updating a group membership.
- *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *   The group content.
- */
-function social_group_group_content_update(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
-      _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
-    }
-  }
-}
-
-/**
  * Form submit for membership edit form.
  *
  * @param array $form
@@ -1075,11 +1211,10 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
  * Implements hook_field_widget_form_alter().
  */
 function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
-  // Unset the public options on visibility field.
+  // Unset the visibility field options which are not enabled.
   if ($field_definition->getType() == 'entity_access_field') {
     $default_value = $context['items']->getValue();
     if (isset($default_value[0]['value'])) {
@@ -1096,6 +1231,8 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
+      // If it's an existing entity we dont need to set the default
+      // rather follow the saved one.
       if (!$entity->id()) {
         $element['#default_value'] = \Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group_type_id);
       }
@@ -1107,12 +1244,72 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     }
 
     $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $current_group);
-
+    // Based on the allowed visibility options for a group type,
+    // we disable the options which are not valid for the group.
+    // Remember for flexible groups we can have multiple options.
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
+      // If the element is disabled, we also need to move it from
+      // the default value.
+      if (!$allowed && $element['#default_value'] === $visibility) {
+        $element['#default_value'] = NULL;
+      }
+    }
+
+    // This contains the group that is passed back from the form_state as
+    // chosen by selecting a group in the $form['groups'] select widget.
+    // With this we can ensure that on validation the content visibility
+    // field is disabling the correct values based on the selected group.
+    if (!empty($form_state->getValue('groups'))) {
+      $group_id = NULL;
+      $group_value = $form_state->getValue('groups');
+      if (is_array($group_value)) {
+        $group_id = $group_value[0]['target_id'];
+      }
+      if (is_string($group_value)) {
+        $group_id = (int) $group_value;
+      }
+      // Load the correct group.
+      $selected_groups = Group::loadMultiple([$group_id]);
+
+      // Ensure we disable the correct visibility options.
+      foreach ($selected_groups as $current_group) {
+        if (!empty($current_group)) {
+          $group_type = $current_group->getGroupType();
+          $group_type_id = $group_type->id();
+
+          $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, NULL, $current_group);
+
+          foreach ($visibility_options as $visibility => $allowed) {
+            $element[$visibility]['#disabled'] = !$allowed;
+            // If the element is disabled, we also need to move it from
+            // the default value.
+            if (!$allowed && $element['#default_value'] === $visibility) {
+              $element['#default_value'] = NULL;
+            }
+          }
+        }
+      }
+    }
+
+    // For flexible groups it could potentially still be empty.
+    // But in any way, from the available options, if its empty
+    // lets choose the most safe one.
+    if ($element['#default_value'] === NULL) {
+      // So if public isn't disabled, it will become public.
+      if (!$element['public']['#disabled']) {
+        $element['#default_value'] = 'public';
+      }
+      // So if community isn't disabled, it will become community.
+      if (!$element['community']['#disabled']) {
+        $element['#default_value'] = 'community';
+      }
+      // And if members isn't disabled, it will become members.
+      if (!$element['group']['#disabled']) {
+        $element['#default_value'] = 'group';
+      }
     }
   }
-
 }
 
 /**
@@ -1244,9 +1441,12 @@ function _social_group_get_member_profile(GroupContent $group_content) {
 }
 
 /**
- * Get current Group entity from the route.
+ * Gets current Group entity from the route.
  *
- * @return \Drupal\group\Entity\GroupInterface
+ * @param \Drupal\node\NodeInterface|null $node
+ *   (optional) The node object or NULL.
+ *
+ * @return \Drupal\group\Entity\GroupInterface|null
  *   Returns the group object.
  */
 function _social_group_get_current_group($node = NULL) {
@@ -1277,7 +1477,7 @@ function _social_group_get_current_group($node = NULL) {
   }
   else {
     $node = is_object($node) ? $node : \Drupal::routeMatch()->getParameter('node');
-    if (is_object($node) && !is_null($node)) {
+    if (is_object($node)) {
       $node_entity = [
         'target_type' => 'node',
         'target_id' => $node->id(),
@@ -1294,7 +1494,7 @@ function _social_group_get_current_group($node = NULL) {
   // If we have a cache key we store the value.
   if (!is_null($nid)) {
     // Translate NULL to FALSE so that isset works.
-    $cache[$nid] = isset($group) ? $group : FALSE;
+    $cache[$nid] = $group ?? FALSE;
   }
 
   return $group;
@@ -1565,17 +1765,14 @@ function social_group_get_all_groups() {
  * @return array
  *   List of group IDs the user is member of.
  *
- * @deprecated in Open Social 4.2 and will be removed in one of the next major
- *   updates.
+ * @deprecated in social:8.x-4.2 and is removed from social:8.x-9.6.
  *   This function is moved to the service social_group.helper_service, use
  *   getAllGroupsForUser() instead.
  *
  * @see https://www.drupal.org/node/3026220
  */
 function social_group_get_all_group_members($uid) {
-  @trigger_error('social_group_get_all_group_members() is deprecated in Open Social 4.2 and will be removed in
-  one of the next major updates. This function is moved to the service social_group.helper_service, use
-  getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220.', E_USER_DEPRECATED);
+  @trigger_error(__FUNCTION__ . ' is deprecated in social:8.x-4.2 and is removed from social:8.x-9.6. This function is moved to the service social_group.helper_service, use getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220', E_USER_DEPRECATED);
 
   $groups = &drupal_static(__FUNCTION__);
 
@@ -1610,20 +1807,18 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node'];
-  if (in_array($entity_type->id(), $entity_types)) {
-    if (isset($fields['groups'])) {
-      /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
-      $fields['groups']->setLabel(t('Group'));
-      $fields['groups']->setDisplayOptions('form', [
+  if ($entity_type->id() === 'node' && isset($fields['groups'])) {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+    $fields['groups']
+      ->setLabel(t('Group'))
+      ->setDescription('')
+      ->setSetting('handler', 'social')
+      ->setDisplayOptions('form', [
         'type' => 'options_select',
         'settings' => [],
         'weight' => 16,
-      ]);
-      $fields['groups']->setDisplayConfigurable('form', TRUE);
-      $fields['groups']->setDescription('');
-
-    }
+      ])
+      ->setDisplayConfigurable('form', TRUE);
   }
 }
 
@@ -1635,13 +1830,30 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
 function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     if (isset($form['groups'])) {
+      // Check if we are adding a translation or it's the default being editted.
+      /** @var \Drupal\Core\Entity\EntityForm $form_object */
+      $form_object = $form_state->getFormObject();
+      /** @var \Drupal\social_node\Entity\Node $node */
+      $node = $form_object->getEntity();
+      $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
+      // If it's not the original, we can safely say its a translation being
+      // added or editted. In that case we don't want users to override the
+      // group or visibility. We only allow those changes on the default as
+      // these can not change per language for now.
+      if (!$is_original_language) {
+        $form['field_content_visibility']['widget']['#disabled'] = TRUE;
+        $form['field_content_visibility']['widget']['#description'] = t('Changing visibility is disabled when translating.');
+        $form['groups']['widget']['#disabled'] = TRUE;
+        $form['groups']['widget']['#description'] = t('Changing groups is disabled when translating.');
+      }
+
       $change_fieldgroup_titles = [
         'group_topic_visibility',
         'group_event_visibility',
       ];
       foreach ($change_fieldgroup_titles as $fieldgroup_title) {
         if (isset($form['#fieldgroups'][$fieldgroup_title])) {
-          $form['#fieldgroups'][$fieldgroup_title]->label = (string) t('Group and visibility');
+          $form['#fieldgroups'][$fieldgroup_title]->label = t('Access permissions')->render();
         }
       }
       // Lets remove the original submit function in favor of this submit.
@@ -1651,7 +1863,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
         }
       }
 
-      /* @var \Drupal\node\Entity\Node $node */
+      /** @var \Drupal\node\NodeInterface $node */
       $node = $form_state->getFormObject()->getEntity();
       // Store if the node is new or not.
       $form['is_new'] = [
@@ -1673,8 +1885,12 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /* @var \Drupal\node\Entity\Node $node */
-  $node = $form_state->getFormObject()->getEntity();
+  // Check if we are adding a translation or it's the default being editted.
+  /** @var \Drupal\Core\Entity\EntityForm $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\social_node\Entity\Node $node */
+  $node = $form_object->getEntity();
+  $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
 
   // Check if the created node is new or updated.
   $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
@@ -1701,8 +1917,13 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   }
 
   // Now make sure the relevant GroupContent is removed or added.
-  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  // But only when we are on the original language, we don't want to update
+  // this when translating. The field is disabled for that scenario so no
+  // need to run this.
+  if ($is_original_language) {
+    $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+    $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  }
 }
 
 /**
@@ -1906,7 +2127,7 @@ function social_group_social_user_account_header_create_links($context) {
  * site manager.
  */
 function social_group_social_user_account_header_items(array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== TRUE) {
     return [];
   }
 
@@ -2043,6 +2264,17 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
 function social_group_social_group_default_route_tabs_alter(&$tabs) {
   // Unset some tabs created by group.
   unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+}
+
+/**
+ * Implements hook_social_path_manager_group_tabs_alter().
+ */
+function social_group_social_path_manager_group_tabs_alter(array &$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+
+  // Add manage members tab.
+  $tabs['social_group.membership'] = 'view.group_manage_members.page_group_manage_members';
 }
 
 /**
@@ -2283,4 +2515,164 @@ function social_group_preprocess_field(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Returns a new popover tooltip based on a descriptive text and field name.
+ *
+ * @param string $field_name
+ *   The field name to create a unique id for.
+ * @param \Drupal\Core\StringTranslation\TranslatableMarkup $data_title
+ *   The title of the pop-up.
+ * @param string $description
+ *   A string containing the description, this needs to be rendered markup.
+ *
+ * @return array
+ *   The render array containing the tooltip.
+ */
+function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description) {
+  $build = [];
+  $id = Html::getUniqueId('tooltip-' . $field_name);
+  $icon = Bootstrap::glyphicon('question-sign');
+  $title = '';
+
+  // We special case this for the hero.
+  if ($field_name === 'group_hero') {
+    $data_title = t('Access permissions');
+
+    // For SKY we can render a bigger icon.
+    $icon_size = 'icon-small';
+    if (theme_get_setting('style') === 'sky') {
+      $icon_size = 'icon-medium';
+      $title = t('Access permissions');
+    }
+
+    $icon = [
+      '#type' => "inline_template",
+      '#template' => '<svg class="icon-white ' . $icon_size . '"><use xlink:href="#icon-cog"></use></svg>',
+    ];
+  }
+
+  $build['toggle'] = [
+    '#type' => 'link',
+    '#url' => Url::fromUserInput("#$id"),
+    '#icon' => $icon,
+    '#title' => $title,
+    '#attributes' => [
+      'class' => ['icon-before'],
+      'data-toggle' => 'popover',
+      'data-container' => 'body',
+      'data-html' => 'true',
+      'data-placement' => 'bottom',
+      'data-title' => $data_title ?: '',
+    ],
+  ];
+  $build['requirements'] = [
+    '#type' => 'container',
+    '#theme_wrappers' => ['container__file_upload_help'],
+    '#attributes' => [
+      'id' => $id,
+      'class' => ['hidden', 'help-block'],
+      'aria-hidden' => 'true',
+    ],
+  ];
+  // As documented in Render API, Note that the value is passed through
+  // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
+  // vectors while allowing a permissive list of HTML tags.
+  $build['requirements']['descriptions'] = [
+    '#markup' => $description,
+    '#allowed_tags' => [
+      'strong',
+      'span',
+      'svg',
+      'p',
+      'div',
+      'em',
+      'img',
+      'a',
+      'span',
+      'use',
+    ],
+  ];
+
+  $variables['popover'] = $build;
+
+  return $build;
+}
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function social_group_preprocess_fieldset(&$variables) {
+  // Make sure our flexible group visibility field renders a tooltip, since
+  // this field is rendered as fieldset with legend and radios as children
+  // we need to do it in this preprocess.
+  $element = $variables['element'];
+  if (!empty($element['#field_name']) && $element['#field_name'] === 'field_content_visibility') {
+    $description = '';
+    foreach ($element['#options'] as $key => $label) {
+      $description .= social_group_allowed_visibility_description($key);
+    }
+
+    // Render a specific tooltip based on a field name and description.
+    // This is done in the fieldset, next to the <legend>.
+    $variables['popover'] = social_group_render_tooltip('field_content_visibility', t('Visibility'), $description);
+  }
+}
+
+/**
+ * Returns a description array for the field_flexible_group_visibility options.
+ *
+ * @param string $key
+ *   The join method key.
+ *
+ * @return string
+ *   The render array containing the description.
+ */
+function social_group_allowed_visibility_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'public':
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
+      $description .= '<strong>' . t('Public')->render() . '</strong>';
+      $description .= ' - ' . t('visible to all visitors to the platform.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'community':
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      $description .= '<strong>' . t('Community')->render() . '</strong>';
+      $description .= ' - ' . t('only visible to all logged-in users.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'group':
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      $description .= '<strong>' . t('Group members only')->render() . '</strong>';
+      $description .= ' - ' . t('only visible to logged-in group members.')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // group_visibility #options array.
+  \Drupal::moduleHandler()->alter('social_group_content_visibility_description', $key, $description);
+
+  return $description;
 }

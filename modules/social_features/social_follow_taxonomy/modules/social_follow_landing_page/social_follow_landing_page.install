@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_follow_landing_page module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_follow_landing_page_install() {
+  // Set a higher weight to overlap templates.
+  module_set_weight('social_follow_landing_page', 11);
+  // Clear cache so that overlapped templates are used after module enabling.
+  drupal_flush_all_caches();
+}

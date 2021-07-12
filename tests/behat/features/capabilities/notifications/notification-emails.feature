@@ -122,3 +122,25 @@ Feature: Receive email notifications and choose frequency
       | Cathy Willis mentioned you in a post                       |
       | Thomas Miller mentioned you in a post                      |
       | the notifications above are sent to you as a Weekly mail   |
+
+  @email-spool
+  Scenario: See if the queue item is processed or stuck after cron run.
+    Given I am logged in as an "authenticated user"
+    And I run cron
+    And I wait for the queue to be empty
+    And I am on "user"
+    And I click "Topics"
+    And I click "Create Topic"
+    When I fill in "Title" with "This is a test topic"
+    When I fill in the following:
+      | Title | This is a test topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
+    And I click radio button "Discussion"
+    And I press "Create topic"
+    And I should see "Topic This is a test topic has been created."
+    And I click "Edit content"
+    And I click "Delete"
+    And I should see "This action cannot be undone."
+    And I press "Delete"
+    And I run cron
+    And I check if queue items processed "activity_logger_message"

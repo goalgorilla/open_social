@@ -3,6 +3,7 @@ services:
     class: Drupal\social_profile_privacy\RestrictedNameProcessorOverride
     tags:
       - { name: config.factory.override, priority: 5 }
+
   social_profile_privacy.config_events_subscriber:
     class: Drupal\social_profile_privacy\EventSubscriber\ConfigEventsSubscriber
     arguments:
@@ -11,3 +12,10 @@ services:
       - '@logger.factory'
     tags:
       - { name: 'event_subscriber' }
+
+  social_profile_privacy.helper:
+    class: Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelper
+    arguments: ['@entity_type.manager', '@entity_field.manager']
+
+  social_profile_privacy.batch.helper:
+    class: Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper

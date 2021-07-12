@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
 
@@ -132,4 +133,111 @@ function social_search_update_8902() {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_search')->info($e->getMessage());
   }
+}
+
+/**
+ * Change weight of search index processors().
+ */
+function social_search_update_8903() {
+  // Config factory.
+  $config_factory = Drupal::configFactory();
+
+  // Get search API index configs.
+  $search_all = $config_factory->getEditable('search_api.index.social_all');
+  $search_content = $config_factory->getEditable('search_api.index.social_content');
+  $search_groups = $config_factory->getEditable('search_api.index.social_groups');
+  $search_users = $config_factory->getEditable('search_api.index.social_users');
+
+  // Setting that need to be changed.
+  $setting = 'processor_settings.html_filter.weights.preprocess_index';
+
+  // Set new weight for the 'HTML filter' processors.
+  $search_all->set($setting, -25)->save();
+  $search_content->set($setting, -15)->save();
+  $search_groups->set($setting, -15)->save();
+  $search_users->set($setting, -15)->save();
+}
+
+/**
+ * Configuration update: Enable Entity Access By Field processor.
+ */
+function social_search_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update Search index.
+ */
+function social_search_update_8905() {
+  try {
+    $indexes = [
+      'social_all',
+      'social_content',
+    ];
+
+    foreach ($indexes as $index) {
+      $index = Index::load($index);
+      if ($index !== NULL && $index->status()) {
+        $index->save();
+        $index->clear();
+        $index->reindex();
+      }
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_search')->info($e->getMessage());
+  }
+}
+
+/**
+ * Removed created field for profile and added 'Owner » User » Created' field.
+ */
+function social_search_update_10001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_10001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update search users with new 'created' field.
+ */
+function social_search_update_10002() {
+  try {
+    $social_user_update_indexes = Settings::get('social_user_update_indexes', TRUE);
+    $index = Index::load('social_users');
+    if ($index !== NULL && $index->status() && $social_user_update_indexes) {
+      $index->save();
+      $index->clear();
+      $index->reindex();
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_search')->info($e->getMessage());
+  }
+}
+
+/**
+ * Add translation support for search views.
+ */
+function social_search_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

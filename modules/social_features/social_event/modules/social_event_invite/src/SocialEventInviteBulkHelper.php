@@ -161,7 +161,7 @@ class SocialEventInviteBulkHelper {
     $results = [];
 
     foreach ($users as $user) {
-      // Todo: Should be merged with extractEmailsFrom from InviteEmailBaseForm.
+      // @todo Should be merged with extractEmailsFrom from InviteEmailBaseForm.
       // Remove select2 ID parameter.
       $user = str_replace('$ID:', '', $user);
       preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $email);
@@ -267,13 +267,13 @@ class SocialEventInviteBulkHelper {
     }
 
     if ($success && !empty($results)) {
-      drupal_set_message(t('Invite(s) have been successfully sent.'));
+      \Drupal::messenger()->addStatus(t('Invite(s) have been successfully sent.'));
     }
     elseif ($success && empty($results)) {
-      drupal_set_message(t('No invites were sent, recipients already received one before.'), 'info');
+      \Drupal::messenger()->AddStatus(t('No invites were sent, recipients already received one before.'));
     }
     else {
-      drupal_set_message(t('There was an unexpected error.'), 'error');
+      \Drupal::messenger()->addError(t('There was an unexpected error.'));
     }
 
     // Redirect back to the event if we found the node ID.

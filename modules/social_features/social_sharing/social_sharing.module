@@ -51,7 +51,7 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
       // We have a node!
       if (!empty($nid) && $node = Node::load($nid)) {
         $field_definitions = $node->getFieldDefinitions();
-        /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+        /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
         foreach ($field_definitions as $field_name => $field_definition) {
           // Lets fetch all the entity access fields on this current node.
           if ($field_definition->getType() === 'entity_access_field') {

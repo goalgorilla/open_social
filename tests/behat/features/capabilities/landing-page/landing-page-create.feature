@@ -23,7 +23,7 @@ Feature: Create Landing Page
     When I am on "node/add/landing_page"
     And I fill in the following:
       | Title | This is a dynamic page |
-    And I click radio button "Public - visible to everyone including people who are not a member" with the id "edit-field-content-visibility-public"
+    And I click radio button "Public" with the id "edit-field-content-visibility-public"
     And I press "Add Section"
     And I wait for AJAX to finish
     And I press "Add Hero"
@@ -79,9 +79,8 @@ Feature: Create Landing Page
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][uri]   | /explore   |
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link |
     # Set URL Alias
-    And I click "URL path settings"
     And I set alias as "landingpage"
-    And I press "Save"
+    And I press "Create landing page"
     # Ses as LU
     Then I should see "Landing page This is a dynamic page has been created."
     And I should see "Hero title"

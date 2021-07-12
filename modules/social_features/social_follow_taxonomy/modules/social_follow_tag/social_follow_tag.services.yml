@@ -1,0 +1,17 @@
+services:
+  social_follow_tag.overrider:
+    class: Drupal\social_follow_tag\SocialFollowTagOverrides
+    arguments: ['@config.factory']
+    tags:
+      - {name: config.factory.override, priority: 10}
+
+  social_follow_tag.lazy_builder:
+    class: Drupal\social_follow_tag\SocialFollowTagLazyBuilder
+    arguments:
+      - '@entity_type.manager'
+      - '@form_builder'
+      - '@social_tagging.tag_service'
+      - '@flag'
+      - '@renderer'
+      - '@flag.link_builder'
+      - '@current_user'

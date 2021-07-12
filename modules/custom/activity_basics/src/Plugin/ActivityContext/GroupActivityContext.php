@@ -2,10 +2,14 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
+use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupContent;
+use Drupal\social_group\SocialGroupHelperService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'GroupActivityContext' activity context.
@@ -16,6 +20,60 @@ use Drupal\group\Entity\GroupContent;
  * )
  */
 class GroupActivityContext extends ActivityContextBase {
+
+  /**
+   * The group helper service.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $grouphelperService;
+
+  /**
+   * ActivityContextBase constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\Query\Sql\QueryFactory $entity_query
+   *   The entity query.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
+   * @param \Drupal\social_group\SocialGroupHelperService $grouphelper_service
+   *   The group helper service.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    QueryFactory $entity_query,
+    EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
+    SocialGroupHelperService $grouphelper_service
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
+
+    $this->grouphelperService = $grouphelper_service;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity.query.sql'),
+      $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -29,16 +87,7 @@ class GroupActivityContext extends ActivityContextBase {
 
       $referenced_entity = $data['related_object']['0'];
 
-      try {
-        // TODO: Replace this with dependency injection.
-        /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
-        $group_helper = \Drupal::service('social_group.helper_service');
-      }
-      catch (PluginNotFoundException $e) {
-        return $recipients;
-      }
-
-      if ($gid = $group_helper->getGroupFromEntity($referenced_entity, FALSE)) {
+      if ($gid = $this->grouphelperService->getGroupFromEntity($referenced_entity, FALSE)) {
         $recipients[] = [
           'target_type' => 'group',
           'target_id' => $gid,

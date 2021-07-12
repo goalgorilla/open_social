@@ -1,0 +1,31 @@
+core.entity_form_display.node.landing_page.default:
+  expected_config: { }
+  update_actions:
+    add:
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - uid
+              - created
+              - path
+              - status
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: hidden
+            weight: 20
+    change:
+      content:
+        created:
+          weight: 5
+        path:
+          weight: 3
+        uid:
+          weight: 4

@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_topic module.
  */
 
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\FieldConfigInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
@@ -23,15 +25,25 @@ function social_topic_install() {
 
   // Create some default taxonomy terms.
   $terms = [
-    t('Blog'),
-    t('Discussion'),
-    t('News'),
+    [
+      'label' => t('Blog'),
+      'icon' => 'icon-blog',
+    ],
+    [
+      'label' => t('Discussion'),
+      'icon' => 'icon-discussion',
+    ],
+    [
+      'label' => t('News'),
+      'icon' => 'icon-news',
+    ],
   ];
 
-  foreach ($terms as $term_name) {
+  foreach ($terms as $term) {
     $term = Term::create([
       'vid' => 'topic_types',
-      'name' => $term_name,
+      'name' => $term['label'],
+      'field_topic_type_icon' => $term['icon'],
     ]);
     $term->save();
   }
@@ -141,6 +153,11 @@ function social_topic_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_topic'][8909] = [
+    'social_core' => 8908,
+  ];
+
   return $dependencies;
 }
 
@@ -208,6 +225,188 @@ function social_topic_update_8901() {
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('core.entity_view_display.node.topic.small_teaser');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Empty, moved to social_topic_update_8909().
+ */
+function social_topic_update_8902() {
+  // Code has been moved to social_page_update_8909().
+}
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_topic_update_8903() {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.topic.field_files_8903.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.topic.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Updated fieldset labels and added new fieldset called Settings.
+ */
+function social_topic_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added fields to their new respective fieldsets.
+ */
+function social_topic_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove group_topic_description fieldgroup from topic content type.
+ */
+function social_topic_update_8906() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroup we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $group = field_group_load_field_group('group_topic_description', 'node', 'topic', 'form', 'default');
+  if ($group && empty($group->children)) {
+    field_group_delete_field_group($group);
+  }
+}
+
+/**
+ * Create new field & field storage configuration for new topic type icon field.
+ */
+function social_topic_update_8907(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/social_topic_update_8907.yml';
+
+  if (is_file($config_file)) {
+    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
+    if (!isset($sandbox['total'])) {
+      // Count the amount we need to add to cover batching..
+      $sandbox['total'] = count($sandbox['configs']);
+      $sandbox['current'] = 0;
+    }
+
+    $names = array_keys($sandbox['configs']);
+    $name = $names[$sandbox['current']++];
+    $data = $sandbox['configs'][$name];
+
+    $parts = explode('.', $name);
+
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        $entity_type = \Drupal::service('config.manager')
+          ->getEntityTypeIdByName($name);
+
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+        $entity = $storage->createFromStorageRecord($data);
+        $entity->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if ($field_config instanceof FieldConfigInterface) {
+          $field_config->setDescription($data);
+        }
+        else {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+
+      default:
+        // Fallback similar to before.
+        \Drupal::configFactory()
+          ->getEditable($name)
+          ->setData($data)
+          ->save(TRUE);
+    }
+
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  }
+}
+
+/**
+ * Add icons to default topic types.
+ */
+function social_topic_update_8908() {
+  // Default topic types.
+  $topic_types = [
+    [
+      'label' => t('Blog')->render(),
+      'icon' => 'icon-blog',
+    ],
+    [
+      'label' => t('Discussion')->render(),
+      'icon' => 'icon-discussion',
+    ],
+    [
+      'label' => t('News')->render(),
+      'icon' => 'icon-news',
+    ],
+  ];
+
+  foreach ($topic_types as $type) {
+    $term = _social_topic_get_term_id_by_name($type['label']);
+    if ($term && $term->hasField('field_topic_type_icon') && $term->field_topic_type_icon->isEmpty()) {
+      $term->field_topic_type_icon->value = $type['icon'];
+      $term->save();
+    }
+  }
+}
+
+/**
+ * Find topic type term by name.
+ */
+function _social_topic_get_term_id_by_name($term_name) {
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties([
+      'name' => $term_name,
+      'vid' => 'topic_types',
+    ]);
+  $term = reset($terms);
+
+  return !empty($term) ? $term : FALSE;
+}
+
+/**
+ * Show thumbnail on File fields when attachment is an image.
+ */
+function social_topic_update_8909() {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/core.entity_view_display.node.topic.default_8909.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.topic.default');
 
       $config->setData($settings)->save(TRUE);
     }

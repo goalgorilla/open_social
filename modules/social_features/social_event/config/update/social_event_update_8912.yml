@@ -1,0 +1,79 @@
+core.entity_form_display.node.event.default:
+  expected_config: {  }
+  update_actions:
+    delete:
+      content:
+        field_event_managers:
+        promote:
+        sticky:
+      third_party_settings:
+        field_group:
+          group_event_managers:
+          group_description:
+            children:
+              - body
+    add:
+      third_party_settings:
+        field_group:
+          group_event_visibility:
+            children:
+              - group_enrollment
+          group_title_image:
+            children:
+              - body
+    change:
+      content:
+        field_enroll_method:
+          weight: 121
+        field_event_enroll:
+          weight: 122
+        field_event_comments:
+          weight: 10
+        path:
+          weight: 11
+      third_party_settings:
+        field_group:
+          group_attachments:
+            weight: 4
+          group_date_time:
+            weight: 1
+          group_event_visibility:
+            weight: 3
+          group_location:
+            weight: 2
+          group_description:
+            children: {  }
+          group_enrollment:
+            format_settings:
+              classes: ''
+              description: ''
+              open: false
+            format_type: details
+            label: Enrollment
+            parent_name: group_event_visibility
+            region: content
+            weight: 18
+          group_enrollment_methods:
+            region: content
+          group_settings:
+            children:
+              - uid
+              - created
+              - field_event_comments
+              - path
+              - status
+      hidden:
+        promote: true
+        sticky: true
+field.field.node.event.body:
+  expected_config:
+    label: Body
+  update_actions:
+    change:
+      label: Description
+field.field.node.event.field_files:
+  expected_config:
+    label: Files
+  update_actions:
+    change:
+      label: Attachment

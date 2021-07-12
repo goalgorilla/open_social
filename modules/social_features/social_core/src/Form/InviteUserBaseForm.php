@@ -52,7 +52,6 @@ class InviteUserBaseForm extends FormBase {
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
     $this->loggerFactory = $logger_factory;
-    $this->group = $this->routeMatch->getParameter('group');
   }
 
   /**

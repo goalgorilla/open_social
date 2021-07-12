@@ -1,0 +1,77 @@
+filter.format.basic_html:
+  expected_config:
+    filters:
+      filter_html:
+        settings:
+          allowed_html: '<a href hreflang title id target rel class=""> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <mention id>'
+  update_actions:
+    change:
+      filters:
+        filter_html:
+          settings:
+            allowed_html: '<a href hreflang title id target rel class=""> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <mention id> <table style cellspacing cellpadding border> <caption> <tbody> <thead> <tfoot> <th scope> <td> <tr>'
+
+editor.editor.basic_html:
+  expected_config:
+    settings:
+      toolbar:
+        rows:
+          -
+            - name: Formatting
+              items:
+                - Bold
+                - Italic
+            - name: Linking
+              items:
+                - DrupalLink
+                - DrupalUnlink
+            - name: Lists
+              items:
+                - BulletedList
+                - NumberedList
+            - name: Media
+              items:
+                - Blockquote
+                - DrupalImage
+            - name: 'Block Formatting'
+              items:
+                - Format
+            - name: Tools
+              items:
+                - Source
+                - Maximize
+  update_actions:
+    delete:
+      settings:
+        toolbar: { }
+    change:
+      settings:
+        toolbar:
+          rows:
+            -
+              - name: Formatting
+                items:
+                  - Bold
+                  - Italic
+              - name: Linking
+                items:
+                  - DrupalLink
+                  - DrupalUnlink
+              - name: Lists
+                items:
+                  - BulletedList
+                  - NumberedList
+              - name: Media
+                items:
+                  - Blockquote
+                  - DrupalImage
+              - name: 'Block Formatting'
+                items:
+                  - Format
+              - name: Tools
+                items:
+                  - Source
+                  - Maximize
+              - name: Tables
+                items:
+                  - Table

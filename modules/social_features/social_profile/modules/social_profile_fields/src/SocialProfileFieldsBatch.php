@@ -92,7 +92,7 @@ class SocialProfileFieldsBatch {
       $message = t('Whoops... something went wrong!');
     }
 
-    drupal_set_message($message);
+    \Drupal::messenger()->addStatus($message);
   }
 
 }

@@ -35,6 +35,13 @@ class InviteEmailBaseForm extends FormBase {
   protected $loggerFactory;
 
   /**
+   * The current group from route.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $group;
+
+  /**
    * Constructs a new BulkGroupInvitation Form.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
@@ -52,7 +59,6 @@ class InviteEmailBaseForm extends FormBase {
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
     $this->loggerFactory = $logger_factory;
-    $this->group = $this->routeMatch->getParameter('group');
   }
 
   /**
@@ -89,7 +95,7 @@ class InviteEmailBaseForm extends FormBase {
       ],
     ];
 
-    // Todo: Validation should go on the element and return a nice list.
+    // @todo Validation should go on the element and return a nice list.
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',

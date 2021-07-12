@@ -27,6 +27,12 @@
  */
 #}
 
+{%
+  set classes = [
+  'row',
+]
+%}
+
 {% if page.header %}
   {{ page.header }}
 {% endif %}
@@ -36,20 +42,25 @@
   {# No breadcrumbs for landing pages #}
   {# Hero region will be in section #}
   {# No secondary navigation #}
-  {% if page.secondary_navigation %}
-    {{ page.secondary_navigation }}
-  {% endif %}
   {% if page.content_top %}
     {{ page.content_top }}
   {% endif %}
   {# Clear section class #}
-  <section{{ content_attributes.removeClass('with-title-region', 'layout--with-complementary') }}>
+  <section{{ attributes.addClass(classes) }}>
     {# Page title printed in a section #}
     {# No side blocks #}
+    {% if container_wrapper %}<div class="row container layout--with-complementary">{% endif %}
+
+    {% if page.secondary_navigation %}
+      {{ page.secondary_navigation }}
+    {% endif %}
+
     {% block content %}
       <a id="main-content" tabindex="-1"></a>
       {{ page.content }}
     {% endblock %}
+
+    {% if container_wrapper %}<aside class="region--complementary" role="complementary"></aside></div>{% endif %}
 
   </section>
 

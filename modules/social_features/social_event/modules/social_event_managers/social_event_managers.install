@@ -86,3 +86,38 @@ function social_event_managers_update_8004() {
     }
   }
 }
+
+/**
+ * Update labels for event organiser field.
+ */
+function social_event_managers_update_8005() {
+  // Load the existing configuration.
+  $config_name = 'field.field.node.event.field_event_managers';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['label'])) {
+    // This to ensure any custom added values are not affected.
+    if (strpos($config_data['label'], 'Event organisers') !== FALSE) {
+      $config_data['label'] = 'Organizers';
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Add translation compatibility for Event fields and views.
+ */
+function social_event_managers_update_8006() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_managers', 'social_event_managers_update_8006');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

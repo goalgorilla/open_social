@@ -35,7 +35,7 @@ Feature: Group access roles
       | Title | Test closed group 3 topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Test closed group 3 topic"
 
   # As a outsider with the role CM+ I should be able to see and manage content from a closed group

@@ -42,6 +42,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#title' => new TranslatableMarkup('Notification Centre'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
+      '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
       '#notification_count' => $num_notifications,
       '#weight' => 800,
       'header' => [
@@ -61,7 +62,7 @@ function social_activity_social_user_account_header_items(array $context) {
       ],
       'notifications' => [
         '#wrapper_attributes' => ['class' => 'js-notification-center-wrapper'],
-        // @todo: Change ajax throbber to opensocial spinner.
+        // @todo Change ajax throbber to opensocial spinner.
         // @see: https://www.drupal.org/project/social/issues/3074740
         '#markup' => '<div className="spinner">
       <div className="bounce1"></div>
@@ -220,6 +221,7 @@ function social_activity_social_account_notifications_counter(AccountInterface $
  */
 function social_activity_views_post_build(ViewExecutable $view) {
   $override_displays = [
+    'block_stream_explore',
     'block_stream_homepage',
     'block_stream_homepage_without_post',
   ];
@@ -286,6 +288,22 @@ function social_activity_preprocess_block(&$variables) {
           ],
         ],
       ];
+
+      // Set vocabulary ID from views filter.
+      if (isset($view->filter_vocabulary)) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          [$view->filter_vocabulary]
+        );
+      }
+
+      // Set taxonomy IDs from views filter.
+      if (isset($view->filter_tags) && is_array($view->filter_tags)) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          array_keys($view->filter_tags)
+        );
+      }
     }
   }
 }

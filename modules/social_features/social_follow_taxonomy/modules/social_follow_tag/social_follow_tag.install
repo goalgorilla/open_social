@@ -1,0 +1,144 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_follow_tag module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_tag.
+ */
+function social_follow_tag_install() {
+  // Set a higher weight to overlap templates.
+  module_set_weight('social_follow_tag', 10);
+  // Clear cache so that overlapped templates are used after module enabling.
+  drupal_flush_all_caches();
+}
+
+/**
+ * Revert configs.
+ */
+function social_follow_tag_update_8801() {
+  $config_files = [
+    'message.template.update_node_following_tag',
+  ];
+
+  foreach ($config_files as $config_file) {
+    $config = drupal_get_path('module', 'social_follow_tag') . '/config/install/' . $config_file . '.yml';
+
+    if (is_file($config)) {
+      $settings = Yaml::parse(file_get_contents($config));
+      if (is_array($settings)) {
+        $update_config = \Drupal::configFactory()
+          ->getEditable($config_file);
+
+        $update_config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Update followtag block.
+ */
+function social_follow_tag_update_8802() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/optional';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('block.block.followtag', $source->read('block.block.followtag'));
+}
+
+/**
+ * Use enforced social_follow_tag module for configuration.
+ */
+function social_follow_tag_update_8803() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/install';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  // List of configs.
+  $configs = [
+    'message.template.create_node_following_tag',
+    'message.template.update_node_following_tag',
+  ];
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Update template in existing messages.
+ */
+function social_follow_tag_update_8804(&$sandbox) {
+  $message_storage = \Drupal::entityTypeManager()->getStorage('message');
+  if (!isset($sandbox['total'])) {
+    // Get all message IDs than should be updated.
+    $mids = $message_storage->getQuery()
+      ->condition('template', 'create_node_following_tag_stream')
+      ->execute();
+    if (empty($mids)) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+
+    // Set default params.
+    $sandbox['total'] = count($mids);
+    $sandbox['processed'] = 0;
+    $sandbox['mids'] = $mids;
+  }
+
+  $messages_per_batch = 50;
+  $mids = array_slice($sandbox['mids'], $sandbox['processed'], $messages_per_batch);
+
+  /** @var \Drupal\message\MessageInterface[] $messages */
+  $messages = $message_storage->loadMultiple($mids);
+
+  // Set new message template for existing messages.
+  foreach ($messages as $message) {
+    $message->set('template', 'create_node_following_tag');
+    $message->save();
+    $sandbox['processed']++;
+  }
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
+ * Delete unnecessary message template.
+ */
+function social_follow_tag_update_8805() {
+  \Drupal::entityTypeManager()
+    ->getStorage('message_template')
+    ->load('create_node_following_tag_stream')
+    ->delete();
+}
+
+/**
+ * Update message template for follow tag.
+ */
+function social_follow_tag_update_8806() {
+  /** @var \Drupal\message\MessageTemplateInterface $message_template */
+  $message_template = \Drupal::entityTypeManager()
+    ->getStorage('message_template')
+    ->load('create_node_following_tag');
+  $destinations = [
+    'notifications' => 'notifications',
+    'email' => 'email',
+  ];
+  $message_template->setThirdPartySetting('activity_logger', 'activity_destinations', $destinations);
+  $text = [];
+  for ($i = 0; $i <= 2; ++$i) {
+    $text[$i]['value'] = '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>';
+    $text[$i]['format'] = 'full_html';
+  }
+  $message_template->set('text', $text);
+  $message_template->save();
+}

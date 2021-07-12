@@ -38,6 +38,23 @@ third_party_settings:
         id: sections
         classes: card
       label: Sections
+    group_settings:
+      children:
+        - uid
+        - created
+        - path
+        - status
+      parent_name: ''
+      weight: 20
+      format_type: details
+      region: hidden
+      format_settings:
+        id: ''
+        classes: social-collapsible-fieldset
+        description: ''
+        open: false
+        required_fields: true
+      label: Settings
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -45,7 +62,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -69,7 +86,7 @@ content:
     region: content
   path:
     type: path
-    weight: 7
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -90,7 +107,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60

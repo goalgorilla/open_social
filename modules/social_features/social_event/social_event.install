@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
@@ -127,6 +128,11 @@ function social_event_update_dependencies() {
   // New config changes should run after the features removal/revert.
   $dependencies['social_event'][8802] = [
     'social_core' => 8805,
+  ];
+
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_event'][8915] = [
+    'social_core' => 8908,
   ];
 
   return $dependencies;
@@ -1613,4 +1619,247 @@ function social_event_update_8904() {
 
   // Update views configuration.
   _social_event_views_update('views.view.events', 'events_overview');
+}
+
+/**
+ * Install Event Add To Calendar module.
+ */
+function social_event_update_8905() {
+  \Drupal::service('module_installer')->install(['social_event_addtocal']);
+}
+
+/**
+ * Empty, moved to social_event_update_8915().
+ */
+function social_event_update_8906() {
+  // Code has been moved to social_event_update_8915().
+}
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_event_update_8907() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/field.field.node.event.field_files_8907.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.event.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update labels for content visibility.
+ */
+function social_event_update_8908() {
+  // Load the existing configuration.
+  $config_name = 'field.storage.node.field_content_visibility';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['allowed_values'])) {
+    foreach ($config_data['settings']['allowed_values'] as $key => $value) {
+      if (!empty($value['label'])) {
+        // Since we are not sure about the array keys for the allowed values
+        // we loop over them, and whenever there is a possible label match
+        // we alter it.
+        // This to ensure any custom added values are not affected.
+        if (strpos($value['label'], 'Public -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Public';
+        }
+        if (strpos($value['label'], 'Community -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Community';
+        }
+        if (strpos($value['label'], 'Group members -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Group members';
+        }
+      }
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Updated field_enroll_method field label.
+ */
+function social_event_update_8909() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8909');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update the enrollment method text of an event on event add form.
+ */
+function social_event_update_8910() {
+  // Load the existing configuration.
+  $config_name = 'field.storage.node.field_enroll_method';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['allowed_values'])) {
+    foreach ($config_data['settings']['allowed_values'] as $key => $value) {
+      if (!empty($value['label'])) {
+        // Since we are not sure about the array keys for the allowed values
+        // we loop over them, and whenever there is a possible label match
+        // we alter it.
+        // This to ensure any custom added values are not affected.
+        if (strpos($value['label'], 'Open') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Open to enroll';
+        }
+        if (strpos($value['label'], 'Request') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Request to enroll';
+        }
+        if (strpos($value['label'], 'Invite-only') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Invite-only';
+        }
+      }
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Updated fieldsets labels and added a new fieldset called "Settings".
+ */
+function social_event_update_8911() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8911');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Re-arranged fields in new fieldsets.
+ */
+function social_event_update_8912() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8912');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove un-required fieldgroup 'group_description' from event content type.
+ */
+function social_event_update_8914() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroups we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $field_groups = [
+    'group_description',
+  ];
+
+  foreach ($field_groups as $field_group) {
+    $group = field_group_load_field_group($field_group, 'node', 'event', 'form', 'default');
+    if ($group && empty($group->children)) {
+      field_group_delete_field_group($group);
+    }
+  }
+}
+
+/**
+ * Show thumbnail on File fields when attachment is an image.
+ */
+function social_event_update_8915() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/core.entity_view_display.node.event.default_8915.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.event.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add the 'enable event enrolment' field.
+ */
+function social_event_update_8916() {
+  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.node.field_event_enable_enrollment_8916');
+  $class = $field_type_manager->getPluginClass($data['type']);
+  if (is_null($field_storage_config_storage->load($data['id']))) {
+    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+    $field_storage_config_storage->create($data)->save();
+  }
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  // Create field settings.
+  $data = $source->read('field.field.node.event.field_event_enable_enrollment_8916');
+  if (is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
+}
+
+/**
+ * Update event display.
+ */
+function social_event_update_8917() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8917');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Set default configs for event.
+ */
+function social_event_update_8918() {
+  \Drupal::configFactory()->getEditable('social_event.settings')
+    ->set('disable_event_enroll', FALSE)
+    ->save();
+}
+
+/**
+ * Add translation compatibility for Event fields and views.
+ */
+function social_event_update_8919() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8919');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

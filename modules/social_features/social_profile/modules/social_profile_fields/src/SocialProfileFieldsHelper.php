@@ -3,24 +3,38 @@
 namespace Drupal\social_profile_fields;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialProfileFieldsHelper.
+ * Defines the helper service.
  */
 class SocialProfileFieldsHelper {
 
   /**
-   * Drupal\Core\Entity\EntityTypeManagerInterface definition.
+   * Entity type manager for loading entities.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
-   * Constructs a new SocialProfileFieldsHelper object.
+   * Module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  protected $moduleHandler;
+
+  /**
+   * Constructs a new SocialProfileFieldsHelper object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager for loading entities.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -37,7 +51,11 @@ class SocialProfileFieldsHelper {
 
     // Use storage to get only the profile fields of the current bundle type.
     try {
-      $profile_fields = $this->entityTypeManager->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => $profile_type_id]);
+      $profile_fields = $this->entityTypeManager->getStorage('field_config')
+        ->loadByProperties([
+          'entity_type' => 'profile',
+          'bundle' => $profile_type_id,
+        ]);
     }
     catch (\Exception $e) {
       return $fields;
@@ -81,7 +99,7 @@ class SocialProfileFieldsHelper {
    *   An array of fields and user export plugins.
    */
   public function mapProfileFieldsToUserExportPlugin() {
-    return [
+    $mapping = [
       'user_first_name' => 'profile_profile_field_profile_first_name',
       'user_last_name' => 'profile_profile_field_profile_last_name',
       'user_address_country_code' => 'profile_profile_field_profile_address',
@@ -91,6 +109,7 @@ class SocialProfileFieldsHelper {
       'user_address_line1' => 'profile_address_field_address',
       'user_address_line2' => 'profile_profile_field_profile_address',
       'user_phone_number' => 'profile_profile_field_profile_phone_number',
+      'user_nationality' => 'profile_profile_field_profile_nationality',
       'user_organization' => 'profile_profile_field_profile_organization',
       'user_function' => 'profile_profile_field_profile_function',
       'user_skills' => 'profile_profile_field_profile_expertise',
@@ -98,6 +117,11 @@ class SocialProfileFieldsHelper {
       'user_profile_tag' => 'profile_profile_field_profile_profile_tag',
       'user_nickname' => 'profile_profile_field_profile_nick_name',
     ];
+
+    // Allow other modules to alter the mapping.
+    $this->moduleHandler->alter('profile_field_export_mapping', $mapping);
+
+    return $mapping;
   }
 
 }

@@ -60,6 +60,10 @@ function social_event_content_block_update_8002() {
             'label' => 'Next month',
           ],
           [
+            'value' => 'ongoing',
+            'label' => 'Ongoing',
+          ],
+          [
             'value' => 'last_30',
             'label' => 'Last 30 days',
           ],
@@ -131,4 +135,18 @@ function social_event_content_block_update_8002() {
 
     $storage->createFromStorageRecord($data)->save();
   }
+}
+
+/**
+ * Add "ongoing" allowed value to the event date field storage.
+ */
+function social_event_content_block_update_8003() {
+  $event_date_storage = \Drupal::configFactory()->getEditable('field.storage.block_content.field_event_date');
+  $allowed_values = $event_date_storage->get('settings.allowed_values');
+  $allowed_values[] = [
+    'value' => 'ongoing',
+    'label' => t('Ongoing'),
+  ];
+
+  $event_date_storage->set('settings.allowed_values', $allowed_values)->save();
 }

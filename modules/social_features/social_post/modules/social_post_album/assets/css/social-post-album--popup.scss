@@ -1,0 +1,365 @@
+// Default styles for drupal popup.
+.ui-front.ui-widget-overlay {
+  opacity: 1;
+  z-index: 9999 !important;
+}
+
+.ui-widget.ui-dialog.post {
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 100%;
+  top: 0 !important;
+  left: 0 !important;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  z-index: 10000 !important;
+
+  .ui-dialog-content.ui-widget-content {
+    height: 100% !important;
+    min-height: 100% !important;
+    padding: 0;
+    overflow: initial;
+  }
+
+  .ui-dialog-buttonpane {
+    .btn--comment-submit {
+      position: absolute;
+      right: 13px;
+      bottom: 20px;
+      padding: 8px;
+      margin-bottom: 0;
+      z-index: 10000;
+
+      @media (max-width: 899px) {
+        right: 9px;
+        bottom: 19px;
+      }
+
+      .label {
+        display: none;
+      }
+    }
+  }
+
+  .ui-dialog-titlebar {
+    padding: 0;
+    border: none;
+
+    .ui-dialog-titlebar-close {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      top: 0;
+      right: 0;
+      padding: 0;
+      margin: 0;
+      font-size: 0;
+      background: #fff;
+      opacity: 1;
+      z-index: 10000;
+      border-color: #fff;
+      border-radius: 0;
+
+      @media (max-width: 899px) {
+        width: 38px;
+        height: 38px;
+      }
+
+      &:hover,
+      &:focus,
+      &:active {
+        background: #000;
+        border-color: #fff;
+        opacity: 1;
+
+        &:before,
+        &:after {
+          background: #fff;
+        }
+      }
+
+      > * {
+        display: none;
+      }
+
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 14px;
+        right: auto;
+        width: 18px;
+        height: 2px;
+        background: #777;
+
+        @media (max-width: 899px) {
+          top: 18px;
+          left: 11px;
+        }
+      }
+
+      &:before {
+        transform: rotate(45deg);
+      }
+
+      &:after {
+        transform: rotate(-45deg);
+      }
+    }
+  }
+
+  .ui-dialog-title {
+    display: none;
+  }
+}
+
+.social-post-album--popup {
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+
+  > * {
+    height: 100%;
+  }
+
+  .social-post-album--popup-slider {
+    flex: 0 0 calc(100% - 380px);
+    max-width: calc(100% - 380px);
+    background: rgba(#000, .8);
+
+    @media (max-width: 899px) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  .post-comment-wrapper {
+    position: relative;
+    height: 100%;
+    flex: 0 0 380px;
+    max-width: 380px;
+    background: #fff;
+    display: none;
+
+    &.post-comment-block--active {
+      display: block;
+    }
+
+    @media (max-width: 899px) {
+      position: absolute;
+      flex: 0 0 auto;
+      max-width: none;
+      width: 100%;
+      height: auto;
+      top: auto;
+      bottom: 0;
+    }
+
+    .post-header {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      border-bottom: 1px solid #f3f3f3;
+      background: #fff;
+      padding: .75rem 44px .75rem 1.25rem;
+      font-size: .875rem;
+      z-index: 1;
+
+      @media (max-width: 899px) {
+        position: fixed;
+        padding: .5rem 38px .5rem .875rem;
+      }
+    }
+
+    .post-message {
+      position: relative;
+    }
+
+    .post-message,
+    .card {
+      @media (min-width: 900px) {
+        height: 100%;
+      }
+    }
+
+    .card {
+      border: none;
+      box-shadow: none;
+      margin-bottom: 0;
+      border-radius: 0 !important;
+      overflow-x: hidden;
+    }
+
+    .card__block {
+      height: 150px;
+      margin-bottom: 80px;
+      padding: 1rem 1rem 0;
+      overflow-y: auto;
+
+      @media (min-width: 900px) {
+        max-height: calc(100% - 80px);
+        height: auto;
+        margin-bottom: 0;
+        overflow-y: auto;
+        padding: 55px 1.25rem 0;
+      }
+
+      .margin-top-s {
+        margin-bottom: .5rem;
+      }
+
+      > .js-comment.comment-form__wrapper {
+        overflow: hidden;
+
+        .card__nested-section {
+          border: none;
+          background: transparent;
+        }
+
+        .comment-post-comment-form {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1.25rem;
+          border-top: 1px solid #e6e6e6;
+          background: #f3f3f3;
+
+          @media (min-width: 900px) {
+            flex: 0 0 380px;
+            max-width: 380px;
+            left: auto;
+            right: 0;
+          }
+
+          .card__nested-section {
+            margin-top: 0;
+            border-radius: 0 !important;
+
+            @media (max-width: 899px) {
+              margin: .625rem -1rem -1rem;
+              padding: .5rem 1rem;
+            }
+          }
+        }
+      }
+
+      .comment .form-actions .btn {
+        width: auto !important;
+        height: auto !important;
+        padding: 8px !important;
+        opacity: 0;
+
+        .btn-icon {
+          display: block;
+        }
+
+        .label {
+          display: none;
+        }
+      }
+    }
+
+    .comment__avatar {
+      display: none;
+    }
+
+    .comment__content {
+      textarea.form-control {
+        height: 38px;
+      }
+
+      .filter-wrapper {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.social-post-album--popup-slider {
+  @media(min-width: 900px) {
+    padding: 60px;
+  }
+
+  &-wrapper {
+    height: 100%;
+
+    &:not(.slick-initialized) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > *:not(:first-child) {
+        display: none;
+      }
+    }
+
+    &.slick-initialized {
+      .slick-slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          max-height: 100vh;
+        }
+      }
+
+      .slick-prev {
+        left: 0;
+
+        @media(min-width: 900px) {
+          left: -60px;
+        }
+      }
+
+      .slick-next {
+        right: 0;
+
+        @media(min-width: 900px) {
+          right: -60px;
+        }
+      }
+
+      .slick-arrow {
+        width: 37px;
+        height: 37px;
+        background: #4d4d4d;
+        z-index: 1;
+
+        &:before {
+          display: none;
+        }
+
+        &.slick-disabled {
+          display: none;
+        }
+
+        svg {
+          width: 21px;
+          height: 21px;
+          fill: #fff;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 899px) {
+    padding: 38px 0 150px;
+  }
+
+  .slick-list,
+  .slick-track {
+    height: 100%;
+  }
+}

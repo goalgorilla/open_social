@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\profile\Entity\Profile;
 use Drupal\search_api\Entity\Index;
-use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 use Drupal\user\Entity\User;
 
 /**
@@ -212,74 +211,6 @@ function social_search_search_api_views_handler_mapping_alter(array &$mapping) {
  */
 function social_block_view_search_hero_block_alter(array &$build, BlockPluginInterface $block) {
   $build['#configuration']['label'] = t('Search');
-}
-
-/**
- * Implements hook_ENTITY_TYPE_update().
- *
- * Update the profile index when user is updated or delete entry when blocked.
- */
-function social_search_user_update(EntityInterface $entity) {
-  /** @var \Drupal\user\Entity\User $entity */
-  _social_search_retrigger_profile($entity);
-}
-
-/**
- * Retriggers the profile in the search when a user has ben changed.
- *
- * @param \Drupal\user\Entity\User $user
- *   The user whose profile we want to retrigger.
- */
-function _social_search_retrigger_profile(User $user) {
-  // These indices need to be updated.
-  $indexes = [
-    'social_all',
-    'social_users',
-  ];
-
-  try {
-    /** @var \Drupal\profile\ProfileStorage $profile_storage */
-    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  }
-  catch (InvalidPluginDefinitionException $e) {
-    return;
-  }
-  catch (PluginNotFoundException $e) {
-    return;
-  }
-
-  /** @var \Drupal\profile\Entity\Profile $profile */
-  $profile = $profile_storage->loadByUser($user, 'profile');
-
-  // Must be a profile, otherwise we can leave.
-  if (!$profile instanceof Profile) {
-    return;
-  }
-
-  // Loop over the indexes that need to be updated.
-  foreach ($indexes as $index_id) {
-    $index = Index::load($index_id);
-    if ($index instanceof  Index) {
-      // Init.
-      $profile_ids = [];
-      /** @var \Drupal\user\Entity\User $original_user */
-      $original_user = $user->original;
-      foreach ($profile->getTranslationLanguages() as $langcode => $language) {
-        $profile_ids[] = $profile->id() . ':' . $langcode;
-      }
-      $datasource_id = 'entity:profile';
-      if ($user->isBlocked() && $original_user->isActive()) {
-        $index->trackItemsDeleted($datasource_id, $profile_ids);
-      }
-      elseif ($user->isActive() && $original_user->isBlocked()) {
-        $filtered_item_ids = ContentEntity::filterValidItemIds($index, $datasource_id, $profile_ids);
-        $index->trackItemsInserted($datasource_id, $filtered_item_ids);
-      }
-      else {
-        $index->trackItemsUpdated($datasource_id, $profile_ids);
-      }
-    }
-  }
 }
 
 /**

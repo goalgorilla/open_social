@@ -5,5 +5,4 @@ services:
       - {name: config.factory.override, priority: 5}
   plugin.manager.user_export_plugin:
     class: Drupal\social_user_export\Plugin\UserExportPluginManager
-    parent: default_plugin_manager
-    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@current_user', '@config.factory']

@@ -7,6 +7,7 @@ use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 use Drupal\user\RoleInterface;
@@ -50,7 +51,7 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Update Group content after Group changed.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group we've updated.
    * @param array $changed_visibility
    *   The Group's old visibility.
@@ -59,7 +60,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(Group $group, array $changed_visibility, array $new_options) {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, array $changed_visibility, array $new_options) {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
@@ -122,7 +123,7 @@ class FlexibleGroupContentVisibilityUpdate {
       $entity->setVisibility($default_visibility);
       $entity->save();
     }
-    if ($entity instanceof Node) {
+    if ($entity instanceof Node && $entity->hasField('field_content_visibility')) {
       $default_visibility = self::calculateVisibility($entity->getFieldValue('field_content_visibility', 'value'), $new_options);
       $entity->set('field_content_visibility', $default_visibility);
       $entity->save();
@@ -174,13 +175,13 @@ class FlexibleGroupContentVisibilityUpdate {
   /**
    * Load all Posts based on a certain group.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group where we should check our posts for.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(Group $group) {
+  public static function getPostsFromGroup(GroupInterface $group) {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.

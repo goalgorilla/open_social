@@ -32,6 +32,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $uid = $current_user->id();
 
     if (!$current_user->isAnonymous()) {
+      // Check if enrollment is enabled.
+      if (!$this->eventEnrollService->isEnabled($node)) {
+        return [];
+      }
       $conditions = [
         'field_account' => $uid,
         'field_event' => $nid,
@@ -150,7 +154,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     $enrollments = $this->entityStorage->loadByProperties($conditions);
 
-    // @todo: also clear the breadcrumb cachetags.
+    // @todo also clear the breadcrumb cachetags.
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
     $tags = [];

@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for social_activity_filter module.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_activity_filter_update_dependencies() {
+  $dependencies['social_activity_filter'][8002] = [
+    'social_core' => 8805,
+  ];
+  return $dependencies;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_activity_filter module.
+ */
+function social_activity_filter_install() {
+  user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
+  _social_activity_filter_set_default_settings();
+  _social_activity_filter_enable_filters();
+}
+
+/**
+ * Set default filter settings for activities blocks.
+ */
+function social_activity_filter_update_8001() {
+  _social_activity_filter_set_default_settings();
+}
+
+/**
+ * Add & enable tag filter in the stream blocks.
+ */
+function social_activity_filter_update_8002() {
+  _social_activity_filter_enable_filters();
+}
+
+/**
+ * Helper function to set default tag filter settings.
+ */
+function _social_activity_filter_set_default_settings() {
+  $config_factory = \Drupal::service('config.factory');
+  $config_names = [
+    'activity_stream' => [
+      'block_stream_explore',
+      'block_stream_homepage',
+      'block_stream_homepage_without_post',
+    ],
+    'community_activities' => [
+      'block_stream_landing',
+    ],
+  ];
+
+  // Update activity filter settings.
+  $social_activity_filter_config = $config_factory->getEditable('social_activity_filter.settings');
+
+  $blocks = [];
+  foreach ($config_names as $config_name => $display_ids) {
+    foreach ($display_ids as $display_id) {
+      $blocks["{$config_name}__{$display_id}"] = "{$config_name}__{$display_id}";
+    }
+  }
+  // Enable activity filter for blocks.
+  $social_activity_filter_config->set('blocks', $blocks);
+
+  // Set default taxonomy vocabularies for activity filter in blocks.
+  if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
+    $social_activity_filter_config->set('vocabulary', ['social_tagging' => 'social_tagging']);
+    $social_activity_filter_config->set('taxonomy_fields', ['social_tagging' => 'social_tagging']);
+  }
+  $social_activity_filter_config->save();
+}
+
+/**
+ * Helper function to enable tag filters for activities blocks.
+ */
+function _social_activity_filter_enable_filters() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity_filter', 'social_activity_filter_update_8002');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update and set delta of referenced blocks for existing landing page items.
+ */
+function social_activity_filter_update_8003() {
+  $connection = Database::getConnection();
+  $query = $connection->select('paragraph__field_block_reference', 'pfbr');
+  $query->fields('pfbr', ['entity_id', 'field_block_reference_settings']);
+  $query->condition('pfbr.bundle', 'block');
+
+  $query->join('paragraph__field_section_paragraph', 'pfsp', 'pfsp.field_section_paragraph_target_id = pfbr.entity_id');
+  $query->condition('pfsp.bundle', 'section');
+
+  $query->join('node__field_landing_page_section', 'nflps', 'nflps.field_landing_page_section_target_id = pfsp.entity_id');
+  $query->fields('nflps', ['delta']);
+  $query->condition('nflps.bundle', 'landing_page');
+
+  $referenced_blocks = $query->execute()->fetchAll();
+
+  foreach ($referenced_blocks as $referenced_block) {
+    $settings = unserialize($referenced_block->field_block_reference_settings);
+    $settings['delta'] = $referenced_block->delta;
+
+    $connection->update('paragraph__field_block_reference')
+      ->fields(['field_block_reference_settings' => serialize($settings)])
+      ->condition('entity_id', $referenced_block->entity_id)
+      ->condition('bundle', 'block')
+      ->execute();
+  }
+}

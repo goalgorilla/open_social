@@ -7,8 +7,10 @@ use Drupal\views\Plugin\views\sort\Date;
 /**
  * Basic sort handler for passed events.
  *
- * @deprecated in Open Social 9.1.
- *  Use Drupal\social_event\Plugin\views\sort\EventDate.
+ * @deprecated
+ *   in Open Social 9.1.
+ *
+ * @see Drupal\social_event\Plugin\views\sort\EventDate.
  *
  * @ViewsSort("event_passed_upcoming_sort")
  */

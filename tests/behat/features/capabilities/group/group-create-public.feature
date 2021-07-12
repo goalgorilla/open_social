@@ -91,7 +91,7 @@ Feature: Create Public Group
       | edit-field-event-date-end-0-value-time | 11:00:00 |
       | Location name | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I press "Save"
+    And I press "Create event"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -107,7 +107,7 @@ Feature: Create Public Group
     When I fill in "Title" with "Test group topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
     And I should see the link "Test public group"

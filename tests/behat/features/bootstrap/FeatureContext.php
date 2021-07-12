@@ -4,20 +4,22 @@
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
+use Behat\Mink\Selector\Xpath\Escaper;
 use PHPUnit\Framework\Assert as Assert;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawMinkContext implements Context, SnippetAcceptingContext
+class FeatureContext extends RawMinkContext implements Context
 {
 
     protected $minkContext;
@@ -144,8 +146,11 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       $iframe_source = $element->getAttribute('src');
 
-      if ($iframe_source !== $src) {
-        throw new \InvalidArgumentException(sprintf('The iframe does not have the src: "%s"', $src));
+      // the sources could contain certain metadata making it hard to test
+      // if it matches the given source. So we don't strict check rather
+      // check if part of the source matches.
+      if (strpos($iframe_source, $src) === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The iframe source does not contain the src: "%s" it is however: "%s"', $src, $iframe_source));
       }
     }
 
@@ -212,33 +217,19 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * @When I select post visibility :visibility
      */
     public function iSelectPostVisibility($visibility) {
-      $allowed_visibility = array(
-        '0' => 'Recipient', // Is displayed as Community in front-end.
-        '1' => 'Public',
-        '2' => 'Community',
-        '3' => 'Group members',
-      );
-
-      if (!in_array($visibility, $allowed_visibility)) {
-        throw new \InvalidArgumentException(sprintf('This visibility option is not allowed: "%s"', $visibility));
-      }
-
       // First make post visibility setting visible.
       $this->iClickPostVisibilityDropdown();
 
-      // Click the radio button.
-      $key = array_search($visibility, $allowed_visibility);
-      if (!empty($key)) {
-        $id = 'edit-field-visibility-0-' . $key;
-        $this->clickRadioButton('', $id);
-      }
-      else {
-        throw new \InvalidArgumentException(sprintf('Could not find key for visibility option: "%s"', $visibility));
+      // Click the label of the readio button with the visibility. The radio
+      // button itself can't be clicked because it's invisible.
+      $page = $this->getSession()->getPage();
+      $field = $page->findField($visibility);
+
+      if (null === $field) {
+        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $visibility);
       }
 
-      // Hide post visibility setting.
-      $this->iClickPostVisibilityDropdown();
-
+      $field->getParent()->click();
     }
 
     /**
@@ -398,7 +389,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       $element = $session->getPage();
 
-      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
+      $escaper = new Escaper();
+      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $escaper->escapeLiteral($label)));
       if ($radiobutton === NULL) {
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
@@ -452,6 +444,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Shows hidden inputs.
+     *
+     * @When /^(?:|I )show hidden inputs/
+     */
+    public function showHiddenInputs()
+    {
+      $session = $this->getSession();
+
+      $session->executeScript(
+        "var inputs = document.getElementsByClassName('input');
+            for(var i = 0; i < inputs.length; i++) {
+            inputs[i].style.opacity = 1;
+            inputs[i].style.left = 0;
+            inputs[i].style.position = 'relative';
+            inputs[i].style.display = 'block';
+            }
+            ");
+    }
+
+
+  /**
      * Opens specified page.
      *
      * @Given /^(?:|I )am on the profile of "(?P<username>[^"]+)"$/
@@ -616,7 +629,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         ->condition('label', $group_title);
 
       $group_ids = $query->execute();
-      $groups = entity_load_multiple('group', $group_ids);
+      $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple($group_ids);
 
       if (count($groups) > 1) {
         return NULL;
@@ -628,6 +641,32 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
       return $group_id;
+    }
+
+    /**
+     * @param $group_title
+     * @param $mail
+     *
+     * @return null
+     */
+    public function getGroupContentIdFromGroupTitle($group_title, $mail) {
+
+      $properties = [
+        'gid' => $this->getGroupIdFromTitle($group_title),
+        'invitation_status' => 0,
+        'invitee_mail' => $mail
+      ];
+      $loader = \Drupal::service('ginvite.invitation_loader');
+      $invitations = $loader->loadByProperties($properties);
+
+      if ($invitations > 0) {
+        $invitation = reset($invitations);
+
+        if ($invitation instanceof GroupInvitationWrapper) {
+          $group_content = $invitation->getGroupContent();
+          return $group_content->id();
+        }
+      }
     }
 
     /**
@@ -659,6 +698,96 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
     }
+
+    /**
+     * Opens register page with destination to invited group.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationGroup($mail, $group_title)
+    {
+      $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accept';
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Opens register page with destination to invited node.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited node "(?P<node_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationNode($mail, $node_title)
+    {
+      $nodes = \Drupal::entityTypeManager()->getStorage('node')
+        ->loadByProperties(['title' => $node_title]);
+      $node = reset($nodes);
+
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/node/' . $node->id();
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Keep track of intended user names so they can be cleaned up.
+     *
+     * @var array
+     */
+    protected $intended_user_names = [];
+
+    /**
+     * Stores the user's name in $this->intended_user_names.
+     *
+     * This goes before a register form manipulation and submission.
+     *
+     * @Given I intend to create a user named :name
+     *
+     * @see cleanUsers()
+     */
+    public function intendUserName($name) {
+      $this->intended_user_names[] = $name;
+    }
+
+    /**
+     * Remove any queue items that were created.
+     *
+     * @AfterScenario
+     */
+    public function cleanupQueue(AfterScenarioScope $scope)
+    {
+      $workerManager = \Drupal::service('plugin.manager.queue_worker');
+      /** @var Drupal\Core\Queue\QueueFactory; $queue */
+      $queue = \Drupal::service('queue');
+
+      foreach ($workerManager->getDefinitions() as $name => $info) {
+        /** @var Drupal\Core\Queue\QueueInterface $worker */
+        $worker = $queue->get($name);
+
+        if ($worker->numberOfItems() > 0) {
+          while ($item = $worker->claimItem()) {
+            // If we don't just delete them, process the item first.
+            $worker->deleteItem($item);
+          }
+        }
+      }
+    }
+
+  /**
+   * Remove any groups that were created.
+   *
+   * @AfterScenario
+   */
+  public function cleanupUser(AfterScenarioScope $scope)
+  {
+    if (!empty($this->intended_user_names)) {
+      foreach ($this->intended_user_names as $name) {
+        $user_obj = user_load_by_name($name);
+        \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
+      }
+    }
+  }
 
     /**
      * Checks if correct amount of uploaded files by user are private.
@@ -795,7 +924,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       }
 
       $query = \Drupal::entityQuery('group')
-        ->condition('label', $groupname);
+        ->condition('label', $groupname)
+        ->accessCheck(FALSE);
       $gid = $query->execute();
 
       if (!empty($gid) && count($gid) === 1) {
@@ -851,7 +981,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      *  1 = YES access
      */
     public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
-      $entity = entity_load($entity_type, $entity_id);
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
       /** @var \Drupal\Core\Url $url */
       $url = $entity->toUrl();
       $page = $url->toString();
@@ -1007,5 +1137,38 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function iFillNextInWithAndSelect($field, $text, $item) {
       $this->fillAutocompleteField($field, $text, $item, TRUE);
+    }
+
+    /**
+     * @When /^I click "([^"]*)" on the row containing "([^"]*)"$/
+     */
+    public function iClickOnOnTheRowContaining($link_name, $row_text) {
+      /** @var $row \Behat\Mink\Element\NodeElement */
+      $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $row_text));
+      if (!$row) {
+        throw new \Exception(sprintf('Cannot find any row on the page containing the text "%s"', $row_text));
+      }
+
+      $row->clickLink($link_name);
+    }
+
+    /**
+     * Remove any user consents that were created.
+     *
+     * @AfterScenario @data-policy-create
+     */
+    public function deleteUserConsentEntities() {
+      $consents = \Drupal::entityTypeManager()
+        ->getStorage('user_consent')
+        ->loadMultiple();
+
+      foreach ($consents as $consent) {
+        try {
+          $consent->delete();
+        }
+        catch (\Throwable $e) {
+          // This can be fine.
+        }
+      }
     }
 }

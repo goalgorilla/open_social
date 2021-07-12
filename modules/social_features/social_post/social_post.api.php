@@ -5,6 +5,8 @@
  * Hooks provided by the Social Post module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -66,6 +68,24 @@ function hook_post_links_alter(array &$links, PostInterface $entity, array &$con
       ],
     ],
   ];
+}
+
+/**
+ * Provide a method to alter a message about creating a new post.
+ *
+ * @param \Drupal\Core\StringTranslation\TranslatableMarkup $message
+ *   The message.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ *
+ * @see \Drupal\social_post\Form\PostForm::save()
+ */
+function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
+  $post = $form_state->getFormObject()->getEntity();
+
+  if (mb_strlen($post->field_post->value) > 1000) {
+    $message = t('Your long post has been posted.');
+  }
 }
 
 /**

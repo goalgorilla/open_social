@@ -5,6 +5,7 @@
  * Contains social_tagging.module.
  */
 
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -14,6 +15,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Database\Database;
 
 /**
  * Implements hook_help().
@@ -31,7 +33,7 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
       $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
       if ($tag_service->allowSplit()) {
-        /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+        /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
         $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
         if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
           return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
@@ -78,7 +80,7 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
 
   if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
     $storage = $form_state->getStorage();
-    /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
     $vocabulary = $storage['taxonomy']['vocabulary'];
 
     if ($vocabulary->id() === 'social_tagging') {
@@ -100,23 +102,55 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
 }
 
 /**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ *
+ * This hook allows to have a compatibility with "Inline Entity Form" module.
+ */
+function social_tagging_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
+  // Act if the form has the tagging field.
+  if (isset($entity_form['social_tagging'])) {
+    // "Inline entity form" module has an entity object in the "form" variable.
+    social_tagging_social_tagging_field_form_alter($entity_form, $form_state, $entity_form['#entity']);
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Act if the form has the tagging field.
   if (isset($form['social_tagging'])) {
+    if (method_exists($form_state->getFormObject(), 'getEntity')) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $form_state->getFormObject()->getEntity();
+      social_tagging_social_tagging_field_form_alter($form, $form_state, $entity);
+    }
+  }
+}
+
+/**
+ * Function do a changes related to social_tagging field.
+ *
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form State object.
+ * @param \Drupal\Core\Entity\EntityInterface $form_entity
+ *   Entity object.
+ */
+function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
+  if (!empty($form['social_tagging'])) {
     // Load tag config..
     $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    /** @var \Drupal\Core\Entity\EntityBase $form_entity */
-    $form_entity = $form_state->getFormObject()->getEntity();
     // Switch for the entity_type.
     switch ($form_entity->getEntityTypeId()) {
       case 'node':
-        $type = $form_entity->type->entity->id();
+        $type = $form_entity->bundle();
         $tag_enabled = $tag_settings->get('tag_node_type_' . $type);
         break;
 
       case 'group':
+      case 'profile':
         $type = $form_entity->getEntityTypeId();
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
         break;
@@ -146,6 +180,27 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         '#weight' => 50,
       ];
 
+      // We want to move the tagging field in new fieldset
+      // "Tags". Only when the theme settings are updated.
+      $use_social_content_forms = theme_get_setting('content_entity_form_style');
+      if (isset($form['#fieldgroups']['group_social_tags']) &&
+        $use_social_content_forms === 'open_social') {
+        $form['tagging']['#type'] = 'details';
+        $form['tagging']['#title'] = '';
+        $form['#fieldgroups']['group_social_tags']->children[] = 'tagging';
+        $form['#group_children']['tagging'] = 'group_social_tags';
+      }
+
+      // Add Tags in flexible groups if enabled.
+      if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group') &&
+        isset($form['#fieldgroups']['group_additional_details']) &&
+        $use_social_content_forms === 'open_social') {
+        $form['tagging']['#type'] = 'details';
+        $form['tagging']['#title'] = t('Tags');
+        $form['#fieldgroups']['group_additional_details']->children[] = 'tagging';
+        $form['#group_children']['tagging'] = 'group_additional_details';
+      }
+
       if ($tag_service->allowSplit()) {
         // Get the default value.
         $default_value = _social_tagging_node_form_defaults_values($form_entity);
@@ -156,6 +211,12 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
           $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
           // Get the corresponding items.
           $options = $tag_service->getChildren($tid);
+
+          // Display parent item in the tags list.
+          if ($tag_service->useCategoryParent()) {
+            $options = [$tid => $category] + $options;
+          }
+
           // Only add a field if the category has any options.
           if (count($options) > 0) {
             // Add a field.
@@ -185,6 +246,16 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         unset($form['social_tagging']);
         $form['tagging']['social_tagging']['#group'] = 'group_tagging';
       }
+
+      if ($form_entity->getEntityTypeId() === 'profile') {
+        if (isset($form['#fieldgroups']['group_tags'])) {
+          $form['tagging']['#type'] = 'container';
+          $form['tagging']['#group'] = 'group_tags';
+        }
+        else {
+          $form['tagging']['#title'] = t('Tags');
+        }
+      }
     }
   }
 }
@@ -201,7 +272,7 @@ function _social_tagging_entity_validate($form, FormStateInterface $form_state) 
   $tagging_values = [];
   $counter = 0;
   // Loop over the categories.
-  foreach ($categories as $tid => $category) {
+  foreach ($categories as $category) {
     if (!empty($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)))) {
       foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
         $tagging_values[] = [
@@ -225,7 +296,7 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
   $default_value = [];
   // If the node exists, we need to get the default value.
   if ($entity instanceof EntityInterface && $entity->id() !== NULL) {
-    foreach ($entity->get('social_tagging')->getValue() as $key => $value) {
+    foreach ($entity->get('social_tagging')->getValue() as $value) {
       if (isset($value['target_id'])) {
         $default_value[] = $value['target_id'];
       }
@@ -240,8 +311,14 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
 function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type) {
   $fields = [];
 
-  // Add a 'Highlight' base field to all node types.
-  if ($entity_type->id() === 'node' || $entity_type->id() === 'group') {
+  $entity_types = [
+    'node',
+    'group',
+    'profile',
+  ];
+
+  // Add a Tagging base field.
+  if (in_array($entity_type->id(), $entity_types)) {
     $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tagging'))
       ->setDescription(t('Tagging field.'))
@@ -273,13 +350,14 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
  */
 function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
-  if ($entity instanceof Term) {
-    /* @var Term $entity */
-    if ($entity->getVocabularyId() == 'social_tagging') {
-      /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
-      db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-      db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-    }
+  /** @var \Drupal\taxonomy\Entity\Term $entity */
+  if ($entity instanceof Term &&
+    $entity->bundle() === 'social_tagging') {
+    /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
+    // We need to use `\Drupal\Core\Database\Database::getConnection()`
+    // because we might not yet have access to the container here.
+    Database::getConnection()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    Database::getConnection()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
   }
 }
 
@@ -338,6 +416,8 @@ function social_tagging_process_tags(EntityInterface $entity) {
     ];
   }
 
+  $renderable['#entity_type'] = $entity->getEntityTypeId();
+
   return \Drupal::service('renderer')->render($renderable);
 }
 
@@ -347,10 +427,17 @@ function social_tagging_process_tags(EntityInterface $entity) {
 function social_tagging_theme($existing, $type, $theme, $path) {
   return [
     'social_tagging_nosplit' => [
-      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+      'variables' => [
+        'tagstitle' => NULL,
+        'tags' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
     'social_tagging_split' => [
-      'variables' => ['taghierarchy' => NULL],
+      'variables' => [
+        'taghierarchy' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
   ];
 }
@@ -364,6 +451,8 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-groups-page-no-value',
     'views-exposed-form-search-groups-page',
+    'views-exposed-form-search-users-page-no-value',
+    'views-exposed-form-search-users-page',
     'views-exposed-form-latest-topics-page-latest-topics',
     'views-exposed-form-upcoming-events-page-community-events',
     'views-exposed-form-topics-page-profile',
@@ -371,6 +460,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-group-topics-page-group-topics',
     'views-exposed-form-group-events-page-group-events',
     'views-exposed-form-newest-groups-page-all-groups',
+    'views-exposed-form-newest-users-page-newest-users',
   ];
 
   // Must be either one of these form_ids.
@@ -385,12 +475,18 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     return;
   }
   if ($tag_service->allowSplit()) {
-    foreach ($tag_service->getCategories() as $tid => $label) {
-      $label = social_tagging_to_machine_name($label);
+    foreach ($tag_service->getCategories() as $tid => $term_name) {
+      $label = social_tagging_to_machine_name($term_name);
 
       if (isset($form[$label])) {
         $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
+
+        // Display parent of tags.
+        if ($tag_service->useCategoryParent()) {
+          $form[$label]['#options'] += [$tid => $term_name];
+        }
+
         $form[$label]['#options'] += $tag_service->getChildren($tid);
         $form[$label]['#type'] = 'select2';
         $form[$label]['#size'] = NULL;
@@ -404,9 +500,8 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
       }
     }
   }
-  // Only remove all top level items.
   else {
-    // Remove main items and just insert child options.
+    // Cleanup and display hierarchical structure of tags.
     $form['tag']['#options'] = [];
     $form['tag']['#options'][''] = t('- Any -');
     $form['tag']['#type'] = 'select2';
@@ -419,9 +514,9 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     }
 
     foreach ($tag_service->getCategories() as $tid => $label) {
-      if (!empty($options = $tag_service->getChildren($tid))) {
-        $form['tag']['#options'][$label] = $options;
-      }
+      $options = [$tid => $label];
+      $options += $tag_service->getChildren($tid);
+      $form['tag']['#options'][$label] = $options;
     }
   }
 }
@@ -440,4 +535,57 @@ function social_tagging_to_machine_name($text) {
   $text = str_replace(' ', '', $text);
 
   return $text;
+}
+
+/**
+ * Implements hook_preprocess_profile().
+ */
+function social_tagging_preprocess_profile(array &$variables) {
+  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+
+  $variables['social_tagging_profile_active'] = FALSE;
+  if ($tag_service->active() && $tag_service->profileActive()) {
+    $variables['social_tagging_profile_active'] = TRUE;
+
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['profile'];
+
+    if (!$profile->get('social_tagging')->isEmpty()) {
+      $tags = $profile->get('social_tagging')->getValue();
+
+      $variables['social_tagging_allow_split'] = $tag_service->allowSplit();
+      $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+
+  // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
+  // will be attached in that section when a user enable tagging options.
+  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
+    return;
+  }
+
+  $settings = [
+    "children" => [],
+    "parent_name" => "",
+    "weight" => '1',
+    "label" => "Tags",
+    "format_type" => "fieldset",
+    "format_settings" => [
+      "required_fields" => TRUE,
+      "id" => "tags",
+      "classes" => "card",
+      "label" => "Tags",
+    ],
+    "region" => "hidden",
+  ];
+
+  $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
+  $form_display->save();
 }

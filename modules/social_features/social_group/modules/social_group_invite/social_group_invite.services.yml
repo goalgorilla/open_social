@@ -8,3 +8,12 @@ services:
     class: Drupal\social_group_invite\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_group_invite.override:
+    class: \Drupal\social_group_invite\SocialGroupInviteConfigOverride
+    arguments:
+      - '@request_stack'
+      - '@email.validator'
+      - '@database'
+      - '@config.factory'
+    tags:
+      - { name: config.factory.override, priority: 10}

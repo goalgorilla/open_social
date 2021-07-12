@@ -2,11 +2,11 @@
 
 namespace Drupal\social_private_message\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Url;
 
 /**
  * Provides a 'PmAddBlock' block.
@@ -24,7 +24,10 @@ class PmAddBlock extends BlockBase {
    * Custom access logic to display the block.
    */
   public function blockAccess(AccountInterface $account) {
-    if ($account->hasPermission('use private messaging system')) {
+    if (
+      $account->hasPermission('use private messaging system') &&
+      $account->hasPermission('create private messages thread')
+    ) {
       return AccessResult::allowed();
     }
     return AccessResult::forbidden();

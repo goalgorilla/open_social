@@ -48,7 +48,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
       }
 
       // And finally save (update) this updated $event_enrollment.
-      // @todo: maybe think of deleting approved/declined records from the db?
+      // @todo maybe think of deleting approved/declined records from the db?
       $event_enrollment->save();
 
       // Invalidate cache.

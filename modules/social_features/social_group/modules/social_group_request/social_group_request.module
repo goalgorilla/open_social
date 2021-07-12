@@ -154,7 +154,10 @@ function social_group_request_preprocess_group(&$variables) {
     }
   }
 
-  if ($group_type->id() === 'flexible_group') {
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+  if (in_array($group_type->id(), $group_types)) {
     $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
     $request_option = in_array('request', array_column($join_methods, 'value'), FALSE);
@@ -278,7 +281,11 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
   if (in_array($form_id, $group_forms)) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $form_state->getFormObject()->getEntity()->getGroupType();
-    if ($group_type->id() === 'flexible_group' || !$group_type->hasContentPlugin('group_membership_request')) {
+
+    $group_types = ['flexible_group'];
+    \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+    if (in_array($group_type->id(), $group_types) || !$group_type->hasContentPlugin('group_membership_request')) {
       unset($form['allow_request']);
     }
   }
@@ -366,7 +373,7 @@ function social_group_request_preprocess_page_title(&$variables) {
  */
 function social_group_request_allowed_join_method_values(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
   $allowed_values = $definition->getSetting('allowed_values');
-  $allowed_values['request'] = t('Request to join - users can "request to join" this group which group managers approve/decline');
+  $allowed_values['request'] = t('Request to join');
   return $allowed_values;
 }
 

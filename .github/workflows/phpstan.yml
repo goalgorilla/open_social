@@ -1,0 +1,22 @@
+name: PHP Stan
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      -   name: Set default PHP7.4
+          run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      -   name: Checkout code
+          uses: actions/checkout@v2
+
+      -   name: Install dependencies
+          run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+
+      -   name: PHP Stan
+          run: vendor/bin/phpstan analyse -c phpstan.neon

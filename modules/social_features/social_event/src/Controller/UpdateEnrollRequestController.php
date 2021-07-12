@@ -98,7 +98,7 @@ class UpdateEnrollRequestController extends ControllerBase {
       $event_enrollment->setOwnerId($this->currentUser->id());
 
       // And finally save (update) this updated $event_enrollment.
-      // @todo: maybe think of deleting approved/declined records from the db?
+      // @todo maybe think of deleting approved/declined records from the db?
       $event_enrollment->save();
     }
 

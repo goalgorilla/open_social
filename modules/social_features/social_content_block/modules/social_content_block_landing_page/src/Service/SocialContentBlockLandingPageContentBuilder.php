@@ -4,6 +4,7 @@ namespace Drupal\social_content_block_landing_page\Service;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\social_content_block\ContentBuilder;
 
 /**
@@ -11,7 +12,7 @@ use Drupal\social_content_block\ContentBuilder;
  *
  * @package Drupal\social_content_block_landing_page\Service
  */
-class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
+class SocialContentBlockLandingPageContentBuilder extends ContentBuilder implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
@@ -42,7 +43,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
       '#weight' => 0,
     ];
 
-    if (!isset($build['content']['entities']['#markup'])) {
+    if (!isset($build['content']['entities']['#markup']) && !isset($build['content']['entities']['#lazy_builder'])) {
       $build['content']['entities']['#prefix'] = str_replace(
         'content-list__items',
         'field--name-field-featured-items',
@@ -56,8 +57,8 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
   /**
    * {@inheritdoc}
    */
-  protected function getEntities(BlockContentInterface $block_content) {
-    $elements = parent::getEntities($block_content);
+  public function getEntities($block_id) {
+    $elements = parent::getEntities($block_id);
 
     foreach (Element::children($elements) as $delta) {
       $elements[$delta]['#custom_content_list_section'] = TRUE;
@@ -83,6 +84,13 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
     }
 
     return $link;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['build'];
   }
 
 }

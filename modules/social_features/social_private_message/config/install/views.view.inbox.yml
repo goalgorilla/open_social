@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
-  - core.entity_view_mode.private_message_thread.inbox
+    - core.entity_view_mode.private_message_thread.inbox
   module:
-  - private_message
-  - user
+    - private_message
+    - user
 id: inbox
 label: Inbox
 module: views
@@ -229,14 +229,14 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - user
-      - user.permissions
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
       tags:
-      - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
-      - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
+        - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
+        - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
   inbox:
     display_plugin: page
     id: inbox
@@ -248,11 +248,11 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - user
-      - user.permissions
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
       tags:
-      - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
-      - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
+        - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
+        - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'

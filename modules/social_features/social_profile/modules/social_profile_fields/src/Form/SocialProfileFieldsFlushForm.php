@@ -61,9 +61,9 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')->getStorage('profile'),
+      $container->get('entity_type.manager')->getStorage('profile'),
       $container->get('config.factory'),
-      $container->get('entity.manager')->getStorage('field_config')
+      $container->get('entity_type.manager')->getStorage('field_config')
     );
   }
 

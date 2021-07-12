@@ -47,12 +47,12 @@ class DeleteGroup {
         'One item deleted.', '@count items deleted.'
       );
       // Provide some feedback when its a success.
-      drupal_set_message(t('Your group and all of its topics, events and posts have been deleted.'));
-      // TODO: log to the database.
+      \Drupal::messenger()->addStatus(t('Your group and all of its topics, events and posts have been deleted.'));
+      // @todo log to the database.
     }
     else {
       $message = t('There was an unexpected error.');
-      drupal_set_message($message, 'error');
+      \Drupal::messenger()->addError($message);
     }
     // Redirect the user back to their groups overview once the batch is done.
     return new RedirectResponse(Url::fromRoute('view.groups.page_user_groups')->setRouteParameter('user', \Drupal::currentUser()->id())->toString());

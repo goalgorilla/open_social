@@ -199,7 +199,7 @@ class GroupRequestController extends ControllerBase {
    *   The access result.
    */
   public function routeAccess(AccountInterface $account) {
-    // @TODO:: refactor this when Group entity query access lands.
+    // @todo refactor this when Group entity query access lands.
     $has_administer_users = $account->hasPermission('administer members');
     if ($has_administer_users) {
       return AccessResult::allowed();

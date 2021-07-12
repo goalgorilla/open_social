@@ -1,8 +1,8 @@
 name: Social
 type: profile
 description: 'Open Social install profile.'
-core_version_requirement: ^8.8
-version: '8.x-9.1'
+core_version_requirement: ^8.8 || ^9
+version: '10.2.0'
 project: social
 
 # Dependencies that Open Social can not live without.
@@ -31,11 +31,13 @@ install:
   - social:social_event
   - social:social_follow_content
   - social:social_font
+  - social:social_footer
   - social:social_group_gvbo
   - social:social_like
   - social:social_mentions
   - social:social_page
   - social:social_post
+  - social:social_post_album
   - social:social_post_photo
   - social:social_profile
   - social:social_queue_storage
@@ -44,6 +46,9 @@ install:
   - social:social_group_invite
   - social:social_group_request
   - social:social_event_invite
+  - social:social_advanced_queue
+  # Contrib
+  - ultimate_cron:ultimate_cron
 
 themes:
   - gin

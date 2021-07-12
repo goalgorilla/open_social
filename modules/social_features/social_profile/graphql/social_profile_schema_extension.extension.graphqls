@@ -1,0 +1,9 @@
+extend type User {
+  # Open Social assumes a user has only a single profile. Custom platform
+  # implementations that support having multiple profiles or profiles for
+  # different use-cases must provide their own implementation.
+  """
+  Profile data for the user.
+  """
+  profile: Profile!
+}

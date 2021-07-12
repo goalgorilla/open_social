@@ -5,6 +5,8 @@
  * The social profile privacy install file.
  */
 
+use Drupal\Core\Site\Settings;
+use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 use Drupal\user\Entity\Role;
 
 /**
@@ -62,4 +64,187 @@ function _social_profile_privacy_get_permissions($role) {
   }
 
   return $permissions[$role];
+}
+
+/**
+ * Define visibility options of separate fields per user.
+ */
+function social_profile_privacy_update_8001(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['users'] = \Drupal::database()->select('users_data', 'ud')
+      ->fields('ud', ['uid'])
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'fields')
+      ->execute()
+      ->fetchCol();
+
+    $query = \Drupal::database()->select('users_data', 'ud')
+      ->fields('ud')
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'private_info');
+
+    if ($sandbox['users']) {
+      $query->condition('uid', $sandbox['users'], 'NOT IN');
+    }
+
+    if (!($sandbox['total'] = $query->countQuery()->execute()->fetchField())) {
+      $output = t('User profiles privacy data not found.');
+      return $output;
+    }
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+      ->load('profile.profile.default');
+
+    foreach ($display->getThirdPartySettings('field_group') as $fields_group => $settings) {
+      $sandbox['fields'][$fields_group] = $settings['children'];
+    }
+
+    $sandbox['uid'] = $sandbox['processed'] = 0;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+  }
+
+  $query = \Drupal::database()->select('users_data', 'ud')
+    ->fields('ud', ['uid', 'value'])
+    ->condition('uid', $sandbox['uid'], '>')
+    ->condition('module', 'social_profile_privacy')
+    ->condition('name', 'private_info');
+
+  if ($sandbox['users']) {
+    $query->condition('uid', $sandbox['users'], 'NOT IN');
+  }
+
+  $items = $query
+    ->orderBy('uid')
+    ->range(0, $sandbox['limit'])
+    ->execute()
+    ->fetchAllKeyed();
+
+  /** @var \Drupal\Component\Serialization\SerializationInterface $serialization */
+  $serialization = \Drupal::service('serialization.phpserialize');
+
+  $user_fields = [];
+
+  foreach ($items as $uid => $value) {
+    if ($fields_groups = $serialization->decode($value)) {
+      $fields = [];
+
+      foreach ($fields_groups as $fields_group => $visible) {
+        foreach ($sandbox['fields'][$fields_group] as $field) {
+          $fields[$field] = $visible;
+        }
+      }
+
+      $user_fields[$uid] = $serialization->encode($fields);
+    }
+  }
+
+  $sandbox['uid'] = $uid;
+
+  if ($user_fields) {
+    $query = \Drupal::database()->insert('users_data')->fields([
+      'uid',
+      'module',
+      'name',
+      'value',
+      'serialized',
+    ]);
+
+    foreach ($user_fields as $uid => $fields) {
+      $query->values([$uid, 'social_profile_privacy', 'fields', $fields, 1]);
+    }
+
+    $query->execute();
+  }
+
+  $sandbox['processed'] += count($items);
+
+  if ($sandbox['processed'] < $sandbox['total']) {
+    $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+  }
+  else {
+    \Drupal::database()->delete('users_data')
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'private_info')
+      ->execute();
+  }
+
+  $output = t('Profile privacy data has been processed for the following users: @list', [
+    '@list' => implode(', ', array_keys($items)),
+  ]);
+
+  return $output;
+}
+
+/**
+ * Prepare settings of fields based on settings of groups of fields.
+ */
+function social_profile_privacy_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
+  $fields_groups = [];
+  $disclaimer = array_fill_keys(['title', 'text.value', 'text.format'], NULL);
+
+  foreach (['user', 'profile'] as $entity_type_id) {
+    if ($config->get($form = $entity_type_id . '_form_display')) {
+      foreach (array_filter((array) $config->get($form . '_field_groups')) as $fields_group) {
+        $fields_groups[] = $fields_group;
+      }
+    }
+
+    foreach ($disclaimer as $key => &$value) {
+      if ($form_value = $config->get($form . '_disclaimer.' . $key)) {
+        $value = $form_value;
+      }
+    }
+
+    foreach (['', '_field_groups', '_disclaimer'] as $suffix) {
+      $config->clear($form . $suffix);
+    }
+  }
+
+  $text = '';
+
+  if ($disclaimer['title']) {
+    $text .= '<strong>' . $disclaimer['title'] . ':</strong>';
+  }
+
+  if ($disclaimer['text.value']) {
+    $text .= ($text ? "\r\n" : '') . $disclaimer['text.value'];
+  }
+
+  if ($text) {
+    $config->set('disclaimer', [
+      'value' => $text,
+      'format' => $disclaimer['text.format'] ?: 'basic_html',
+    ]);
+  }
+
+  if ($fields_groups) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+      ->load('profile.profile.default');
+
+    $states = [];
+
+    foreach (array_unique($fields_groups) as $fields_group) {
+      $settings = $display->getThirdPartySetting('field_group', $fields_group);
+
+      foreach ($settings['children'] as $field) {
+        $states[$field] = SocialProfilePrivacyHelperInterface::CONFIGURABLE;
+      }
+    }
+
+    $config->set('fields', $states);
+
+    $output = t('The visibility option has been changed to configurable for the following fields: @list', [
+      '@list' => implode(', ', array_keys($states)),
+    ]);
+  }
+  else {
+    $output = t('The visibility option for no one field has been changed.');
+  }
+
+  $config->save();
+
+  return $output;
 }

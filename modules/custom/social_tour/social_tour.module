@@ -16,7 +16,7 @@ function social_tour_form_user_form_alter(&$form, FormStateInterface $form_state
   $user = \Drupal::routeMatch()->getParameter('user');
 
   if ($user instanceof UserInterface) {
-    // @TODO: We've currently decided to turn off the possibility for a LU to re-enable the tips.
+    // @todo We've currently decided to turn off the possibility for a LU to re-enable the tips.
     if (FALSE) {
       // Only do this when onboarding is disabled.
       // if (\Drupal::service('user.data')->get('social_tour',

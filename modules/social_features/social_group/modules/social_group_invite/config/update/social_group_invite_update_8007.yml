@@ -1,0 +1,16 @@
+message.template.invited_to_join_group:
+  expected_config: { }
+  update_actions:
+    delete:
+      text: { }
+    change:
+      text:
+        -
+          value: "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]</a></p>\r\n"
+          format: basic_html
+        -
+          value: "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]</a></p>\r\n"
+          format: basic_html
+        -
+          value: "<p>Hi,</p>\r\n\r\n<p>I would like to invite you to my group [message:gtitle] on [site:name].</p>\r\n\r\n<p>Kind regards,<br />\r\n[message:author:display-name]</p>\r\n\r\n<table class=\"btn-wrap\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[message:gurl]\">Accept invite</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>\r\n"
+          format: full_html

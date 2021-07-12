@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_group_invite module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\group\Entity\GroupType;
 
 /**
@@ -78,4 +79,37 @@ function social_group_invite_update_8005() {
     $group_config->set('plugin_config.existing_user_invitation_body', $existing_user_invitation_body);
     $group_config->save();
   }
+}
+
+/**
+ * Update group invite views().
+ */
+function social_group_invite_update_8006() {
+  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/optional';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $configs = [
+    'views.view.social_group_invitations',
+    'views.view.social_group_user_invitations',
+  ];
+
+  // Update config.
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Update a text of invited_to_join_group message template.
+ */
+function social_group_invite_update_8007() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', 'social_group_invite_update_8007');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

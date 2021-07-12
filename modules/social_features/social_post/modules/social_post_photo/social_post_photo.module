@@ -16,17 +16,28 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
   $form['field_post_image']['widget'][0]['#description'] = '';
   // Add JS to change the placeholder. @TODO: Improve this.
   $form['#attached']['library'][] = 'social_post_photo/widget';
+
+  if ($form_state->hasValue(['field_post_image', 0, 'fids', 0])) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = $form_state->get('form_display');
+
+    $field = $display->getComponent('field_post');
+
+    $form['field_post']['widget'][0]['#placeholder'] = $field['settings']['placeholder'];
+  }
 }
 
 /**
  * Implements hook_photo_preprocess_image_formatter().
  */
 function social_post_photo_preprocess_image_formatter(&$variables) {
-  if ($variables['image_style'] == "social_post_photo" && empty($variables['image']['#alt'])) {
-    // Set the image alt to the filename.
-    $uri = $variables['image']['#uri'];
-    $alt = substr(strrchr($uri, "/"), 1);
-    $variables['image']['#alt'] = $alt;
+  if ($variables['image_style'] === "social_post_photo" && empty($variables['image']['#alt'])) {
+    // At the moment there is no good alt text for photos in posts and the posts
+    // are usually descriptive enough that the images can be considered
+    // decorative. To properly indicate this we include an empty string as
+    // alt-text. This is better than using the filename which is meaningless in
+    // most cases. See Issue #2946442.
+    $variables['image']['#alt'] = "";
   }
 }
 

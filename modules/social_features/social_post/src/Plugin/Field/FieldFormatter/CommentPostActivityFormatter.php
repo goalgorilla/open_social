@@ -28,8 +28,8 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
    * @see Drupal\comment\CommentStorage::loadThead()
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
-    // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = db_select('comment_field_data', 'c');
+    // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
+    $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
     $query
       ->condition('c.entity_id', $entity->id())
@@ -58,7 +58,7 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
     $comments = [];
     if ($cids) {
       krsort($cids);
-      $comments = entity_load_multiple('comment', $cids);
+      $comments = $this->storage->loadMultiple($cids);
     }
 
     return $comments;

@@ -40,6 +40,8 @@ class EventRequestActivityContext extends ActivityContextBase {
    *   The query factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
@@ -49,9 +51,10 @@ class EventRequestActivityContext extends ActivityContextBase {
     $plugin_definition,
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
     ModuleHandlerInterface $module_handler
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->moduleHandler = $module_handler;
   }
@@ -66,6 +69,7 @@ class EventRequestActivityContext extends ActivityContextBase {
       $plugin_definition,
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
       $container->get('module_handler')
     );
   }
@@ -78,7 +82,7 @@ class EventRequestActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($data['related_object'][0]['target_type'] === 'event_enrollment') {
         // Get the enrollment id.

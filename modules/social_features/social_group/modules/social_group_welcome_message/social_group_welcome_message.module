@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -69,11 +70,33 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
     isset($form['private_message_body']) &&
     isset($form['private_message_send'])
   ) {
-    $form['private_message_body']['#states'] = [
-      'visible' => [
-        ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
-      ],
-    ];
+
+    // Get group owner.
+    $group = $form_state->getFormObject()->getEntity();
+    if ($group instanceof GroupInterface) {
+      $owner = $group->getOwner();
+    }
+    else {
+      $owner = \Drupal::currentUser();
+    }
+
+    // Deny access to welcome message if owner doesn't
+    // have permission to create it.
+    if (
+      !$owner->hasPermission('use private messaging system') ||
+      !$owner->hasPermission('create private messages thread')
+    ) {
+      foreach ($form['#fieldgroups']['group_welcome_message']->children as $form_element_id) {
+        $form[$form_element_id]['#access'] = FALSE;
+      }
+    }
+    else {
+      $form['private_message_body']['#states'] = [
+        'visible' => [
+          ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
+        ],
+      ];
+    }
   }
 }
 
@@ -94,6 +117,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $g_type_id = $group->getGroupType()->id();
 
     // Load the account of the user who just joined.
+    /** @var \Drupal\user\UserInterface $account */
     $account = $group_content->getEntity();
 
     // Skip sending notifications to the owner of the group. They probably know
@@ -102,12 +126,10 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
       return;
     }
 
-    // Get group admins entities.
-    $g_admins = $group->getMembers($g_type_id . '-group_admin');
-    $g_admins_users = [];
-    /** @var \Drupal\group\GroupMembership $member */
-    foreach ($g_admins as $key => $member) {
-      $g_admins_users[$key] = $member->getUser();
+    // Do not send mail for user that don't have permission to view private
+    // message.
+    if (!$account->hasPermission('use private messaging system')) {
+      return;
     }
 
     // Get group managers entities.
@@ -119,18 +141,23 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
 
     // Set sender (owner) of the pm.
-    if (count($g_admins_users) === 1) {
-      list($owner) = $g_admins_users;
-    }
-    elseif (count($g_managers_users) > 0) {
+    if (count($g_managers_users) > 0) {
       list($owner) = $g_managers_users;
     }
     else {
       $owner = $group->getOwner();
     }
 
+    // Check if user have permission to create private message.
+    if (
+      !$owner->hasPermission('use private messaging system') ||
+      !$owner->hasPermission('create private messages thread')
+    ) {
+      return;
+    }
+
     // Merge all managers of the group to recipients array.
-    $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
+    $recipients = $g_managers_users;
 
     // Add the joined user to the already existing recipients array.
     $recipients[] = $account;
@@ -157,7 +184,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // and adding messages to it, for the recipient the $last_message and
     // $thread_last_check get the same timestamp. Showing no new messages badge.
     // https://www.drupal.org/project/private_message/issues/3043898
-    // TODO:: Update to the correct version when issue has been solved.
+    // @todo Update to the correct version when issue has been solved.
     /** @var UserDataInterface $userData */
     $userData = \Drupal::service('user.data');
     $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);

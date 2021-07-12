@@ -440,7 +440,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       $overrides['search_api.index.social_groups'] = [
         'dependencies' => [
           'config' => [
-            'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+            'field_storage_group_field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
           ],
         ],
         'field_settings' => [
@@ -451,7 +451,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
             'type' => 'string',
             'dependencies' => [
               'config' => [
-                'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+                'field_storage_group_field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
               ],
             ],
           ],

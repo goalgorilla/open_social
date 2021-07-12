@@ -163,7 +163,7 @@ class SetGroupsForNodeService {
    *   Object of a group.
    */
   public static function addGroupContent(NodeInterface $node, Group $group) {
-    // TODO Check if group plugin id exists.
+    // @todo Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
     $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
   }
@@ -179,7 +179,7 @@ class SetGroupsForNodeService {
   public static function removeGroupContent(NodeInterface $node, Group $group) {
     // Try to load group content from entity.
     if ($group_contents = GroupContent::loadByEntity($node)) {
-      /* @var @param \Drupal\group\Entity\GroupContent $group_content */
+      /** @var @param \Drupal\group\Entity\GroupContent $group_content */
       foreach ($group_contents as $group_content) {
         if ($group->id() === $group_content->getGroup()->id()) {
           $group_content->delete();

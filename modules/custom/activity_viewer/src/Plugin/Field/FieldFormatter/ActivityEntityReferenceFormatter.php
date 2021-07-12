@@ -44,7 +44,7 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
         // entity's url. Since we don't know what the markup of the entity will
         // be, we shouldn't rely on it for structured data such as RDFa.
         if (!empty($items[$delta]->_attributes)) {
-          $items[$delta]->_attributes += ['resource' => $entity->url()];
+          $items[$delta]->_attributes += ['resource' => $entity->toUrl()];
         }
       }
       else {

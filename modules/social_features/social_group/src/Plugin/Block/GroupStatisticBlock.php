@@ -18,7 +18,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  * @Block(
  *  id = "group_statistic_block",
  *  admin_label = @Translation("Group statistic block"),
- *  context = {
+ *  context_definitions = {
  *    "group" = @ContextDefinition("entity:group", required = FALSE)
  *  }
  * )

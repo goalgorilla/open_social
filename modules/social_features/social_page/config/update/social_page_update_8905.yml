@@ -1,0 +1,101 @@
+core.entity_form_display.node.page.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              label: Attachments
+          group_page_content:
+            format_settings:
+              label: Content
+          group_page_description:
+            children:
+              - body
+            format_settings:
+              label: 'Page description'
+          group_page_visibility:
+            format_settings:
+              label: Visibility
+    add:
+      content:
+        body:
+          settings:
+            show_summary: false
+        field_page_image:
+          settings:
+            crop_types_required: {  }
+            warn_multiple_usages: true
+      third_party_settings:
+        field_group:
+          group_attachments:
+            region: hidden
+          group_page_content:
+            children:
+              - body
+            format_settings:
+              description: ''
+            region: hidden
+          group_page_description:
+            region: hidden
+          group_page_visibility:
+            format_settings:
+              description: ''
+            region: hidden
+          group_settings:
+            children:
+              - uid
+              - created
+              - field_page_comments
+              - path
+              - status
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: hidden
+            weight: 20
+    change:
+      content:
+        body:
+          weight: 3
+        created:
+          weight: 8
+        field_page_comments:
+          weight: 5
+        path:
+          weight: 6
+        uid:
+          weight: 7
+        url_redirects:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 50
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              open: false
+            format_type: details
+            label: 'Additional information'
+          group_page_content:
+            label: 'Basic information'
+          group_page_description:
+            children: {  }
+          group_page_visibility:
+            label: 'Access permissions'
+field.field.node.page.field_files:
+  expected_config:
+    label: Files
+  update_actions:
+    change:
+      label: Attachment

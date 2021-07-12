@@ -6,3 +6,11 @@ services:
   social_profile.user_statistics:
     class: Drupal\social_profile\UserStatistics
     arguments: ['@database']
+  social_profile.tag_service:
+    class: Drupal\social_profile\SocialProfileTagService
+    arguments: ['@entity_type.manager', '@config.factory', '@language_manager']
+  social_profile.name_service:
+    class: Drupal\social_profile\SocialProfileNameService
+    arguments:
+      - '@entity_type.manager'
+      - '@module_handler'

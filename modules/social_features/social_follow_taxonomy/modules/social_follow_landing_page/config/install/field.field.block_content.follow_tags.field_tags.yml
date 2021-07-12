@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.follow_tags
+    - field.storage.block_content.field_tags
+    - paragraphs.paragraphs_type.tag
+  module:
+    - entity_reference_revisions
+id: block_content.follow_tags.field_tags
+field_name: field_tags
+entity_type: block_content
+bundle: follow_tags
+label: Tags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      tag: tag
+    target_bundles_drag_drop:
+      accordion:
+        weight: 13
+        enabled: false
+      accordion_item:
+        weight: 14
+        enabled: false
+      block:
+        weight: 15
+        enabled: false
+      button:
+        weight: 16
+        enabled: false
+      featured:
+        weight: 17
+        enabled: false
+      featured_item:
+        weight: 18
+        enabled: false
+      featured_items:
+        weight: 19
+        enabled: false
+      hero:
+        weight: 20
+        enabled: false
+      hero_small:
+        weight: 21
+        enabled: false
+      introduction:
+        weight: 22
+        enabled: false
+      section:
+        weight: 23
+        enabled: false
+      tag:
+        enabled: true
+        weight: 24
+field_type: entity_reference_revisions

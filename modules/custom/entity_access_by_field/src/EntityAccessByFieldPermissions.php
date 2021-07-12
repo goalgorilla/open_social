@@ -3,10 +3,10 @@
 namespace Drupal\entity_access_by_field;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Routing\UrlGeneratorTrait;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 
 /**
  * EntityAccessByFieldPermissions.
@@ -14,23 +14,32 @@ use Drupal\Core\Routing\UrlGeneratorTrait;
 class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
-  use UrlGeneratorTrait;
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
+
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
 
   /**
    * Constructs a new NodeViewPermissionsPermission instance.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
@@ -38,7 +47,8 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')
+      $container->get('entity_type.manager'),
+      $container->get('entity_field.manager')
     );
   }
 
@@ -66,7 +76,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
       /** @var \Drupal\field\Entity\FieldConfig $field */
       foreach ($fields as $field) {
         $field_storage = $field->getFieldStorageDefinition();
-        // @TODO Add support for allowed_values_function.
+        // @todo Add support for allowed_values_function.
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
@@ -102,7 +112,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
       /** @var \Drupal\field\Entity\FieldConfig $field */
       foreach ($fields as $field) {
         $field_storage = $field->getFieldStorageDefinition();
-        // @TODO Add support for allowed_values_function.
+        // @todo Add support for allowed_values_function.
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
@@ -140,7 +150,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    *   Returns the entity interface containing all the content types.
    */
   protected function getContentTypes() {
-    $contentTypes = $this->entityManager->getStorage('node_type')->loadMultiple();
+    $contentTypes = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
     return $contentTypes;
   }
 
@@ -152,7 +162,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    */
   public function getEntityAccessFields($entity, $bundle) {
     $fields = [];
-    $field_definitions = $this->entityManager->getFieldDefinitions($entity, $bundle->id());
+    $field_definitions = $this->entityFieldManager->getFieldDefinitions($entity, $bundle->id());
     foreach ($field_definitions as $field_name => $field_definition) {
       if (!empty($field_definition->getTargetBundle())) {
         if ($field_definition->getType() === 'entity_access_field') {

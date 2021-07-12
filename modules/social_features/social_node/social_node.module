@@ -6,6 +6,7 @@
  */
 
 use Drupal\social_node\Entity\Node;
+use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
 
 /**
@@ -16,5 +17,9 @@ function social_node_entity_type_alter(array &$entity_types) {
   if (isset($entity_types['node'])) {
     $entity_types['node']->setClass(Node::class);
     $entity_types['node']->setViewBuilderClass(NodeViewBuilder::class);
+
+    foreach (['default', 'edit'] as $operation) {
+      $entity_types['node']->setFormClass($operation, SocialNodeForm::class);
+    }
   }
 }

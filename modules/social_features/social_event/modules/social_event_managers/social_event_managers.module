@@ -57,15 +57,7 @@ function social_event_managers_views_data_alter(array &$data) {
 }
 
 /**
- * Add notification settings display on user Profile for the EO notification.
- *
- * @param array &$items
- *   An array of groups that contain a title and an array of templates that are
- *   contained in this settings group.
- * @param array $email_message_templates
- *   Message templates enabled for sending by email.
- *
- * @see activity_send_email_form_user_form_alter()
+ * Implements hook_activity_send_email_notifications_alter().
  */
 function social_event_managers_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
   // If a member_added_by_event_organiser template is enabled then we add it in
@@ -244,8 +236,8 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
 
   $grants = [];
 
-  // TODO:
-  // Fetch all nodes this user has access to and add a grant for each of those!
+  // @todo Fetch all nodes this user has access to
+  // and add a grant for each of those.
   $query = \Drupal::database()->select('node__field_event_managers', 'em');
   $query->fields('em', ['entity_id']);
   $query->condition('em.field_event_managers_target_id', $account->id());
@@ -374,6 +366,10 @@ function social_event_managers_form_node_event_form_alter(&$form, FormStateInter
       $form['field_event_managers']['widget'][$last_key]['target_id']['#default_value'] = $user;
     }
   }
+  // Update the field event managers widget form.
+  if (isset($form['field_event_managers']['widget']['add_more'])) {
+    $form['field_event_managers']['widget']['add_more']['#value'] = t('Add another organizer');
+  }
 }
 
 /**
@@ -483,7 +479,7 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
 
       if ($fields === 2) {
-        // @todo: source strings will never be translatable when we use
+        // @todo source strings will never be translatable when we use
         // variables. This should be refactored.
         $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
@@ -615,24 +611,26 @@ function _social_event_managers_views_bulk_operations_bulk_form_submit($form, Fo
  * Implements hook_preprocess_HOOK().
  */
 function social_event_managers_preprocess_views_view(&$variables) {
-  /** @var \Drupal\views\ViewExecutable $view */
-  $view = &$variables['view'];
+  if (!\Drupal::moduleHandler()->moduleExists('social_event_invite')) {
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = &$variables['view'];
 
-  // Remove header & VBO actions from the Enrollment Management tab if the user
-  // is not a manager or organiser.
-  if ($view->id() === 'event_manage_enrollments') {
-    if (!social_event_manager_or_organizer()) {
-      unset($variables['rows']['social_views_bulk_operations_bulk_form_enrollments_1']);
-      unset($variables['rows']['header']);
-      unset($variables['rows']['actions']);
+    // Remove header & VBO actions from the Enrollment Management tab if the
+    // user is not a manager or organiser.
+    if ($view->id() === 'event_manage_enrollments') {
+      if (!social_event_manager_or_organizer()) {
+        unset($variables['rows']['social_views_bulk_operations_bulk_form_enrollments_1']);
+        unset($variables['rows']['header']);
+        unset($variables['rows']['actions']);
+      }
+
+      $block = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialblue_local_actions');
+
+      $variables['header']['actions'] = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($block);
     }
-
-    $block = \Drupal::entityTypeManager()->getStorage('block')
-      ->load('socialblue_local_actions');
-
-    $variables['header']['actions'] = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($block);
   }
 }
 

@@ -1,0 +1,70 @@
+core.entity_form_display.node.topic.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_topic_content:
+            children:
+              - field_topic_type
+          group_topic_description:
+            children:
+              - title
+              - body
+              - field_topic_image
+            format_settings:
+              classes: 'card '
+              id: description
+              required_fields: true
+            format_type: fieldset
+            label: Description
+            parent_name: ''
+            region: hidden
+            weight: 2
+    add:
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - uid
+              - created
+          group_topic_content:
+            children:
+              - field_topic_type
+              - body
+              - field_topic_image
+    change:
+      content:
+        body:
+          weight: 4
+        created:
+          weight: 7
+        field_topic_comments:
+          weight: 3
+        field_topic_image:
+          weight: 3
+        field_topic_type:
+          weight: 1
+        path:
+          weight: 4
+        title:
+          weight: 2
+        uid:
+          weight: 6
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - field_topic_comments
+              - path
+              - uid
+              - created
+              - status
+          group_topic_content:
+            children:
+              - title
+field.field.node.topic.field_files:
+  expected_config: { }
+  update_actions:
+    change:
+      label: Attachment

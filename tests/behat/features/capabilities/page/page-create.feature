@@ -8,9 +8,9 @@ Feature: Create Page
     Given I am logged in as an "administrator"
     And I am on "node/add/page"
     When I fill in the following:
-      | Title | This is a static page |
+      | title[0][value] | This is a static page |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I press "Save"
+    And I press "Create basic page"
     Then I should see "Page This is a static page has been created."
     And I should see "This is a static page" in the "Hero block"
     And I should see "Body description text" in the "Main content"

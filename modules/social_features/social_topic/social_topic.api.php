@@ -5,6 +5,8 @@
  * Hooks provided by the Social_topic module.
  */
 
+use Drupal\taxonomy\Entity\Term;
+
 /**
  * @addtogroup hooks
  * @{
@@ -21,7 +23,7 @@
  *
  * @ingroup social_topic_api
  */
-function hook_topic_type_title_alter(&$title, \Drupal\taxonomy\Entity\Term &$term) {
+function hook_topic_type_title_alter(&$title, Term &$term) {
   if (isset($term)) {
     $term_title = $term->getName();
     $title = t('@type', ['@type' => $term_title]);

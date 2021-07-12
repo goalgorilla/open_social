@@ -25,7 +25,7 @@ Feature: Create Event
          | Street address | Fedkovycha 60a |
          | Postal code | 79000 |
          | Oblast | Lviv oblast |
-    And I press "Save"
+    And I press "Create event"
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
     And I should see "Technopark" in the "Main content"

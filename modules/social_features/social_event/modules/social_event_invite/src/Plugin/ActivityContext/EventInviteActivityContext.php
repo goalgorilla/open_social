@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Plugin\ActivityContext;
 
+use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
@@ -39,6 +40,8 @@ class EventInviteActivityContext extends ActivityContextBase {
    *   The query factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
@@ -48,9 +51,10 @@ class EventInviteActivityContext extends ActivityContextBase {
     $plugin_definition,
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
     ModuleHandlerInterface $module_handler
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->moduleHandler = $module_handler;
   }
@@ -65,6 +69,7 @@ class EventInviteActivityContext extends ActivityContextBase {
       $plugin_definition,
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
       $container->get('module_handler')
     );
   }

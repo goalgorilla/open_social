@@ -19,6 +19,7 @@ use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
 use Drupal\views\ViewExecutable;
+use Drupal\social_user\SocialUserSearchContentBlockAlter;
 
 /**
  * Implements hook_entity_type_alter().
@@ -460,27 +461,7 @@ function template_preprocess_unwrapped_container(array &$variables) {
  */
 function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block) {
   // Add pre render to search content block in the header.
-  $build['#pre_render'][] = '_social_user_search_content_pre_render';
-}
-
-/**
- * Pre render for the search content in the header. This will add javascript.
- *
- * @param array $build
- *   The render build array.
- *
- * @return array
- *   Attached array with javascript.
- */
-function _social_user_search_content_pre_render(array $build) {
-  // Attach the social_search library defined in social_search.libraries.yml.
-  $build['#attached'] = [
-    'library' => [
-      'social_search/navbar-search',
-    ],
-  ];
-
-  return $build;
+  $build['#pre_render'][] = [SocialUserSearchContentBlockAlter::class, 'preRender'];
 }
 
 /**

@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
@@ -14,6 +17,7 @@ use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -27,6 +31,8 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image.
   _social_profile_add_default_profile_image();
+  // Update the field definitions.
+  _social_profile_field_definitions_update();
 
   // Create a profile for user 1.
   Profile::create([
@@ -44,7 +50,7 @@ function _social_profile_add_default_profile_image() {
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
 
-  $uri = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
+  $uri = Drupal::service('file_system')->copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'uri' => $uri,
@@ -417,4 +423,94 @@ function social_profile_update_8802(&$sandbox) {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+}
+
+/**
+ * Moved the profile's banner field above image field.
+ */
+function social_profile_update_8803() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add a new block to display filters (social_tagging) on all-members page.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ */
+function social_profile_update_8901() {
+  $config_files = [
+    'block.block.exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.exposedformnewest_userspage_newest_users_8901.yml',
+    'block.block.socialblue_exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
+  ];
+
+  foreach ($config_files as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = \Drupal::configFactory()
+          ->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Enable exposed filters block on all-members views.
+ */
+function social_profile_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Sets default profile settings.
+ */
+function social_profile_update_8903() {
+  \Drupal::configFactory()
+    ->getEditable('social_profile.settings')
+    ->set('enable_profile_tagging', TRUE)
+    ->save();
+}
+
+/**
+ * Update the field definitions on install, or in an update hook.
+ */
+function _social_profile_field_definitions_update() {
+  // Create field storage for the 'Profile Name' base field.
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+}
+
+/**
+ * Install Profile name field to profile entity type.
+ */
+function social_profile_update_8904() {
+  $field_storage_definition = BaseFieldDefinition::create('string')
+    ->setLabel(t('Profile name'))
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setReadOnly(TRUE);
+
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installFieldStorageDefinition('profile_name', 'profile', 'social_profile', $field_storage_definition);
+}
+
+/**
+ * Update field definitions.
+ */
+function social_profile_update_8905() {
+  _social_profile_field_definitions_update();
 }

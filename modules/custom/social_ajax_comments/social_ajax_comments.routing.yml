@@ -1,10 +1,19 @@
-social_ajax_comments.unpublish:
-  path: '/ajax_comments/{comment}/unpublish'
+social_ajax_comments.cancel:
+  path: '/ajax_comments/{cid}/cancel'
   defaults:
-    _controller: 'Drupal\social_ajax_comments\Controller\AjaxCommentsController::unpublish'
+    _controller: '\Drupal\social_ajax_comments\Controller\AjaxCommentsController::socialCancel'
   requirements:
-    _permission: 'administer comments'
+    _access: 'TRUE'
+    cid: ^[0-9]+
+
+social_ajax_comments.add:
+  path: '/ajax_comments/add/{entity_type}/{entity}/{field_name}/{pid}'
+  defaults:
+    _controller: '\Drupal\social_ajax_comments\Controller\AjaxCommentsController::socialAdd'
+    pid: ~
+  requirements:
+    _access: 'TRUE'
   options:
     parameters:
-      comment:
-        type: entity:comment
+      entity:
+        type: entity:{entity_type}
