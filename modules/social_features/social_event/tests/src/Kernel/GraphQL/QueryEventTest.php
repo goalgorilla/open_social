@@ -138,6 +138,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'skip comment approval',
       'access comments',
       'view node.event.field_content_visibility:public content',
+      'access user profiles'
     ], $this->userPermissions()));
 
     $comment = Comment::create([

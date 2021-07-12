@@ -145,7 +145,7 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
     // This is a quick fix due to an incorrect entity access layer for users
     // do not copy this, but fix your access checks instead.
-    if ($this->currentUser->isAnonymous()) {
+    if (!$this->currentUser->hasPermission('list user')) {
       return new EmptyEntityConnection();
     }
 

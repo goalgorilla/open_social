@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -14,6 +15,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -367,7 +370,7 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
 function social_profile_preprocess_profile(array &$variables) {
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $variables['profile'];
-  $user = User::load($profile->getOwnerId());
+  $user = $profile->getOwner();
   $current_user = \Drupal::currentUser();
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
@@ -383,11 +386,9 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_contact_label'] = 'profile_info';
   if (
     \Drupal::moduleHandler()->moduleExists('social_private_message') &&
-    $current_user->id() != $profile->getOwnerId() &&
+    $current_user->id() !== $user->id() &&
     $current_user->hasPermission('use private messaging system') &&
-    $current_user->hasPermission('create private messages thread') &&
-    User::load($profile->getOwnerId())
-      ->hasPermission('use private messaging system')
+    $user->hasPermission('use private messaging system')
   ) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
@@ -462,61 +463,109 @@ function social_profile_preprocess_profile(array &$variables) {
  *   Return TRUE if current user is allowed to see the property else FALSE.
  */
 function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property) {
+  // phpcs:ignore
+  @trigger_error("_social_profile_check_property_access is deprecated and will be removed in 11.0.0. Use a field access check for the `view` operation instead.", E_USER_DEPRECATED);
+
   // Flag to set.
   $flag = FALSE;
   switch ($property) {
     case 'email':
-      // If the current user has this permission, return true straight away.
-      if ($current_user->hasPermission('social profile privacy view hidden fields') || $current_user->hasPermission('view profile email')) {
-        $flag = TRUE;
-      }
-
-      // Prepare some variables for checking on the email field.
-      $global_show_email = \Drupal::config('social_profile.settings')
-        ->get('social_profile_show_email');
-      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : FALSE;
-
-      // If the current user doesn't have the above permission, perform
-      // additional checks to see if the current user is still able to view
-      // this email field.
-      if ($global_show_email || $profile_show_email) {
-        $flag = TRUE;
-      }
-      break;
+      /** @var \Drupal\user\UserInterface $profile_user */
+      $profile_user = $profile->getOwner();
+      /** @var bool $access */
+      $access = $profile_user->get('mail')->access('view', $current_user);
+      return $access;
 
     case 'language':
-      // If the current user has this permission, return true straight away.
-      if ($current_user->hasPermission('view profile language')) {
-        $flag = TRUE;
-      }
-
-      // Prepare some variables for checking on the language access.
-      $global_show_lang = \Drupal::config('social_profile.settings')
-        ->get('social_profile_show_language');
-      $profile_show_lang = \Drupal::service('user.data')
-        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? FALSE;
-
-      // If the current user doesn't have the above permission, perform
-      // additional checks to see if the current user is still able to view
-      // this preferred language.
-      if ($global_show_lang || $profile_show_lang) {
-        $flag = TRUE;
-      }
-      break;
+      /** @var \Drupal\user\UserInterface $profile_user */
+      $profile_user = $profile->getOwner();
+      /** @var bool $access */
+      $access = $profile_user->get('preferred_langcode')->access('view', $current_user);
+      return $access;
   }
-  return $flag;
+
+  return FALSE;
+}
+
+/**
+ * Implements hook_entity_field_access().
+ */
+function social_profile_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) : AccessResultInterface {
+  if ($operation === 'view' && $field_definition->getTargetEntityTypeId() === 'user') {
+    if ($field_definition->getName() === 'mail') {
+      // Allowed if the user has a permission to always see the email.
+      $can_view_all_hidden = AccessResult::allowedIfHasPermission($account, 'social profile privacy view hidden fields');
+      $can_view_email_always = AccessResult::allowedIfHasPermission($account, 'view profile email');
+
+      // Allowed if the email is configured to be visible for everyone.
+      $profile_settings = \Drupal::config('social_profile.settings');
+      $email_is_global_visible = AccessResult::allowedIf($profile_settings->get('social_profile_show_email'))
+        ->addCacheableDependency($profile_settings);
+
+      // Allowed if the user chose to share their email.
+      $email_field_shared = AccessResult::neutral();
+      if ($items !== NULL) {
+        $profile = $items->getEntity();
+        if ($profile->hasField('field_profile_show_email')) {
+          $show_email_field = $profile->get('field_profile_show_email');
+          $show_email_field_item = $show_email_field->first();
+          if ($show_email_field_item !== NULL) {
+            $email_field_shared = AccessResult::allowedIf(
+              $show_email_field_item->getValue()
+            )->addCacheableDependency($show_email_field);
+          }
+        }
+        $email_field_shared->addCacheableDependency($profile);
+      }
+
+      // Chain all possible access result to ensure Drupal can determine the
+      // correct cache metadata.
+      return $can_view_all_hidden
+        ->orIf($can_view_email_always)
+        ->orIf($email_is_global_visible)
+        ->orIf($email_field_shared);
+    }
+
+    if ($field_definition->getName() === 'preferred_langcode') {
+      // If the current user has this permission, return true straight away.
+      $can_view_language_always = AccessResult::allowedIfHasPermission($account, 'view profile language');
+
+      // Allowed if the language is configured to be visible for everyone.
+      $profile_settings = \Drupal::config('social_profile.settings');
+      $language_is_global_visible = AccessResult::allowedIf($profile_settings->get('social_profile_show_language'))
+        ->addCacheableDependency($profile_settings);
+
+      // Allowed if the user chose to share their language.
+      $language_field_shared = AccessResult::neutral();
+      if ($items !== NULL) {
+        /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+        $profile = $items->getEntity();
+        $profile_show_lang = \Drupal::service('user.data')->get('social_profile_privacy', $profile->getOwnerId(), 'lang_info') ?? FALSE;
+
+        $language_field_shared = AccessResult::allowedIf($profile_show_lang);
+      }
+
+      // Chain all possible access result to ensure Drupal can determine the
+      // correct cache metadata.
+      return $can_view_language_always
+        ->orIf($language_is_global_visible)
+        ->orIf($language_field_shared);
+    }
+  }
+
+  return AccessResult::neutral();
 }
 
 /**
  * Get the contact URL. This can be private message or other means of contact.
  *
- * @param \Drupal\user\Entity\User $account
+ * @param \Drupal\user\UserInterface $account
  *   The user object.
  *
  * @return \Drupal\Core\Url
  *   The URL to contact the user.
  */
-function _social_profile_get_contact_url(User $account) {
+function _social_profile_get_contact_url(UserInterface $account) {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
     $current_user = \Drupal::currentUser();
     if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
