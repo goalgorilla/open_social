@@ -41,3 +41,10 @@ function social_embed_create_media_button() {
   $button->save();
 
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for node.html.twig.
+ */
+function social_embed_preprocess_node(&$variables) {
+  $variables['#attached']['library'][] = 'social_embed/iframe';
+}
