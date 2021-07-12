@@ -58,6 +58,7 @@ function _social_page_get_permissions($role) {
     'delete own page content',
     'edit any page content',
     'edit own page content',
+    'translate page node',
     'view page revisions',
     'delete page revisions',
     'revert page revisions',
@@ -205,4 +206,13 @@ function social_page_update_8908() {
     'core.entity_view_display.node.page.small_teaser',
     $source->read('social_page_static_update_8908')
   );
+}
+
+/**
+ * Allow CM+ translate "Basic Page" node type.
+ */
+function social_page_update_10301() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate page node']);
+  }
 }
