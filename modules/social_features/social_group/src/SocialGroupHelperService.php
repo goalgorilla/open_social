@@ -11,6 +11,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class SocialGroupHelperService.
@@ -34,13 +35,23 @@ class SocialGroupHelperService {
   protected $database;
 
   /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructor for SocialGroupHelperService.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler.
    */
-  public function __construct(Connection $connection) {
+  public function __construct(Connection $connection, ModuleHandlerInterface $module_handler) {
     $this->database = $connection;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -197,6 +208,49 @@ class SocialGroupHelperService {
     }
 
     return $groups[$uid];
+  }
+
+  /**
+   * Count all group memberships for a certain user.
+   *
+   * @param string $uid
+   *   The UID for which we fetch the groups it is member of.
+   *
+   * @return int
+   *   Count of groups a user is a member of.
+   */
+  public function countGroupMembershipsForUser($uid): int {
+    $count = &drupal_static(__FUNCTION__);
+
+    // Get the count of memberships for the user if they aren't known yet.
+    if (!isset($count[$uid])) {
+      $hidden_types = [];
+      $this->moduleHandler->alter('social_group_hide_types', $hidden_types);
+
+      $group_content_types = GroupContentType::loadByEntityTypeId('user');
+      $group_content_types = array_keys($group_content_types);
+      $query = $this->database->select('group_content_field_data', 'gcfd');
+      $query->addField('gcfd', 'gid');
+      $query->condition('gcfd.entity_id', $uid);
+      $query->condition('gcfd.type', $group_content_types, 'IN');
+      if (!empty($hidden_types)) {
+        foreach ($hidden_types as $group_type) {
+          $query->condition('gcfd.type', '%' . $this->database->escapeLike($group_type) . '%', 'NOT LIKE');
+        }
+      }
+      // We need to add another like for the fact that we have more plugins
+      // than memberships for a User, like request or invite which are not
+      // group memberships yet.
+      $query->condition('gcfd.type', '%group_membership', 'LIKE');
+      // Add a query tag for other modules to alter, this query.
+      $query->addTag('count_memberships_for_user');
+      $query->execute()->fetchAll();
+
+      $group_ids = $query->countQuery()->execute()->fetchField();
+      $count[$uid] = $group_ids;
+    }
+
+    return $count[$uid];
   }
 
   /**
