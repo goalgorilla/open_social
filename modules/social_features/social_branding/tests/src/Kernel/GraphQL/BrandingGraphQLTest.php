@@ -57,6 +57,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     // Prepare logo url.
     $config->set('logo.path', 'public://logo.png')->save();
     $expected_logo_url = 'http://localhost/' . $this->siteDirectory . '/files/logo.png';
+    // Prepare preferred features.
+    \Drupal::service('module_installer')->install(['social_branding_required_test'], FALSE);
+    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('social_branding_required_test'), 'Test required module is enabled.');
     // Set anonymous user.
     $this->setUpCurrentUser();
 
@@ -177,6 +180,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
                 }
               }
             }
+            preferredFeatures {
+              machineName
+            }
           }
         }
       ',
@@ -296,6 +302,11 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
               ],
             ],
           ],
+          'preferredFeatures' => [
+            ['machineName' => 'feature0'],
+            ['machineName' => 'feature1'],
+            ['machineName' => 'feature2'],
+          ],
         ],
       ],
       $this->defaultCacheMetaData()
@@ -364,6 +375,35 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       [
         'platformBranding' => [
           'brandingColors' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_theme)
+    );
+  }
+
+  /**
+   * Test that the platform preferred features can return an empty array.
+   */
+  public function testPreferredFeeaturesReturnEmptyArray(): void {
+    $system_theme = $this->config('system.theme');
+    // Set anonymous user.
+    $this->setUpCurrentUser();
+
+    $this->assertResults(
+      '
+        query {
+          platformBranding {
+            preferredFeatures {
+              machineName
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'platformBranding' => [
+          'preferredFeatures' => [],
         ],
       ],
       $this->defaultCacheMetaData()

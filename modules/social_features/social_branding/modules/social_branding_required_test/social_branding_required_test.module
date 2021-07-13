@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Social Branding Test module.
+ */
+
+/**
+ * Implements hook_social_branding_preferred_features_alter().
+ *
+ * Manipulate module dependencies to test dependency chains.
+ */
+function social_branding_required_test_social_branding_preferred_features_alter(&$preferred_features) {
+  $preferred_features = [
+    [
+      'weight' => 2,
+      'name' => 'feature2',
+    ],
+    [
+      'weight' => 0,
+      'name' => 'feature0',
+    ],
+    [
+      'weight' => 1,
+      'name' => 'feature1',
+    ],
+  ];
+}
