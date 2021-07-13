@@ -89,3 +89,23 @@ function social_content_translation_update_8001() {
     $config->save(TRUE);
   }
 }
+
+/**
+ * Add translations compatibility for custom blocks.
+ */
+function social_content_translation_update_10301() {
+  $module_names = [
+    'social_content_block',
+    'social_core',
+    'social_featured_content',
+    'social_featured_items',
+    'social_follow_landing_page',
+  ];
+
+  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
+
+  foreach ($module_names as $module_name) {
+    $config->set($module_name, TRUE);
+    $config->save(TRUE);
+  }
+}
