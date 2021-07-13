@@ -8,8 +8,6 @@ dependencies:
     - search_api
     - social_search
     - user
-_core:
-  default_config_hash: a19IcAteq_kDlYZTbWZgPHGMlmh_tGlBa_F0086x3bw
 id: search_content
 label: 'Search Content'
 module: views
@@ -282,6 +280,46 @@ display:
                   min: ''
                   max: ''
           plugin_id: search_api_date
+        search_api_language:
+          id: search_api_language
+          table: search_api_index_social_content
+          field: search_api_language
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: search_api_language
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -399,7 +437,8 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_content'
   page:
     display_plugin: page
     id: page
@@ -434,7 +473,8 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_content'
   page_no_value:
     display_plugin: page
     id: page_no_value
@@ -467,4 +507,5 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_content'
