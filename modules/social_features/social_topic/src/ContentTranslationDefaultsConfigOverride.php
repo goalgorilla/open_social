@@ -55,23 +55,6 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'core.base_field_override.node.topic.status' => [
         'translatable' => TRUE,
       ],
-      'field.field.node.topic.body' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.topic.field_files' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.topic.field_topic_image' => [
-        'third_party_settings' => [
-          'content_translation' => [
-            'translation_sync' => [
-              'file' => 'file',
-              'alt' => '0',
-              'title' => '0',
-            ],
-          ],
-        ],
-      ],
     ];
   }
 
