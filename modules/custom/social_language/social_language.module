@@ -5,6 +5,7 @@
  * Contains social_language.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
@@ -56,7 +57,7 @@ function social_language_entity_operation_alter(array &$operations, EntityInterf
   // "Content Translations" module allows to add translations
   // to the entity that user can't edit...This cause displaying
   // the redundant operation "translate" in entity list pages.
-  /** @see content_translation_translate_access() */
+  /* @see content_translation_translate_access() */
   if (!empty($operations['translate'])) {
     // All checks are already done in social_language_entity_operation()
     // and we need only add the last one.
