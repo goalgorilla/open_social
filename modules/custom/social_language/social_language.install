@@ -123,6 +123,10 @@ YAML;
  * Allow "Content Manager" role to manage translations.
  */
 function social_language_update_10301() {
-  // The function grand permissions.
-  _social_language_set_permissions();
+  $permissions = [
+    'create content translations',
+    'delete content translations',
+    'update content translations',
+  ];
+  user_role_grant_permissions('contentmanager', $permissions);
 }
