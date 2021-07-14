@@ -6,35 +6,14 @@
  */
 
 use Drupal\Core\Config\FileStorage;
-use Drupal\search_api\Entity\Index;
-use Drupal\user\Entity\User;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
  */
 function social_profile_fields_install() {
-  // Set some default permissions.
-  // Clear the entity field manager cached field definitions as the address
-  // field overrides settings need to be applied.
   _social_profile_fields_set_permissions();
-  _social_profile_fields_update_search_index();
-  _social_profile_fields_update_search_index('social_all');
   _social_profile_fields_nationalities();
-}
-
-/**
- * Disable and enable the search index, so the nickname field is added.
- */
-function social_profile_fields_update_8001() {
-  _social_profile_fields_update_search_index();
-}
-
-/**
- * Disable and enable the main search index, so the nickname field is added.
- */
-function social_profile_fields_update_8002() {
-  _social_profile_fields_update_search_index('social_all');
 }
 
 /**
@@ -42,39 +21,6 @@ function social_profile_fields_update_8002() {
  */
 function _social_profile_fields_set_permissions() {
   user_role_grant_permissions('sitemanager', ['social profile fields change used profile fields']);
-}
-
-/**
- * Disable and enable the search index, so the nickname field is added.
- *
- * @param string $index_id
- *   The search index ID.
- */
-function _social_profile_fields_update_search_index($index_id = 'social_users') {
-  /** @var \Drupal\search_api\IndexInterface $index */
-  $index = Index::load($index_id);
-
-  $logger = \Drupal::logger('social_profile_fields');
-  $logger->info('Loaded search index');
-
-  // If currently enabled we will first disabled and enable the index.
-  if ($index !== NULL && $index->status()) {
-    $logger->info('Search index exists');
-
-    // Elevate permissions so we can index *all* the items.
-    $accountSwitcher = \Drupal::service('account_switcher');
-    $account = User::load(1);
-    $accountSwitcher->switchTo($account);
-
-    // Disable and enable the index so the tagging field is properly added.
-    $index->disable()->save();
-    $logger->info('Search index disabled');
-    $index->enable()->save();
-    $logger->info('Search index enabled');
-
-    // Restore user account.
-    $accountSwitcher->switchBack();
-  }
 }
 
 /**

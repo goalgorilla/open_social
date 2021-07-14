@@ -19,3 +19,6 @@ services:
     arguments: ['@module_handler']
     tags:
       - { name: config.factory.override, priority: 5 }
+  social_profile.profile_fields_permission_provider:
+    class: Drupal\social_profile\ProfileFieldsPermissionProvider
+    arguments: ['@entity_type.manager']
