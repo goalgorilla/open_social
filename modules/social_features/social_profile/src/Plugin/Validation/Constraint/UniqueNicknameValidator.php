@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_fields\Plugin\Validation\Constraint;
+namespace Drupal\social_profile\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\profile\ProfileStorageInterface;
@@ -33,7 +33,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container) : self {
     return new static(
       $container->get('entity_type.manager')->getStorage('profile')
     );
@@ -42,7 +42,8 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate($items, Constraint $constraint) : void {
+    assert($constraint instanceof UniqueNickname);
     foreach ($items as $item) {
       // Next check if the value is unique.
       if (!$this->isUnique($item->value)) {
