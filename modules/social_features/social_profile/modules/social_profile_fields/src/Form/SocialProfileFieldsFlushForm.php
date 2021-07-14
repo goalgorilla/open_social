@@ -124,7 +124,6 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);
 

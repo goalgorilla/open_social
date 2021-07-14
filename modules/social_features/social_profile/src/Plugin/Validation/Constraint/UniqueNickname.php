@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_fields\Plugin\Validation\Constraint;
+namespace Drupal\social_profile\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 
