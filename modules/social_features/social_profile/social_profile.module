@@ -76,7 +76,7 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
   // actually edit a users profile and add profile tags there.
   $form['field_profile_profile_tag']['#access'] = FALSE;
   if (
-    $profile_settings->get('allow_for_users') ||
+    $profile_settings->get('allow_tagging_for_lu') ||
     $user->hasPermission('edit profile tags')
   ) {
     $form['field_profile_profile_tag']['#access'] = TRUE;
@@ -114,7 +114,7 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // actually edit a users profile and add profile tags there.
   $form['field_profile_profile_tag']['#access'] = FALSE;
   if (
-    $profile_settings->get('allow_for_users') ||
+    $profile_settings->get('allow_tagging_for_lu') ||
     $viewing_user->hasPermission('edit profile tags')
   ) {
     $form['field_profile_profile_tag']['#access'] = TRUE;

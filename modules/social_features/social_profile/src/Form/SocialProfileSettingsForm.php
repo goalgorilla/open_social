@@ -140,10 +140,10 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
-    $form['tagging']['allow_for_users'] = [
+    $form['tagging']['allow_tagging_for_lu'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow Profile tagging for LU'),
-      '#default_value' => $config->get('allow_for_users'),
+      '#default_value' => $config->get('allow_tagging_for_lu'),
       '#required' => FALSE,
       '#description' => $this->t("Determine whether LU are allowed to add profile tags to the profile"),
       '#states' => [
@@ -166,7 +166,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'));
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
     $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
-    $config->set('allow_for_users', $form_state->getValue('allow_for_users'));
+    $config->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'));
     $config->save();
 
     // Check if the website is multilingual.
