@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_fields\Plugin\UserExportPlugin;
+namespace Drupal\social_profile\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;

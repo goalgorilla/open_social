@@ -18,6 +18,9 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\Entity\Role;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
@@ -30,26 +33,28 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_profile.
  */
 function social_profile_install() {
+  // Add some links.
+  _social_profile_create_menu_links();
+  // Add default profile image.
+  _social_profile_add_default_profile_image();
+
+  _social_profile_install_visibility_fields();
+  _social_profile_populate_nationalities_vocabulary('10.3.0');
+
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
-    RoleInterface::AUTHENTICATED_ID,
+    'authenticated',
     [
       'add own profile profile',
       'update own profile profile',
+      'view any profile profile',
       'view own profile profile',
       'view profile',
     ]
   );
   user_role_grant_permissions(
-    'verified',
-    [
-      'view any profile profile',
-    ]
-  );
-  user_role_grant_permissions(
     'contentmanager',
     [
-      'view any profile profile',
       'add any profile profile',
       'update any profile profile',
       'edit profile tags',
@@ -58,7 +63,6 @@ function social_profile_install() {
   user_role_grant_permissions(
     'sitemanager',
     [
-      'view any profile profile',
       'add any profile profile',
       'update any profile profile',
       'edit profile tags',
@@ -69,12 +73,6 @@ function social_profile_install() {
       'view profile language',
     ]
   );
-  // Add some links.
-  _social_profile_create_menu_links();
-  // Add default profile image.
-  _social_profile_add_default_profile_image();
-
-  _social_profile_install_visibility_fields();
 
   // Create a profile for user 1.
   Profile::create([
@@ -179,6 +177,27 @@ function _social_profile_install_visibility_fields() : void {
 
     $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->id());
     $field_storage_config->save();
+  }
+}
+
+/**
+ * Seed the nationalities vocabulary with initial data.
+ *
+ * Loads from `social_profile/content/nationalities-<version>.yml`. This allows
+ * this to be used in update hooks in a predictable manner.
+ *
+ * @param string $version
+ *   The version to load.
+ */
+function _social_profile_populate_nationalities_vocabulary(string $version) : void {
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'social_profile');
+  $data = Yaml::parseFile("$module_path/content/nationalities-$version.yml");
+
+  foreach ($data['nationalities'] as $nationality) {
+    Term::create([
+      'vid' => 'nationality',
+      'name' => $nationality,
+    ])->save();
   }
 }
 
@@ -659,4 +678,175 @@ function social_profile_update_12004() : void {
   // hook runs since we have other methods in place to catch newly created
   // fields and filter out previously updated fields.
   _social_profile_install_visibility_fields();
+}
+
+/**
+ * Install or adopt social profile fields fields.
+ */
+function social_profile_update_12005() : void {
+  $config_factory = \Drupal::configFactory();
+  $nationality_config = $config_factory->getEditable('taxonomy.vocabulary.nationality');
+  // If the vocabulary already exists then we need to swap the enforced
+  // dependency.
+  if (!$nationality_config->isNew()) {
+    $dependencies = $nationality_config->get('dependencies');
+    $dependencies['enforced']['module'] = array_filter(
+      $dependencies['enforced']['module'],
+      static fn (string $module) => $module !== 'social_profile_fields'
+    );
+    $dependencies['enforced']['module'][] = 'social_profile';
+    $nationality_config->set('dependencies', $dependencies)->save(TRUE);
+  }
+  // Otherwise we create the vocabulary.
+  else {
+    Vocabulary::create([
+      'vid' => 'nationality',
+      'name' => new TranslatableMarkup('Nationality'),
+      'description' => new TranslatableMarkup('Nationalities'),
+      'dependencies' => [
+        'enforced' => [
+          'module' => ['social_profile'],
+        ],
+      ],
+    ])->save();
+
+    // For the new vocabulary we must also load the default data set.
+    _social_profile_populate_nationalities_vocabulary('10.3.0');
+  }
+
+  // Add nationality as profile field if it doesn't already exist.
+  $nationality_storage_config = $config_factory->getEditable('field.storage.profile.field_profile_nationality');
+  if (!$nationality_storage_config->isNew()) {
+    // Remove social_profile_fields as dependency and instead properly set our
+    // profile module as provider rather than core.
+    $dependencies = $nationality_storage_config->get('dependencies');
+    $dependencies['enforced']['module'] = array_filter(
+      $dependencies['enforced']['module'],
+      static fn (string $module) => $module !== 'social_profile_fields'
+    );
+    $nationality_storage_config
+      ->set('dependencies', $dependencies)
+      ->set('module', 'social_profile')
+      ->save(TRUE);
+  }
+  else {
+    FieldStorageConfig::create([
+      'field_name' => "field_profile_nationality",
+      'entity_type' => 'profile',
+      'type' => 'entity_reference',
+      'module' => 'social_profile',
+      'translatable' => FALSE,
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+    ])->save();
+  }
+
+  $nationality_field_config = $config_factory->getEditable('field.field.profile.profile.field_profile_nationality');
+  if (!$nationality_field_config->isNew()) {
+    // Remove social_profile_fields as dependency and do not add a module
+    // dependency since we depend only on the storage (which already specifies
+    // the module).
+    $dependencies = $nationality_field_config->get('dependencies');
+    $dependencies['enforced']['module'] = array_filter(
+      $dependencies['enforced']['module'],
+      static fn (string $module) => $module !== 'social_profile_fields'
+    );
+    $nationality_field_config
+      ->set('dependencies', $dependencies)
+      ->save(TRUE);
+  }
+  else {
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::load('profile.field_profile_nationality'),
+      'bundle' => 'profile',
+      'label' => new TranslatableMarkup('Nationality'),
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'nationality' => 'nationality',
+          ],
+          'sort' => [
+            'field' => 'name',
+            'direction' => 'asc',
+          ],
+          'auto_create' => FALSE,
+          'auto_create_bundle' => '',
+        ],
+      ],
+      'field_type' => 'entity_reference',
+    ])->save();
+  }
+
+  // Add the nick name field if it doesn't already exist.
+  $nick_name_storage_config = $config_factory->getEditable('field.storage.profile.field_profile_nick_name');
+  if (!$nick_name_storage_config->isNew()) {
+    // Remove social_profile_fields as dependency and instead properly set our
+    // profile module as provider rather than core.
+    $dependencies = $nick_name_storage_config->get('dependencies');
+    $dependencies['enforced']['module'] = array_filter(
+      $dependencies['enforced']['module'],
+      static fn (string $module) => $module !== 'social_profile_fields'
+    );
+    $nick_name_storage_config
+      ->set('dependencies', $dependencies)
+      ->set('module', 'social_profile')
+      ->save(TRUE);
+  }
+  else {
+    FieldStorageConfig::create([
+      'field_name' => "field_profile_nick_name",
+      'entity_type' => 'profile',
+      'type' => 'string',
+      'module' => 'social_profile',
+      'translatable' => FALSE,
+      'cardinality' => 1,
+      'settings' => [
+        'max_length' => 255,
+        'is_ascii' => FALSE,
+        'case_sensitive' => FALSE,
+      ],
+    ])->save();
+  }
+
+  $nick_name_field_config = $config_factory->getEditable('field.field.profile.profile.field_profile_nick_name');
+  if (!$nick_name_field_config->isNew()) {
+    // Remove social_profile_fields as dependency and do not add a module
+    // dependency since we depend only on the storage (which already specifies
+    // the module).
+    $dependencies = $nick_name_field_config->get('dependencies');
+    $dependencies['enforced']['module'] = array_filter(
+      $dependencies['enforced']['module'],
+      static fn (string $module) => $module !== 'social_profile_fields'
+    );
+    $nick_name_field_config
+      ->set('dependencies', $dependencies)
+      ->save(TRUE);
+  }
+  else {
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::load('profile.field_profile_nick_name'),
+      'bundle' => 'profile',
+      'label' => new TranslatableMarkup('Nickname'),
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => [],
+      'field_type' => 'string',
+    ])->save();
+  }
+}
+
+/**
+ * Delete permissions provided by merged social profile fields module.
+ */
+function social_profile_update_12006() : void {
+  // This permission is revoked from all roles as it duplicates the broader
+  // `administer profile settings` permissions which we would give out to the
+  // exact same roles.
+  foreach (Role::loadMultiple() as $role) {
+    user_role_revoke_permissions($role->id(), ['social profile fields change used profile fields']);
+  }
 }

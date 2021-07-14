@@ -293,9 +293,8 @@ class ProfileEntitySortable extends RenderedEntity {
    *   The name of the field that stores visibility data.
    */
   private function getVisibilityFieldName(string $for_field) : string {
-    // @todo Dependency injection.
     /** @var \Drupal\field\FieldStorageConfigInterface|NULL $field_storage_config */
-    $field_storage_config = \Drupal::entityTypeManager()
+    $field_storage_config = $this->entityTypeManager
       ->getStorage('field_storage_config')
       ->load("profile.${for_field}");
 
