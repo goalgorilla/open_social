@@ -13754,32 +13754,12 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
 
 		-
-			message: "#^Function _social_profile_fields_update_search_index\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
-
-		-
 			message: "#^Function social_profile_fields_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
 
 		-
-			message: "#^Function social_profile_fields_update_8001\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
-
-		-
-			message: "#^Function social_profile_fields_update_8002\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
-
-		-
 			message: "#^Function social_profile_fields_update_8003\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
-
-		-
-			message: "#^Parameter \\#1 \\$account of method Drupal\\\\Core\\\\Session\\\\AccountSwitcher\\:\\:switchTo\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
 
@@ -14359,22 +14339,17 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.install
 
 		-
+			message: "#^Function social_profile_ensure_default_user_profile not found\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.install
+
+		-
 			message: "#^Function social_profile_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
 
 		-
 			message: "#^Function social_profile_uninstall\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.install
-
-		-
-			message: "#^Function social_profile_update_10201\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.install
-
-		-
-			message: "#^Function social_profile_update_10301\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
 
@@ -14410,6 +14385,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.install
+
+		-
+			message: "#^Relying on entity queries to check access by default is deprecated in drupal\\:9\\.2\\.0 and an error will be thrown from drupal\\:10\\.0\\.0\\. Call \\\\Drupal\\\\Core\\\\Entity\\\\Query\\\\QueryInterface\\:\\:accessCheck\\(\\) with TRUE or FALSE to specify whether access should be checked\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
 
@@ -14465,11 +14445,6 @@ parameters:
 
 		-
 			message: "#^Function _social_profile_profile_edit_form_submit\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
-			message: "#^Function social_profile_entity_base_field_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
 
@@ -14634,11 +14609,6 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
-			message: "#^Function social_profile_profile_presave\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
 			message: "#^Function social_profile_profile_view_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
@@ -14700,11 +14670,6 @@ parameters:
 
 		-
 			message: "#^Function social_profile_post_update_10101_profile_names_update\\(\\) has parameter \\$sandbox with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.post_update.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|int given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.post_update.php
 
@@ -14789,8 +14754,18 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/GraphQL/SchemaExtension/ProfileSchemaExtension.php
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addField\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addOrderBy\\(\\)\\.$#"
 			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addRelationship\\(\\)\\.$#"
+			count: 3
 			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
 
 		-
@@ -14799,13 +14774,13 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
 
 		-
-			message: "#^Parameter \\#2 \\$join of method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\Sql\\:\\:addRelationship\\(\\) expects Drupal\\\\views\\\\Plugin\\\\views\\\\join\\\\JoinPluginBase, object given\\.$#"
+			message: "#^Property Drupal\\\\views\\\\Plugin\\\\views\\\\field\\\\FieldPluginBase\\:\\:\\$field_alias \\(string\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
 
 		-
-			message: "#^Property Drupal\\\\views\\\\Plugin\\\\views\\\\field\\\\FieldPluginBase\\:\\:\\$field_alias \\(string\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
 			path: modules/social_features/social_profile/src/Plugin/views/field/ProfileEntitySortable.php
 
 		-

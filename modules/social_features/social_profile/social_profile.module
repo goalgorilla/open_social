@@ -14,9 +14,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -25,6 +25,9 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldStorageConfigInterface;
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
@@ -39,6 +42,149 @@ use Drupal\user\UserInterface;
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
 const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
 const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
+
+const SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC = 'public';
+const SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY = 'community';
+// Open Social does not yet support friends but it's a logical step between
+// private and community which is why the constant is already documented here.
+const SOCIAL_PROFILE_FIELD_VISIBILITY_FRIENDS = 'friends';
+const SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE = 'private';
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_profile_field_storage_config_insert(FieldStorageConfigInterface $field_storage_config) : void {
+  if ($field_storage_config->getTargetEntityTypeId() === "profile" && $field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') === NULL) {
+    $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
+
+    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->id());
+    $field_storage_config->save();
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_profile_field_storage_config_delete(FieldStorageConfigInterface $field_storage_config) : void {
+  if ($field_storage_config->getTargetEntityTypeId() === "profile" && $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') !== NULL) {
+    social_profile_delete_visibility_field_storage_config_for($field_storage_config);
+  }
+}
+
+/**
+ * Create visibility field storage configuration for another field.
+ *
+ * @param \Drupal\field\FieldStorageConfigInterface $field_storage_config
+ *   The field storage configuration for which to create the visibility field
+ *   storage configuration.
+ *
+ * @return \Drupal\field\FieldStorageConfigInterface
+ *   The created field storage config interface.
+ */
+function social_profile_create_visibility_field_storage_config_for(FieldStorageConfigInterface $field_storage_config) : FieldStorageConfigInterface {
+  if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
+    throw new RuntimeException("Can not create a visibility field storage config for another visibility field storage config, this could create loops.");
+  }
+
+  if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') !== NULL) {
+    throw new RuntimeException("Tried to create a visibility field storage config for a field that already has a visibility field storage config.");
+  }
+
+  /** @var \Drupal\field\FieldStorageConfigInterface $visibility_storage_config */
+  $visibility_storage_config = FieldStorageConfig::create([
+    'field_name' => social_profile_get_visibility_field_name($field_storage_config->getName()),
+    'entity_type' => 'profile',
+    'type' => 'string',
+    'module' => 'social_profile',
+    'translatable' => FALSE,
+    'locked' => TRUE,
+  ]);
+  $visibility_storage_config->setThirdPartySetting('social_profile', 'visibility_for', $field_storage_config->id());
+  $visibility_storage_config->save();
+
+  return $visibility_storage_config;
+}
+
+/**
+ * Delete visibility field storage configuration for another field.
+ *
+ * @param \Drupal\field\FieldStorageConfigInterface $field_storage_config
+ *   The field storage configuration for which to delete the corresponding
+ *   visibility field storage configuration.
+ */
+function social_profile_delete_visibility_field_storage_config_for(FieldStorageConfigInterface $field_storage_config) : void {
+  if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') === NULL) {
+    throw new RuntimeException("Can not remove visibility field config storage for field without visibility field config storage.");
+  }
+
+  /** @var \Drupal\field\FieldStorageConfigInterface|null $visibility_storage_config */
+  $visibility_storage_config = FieldStorageConfig::load($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by'));
+
+  // If we can't load a visibility storage config then we're done.
+  if ($visibility_storage_config !== NULL) {
+    if ($visibility_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== $field_storage_config->id()) {
+      throw new RuntimeException("A field storage config indicated that its visibility was stored by a visibility field storage that was not intended for this field.");
+    }
+
+    $visibility_storage_config->delete();
+  }
+
+  // While slightly awkward for the API we can not save here since that may
+  // restore a field storage config entity that is being deleted.
+  $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', NULL);
+}
+
+/**
+ * Generate the visibility field name.
+ *
+ * Field names need to be less than 32 characters but since we're deriving our
+ * name from another field name we may already go over that by simply appending
+ * another string to the name.
+ *
+ * @param string $field_name
+ *   The name of the field to get the visibility field name for.
+ *
+ * @return string
+ *   The name of the visibility field.
+ */
+function social_profile_get_visibility_field_name(string $field_name) : string {
+  // We prefer just prepending our prefix.
+  $visibility_name = 'visibility_' . $field_name;
+  // But we must limit based on the FieldStorageConfig rules.
+  if (mb_strlen($visibility_name) > FieldStorageConfig::NAME_MAX_LENGTH) {
+    // In that case we borrow a trick from
+    // \Drupal\Core\Entity\Sql\DefaultTableMapping::generateFieldTableName().
+    $field_name_hash = substr(hash('sha256', $field_name), 0, 28);
+    $visibility_name = "vis_" . $field_name_hash;
+  }
+
+  return $visibility_name;
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ *
+ * For each field on a profile, adds a duplicate field that stores the
+ * visibility settings that the user has configured for their profile.
+ *
+ * Implemented as alter hook to ensure we have access to all the bundle fields.
+ */
+function social_profile_entity_bundle_field_info_alter(array $fields, EntityTypeInterface $entity_type, string $bundle) : void {
+  // @todo Allow opting out of visibility field creation.
+  if ($entity_type->id() === "profile") {
+    $storage_definitions = field_entity_field_storage_info($entity_type);
+    // We create field definitions from the other field so that if a field is
+    // deleted but its storage not cleaned up then the visibility field is still
+    // made inaccessible. We do require a field storage to be present to be able
+    // to tell Drupal there's a visibility field there.
+    foreach ($fields as $field_name => $field) {
+      $visibility_field_name = social_profile_get_visibility_field_name($field_name);
+      if (isset($storage_definitions[$visibility_field_name])) {
+        $fields[$visibility_field_name] = FieldDefinition::createFromFieldStorageDefinition($storage_definitions[$visibility_field_name]);
+      }
+    }
+  }
+}
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -616,7 +762,47 @@ function social_profile_user_insert(UserInterface $account) {
       $profile = Profile::create($default_values);
       $profile->save();
     }
+    else {
+      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+      $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+      $profile = $profile_storage->loadByUser($account, 'profile');
+      assert($profile !== NULL, "Profile type 'profile' was configured to be created during registration but no profile existed for the user ({$account->id()}).");
+    }
+
+    social_profile_sync_user_fields_to_profile($account, $profile);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_profile_user_update(UserInterface $user) : void {
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile = $profile_storage->loadByUser($user, 'profile');
+  assert($profile !== NULL, "User updated without a profile, this means the user insert logic that should automatically create a profile is broken.");
+  social_profile_sync_user_fields_to_profile($user, $profile);
+}
+
+/**
+ * Synchronise shared fields from the user entity to the profile.
+ *
+ * Some data for users such as email and langcode should be displayed on the
+ * users profile depending on user configuration. Managing all this display data
+ * in a single entity is easier for access and display but the data is owned by
+ * the user entity, so rather than edit it directly this function synchronizes
+ * it from the user entity to the profile.
+ *
+ * @param \Drupal\user\UserInterface $user
+ *   The user to synchronize data for.
+ * @param \Drupal\profile\Entity\ProfileInterface $profile
+ *   The profile entity to synchronize data to.
+ */
+function social_profile_sync_user_fields_to_profile(UserInterface $user, ProfileInterface $profile) : void {
+  $profile
+    ->set('field_profile_email', $user->getEmail())
+    ->set('field_profile_preferred_language', $user->getPreferredLangcode())
+    ->save();
 }
 
 /**
@@ -1023,45 +1209,6 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_profile_views_plugins_filter_alter(array &$plugins) {
   $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
-}
-
-/**
- * Implements hook_entity_base_field_info().
- */
-function social_profile_entity_base_field_info(EntityTypeInterface $entity_type) {
-  $fields = [];
-
-  // Check if we're dealing with the profile entity.
-  if ($entity_type->id() === 'profile') {
-    $fields['profile_name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Profile name'))
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-      ->setReadOnly(TRUE);
-  }
-
-  return $fields;
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- *
- * Set the correct profile name.
- */
-function social_profile_profile_presave(EntityInterface $profile) {
-  if ($profile instanceof ProfileInterface) {
-    /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
-    $profile_name_service = \Drupal::service('social_profile.name_service');
-
-    // Check if we need update Profile name.
-    if (!$profile_name_service->needToUpdateProfileName($profile)) {
-      return;
-    }
-
-    // Get generated profile name.
-    $profile_name = $profile_name_service->getProfileName($profile);
-    // Update profile name.
-    $profile->set('profile_name', $profile_name);
-  }
 }
 
 /**

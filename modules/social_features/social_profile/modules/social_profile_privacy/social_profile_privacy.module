@@ -10,9 +10,6 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\profile\Entity\ProfileInterface;
-use Drupal\social_profile\SocialProfileNameService;
-use Drupal\social_profile_privacy\Service\SocialProfilePrivacyBatchHelper;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 
 /**
@@ -100,50 +97,6 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
     '#format' => $config->get('disclaimer.format'),
   ];
 
-  // Add warning for site_manager to inform about updating all the profiles
-  // after form is submitted.
-  // We need to get Profile name fields.
-  $account_name_fields = SocialProfileNameService::getProfileNameFields();
-  // Var where will we stack the Profile name fields labels.
-  $profile_name_fields_labels = [];
-  // Getting the Profile name fields labels.
-  foreach ($account_name_fields as $account_name_field) {
-    if (isset($field_options[$account_name_field]) && !empty($label = $field_options[$account_name_field]['label'])) {
-      $profile_name_fields_labels[] = $label;
-    }
-  }
-  // We need to add a warning message only if the Profile name fields settings
-  // available.
-  if (!empty($profile_name_fields_labels)) {
-    // Make string with a list of the Profile name fields labels.
-    if (count($profile_name_fields_labels) > 1) {
-      $last_label = array_pop($profile_name_fields_labels);
-      $profile_name_fields_labels = implode(', ', $profile_name_fields_labels);
-      $profile_name_fields_labels .= " and, {$last_label}";
-    }
-    else {
-      $profile_name_fields_labels = $profile_name_fields_labels[0];
-    }
-
-    // Add warning message.
-    $form['social_profile_privacy_warning_message'] = [
-      '#theme' => 'status_messages',
-      '#message_list' => [
-        'warning' => [
-          [
-            '#type' => 'html_tag',
-            '#tag' => 'strong',
-            '#value' => t('If visibility settings of the fields %labels will be changed, then once you submit this form, all the user profiles on the platform will be updated.', ['%labels' => $profile_name_fields_labels]),
-          ],
-        ],
-      ],
-      '#status_headings' => [
-        'warning' => t('Attention!'),
-      ],
-      '#weight' => -1,
-    ];
-  }
-
   $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
 }
 
@@ -178,14 +131,6 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
   }
 
   $config->save();
-
-  // We need to get Profile name fields.
-  $account_name_fields = SocialProfileNameService::getProfileNameFields();
-  // If at least one field setting of the Profile name has been updated we need
-  // to update all profiles.
-  if (array_intersect($account_name_fields, $updated_fields)) {
-    SocialProfilePrivacyBatchHelper::bulkUpdateProfileNames();
-  }
 }
 
 /**
@@ -319,16 +264,6 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   }
 
   \Drupal::service('cache_tags.invalidator')->invalidateTags($tags);
-
-  if (!isset($profile) || empty($updated_fields) || empty(array_intersect(SocialProfileNameService::getProfileNameFields(), $updated_fields))) {
-    return;
-  }
-  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  $profile = $profile_storage->load($profile);
-  if ($profile instanceof ProfileInterface) {
-    SocialProfilePrivacyBatchHelper::updateProfileName($profile);
-  }
 }
 
 /**
