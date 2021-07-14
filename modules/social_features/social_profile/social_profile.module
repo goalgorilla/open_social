@@ -373,7 +373,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')->countGroupMembershipsForUser($user->id());
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
