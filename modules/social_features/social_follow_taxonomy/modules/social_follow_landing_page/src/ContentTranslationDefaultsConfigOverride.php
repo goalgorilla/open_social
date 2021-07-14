@@ -2,51 +2,72 @@
 
 namespace Drupal\social_follow_landing_page;
 
-use Drupal\social_core\ContentTranslationConfigOverrideBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Provides content translation for the Social Follow Landing Page module.
  *
  * @package Drupal\social_follow_landing_page
  */
-class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
-
-  use StringTranslationTrait;
+class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * {@inheritdoc}
    */
-  protected function getModule() {
-    return 'social_follow_landing_page';
-  }
+  public function loadOverrides($names) {
+    $overrides = [];
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDisplayName() {
-    // We can't use dependency injection here because it causes a circular
-    // dependency for the configuration override.
-    return $this->t('Social Follow Landing Page');
-  }
+    // If the module "content_translation" is enabled let make translations
+    // enabled for content provided by the module by default.
+    $is_content_translations_enabled = \Drupal::moduleHandler()
+      ->moduleExists('content_translation');
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getTranslationOverrides() {
-    return [
-      // Translations for "Follow tags" custom block.
-      'language.content_settings.block_content.follow_tags' => [
+    if (!$is_content_translations_enabled) {
+      return $overrides;
+    }
+
+    // Translations for "Follow tags" custom block.
+    $config_name = 'language.content_settings.block_content.follow_tags';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
           ],
         ],
-      ],
-      'core.base_field_override.block_content.follow_tags.info' => [
+      ];
+    }
+    $config_name = 'core.base_field_override.block_content.follow_tags.info';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'translatable' => TRUE,
-      ],
-    ];
+      ];
+    }
+
+    return $overrides;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheSuffix() {
+    return 'social_follow_landing_page.content_translation_defaults_config_override';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheableMetadata($name) {
+    return new CacheableMetadata();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+    return NULL;
   }
 
 }

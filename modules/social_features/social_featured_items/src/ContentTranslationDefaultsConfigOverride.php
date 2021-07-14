@@ -2,62 +2,70 @@
 
 namespace Drupal\social_featured_items;
 
-use Drupal\social_core\ContentTranslationConfigOverrideBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Provides content translation for the Social Featured Items module.
  *
  * @package Drupal\social_featured_items
  */
-class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
-
-  use StringTranslationTrait;
+class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * {@inheritdoc}
    */
-  protected function getModule() {
-    return 'social_featured_items';
-  }
+  public function loadOverrides($names) {
+    $overrides = [];
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getDisplayName() {
-    // We can't use dependency injection here because it causes a circular
-    // dependency for the configuration override.
-    return $this->t('Social Featured Items');
-  }
+    // If the module "content_translation" is enabled let make translations
+    // enabled for content provided by the module by default.
+    $is_content_translations_enabled = \Drupal::moduleHandler()
+      ->moduleExists('content_translation');
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function getTranslationOverrides() {
-    return [
-      // Translations for "Featured Items" custom block.
-      'language.content_settings.block_content.featured_items' => [
+    if (!$is_content_translations_enabled) {
+      return $overrides;
+    }
+
+    // Translations for "Featured Items" custom block.
+    $config_name = 'language.content_settings.block_content.featured_items';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
           ],
         ],
-      ],
-      'core.base_field_override.block_content.featured_items.info' => [
+      ];
+    }
+    $config_name = 'core.base_field_override.block_content.featured_items.info';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'translatable' => TRUE,
-      ],
-      // Translations for "Featured Item" paragraph type.
-      'language.content_settings.paragraph.featured_item' => [
+      ];
+    }
+
+    // Translations for "Featured Item" paragraph type.
+    $config_name = 'language.content_settings.paragraph.featured_item';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
           ],
         ],
-      ],
-      'core.base_field_override.paragraph.featured_item.status' => [
+      ];
+    }
+    $config_name = 'core.base_field_override.paragraph.featured_item.status';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'translatable' => TRUE,
-      ],
-      'field.field.paragraph.featured_item.field_featured_item_image' => [
+      ];
+    }
+    $config_name = 'field.field.paragraph.featured_item.field_featured_item_image';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'third_party_settings' => [
           'content_translation' => [
             'translation_sync' => [
@@ -67,19 +75,49 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
             ],
           ],
         ],
-      ],
-      // Translations for "Featured Items" paragraph type.
-      'language.content_settings.paragraph.featured_items' => [
+      ];
+    }
+
+    // Translations for "Featured Items" paragraph type.
+    $config_name = 'language.content_settings.paragraph.featured_items';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'third_party_settings' => [
           'content_translation' => [
             'enabled' => TRUE,
           ],
         ],
-      ],
-      'core.base_field_override.paragraph.featured_items.status' => [
+      ];
+    }
+    $config_name = 'core.base_field_override.paragraph.featured_items.status';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
         'translatable' => TRUE,
-      ],
-    ];
+      ];
+    }
+
+    return $overrides;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheSuffix() {
+    return 'social_featured_items.content_translation_defaults_config_override';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheableMetadata($name) {
+    return new CacheableMetadata();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+    return NULL;
   }
 
 }
