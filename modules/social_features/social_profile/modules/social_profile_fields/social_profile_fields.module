@@ -92,21 +92,6 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
 }
 
 /**
- * Implements hook_form_alter().
- */
-function social_profile_fields_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form_object = $form_state->getFormObject();
-
-  if (
-    $form_object instanceof ContentEntityFormInterface &&
-    $form_object->getEntity()->getEntityTypeId() === 'profile' &&
-    isset($form['field_profile_nationality']['widget']['target_id'])
-  ) {
-    $form['field_profile_nationality']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_fields_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state) {
