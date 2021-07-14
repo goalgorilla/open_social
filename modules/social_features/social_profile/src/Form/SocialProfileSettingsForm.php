@@ -110,13 +110,26 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['enable_profile_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow profiles to be tagged'),
+      '#title' => $this->t('Allow profile tagging for content managers'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether CM+ are allowed to add @profile_tags terms to the users profile',
+      '#description' => $this->t('Determine whether content managers are allowed to add @profile_tags terms to the users profile.',
         [
           '@profile_tags' => $profile_tags->toString(),
         ]),
+    ];
+
+    $form['tagging']['allow_tagging_for_lu'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow profile tagging for regular users'),
+      '#default_value' => $config->get('allow_tagging_for_lu'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine whether regular users are allowed to add profile tags to their own profile."),
+      '#states' => [
+        'visible' => [
+          ':input[name="enable_profile_tagging"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $form['tagging']['allow_category_split'] = [
@@ -136,19 +149,6 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       '#states' => [
         'visible' => [
           ':input[name="allow_category_split"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-
-    $form['tagging']['allow_tagging_for_lu'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow Profile tagging for LU'),
-      '#default_value' => $config->get('allow_tagging_for_lu'),
-      '#required' => FALSE,
-      '#description' => $this->t("Determine whether LU are allowed to add profile tags to the profile"),
-      '#states' => [
-        'visible' => [
-          ':input[name="enable_profile_tagging"]' => ['checked' => TRUE],
         ],
       ],
     ];
