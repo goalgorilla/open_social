@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Post update functions for the Social Course Quiz module.
+ * Post update functions for the Social Event module.
  */
 
 /**
@@ -16,6 +16,7 @@ function social_event_post_update_update_events(&$sandbox) {
     // Get all event ids.
     $sandbox['ids'] = $node_storage
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('type', 'event')
       ->execute();
     // Write total of entities need to be processed to $sandbox.
