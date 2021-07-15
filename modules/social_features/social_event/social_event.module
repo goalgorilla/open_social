@@ -285,6 +285,9 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
     $build['enrollments_count'] = [
       '#type' => '#text_field',
       '#markup' => $enrollments_count,
+      '#cache' => [
+        'max-age' => 0,
+      ],
     ];
 
     // Check if ongoing.
