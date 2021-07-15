@@ -58,8 +58,8 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $config->set('logo.path', 'public://logo.png')->save();
     $expected_logo_url = 'http://localhost/' . $this->siteDirectory . '/files/logo.png';
     // Prepare preferred features.
-    \Drupal::service('module_installer')->install(['social_branding_required_test'], FALSE);
-    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('social_branding_required_test'), 'Test required module is enabled.');
+    \Drupal::service('module_installer')->install(['social_branding_test_preferred_features'], FALSE);
+    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('social_branding_test_preferred_features'), 'Test preferred features module is enabled.');
     // Set anonymous user.
     $this->setUpCurrentUser();
 
