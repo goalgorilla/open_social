@@ -137,6 +137,14 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
+    $form['use_and_condition'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('When filtering use AND condition.'),
+      '#default_value' => $config->get('use_and_condition'),
+      '#required' => FALSE,
+      '#description' => $this->t("When filtering with multiple terms use AND condition in the query."),
+    ];
+
     $form['node_type_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Type configuration'),
@@ -181,6 +189,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config = $this->config('social_tagging.settings');
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
+    $config->set('use_and_condition', $form_state->getValue('use_and_condition'))->save();
     $config->set('tag_type_group', $form_state->getValue('tag_type_group'))->save();
     $config->set('tag_type_profile', $form_state->getValue('tag_type_profile'))->save();
 
