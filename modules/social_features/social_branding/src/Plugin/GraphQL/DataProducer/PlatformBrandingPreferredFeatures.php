@@ -64,11 +64,12 @@ class PlatformBrandingPreferredFeatures extends DataProducerPluginBase implement
    *   An array with the preferred features.
    */
   public function resolve() : array {
-    $preferred_features = [];
-    $this->moduleHandler->invokeAll('social_branding_preferred_features_alter', [&$preferred_features]);
+    $preferred_features = $this->moduleHandler->invokeAll('social_branding_preferred_features');
+    $this->moduleHandler->alter('social_branding_preferred_features', $preferred_features);
 
+    // Order ascending by weight.
     usort($preferred_features, function ($item1, $item2) {
-      return $item1['weight'] <=> $item2['weight'];
+      return $item1->getWeight() <=> $item2->getWeight();
     });
 
     return $preferred_features;
