@@ -212,3 +212,18 @@ function social_mentions_js_alter(&$javascript, AttachedAssetsInterface $assets)
     $javascript[$path]['weight'] += $javascript['core/assets/vendor/ckeditor/ckeditor.js']['weight'];
   }
 }
+
+/**
+ * Provides the settings for mentions in Open Social.
+ *
+ * This helper method can be used by configuration overwrites for text formats
+ * or other applications of the mentions filter.
+ */
+function social_mentions_get_social_mentions_filter_settings() {
+  return [
+    'mentions_filter' => [
+      'ProfileMention' => 1,
+      'UserMention' => 1,
+    ],
+  ];
+}
