@@ -85,6 +85,7 @@ function _social_book_get_permissions($role) {
     'edit any book content',
     'edit own book content',
     'view book revisions',
+    'translate book node',
   ]);
 
   // Site manager.
@@ -255,4 +256,13 @@ function social_book_update_8903() {
     'core.entity_view_display.node.book.small_teaser',
     $source->read('social_book_static_update_8903')
   );
+}
+
+/**
+ * Allow CM+ translate "Book Page" node type.
+ */
+function social_book_update_10301() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate book node']);
+  }
 }

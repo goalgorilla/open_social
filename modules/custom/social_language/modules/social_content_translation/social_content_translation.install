@@ -89,3 +89,19 @@ function social_content_translation_update_8001() {
     $config->save(TRUE);
   }
 }
+
+/**
+ * Add translations compatibility for Topics.
+ */
+function social_content_translation_update_10301() {
+  $module_names = [
+    'social_topic',
+  ];
+
+  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
+
+  foreach ($module_names as $module_name) {
+    $config->set($module_name, TRUE);
+    $config->save(TRUE);
+  }
+}

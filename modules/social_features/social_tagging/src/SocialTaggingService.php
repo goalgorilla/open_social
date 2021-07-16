@@ -244,7 +244,8 @@ class SocialTaggingService {
         }
         // Or add the parent term itself if it connected to the content.
         else {
-          $category_label = $current_term->getTranslation($langcode)->getName();
+          $category_label = $current_term->hasTranslation($langcode) ? $current_term->getTranslation($langcode)
+            ->getName() : $current_term->getName();
           $parent = $current_term;
         }
         // Prepare the parameter;.

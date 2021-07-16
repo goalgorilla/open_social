@@ -150,8 +150,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // We check if the node is placed in a Group I am a member of. If not,
     // we are not going to build anything.
-    if (!empty($nid)) {
-      if (!is_object($nid) && !is_null($nid)) {
+    if (!is_null($nid)) {
+      if (!is_object($nid)) {
         $node = $this->entityTypeManager
           ->getStorage('node')
           ->load($nid);

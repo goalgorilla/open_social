@@ -228,7 +228,7 @@ class ActivityNotifications extends ControllerBase {
       try {
         $query = $this->database->select('activity_notification_status', 'ans')
           ->fields('ans', ['aid'])
-          ->condition('uid', $uid);
+          ->condition('uid', (string) $uid);
 
         if (!empty($status)) {
           $query->condition('status', $status, 'IN');
