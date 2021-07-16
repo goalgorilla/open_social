@@ -387,7 +387,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $system_theme = $this->config('system.theme');
     // Set anonymous user.
     $this->setUpCurrentUser();
-    // Uninstall social_branding_test to clear the provided preferred features.
+    // Uninstall social_branding_test to clean the provided preferred features.
     \Drupal::service('module_installer')->uninstall(['social_branding_test'], FALSE);
     $this->assertFalse(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is disabled.');
 
