@@ -15,6 +15,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
    */
   public static $modules = [
     "social_branding",
+    "social_branding_test",
   ];
 
   /**
@@ -57,9 +58,6 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     // Prepare logo url.
     $config->set('logo.path', 'public://logo.png')->save();
     $expected_logo_url = 'http://localhost/' . $this->siteDirectory . '/files/logo.png';
-    // Prepare preferred features.
-    \Drupal::service('module_installer')->install(['social_branding_test'], FALSE);
-    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is enabled.');
     // Set anonymous user.
     $this->setUpCurrentUser();
 
@@ -389,6 +387,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $system_theme = $this->config('system.theme');
     // Set anonymous user.
     $this->setUpCurrentUser();
+    // Uninstall social_branding_test to clear the provided preferred features.
+    \Drupal::service('module_installer')->uninstall(['social_branding_test'], FALSE);
+    $this->assertFalse(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is disabled.');
 
     $this->assertResults(
       '

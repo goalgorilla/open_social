@@ -27,8 +27,8 @@ class PreferredPlatformFeature implements PreferredPlatformFeatureInterface {
    * @param string $name
    *   The feature name as machine name. e.g. cool_feature.
    * @param int $weight
-   *   The feature weight to indicate the priority in a list of preferred
-   *   features.
+   *   An integer used to indicate ordering, with higher weights
+   *   sinking: e.g. -1 will be above 0 and 1 will be below 0.
    */
   public function __construct(string $name, int $weight) {
     $this->name = $name;

@@ -27,7 +27,8 @@ interface PreferredPlatformFeatureInterface {
    * Set the weight of this preferred platform feature.
    *
    * @param int $weight
-   *   An integer with the weight of this preferred platform feature.
+   *   An integer used to indicate ordering, with higher weights
+   *   sinking: e.g. -1 will be above 0 and 1 will be below 0.
    *
    * @return $this
    *   The class instance that this method is called on.
