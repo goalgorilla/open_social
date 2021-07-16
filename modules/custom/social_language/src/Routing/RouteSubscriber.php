@@ -53,6 +53,23 @@ class RouteSubscriber extends RouteSubscriberBase {
       }
     }
 
+    // Restrict access to translations if user can't edit the original content.
+    // @todo: make there restrictions more general (for custom entities, blocks, etc)
+    $entity_types = ['node', 'group'];
+    foreach ($entity_types as $entity_type_id) {
+      $routes = [
+        "entity.{$entity_type_id}.content_translation_overview",
+        "entity.{$entity_type_id}.content_translation_add",
+        "entity.{$entity_type_id}.content_translation_edit",
+        "entity.{$entity_type_id}.content_translation_delete",
+      ];
+      foreach ($routes as $name) {
+        if ($route = $collection->get($name)) {
+          $route->setRequirement('_entity_access', "{$entity_type_id}.update");
+        }
+      }
+    }
+
   }
 
   /**
