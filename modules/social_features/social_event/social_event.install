@@ -70,6 +70,7 @@ function _social_event_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'translate event node',
     'delete any event content',
     'edit any event content',
     'revert event revisions',
@@ -1862,4 +1863,13 @@ function social_event_update_8919() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Allow CM+ translate "Event" node type.
+ */
+function social_event_update_10301() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate event node']);
+  }
 }
