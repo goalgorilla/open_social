@@ -38,6 +38,9 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('platform_branding_colors')
         ->map('platformBranding', $builder->fromParent())
     );
+    $registry->addFieldResolver('PlatformBranding', 'preferredFeatures',
+      $builder->produce('platform_branding_preferred_features')
+    );
 
     // PlatformBrandColorScheme fields.
     $registry->addFieldResolver('PlatformBrandColorScheme', 'primary',
@@ -137,6 +140,12 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
     $registry->addFieldResolver('RGBAColor', 'alpha',
       $builder->produce('color_alpha')
         ->map('color', $builder->fromParent())
+    );
+
+    // PlatformFeature fields.
+    $registry->addFieldResolver('PlatformFeature', 'machineName',
+      $builder->produce('platform_feature_machine_name')
+        ->map('preferredFeature', $builder->fromParent())
     );
   }
 
