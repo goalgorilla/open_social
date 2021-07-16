@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -134,4 +135,21 @@ function _social_like_get_permissions($role) {
   }
 
   return [];
+}
+
+/**
+ * Update message template "message.template.create_like_node_or_post".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_like_update_10201() {
+  $config_file = drupal_get_path('module', 'social_like') . '/config/static/message.template.create_like_node_or_post_10201.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_like_node_or_post');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

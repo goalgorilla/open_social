@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -109,4 +110,21 @@ function _social_content_report_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_content_report_update_10201() {
+  $config_file = drupal_get_path('module', 'social_content_report') . '/config/static/message.template.content_reported_10201.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.content_reported');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

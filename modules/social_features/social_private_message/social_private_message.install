@@ -304,3 +304,20 @@ function social_private_message_update_8803() {
     }
   }
 }
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_private_message_update_10201() {
+  $config_file = drupal_get_path('module', 'social_private_message') . '/config/static/message.template.create_private_message_10201.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_private_message');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

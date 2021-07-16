@@ -1,0 +1,10 @@
+<div class="teaser--small__media" aria-hidden="true">
+  <svg class="teaser--small__type-icon">
+    <title>{{- group.bundle|clean_class|capitalize -}}</title>
+    <use xlink:href="#icon-group"></use>
+  </svg>
+</div>
+<div><strong>{{ group_title }}</strong></div>
+<div class="teaser--small__meta">
+  {{ group_type }} &middot; {% trans %}1 member{% plural group_members %}@count members{% endtrans %}
+</div>

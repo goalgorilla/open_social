@@ -82,9 +82,9 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
         case 'recipient-user-url':
         case 'pmt-url':
 
-          if (isset($message->field_message_related_object) && !empty($message->field_message_related_object->target_type)) {
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
+          if (!empty($message->get('field_message_related_object'))) {
+            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
               ->getStorage($target_type)
               ->load($target_id);
@@ -186,8 +186,8 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
               if ($name === 'pmt-url') {
                 // Get the related message.
-                $target_type = $message->field_message_related_object->target_type;
-                $target_id = $message->field_message_related_object->target_id;
+                $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+                $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
                 $entity = \Drupal::entityTypeManager()
                   ->getStorage($target_type)
                   ->load($target_id);

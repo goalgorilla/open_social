@@ -1873,3 +1873,20 @@ function social_event_update_10301() {
     user_role_grant_permissions($role_id, ['translate event node']);
   }
 }
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_event_update_10302() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/message.template.activity_on_events_im_organizing_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.activity_on_events_im_organizing');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
