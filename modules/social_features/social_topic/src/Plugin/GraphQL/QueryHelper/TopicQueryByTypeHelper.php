@@ -1,12 +1,11 @@
 <?php
 
-namespace Drupal\social_comment\Plugin\GraphQL\QueryHelper;
+namespace Drupal\social_topic\Plugin\GraphQL\QueryHelper;
 
-use Drupal\comment\Entity\Comment;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
-use Drupal\node\NodeInterface;
+use Drupal\node\Entity\Node;
 use Drupal\social_graphql\GraphQL\ConnectionQueryHelperBase;
 use Drupal\social_graphql\Wrappers\Cursor;
 use Drupal\social_graphql\Wrappers\Edge;
@@ -14,26 +13,19 @@ use GraphQL\Deferred;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
- * Loads comments.
+ * Loads topics.
  */
-class CommentQueryHelper extends ConnectionQueryHelperBase {
+class TopicQueryByTypeHelper extends ConnectionQueryHelperBase {
 
   /**
-   * The node for which comments are being fetched.
+   * The topic type id.
    *
-   * @var \Drupal\node\NodeInterface|null
+   * @var string
    */
-  protected ?NodeInterface $parent;
+  protected string $type;
 
   /**
-   * The comment bundle.
-   *
-   * @var string|null
-   */
-  protected ?string $bundle;
-
-  /**
-   * CommentQueryHelper constructor.
+   * TopicQueryHelper constructor.
    *
    * @param string $sort_key
    *   The key that is used for sorting.
@@ -41,35 +33,24 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
    *   The Drupal entity type manager.
    * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
    *   The GraphQL entity buffer.
-   * @param \Drupal\node\NodeInterface|null $parent
-   *   The node for which comments are being fetched.
-   * @param string|null $bundle
-   *   The comment bundle.
+   * @param string $type
+   *   The topic type.
    */
-  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, ?NodeInterface $parent, ?string $bundle) {
+  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, string $type) {
     parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
-    $this->parent = $parent;
-    $this->bundle = $bundle;
+    $this->type = $type;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuery() : QueryInterface {
-    $query = $this->entityTypeManager->getStorage('comment')
+  public function getQuery(): QueryInterface {
+    return $this->entityTypeManager->getStorage('node')
       ->getQuery()
       ->currentRevision()
-      ->accessCheck(TRUE);
-
-    if ($this->parent instanceof NodeInterface) {
-      $query->condition('entity_id', $this->parent->id());
-    }
-
-    if ($this->bundle) {
-      $query->condition('comment_type', $this->bundle);
-    }
-
-    return $query;
+      ->accessCheck(TRUE)
+      ->condition('type', 'topic')
+      ->condition('field_topic_type.0.entity:taxonomy_term.uuid', $this->type);
   }
 
   /**
@@ -78,7 +59,7 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
   public function getCursorObject(string $cursor) : ?Cursor {
     $cursor_object = Cursor::fromCursorString($cursor);
 
-    return !is_null($cursor_object) && $cursor_object->isValidFor($this->sortKey, 'comment')
+    return !is_null($cursor_object) && $cursor_object->isValidFor($this->sortKey, 'node')
       ? $cursor_object
       : NULL;
   }
@@ -87,7 +68,7 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
    * {@inheritdoc}
    */
   public function getIdField() : string {
-    return 'cid';
+    return 'nid';
   }
 
   /**
@@ -106,6 +87,13 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
   /**
    * {@inheritdoc}
    */
+  public function getAggregateSortFunction() : ?string {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getLoaderPromise(array $result) : SyncPromise {
     // In case of no results we create a callback the returns an empty array.
     if (empty($result)) {
@@ -116,15 +104,15 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
     // results are used multiple times.
     else {
       $buffer = \Drupal::service('graphql.buffer.entity');
-      $callback = $buffer->add('comment', array_values($result));
+      $callback = $buffer->add('node', array_values($result));
     }
 
     return new Deferred(
       function () use ($callback) {
         return array_map(
-          fn (Comment $entity) => new Edge(
+          fn (Node $entity) => new Edge(
             $entity,
-            new Cursor('comment', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+            new Cursor('node', $entity->id(), $this->sortKey, $this->getSortValue($entity))
           ),
           $callback()
         );
@@ -135,16 +123,16 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
   /**
    * Get the value for an entity based on the sort key for this connection.
    *
-   * @param \Drupal\comment\Entity\Comment $comment
-   *   The comment entity.
+   * @param \Drupal\node\Entity\Node $node
+   *   The participant entity for the user in this conversation.
    *
    * @return mixed
    *   The sort value.
    */
-  protected function getSortValue(Comment $comment) {
+  protected function getSortValue(Node $node) {
     switch ($this->sortKey) {
       case 'CREATED_AT':
-        return $comment->getCreatedTime();
+        return $node->getCreatedTime();
 
       default:
         throw new \InvalidArgumentException("Unsupported sortKey for pagination '{$this->sortKey}'");
