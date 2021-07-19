@@ -1,31 +1,26 @@
 <?php
 
-namespace Drupal\social_comment\Plugin\GraphQL\DataProducer;
+namespace Drupal\social_topic\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\node\NodeInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
-use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
+use Drupal\social_topic\Plugin\GraphQL\QueryHelper\TopicQueryByTypeHelper;
 
 /**
- * Queries the comments on the platform.
+ * Queries the topics by type on the platform.
  *
  * @DataProducer(
- *   id = "query_comments",
- *   name = @Translation("Social Comments"),
- *   description = @Translation("Loads the comments."),
+ *   id = "query_topic_by_type",
+ *   name = @Translation("Query a list of topics"),
+ *   description = @Translation("Loads the topics."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("EntityConnection")
  *   ),
  *   consumes = {
- *     "parent" = @ContextDefinition("entity:node",
- *       label = @Translation("Parent"),
- *       required = FALSE
- *     ),
- *     "bundle" = @ContextDefinition("string",
- *       label = @Translation("Comment bundle"),
- *       required = FALSE
+ *     "type" = @ContextDefinition("string",
+ *       label = @Translation("Unique identifier of topic type"),
+ *       required = TRUE
  *     ),
  *     "first" = @ContextDefinition("integer",
  *       label = @Translation("First"),
@@ -56,15 +51,13 @@ use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
  *   }
  * )
  */
-class QueryComments extends EntityDataProducerPluginBase {
+class QueryTopicByType extends EntityDataProducerPluginBase {
 
   /**
    * Resolves the request to the requested values.
    *
-   * @param \Drupal\node\NodeInterface|null $parent
-   *   The comment parent entity or ID.
-   * @param string|null $bundle
-   *   The comment bundle.
+   * @param string $type
+   *   The topic type ID.
    * @param int|null $first
    *   Fetch the first X results.
    * @param string|null $after
@@ -83,13 +76,8 @@ class QueryComments extends EntityDataProducerPluginBase {
    * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    if ($parent) {
-      $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent->uuid()]);
-      $parent = reset($nodes);
-    }
-
-    $query_helper = new CommentQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $parent, $bundle);
+  public function resolve(string $type, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+    $query_helper = new TopicQueryByTypeHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $type);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);
