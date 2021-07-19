@@ -1873,3 +1873,17 @@ function social_event_update_10301() {
     user_role_grant_permissions($role_id, ['translate event node']);
   }
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_event_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10302');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

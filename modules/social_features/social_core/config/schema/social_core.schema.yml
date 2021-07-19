@@ -16,3 +16,17 @@ social_core.settings:
         Open Social and the Open Social query_access handlers will be unconditionally enabled.
         See: https://www.drupal.org/project/social/issues/3210685
 
+field.formatter.settings.file_image_default:
+  type: field.formatter.settings.image
+  label: 'Image field display format settings'
+
+field.formatter.settings.comment_node:
+  type: mapping
+  label: 'Comment on node list'
+  mapping:
+    num_comments:
+      type: integer
+      label: 'Number of comments'
+    always_show_all_comments:
+      type: boolean
+      label: 'Always show all comments'
