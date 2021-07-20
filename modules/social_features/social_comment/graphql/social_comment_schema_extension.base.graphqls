@@ -1,4 +1,24 @@
 """
+Things that can be commented on.
+"""
+interface Commentable {
+  comments(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: CommentSortKeys = CREATED_AT
+  ): CommentConnection!
+}
+
+"""
 A comment to a piece of content that supports commenting.
 """
 type Comment implements Node {
