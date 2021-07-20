@@ -14,8 +14,41 @@ use Drupal\user\RoleInterface;
  * Perform actions related to the installation of social_user.
  */
 function social_user_install() {
-  // Set some default permissions.
-  _social_user_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'cancel account',
+      'change own username',
+      'select account cancellation method',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access user profiles',
+      'view users',
+      'block users',
+      'administer navigation settings',
+      'administer social_user settings',
+      'assign contentmanager role',
+      'assign sitemanager role',
+      'assign verified role',
+      'view blocked user',
+    ]
+  );
 }
 
 /**
@@ -238,9 +271,15 @@ function social_user_update_dependencies() {
  * Grant Profile permissions for the Authenticated user role.
  */
 function social_user_update_11002() {
-  // Authenticated user role permissions.
-  $auth_role_permissions = _social_user_get_permissions(RoleInterface::AUTHENTICATED_ID);
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $auth_role_permissions);
+  // Grant the Authenticated user new permissions.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'cancel account',
+      'change own username',
+      'select account cancellation method',
+    ]
+  );
 }
 
 /**

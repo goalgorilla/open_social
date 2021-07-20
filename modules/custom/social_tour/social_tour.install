@@ -5,17 +5,33 @@
  * Install, update and uninstall functions for the social_tour module.
  */
 
-use Drupal\user\Entity\Role;
-use Drupal\user\RoleInterface;
-
 /**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_tour.
  */
 function social_tour_install() {
-  // Set some default permissions.
-  _social_tour_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access tour',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access tour',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access tour',
+      'manage tour',
+    ]
+  );
+
   // Enable the module's on/off setting by default.
   \Drupal::configFactory()->getEditable('social_tour.settings')
     ->set('social_tour_enabled', 1)
@@ -52,58 +68,4 @@ function social_tour_uninstall() {
 function social_tour_update_8001(&$sandbox) {
   // Reinstall the tours, because of some textual changes.
   social_tour_reimport_config();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_tour_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    $permissions = _social_tour_get_permissions($role->id());
-
-    if ($permissions) {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
-}
-
-/**
- * Build permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array.
- */
-function _social_tour_get_permissions($role) {
-  $permissions = [];
-
-  // Anonymous.
-  $permissions[RoleInterface::ANONYMOUS_ID] = [];
-
-  // Authenticated.
-  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
-
-  // Verified.
-  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
-    'access tour',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'manage tour',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-
-  return [];
 }

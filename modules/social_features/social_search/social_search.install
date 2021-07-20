@@ -8,7 +8,6 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
-use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
 /**
@@ -29,62 +28,40 @@ function social_search_update_dependencies() {
  * Perform actions related to the installation of social_search.
  */
 function social_search_install() {
-
-  // Set some default permissions.
-  _social_search_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_search_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_search_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_search_get_permissions($role) {
-  // Anonymous.
-  $permissions[RoleInterface::ANONYMOUS_ID] = [
-    'access content search',
-  ];
-
-  // Authenticated.
-  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
-
-  // Verified.
-  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
-    'access users search',
-    'access group search',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'access content search',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'access content search',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access users search',
+      'access group search',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access users search',
+      'access group search',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access users search',
+      'access group search',
+    ]
+  );
 }
 
 /**
