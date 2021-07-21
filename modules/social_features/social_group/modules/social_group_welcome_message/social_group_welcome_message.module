@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 
@@ -66,11 +67,8 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
   }
 
   if (
-    in_array($form_id, $group_forms) &&
-    isset($form['private_message_body']) &&
-    isset($form['private_message_send'])
+    in_array($form_id, $group_forms)
   ) {
-
     // Get group owner.
     $group = $form_state->getFormObject()->getEntity();
     if ($group instanceof GroupInterface) {
@@ -79,23 +77,39 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
     else {
       $owner = \Drupal::currentUser();
     }
-
     // Deny access to welcome message if owner doesn't
     // have permission to create it.
     if (
       !$owner->hasPermission('use private messaging system') ||
       !$owner->hasPermission('create private messages thread')
     ) {
-      foreach ($form['#fieldgroups']['group_welcome_message']->children as $form_element_id) {
-        $form[$form_element_id]['#access'] = FALSE;
-      }
+      unset($form['private_message_body']);
+      unset($form['private_message_send']);
     }
-    else {
+    elseif (
+    isset($form['private_message_body']) &&
+    isset($form['private_message_send'])) {
       $form['private_message_body']['#states'] = [
         'visible' => [
           ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
         ],
       ];
+
+      // Add new element to act as a new fieldgroup.
+      $form['group_welcome_message'] = [
+        '#type' => 'details',
+        '#weight' => 1,
+        '#title' => new TranslatableMarkup('Welcome message'),
+      ];
+      // Add both existing fields to this new element.
+      $form['group_welcome_message'][] = $form['private_message_body'];
+      $form['group_welcome_message'][] = $form['private_message_send'];
+      unset($form['private_message_body']);
+      unset($form['private_message_send']);
+
+      // Add the new element to fieldgroups.
+      $form['#fieldgroups']['group_settings']->children[] = 'group_welcome_message';
+      $form['#group_children']['group_welcome_message'] = 'group_settings';
     }
   }
 }
@@ -185,7 +199,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // $thread_last_check get the same timestamp. Showing no new messages badge.
     // https://www.drupal.org/project/private_message/issues/3043898
     // @todo Update to the correct version when issue has been solved.
-    /** @var UserDataInterface $userData */
+    /** @var  \Drupal\user\UserDataInterface $userData */
     $userData = \Drupal::service('user.data');
     $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);
   }
