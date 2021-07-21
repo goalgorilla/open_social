@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\views\field;
 
+use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -50,6 +51,8 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    *   The request stack.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Action\ActionManager $pluginActionManager
+   *   The action manager.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -64,9 +67,10 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     AccountInterface $currentUser,
     RequestStack $requestStack,
     EntityTypeManagerInterface $entity_type_manager,
+    ActionManager $pluginActionManager,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack, $entity_type_manager, $pluginActionManager);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
@@ -86,6 +90,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
       $container->get('current_user'),
       $container->get('request_stack'),
       $container->get('entity_type.manager'),
+      $container->get('plugin.manager.action'),
       $container->get('social_event_an_enroll.manager')
     );
   }
