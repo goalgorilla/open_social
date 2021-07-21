@@ -20,10 +20,18 @@
         @media(min-width: 600px) {
           > .control-label {
             float: left;
+
+            [dir='rtl'] & {
+              float: right;
+            }
           }
 
           > .fieldset-wrapper {
             float: right;
+
+            [dir='rtl'] & {
+              float: left;
+            }
           }
         }
 

@@ -23,6 +23,11 @@
       z-index: 1;
       border-radius: .5rem;
 
+      [dir='rtl'] & {
+        left: auto;
+        right: 1.25rem;
+      }
+
       @media (min-width: 600px) {
         width: calc((100% / 3) - 1.5rem);
       }
@@ -205,12 +210,27 @@
         &:first-child {
           margin-left: 50%;
 
+          [dir='rtl'] & {
+            margin-right: 50%;
+            margin-left: 0;
+          }
+
           @media (min-width: 600px) {
             margin-left: calc(100% / 3);
+
+            [dir='rtl'] & {
+              margin-left: 0;
+              margin-right: calc(100% / 3);
+            }
           }
 
           @media (min-width: 1200px) {
             margin-left: 25%;
+
+            [dir='rtl'] & {
+              margin-left: 0;
+              margin-right: 25%;
+            }
           }
         }
       }

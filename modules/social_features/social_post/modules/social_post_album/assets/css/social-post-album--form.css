@@ -14,6 +14,9 @@
   margin: -1px 0;
   z-index: 1;
   border-radius: .5rem; }
+  [dir='rtl'] .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) {
+    left: auto;
+    right: 1.25rem; }
   @media (min-width: 600px) {
     .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) {
       width: calc((100% / 3) - 1.5rem); } }
@@ -136,12 +139,21 @@
       display: none; }
     .card--stream.social-post-album--form form tbody > tr:first-child {
       margin-left: 50%; }
+      [dir='rtl'] .card--stream.social-post-album--form form tbody > tr:first-child {
+        margin-right: 50%;
+        margin-left: 0; }
       @media (min-width: 600px) {
         .card--stream.social-post-album--form form tbody > tr:first-child {
-          margin-left: calc(100% / 3); } }
+          margin-left: calc(100% / 3); }
+          [dir='rtl'] .card--stream.social-post-album--form form tbody > tr:first-child {
+            margin-left: 0;
+            margin-right: calc(100% / 3); } }
       @media (min-width: 1200px) {
         .card--stream.social-post-album--form form tbody > tr:first-child {
-          margin-left: 25%; } }
+          margin-left: 25%; }
+          [dir='rtl'] .card--stream.social-post-album--form form tbody > tr:first-child {
+            margin-left: 0;
+            margin-right: 25%; } }
 .card--stream.social-post-album--form form #edit-field-album-wrapper {
   display: flex;
   width: 100%;
