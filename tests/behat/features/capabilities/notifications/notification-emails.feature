@@ -1,16 +1,16 @@
 @api @notifications @stability @DS-4323 @notification-emails
 Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to receive email notifications and configure their frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     And users:
-      | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
-      | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
-      | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
+      | name    | mail                   | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  | verified |
+      | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  | verified |
     And I am logged in as "user1"
     And I am on the homepage
     And the cache has been cleared
@@ -125,7 +125,7 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: See if the queue item is processed or stuck after cron run.
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I run cron
     And I wait for the queue to be empty
     And I am on "user"

@@ -1,14 +1,14 @@
 @api @like @stability @DS-2969 @stability-4 @like-create-topic
 Feature: Create topic like
   Benefit: In order to like a topic
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to like a topic
 
   Scenario: Successfully like a topic
    Given users:
-     | name     | mail               | status | field_profile_first_name | field_profile_last_name |
-     | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   |
-     | user_2   | mail_2@example.com | 1      | Charles                  | Darwin                  |
+     | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
+     | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   | verified |
+     | user_2   | mail_2@example.com | 1      | Charles                  | Darwin                  | verified |
      And I am logged in as "user_1"
      And I am on "user"
      And I click "Topics"

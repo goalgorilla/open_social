@@ -1,7 +1,7 @@
 @api @gdpr @inform-block @DS-5586 @stability @stability-4
 Feature: Inform about personal data collection
   Benefit: So I can make an informed decision.
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to understand what data the site collects about me
 
   Scenario: Successfully inform user about data collection.
@@ -9,7 +9,7 @@ Feature: Inform about personal data collection
     Given users:
       | name               | mail                           | status | roles         |
       | behatadministrator | behatadministrator@example.com | 1      | administrator |
-      | behatuser          | behatuser@example.com          | 1      |               |
+      | behatuser          | behatuser@example.com          | 1      | verified      |
 
     Given I enable the module "social_gdpr"
 

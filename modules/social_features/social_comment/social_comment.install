@@ -13,65 +13,45 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_comment.
  */
 function social_comment_install() {
-  // Set some default permissions.
-  _social_comment_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access comments',
+      'post comments',
+      'skip comment approval',
+      'edit own comments',
+      'delete own comments',
+      'administer own comments',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access comments',
+      'post comments',
+      'skip comment approval',
+      'edit own comments',
+      'delete own comments',
+      'administer own comments',
+      'administer comments',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access comments',
+      'post comments',
+      'skip comment approval',
+      'edit own comments',
+      'delete own comments',
+      'administer own comments',
+      'administer comments',
+    ]
+  );
 
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('comment', 'activity');
-}
-
-/**
- * Function to set permissions.
- */
-function _social_comment_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_comment_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_comment_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'access comments',
-    'post comments',
-    'skip comment approval',
-    'edit own comments',
-    'delete own comments',
-    'administer own comments',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'administer comments',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

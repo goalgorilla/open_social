@@ -9,9 +9,9 @@ Feature: Give user consent
     Given users:
       | name             | mail                         | status | roles       |
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
-      | behatuser1       | behatuser1@example.com       | 1      |             |
-      | behatuser2       | behatuser2@example.com       | 1      |             |
-      | behatuser3       | behatuser3@example.com       | 1      |             |
+      | behatuser1       | behatuser1@example.com       | 1      | verified    |
+      | behatuser2       | behatuser2@example.com       | 1      | verified    |
+      | behatuser3       | behatuser3@example.com       | 1      | verified    |
 
     Given I enable the module "social_gdpr"
 

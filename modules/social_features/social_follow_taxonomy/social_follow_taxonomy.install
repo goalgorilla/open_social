@@ -5,64 +5,34 @@
  * Install, update functions for the social_follow_taxonomy module.
  */
 
-use Drupal\user\Entity\Role;
-
 /**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_follow_taxonomy.
  */
 function social_follow_taxonomy_install() {
-
-  // Set default permissions.
-  _social_follow_taxonomy_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_follow_taxonomy_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_follow_taxonomy_get_permissions($role->id());
-    if (!empty($permissions)) {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_follow_taxonomy_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'flag follow_term',
-    'unflag follow_term',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  return isset($permissions[$role]) ? $permissions[$role] : [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'flag follow_term',
+      'unflag follow_term',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'flag follow_term',
+      'unflag follow_term',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'flag follow_term',
+      'unflag follow_term',
+    ]
+  );
 }
 
 /**

@@ -1,14 +1,14 @@
 @api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database @stability-2 @post-comments
 Feature: Comment on a Post
   Benefit: In order to give my opinion on a post
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to comment on a post
 
   Scenario: Successfully create, edit and delete a comment on a post
   Given users:
-      | name      | status | pass |
-      | PostUser1 |      1 | PostUser1 |
-      | PostUser2 |      1 | PostUser2 |
+      | name      | status | pass      | roles    |
+      | PostUser1 |      1 | PostUser1 | verified |
+      | PostUser2 |      1 | PostUser2 | verified |
     And I am logged in as "PostUser1"
     And I am on the homepage
 

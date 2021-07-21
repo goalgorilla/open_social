@@ -13,55 +13,13 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of group_core_comments.
  */
 function group_core_comments_install() {
-  // Set some default permissions.
-  _group_core_comments_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _group_core_comments_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _group_core_comments_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Get permissions per role.
- *
- * @param string $role
- *   The name of the role.
- *
- * @return array
- *   A list of permissions.
- */
-function _group_core_comments_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'delete all comments',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'delete all comments',
+    ]
+  );
 }
 
 /**

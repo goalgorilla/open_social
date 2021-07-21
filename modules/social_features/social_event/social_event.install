@@ -10,6 +10,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -18,83 +19,84 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_event.
  */
 function social_event_install() {
-
-  // Set some default permissions.
-  _social_event_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.event.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view node.event.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'create event content',
+      'delete own event content',
+      'edit own event content',
+      'override event published option',
+      'view node.event.field_content_visibility:community content',
+      'view events on my profile',
+      'view events on other profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create event content',
+      'delete own event content',
+      'edit own event content',
+      'override event published option',
+      'view node.event.field_content_visibility:community content',
+      'view events on my profile',
+      'view events on other profiles',
+      'translate event node',
+      'delete any event content',
+      'edit any event content',
+      'revert event revisions',
+      'delete event revisions',
+      'view event revisions',
+      'override event revision log entry',
+      'override event authored by option',
+      'override event authored on option',
+      'override event promote to front page option',
+      'override event revision option',
+      'override event sticky option',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create event content',
+      'delete own event content',
+      'edit own event content',
+      'override event published option',
+      'view node.event.field_content_visibility:community content',
+      'view events on my profile',
+      'view events on other profiles',
+      'translate event node',
+      'delete any event content',
+      'edit any event content',
+      'revert event revisions',
+      'delete event revisions',
+      'view event revisions',
+      'override event revision log entry',
+      'override event authored by option',
+      'override event authored on option',
+      'override event promote to front page option',
+      'override event revision option',
+      'override event sticky option',
+      'administer visibility settings',
+      'administer social_event settings',
+      'view published event enrollment entities',
+    ]
+  );
   // Add menu links.
   _social_event_create_menu_links();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_event_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_event_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_event_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [
-    'view node.event.field_content_visibility:public content',
-  ];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'create event content',
-    'delete own event content',
-    'edit own event content',
-    'override event published option',
-    'view node.event.field_content_visibility:community content',
-    'view events on my profile',
-    'view events on other profiles',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'translate event node',
-    'delete any event content',
-    'edit any event content',
-    'revert event revisions',
-    'delete event revisions',
-    'view event revisions',
-    'override event revision log entry',
-    'override event authored by option',
-    'override event authored on option',
-    'override event promote to front page option',
-    'override event revision option',
-    'override event sticky option',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'administer visibility settings',
-    'administer social_event settings',
-    'view published event enrollment entities',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

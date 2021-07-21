@@ -1,11 +1,11 @@
 @api @topic @stability @perfect @critical @DS-2311 @DS-7612 @stability-3 @topic-follow-content
 Feature: Follow Content
   Benefit: In order receive (email) notification  when a new comments or reply has been placed
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to subscribe to content
 
   Scenario: Follow content
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "user"
     And I click "Topics"
     And I click "Create Topic"

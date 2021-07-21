@@ -1,10 +1,10 @@
-@api @event @stability @perfect @community @upcoming @overview @block @LU @critical @DS-1056 @stability-2 @homepage-community-events
+@api @event @stability @perfect @community @upcoming @overview @block @verified @critical @DS-1056 @stability-2 @homepage-community-events
 Feature: See upcoming events in the community
   Benefit: In order to know which events I can join
-  Role: LU
+  Role: As a Verified
   Goal/desire: I want to see upcoming events of the community on the homepages
 
-  Scenario: Successfully show my upcoming events as a LU
+  Scenario: Successfully show my upcoming events as a Verified
 #    TODO: Test visibility settings (Public, Community)
 
     Given I am on the homepage
@@ -28,7 +28,7 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 2"
     And I should see "Ongoing and upcoming events"
 
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     Then I should see "Behat Event 1"
     And I should see "Behat Event 2"
 

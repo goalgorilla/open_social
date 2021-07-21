@@ -6,58 +6,33 @@
  */
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\user\RoleInterface;
 
 /**
  * Install hook for Social Post Photo.
  */
 function social_post_photo_install() {
-  // Set some default permissions.
-  _social_post_photo_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'add photo post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'add photo post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'add photo post entities',
+    ]
+  );
 
   // Change post to photo.
   _social_post_photo_settype('post', 'photo');
-}
-
-/**
- * Function to set permissions.
- */
-function _social_post_photo_set_permissions() {
-  $roles = \Drupal::entityQuery('user_role')
-    ->condition('id', 'administrator', '<>')
-    ->execute();
-
-  foreach ($roles as $role) {
-    $permissions = _social_post_photo_get_permissions($role);
-    user_role_grant_permissions($role, $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_post_photo_get_permissions($role) {
-  // Anonymous.
-  $permissions[RoleInterface::ANONYMOUS_ID] = [];
-
-  // Authenticated.
-  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
-    'add photo post entities',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  return $permissions[$role] ?? [];
 }
 
 /**

@@ -1,13 +1,13 @@
 @api @post @ @stability @perfect @critical @DS-1136 @YANG-4759 @database @stability-3 @post-photo-create
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Posts with photo's
 
   Scenario: Successfully create, edit and delete post
   Given users:
-      | name             | status | pass             |
-      | PostPhotoCreate1 |      1 | PostPhotoCreate1 |
+      | name             | status | pass             | roles    |
+      | PostPhotoCreate1 |      1 | PostPhotoCreate1 | verified |
     And I am logged in as "PostPhotoCreate1"
     And I am on the homepage
     And I should not see "PostPhotoCreate1" in the "Main content front"

@@ -8,7 +8,7 @@
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Site\Settings;
-use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * PROCEED WITH CARE HERE!
@@ -27,71 +27,65 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_post.
  */
 function social_post_install() {
-  // Set some default permissions.
-  _social_post_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view public posts',
+      'view published post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view public posts',
+      'view published post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'add post entities',
+      'add post post entities',
+      'delete own post entities',
+      'edit own post entities',
+      'view community posts',
+      'view own unpublished post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'add post entities',
+      'add post post entities',
+      'delete own post entities',
+      'edit own post entities',
+      'view community posts',
+      'view own unpublished post entities',
+      'delete any post entities',
+      'edit any post entities',
+      'view unpublished post entities',
+      'administer post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'add post entities',
+      'add post post entities',
+      'delete own post entities',
+      'edit own post entities',
+      'view community posts',
+      'view own unpublished post entities',
+      'delete any post entities',
+      'edit any post entities',
+      'view unpublished post entities',
+      'administer post entities',
+    ]
+  );
 
   // Set the view mode for posts in activities.
   activity_creator_set_entity_view_mode('post', 'activity');
-}
-
-/**
- * Function to set permissions.
- */
-function _social_post_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_post_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_post_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [
-    'view public posts',
-    'view published post entities',
-  ];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'add post entities',
-    'add post post entities',
-    'delete own post entities',
-    'edit own post entities',
-    'view community posts',
-    'view own unpublished post entities',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'delete any post entities',
-    'edit any post entities',
-    'view unpublished post entities',
-    'administer post entities',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

@@ -1,14 +1,14 @@
 @api @post @stability @perfect @critical @DS-244 @DS-245 @DS-247 @DS-248 @DS-674 @DS-676 @database @stability-1 @post-create
 Feature: Create Post
   Benefit: In order to share knowledge with people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Posts
 
   Scenario: Successfully create, edit and delete post
   Given users:
-      | name      | status | pass |
-      | PostCreateUser1 |      1 | PostCreateUser1 |
-      | PostCreateUser2 |      1 | PostCreateUser2 |
+      | name            | status | pass            | roles    |
+      | PostCreateUser1 |      1 | PostCreateUser1 | verified |
+      | PostCreateUser2 |      1 | PostCreateUser2 | verified |
     And I am logged in as "PostCreateUser1"
     And I am on the homepage
   And I should not see "PostCreateUser1" in the "Main content front"
@@ -54,3 +54,10 @@ Feature: Create Post
     And I am on the homepage
    Then I should see "This is a public post."
    Then I should not see "This is a community post."
+
+    # LU should not be able to create posts.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on the homepage
+    Then I should not see an ".form--post-create" element
+      And I enable that the registered users to be verified immediately

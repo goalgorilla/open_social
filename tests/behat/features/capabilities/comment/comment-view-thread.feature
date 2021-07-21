@@ -1,11 +1,11 @@
 @api @comment @stability @DS-477 @stability-2 @comment-view-thread
 Feature: See Comment
   Benefit: In order to interact with people on the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to see comments
 
   Scenario: Successfully see comment thread
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am viewing a "topic" with the title "Comment view thread"
     When I fill in the following:
          | Add a comment | This is a first comment |

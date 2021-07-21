@@ -9,9 +9,9 @@ Feature: Send invite event email notifications
 
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     Given users:
-      | name   | mail  | status | roles |
-      | site_manager_1 | site_manager_1@example.com | 1      | sitemanager  |
-      | existing_user_1 | existing_user_1@example.com | 1      |   |
+      | name            | mail                        | status | roles       |
+      | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
+      | existing_user_1 | existing_user_1@example.com | 1      | verified    |
     Given event content:
       | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author         |
       | Invite Event  | +2 days          | 1      | public                   | 1                     | site_manager_1 |
@@ -56,8 +56,8 @@ Feature: Send invite event email notifications
     Then I open register page with prefilled "new_test_user@example.com" and destination to invited node "Invite Event"
 
     When I fill in the following:
-      | Username | new_test_user |
-      | Password | new_test_pass |
+      | Username         | new_test_user |
+      | Password         | new_test_pass |
       | Confirm password | new_test_pass |
     And I press "Create new account"
     Then I should see "Registration successful. You are now logged in."

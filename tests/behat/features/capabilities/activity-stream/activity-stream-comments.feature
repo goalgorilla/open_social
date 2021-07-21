@@ -1,15 +1,15 @@
 @api @stability @activity_stream @comment @DS-1394 @DS-4211 @DS-4886 @stability-2 @activity-stream-comments
 Feature: See comments in activity stream
   Benefit: Participate in discussions on the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I do not want to see replies to comments in the activity stream
 
   @public
   Scenario: Do not see replies to comments in the activity stream
     Given users:
-      | name       | status | pass        |
-      | CreateUser | 1      | CreateUser  |
-      | SeeUser    | 1      | SeeUser     |
+      | name       | status | pass        | roles    |
+      | CreateUser | 1      | CreateUser  | verified |
+      | SeeUser    | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     Given I am viewing my topic:
       | title                    | My Behat Topic created |
@@ -49,9 +49,9 @@ Feature: See comments in activity stream
   @group
   Scenario: See community event with comments in a group
     Given users:
-      | name        | status | pass        |
-      | CreateUser  | 1      | CreateUser  |
-      | SeeUser     | 1      | SeeUser     |
+      | name        | status | pass        | roles    |
+      | CreateUser  | 1      | CreateUser  | verified |
+      | SeeUser     | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on "group/add"
     And I press "Continue"
@@ -64,11 +64,11 @@ Feature: See comments in activity stream
     When I click "Events"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | GG HQ |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | Time                                   | 11:00:00         |
+      | Location name                          | GG HQ            |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
     Then I should see "Test group event"

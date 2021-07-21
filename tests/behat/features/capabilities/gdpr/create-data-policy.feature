@@ -9,7 +9,7 @@ Feature: Create data policy and view new policy
     Given users:
       | name             | mail                         | status | roles       |
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
-      | behatuser        | behatuser@example.com        | 1      |             |
+      | behatuser        | behatuser@example.com        | 1      | verified    |
 
     Given I enable the module "social_gdpr"
     Given I am logged in as "behatsitemanager" with the "without consent" permission
