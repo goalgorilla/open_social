@@ -70,11 +70,16 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
  */
 function social_profile_form_profile_profile_add_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile creation.
@@ -100,14 +105,19 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $viewing_user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $form_state->getFormObject()->getEntity();
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$viewing_user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $viewing_user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile edit.
