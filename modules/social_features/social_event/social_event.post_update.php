@@ -2,13 +2,20 @@
 
 /**
  * @file
- * Post update functions for the Social Course Quiz module.
+ * Post update functions for the Social event module.
  */
 
 /**
- * Update existing events.
+ * Empty post update hook.
  */
 function social_event_post_update_update_events(&$sandbox) {
+  // Moved to social_event_post_update_10301_enable_event_enrollment().
+}
+
+/**
+ * Set event enrollment option to enabled by default for existing events.
+ */
+function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
   /** @var \Drupal\node\NodeStorageInterface $node_storage */
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 
@@ -16,6 +23,7 @@ function social_event_post_update_update_events(&$sandbox) {
     // Get all event ids.
     $sandbox['ids'] = $node_storage
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('type', 'event')
       ->execute();
     // Write total of entities need to be processed to $sandbox.
@@ -36,9 +44,7 @@ function social_event_post_update_update_events(&$sandbox) {
 
   /** @var \Drupal\node\NodeInterface $event */
   foreach ($node_storage->loadMultiple($ids) as $event) {
-    if ($event->get('field_event_enable_enrollment')->isEmpty()) {
-      $event->set('field_event_enable_enrollment', '1');
-    }
+    $event->set('field_event_enable_enrollment', '1');
     $event->save();
     $sandbox['current']++;
   }
