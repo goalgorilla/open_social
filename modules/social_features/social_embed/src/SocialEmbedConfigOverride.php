@@ -96,6 +96,14 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
       'settings' => [],
     ];
 
+    $overrides[$config_name]['filters']['social_embed_iframe'] = [
+      'id' => 'social_embed_iframe',
+      'provider' => 'social_embed',
+      'status' => TRUE,
+      'weight' => 101,
+      'settings' => [],
+    ];
+
     if ($convert_url) {
       $overrides[$config_name]['filters']['social_embed_convert_url'] = [
         'id' => 'social_embed_convert_url',
