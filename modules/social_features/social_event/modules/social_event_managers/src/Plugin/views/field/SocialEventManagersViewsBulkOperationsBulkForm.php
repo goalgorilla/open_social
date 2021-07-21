@@ -215,7 +215,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     if (!empty($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) > 0) {
       $excluded = FALSE;
-      if (!empty($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
+      if (isset($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
         $excluded = TRUE;
       }
       $wrapper['multipage']['list']['#title'] = !$excluded ? $this->t('See selected enrollees on other pages') : $this->t('See excluded enrollees on other pages');

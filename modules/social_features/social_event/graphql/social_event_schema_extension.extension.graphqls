@@ -1,0 +1,31 @@
+extend type Query {
+  """
+  List of all events on the platform.
+
+  Results are limited to what the current viewer has access to.
+  """
+  events(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: EventSortKeys = CREATED_AT
+  ): EventConnection!
+
+  """
+  Fetch data for a specific event.
+  """
+  event(
+    """
+    The id of the event to load.
+    """
+    id: ID!
+  ): Event
+}

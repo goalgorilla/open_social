@@ -1,0 +1,194 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
+"""
+Information about the branding of the Platform.
+
+This provides access to branding information such as the logo url or 
+colors configured by a site manager of the platform.
+"""
+type PlatformBranding {
+  """
+  The platform's logo url.
+  
+  This can be shown in elements such as a navbar. NULL if no logo is configured.
+  """
+  logoUrl: Url
+  """
+  The brand colors for this platform.
+  
+  NULL if the platform has not configured a brand color scheme.
+  """
+  brandingColors: PlatformBrandColorScheme
+  """
+  The preferred features for this platform in order from most important to least important.
+
+  Provides focus about the focus of the platform and lets 
+  external applications know what actions they should persent 
+  to users in primary navigation.
+  """
+  preferredFeatures: [PlatformFeature!]!
+}
+
+"""
+The platform's brand colors.
+
+The brand colors are configured by site managers. This provides a way to change 
+the colors of an Open Social platform in broad strokes.
+"""
+type PlatformBrandColorScheme {
+  """
+  The primary brand color.
+  
+  Should be used in primary call to actions.
+  """
+  primary: Color!
+  """
+  The secondary brand color.
+  
+  Can be used for labels important to a user such as the "enrolled" status in an event teaser.
+  """
+  secondary: Color!
+  """
+  The brand accent color.
+  
+  Can be used for status indicators, for example a notification count.
+  Also used for event enrollment and group join status buttons.
+  """
+  accentBackground: Color!
+  """
+  The accent text color.
+  
+  The text color to use when creating an accent color button. Ensures accessible text.
+  """
+  accentText: Color!
+  """
+  The link color.
+  
+  The color that should be applied to non-button links in texts.
+  """
+  link: Color!
+  """
+  The background color for navbar elements.
+  """
+  navbarBackground: Color!
+  """
+  The text color for navbar elements.
+  """
+  navbarText: Color!
+  """
+  The background color for the currently active navbar element.
+  """
+  navbarActiveBackground: Color!
+  """
+  The text color for the currently active navbar element.
+  """
+  navbarActiveText: Color!
+  """
+  The background color for a secondary navbar component.
+  
+  Tabs within a group are an example of a secondary navbar component.
+  """
+  navbarSecondaryBackground: Color!
+  """
+  The text color for a secondary navbar component.
+  
+  Tabs within a group are an example of a secondary navbar component.
+  """
+  navbarSecondaryText: Color!
+}
+
+"""
+A color as a hexadecimal RGBA string.
+
+Does not contain a leading pound sign (#) e.g. FFAA33FF.
+"""
+scalar HexRGBAColor
+
+"""
+A color as a hexadecimal RGB string.
+
+Does not contain a leading pound sign (#) or opacity information e.g. FFAA33.
+"""
+scalar HexRGBColor
+
+"""
+A color representation with access to individual hue, saturation, lightness and alpha components.
+"""
+type HSLAColor {
+  """
+  The hue value on a scale of 0-255.
+  """
+  hue: Int!
+  """
+  The saturation percentage on a scale of 0-100.
+  """
+  saturation: Int!
+  """
+  The lightness percentage on a scale of 0-100.
+  """
+  lightness: Int!
+  """
+  The alpha percentange on a scale of 0-100.
+  """
+  alpha: Float!
+}
+
+"""
+A color representation with access to individual red, green, blue, and alpha components.
+"""
+type RGBAColor {
+  """
+  The red component value on a scale of 0-255.
+  """
+  red: Int!
+  """
+  The green component value on a scale of 0-255.
+  """
+  green: Int!
+  """
+  The blue component value on a scale of 0-255.
+  """
+  blue: Int!
+  """
+  The alpha component value on a scale of 0-255.
+  """
+  alpha: Float!
+}
+
+"""
+A color representation that's valid in css style rules.
+
+e.g. #FF33AAFF or hsla(325, 100%, 60%, 1)
+"""
+scalar CSSColor
+
+"""
+A color value.
+"""
+type Color {
+  """
+  The color as hexadecimal string.
+  """
+  hexRGB: HexRGBColor!
+  """
+  The color as individual RGBA components.
+  """
+  rgba: RGBAColor!
+  """
+  The color as usable CSS value.
+  """
+  css: CSSColor!
+}
+
+"""
+A feature on the platform.
+"""
+type PlatformFeature {
+  """
+  The machine name of this feature.
+  
+  e.g. "CHAT", "GROUPS" or "DISCUSSIONS".
+  """
+  machineName: String!
+}

@@ -5,6 +5,7 @@
  * Contains social_language.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
@@ -47,4 +48,23 @@ function social_language_form_user_form_alter(&$form, FormStateInterface $form_s
 function social_language_social_group_default_route_tabs_alter(&$tabs) {
   // Unset some tabs created by group.
   unset($tabs['content_translation.local_tasks:entity.group.content_translation_overview']);
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_language_entity_operation_alter(array &$operations, EntityInterface $entity): array {
+  // "Content Translations" module allows to add translations
+  // to the entity that user can't edit...This cause displaying
+  // the redundant operation "translate" in entity list pages.
+  /* @see content_translation_translate_access() */
+  if (!empty($operations['translate'])) {
+    // All checks are already done in social_language_entity_operation()
+    // and we need only add the last one.
+    if (!$entity->access('update')) {
+      // Remove the operation if user can't edit entity.
+      unset($operations['translate']);
+    }
+  }
+  return $operations;
 }
