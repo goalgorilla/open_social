@@ -43,12 +43,8 @@ class FlexibleGroupSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('FlexibleGroup', 'title',
-      $builder->compose(
-        $builder->produce('entity_label')
-          ->map('entity', $builder->fromParent()),
-        $builder->produce('uppercase')
-          ->map('string', $builder->fromParent())
-      )
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
     );
 
     $registry->addFieldResolver('FlexibleGroup', 'author',
@@ -57,33 +53,35 @@ class FlexibleGroupSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('FlexibleGroup', 'bodyHtml',
-      $builder->fromPath('entity:group', 'field_group_description.0.value')
-    );
-
-    $registry->addFieldResolver('FlexibleGroup', 'heroImage',
       $builder->compose(
-        $builder->fromPath('entity:group:flexible_group', 'field_group_image.value'),
         $builder->produce('field')
-          //          ->map('entity', $builderСалоРо->fromParent())
+          ->map('entity', $builder->fromParent())
+          ->map('field', $builder->fromValue('field_group_description')),
+        $builder->produce('field_renderer')
           ->map('field', $builder->fromParent())
       )
     );
 
+    $registry->addFieldResolver('FlexibleGroup', 'heroImage',
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_group_image'))
+    );
+
     $registry->addFieldResolver('FlexibleGroup', 'created',
-      $builder->fromPath('entity:group', 'created.value')
+      $builder->produce('entity_created')
+        ->map('entity', $builder->fromParent())
+        ->map('format', $builder->fromValue('U'))
     );
 
     $registry->addFieldResolver('FlexibleGroup', 'url',
       $builder->compose(
         $builder->produce('entity_url')
-          ->map('entity', $builder->fromParent()),
+          ->map('entity', $builder->fromParent())
+          ->map('options', $builder->fromValue(['absolute' => TRUE])),
         $builder->produce('url_path')
           ->map('url', $builder->fromParent())
       )
-    );
-
-    $registry->addFieldResolver('FlexibleGroup', 'created',
-      $builder->fromPath('entity:group', 'created.value')
     );
   }
 
