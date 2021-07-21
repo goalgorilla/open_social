@@ -20,6 +20,14 @@ type PlatformBranding {
   NULL if the platform has not configured a brand color scheme.
   """
   brandingColors: PlatformBrandColorScheme
+  """
+  The preferred features for this platform in order from most important to least important.
+
+  Provides focus about the focus of the platform and lets 
+  external applications know what actions they should persent 
+  to users in primary navigation.
+  """
+  preferredFeatures: [PlatformFeature!]!
 }
 
 """
@@ -171,4 +179,16 @@ type Color {
   The color as usable CSS value.
   """
   css: CSSColor!
+}
+
+"""
+A feature on the platform.
+"""
+type PlatformFeature {
+  """
+  The machine name of this feature.
+  
+  e.g. "CHAT", "GROUPS" or "DISCUSSIONS".
+  """
+  machineName: String!
 }
