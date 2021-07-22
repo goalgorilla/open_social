@@ -50,12 +50,11 @@ function social_content_translation_install_language_settings_for_entities() {
       // Otherwise lets install it.
       if (!$config_storage->exists($config_name)) {
         $file = $source->read($config_name);
-        $entity_type_id = $file['target_entity_type_id'];
-        $bundle = $file['target_bundle'];
         // We create a config as an entity because it allows to update field
         // definitions for translated fields.
         // @see content_translation_language_content_settings_insert()
-        ContentLanguageSettings::create(['target_entity_type_id' => $entity_type_id, 'target_bundle' => $bundle]);
+        $config = ContentLanguageSettings::create($file);
+        $config->save();
       }
     }
   }
