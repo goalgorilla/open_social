@@ -2,7 +2,7 @@
 
 namespace Drupal\social_user\Service;
 
-use Drupal\user\UserInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Defines the helper service interface.
@@ -14,13 +14,13 @@ interface SocialUserHelperInterface {
   /**
    * Check if a user is verified.
    *
-   * @param \Drupal\user\UserInterface $account
-   *   The user entity.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user for which to check access.
    *
    * @return bool
    *   TRUE if the user is verified, FALSE otherwise.
    */
-  public function isVerifiedUser(UserInterface $account): bool;
+  public function isVerifiedUser(AccountInterface $account): bool;
 
   /**
    * Verified user roles.

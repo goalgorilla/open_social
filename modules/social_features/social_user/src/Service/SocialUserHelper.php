@@ -2,8 +2,8 @@
 
 namespace Drupal\social_user\Service;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\user\RoleInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Provides helper functions for Social users.
@@ -15,7 +15,7 @@ class SocialUserHelper implements SocialUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function isVerifiedUser(UserInterface $account): bool {
+  public function isVerifiedUser(AccountInterface $account): bool {
     // Verified user roles.
     $roles = $this->verifiedUserRoles();
 

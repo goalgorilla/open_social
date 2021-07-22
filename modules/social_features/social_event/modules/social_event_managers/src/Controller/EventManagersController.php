@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use Drupal\user\RoleInterface;
+use Drupal\social_user\Service\SocialUserHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,13 +26,23 @@ class EventManagersController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
+   * The social user helper.
+   *
+   * @var \Drupal\social_user\Service\SocialUserHelperInterface
+   */
+  protected $socialUserHelper;
+
+  /**
    * SocialTopicController constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\social_user\Service\SocialUserHelperInterface $socialUserHelper
+   *   The social user helper.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, SocialUserHelperInterface $socialUserHelper) {
     $this->entityTypeManager = $entityTypeManager;
+    $this->socialUserHelper = $socialUserHelper;
   }
 
   /**
@@ -40,7 +50,8 @@ class EventManagersController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('social_user.helper')
     );
   }
 
@@ -83,7 +94,7 @@ class EventManagersController extends ControllerBase {
 
     // If we minimize the amount of tabs we can allow Verified that can see this
     // event to see the tab as well.
-    if ($node->access('view', $account) && !$account->isAnonymous() && !(count($account->getRoles()) == 1 && $account->getRoles()[0] === RoleInterface::AUTHENTICATED_ID)) {
+    if ($node->access('view', $account) && !$account->isAnonymous() && $this->socialUserHelper->isVerifiedUser($account)) {
       return AccessResult::allowed();
     }
 
