@@ -49,18 +49,6 @@ function social_group_update_dependencies() {
 function social_group_install() {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
-    RoleInterface::ANONYMOUS_ID,
-    [
-      'access group search',
-    ]
-  );
-  user_role_grant_permissions(
-    RoleInterface::AUTHENTICATED_ID,
-    [
-      'access group search',
-    ]
-  );
-  user_role_grant_permissions(
     'verified',
     [
       'create open_group group',
