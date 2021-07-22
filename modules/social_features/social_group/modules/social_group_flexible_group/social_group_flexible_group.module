@@ -740,6 +740,11 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   if ($ids) {
     $query->addWhere($new_where, 'id', $ids, 'NOT IN');
   }
+
+  // Make sure this block gets refreshed for a user if the group membership
+  // changed for this user.
+  $view->element['#cache']['contexts'][] = 'user';
+  $view->element['#cache']['tags'][] = 'group_content_list:plugin:group_membership:entity:' . $account->id();
 }
 
 /**
