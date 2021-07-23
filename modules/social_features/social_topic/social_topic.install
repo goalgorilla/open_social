@@ -94,6 +94,7 @@ function _social_topic_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'translate topic node',
     'delete any topic content',
     'edit any topic content',
     'revert topic revisions',
@@ -411,4 +412,41 @@ function social_topic_update_8909() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Add translation compatibility for Topic fields and views.
+ */
+function social_topic_update_10301() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_10301');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Allow CM+ translate "Topic" node type.
+ */
+function social_topic_update_10302() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate topic node']);
+  }
+}
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_topic_update_10303() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_10303');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
