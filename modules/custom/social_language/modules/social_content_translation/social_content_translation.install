@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\language\Entity\ContentLanguageSettings;
 
 /**
@@ -25,7 +26,7 @@ function social_content_translation_uninstall() {
 /**
  * Install translation configuration.
  *
- * "Content Translation" module provide UI where we can enabled/disable
+ *  "Content Translation" module provide UI where we can enabled/disable
  *  translations for entity types we want. So here we enabling translations
  *  for modules if it have "language.content_settings*" configuration in
  *  "config/optional" folder.
@@ -75,6 +76,11 @@ function social_content_translation_fill_in_translations_fields($entity_type) {
   $time = \Drupal::time()->getCurrentTime();
   $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
   foreach ($storage->loadMultiple() as $entity) {
+    if (!($entity instanceof ContentEntityBase)) {
+      // Entity doesn't support translations.
+      return;
+    }
+    /* @var Drupal\Core\Entity\ContentEntityBase $entity */
     $langcodes = array_keys($entity->getTranslationLanguages());
     foreach ($langcodes as $langcode) {
       // Update entity translation fields
