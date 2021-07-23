@@ -83,7 +83,7 @@ function social_content_translation_fill_in_translations_fields($entity_type) {
     /* @var Drupal\Core\Entity\ContentEntityBase $entity */
     $langcodes = array_keys($entity->getTranslationLanguages());
     foreach ($langcodes as $langcode) {
-      // Update entity translation fields
+      // Update entity translation fields.
       $translation = $entity->getTranslation($langcode);
       if ($entity->hasField('content_translation_source')) {
         $translation->set('content_translation_source', $langcode);
