@@ -694,7 +694,7 @@ function social_group_update_10302() {
     ],
   ];
 
-  ConfigurationsService::importConfigurations($configs);
+  ConfigurationsService::importConfigurations($configs, 'social_group');
 }
 
 /**
@@ -726,7 +726,7 @@ function social_group_update_10304() {
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group', 'social_group_update_10204');
+  $updateHelper->executeUpdate('social_group', 'social_group_update_10304');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
@@ -742,5 +742,5 @@ function social_group_update_10305() {
     ],
   ];
 
-  ConfigurationsService::importConfigurations($configs);
+  ConfigurationsService::importConfigurations($configs, 'social_group');
 }
