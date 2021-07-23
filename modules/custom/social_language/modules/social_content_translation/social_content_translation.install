@@ -64,6 +64,57 @@ function social_content_translation_install_language_settings_for_entities() {
 }
 
 /**
+ * Fill in translations fields for entity after enabling translation.
+ *
+ *  If we have entities before translation was enabled for them after
+ *  enabling and updating fields definitions we got empty translations
+ *  fields (like "content_translation_source", "content_translation_uid" etc.
+ *  The functions tries to fix this and if possible fill these fields.
+ */
+function social_content_translation_fill_in_translations_fields($entity_type) {
+  $time = \Drupal::time()->getCurrentTime();
+  $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+  foreach ($storage->loadMultiple() as $entity) {
+    $langcodes = array_keys($entity->getTranslationLanguages());
+    foreach ($langcodes as $langcode) {
+      // Update entity translation fields
+      $translation = $entity->getTranslation($langcode);
+      if ($entity->hasField('content_translation_source')) {
+        $translation->set('content_translation_source', $langcode);
+      }
+      if ($entity->hasField('content_translation_outdated')) {
+        $translation->set('content_translation_outdated', FALSE);
+      }
+      if ($entity->hasField('content_translation_uid')) {
+        $uid = method_exists($entity, 'getOwnerId')
+          ? $entity->getOwnerId()
+          : 1;
+        $translation->set('content_translation_uid', $uid);
+      }
+      if ($entity->hasField('content_translation_status')) {
+        $is_published = method_exists($entity, 'isPublished')
+          ? $entity->isPublished()
+          : TRUE;
+        $translation->set('content_translation_status', $is_published);
+      }
+      if ($entity->hasField('content_translation_created')) {
+        $created = method_exists($entity, 'getCreatedTime')
+          ? $entity->getCreatedTime()
+          : $time;
+        $translation->set('content_translation_created', $created);
+      }
+      if ($entity->hasField('content_translation_changed')) {
+        $changed = method_exists($entity, 'getChangedTime')
+          ? $entity->getChangedTime()
+          : $time;
+        $translation->set('content_translation_changed', $changed);
+      }
+      $translation->save();
+    }
+  }
+}
+
+/**
  * Add support translations for entities.
  */
 function social_content_translation_update_8001() {
