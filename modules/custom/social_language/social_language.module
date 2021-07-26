@@ -29,7 +29,7 @@ function social_language_language_switch_links_alter(array &$links, $type, Url $
 function social_language_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Move the fields to group_settings.
   if (isset($form['#fieldgroups']['group_settings'])) {
-    // As translation form fields are added directly to forms bypassing 
+    // As translation form fields are added directly to forms bypassing
     // entity form display we can't have both approaches (OS and user own)
     // for field managing (@see social_core_form_node_form_alter()).
     if (isset($form['content_translation']) && Element::isVisibleElement($form['content_translation'])) {
@@ -39,7 +39,7 @@ function social_language_form_alter(&$form, FormStateInterface $form_state, $for
       $form['#fieldgroups']['group_settings']->children[] = 'content_translation';
       $form['content_translation']['#group'] = 'group_settings';
     }
-    
+
     if (isset($form['source_langcode']) && Element::isVisibleElement($form['source_langcode'])) {
       // Move "source_langcode" form element to translations fieldset.
       if (!empty($form['content_translation'])) {
