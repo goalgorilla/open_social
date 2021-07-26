@@ -707,13 +707,18 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // and remove them from showing in the view.
   $ids = array_diff(array_keys($hidden_groups), $my_groups);
   if ($ids) {
-    $query->addWhere($new_where, 'id', $ids, 'NOT IN');
-  }
+    // Anonymous user should only see 'public' groups.
+    if ($account->isAnonymous()) {
+      $community_groups = \Drupal::entityTypeManager()->getStorage('group')->loadByProperties([
+        'field_flexible_group_visibility' => 'community',
+      ]);
+      $ids = array_merge($ids, array_keys($community_groups));
 
-  // Add context so for AN it will have a different cache.
-  if ($account->isAnonymous()) {
-    $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
-    return;
+      // Add context so for AN it will have a different cache.
+      $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
+    }
+
+    $query->addWhere($new_where, 'id', $ids, 'NOT IN');
   }
 
   // Make sure this block gets refreshed for a user if the group membership
