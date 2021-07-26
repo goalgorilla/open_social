@@ -418,8 +418,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       'field_event' => $event->id(),
     ]);
     $eventEnrollment = end($eventEnrollment);
+
+    // If the user is not enrolled, then they should not see
+    // any operations at all.
     if (!$eventEnrollment) {
-      return $bulkOptions;
+      return [];
     }
 
     // Load each action and check the access.
