@@ -14,6 +14,8 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_language.
  */
 function social_language_install() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
 
   // Set some default permissions.
   _social_language_set_permissions();
@@ -129,4 +131,12 @@ function social_language_update_10301() {
     'update content translations',
   ];
   user_role_grant_permissions('contentmanager', $permissions);
+}
+
+/**
+ * Change the weight for the module "Social Language".
+ */
+function social_language_update_10302() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
 }
