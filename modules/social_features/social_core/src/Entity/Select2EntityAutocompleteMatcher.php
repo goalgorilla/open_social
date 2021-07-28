@@ -2,8 +2,13 @@
 
 namespace Drupal\social_core\Entity;
 
+use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
+use Drupal\social_user\Service\SocialUserHelperInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Class Select2EntityAutocompleteMatcher.
@@ -11,6 +16,29 @@ use Drupal\Component\Utility\Html;
  * @package Drupal\social_core\Entity
  */
 class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
+
+  /**
+   * The social user helper.
+   *
+   * @var \Drupal\social_user\Service\SocialUserHelperInterface
+   */
+  protected $socialUserHelper;
+
+  /**
+   * Constructs a Select2EntityAutocompleteMatcher object.
+   *
+   * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager
+   *   The entity reference selection handler plugin manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
+   * @param \Drupal\social_user\Service\SocialUserHelperInterface $socialUserHelper
+   *   The social user helper.
+   */
+  public function __construct(SelectionPluginManagerInterface $selection_manager, ModuleHandlerInterface $module_handler, SocialUserHelperInterface $socialUserHelper) {
+    parent::__construct($selection_manager, $module_handler);
+
+    $this->socialUserHelper = $socialUserHelper;
+  }
 
   /**
    * {@inheritdoc}
@@ -38,6 +66,15 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           // '#selection_settings' => [ 'skip_entity' => ['7', '8', '9'] ].
           if (!empty($selection_settings['skip_entity']) && in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
             continue;
+          }
+
+          // Ensure that we are able to select Verified+ users only.
+          if ($target_type === 'user' && $selection_handler === 'social') {
+            /** @var \Drupal\user\UserInterface $account */
+            $account = User::load($entity_id);
+            if ($account instanceof AccountInterface && !$this->socialUserHelper->isVerifiedUser($account)) {
+              continue;
+            }
           }
 
           $label = !empty($selection_settings['hide_id']) ? $label : "$label ($entity_id)";

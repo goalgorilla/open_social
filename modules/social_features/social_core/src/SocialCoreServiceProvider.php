@@ -6,6 +6,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Drupal\social_core\Service\LayoutService;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class SocialCoreServiceProvider.
@@ -29,6 +30,13 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
     if (isset($modules['select2'])) {
       $definition = $container->getDefinition('select2.autocomplete_matcher');
       $definition->setClass('Drupal\social_core\Entity\Select2EntityAutocompleteMatcher');
+      $definition->setArguments(
+        [
+          new Reference('plugin.manager.entity_reference_selection'),
+          new Reference('module_handler'),
+          new Reference('social_user.helper'),
+        ]
+      );
     }
 
     // Check for installed layout_builder module.

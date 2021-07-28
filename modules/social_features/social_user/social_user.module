@@ -843,26 +843,3 @@ function social_user_user_insert(UserInterface $user) {
     $user->save();
   }
 }
-
-/**
- * Implements hook_select2_autocomplete_matches_alter().
- */
-function social_user_select2_autocomplete_matches_alter(array &$matches, array $options) {
-  // Do nothing if it is no User entity type.
-  if ($options['target_type'] !== 'user' && $options['handler'] !== 'social') {
-    return;
-  }
-
-  $user_helper = \Drupal::service('social_user.helper');
-
-  $entity_manager = \Drupal::entityTypeManager();
-  $accounts = $entity_manager->getStorage($options['target_type'])->loadMultiple(array_keys($matches));
-
-  /** @var \Drupal\user\UserInterface $account */
-  foreach ($accounts as $id => $account) {
-    // Make sure can only select Verified+ users.
-    if (!$user_helper->isVerifiedUser($account)) {
-      unset($matches[$id]);
-    }
-  }
-}
