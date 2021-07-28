@@ -13,6 +13,9 @@ use Drupal\Core\Serialization\Yaml;
  * Perform actions related to the installation of social_language.
  */
 function social_language_install() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
+
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'contentmanager',
@@ -31,6 +34,44 @@ function social_language_install() {
       'translate any entity',
     ]
   );
+
+  \Drupal::configFactory()->getEditable('locale.settings')
+    ->set('translation.path', '/tmp')
+    ->save();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_language_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_language_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Build the permissions.
+ */
+function _social_language_get_permissions($role) {
+  // Content manager.
+  $permissions['contentmanager'] = [
+    'create content translations',
+    'delete content translations',
+    'update content translations',
+  ];
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'translate any entity',
+  ]);
 
   \Drupal::configFactory()->getEditable('locale.settings')
     ->set('translation.path', '/tmp')
@@ -107,4 +148,12 @@ function social_language_update_10301() {
     'update content translations',
   ];
   user_role_grant_permissions('contentmanager', $permissions);
+}
+
+/**
+ * Change the weight for the module "Social Language".
+ */
+function social_language_update_10302() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
 }

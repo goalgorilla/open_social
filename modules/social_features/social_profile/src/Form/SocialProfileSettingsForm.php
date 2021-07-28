@@ -110,13 +110,26 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['tagging']['enable_profile_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow profiles to be tagged'),
+      '#title' => $this->t('Allow profile tagging for content managers'),
       '#required' => FALSE,
       '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether CM+ are allowed to add @profile_tags terms to the users profile',
+      '#description' => $this->t('Determine whether content managers are allowed to add @profile_tags terms to the users profile.',
         [
           '@profile_tags' => $profile_tags->toString(),
         ]),
+    ];
+
+    $form['tagging']['allow_tagging_for_lu'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow profile tagging for regular users'),
+      '#default_value' => $config->get('allow_tagging_for_lu'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine whether regular users are allowed to add profile tags to their own profile."),
+      '#states' => [
+        'visible' => [
+          ':input[name="enable_profile_tagging"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $form['tagging']['allow_category_split'] = [
@@ -153,6 +166,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'));
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
     $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
+    $config->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'));
     $config->save();
 
     // Check if the website is multilingual.
