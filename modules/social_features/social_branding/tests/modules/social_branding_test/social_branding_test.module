@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Social Branding Test.
+ */
+
+use Drupal\social_branding\PreferredPlatformFeature;
+
+/**
+ * Implements hook_social_branding_preferred_features().
+ */
+function social_branding_test_social_branding_preferred_features() {
+  return [
+    new PreferredPlatformFeature('feature0', 0),
+    new PreferredPlatformFeature('feature1', 1),
+    new PreferredPlatformFeature('feature2', 2),
+  ];
+}
+
+/**
+ * Implements hook_social_branding_preferred_features_alter().
+ */
+function social_branding_test_social_branding_preferred_features_alter(&$preferred_features) {
+  foreach ($preferred_features as $preferred_feature) {
+    if ($preferred_feature->getName() === 'feature0') {
+      $preferred_feature->setWeight(3);
+    }
+  }
+}

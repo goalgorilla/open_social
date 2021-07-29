@@ -14,6 +14,8 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_language.
  */
 function social_language_install() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
 
   // Set some default permissions.
   _social_language_set_permissions();
@@ -44,13 +46,17 @@ function _social_language_set_permissions() {
  * Build the permissions.
  */
 function _social_language_get_permissions($role) {
-  // Site manager.
-  $permissions['sitemanager'] = [
+  // Content manager.
+  $permissions['contentmanager'] = [
     'create content translations',
     'delete content translations',
     'update content translations',
-    'translate any entity',
   ];
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'translate any entity',
+  ]);
 
   return isset($permissions[$role]) ? $permissions[$role] : [];
 }
@@ -113,4 +119,24 @@ YAML;
     'translate profile_tag taxonomy_term',
     'translate topic_types taxonomy_term',
   ]);
+}
+
+/**
+ * Allow "Content Manager" role to manage translations.
+ */
+function social_language_update_10301() {
+  $permissions = [
+    'create content translations',
+    'delete content translations',
+    'update content translations',
+  ];
+  user_role_grant_permissions('contentmanager', $permissions);
+}
+
+/**
+ * Change the weight for the module "Social Language".
+ */
+function social_language_update_10302() {
+  // Make sure the module has more weight then "Content Translation" module.
+  module_set_weight('social_language', 11);
 }

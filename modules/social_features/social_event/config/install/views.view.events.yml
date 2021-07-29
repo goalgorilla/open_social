@@ -10,8 +10,6 @@ dependencies:
     - node
     - social_event
     - user
-_core:
-  default_config_hash: S62CjB3X7jHYzK5Hx-bQdr9jh6lwjPe-w4sSSsUpmbE
 id: events
 label: 'Events Profile'
 module: views
@@ -540,6 +538,7 @@ display:
         groups:
           1: AND
       title: 'Upcoming events'
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
@@ -666,7 +665,7 @@ display:
           group_type: group
           admin_label: ''
           operator: in
-          value: {  }
+          value: null
           group: 1
           exposed: true
           expose:
@@ -707,7 +706,7 @@ display:
               3:
                 title: ''
                 operator: in
-                value: {  }
+                value: null
           plugin_id: social_event_date_filter
         event_enrolled_or_created_filter:
           id: event_enrolled_or_created_filter
@@ -808,6 +807,7 @@ display:
             label: ''
           granularity: minute
           plugin_id: social_event_date_sort
+      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:

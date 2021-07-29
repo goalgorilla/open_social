@@ -67,6 +67,7 @@ function _social_gdpr_get_permissions($role) {
     'overview inform and consent settings',
     'administer inform and consent settings',
     'change inform and consent setting status',
+    'translate data_policy',
   ]);
 
   if (isset($permissions[$role])) {
@@ -81,4 +82,11 @@ function _social_gdpr_get_permissions($role) {
  */
 function social_gdpr_update_8901() {
   user_role_grant_permissions('sitemanager', ['administer data policy entities']);
+}
+
+/**
+ * Add permissions for SM to add translations for Data Policy.
+ */
+function social_gdpr_update_8902() {
+  user_role_grant_permissions('sitemanager', ['translate data_policy']);
 }

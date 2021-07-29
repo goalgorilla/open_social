@@ -5,8 +5,9 @@ namespace Drupal\social_comment\Plugin\GraphQL\QueryHelper;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\node\NodeInterface;
-use Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface;
+use Drupal\social_graphql\GraphQL\ConnectionQueryHelperBase;
 use Drupal\social_graphql\Wrappers\Cursor;
 use Drupal\social_graphql\Wrappers\Edge;
 use GraphQL\Deferred;
@@ -15,7 +16,7 @@ use GraphQL\Executor\Promise\Adapter\SyncPromise;
 /**
  * Loads comments.
  */
-class CommentQueryHelper implements ConnectionQueryHelperInterface {
+class CommentQueryHelper extends ConnectionQueryHelperBase {
 
   /**
    * The node for which comments are being fetched.
@@ -25,33 +26,30 @@ class CommentQueryHelper implements ConnectionQueryHelperInterface {
   protected ?NodeInterface $parent;
 
   /**
-   * The Drupal entity type manager.
+   * The comment bundle.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var string|null
    */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
-   * The key that is used for sorting.
-   *
-   * @var string
-   */
-  protected string $sortKey;
+  protected ?string $bundle;
 
   /**
    * CommentQueryHelper constructor.
    *
-   * @param \Drupal\node\NodeInterface|null $parent
-   *   The node for which comments are being fetched.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The Drupal entity type manager.
    * @param string $sort_key
    *   The key that is used for sorting.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The Drupal entity type manager.
+   * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $graphql_entity_buffer
+   *   The GraphQL entity buffer.
+   * @param \Drupal\node\NodeInterface|null $parent
+   *   The node for which comments are being fetched.
+   * @param string|null $bundle
+   *   The comment bundle.
    */
-  public function __construct(?NodeInterface $parent, EntityTypeManagerInterface $entity_type_manager, string $sort_key) {
+  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, ?NodeInterface $parent, ?string $bundle) {
+    parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
     $this->parent = $parent;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->sortKey = $sort_key;
+    $this->bundle = $bundle;
   }
 
   /**
@@ -65,6 +63,10 @@ class CommentQueryHelper implements ConnectionQueryHelperInterface {
 
     if ($this->parent instanceof NodeInterface) {
       $query->condition('entity_id', $this->parent->id());
+    }
+
+    if ($this->bundle) {
+      $query->condition('comment_type', $this->bundle);
     }
 
     return $query;
@@ -99,13 +101,6 @@ class CommentQueryHelper implements ConnectionQueryHelperInterface {
       default:
         throw new \InvalidArgumentException("Unsupported sortKey for sorting '{$this->sortKey}'");
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAggregateSortFunction() : ?string {
-    return NULL;
   }
 
   /**

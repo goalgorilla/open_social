@@ -24,3 +24,9 @@ services:
     arguments: ['@current_user', '@current_route_match']
     tags:
       - { name: event_subscriber }
+
+  social_group_flexible_group.translation_defaults:
+    class: Drupal\social_group_flexible_group\ContentTranslationDefaultsConfigOverride
+    tags:
+      - { name: config.factory.override, priority: 5 }
+      - { name: social_language_defaults }

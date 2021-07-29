@@ -23,6 +23,10 @@ use Drupal\social_comment\Plugin\GraphQL\QueryHelper\CommentQueryHelper;
  *       label = @Translation("Parent"),
  *       required = FALSE
  *     ),
+ *     "bundle" = @ContextDefinition("string",
+ *       label = @Translation("Comment bundle"),
+ *       required = FALSE
+ *     ),
  *     "first" = @ContextDefinition("integer",
  *       label = @Translation("First"),
  *       required = FALSE
@@ -59,6 +63,8 @@ class QueryComments extends EntityDataProducerPluginBase {
    *
    * @param \Drupal\node\NodeInterface|null $parent
    *   The comment parent entity or ID.
+   * @param string|null $bundle
+   *   The comment bundle.
    * @param int|null $first
    *   Fetch the first X results.
    * @param string|null $after
@@ -77,13 +83,13 @@ class QueryComments extends EntityDataProducerPluginBase {
    * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(?NodeInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    if (is_string($parent)) {
-      $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent]);
+  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+    if ($parent) {
+      $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent->uuid()]);
       $parent = reset($nodes);
     }
 
-    $query_helper = new CommentQueryHelper($parent, $this->entityTypeManager, $sortKey);
+    $query_helper = new CommentQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $parent, $bundle);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);

@@ -227,3 +227,17 @@ function social_search_update_10002() {
     \Drupal::logger('social_search')->info($e->getMessage());
   }
 }
+
+/**
+ * Add translation support for search views.
+ */
+function social_search_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

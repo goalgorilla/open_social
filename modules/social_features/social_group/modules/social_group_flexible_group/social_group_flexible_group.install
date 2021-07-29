@@ -57,7 +57,9 @@ function _social_group_flexible_group_get_permissions($role) {
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'translate flexible_group group',
+  ]);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
@@ -382,4 +384,27 @@ function social_group_flexible_group_update_8911() {
   }
 
   $config->save(TRUE);
+}
+
+/**
+ * Make group creators as a group managers by default.
+ */
+function social_group_flexible_group_update_8912() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8912');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Allow CM+ translate "Flexible Group" group type.
+ */
+function social_group_flexible_update_10301() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate flexible_group group']);
+  }
 }
