@@ -68,7 +68,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
-    // Not group canonical or home, then we leave.
+    // Not group canonical, then we leave.
     if ($routeMatch !== 'entity.group.canonical') {
       return;
     }
