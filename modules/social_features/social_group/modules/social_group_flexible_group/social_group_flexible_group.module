@@ -718,7 +718,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
       $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
     }
 
-    $query->addWhere($new_where, 'id', $ids, 'NOT IN');
+    $query->addWhere($new_where, 'groups_field_data.id', $ids, 'NOT IN');
   }
 
   // Make sure this block gets refreshed for a user if the group membership
