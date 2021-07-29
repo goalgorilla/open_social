@@ -15,9 +15,9 @@ class SocialUserHelper implements SocialUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function isVerifiedUser(AccountInterface $account): bool {
+  public static function isVerifiedUser(AccountInterface $account): bool {
     // Verified user roles.
-    $roles = $this->verifiedUserRoles();
+    $roles = SocialUserHelper::verifiedUserRoles();
 
     // Get user roles.
     $user_roles = $account->getRoles();
@@ -29,7 +29,7 @@ class SocialUserHelper implements SocialUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function verifiedUserRoles(): array {
+  public static function verifiedUserRoles(): array {
     // Get all exist roles except 'anonymous'.
     $roles = array_map(function (RoleInterface $role) {
       return $role->id();

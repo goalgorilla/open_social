@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_user\Service\SocialUserHelper;
 use Drupal\social_user\Service\SocialUserHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -94,7 +95,7 @@ class EventManagersController extends ControllerBase {
 
     // If we minimize the amount of tabs we can allow Verified that can see this
     // event to see the tab as well.
-    if ($node->access('view', $account) && !$account->isAnonymous() && $this->socialUserHelper->isVerifiedUser($account)) {
+    if ($node->access('view', $account) && !$account->isAnonymous() && SocialUserHelper::isVerifiedUser($account)) {
       return AccessResult::allowed();
     }
 

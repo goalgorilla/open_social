@@ -20,7 +20,7 @@ interface SocialUserHelperInterface {
    * @return bool
    *   TRUE if the user is verified, FALSE otherwise.
    */
-  public function isVerifiedUser(AccountInterface $account): bool;
+  public static function isVerifiedUser(AccountInterface $account): bool;
 
   /**
    * Verified user roles.
@@ -28,6 +28,6 @@ interface SocialUserHelperInterface {
    * @return string[]
    *   List of verified user roles.
    */
-  public function verifiedUserRoles(): array;
+  public static function verifiedUserRoles(): array;
 
 }

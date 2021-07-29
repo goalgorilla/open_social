@@ -5,6 +5,7 @@ namespace Drupal\social_search\Plugin\search_api\processor;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_user\Service\SocialUserHelper;
 use Drupal\social_user\Service\SocialUserHelperInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -78,12 +79,12 @@ class VerifiedUsers extends ProcessorPluginBase {
       $object = $item->getOriginalObject()->getValue();
       if ($object instanceof ProfileInterface) {
         // Profile owner ID is the user ID.
-        if (!$this->socialUserHelper->isVerifiedUser($object->getOwner())) {
+        if (!SocialUserHelper::isVerifiedUser($object->getOwner())) {
           unset($items[$item_id]);
         }
       }
       elseif ($object instanceof UserInterface) {
-        if (!$this->socialUserHelper->isVerifiedUser($object)) {
+        if (!SocialUserHelper::isVerifiedUser($object)) {
           unset($items[$item_id]);
         }
       }
