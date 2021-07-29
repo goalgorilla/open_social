@@ -6,9 +6,7 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Service\SocialUserHelper;
-use Drupal\social_user\Service\SocialUserHelperInterface;
 use Drupal\user\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Ignores not Verified users in index.
@@ -25,38 +23,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class VerifiedUsers extends ProcessorPluginBase {
-
-  /**
-   * The social user helper.
-   *
-   * @var \Drupal\social_user\Service\SocialUserHelperInterface
-   */
-  protected $socialUserHelper;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    /** @var static $processor */
-    $processor = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-
-    $processor->setSocialUserHelper($container->get('social_user.helper'));
-
-    return $processor;
-  }
-
-  /**
-   * Sets the social user helper.
-   *
-   * @param \Drupal\social_user\Service\SocialUserHelperInterface $social_user_helper
-   *   The social user helper.
-   *
-   * @return $this
-   */
-  public function setSocialUserHelper(SocialUserHelperInterface $social_user_helper) {
-    $this->socialUserHelper = $social_user_helper;
-    return $this;
-  }
 
   /**
    * {@inheritdoc}

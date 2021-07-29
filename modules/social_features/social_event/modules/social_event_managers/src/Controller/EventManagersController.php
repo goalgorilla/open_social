@@ -9,7 +9,6 @@ use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_user\Service\SocialUserHelper;
-use Drupal\social_user\Service\SocialUserHelperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,23 +26,13 @@ class EventManagersController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
-   * The social user helper.
-   *
-   * @var \Drupal\social_user\Service\SocialUserHelperInterface
-   */
-  protected $socialUserHelper;
-
-  /**
    * SocialTopicController constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\social_user\Service\SocialUserHelperInterface $socialUserHelper
-   *   The social user helper.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, SocialUserHelperInterface $socialUserHelper) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
-    $this->socialUserHelper = $socialUserHelper;
   }
 
   /**
@@ -51,8 +40,7 @@ class EventManagersController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager'),
-      $container->get('social_user.helper')
+      $container->get('entity_type.manager')
     );
   }
 
