@@ -1,47 +1,54 @@
-{{ attach_library('social_sharing_post/sharing-post')}}
+{{ attach_library('social_sharing_post/sharing-post') }}
 
-<div class="share-wrapper">
-  {% if url %}
-    <button id="share-button" class="btn btn-link btn-flat--gray">{{ 'Share'|t }}</button>
+{% if url %}
 
-    <div class="modal" id="share-modal">
-      <div class="modal-content">
+  {% set facebook_url = 'https://www.facebook.com/share.php?u=' %}
+  {% set twitter_url = 'https://twitter.com/intent/tweet?text=' %}
+  {% set linkedin_url = 'https://www.linkedin.com/sharing/share-offsite/?url=' %}
 
-        <div class="modal-header">
-          <span class="close">&times;</span>
-          <div><strong>{{ 'Share a link to this post'|t }}</strong></div>
-        </div>
+  <div class="share-wrapper">
+    <button class="share-button btn btn-link btn-flat--gray">{{ 'Share'|t }}</button>
 
-        <div class="modal-body">
-          <input type="text" value="{{ url }}" id="input-url" readonly>
-        </div>
+    <div class="modal-share">
+      <div class="modal-content-wrapper">
+        <div class="modal-content-share">
 
-        <div class="modal-footer">
-          <div class="actions">
-            <div id="snackbar">{{ 'Link copied to clipboard.'|t }}</div>
-            <button class="btn-link" id="copy-link-clipboard">{{ 'Copy link'|t }}</button>
+          <div class="modal-header">
+            <span class="close">&times;</span>
+            <div><strong>{{ 'Share a link to this post'|t }}</strong></div>
           </div>
 
-          <ul class="media">
-            <li class="facebook">
-              <a href="https://www.facebook.com/share.php?u={{ url }}" target="_blank">
-                <span class="fa-facebook-f fab"></span>
-              </a>
-            </li>
-            <li class="twitter">
-              <a class="twitter-share-button" target="_blank" href="https://twitter.com/intent/tweet?text={{ post ~ url }}">
-                <span class="fa-twitter fab fa-twitter"></span>
-              </a>
-            </li>
-            <li class="linkedin">
-              <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url }}" target="_blank">
-                <span class="fa-linkedin fab fa-linkedin-in"></span>
-              </a>
-            </li>
-          </ul>
+          <div class="modal-body">
+            <input type="text" value="{{ url }}" class="input-url" readonly>
+          </div>
+
+          <div class="modal-footer">
+            <div class="actions">
+              <button class="btn-link copy-link-clipboard">{{ 'Copy link'|t }}</button>
+            </div>
+
+            <ul class="media">
+              <li class="facebook">
+                <a href="{{ facebook_url ~ url }}" target="_blank">
+                  <span class="fa-facebook-f fab"></span>
+                </a>
+              </li>
+              <li class="twitter">
+                <a class="twitter-share-button" target="_blank"
+                   href="{{ twitter_url ~ url }}">
+                  <span class="fa-twitter fab fa-twitter"></span>
+                </a>
+              </li>
+              <li class="linkedin">
+                <a href="{{ linkedin_url ~ url }}" target="_blank">
+                  <span class="fa-linkedin fab fa-linkedin-in"></span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  {% endif %}
-</div>
 
+    </div>
+  </div>
+{% endif %}

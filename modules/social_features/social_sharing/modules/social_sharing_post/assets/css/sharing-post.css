@@ -1,36 +1,93 @@
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 100; /* Sit on top */
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+/*** The Modal ***/
+
+.modal-content-wrapper::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 30px;
+  width: 15px;
+  height: 15px;
+  transform: rotate(45deg) translateY(-50%);
+  background-color: #fff;
+  box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+  border: 1px solid #888;
 }
 
-/* Modal Content/Box */
-.modal-content {
+.modal-content-wrapper {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
+  margin: 0;
   border: 1px solid #888;
   min-width: 400px;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+  overflow: hidden;
+  border-radius: 10px;
+  position: static;
 }
 
-@media all and (max-width: 640px) {
-  .modal .modal-content {
+.modal-share {
+  right: 0;
+  display: none;
+}
+
+.share-wrapper {
+  position: relative;
+}
+
+.share-wrapper .modal-share {
+  overflow: visible;
+  position: absolute; /* Stay in place */
+  z-index: 100; /* Sit on top */
+}
+
+
+/*** Modal Content/Box ***/
+
+.modal-content-share {
+  position: relative;
+  padding: 20px;
+  background-color: #fff;
+}
+
+@media all and (max-width: 599px) {
+  .share-wrapper .modal-content-share {
+    padding: 10px;
+  }
+  .share-wrapper .modal-share .media {
+    justify-content: left;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .share-wrapper .modal-content-wrapper::before {
+    right: 12px;
+  }
+
+  .share-wrapper .share-button {
+    padding-right: 0;
+  }
+
+  .share-wrapper .modal-content-wrapper .modal-header {
+    text-align: left;
+  }
+
+  .share-wrapper .modal-content-wrapper {
     min-width: auto;
-    width: 310px;
-    margin: 50% auto;
+  }
+
+  .share-wrapper .modal-share {
+    margin-top: 5px;
+  }
+
+  div.share-wrapper {
+    width: 100%;
+    text-align: right;
   }
 }
 
-/* The Close Button */
+/*** The Close Button ***/
+
 .close {
   color: #aaa;
   float: right;
@@ -47,18 +104,18 @@
 
 /* Modal footer elements */
 
-.share-wrapper .modal .media {
+.share-wrapper .media {
   display: flex;
   flex-wrap: wrap;
   min-width: 150px;
 }
 
-.share-wrapper .modal .actions button {
+.share-wrapper .modal-share .actions button {
   padding-left: 0;
   font-size: 14px;
 }
 
-.share-wrapper .modal input {
+.share-wrapper .modal-share input {
   margin: 10px 0;
   width: 100%;
 }

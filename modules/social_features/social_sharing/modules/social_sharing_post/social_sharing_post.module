@@ -8,7 +8,7 @@
 function social_sharing_post_theme() {
   return [
     'post_sharing' => [
-      'variables' => ['url' => NULL, 'post' => NULL],
+      'variables' => ['url' => NULL],
     ],
   ];
 }
@@ -24,6 +24,15 @@ function social_sharing_post_preprocess_post__activity(&$variables) {
   $variables['share_post'] = [
     '#theme' => 'post_sharing',
     '#url' => $url,
-    '#post' => $entity->field_post->value,
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_sharing_post_preprocess_html(&$variables) {
+  $variables['page']['content_top']['snackbar'] = [
+    '#type' => 'markup',
+    '#markup' => '<div id="snackbar">Link copied to clipboard.</div>',
   ];
 }
