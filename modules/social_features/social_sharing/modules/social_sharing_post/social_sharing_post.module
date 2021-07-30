@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * The Social Sharing Post module.
+ */
+
+function social_sharing_post_theme() {
+  return [
+    'post_sharing' => [
+      'variables' => ['url' => NULL, 'post' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_post__activity().
+ */
+function social_sharing_post_preprocess_post__activity(&$variables) {
+  /** @var \Drupal\social_post\Entity\PostInterface $entity */
+  $entity = $variables['elements']['#post'];
+  $url = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+
+  $variables['share_post'] = [
+    '#theme' => 'post_sharing',
+    '#url' => $url,
+    '#post' => $entity->field_post->value,
+  ];
+}
