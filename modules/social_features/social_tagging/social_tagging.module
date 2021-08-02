@@ -571,6 +571,12 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
     return;
   }
 
+  // Set current language for configs.
+  $language_manager = \Drupal::languageManager();
+  $curr_lang = $language_manager->getCurrentLanguage();
+  $def_lang = $language_manager->getConfigOverrideLanguage();
+  $language_manager->setConfigOverrideLanguage($curr_lang);
+
   $settings = [
     "children" => [],
     "parent_name" => "",
@@ -588,4 +594,5 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
 
   $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
   $form_display->save();
+  $language_manager->setConfigOverrideLanguage($def_lang);
 }

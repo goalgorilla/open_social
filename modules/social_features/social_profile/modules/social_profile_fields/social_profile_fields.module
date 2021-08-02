@@ -56,6 +56,12 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     return;
   }
 
+  // Set current language for configs.
+  $language_manager = \Drupal::languageManager();
+  $curr_lang = $language_manager->getCurrentLanguage();
+  $def_lang = $language_manager->getConfigOverrideLanguage();
+  $language_manager->setConfigOverrideLanguage($curr_lang);
+
   $form_display->setComponent('field_profile_nationality', [
     'weight' => 8,
     'settings' => [
@@ -77,6 +83,7 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
   }
 
   $form_display->save();
+  $language_manager->setConfigOverrideLanguage($def_lang);
 }
 
 /**

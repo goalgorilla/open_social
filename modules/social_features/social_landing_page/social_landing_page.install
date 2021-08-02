@@ -703,3 +703,17 @@ function social_landing_page_update_10301() {
     user_role_grant_permissions($role_id, ['translate landing_page node']);
   }
 }
+
+/**
+ * Update landing page form labels.
+ */
+function social_landing_page_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_10302');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
