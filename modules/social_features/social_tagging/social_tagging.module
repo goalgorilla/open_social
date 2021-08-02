@@ -151,6 +151,7 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
 
       case 'group':
       case 'profile':
+      case 'post':
         $type = $form_entity->getEntityTypeId();
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
         break;
@@ -315,6 +316,7 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
     'node',
     'group',
     'profile',
+    'post',
   ];
 
   // Add a Tagging base field.
@@ -438,6 +440,9 @@ function social_tagging_theme($existing, $type, $theme, $path) {
         'taghierarchy' => NULL,
         'entity_type' => NULL,
       ],
+    ],
+    'field__post__social_tagging' => [
+      'base hook' => 'field',
     ],
   ];
 }
@@ -588,4 +593,26 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
 
   $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
   $form_display->save();
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_tagging_preprocess_field__post__social_tagging(&$variables) {
+  foreach ($variables['element']['#items']->referencedEntities() as $id => $tag) {
+    /** @var \Drupal\taxonomy\Entity\Term $tag */
+    $variables['items'][$id]['follow'] = social_follow_taxonomy_term_followed($tag);
+    $variables['items'][$id]['popup'] = [
+      '#create_placeholder' => TRUE,
+      '#lazy_builder' => [
+        'social_follow_tag.lazy_builder:popupLazyBuild',
+        [
+          '/related-posts?tag=' . $tag->id(),
+          $tag->id(),
+          'social_tagging',
+          $variables['entity_type'],
+        ],
+      ],
+    ];
+  }
 }

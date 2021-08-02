@@ -1,0 +1,120 @@
+{#
+/**
+ * @file
+ * Theme override for a field.
+ *
+ * To override output, copy the "field.html.twig" from the templates directory
+ * to your theme's directory and customize it, just like customizing other
+ * Drupal templates such as page.html.twig or node.html.twig.
+ *
+ * Instead of overriding the theming for all fields, you can also just override
+ * theming for a subset of fields using
+ * @link themeable Theme hook suggestions. @endlink For example,
+ * here are some theme hook suggestions that can be used for a field_foo field
+ * on an article node type:
+ * - field--node--field-foo--article.html.twig
+ * - field--node--field-foo.html.twig
+ * - field--node--article.html.twig
+ * - field--field-foo.html.twig
+ * - field--text-with-summary.html.twig
+ * - field.html.twig
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - label_hidden: Whether to show the field label or not.
+ * - title_attributes: HTML attributes for the title.
+ * - label: The label for the field.
+ * - multiple: TRUE if a field can contain multiple items.
+ * - items: List of all the field items. Each item contains:
+ *   - attributes: List of HTML attributes for each item.
+ *   - content: The field item's content.
+ * - entity_type: The entity type to which the field belongs.
+ * - field_name: The name of the field.
+ * - field_type: The type of the field.
+ * - label_display: The display settings for the label.
+ *
+ *
+ * @see template_preprocess_field()
+ */
+#}
+{# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
+
+{%
+  set title_classes = [
+  'field--label',
+  label_display == 'visually_hidden' ? 'sr-only',
+]
+%}
+
+{#{% if bare %}#}
+{#  {% if not label_hidden %}#}
+{#    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>#}
+{#  {% endif %}#}
+{#  {% for item in items %}#}
+{#    {% if entity_type == "node" and field_name == "body" and part_of_teaser %}#}
+{#      {{ item.content|render|striptags }}#}
+{#    {% else %}#}
+{#      {{ item.content }}#}
+{#    {% endif %}#}
+{#  {% endfor %}#}
+
+{#{% else %}#}
+
+{#  {%#}
+{#    set classes = [#}
+{#    'field',#}
+{#    'field--name-' ~ field_name|clean_class,#}
+{#    'field--type-' ~ field_type|clean_clasds,#}
+{#    'field--label-' ~ label_display,#}
+{#  ]#}
+{#  %}#}
+
+{#  {% if label_hidden %}#}
+{#    {% if multiple %}#}
+{#      <div{{ attributes.addClass(classes, 'field--items') }}>#}
+{#        {% for item in items %}#}
+{#          <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#    {% else %}#}
+{#      {% for item in items %}#}
+{#        <div{{ attributes.addClass(classes, 'field--item') }}>{{ item.content }}</div>#}
+{#      {% endfor %}#}
+{#    {% endif %}#}
+{#  {% else %}#}
+{#    <div{{ attributes.addClass(classes) }}>#}
+{#      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>#}
+{#      {% if multiple %}#}
+{#      <div class="field__items">#}
+{#        {% endif %}#}
+{#        {% for item in items %}#}
+{#          <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>#}
+{#        {% endfor %}#}
+{#        {% if multiple %}#}
+{#      </div>#}
+{#      {% endif %}#}
+{#    </div>#}
+{#  {% endif %}#}
+
+{#{% endif %}#}
+
+<div class="post-tags card__block social_follow_tax" style="padding-left: 0">
+  <div class="group-action-wrapper">
+    {% for item in items %}
+
+      <div class="group-action">
+
+        <a class="badge badge-default badge--large badge--pill btn-action__term{% if(item.follow) %} term-followed{% endif %}" href="#" style="color: #4d4d4d; text-decoration: none;">
+          {{ item.content }}
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11">
+            <path fill="#4d4d4d" d="M6.003 9.078l3.605 2.175-.956-4.1 3.185-2.76-4.194-.356L6.003.17 4.364 4.037.17 4.393l3.185 2.76-.957 4.1z"/>
+          </svg>
+        </a>
+        {{ item.popup }}
+      </div>
+
+    {% endfor %}
+  </div>
+
+</div>
+

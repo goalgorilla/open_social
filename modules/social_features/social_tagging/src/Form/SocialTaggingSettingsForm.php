@@ -156,6 +156,13 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#required' => FALSE,
     ];
 
+    $form['node_type_settings']['tag_type_post'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Post'),
+      '#default_value' => $config->get('tag_type_post'),
+      '#required' => FALSE,
+    ];
+
     foreach ($node_types as $nodetype) {
       $field_name = 'tag_node_type_' . $nodetype->id();
       $value = $config->get($field_name);
@@ -183,6 +190,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
     $config->set('tag_type_group', $form_state->getValue('tag_type_group'))->save();
     $config->set('tag_type_profile', $form_state->getValue('tag_type_profile'))->save();
+    $config->set('tag_type_post', $form_state->getValue('tag_type_post'))->save();
 
     if ($form_state->getValue('allow_category_split')) {
       $config->set('use_category_parent', $form_state->getValue('use_category_parent'))->save();

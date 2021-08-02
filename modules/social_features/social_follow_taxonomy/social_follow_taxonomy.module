@@ -452,9 +452,19 @@ function social_follow_taxonomy_related_entity_count(TermInterface $term, $field
         ->execute();
       break;
 
+    case 'post':
+      $items = \Drupal::entityTypeManager()
+        ->getStorage('post')
+        ->getQuery()
+        ->condition('social_tagging', $term->id())
+        ->execute();
+      break;
+
     default:
       break;
   }
+
+  $items = $items ?? [];
 
   \Drupal::moduleHandler()
     ->alter('social_follow_taxonomy_related_items', $items, $term);
