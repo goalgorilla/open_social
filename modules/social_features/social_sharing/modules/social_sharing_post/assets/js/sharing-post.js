@@ -31,7 +31,7 @@
         });
       });
 
-      window.onclick = function (event) {
+      document.onclick = function (event) {
         if ($(event.target).is('.modal-share') || $(event.target).closest('.modal-share').length || $(event.target).is('.share-button')) {
 
         } else {
