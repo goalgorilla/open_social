@@ -56,12 +56,6 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     return;
   }
 
-  // Set current language for configs.
-  $language_manager = \Drupal::languageManager();
-  $curr_lang = $language_manager->getCurrentLanguage();
-  $def_lang = $language_manager->getConfigOverrideLanguage();
-  $language_manager->setConfigOverrideLanguage($curr_lang);
-
   $form_display->setComponent('field_profile_nationality', [
     'weight' => 8,
     'settings' => [
@@ -74,16 +68,6 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     'type' => 'entity_reference_autocomplete_tags',
     'region' => 'content',
   ]);
-
-  $settings = $form_display->getThirdPartySetting('field_group', 'group_profile_contact_info');
-
-  if (!in_array('field_profile_nationality', $settings['children'])) {
-    $settings['children'][] = 'field_profile_nationality';
-    $form_display->setThirdPartySetting('field_group', 'group_profile_contact_info', $settings);
-  }
-
-  $form_display->save();
-  $language_manager->setConfigOverrideLanguage($def_lang);
 }
 
 /**
@@ -151,6 +135,9 @@ function social_profile_fields_form_profile_profile_edit_form_alter(&$form, Form
   if ($hide_revision_field) {
     $form['revision_log_message']['#access'] = FALSE;
   }
+
+  $form['field_profile_nationality']['#group'] = 'group_profile_contact_info';
+  $form['#group_children']['field_profile_nationality'] = 'group_profile_contact_info';
 }
 
 /**
