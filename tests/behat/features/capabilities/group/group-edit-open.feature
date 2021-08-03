@@ -9,7 +9,6 @@ Feature: Edit my group as a group manager
       | name              | mail             | field_profile_organization | status |
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      |
       | Group Member Two  | gm_2@example.com | Drupal                     | 1      |
-    And I set the configuration item "socialblue.settings" with key "style" to "default"
     And I am logged in as "Group Manager One"
     And I am on "group/add"
     And I press "Continue"
