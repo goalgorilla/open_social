@@ -9,6 +9,7 @@ Feature: Edit my group as a group manager
       | name              | mail             | field_profile_organization | status |
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      |
       | Group Member Two  | gm_2@example.com | Drupal                     | 1      |
+    And I set the configuration item "socialblue.settings" with key "style" to "default"
     And I am logged in as "Group Manager One"
     And I am on "group/add"
     And I press "Continue"
@@ -35,9 +36,15 @@ Feature: Edit my group as a group manager
     And I should see "Test open group" in the "Main content"
     Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
+    And I should see "Stream"
+    And I should see "About"
+    And I should see "Events"
+    And I should see "Topics"
+    And I should see "Manage members"
+    And I should not see "Nodes"
 
   # DS-706 As a Group Manager I want to manage group memberships
-    And I click "Manage members"
+    When I click "Manage members"
     Then I should see "Add members"
     And I should see "Member"
     And I should see "Group Manager One"
