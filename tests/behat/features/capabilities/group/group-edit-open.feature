@@ -39,8 +39,8 @@ Feature: Edit my group as a group manager
     And I should see "About"
     And I should see "Events"
     And I should see "Topics"
-    And I should see "Manage members"
     And I should not see "Nodes"
+    And I should see "Manage members"
 
   # DS-706 As a Group Manager I want to manage group memberships
     When I click "Manage members"
