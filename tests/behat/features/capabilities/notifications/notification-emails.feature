@@ -145,7 +145,7 @@ Feature: Receive email notifications and choose frequency
     And I run cron
     And I check if queue items processed "activity_logger_message"
 
-  @email-spool @sm
+  @email-spool
   Scenario: User should not receive notification as default
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     And users:
@@ -154,6 +154,7 @@ Feature: Receive email notifications and choose frequency
       | user2 | mail_user2@example.com | 1      | Cathy                    | Willis                  |
     And I am logged in as an "sitemanager"
     And I go to "/admin/config/opensocial/swiftmail"
+    And I press "Default email notification settings"
     And I click radio button "Never" with the id "edit-create-mention-post-none"
     And I press "Save configuration"
 
