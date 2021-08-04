@@ -160,23 +160,6 @@ function social_user_update_8008() {
 }
 
 /**
- * Function to set permissions.
- */
-function _social_user_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_user_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
  * Return the permissions per role.
  *
  * @param string $role
