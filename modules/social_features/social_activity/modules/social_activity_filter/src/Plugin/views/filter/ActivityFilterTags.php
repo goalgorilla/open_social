@@ -2,7 +2,6 @@
 
 namespace Drupal\social_activity_filter\Plugin\views\filter;
 
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
@@ -25,18 +24,21 @@ class ActivityFilterTags extends FilterPluginBase {
   protected $database;
 
   /**
-   * {@inheritdoc}
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->database = $database;
-  }
+  protected $request;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('database'));
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->database = $container->get('database');
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+
+    return $instance;
   }
 
   /**
@@ -50,14 +52,25 @@ class ActivityFilterTags extends FilterPluginBase {
    * Filters out activity items by the taxonomy tags.
    */
   public function query() {
-    $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
-    $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
+    if (isset($this->view->filter_use_contextual_tags) && $this->view->filter_use_contextual_tags === TRUE) {
+      $tags = [$this->request->query->get('tag') ?? ''];
+    }
+    else {
+      $tags = $this->view->filter_tags ?? '';
+    }
+
+    $taxonomy_field = $this->view->filter_vocabulary ?? '';
 
     $or = new Condition('OR');
     $and_wrapper = new Condition('AND');
 
     $taxonomy_node_table = "node__{$taxonomy_field}";
     $taxonomy_post_table = "post__field_{$taxonomy_field}";
+
+    if ($taxonomy_field === 'social_tagging') {
+      $taxonomy_post_table = "post__{$taxonomy_field}";
+    }
+
     $activity_entity_table = 'activity__field_activity_entity';
 
     // Filter Nodes by selected tags.
@@ -78,8 +91,7 @@ class ActivityFilterTags extends FilterPluginBase {
           ],
         ],
       ];
-      $join = Views::pluginManager('join')
-        ->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('filtered_nodes', $join, $taxonomy_node_table);
 
       $and_node_wrapper = new Condition('AND');
@@ -104,8 +116,7 @@ class ActivityFilterTags extends FilterPluginBase {
           ],
         ],
       ];
-      $join = Views::pluginManager('join')
-        ->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship($comment_table, $join, $comment_table);
 
       $and_comment_wrapper = new Condition('AND');
@@ -120,8 +131,7 @@ class ActivityFilterTags extends FilterPluginBase {
       ];
 
       // Apply filter by tags to commented entity activity.
-      $join = Views::pluginManager('join')
-        ->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('commented_nodes', $join, $comment_table);
       $and_comment_wrapper->condition("commented_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
 
@@ -143,12 +153,11 @@ class ActivityFilterTags extends FilterPluginBase {
           ],
         ],
       ];
-      $join = Views::pluginManager('join')
-        ->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('filtered_posts', $join, $taxonomy_post_table);
 
       $and_post_wrapper = new Condition('AND');
-      $and_post_wrapper->condition("filtered_posts.field_{$taxonomy_field}_target_id", $tags, 'IN');
+      $and_post_wrapper->condition("filtered_posts.{$taxonomy_field}_target_id", $tags, 'IN');
       $or->condition($and_post_wrapper);
     }
 
@@ -166,6 +175,7 @@ class ActivityFilterTags extends FilterPluginBase {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user';
+    $contexts[] = 'url.query_args:tag';
 
     return $contexts;
   }

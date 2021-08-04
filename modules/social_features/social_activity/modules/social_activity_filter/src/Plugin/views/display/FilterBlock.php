@@ -6,8 +6,8 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Plugin\Block\ViewsBlock;
 use Drupal\social_activity\Plugin\views\display\ModeBlock;
+use Drupal\views\Plugin\Block\ViewsBlock;
 
 /**
  * The plugin that handles a block.
@@ -40,6 +40,7 @@ class FilterBlock extends ModeBlock {
       'contains' => [
         'vocabulary' => ['default' => 'vocabulary'],
         'tags' => ['default' => 'tags'],
+        'use_contextual_tags' => ['default' => 'use_contextual_tags'],
       ],
     ];
 
@@ -54,6 +55,7 @@ class FilterBlock extends ModeBlock {
 
     $settings['vocabulary'] = 'none';
     $settings['tags'] = 'none';
+    $settings['use_contextual_tags'] = FALSE;
 
     return $settings;
   }
@@ -135,14 +137,33 @@ class FilterBlock extends ModeBlock {
         continue;
       }
       switch ($type) {
+        case 'use_contextual_tags':
+          $form['override']['use_contextual_tags'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Get tags from context'),
+            '#weight' => 1,
+            '#description' => $this->t('When this box will be checked, then tags from list above will be ignored and tag will come from URL.'),
+            '#default_value' => $block_configuration['use_contextual_tags'],
+            '#attributes' => [
+              'id' => 'use-contextual-tags',
+            ],
+          ];
+          break;
+
         case 'vocabulary':
           $form['override']['vocabulary'] = [
             '#type' => 'select',
             '#title' => $this->t('Vocabulary'),
+            '#weight' => 2,
             '#options' => $this->getVocabularyOptionsList(),
             '#default_value' => $block_configuration['vocabulary'],
             '#empty_option' => $this->t('None'),
             '#empty_value' => '_none',
+            '#states' => [
+              'invisible' => [
+                ':input[id="use-contextual-tags"]' => ['checked' => TRUE],
+              ],
+            ],
             '#ajax' => [
               'callback' => [static::class, 'updateTagsOptions'],
               'wrapper' => 'edit-block-term-wrapper-' . $delta,
@@ -162,6 +183,7 @@ class FilterBlock extends ModeBlock {
           $form['override']['tags'] = [
             '#type' => 'select',
             '#title' => $this->t('Tags'),
+            '#weight' => 3,
             '#description' => $this->t('Select the tags to filter items in the stream.'),
             '#default_value' => $block_configuration['tags'],
             '#options' => $opt,
@@ -169,6 +191,11 @@ class FilterBlock extends ModeBlock {
             '#required' => !empty($opt) ? TRUE : FALSE,
             '#prefix' => '<div id="edit-block-term-wrapper-' . $delta . '" class="' . $hidden . '">',
             '#suffix' => '</div>',
+            '#states' => [
+              'invisible' => [
+                ':input[id="use-contextual-tags"]' => ['checked' => TRUE],
+              ],
+            ],
           ];
           break;
 
@@ -252,6 +279,9 @@ class FilterBlock extends ModeBlock {
     }
     $form_state->unsetValue(['override', 'vocabulary']);
 
+    $block->setConfigurationValue('use_contextual_tags', (bool) $form_state->getValue(['override', 'use_contextual_tags']));
+    $form_state->unsetValue(['override', 'use_contextual_tags']);
+
     // Always save delta of element.
     $delta = $form_state->getValue(['override', 'delta']);
     $block->setConfigurationValue('delta', $delta);
@@ -267,6 +297,10 @@ class FilterBlock extends ModeBlock {
 
     // Prepare values to use it in the views filter.
     $block_configuration = $block->getConfiguration();
+
+    if (isset($block_configuration['use_contextual_tags'])) {
+      $this->view->filter_use_contextual_tags = (bool) $block_configuration['use_contextual_tags'];
+    }
 
     if (isset($block_configuration['tags'])) {
       $this->view->filter_tags = $block_configuration['tags'];

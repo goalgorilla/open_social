@@ -297,6 +297,13 @@ function social_activity_preprocess_block(&$variables) {
         );
       }
 
+      if (isset($view->filter_use_contextual_tags) && $view->filter_use_contextual_tags) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          [$view->filter_use_contextual_tags]
+        );
+      }
+
       // Set taxonomy IDs from views filter.
       if (isset($view->filter_tags) && is_array($view->filter_tags)) {
         $variables['content']['#lazy_builder'][1] = array_merge(

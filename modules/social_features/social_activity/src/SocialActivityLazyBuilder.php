@@ -66,7 +66,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags) {
+  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, $use_contextual_tags = FALSE, ...$tags) {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
@@ -78,6 +78,8 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
       $view->filter_tags = $tags;
       $view->filter_vocabulary = $vocabulary;
     }
+
+    $view->filter_use_contextual_tags = $use_contextual_tags;
 
     $view->preExecute();
     $view->execute($display_id);
