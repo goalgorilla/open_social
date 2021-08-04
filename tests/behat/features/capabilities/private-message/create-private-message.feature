@@ -37,7 +37,7 @@
     Then I should see the link "Private message"
     And I click "Private message"
     Then I should see "PM User Two"
-    And I should see "You"
+    And I should see "You:"
     When I fill in "Message" with "Hi PM User Two, are we going to eat some pizza tomorrow?"
     And I press "Send"
     Then I should see the following success messages:
