@@ -137,12 +137,16 @@ class FilterBlock extends ModeBlock {
         continue;
       }
       switch ($type) {
+        // @todo: Ideally after checking the use_contextual_tags box,
+        //   "vocabulary" should be required, and "tags" should be hidden and
+        //   not required, but it's a bit complicated and requires more time
+        //   that we have at the moment.
         case 'use_contextual_tags':
           $form['override']['use_contextual_tags'] = [
             '#type' => 'checkbox',
-            '#title' => $this->t('Get tags from context'),
+            '#title' => $this->t('Get tags from URL context'),
             '#weight' => 1,
-            '#description' => $this->t('When this box will be checked, then tags from list above will be ignored and tag will come from URL.'),
+            '#description' => $this->t('When this box will be checked, then tags from the list below will be ignored and tags will come from the URL. Also, you must select vocabulary, since, after taking the tag from the URL we also should know vocabulary for this term.'),
             '#default_value' => $block_configuration['use_contextual_tags'],
             '#attributes' => [
               'id' => 'use-contextual-tags',
@@ -159,11 +163,6 @@ class FilterBlock extends ModeBlock {
             '#default_value' => $block_configuration['vocabulary'],
             '#empty_option' => $this->t('None'),
             '#empty_value' => '_none',
-            '#states' => [
-              'invisible' => [
-                ':input[id="use-contextual-tags"]' => ['checked' => TRUE],
-              ],
-            ],
             '#ajax' => [
               'callback' => [static::class, 'updateTagsOptions'],
               'wrapper' => 'edit-block-term-wrapper-' . $delta,
@@ -188,14 +187,9 @@ class FilterBlock extends ModeBlock {
             '#default_value' => $block_configuration['tags'],
             '#options' => $opt,
             '#multiple' => TRUE,
-            '#required' => !empty($opt) ? TRUE : FALSE,
+            '#required' => !empty($opt),
             '#prefix' => '<div id="edit-block-term-wrapper-' . $delta . '" class="' . $hidden . '">',
             '#suffix' => '</div>',
-            '#states' => [
-              'invisible' => [
-                ':input[id="use-contextual-tags"]' => ['checked' => TRUE],
-              ],
-            ],
           ];
           break;
 

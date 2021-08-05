@@ -35,8 +35,10 @@ function social_follow_tag_theme() {
         'related_entity_count' => NULL,
       ],
     ],
+    'field__post__social_tagging' => [
+      'base hook' => 'field',
+    ],
   ];
-
 }
 
 /**
@@ -231,5 +233,27 @@ function social_follow_tag_entity_update(EntityInterface $entity) {
         ->createInstance('update_entity_action')
         ->create($entity);
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_follow_tag_preprocess_field__post__social_tagging(&$variables) {
+  foreach ($variables['element']['#items']->referencedEntities() as $id => $tag) {
+    /** @var \Drupal\taxonomy\Entity\Term $tag */
+    $variables['items'][$id]['follow'] = social_follow_taxonomy_term_followed($tag);
+    $variables['items'][$id]['popup'] = [
+      '#create_placeholder' => TRUE,
+      '#lazy_builder' => [
+        'social_follow_tag.lazy_builder:popupLazyBuild',
+        [
+          '/related-posts?tag=' . $tag->id(),
+          $tag->id(),
+          'social_tagging',
+          $variables['entity_type'],
+        ],
+      ],
+    ];
   }
 }

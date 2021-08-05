@@ -52,14 +52,30 @@ class ActivityFilterTags extends FilterPluginBase {
    * Filters out activity items by the taxonomy tags.
    */
   public function query() {
+    $taxonomy_field = $this->view->filter_vocabulary ?? '';
+
+    // If it is allowed to receive tags from the context in the block settings,
+    // then we take the tags from the context and not from the tags field, and
+    // if it is allowed in the block settings, but this parameter is not in the
+    // request, then we leave an empty string.
     if (isset($this->view->filter_use_contextual_tags) && $this->view->filter_use_contextual_tags === TRUE) {
-      $tags = [$this->request->query->get('tag') ?? ''];
+      $tags = $this->request->query->has('tag') ? [$this->request->query->get('tag')] : '';
     }
     else {
       $tags = $this->view->filter_tags ?? '';
     }
 
-    $taxonomy_field = $this->view->filter_vocabulary ?? '';
+    // Before it was not needed, because after selecting vocabulary tags lists
+    // is required, and there could be only 2 cases, or both fields are empty,
+    // or both are filled, but now, after adding the ability to get tags from
+    // the context, we still need a vocabulary field, but now the tags field
+    // may not be filled, respectively, the previous logic is violated, and if
+    // tags are not selected in the field and tags are absent in the context,
+    // then, in this case, the vocabulary field must be empty, and this cannot
+    // be validated in the block itself.
+    if ($tags === '') {
+      $taxonomy_field = '';
+    }
 
     $or = new Condition('OR');
     $and_wrapper = new Condition('AND');
@@ -67,6 +83,9 @@ class ActivityFilterTags extends FilterPluginBase {
     $taxonomy_node_table = "node__{$taxonomy_field}";
     $taxonomy_post_table = "post__field_{$taxonomy_field}";
 
+    // The social tagging table has a different name since was created via
+    // BaseFieldDefinition so if we use social_tagging vocabulary, then the
+    // table name will be different from usual.
     if ($taxonomy_field === 'social_tagging') {
       $taxonomy_post_table = "post__{$taxonomy_field}";
     }

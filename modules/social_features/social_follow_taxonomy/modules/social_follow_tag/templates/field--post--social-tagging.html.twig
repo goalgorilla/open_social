@@ -46,58 +46,6 @@
 ]
 %}
 
-{#{% if bare %}#}
-{#  {% if not label_hidden %}#}
-{#    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>#}
-{#  {% endif %}#}
-{#  {% for item in items %}#}
-{#    {% if entity_type == "node" and field_name == "body" and part_of_teaser %}#}
-{#      {{ item.content|render|striptags }}#}
-{#    {% else %}#}
-{#      {{ item.content }}#}
-{#    {% endif %}#}
-{#  {% endfor %}#}
-
-{#{% else %}#}
-
-{#  {%#}
-{#    set classes = [#}
-{#    'field',#}
-{#    'field--name-' ~ field_name|clean_class,#}
-{#    'field--type-' ~ field_type|clean_clasds,#}
-{#    'field--label-' ~ label_display,#}
-{#  ]#}
-{#  %}#}
-
-{#  {% if label_hidden %}#}
-{#    {% if multiple %}#}
-{#      <div{{ attributes.addClass(classes, 'field--items') }}>#}
-{#        {% for item in items %}#}
-{#          <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>#}
-{#        {% endfor %}#}
-{#      </div>#}
-{#    {% else %}#}
-{#      {% for item in items %}#}
-{#        <div{{ attributes.addClass(classes, 'field--item') }}>{{ item.content }}</div>#}
-{#      {% endfor %}#}
-{#    {% endif %}#}
-{#  {% else %}#}
-{#    <div{{ attributes.addClass(classes) }}>#}
-{#      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>#}
-{#      {% if multiple %}#}
-{#      <div class="field__items">#}
-{#        {% endif %}#}
-{#        {% for item in items %}#}
-{#          <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>#}
-{#        {% endfor %}#}
-{#        {% if multiple %}#}
-{#      </div>#}
-{#      {% endif %}#}
-{#    </div>#}
-{#  {% endif %}#}
-
-{#{% endif %}#}
-
 <div class="post-tags card__block social_follow_tax" style="padding-left: 0">
   <div class="group-action-wrapper">
     {% for item in items %}

@@ -60,6 +60,8 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    *   Items to display.
    * @param string|null $vocabulary
    *   Vocabulary ID.
+   * @param bool $use_contextual_tags
+   *   Take tags from the URL if TRUE.
    * @param mixed $tags
    *   List of tags IDs.
    *
