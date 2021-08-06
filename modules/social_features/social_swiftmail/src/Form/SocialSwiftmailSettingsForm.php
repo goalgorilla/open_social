@@ -122,9 +122,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $notification_options = [];
     // Place the sorted data in an actual form option.
     foreach ($email_frequencies as $option) {
-      if ($option['id'] !== 'none') {
-        $notification_options[$option['id']] = $option['name'];
-      }
+      $notification_options[$option['id']] = $option['name'];
     }
 
     $template_frequencies = $config->get('template_frequencies') ?: [];

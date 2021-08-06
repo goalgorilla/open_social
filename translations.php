@@ -102,6 +102,12 @@ new TranslatableMarkup("Manage Enrollments");
 new TranslatableMarkup("Collaboration Settings");
 new TranslatableMarkup("Reply-to");
 new TranslatableMarkup("Selected @count entities:");
+new TranslatableMarkup("Group visibility");
+new TranslatableMarkup("Who can see the group.");
+new TranslatableMarkup("Group content visibility options");
+new TranslatableMarkup("Choose the visibility options allowed for the group content.");
+new TranslatableMarkup("Join methods");
+new TranslatableMarkup("How can people join this group. Group managers can always add members directly, regardless of the chosen join method.");
 // Following plural strings are not translatable due to the @todo in
 // _social_event_managers_action_batch_finish().
 new PluralTranslatableMarkup(0, '1 selected enrollee has been exported successfully', '@count selected enrollees have been exported successfully');
@@ -136,3 +142,7 @@ new TranslatableMarkup('Changing the group may have impact on the <strong>visibi
 
 // String added because it was removed from the Group Join Confirmation Page.
 new TranslatableMarkup('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');
+
+// String added because activity view modes will display attachment count
+// instead of links.
+new PluralTranslatableMarkup(0, '1 attachment.', '@count attachments.');

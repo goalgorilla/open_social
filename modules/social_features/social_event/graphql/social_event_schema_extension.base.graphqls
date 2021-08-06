@@ -1,0 +1,114 @@
+"""
+A type of content on Open Social which allows users to organize, discuss topics, and join activities.
+"""
+type Event implements Node & Commentable {
+  """
+  The unique identifier for the event.
+  """
+  id: ID!
+  """
+  The display title of the event.
+  """
+  title: String!
+  """
+  The author of the event.
+  """
+  author: Actor
+  """
+  A hero image for the event.
+  """
+  heroImage: Image
+  """
+  The message of the event as rendered HTML.
+  """
+  bodyHtml: Html!
+  """
+  The formatted start date of the event.
+  """
+  startDate: DateTime!
+  """
+  The formatted end date of the event.
+
+  When a event is not limited to a specific time period the end date may be NULL.
+  """
+  endDate: DateTime
+  """
+  The location of the event as plain text.
+  """
+  location: String
+  """
+  List of event managers.
+
+  Managers are people who have the rights to edit the event itself.
+  """
+  managers(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+  ): EventManagerConnection!
+  """
+  List of event comments.
+  """
+  comments(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: CommentSortKeys = CREATED_AT
+  ): CommentConnection!
+  """
+  The url to the event.
+  """
+  url: Url!
+  """
+  When the event was created.
+  """
+  created: DateTime!
+}
+
+type EventEdge implements Edge {
+  cursor: Cursor!
+  node: Event!
+}
+
+type EventConnection implements Connection {
+  edges: [EventEdge!]!
+  nodes: [Event!]!
+  pageInfo: PageInfo!
+}
+
+"""
+The set of valid sort keys for the event query.
+"""
+enum EventSortKeys {
+  """Sort by event creation date"""
+  CREATED_AT
+}
+
+type EventManagerEdge implements Edge {
+  cursor: Cursor!
+  node: User!
+}
+
+"""
+Pagination info for moderators of a discussion.
+"""
+type EventManagerConnection implements Connection {
+  edges: [EventManagerEdge!]!
+  nodes: [User!]!
+  pageInfo: PageInfo!
+}
