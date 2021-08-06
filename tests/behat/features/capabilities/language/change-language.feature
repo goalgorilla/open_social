@@ -30,30 +30,26 @@ Feature: Multilingual Open Social
     And I translate "Settings" to "Instellingen" for "nl"
 
 
-    # Check language field not visible when User negotation is not turned on.
-    Given I go to "/admin/config/regional/language/detection"
-    And I uncheck the box "Enable user language detection method"
-    And I press "Save settings"
-    And I am logged in as an "authenticated user"
+    # Check language field visible when site has more than one language.
+    Given I am logged in as an "authenticated user"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should not see the text "Interface language"
-    And I should not see the text "Select the language you want to use this site in."
+    Then I should see the text "Interface language"
+    And I should see the text "Select the language you want to use this site in."
 
-    # Language field on user form should be visible when site has more than one
-    # language and the User language detection is enabled.
+    # Enable User language detection as main.
     Given I am logged in as an "administrator"
     When I go to "/admin/config/regional/language/detection"
     And I uncheck the box "Enable url language detection method"
     And I check the box "Enable user language detection method"
     And I press "Save settings"
-    And I am logged in as an "authenticated user"
+
+    # Switch user's preferred language to Dutch.
+    Given I am logged in as an "authenticated user"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
     Then I should see the text "Interface language"
     And I should see the text "Select the language you want to use this site in."
-
-    # Switch to Dutch.
     When I select "Dutch" from "Interface language"
     And I press "Save"
     Then I should see the text "Taalinstelling"
