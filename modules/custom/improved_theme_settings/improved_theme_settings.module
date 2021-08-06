@@ -105,6 +105,10 @@ function improved_theme_settings_page_attachments(array &$page) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;
           }
+          
+          [dir="rtl"] .teaser__teaser-type {
+            border-radius: 0 0 0 ' . $card_radius . 'px !important;
+          }
         }
 
         @media (min-width: 900px) {
@@ -135,11 +139,20 @@ function improved_theme_settings_page_attachments(array &$page) {
 
           .input-group .form-control:first-child, .input-group-addon:first-child,
           .input-group-addon {
-            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important
+            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important;
+          }
+
+          [dir="rtl"] .input-group .form-control:first-child, [dir="rtl"] .input-group-addon:first-child,
+          [dir="rtl"] .input-group-addon {
+            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important;
           }
           
           .input-group-addon {
-            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important
+            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important;
+          }
+          
+          [dir="rtl"] .input-group-addon {
+            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important;
           }
 
           .input-group .form-control:last-child, .input-group-addon:last-child {
@@ -147,9 +160,17 @@ function improved_theme_settings_page_attachments(array &$page) {
             border-top-left-radius: 0 !important;
           }
 
+          [dir="rtl"] .input-group .form-control:last-child, [dir="rtl"] .input-group-addon:last-child {
+            border-radius: ' . $form_control_radius . 'px 0 0 ' . $form_control_radius . 'px !important;
+          }
+
           .input-group .select-wrapper:first-child .form-control:first-child {
             border-bottom-left-radius: ' . $form_control_radius . 'px !important;
             border-top-left-radius: ' . $form_control_radius . 'px !important;
+          }
+
+          [dir="rtl"] .input-group .select-wrapper:first-child .form-control:first-child {
+            border-radius: 0 ' . $form_control_radius . 'px ' . $form_control_radius . 'px 0 !important;
           }
         ';
       }
