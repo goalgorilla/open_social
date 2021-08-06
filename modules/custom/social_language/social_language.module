@@ -7,8 +7,11 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Implements hook_language_switch_links_alter().
@@ -51,12 +54,8 @@ function social_language_form_alter(&$form, FormStateInterface $form_state, $for
  * Implements hook_form_FORM_ID_alter().
  */
 function social_language_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  /** @var \Drupal\Core\Config\ImmutableConfig $language_types */
-  $language_negotiations = \Drupal::configFactory()->get('language.types')->get('negotiation');
-
-  // Show the preferred language field only when the user language negotiation
-  // is set to user and we have at least two languages.
-  if (isset($language_negotiations['language_interface']['enabled']['language-user']) && count(\Drupal::languageManager()->getLanguages()) > 1) {
+  // Show the preferred language field only when we have at least two languages.
+  if (count(\Drupal::languageManager()->getLanguages()) > 1) {
     $form['language']['#title'] = NULL;
     $form['language']['preferred_langcode']['#title'] = t('Interface language');
     $form['language']['preferred_langcode']['#description'] = t('Select the language you want to use this site in.');
@@ -101,4 +100,45 @@ function social_language_field_group_form_process_alter(array &$element, &$group
   // Prevent \Drupal\content_translation\ContentTranslationHandler::addTranslatabilityClue()
   // from adding an incorrect suffix to the field group title.
   $element['#multilingual'] = TRUE;
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function social_language_user_login(UserInterface $account): void {
+  $active_theme = \Drupal::theme()->getActiveTheme()->getName();
+
+  /** @var \Drupal\block\BlockInterface $block */
+  $block = \Drupal::entityTypeManager()->getStorage('block')->load($active_theme . '_language_switcher_block');
+
+  // Skip if user does not have access to language switcher.
+  if (!$block->access('view', $account)) {
+    return;
+  }
+
+  $language_manager = \Drupal::languageManager();
+  $current_langcode = $language_manager->getCurrentLanguage(LanguageInterface::TYPE_URL)->getId();
+  $default_langcode = $language_manager->getDefaultLanguage()->getId();
+
+  // Skip if user changed interface language before.
+  if ($current_langcode !== $default_langcode) {
+    return;
+  }
+
+  $user_langcode = $account->getPreferredLangcode();
+  $langcode = $user_langcode ?: $current_langcode;
+
+  // Skip if user language is the same as current.
+  if ($langcode === $current_langcode) {
+    return;
+  }
+
+  $url = Url::fromRoute('<front>', [], [
+    'language' => $language_manager->getLanguage($langcode),
+  ]);
+
+  // Redirect with changed language.
+  // @phpstan-ignore-next-line
+  $response = new RedirectResponse($url->toString());
+  $response->send();
 }
