@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.search_keywords.field_group_entities
+    - field.field.taxonomy_term.search_keywords.field_node_entities
+    - field.field.taxonomy_term.search_keywords.field_profile_entities
+    - taxonomy.vocabulary.search_keywords
+  module:
+    - select2
+id: taxonomy_term.search_keywords.default
+targetEntityType: taxonomy_term
+bundle: search_keywords
+mode: default
+content:
+  field_group_entities:
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      autocomplete: false
+      width: 100%
+    third_party_settings: {  }
+    type: select2_entity_reference
+    region: content
+  field_node_entities:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      autocomplete: false
+      width: 100%
+    third_party_settings: {  }
+    type: select2_entity_reference
+    region: content
+  field_profile_entities:
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      autocomplete: false
+      width: 100%
+    third_party_settings: {  }
+    type: select2_entity_reference
+    region: content
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  description: true
+  path: true

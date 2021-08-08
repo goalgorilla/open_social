@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_search_recommended
+    - system
+  theme:
+    - socialblue
+id: searchrecommendedblock
+theme: socialblue
+region: content
+weight: -34
+provider: null
+plugin: search_recommended_block
+settings:
+  id: search_recommended_block
+  label: 'Search recommended block'
+  provider: social_search_recommended
+  label_display: '0'
+  partial_search: false
+  total_items: 5
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/all\r\n/search/all/*"
+    negate: false
+    context_mapping: {  }
