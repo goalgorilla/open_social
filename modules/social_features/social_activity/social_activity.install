@@ -260,3 +260,39 @@ function social_activity_update_8807() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Resolve missing filter on Activity Stream view.
+ */
+function social_activity_update_10301() {
+  // Set the key for the filter to remove from all displays.
+  $filter_to_remove = 'activity_filter_nodes_from_my_groups_filter';
+
+  $config_factory = \Drupal::configFactory();
+  // Load the activity stream.
+  $view = $config_factory->getEditable('views.view.activity_stream');
+  // Get the displays.
+  $displays = $view->get('display');
+
+  // Remove the filter from any displays where it is used.
+  $updated = [];
+  if (is_array($displays)) {
+    foreach ($displays as $display_name => &$display) {
+      // Remove the redundant filter.
+      if (isset($display['display_options']['filters'][$filter_to_remove])) {
+        unset($display['display_options']['filters'][$filter_to_remove]);
+        $updated[] = $display_name;
+      }
+    }
+  }
+
+  // Save and log if we changed a display.
+  if (count($updated)) {
+    $view->set('display', $displays);
+    $view->save(TRUE);
+    // Log the updates.
+    foreach ($updated as $display_name) {
+      \Drupal::logger('system')->info('Filter removed from display: %name', ['%name' => $display_name]);
+    }
+  }
+}
