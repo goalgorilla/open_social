@@ -93,6 +93,10 @@ class SearchRecommendedBlock extends BlockBase implements ContainerFactoryPlugin
       }
     }
 
+    if (isset($build)) {
+      $build['#attributes']['class'][] = 'card';
+    }
+
     return $build ?? [];
   }
 
