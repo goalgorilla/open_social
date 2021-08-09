@@ -144,3 +144,32 @@ Feature: Receive email notifications and choose frequency
     And I press "Delete"
     And I run cron
     And I check if queue items processed "activity_logger_message"
+
+  @email-spool
+  Scenario: User should not receive notification as default
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
+      | name  | mail                   | status | field_profile_first_name | field_profile_last_name |
+      | user1 | mail_user1@example.com | 1      | Christopher              | Conway                  |
+      | user2 | mail_user2@example.com | 1      | Cathy                    | Willis                  |
+    And I am logged in as an "sitemanager"
+    And I go to "/admin/config/opensocial/swiftmail"
+    And I press "Default email notification settings"
+    And I click radio button "Never" with the id "edit-create-mention-post-none"
+    And I press "Save configuration"
+
+    Given I am logged in as "user1"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "Settings"
+    And I click "Email notifications"
+    And I wait for "2" seconds
+    And I click "Message to me"
+    And I should see "Never" in the "select[name='email_notifications[message_to_me][create_mention_post]'] option[selected='selected']" element
+
+    Given I am logged in as "user2"
+    And I am on the homepage
+    And I fill in "Say something to the Community" with "You're not going to be notified of this [~user1]!"
+    And I press "Post"
+    And I press "Post"
+    And I wait for the queue to be empty
+    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
