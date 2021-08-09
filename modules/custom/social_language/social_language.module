@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 
 /**
@@ -19,6 +20,30 @@ function social_language_language_switch_links_alter(array &$links, $type, Url $
     $link['attributes']['title'] = $link['title'];
     $link['title'] .= " (${langcode})";
     $link['attributes']['class'][] = $langcode === $currentLangcode ? 'active' : NULL;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_language_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Move the fields to group_settings.
+  if (isset($form['#fieldgroups']['group_settings'])) {
+    // As translation form fields are added directly to forms bypassing
+    // entity form display we can't have both approaches (OS and user own)
+    // for field managing (@see social_core_form_node_form_alter()).
+    if (isset($form['content_translation']) && Element::isVisibleElement($form['content_translation'])) {
+      // Change element type for "content_translation" to be consistent
+      // with general approach in OS.
+      $form['#fieldgroups']['group_settings']->children[] = 'content_translation';
+      $form['content_translation']['#group'] = 'group_settings';
+    }
+
+    if (isset($form['source_langcode']) && Element::isVisibleElement($form['source_langcode'])) {
+      // Move "source_langcode" form element to general settings fieldset.
+      $form['#fieldgroups']['group_settings']->children[] = 'source_langcode';
+      $form['source_langcode']['#group'] = 'group_settings';
+    }
   }
 }
 
@@ -67,4 +92,13 @@ function social_language_entity_operation_alter(array &$operations, EntityInterf
     }
   }
   return $operations;
+}
+
+/**
+ * Implements hook_field_group_form_process_alter().
+ */
+function social_language_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  // Prevent \Drupal\content_translation\ContentTranslationHandler::addTranslatabilityClue()
+  // from adding an incorrect suffix to the field group title.
+  $element['#multilingual'] = TRUE;
 }
