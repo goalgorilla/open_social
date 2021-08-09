@@ -102,6 +102,12 @@ new TranslatableMarkup("Manage Enrollments");
 new TranslatableMarkup("Collaboration Settings");
 new TranslatableMarkup("Reply-to");
 new TranslatableMarkup("Selected @count entities:");
+new TranslatableMarkup("Group visibility");
+new TranslatableMarkup("Who can see the group.");
+new TranslatableMarkup("Group content visibility options");
+new TranslatableMarkup("Choose the visibility options allowed for the group content.");
+new TranslatableMarkup("Join methods");
+new TranslatableMarkup("How can people join this group. Group managers can always add members directly, regardless of the chosen join method.");
 // Following plural strings are not translatable due to the @todo in
 // _social_event_managers_action_batch_finish().
 new PluralTranslatableMarkup(0, '1 selected enrollee has been exported successfully', '@count selected enrollees have been exported successfully');
