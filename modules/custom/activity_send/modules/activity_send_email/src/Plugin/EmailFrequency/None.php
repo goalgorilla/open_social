@@ -12,7 +12,7 @@ use Drupal\user\Entity\User;
  *
  * @EmailFrequency(
  *   id = "none",
- *   name = @Translation("- None -"),
+ *   name = @Translation("Never"),
  *   weight = 0,
  *   interval = 0
  * )

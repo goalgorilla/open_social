@@ -1,0 +1,100 @@
+"""
+A type of content on Open Social which allows users to share information
+or organise discussions.
+
+A topic can be a piece of news, blog, a document, or another type depending
+on the platform.
+"""
+type Topic implements Node & Commentable {
+  """
+  The unique identifier for the topic.
+  """
+  id: ID!
+  """
+  The display title of the topic.
+  """
+  title: String!
+  """
+  The author of the topic.
+  """
+  author: Actor
+  """
+  A hero image for the topic.
+  """
+  heroImage: Image
+  """
+  The type of the topic.
+
+  Each topic is tagged with a topic type to make it clear what this topic is about.
+  A topic can be a piece of news, a blogpost, a document, or another type depending on the platform.
+  To get a list of the available topic types for a platform see `Query.topicTypes`.
+  """
+  type: TopicType!
+  """
+  The message of the topic as rendered HTML.
+  """
+  bodyHtml: Html!
+  """
+  List of topic comments.
+
+  If no limits are specified will limit to 10 results.
+  """
+  comments(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: CommentSortKeys = CREATED_AT
+  ): CommentConnection!
+  """
+  The url to the topic.
+  """
+  url: Url!
+  """
+  When the topic was created.
+  """
+  created: DateTime!
+}
+
+type TopicEdge implements Edge {
+  cursor: Cursor!
+  node: Topic!
+}
+
+type TopicConnection implements Connection {
+  edges: [TopicEdge!]!
+  nodes: [Topic!]!
+  pageInfo: PageInfo!
+}
+
+"""
+The set of valid sort keys for the topic query.
+"""
+enum TopicSortKeys {
+  """Sort by topic creation date"""
+  CREATED_AT
+}
+
+"""
+The type of a topic.
+
+Each topic is tagged with a topic type to make it clear what this topic is about.
+A topic can be a piece of news, a blogpost, a document, or another type depending on the platform.
+"""
+type TopicType {
+  """
+  The unique identifier for the topic type.
+  """
+  id: ID!
+  """
+  The human readable name of the topic type.
+  """
+  label: String
+}
