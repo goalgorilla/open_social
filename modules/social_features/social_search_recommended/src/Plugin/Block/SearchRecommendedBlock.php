@@ -63,7 +63,7 @@ class SearchRecommendedBlock extends BlockBase implements ContainerFactoryPlugin
     $total_items = (int) $config['total_items'];
 
     foreach ($search_keywords as $term) {
-      if ($is_partial_search && strpos(strtolower($term->label()), strtolower($search_keys)) !== false) {
+      if ($is_partial_search && strpos(strtolower($term->label()), strtolower($search_keys)) !== FALSE) {
         $nodes = array_merge($nodes, $this->getReferencedEntities('node', $term));
         $groups = array_merge($groups, $this->getReferencedEntities('group', $term));
         $profiles = array_merge($profiles, $this->getReferencedEntities('profile', $term));
