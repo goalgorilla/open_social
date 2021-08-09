@@ -35,9 +35,15 @@ Feature: Edit my group as a group manager
     And I should see "Test open group" in the "Main content"
     Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
+    And I should see "Stream"
+    And I should see "About"
+    And I should see "Events"
+    And I should see "Topics"
+    And I should not see "Nodes"
+    And I should see "Manage members"
 
   # DS-706 As a Group Manager I want to manage group memberships
-    And I click "Manage members"
+    When I click "Manage members"
     Then I should see "Add members"
     And I should see "Member"
     And I should see "Group Manager One"
