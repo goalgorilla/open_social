@@ -1887,3 +1887,17 @@ function social_event_update_10302() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update configuration for events views.
+ */
+function social_event_update_10303() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10303');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
