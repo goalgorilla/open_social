@@ -49,6 +49,14 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'core.base_field_override.node.landing_page.path' => [
         'translatable' => TRUE,
       ],
+      // Translations for "Section" paragraph type.
+      'language.content_settings.paragraph.section' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
       // Translations for "Block" paragraph type.
       'language.content_settings.paragraph.block' => [
         'third_party_settings' => [
