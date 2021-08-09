@@ -2,7 +2,7 @@ services:
   social_group.route_subscriber:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:
-      - { name: event_subscriber }
+      - { name: event_subscriber, priority: 2 }
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
     arguments: ['@database', '@module_handler']
