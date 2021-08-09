@@ -47,7 +47,7 @@ function entity_access_by_field_update_8003() {
       foreach ($data['bundles'] as $bundle) {
         $config_factory
           ->getEditable("field.field.{$entity_type_id}.{$bundle}.{$field_name}")
-          ->set('default_value', NULL)
+          ->set('default_value', [])
           ->save();
       }
     }
