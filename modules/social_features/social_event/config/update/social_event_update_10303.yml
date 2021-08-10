@@ -1,10 +1,62 @@
-block.block.socialblue_views_block__event_enrollments_event_enrollments_socialbase:
-  expected_config:
-    visibility:
-      request_path:
-        pages: "/node/*/edit\r\n/node/*/delete"
+views.view.events:
+  expected_config: { }
   update_actions:
-    change:
-      visibility:
-        request_path:
-          pages: "/node/*/edit\r\n/node/*/delete\r\n/node/*/translations*"
+    delete:
+      display:
+        events_overview:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items: { }
+    add:
+      display:
+        events_overview:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items:
+                    1:
+                      title: 'Ongoing and upcoming events'
+                      operator: in
+                      value: '1'
+                    2:
+                      title: 'Past events'
+                      operator: in
+                      value: '2'
+                    3:
+                      title: ''
+                      operator: in
+                      value: null
+views.view.upcoming_events:
+  expected_config: { }
+  update_actions:
+    delete:
+      display:
+        page_community_events:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items: { }
+    add:
+      display:
+        page_community_events:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items:
+                    1:
+                      title: 'Ongoing and upcoming events'
+                      operator: in
+                      value: '1'
+                    2:
+                      title: 'Past events'
+                      operator: in
+                      value: '2'
+                    3:
+                      title: ''
+                      operator: in
+                      value: null
