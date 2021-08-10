@@ -20,29 +20,30 @@ Feature: Mute/Unmute group notifications
       And I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
       And I click "Ressinel's group 1st"
-    Then I should see "Mute notify"
-    When I click "Mute notify"
+    Then I should see the button "Joined"
+      And I press "Joined"
+      And I should see the link "Mute group"
+    When I click "Mute group"
       And I wait for AJAX to finish
-    Then I should see "Unmute notify"
-    When I click "Unmute notify"
+    Then I should see "Unmute group"
+    When I click "Unmute group"
       And I wait for AJAX to finish
-    Then I should see "Mute notify"
+    Then I should see "Mute group"
 
   @group-mute-group-notifications-overview-page
-  Scenario: LU able to mute/unmute groups notifications on overview groups page
+  Scenario: LU able to view all Groups muted
     Given I am logged in as "dude_1st"
+      And I click the xth "0" element with the css ".navbar-nav .profile"
+      And I click "My groups"
+      And I click "Ressinel's group 1st"
+    Then I should see the button "Joined"
+      And I press "Joined"
+      And I should see the link "Mute group"
+    When I click "Mute group"
+      And I wait for AJAX to finish
+    Then I should see "Unmute group"
     When I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
-    Then I should see "Mute notify"
-    When I click the element with css selector ".view-groups .group a.flag"
-      And I wait for AJAX to finish
-    Then I should see "Unmute notify"
-    When I click the element with css selector ".view-groups .group a.flag"
-      And I wait for AJAX to finish
-    Then I should not see "Unmute notify"
-    # LU able to view all Groups muted.
-    When I click the element with css selector ".view-groups .group a.flag"
-      And I wait for AJAX to finish
     Then I should see "Ressinel's group 2nd"
     When I check the box "edit-muted--2"
       And I press the "Apply" button
@@ -68,7 +69,10 @@ Feature: Mute/Unmute group notifications
     When I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
       And I click "Ressinel's group 1st"
-    Then I should see "Mute notify"
+    Then I should see the button "Joined"
+      And I press "Joined"
+      And I should see the link "Mute group"
+    Then I should see "Mute group"
     # Add content to the group by another user.
     Given I am logged in as "dude_2nd"
     Then I am on "/all-groups"
@@ -105,10 +109,12 @@ Feature: Mute/Unmute group notifications
     Then I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
       And I click "Ressinel's group 1st"
-    Then I should see "Mute notify"
-    When I click "Mute notify"
+    Then I should see the button "Joined"
+      And I press "Joined"
+      And I should see the link "Mute group"
+    When I click "Mute group"
       And I wait for AJAX to finish
-    Then I should see "Unmute notify"
+    Then I should see "Unmute group"
     # Add content to the group by another user.
     Given I am logged in as "dude_2nd"
     Then I am on "/all-groups"
