@@ -5,6 +5,7 @@ namespace Drupal\social_featured_items;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Extension\ModuleHandler;
 
 /**
  * Provides content translation for the Social Featured Items module.
@@ -14,6 +15,23 @@ use Drupal\Core\Config\StorageInterface;
 class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs the service with DI.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   *   The module handler.
+   */
+  public function __construct(ModuleHandler $module_handler) {
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
@@ -21,7 +39,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
 
     // If the module "content_translation" is enabled let make translations
     // enabled for content provided by the module by default.
-    $is_content_translations_enabled = \Drupal::moduleHandler()
+    $is_content_translations_enabled = $this->moduleHandler
       ->moduleExists('content_translation');
 
     if (!$is_content_translations_enabled) {
@@ -117,6 +135,9 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
    * {@inheritdoc}
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+    // The interface says we should return an object here, but we don't care and
+    // this does not seem to break anything?
+    // @phpstan-ignore-next-line
     return NULL;
   }
 

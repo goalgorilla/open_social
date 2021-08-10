@@ -266,6 +266,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     }
 
     // Get block translation if exists.
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
     $block_content = $this->entityRepository->getTranslationFromContext($block_content);
 
     $build['content'] = [];
