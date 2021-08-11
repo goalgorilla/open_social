@@ -31,15 +31,12 @@
         });
       });
 
-      document.onclick = function (event) {
-        if ($(event.target).is('.modal-share') || $(event.target).closest('.modal-share').length || $(event.target).is('.share-button')) {
+      $(document).click(function(event) {
+        if ($(event.target).closest(".modal-share, .share-button").length) return;
+        $(".modal-share").hide();
+        event.stopPropagation();
+      });
 
-        } else {
-          Array.from(modals).forEach(element => {
-            element.style.display = 'none';
-          });
-        }
-      }
 
       // Get the button that copies the link.
       var copyLink = document.getElementsByClassName('copy-link-clipboard');
