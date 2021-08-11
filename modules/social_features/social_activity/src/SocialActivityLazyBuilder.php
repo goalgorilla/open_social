@@ -71,6 +71,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
   public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, $use_contextual_tags = FALSE, ...$tags) {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
+    /** @var \Drupal\views\ViewExecutable $view */
     $view = $this->viewExecutable->get($view_entity);
     $view->setDisplay($display_id);
     $view->setItemsPerPage($item_per_page);

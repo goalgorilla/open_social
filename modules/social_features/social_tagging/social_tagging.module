@@ -5,6 +5,7 @@
  * Contains social_tagging.module.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -12,11 +13,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\Core\Database\Database;
 
 /**
  * Implements hook_help().
@@ -142,7 +142,9 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
 function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
   if (!empty($form['social_tagging'])) {
     // Load tag config..
-    $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+    $tag_settings = \Drupal::getContainer()
+      ->get('config.factory')
+      ->getEditable('social_tagging.settings');
     // Switch for the entity_type.
     switch ($form_entity->getEntityTypeId()) {
       case 'node':
@@ -359,8 +361,14 @@ function social_tagging_entity_delete(EntityInterface $entity) {
     /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
     // We need to use `\Drupal\Core\Database\Database::getConnection()`
     // because we might not yet have access to the container here.
-    Database::getConnection()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-    Database::getConnection()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    Database::getConnection()
+      ->delete('node__social_tagging')
+      ->condition('social_tagging_target_id', $entity->id())
+      ->execute();
+    Database::getConnection()
+      ->delete('node_revision__social_tagging')
+      ->condition('social_tagging_target_id', $entity->id())
+      ->execute();
   }
 }
 
@@ -593,7 +601,10 @@ function social_tagging_entity_view_display_alter(EntityViewDisplayInterface $di
 function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
   // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
   // will be attached in that section when a user enable tagging options.
-  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
+  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], [
+      'edit',
+      'default',
+    ])) {
     return;
   }
 
@@ -618,6 +629,7 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
 
 /**
  * Implements hook_preprocess_HOOK().
- */function social_tagging_preprocess_block__social_post(&$variables, $hook) {
+ */
+function social_tagging_preprocess_block__social_post(&$variables, $hook) {
   $variables['#attached']['library'][] = 'social_tagging/social_tagging';
 }

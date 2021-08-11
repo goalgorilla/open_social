@@ -138,9 +138,9 @@ class FilterBlock extends ModeBlock {
       }
       switch ($type) {
         // @todo: Ideally after checking the use_contextual_tags box,
-        //   "vocabulary" should be required, and "tags" should be hidden and
-        //   not required, but it's a bit complicated and requires more time
-        //   that we have at the moment.
+        // "vocabulary" should be required, and "tags" should be hidden and
+        // not required, but it's a bit complicated and requires more time
+        // that we have at the moment.
         case 'use_contextual_tags':
           $form['override']['use_contextual_tags'] = [
             '#type' => 'checkbox',
