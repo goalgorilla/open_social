@@ -8,37 +8,22 @@
 
   Drupal.behaviors.social_sharing_post = {
     attach: function (context, _) {
-      // Get the modals.
-      var modals = document.getElementsByClassName('modal-share');
-      // Get the button that opens the modal.
-      var btn = document.getElementsByClassName('share-button');
-      // Get the <span> element that closes the modal.
-      var span = document.getElementsByClassName('close');
-
-      Array.from(btn).forEach(element => {
-        element.addEventListener('click', (event) => {
-          Array.from(modals).forEach(element => {
-            element.style.display = 'none';
-          });
-
-          event.target.nextElementSibling.style.display = 'block';
-        });
-      });
-
-      Array.from(span).forEach(element => {
-        element.addEventListener('click', (event) => {
-          element.closest('.modal-share').style.display = 'none';
-        });
-      });
-
       $(document).click(function(event) {
-        if ($(event.target).closest(".modal-share, .share-button").length) return;
-        $(".modal-share").hide();
-        event.stopPropagation();
+        // Open popup when clicking on the "Share" button.
+        if ($(event.target).is(".share-button")) {
+          // We want to close all pop-ups that were opened and open one that we need.
+          $(".modal-share").hide();
+          $(event.target).next(".modal-share").show();
+          event.stopPropagation();
+        }
+
+        // Close popup after clicking on the close icon.
+        if ($(event.target).is(".close")) {
+          $(event.target).closest(".modal-share").hide();
+        }
       });
 
-
-      // Get the button that copies the link.
+      // Gets the button that copies the link.
       var copyLink = document.getElementsByClassName('copy-link-clipboard');
 
       Array.from(copyLink).forEach(element => {
@@ -53,6 +38,14 @@
           x.className = 'show';
           setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         });
+      });
+
+      // Closes popups when we click anywhere except popup itself or share button.
+      $(document).click(function(event) {
+        if ($(event.target).closest(".modal-share, .share-button").length) return;
+
+        $(".modal-share").hide();
+        event.stopPropagation();
       });
     }
   }
