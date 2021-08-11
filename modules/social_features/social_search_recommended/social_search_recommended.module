@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Contains social_search_recommended.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function social_search_recommended_theme() {
+  // Block.
+  $theme_templates['block__searchrecommendedblock'] = [
+    'base hook' => 'block',
+  ];
+
+  return $theme_templates;
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function social_search_recommended_preprocess_block(&$variables) {
+  $variables['#attached']['library'][] = 'social_search_recommended/social_search_recommended';
+}
