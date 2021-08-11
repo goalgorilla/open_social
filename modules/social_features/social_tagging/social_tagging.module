@@ -615,3 +615,9 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
   $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
   $form_display->save();
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */function social_tagging_preprocess_block__social_post(&$variables, $hook) {
+  $variables['#attached']['library'][] = 'social_tagging/social_tagging';
+}
