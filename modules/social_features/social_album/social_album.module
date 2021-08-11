@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -94,6 +95,16 @@ function social_album_preprocess_block__social_post(&$variables) {
       'form' => $variables['content'],
       'current_user_image' => $content,
     ];
+  }
+}
+
+/**
+ * Implements hook_social_path_manager_group_tabs_alter().
+ */
+function social_album_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Move Album to the end of the list.
+  if (!empty($data['tabs'][0]['social_album.group'])) {
+    $data['tabs'][0]['social_album.group']['#weight'] = 200;
   }
 }
 
