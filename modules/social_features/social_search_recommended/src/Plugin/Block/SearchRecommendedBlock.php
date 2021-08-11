@@ -85,7 +85,7 @@ class SearchRecommendedBlock extends BlockBase implements ContainerFactoryPlugin
     $items = 0;
     foreach ($all_entities as $entity) {
       $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
-      $build[] = $view_builder->view($entity, 'small_teaser');
+      $build[] = $view_builder->view($entity, 'featured');
 
       $items++;
       if ($total_items === $items) {
@@ -167,6 +167,7 @@ class SearchRecommendedBlock extends BlockBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function getCacheMaxAge() {
+    // @todo: Should be removed.
     return 0;
   }
 
