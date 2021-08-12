@@ -633,3 +633,37 @@ function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $fo
 function social_tagging_preprocess_block__social_post(&$variables, $hook) {
   $variables['#attached']['library'][] = 'social_tagging/social_tagging';
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state): void {
+  // @todo: should be implemented in social_tagging_social_tagging_field_form_alter().
+  // Get post entity.
+  /** @var \Drupal\social_post\Entity\PostInterface $post */
+  // @phpstan-ignore-next-line
+  $post = $form_state->getFormObject()->getEntity();
+  $title = t('Post tags');
+
+  // Check if create post form.
+  if ($post->isNew()) {
+    $title = [
+      '#type' => 'inline_template',
+      '#template' => '<a href="#" class="card__link">' . $title . '<svg aria-hidden="true" class="icon-expand_more"><use xlink:href="#icon-expand_more"></use></svg></a>',
+      '#allowed_tags' => ['a', 'use', 'svg'],
+    ];
+  }
+
+  // Create the group for the fields.
+  $form['social_tagging_settings'] = [
+    '#type' => 'details',
+    '#title' => $title,
+    '#open' => TRUE,
+    '#weight' => 35,
+    '#optional' => FALSE,
+  ];
+  $form['tagging']['#title'] = NULL;
+
+  // Attach the social_tagging to the post.
+  $form['tagging']['#group'] = 'social_tagging_settings';
+}
