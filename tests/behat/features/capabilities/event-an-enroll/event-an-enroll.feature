@@ -156,9 +156,6 @@ Feature: Enroll for an event without an account
     Then I should see "Find people by name or email address"
       And I fill in select2 input ".form-type-select" with "event_user_2@example.com" and select "event_user_2@example.com"
       And I press "Save"
-    # We should see added users on a page.
-    Then I should see "Dude (Dutch)"
-    Then I should see "Dude (English)"
 
     # Check a list of all event enrollments by the English user.
     And I am logged in as "Dude (English)"
