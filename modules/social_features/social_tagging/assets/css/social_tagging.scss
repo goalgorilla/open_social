@@ -1,6 +1,35 @@
-form:not(.layout-builder-configure-block) fieldset[id*='edit-tagging'] {
+[id*='edit-social-tagging-settings'] {
   width: 100%;
-  margin-top: 0;
+  padding-top: 1rem;
+
+  .card__link {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    float: none;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .panel-body {
+    display: none;
+
+    .form-inline {
+      margin-bottom: 0;
+    }
+
+    fieldset {
+      margin: 0;
+      box-shadow: none;
+
+      > .card__block {
+        padding: 0;
+      }
+    }
+  }
 }
 
 .social_follow_tax .group-action-wrapper {
