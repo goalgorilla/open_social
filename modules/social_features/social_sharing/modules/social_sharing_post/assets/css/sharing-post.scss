@@ -1,0 +1,290 @@
+/*** Share link ***/
+
+.share-wrapper .share-button {
+  padding: 0;
+}
+
+/*** The Modal ***/
+
+.modal-content-wrapper {
+  position: static;
+  background-color: #fefefe;
+  margin: 0;
+  border: 1px solid #888;
+  min-width: 400px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  overflow: hidden;
+  border-radius: 10px;
+
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: 15px;
+    height: 15px;
+    transform: rotate(45deg) translateY(-50%);
+    background-color: #fff;
+    box-shadow: 0 3px 9px rgba(#000, .5);
+    border: 1px solid #888;
+  }
+}
+
+/* Dashboard */
+.page-node-type-dashboard {
+  .modal-content-wrapper {
+    @media(max-width: 1349px) {
+      min-width: 280px;
+    }
+
+    @media(max-width: 599px) {
+      width: 260px;
+    }
+
+    .stream .stream-item .media-post-social,
+    .block--featured-items .paragraph--featured .media-post-social {
+      flex: none;
+      margin-top: auto;
+      flex-wrap: wrap;
+
+      .share-wrapper {
+        flex: 0 0 100%;
+        max-width: 100%;
+        text-align: right;
+      }
+    }
+  }
+}
+
+.share-wrapper {
+  position: relative;
+  margin-left: auto;
+
+  .modal-share {
+    overflow: visible;
+    position: absolute; /* Stay in place */
+    z-index: 100; /* Sit on top */
+    right: 0;
+    display: none;
+    margin-top: 10px;
+
+    @media all and (max-width: 599px) {
+      right: -28px;
+
+      .media {
+        justify-content: left;
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  }
+
+  .modal-content-wrapper {
+    @media all and (max-width: 599px) {
+      min-width: auto;
+
+      &:before {
+        right: 48px;
+      }
+
+      .modal-header {
+        text-align: left;
+      }
+    }
+  }
+
+  .share-button {
+    display: inline-block;
+    width: auto;
+
+    @media all and (max-width: 599px) {
+      padding-right: 0;
+    }
+  }
+
+  .modal-share {
+    @media all and (max-width: 599px) {
+      margin-top: 5px;
+    }
+
+    .actions button {
+      padding-left: 0;
+      font-size: 14px;
+    }
+
+    input {
+      margin: 10px 0;
+      width: 100%;
+    }
+  }
+
+  .media {
+     display: flex;
+     flex-wrap: wrap;
+     flex: 1;
+     min-width: 150px;
+   }
+
+  .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  ul {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      margin-right: 5%;
+      float: left;
+      -webkit-box-flex: 0;
+      -ms-flex: none;
+      flex: none;
+      width: 35px;
+      overflow: hidden;
+      text-align: center;
+      border-radius: 10px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      a {
+        height: 30px;
+        color: #fff;
+        position: relative;
+        display: block;
+        text-decoration: none;
+      }
+
+      .fab {
+        font-size: 24px;
+        width: 30px;
+        line-height: 30px;
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .linkedin a {
+    background-color: #3b5998;
+  }
+
+  .twitter a {
+    background-color: #55acee;
+  }
+
+  .facebook a {
+    background-color: #3b5998;
+  }
+}
+
+/*** Modal Content/Box ***/
+
+.modal-content-share {
+  position: relative;
+  padding: 20px;
+  background-color: #fff;
+}
+
+@media all and (max-width: 599px) {
+  div.share-wrapper {
+    width: 100%;
+    text-align: right;
+  }
+}
+
+/*** The Close Button ***/
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+
+  &:hover,
+  &:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 5px 15px;
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  top: 60px;
+  font-size: 17px;
+
+  &.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+}
+
+@-webkit-keyframes fadein {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 60px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 60px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    top: 60px;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    top: 60px;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
+}
