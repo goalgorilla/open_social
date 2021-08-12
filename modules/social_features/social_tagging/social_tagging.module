@@ -639,13 +639,20 @@ function social_tagging_preprocess_block__social_post(&$variables, $hook) {
  */
 function social_tagging_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state): void {
   // @todo: should be implemented in social_tagging_social_tagging_field_form_alter().
-  // Get post entity.
+  $config = \Drupal::configFactory()->get('social_tagging.settings');
+  $post_is_enabled = $config->get('tag_type_post');
+
+  // We don't want to show the link if social tagging for the post
+  // is not enabled.
+  if (!$post_is_enabled) {
+    return;
+  }
+
   /** @var \Drupal\social_post\Entity\PostInterface $post */
   // @phpstan-ignore-next-line
   $post = $form_state->getFormObject()->getEntity();
   $title = t('Post tags');
 
-  // Check if create post form.
   if ($post->isNew()) {
     $title = [
       '#type' => 'inline_template',
