@@ -82,9 +82,7 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
 
     // Wrapper.
     $element = [
-      '#type' => 'details',
-      '#open' => TRUE,
-      '#access' => FALSE,
+      '#type' => 'container',
     ];
 
     // Get the main categories.
