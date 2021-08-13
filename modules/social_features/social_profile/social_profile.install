@@ -514,3 +514,17 @@ function social_profile_update_8904() {
 function social_profile_update_8905() {
   _social_profile_field_definitions_update();
 }
+
+/**
+ * Update the configs in the database in accordance with the newest schema.
+ */
+function social_profile_update_10301() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_10301');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

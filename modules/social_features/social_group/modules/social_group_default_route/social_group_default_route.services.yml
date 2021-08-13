@@ -7,4 +7,4 @@ services:
   social_group_default_route.route_subscriber:
     class: Drupal\social_group_default_route\RouteSubscriber\RouteSubscriber
     tags:
-      - { name: event_subscriber }
+      - { name: event_subscriber, priority: 3 }
