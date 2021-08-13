@@ -53,22 +53,14 @@
   ]
 %}
 
-
-{% if not bare %}
-
-  <section{{ attributes.addClass(classes).removeClass('card') }}>
-
+<section{{ attributes.addClass(classes) }}>
+  <div class="card__block">
     {% if label %}
       <h2 {{ title_attributes.addClass(title_classes) }}>{{ label }}</h2>
     {% endif %}
 
-{% endif %}
-
-  {% block content %}
-    {{ content }}
-  {% endblock %}
-
-{% if not bare %}
-  </section>
-
-{% endif %}
+    {% block content %}
+      {{ content }}
+    {% endblock %}
+  </div>
+</section>
