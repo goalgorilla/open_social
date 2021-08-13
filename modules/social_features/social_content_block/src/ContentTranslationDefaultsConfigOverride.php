@@ -37,10 +37,10 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   public function loadOverrides($names) {
     $overrides = [];
 
-    // If the module "content_translation" is enabled let make translations
+    // If the module "social_content_translation" is enabled let make translations
     // enabled for content provided by the module by default.
     $is_content_translations_enabled = $this->moduleHandler
-      ->moduleExists('content_translation');
+      ->moduleExists('social_content_translation');
 
     if (!$is_content_translations_enabled) {
       return $overrides;

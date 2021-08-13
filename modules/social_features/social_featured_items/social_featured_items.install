@@ -22,12 +22,12 @@ function social_featured_items_update_8001() {
 /**
  * Add translations support for "Featured Item(s)" custom block fields.
  */
-function social_featured_items_update_10200() {
+function social_featured_items_update_10300() {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $update_helper->executeUpdate('social_featured_items', 'social_featured_items_update_10200');
+  $update_helper->executeUpdate('social_featured_items', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
