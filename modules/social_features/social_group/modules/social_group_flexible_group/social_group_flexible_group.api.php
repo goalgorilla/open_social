@@ -49,5 +49,21 @@ function hook_social_group_flexible_group_allowed_visibility_description_alter($
 }
 
 /**
+ * Allow for other modules to skip specific views query alter for flexible group.
+ *
+ * @see social_group_flexible_group_views_query_alter()
+ *
+ * @return array
+ *   List of view ids needs to skip specific query for flexible group.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_flexible_group_skip_query_rules() {
+  return [
+    'my_personal_open_groups',
+  ];
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

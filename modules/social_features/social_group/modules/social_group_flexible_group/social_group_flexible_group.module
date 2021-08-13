@@ -662,6 +662,13 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     \Drupal::service('page_cache_kill_switch')->trigger();
   }
 
+  // Allows for other views skip applying farther query rules.
+  $skip_view_ids = \Drupal::moduleHandler()->invokeAll('social_flexible_group_skip_query_rules');
+
+  if (in_array($view->id(), $skip_view_ids)) {
+    return;
+  }
+
   // Don't check, they can see it all.
   if ($account->hasPermission('manage all groups')) {
     return;
