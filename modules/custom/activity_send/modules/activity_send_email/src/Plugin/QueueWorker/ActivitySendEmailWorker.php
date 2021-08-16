@@ -282,7 +282,14 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
+        // Filter out blocked users early in the process.
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
+          // If a site manager decides emails should not be sent to users
+          // who have never logged in. We need to verify last accessed time,
+          // so those users are not processed.
+          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
+            continue;
+          }
           // Check if we have $group set which means that this content was
           // posted in a group.
           if (!empty($group) && $group instanceof GroupInterface) {
