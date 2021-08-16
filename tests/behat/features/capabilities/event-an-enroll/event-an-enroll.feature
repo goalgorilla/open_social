@@ -101,7 +101,7 @@ Feature: Enroll for an event without an account
     Then I should see "Enroll in Anonymous event Enrollment"
     And I should see "Enroll as guest"
 
-  @AN
+  @see-event-enrollments-list
   Scenario: LUs with different languages are able to see a list of all event enrollments
 
     Given I enable the module "social_language"
