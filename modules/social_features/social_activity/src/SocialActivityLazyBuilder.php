@@ -82,6 +82,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
       $view->filter_vocabulary = $vocabulary;
     }
 
+    // @phpstan-ignore-next-line
     $view->filter_use_contextual_tags = $use_contextual_tags;
 
     $view->preExecute();

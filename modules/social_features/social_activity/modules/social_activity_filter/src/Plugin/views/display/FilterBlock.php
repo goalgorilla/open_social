@@ -293,6 +293,7 @@ class FilterBlock extends ModeBlock {
     $block_configuration = $block->getConfiguration();
 
     if (isset($block_configuration['use_contextual_tags'])) {
+      // @phpstan-ignore-next-line
       $this->view->filter_use_contextual_tags = (bool) $block_configuration['use_contextual_tags'];
     }
 

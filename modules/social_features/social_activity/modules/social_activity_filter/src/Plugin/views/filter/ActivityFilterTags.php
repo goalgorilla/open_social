@@ -52,6 +52,7 @@ class ActivityFilterTags extends FilterPluginBase {
    * Filters out activity items by the taxonomy tags.
    */
   public function query() {
+    // @phpstan-ignore-next-line
     $taxonomy_field = $this->view->filter_vocabulary ?? '';
 
     // If it is allowed to receive tags from the context in the block settings,
@@ -62,6 +63,7 @@ class ActivityFilterTags extends FilterPluginBase {
       $tags = $this->request->query->has('tag') ? [$this->request->query->get('tag')] : '';
     }
     else {
+      // @phpstan-ignore-next-line
       $tags = $this->view->filter_tags ?? '';
     }
 
@@ -86,6 +88,7 @@ class ActivityFilterTags extends FilterPluginBase {
     // The social tagging table has a different name since was created via
     // BaseFieldDefinition so if we use social_tagging vocabulary, then the
     // table name will be different from usual.
+    // @phpstan-ignore-next-line
     if ($taxonomy_field === 'social_tagging') {
       $taxonomy_post_table = "post__{$taxonomy_field}";
     }
