@@ -134,32 +134,74 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $request = $event->getRequest();
     $request_path = $request->getPathInfo();
     $frontpage_an = $this->siteSettings->get('page.front');
+
     if ($request_path === $frontpage_an || $request_path === '/') {
       $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user');
       if ($frontpage_an === $frontpage_lu) {
         return;
       }
       if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
+        // Check if sitemanager, or content manager are
+        // previewing the anonymous page.
+        // This is needed because the redirect happens twice, so we
+        // need to know if we did the redirect.
+        $isPreview = $request->query->get('preview');
+        if ($isPreview) {
+          return;
+        }
+
         // Don't redirect site managers,content managers so they
-        // can preview the page.
+        // can preview the anonymous page.
         $roles = ['sitemanager', 'contentmananger'];
-        if ($this->currentUser->id() == "1" || array_intersect($roles, $this->currentUser->getRoles())) {
+        if ($this->currentUser->id() == "1" || array_intersect($roles, $this->currentUser->getRoles()) && $request_path == $frontpage_an) {
           $this->messenger->addWarning($this->t(
             "This page is redirected to @url_link, but we deferred the redirect to give you an opportunity to edit the content.",
             [
               '@url_link' => $frontpage_lu,
             ]));
+
+          $cacheContext = [
+            'user.roles:sitemanager',
+            'user.roles:contentmanager',
+          ];
+
+          /** @var string $frontpage_an */
+          $redirectUrl = $frontpage_an . '?preview=true';
+          $event->setResponse(
+            $this->createRedirectResponse($cacheContext, $redirectUrl)
+          );
+
           return;
         }
 
-        $cache_contexts = new CacheableMetadata();
-        $cache_contexts->setCacheContexts(['user.roles:anonymous']);
-
-        $response = new CacheableRedirectResponse($frontpage_lu);
-        $response->addCacheableDependency($cache_contexts);
-        $event->setResponse($response);
+        $cacheContext = ['user.roles:anonymous'];
+        /** @var string $frontpage_lu */
+        $event->setResponse(
+          $this->createRedirectResponse($cacheContext, $frontpage_lu)
+        );
       }
     }
+  }
+
+  /**
+   * Helper function to build the redirect response.
+   *
+   * @param array $cacheContext
+   *   Array of cache context items.
+   * @param string $url
+   *   Url string.
+   *
+   * @return \Drupal\Core\Cache\CacheableRedirectResponse
+   *   Redirect response.
+   */
+  public function createRedirectResponse(array $cacheContext, $url) {
+    $cache_contexts = new CacheableMetadata();
+    $cache_contexts->setCacheContexts($cacheContext);
+
+    $response = new CacheableRedirectResponse($url);
+    $response->addCacheableDependency($cache_contexts);
+
+    return $response;
   }
 
 }
