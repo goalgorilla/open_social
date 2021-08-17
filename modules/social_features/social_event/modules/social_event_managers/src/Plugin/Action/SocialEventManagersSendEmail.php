@@ -102,6 +102,9 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
       $event_id = $object->getFieldValue('field_event', 'target_id');
       $node = $this->entityTypeManager->getStorage('node')->load($event_id);
 
+      // Resets the social_event_manager_or_organizer caches.
+      drupal_static_reset('social_event_manager_or_organizer');
+
       // Also Event organizers can do this.
       if ($node instanceof NodeInterface && social_event_manager_or_organizer($node)) {
         $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
