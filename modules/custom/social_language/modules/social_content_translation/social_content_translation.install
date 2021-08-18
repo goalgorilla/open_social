@@ -5,11 +5,22 @@
  * Installation tasks for the Social Language Content Translation module.
  */
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\language\Entity\ContentLanguageSettings;
+
 /**
  * Implements hook_install().
  */
 function social_content_translation_install() {
-  social_content_translation_disable_field_translations();
+  social_content_translation_install_language_settings_for_entities();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_content_translation_uninstall() {
+  \Drupal::configFactory()->getEditable('social_content_translation.settings')->delete();
 }
 
 /**
@@ -19,6 +30,10 @@ function social_content_translation_install() {
  * taxonomy terms. They are enabled by default when turning on content
  * translation but we want to control this to only the fields that are in
  * ContentTranslationDefaultsConfigOverride classes.
+ *
+ * @deprecated
+ *   The function is deprecated and will be removed as redundant.
+ * @see https://github.com/goalgorilla/open_social/pull/2434
  */
 function social_content_translation_disable_field_translations() {
   $entity_types = [
@@ -75,11 +90,68 @@ function social_content_translation_disable_field_translations() {
 }
 
 /**
+ * Install translation configuration.
+ *
+ *  "Content Translation" module provide UI where we can enabled/disable
+ *  translations for entity types we want. So here we enabling translations
+ *  for modules if it have "language.content_settings*" configuration in
+ *  "config/optional" folder.
+ */
+function social_content_translation_install_language_settings_for_entities() {
+  $config_storage = \Drupal::service('config.storage');
+
+  // Get enabled modules.
+  $modules = \Drupal::moduleHandler()->getModuleList();
+  foreach ($modules as $module_name => $extension) {
+    // Check if modules have target configuration.
+    $config_path = drupal_get_path('module', $module_name) . '/config/optional';
+    $source = new FileStorage($config_path);
+    if (!($list = $source->listAll('language.content_settings'))) {
+      // Do nothing.
+      continue;
+    }
+
+    foreach ($list as $config_name) {
+      // Probably, configuration can be already existed if module provided
+      // it was enabled after "Content Translation" module was enabled.
+      // Otherwise lets install it.
+      if (!$config_storage->exists($config_name)) {
+        $file = $source->read($config_name);
+        // We create a config as an entity because it allows to update field
+        // definitions for translated fields.
+        // @see content_translation_language_content_settings_insert()
+        $config = ContentLanguageSettings::create($file);
+        $config->save();
+      }
+    }
+  }
+
+  \Drupal::service('entity_type.bundle.info')->clearCachedBundles();
+  \Drupal::service('router.builder')->setRebuildNeeded();
+}
+
+/**
  * Add support translations for entities.
  */
 function social_content_translation_update_8001() {
   $module_names = [
     'social_group_flexible_group',
+  ];
+
+  $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');
+
+  foreach ($module_names as $module_name) {
+    $config->set($module_name, TRUE);
+    $config->save(TRUE);
+  }
+}
+
+/**
+ * Add translations compatibility for Topics.
+ */
+function social_content_translation_update_10301() {
+  $module_names = [
+    'social_topic',
   ];
 
   $config = \Drupal::configFactory()->getEditable('social_content_translation.settings');

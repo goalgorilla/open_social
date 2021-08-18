@@ -15,6 +15,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
    */
   public static $modules = [
     "social_branding",
+    "social_branding_test",
   ];
 
   /**
@@ -177,6 +178,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
                 }
               }
             }
+            preferredFeatures {
+              machineName
+            }
           }
         }
       ',
@@ -296,6 +300,11 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
               ],
             ],
           ],
+          'preferredFeatures' => [
+            ['machineName' => 'feature1'],
+            ['machineName' => 'feature2'],
+            ['machineName' => 'feature0'],
+          ],
         ],
       ],
       $this->defaultCacheMetaData()
@@ -364,6 +373,38 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       [
         'platformBranding' => [
           'brandingColors' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_theme)
+    );
+  }
+
+  /**
+   * Test that the platform preferred features can return an empty array.
+   */
+  public function testPreferredFeeaturesReturnEmptyArray(): void {
+    $system_theme = $this->config('system.theme');
+    // Set anonymous user.
+    $this->setUpCurrentUser();
+    // Uninstall social_branding_test to clean the provided preferred features.
+    \Drupal::service('module_installer')->uninstall(['social_branding_test'], FALSE);
+    $this->assertFalse(\Drupal::moduleHandler()->moduleExists('social_branding_test'), 'Test preferred features module is disabled.');
+
+    $this->assertResults(
+      '
+        query {
+          platformBranding {
+            preferredFeatures {
+              machineName
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'platformBranding' => [
+          'preferredFeatures' => [],
         ],
       ],
       $this->defaultCacheMetaData()
