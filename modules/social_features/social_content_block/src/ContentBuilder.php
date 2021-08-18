@@ -6,6 +6,7 @@ use Drupal\block_content\BlockContentInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -55,6 +56,13 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   protected $contentBlockManager;
 
   /**
+   * The entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
+
+  /**
    * ContentBuilder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -67,19 +75,23 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The string translation.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
-    ContentBlockManagerInterface $content_block_manager
+    ContentBlockManagerInterface $content_block_manager,
+    EntityRepositoryInterface $entity_repository
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
+    $this->entityRepository = $entity_repository;
   }
 
   /**
@@ -194,6 +206,10 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         if ($entity->access('view') === FALSE) {
           unset($entities[$key]);
         }
+        else {
+          // Get entity translation if exists.
+          $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+        }
       }
 
       return $this->entityTypeManager
@@ -248,6 +264,10 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     ) {
       return [];
     }
+
+    // Get block translation if exists.
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
+    $block_content = $this->entityRepository->getTranslationFromContext($block_content);
 
     $build['content'] = [];
 

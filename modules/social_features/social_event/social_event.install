@@ -1866,6 +1866,20 @@ function social_event_update_8919() {
 }
 
 /**
+ * Update event form labels.
+ */
+function social_event_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Allow CM+ translate "Event" node type.
  */
 function social_event_update_10301() {
@@ -1897,6 +1911,20 @@ function social_event_update_10303() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_event', 'social_event_update_10303');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Hide blocks on translations add/edit/delete pages.
+ */
+function social_event_update_10304() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
