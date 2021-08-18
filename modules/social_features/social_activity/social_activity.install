@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Config\FileStorage;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 
@@ -294,5 +295,58 @@ function social_activity_update_10301() {
     foreach ($updated as $display_name) {
       \Drupal::logger('system')->info('Filter removed from display: %name', ['%name' => $display_name]);
     }
+  }
+}
+
+/**
+ * Add a new filter to "notifications" view.
+ */
+function social_activity_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_10302');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add changes to message templates.
+ */
+function social_activity_update_10303() {
+  $config_path = drupal_get_path('module', 'social_activity') . '/config/install';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  // Add new message templates.
+  $config_names = [
+    'message.template.create_event_gc',
+    'message.template.create_topic_gc',
+
+  ];
+  foreach ($config_names as $name) {
+    $config_storage->write($name, $source->read($name));
+  }
+
+  // Modify existed message templates.
+  $config_factory = \Drupal::configFactory();
+  $config_names = [
+    'message.template.create_event_group',
+    'message.template.create_topic_group',
+    'message.template.moved_content_between_groups',
+    'message.template.create_content_in_joined_group',
+  ];
+
+  foreach ($config_names as $name) {
+    $config = $config_factory->getEditable($name);
+    // Update template text.
+    $updated_text = $source->read($name)['text'];
+    $config->set('text', $updated_text);
+    // Remove redundant destination.
+    $config->clear('third_party_settings.activity_logger.activity_destinations.stream_group');
+
+    $config->save();
   }
 }
