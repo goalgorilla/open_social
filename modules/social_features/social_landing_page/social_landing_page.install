@@ -61,6 +61,7 @@ function _social_landing_page_get_permissions($role) {
     'delete own landing_page content',
     'edit any landing_page content',
     'edit own landing_page content',
+    'translate landing_page node',
     'view landing_page revisions',
     'delete landing_page revisions',
     'revert landing_page revisions',
@@ -689,6 +690,43 @@ function social_landing_page_update_8811() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_8811');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update landing page form labels.
+ */
+function social_landing_page_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Allow CM+ translate "Landing Page" node type.
+ */
+function social_landing_page_update_10301() {
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['translate landing_page node']);
+  }
+}
+
+/**
+ * Make "Landing Page" translatable.
+ */
+function social_landing_page_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

@@ -208,26 +208,6 @@ function social_post_theme() {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function social_post_preprocess_post(&$variables) {
-  if ($variables['elements']['#view_mode']) {
-    /** @var \Drupal\social_post\Entity\PostInterface $entity */
-    $entity = $variables['elements']['#post'];
-
-    if (
-      in_array($entity->bundle(), ['post', 'photo']) &&
-      \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
-      \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
-    ) {
-      $variables['dashboard'] = TRUE;
-      $variables['comment_count'] = $entity->get('field_post_comments')->comment_count;
-      $variables['comment_url'] = $entity->toUrl()->toString();
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_activity().
  */
 function social_post_preprocess_activity(&$variables) {

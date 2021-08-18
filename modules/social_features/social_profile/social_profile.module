@@ -10,6 +10,9 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
@@ -21,6 +24,7 @@ use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\user\Entity\User;
@@ -66,11 +70,16 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
  */
 function social_profile_form_profile_profile_add_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile creation.
@@ -96,14 +105,19 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $viewing_user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $form_state->getFormObject()->getEntity();
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$viewing_user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $viewing_user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile edit.
@@ -369,7 +383,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')->countGroupMembershipsForUser($user->id());
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
@@ -922,4 +936,43 @@ function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_profile_views_plugins_filter_alter(array &$plugins) {
   $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_profile_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Check if we're dealing with the profile entity.
+  if ($entity_type->id() === 'profile') {
+    $fields['profile_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Profile name'))
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setReadOnly(TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct profile name.
+ */
+function social_profile_profile_presave(EntityInterface $profile) {
+  if ($profile instanceof ProfileInterface) {
+    /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
+    $profile_name_service = \Drupal::service('social_profile.name_service');
+
+    // Check if we need update Profile name.
+    if (!$profile_name_service->needToUpdateProfileName($profile)) {
+      return;
+    }
+
+    // Get generated profile name.
+    $profile_name = $profile_name_service->getProfileName($profile);
+    // Update profile name.
+    $profile->set('profile_name', $profile_name);
+  }
 }

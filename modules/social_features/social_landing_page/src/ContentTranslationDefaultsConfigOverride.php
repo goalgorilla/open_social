@@ -32,6 +32,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Landing Page" node type.
       'language.content_settings.node.landing_page' => [
         'third_party_settings' => [
           'content_translation' => [
@@ -48,23 +49,37 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
       'core.base_field_override.node.landing_page.path' => [
         'translatable' => TRUE,
       ],
-      'field.field.node.landing_page.body' => [
-        'translatable' => TRUE,
+      // Translations for "Section" paragraph type.
+      'language.content_settings.paragraph.section' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'field.field.paragraph.block.field_block_title' => [
-        'translatable' => TRUE,
+      // Translations for "Block" paragraph type.
+      'language.content_settings.paragraph.block' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'field.field.paragraph.button.field_button_link_an' => [
-        'translatable' => TRUE,
+      // Translations for "Button" paragraph type.
+      'language.content_settings.paragraph.button' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'field.field.paragraph.button.field_button_link_lu' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.paragraph.featured.field_featured_description' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.paragraph.featured.field_featured_title' => [
-        'translatable' => TRUE,
+      // Translations for "Hero" paragraph type.
+      'language.content_settings.paragraph.hero' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
       'field.field.paragraph.hero.field_hero_image' => [
         'third_party_settings' => [
@@ -76,19 +91,49 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
             ],
           ],
         ],
-        'translatable' => TRUE,
       ],
-      'field.field.paragraph.hero.field_hero_subtitle' => [
-        'translatable' => TRUE,
+      // Translations for "Hero small" paragraph type.
+      'language.content_settings.paragraph.hero_small' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'field.field.paragraph.hero.field_hero_title' => [
-        'translatable' => TRUE,
+      'field.field.paragraph.hero_small.field_hero_small_image' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'translation_sync' => [
+              'file' => 'file',
+              'alt' => '0',
+              'title' => '0',
+            ],
+          ],
+        ],
       ],
-      'field.field.paragraph.introduction.field_introduction_text' => [
-        'translatable' => TRUE,
+      // Translations for "Introduction" paragraph type.
+      'language.content_settings.paragraph.introduction' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
-      'field.field.paragraph.introduction.field_introduction_title' => [
-        'translatable' => TRUE,
+      // Translations for "Accordion" paragraph type.
+      'language.content_settings.paragraph.accordion' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
+      // Translations for "Accordion Item" paragraph type.
+      'language.content_settings.paragraph.accordion_item' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
       ],
     ];
   }

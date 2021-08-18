@@ -7,7 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
 
 /**
- * Provides add to Google calendar plugin.
+ * Provides add to Outlook calendar plugin.
  *
  * @SocialAddToCalendar(
  *   id = "outlook",
