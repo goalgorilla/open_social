@@ -250,6 +250,12 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             $suffix = _social_path_manager_get_path_suffix($entity, $route);
             $entity_language = $entity->language()->getId();
 
+            // Prevent adding alias for default tab.
+            $source_parts = explode('/', $path['source']);
+            if (end($source_parts) === $suffix) {
+              continue;
+            }
+
             // Get alias of the group tab.
             $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
 
