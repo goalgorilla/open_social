@@ -113,6 +113,14 @@ Feature: Enroll for an event without an account
       | Dude (English) | event_user_1@example.com | 1      |             |
       | Dude (Dutch)   | event_user_2@example.com | 1      |             |
 
+    Given I am logged in as an "authenticated user"
+    Given I am viewing my event:
+      | title                    | My Behat Event |
+      | field_event_date         | +8 days        |
+      | status                   | 1              |
+      | field_content_visibility | public         |
+      | langcode                 | und            |
+
     # Add Dutch language.
     Given I am logged in as an "administrator"
       And I turn off translations import
@@ -140,7 +148,7 @@ Feature: Enroll for an event without an account
     # Add created users directly to the event.
     Given I am logged in as "sm"
       And I am on "/community-events"
-      And I click "National Education Day"
+      And I click "My Behat Event"
     When I click "Manage enrollments"
     # Add a first one.
     Then I should see "Add enrollees"
@@ -161,7 +169,7 @@ Feature: Enroll for an event without an account
     And I am logged in as "Dude (English)"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My events"
-    And I click "National Education Day"
+    And I click "My Behat Event"
     And I should see the link "All enrollments"
     And I click "All enrollments"
     Then I should see "Dude (English)"
@@ -171,7 +179,7 @@ Feature: Enroll for an event without an account
     And I am logged in as "Dude (Dutch)"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My events"
-    And I click "National Education Day"
+    And I click "My Behat Event"
     And I should see the link "All enrollments"
     And I click "All enrollments"
     Then I should see "Dude (English)"
