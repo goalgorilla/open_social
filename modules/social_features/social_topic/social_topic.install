@@ -415,6 +415,20 @@ function social_topic_update_8909() {
 }
 
 /**
+ * Update topic form labels.
+ */
+function social_topic_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Add translation compatibility for Topic fields and views.
  */
 function social_topic_update_10301() {
