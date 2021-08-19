@@ -235,6 +235,6 @@ function social_page_update_10301() {
  * Remove layout_builder settings from small_teaser view mode for page.
  */
 function social_page_update_10302() {
- $config = \Drupal::configFactory()->getEditable('core.entity_view_display.node.page.small_teaser');
- $config->set('third_party_settings', [])->save();
+  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.node.page.small_teaser');
+  $config->set('third_party_settings', [])->save();
 }
