@@ -41,6 +41,72 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
 }
 
 /**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ *
+ * When rendering the block form inside paragraphs, the #states will not
+ * work due to different name parameter, since it's nested inside the paragraph
+ * field. We need to alter the form, so that the #states will match the new
+ * html markup provided by paragraph. We only do this for
+ * 'Override title' field.
+ */
+function social_landing_page_field_widget_block_field_default_form_alter(&$element, &$form_state, $context) {
+  // Make sure we are inside a paragraph.
+  $form = $context['form'];
+  $entity_type = $form['#entity_type'];
+  if ($entity_type != 'paragraph') {
+    return;
+  }
+
+  // Make sure we only do this in field_landing_page_section.
+  $parents = $form['#parents'];
+  if (!in_array('field_landing_page_section', $parents)) {
+    return;
+  }
+
+  // Get block settings and label fields.
+  $block_settings = $element['settings'];
+  $views_label_checkbox = isset($block_settings['views_label_checkbox']) ? $block_settings['views_label_checkbox'] : FALSE;
+  $views_label_fieldset = isset($block_settings['views_label_fieldset']) ? $block_settings['views_label_fieldset'] : FALSE;
+  $views_label = isset($block_settings['views_label']) ? $block_settings['views_label'] : FALSE;
+
+  if (!$views_label_checkbox || !$views_label_fieldset || !$views_label) {
+    return;
+  }
+
+  // Grab the id.
+  $id = $block_settings['#attributes']['id'];
+  $items = explode('-', $id);
+
+  // Generate the new state name.
+  // We use block id, to get all the parent names
+  // and then add the checkbox element to it.
+  $state_name = $items[0];
+  unset($items[0]);
+  $items[] = 'views_label_checkbox';
+
+  foreach ($items as $name) {
+    $state_name .= '[' . $name . ']';
+  }
+
+  // Fields on which to alter the state.
+  $fields = [
+    'views_label_fieldset',
+    'views_label',
+  ];
+
+  $state = ':input[name="' . $state_name . '"]';
+  foreach ($fields as $field) {
+    // Remove old values and replace them with the new ones.
+    unset($element['settings'][$field]['#states']['visible']);
+    $element['settings'][$field]['#states']['visible'][0] = [
+      $state => [
+        'checked' => TRUE,
+      ],
+    ];
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function social_landing_page_theme() {

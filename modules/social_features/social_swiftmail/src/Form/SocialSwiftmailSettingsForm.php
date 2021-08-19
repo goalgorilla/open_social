@@ -122,9 +122,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $notification_options = [];
     // Place the sorted data in an actual form option.
     foreach ($email_frequencies as $option) {
-      if ($option['id'] !== 'none') {
-        $notification_options[$option['id']] = $option['name'];
-      }
+      $notification_options[$option['id']] = $option['name'];
     }
 
     $template_frequencies = $config->get('template_frequencies') ?: [];
@@ -180,6 +178,13 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('remove_open_social_branding'),
     ];
 
+    $form['do_not_send_emails_new_users'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Don't send email notifications to users who have never logged in"),
+      '#description' => $this->t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification centre within the community.'),
+      '#default_value' => $config->get('do_not_send_emails_new_users'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -192,6 +197,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     // Save config.
     $config = $this->config('social_swiftmail.settings');
     $config->set('remove_open_social_branding', $form_state->getValue('remove_open_social_branding'));
+    $config->set('do_not_send_emails_new_users', $form_state->getValue('do_not_send_emails_new_users'));
 
     // Set notification settings.
     $templates = $this->emailActivityDestination->getSendEmailMessageTemplates();
