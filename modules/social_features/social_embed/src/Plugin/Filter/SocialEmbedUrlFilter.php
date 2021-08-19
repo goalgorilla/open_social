@@ -76,6 +76,7 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       'facebook.com\/(.*)\/videos\/(.*)',
       'facebook.com\/(.*)\/photos\/(.*)',
       'facebook.com\/(.*)\/posts\/(.*)',
+      'fb.watch\/(.*)',
       'flickr.com\/photos\/(.*)',
       'flic.kr\/p\/(.*)',
       'instagram.com\/p\/(.*)',
