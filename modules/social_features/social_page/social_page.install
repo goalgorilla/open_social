@@ -230,3 +230,11 @@ function social_page_update_10301() {
     user_role_grant_permissions($role_id, ['translate page node']);
   }
 }
+
+/**
+ * Remove layout_builder settings from small_teaser view mode for page.
+ */
+function social_page_update_10302() {
+  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.node.page.small_teaser');
+  $config->set('third_party_settings', [])->save();
+}
