@@ -241,3 +241,17 @@ function social_search_update_10201() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update the Search All (Index Social all) view configuration.
+ */
+function social_search_update_10301() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_10301');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
