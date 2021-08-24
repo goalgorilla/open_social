@@ -12,11 +12,9 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldItemInterface;
-use Drupal\Core\Field\FieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -26,9 +24,9 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldStorageConfigInterface;
-use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
@@ -37,7 +35,6 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
@@ -136,6 +133,132 @@ function social_profile_delete_visibility_field_storage_config_for(FieldStorageC
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_profile_field_config_insert(FieldConfigInterface $field_config) : void {
+  social_profile_ensure_associated_visibility_field_config($field_config);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_profile_field_config_delete(FieldConfigInterface $field_config) : void {
+  social_profile_delete_associated_visibility_field_config($field_config);
+}
+
+/**
+ * Ensures that a field config entity exists to mirror a profile field.
+ *
+ * When fields are created this adds the field config for the field storage that
+ * is created elsewhere. This ensures an adjustable config entity exists for
+ * each bundle where a field is added.
+ *
+ * @param \Drupal\Core\Field\FieldConfigInterface $field_config
+ *   The field config of the field for which a visibility field config should be
+ *   created.
+ */
+function social_profile_ensure_associated_visibility_field_config(FieldConfigInterface $field_config) : void {
+  // We only support this visibility set-up on the user profile.
+  if ($field_config->getTargetEntityTypeId() !== "profile") {
+    return;
+  }
+
+  // This only works for fieldable fields. Those are required to have a bundle.
+  $bundle = $field_config->getTargetBundle();
+  if ($bundle === NULL) {
+    throw new \InvalidArgumentException("Field config ({$field_config->getName()}) requesting visibility field must be associated with a bundle.");
+  }
+
+  // We only support storage configs from the field module, not those in Drupal
+  // core (i.e. entity base fields).
+  $field_storage_config = $field_config->getFieldStorageDefinition();
+  if (!$field_storage_config instanceof FieldStorageConfigInterface) {
+    return;
+  }
+
+  // Don't do anything when we're called for a field config that belongs to a
+  // field storage that stores visibility information. That field config is
+  // probably created by ourselves and would create infinite loops.
+  if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
+    return;
+  }
+
+  // Avoid trying to create a field config when there's no visibility storage
+  // for the field that we're configuring visibility info for. This can happen
+  // if a field has asked to opt-out of visibility configurability.
+  $visibility_storage_config_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
+  if ($visibility_storage_config_name === NULL) {
+    return;
+  }
+
+  $visibility_storage_config = FieldStorageConfig::load($visibility_storage_config_name);
+  if ($visibility_storage_config === NULL) {
+    throw new RuntimeException("{$field_storage_config->id()} indicated visibility storage in {$visibility_storage_config_name} but that storage does not exist.");
+  }
+
+  // Nothing to do if the visibility field config already exists.
+  if (FieldConfig::loadByName($field_config->getTargetEntityTypeId(), $bundle, $visibility_storage_config->getName()) !== NULL) {
+    return;
+  }
+
+  FieldConfig::create([
+    'field_name' => $visibility_storage_config->getName(),
+    'entity_type' => $field_config->getTargetEntityTypeId(),
+    'bundle' => $bundle,
+    'type' => 'string',
+    'module' => 'social_profile',
+    'translatable' => FALSE,
+    'locked' => TRUE,
+  ])->save();
+}
+
+/**
+ * Remove the visibility field config for our managed field access.
+ *
+ * @param \Drupal\Core\Field\FieldConfigInterface $field_config
+ *   The value field that is being removed for which to remove the matching
+ *   visibility field config.
+ */
+function social_profile_delete_associated_visibility_field_config(FieldConfigInterface $field_config) : void {
+  // We only support this visibility set-up on the user profile.
+  if ($field_config->getTargetEntityTypeId() !== "profile") {
+    return;
+  }
+
+  // We only support storage configs from the field module, not those in Drupal
+  // core (i.e. entity base fields).
+  $field_storage_config = $field_config->getFieldStorageDefinition();
+  if (!$field_storage_config instanceof FieldStorageConfigInterface) {
+    return;
+  }
+
+  // No need to delete an associated visibility field config if the deleted
+  // field doesn't have one.
+  $visibility_storage_config_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
+  if ($visibility_storage_config_name === NULL) {
+    return;
+  }
+
+  $visibility_storage_config = FieldStorageConfig::load($visibility_storage_config_name);
+  if ($visibility_storage_config === NULL) {
+    throw new RuntimeException("{$field_storage_config->id()} indicated visibility storage in {$visibility_storage_config_name} but that storage does not exist.");
+  }
+
+  $visibility_config = FieldConfig::loadByName(
+    $field_config->getTargetEntityTypeId(),
+    $field_config->getTargetBundle() ?? $field_config->getTargetEntityTypeId(),
+    $visibility_storage_config->getName()
+  );
+
+  // Nothing to delete if it's already gone.
+  if ($visibility_config === NULL) {
+    return;
+  }
+
+  $visibility_config->delete();
+}
+
+/**
  * Generate the visibility field name.
  *
  * Field names need to be less than 32 characters but since we're deriving our
@@ -160,31 +283,6 @@ function social_profile_get_visibility_field_name(string $field_name) : string {
   }
 
   return $visibility_name;
-}
-
-/**
- * Implements hook_entity_bundle_field_info_alter().
- *
- * For each field on a profile, adds a duplicate field that stores the
- * visibility settings that the user has configured for their profile.
- *
- * Implemented as alter hook to ensure we have access to all the bundle fields.
- */
-function social_profile_entity_bundle_field_info_alter(array $fields, EntityTypeInterface $entity_type, string $bundle) : void {
-  // @todo Allow opting out of visibility field creation.
-  if ($entity_type->id() === "profile") {
-    $storage_definitions = field_entity_field_storage_info($entity_type);
-    // We create field definitions from the other field so that if a field is
-    // deleted but its storage not cleaned up then the visibility field is still
-    // made inaccessible. We do require a field storage to be present to be able
-    // to tell Drupal there's a visibility field there.
-    foreach ($fields as $field_name => $field) {
-      $visibility_field_name = social_profile_get_visibility_field_name($field_name);
-      if (isset($storage_definitions[$visibility_field_name])) {
-        $fields[$visibility_field_name] = FieldDefinition::createFromFieldStorageDefinition($storage_definitions[$visibility_field_name]);
-      }
-    }
-  }
 }
 
 /**
