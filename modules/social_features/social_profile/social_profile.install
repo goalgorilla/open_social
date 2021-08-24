@@ -177,7 +177,15 @@ function _social_profile_install_visibility_fields() : void {
 
     $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->id());
     $field_storage_config->save();
+
+    // If there's a configured field on the profile bundle then we also ensure
+    // there's a field config entity.
+    $field_config = FieldConfig::loadByName('profile', 'profile', $field_storage_config->getName());
+    if ($field_config !== NULL) {
+      social_profile_ensure_associated_visibility_field_config($field_config);
+    }
   }
+
 }
 
 /**
