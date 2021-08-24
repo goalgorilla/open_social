@@ -1,0 +1,31 @@
+views.view.group_events:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items: {  }
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items:
+                    1:
+                      title: 'Ongoing and upcoming events'
+                      operator: in
+                      value: '1'
+                    2:
+                      title: 'Past events'
+                      operator: in
+                      value: '2'
+                    3:
+                      title: ''
+                      operator: in
+                      value: null
