@@ -47,12 +47,18 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       ->getEditable('system.theme')
       ->set('default', 'socialblue')
       ->save();
+    $this->container
+      ->get('config.factory')
+      ->getEditable('system.site')
+      ->set('name', 'Open Social')
+      ->save();
   }
 
   /**
    * Ensure the platform branding fields are properly added to the endpoint.
    */
   public function testPlatformBrandingFieldsPresence() : void {
+    $system_information = $this->config('system.site');
     $system_theme = $this->config('system.theme');
     $config = $this->config('socialblue.settings');
     // Prepare logo url.
@@ -64,6 +70,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $this->assertResults(
       '
         query {
+          about {
+            name
+          }
           platformBranding {
             logoUrl
             brandingColors {
@@ -186,6 +195,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       ',
       [],
       [
+        'about' => [
+          'name' => $system_information->get('name'),
+        ],
         'platformBranding' => [
           'logoUrl' => $expected_logo_url,
           'brandingColors' => [
@@ -308,6 +320,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultCacheMetaData()
+        ->addCacheableDependency($system_information)
         ->addCacheableDependency($system_theme)
         ->addCacheableDependency($config)
     );

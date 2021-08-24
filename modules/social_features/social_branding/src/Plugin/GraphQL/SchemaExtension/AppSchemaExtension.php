@@ -25,8 +25,17 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
     $builder = new ResolverBuilder();
 
     // Query fields.
+    $registry->addFieldResolver('Query', 'about',
+      $builder->produce('community_about')
+    );
     $registry->addFieldResolver('Query', 'platformBranding',
       $builder->produce('platform_branding')
+    );
+
+    // CommunityAbout fields.
+    $registry->addFieldResolver('CommunityAbout', 'name',
+      $builder->produce('community_about_name')
+        ->map('CommunityAbout', $builder->fromParent())
     );
 
     // PlatformBranding fields.
