@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
@@ -63,6 +64,13 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   protected $entityRepository;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * ContentBuilder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -77,6 +85,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The content block manager.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -84,7 +94,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
     ContentBlockManagerInterface $content_block_manager,
-    EntityRepositoryInterface $entity_repository
+    EntityRepositoryInterface $entity_repository,
+    TimeInterface $time
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
@@ -92,6 +103,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
     $this->entityRepository = $entity_repository;
+    $this->time = $time;
   }
 
   /**
@@ -140,12 +152,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $field_names = [$block_content->field_plugin_field->value];
     }
 
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
-
     $fields = [];
 
     foreach ($field_names as $field_name) {
@@ -169,7 +175,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
-    /** @var \Drupal\Core\Database\Query\SelectInterface $query */
     $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
       ->fields('base_table', [$entity_type->getKey('id')]);
 
@@ -188,7 +193,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
     // Apply our sorting logic.
-    $this->sortBy($query, $entity_type, $block_content->field_sorting->value);
+    $this->sortBy($query, $entity_type, $block_content);
 
     // Add range.
     $query->range(0, $block_content->field_item_amount->value);
@@ -418,14 +423,43 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The query.
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type that is being queried.
-   * @param string $sort_by
-   *   The type of sorting that should happen.
+   * @param \Drupal\block_content\BlockContentInterface $block_content
+   *   The block content entity object.
    */
-  protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, string $sort_by) : void {
+  protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, BlockContentInterface $block_content) : void {
+    $field = $block_content->field_sorting;
+
+    if ($field->isEmpty() || !isset($field->value)) {
+      return;
+    }
+
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.
     // Sorry cool kids, your time's up.
-    $popularity_time_start = strtotime('-90 days');
+    if (($sort_by = $field->value) === 'trending') {
+      $field = $block_content->field_duration;
+
+      if (!$field->isEmpty() && isset($field->value)) {
+        $days = $field->value;
+      }
+      else {
+        $days = NULL;
+      }
+    }
+    else {
+      $days = 90;
+    }
+
+    if ($days) {
+      $popularity_time_start = strtotime("-$days days", $this->time->getRequestTime());
+
+      if ($popularity_time_start) {
+        $popularity_time_start = (string) $popularity_time_start;
+      }
+    }
+    else {
+      $popularity_time_start = NULL;
+    }
 
     // Provide some values that are often used in the query.
     $entity_type_id = $entity_type->id();
@@ -532,6 +566,13 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         }
 
         $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)");
+
+        if ($popularity_time_start) {
+          $query
+            ->condition("$comment_alias.created", $popularity_time_start, '>')
+            ->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+        }
+
         $query->groupBy($base_field)->orderBy($sorting_field, 'DESC');
 
         break;
