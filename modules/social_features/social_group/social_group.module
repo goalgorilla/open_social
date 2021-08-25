@@ -2036,7 +2036,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   // User Groups view.
   if ($view->id() == 'groups' && $view->getDisplay()->display['id'] == 'page_user_groups') {
     // Change Join type if we want to see muted groups.
-    // @todo: Remove changing Join type below when will be fixed issue where
+    // @todo Remove changing Join type below when will be fixed issue where
     // exposed flag filter can't show unflagged groups.
     // @see https://www.drupal.org/project/group/issues/3219902
     /** @var \Drupal\views\Plugin\views\query\Sql $query */
