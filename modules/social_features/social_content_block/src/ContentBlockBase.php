@@ -24,6 +24,7 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
       'most_commented' => 'Most commented',
       'most_liked' => 'Most liked',
       'last_interacted' => 'Last interacted',
+      'trending' => 'Comments and likes',
     ];
   }
 

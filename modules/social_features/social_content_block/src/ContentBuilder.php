@@ -19,7 +19,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
 /**
- * Class ContentBuilder.
+ * Defines the content builder service.
  *
  * @package Drupal\social_content_block
  */
@@ -396,7 +396,11 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     // Check that the currently selected value is valid and change it otherwise.
     $value_parents = array_merge($parents, ['0', 'value']);
     $sort_value = $form_state->getValue($value_parents);
-    $options = NestedArray::getValue($form, array_merge($parents, ['widget', '#options']));
+
+    $options = NestedArray::getValue(
+      $form,
+      array_merge($parents, ['widget', '#options'])
+    );
 
     if ($sort_value === NULL || !isset($options[$sort_value])) {
       // Unfortunately this has already triggered a validation error.
@@ -509,6 +513,27 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
           $query->groupBy("base_table.${entity_id_key}");
           $query->orderBy('newest_timestamp', 'DESC');
         }
+        break;
+
+      // Summed up likes and comments.
+      case 'trending':
+        $base_field = 'base_table.' . $entity_id_key;
+
+        if ($entity_type_id === 'group') {
+          $post_alias = $query->leftJoin('post__field_recipient_group', NULL, "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', NULL, "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', NULL, "%alias.status = 1 AND ($post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node')");
+          $vote_alias = $query->leftJoin('votingapi_vote', NULL, "%alias.type = 'like' AND ($post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node')");
+        }
+        else {
+          $arguments = ['entity_type' => $entity_type_id];
+          $comment_alias = $query->leftJoin('comment_field_data', NULL, "%alias.status = 1 AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $vote_alias = $query->leftJoin('votingapi_vote', NULL, "%alias.type = 'like' AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+        }
+
+        $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)");
+        $query->groupBy($base_field)->orderBy($sorting_field, 'DESC');
+
         break;
 
       case 'event_date':
