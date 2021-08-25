@@ -4,7 +4,7 @@ Feature: Event bulk actions
   Role: LU
   Goal/desire: I want to be able to use bulk actions for events enrollees
 
-  @event-bulk-emails
+  @email-spool @event-bulk-emails
   Scenario: Successfully send bulk emails to enrollees
     Given I enable the module "social_event_an_enroll"
 
