@@ -104,7 +104,7 @@ function _social_like_set_defaults() {
   )->save();
   // Add voting api settings.
   $config = $container->getEditable('like_and_dislike.settings');
-  $config->set('delete_everywhere', TRUE)->save();
+  $config->set('delete_everywhere', FALSE)->save();
 }
 
 /**
