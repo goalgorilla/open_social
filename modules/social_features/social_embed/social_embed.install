@@ -22,3 +22,10 @@ function social_embed_update_8001() {
   // Create the social_embed icon.
   social_embed_create_media_button();
 }
+
+/**
+ * Enable 'administer url_embed' permission for sitemanagers.
+ */
+function social_embed_update_10301() {
+  user_role_grant_permissions('sitemanager', ['administer url_embed']);
+}
