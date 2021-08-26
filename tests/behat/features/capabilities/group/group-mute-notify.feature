@@ -53,7 +53,7 @@ Feature: Mute/Unmute group notifications
     Then I should see "Ressinel's group 1st"
       And I should see "Ressinel's group 2nd"
 
-  @group-mute-group-notifications-unmuted
+  @email-spool @group-mute-group-notifications-unmuted
   Scenario: LU able to receive notifications from the unmuted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
@@ -93,7 +93,7 @@ Feature: Mute/Unmute group notifications
       And I should have an email with subject "Notification from Open Social" and in the content:
         | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
 
-  @group-mute-group-notifications-muted
+  @email-spool @group-mute-group-notifications-muted
   Scenario: LU not able to receive notifications from the muted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
