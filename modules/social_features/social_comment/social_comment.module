@@ -170,6 +170,9 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
  */
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   if (!$entity->isPublished()) {
+    if (\Drupal::moduleHandler()->moduleExists('social_ajax_comments')) {
+      unset($links['comment']['#links']['comment-reply']['attributes']['class']);
+    }
     // If the comment is not published disable the reply link.
     $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');
   }
