@@ -27,7 +27,7 @@ class SocialProfileHideRealNamesHelper {
    */
   public static function getDefaultFieldVisibilityStatus(string $fieldName, AccountInterface $account = NULL) {
     if ($account) {
-      /** @var \Drupal\user\UserDataInterface $user_data */
+      /** @var \Drupal\user\UserDataInterface $userData */
       $userData = \Drupal::service('user.data');
       $userStates = $userData->get('social_profile_privacy', $account->id(), 'fields');
     }

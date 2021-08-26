@@ -23,14 +23,14 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
-  
+
   /**
    * The Drupal entity type handler.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-  
+
   /**
    * The database connection.
    *
@@ -44,7 +44,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @var \Drupal\user\UserDataInterface
    */
   protected $userData;
-  
+
   /**
    * ConfigEventsSubscriber constructor.
    *
@@ -97,15 +97,15 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
     // changed is one we're interested in, perform the re-index.
     $configName = $event->getConfig()->getName();
     if (isset($triggers[$configName]) && $event->isChanged($triggers[$configName])) {
-      // If SM disable global "hide real names" settings we remove all 
+      // If SM disable global "hide real names" settings we remove all
       // user data already created by users and re-index their profiles.
-      if (!$triggers[$configName]) {
+      if (!$event->getConfig()->get('allow_hide_real_names.status')) {
         // Get users ids that already updated their profile.
         $query = $this->connection->select('users_data');
         $query->addField('users_data', 'uid');
         $query->condition('module', 'social_profile_privacy');
         $query->condition('name', 'hide_real_names');
-        $uids = $query->execute()->fetchAllKeyed(0,0);
+        $uids = $query->execute()->fetchAllKeyed(0, 0);
 
         if ($uids) {
           foreach ($uids as $uid) {
@@ -116,7 +116,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
             unset($fields['field_profile_first_name'], $fields['field_profile_last_name'], $fields['field_profile_nick_name']);
             $this->userData->set('social_profile_privacy', $uid, 'fields', $fields);
           }
-          
+
           $this->invalidateProfilesForSearchIndexes($uids);
         }
       }
@@ -127,6 +127,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * Invalidates the search indices for every index that uses profile data.
    *
    * @param array $uids
+   *   An array of users ids.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -136,22 +137,22 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
     if (!$this->moduleHandler->moduleExists('search_api')) {
       return;
     }
-    
+
     $profileIds = $this->entityTypeManager
       ->getStorage('profile')
       ->getQuery()
       ->condition('uid', $uids, 'IN')
       ->execute();
-    
+
     // Users without profiles?
-    if (empty($profileIds)) {  
+    if (empty($profileIds)) {
       return;
     }
-    
+
     $profiles = $this->entityTypeManager
       ->getStorage('profile')
       ->loadMultiple($profileIds);
-    
+
     // We load all indexes, we assume there will never be hundreds of search
     // indexes which would create its own problems for a site.
     $indexes = $this->entityTypeManager

@@ -13,7 +13,7 @@ function social_profile_hide_real_names_install() {
   $parent_module_weight = $extension_config->get('module.social_profile_privacy');
   $this_module = $parent_module_weight + 1;
   module_set_weight('social_profile_hide_real_names', $this_module);
-  
+
   // Add new properties to the main settings.
   $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
   $settings = [

@@ -79,7 +79,7 @@ function social_profile_hide_real_names_form_social_profile_admin_settings_form_
     '#type' => 'checkboxes',
     '#title' => t('Roles'),
     '#description' => t("Chose user roles be able to hide real names."),
-    '#options' => $options,
+    '#options' => $options ?? [],
     '#default_value' => $config->get('allow_hide_real_names.roles') ?? [],
     '#states' => [
       'visible' => [
@@ -153,7 +153,7 @@ function _social_profile_hide_real_names_admin_settings_form_submit($form, FormS
   );
 
   $config->save();
-  
+
   // Also, if "hide real names" feature is enabled we need to restrict for users
   // to create similar nicknames.
   if ($allow_hide_real_names) {
@@ -249,7 +249,7 @@ function _social_profile_hide_real_names_user_form_submit($form, FormStateInterf
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
   $config = \Drupal::config('social_profile_privacy.settings');
-  
+
   $uid = $form_state->get('account_id');
 
   if ($config->get('allow_hide_real_names.status')) {
