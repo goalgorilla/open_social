@@ -1873,15 +1873,6 @@ function social_group_get_all_group_members($uid) {
 }
 
 /**
- * Implements hook_field_info_alter().
- */
-function social_group_field_info_alter(&$info) {
-  if (isset($info['groups'])) {
-    $info['groups']['default widget'] = 'social_group_selector_widget';
-  }
-}
-
-/**
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
@@ -1891,8 +1882,9 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
       ->setLabel(t('Group'))
       ->setDescription('')
       ->setSetting('handler', 'social')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('form', [
-        'type' => 'options_select',
+        'type' => 'social_group_selector_widget',
         'settings' => [],
         'weight' => 16,
       ])
