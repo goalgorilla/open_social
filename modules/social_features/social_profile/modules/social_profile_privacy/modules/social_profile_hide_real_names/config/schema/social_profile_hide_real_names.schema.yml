@@ -1,0 +1,14 @@
+# Schema for the configuration files of the Social Profile Privacy module.
+social_profile_privacy.settings.allow_hide_real_names:
+  type: mapping
+  label: 'Allow hide real names'
+  mapping:
+    status:
+      type: boolean
+      label: 'Status'
+    roles:
+      type: sequence
+      label: 'Roles'
+      sequence:
+        type: string
+        label: 'Role'

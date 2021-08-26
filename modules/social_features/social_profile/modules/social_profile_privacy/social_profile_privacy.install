@@ -248,3 +248,11 @@ function social_profile_privacy_update_8002() {
 
   return $output;
 }
+
+/**
+ * Enable "social_profile_hide_real_names" module.
+ */
+function social_profile_privacy_update_8003() {
+  \Drupal::service('module_installer')
+    ->install(['social_profile_hide_real_names']);
+}

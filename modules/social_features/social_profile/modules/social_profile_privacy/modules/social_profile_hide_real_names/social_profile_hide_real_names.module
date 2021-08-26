@@ -1,0 +1,324 @@
+<?php
+
+/**
+ * @file
+ * The Social Profile Hide Real Names module file.
+ */
+
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\PrependCommand;
+use Drupal\Core\Ajax\RemoveCommand;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Render\Element\Checkboxes;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\social_profile_hide_real_names\SocialProfileHideRealNamesHelper;
+use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_hide_real_names_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  switch ($form_id) {
+    case 'profile_profile_add_form':
+    case 'profile_profile_edit_form':
+      $profile = $form_state->getFormObject()->getEntity();
+      $user_data = \Drupal::service('user.data');
+
+      $hide_real_names = $user_data->get('social_profile_privacy', $profile->getOwnerId(), 'hide_real_names');
+      if ($hide_real_names) {
+        // Make field "nickname" required.
+        if (!empty($form['field_profile_nick_name']['widget'][0]['value'])) {
+          $form['field_profile_nick_name']['widget'][0]['value']['#required'] = TRUE;
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "social_profile_admin_settings_form".
+ */
+function social_profile_hide_real_names_form_social_profile_admin_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('social_profile_privacy.settings');
+
+  // Add setting allows hide "real names" for users.
+  $form['privacy']['allow_hide_real_names'] = [
+    '#type' => 'details',
+    '#title' => t('Allow hide real names'),
+    '#tree' => TRUE,
+    '#open' => TRUE,
+    '#attributes' => [
+      'id' => 'allow-hide-full-name-wrapper',
+    ],
+    '#weight' => -1,
+  ];
+
+  $form['privacy']['allow_hide_real_names']['status'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Allow hide real names'),
+    '#description' => t("Enabling this setting causes users' real names to be hidden on the platform and forces the user to fill his nickname. If user hide the real names only site managers will be able to see it."),
+    '#default_value' => $config->get('allow_hide_real_names.status') ?? FALSE,
+    '#ajax' => [
+      'callback' => '_social_profile_hide_real_names_admin_settings_form_ajax_callback',
+      'wrapper' => 'allow-hide-full-name-wrapper',
+      'event' => 'change',
+    ],
+  ];
+
+  // The list of roles can hide the real names.
+  $roles = Role::loadMultiple();
+  unset($roles[RoleInterface::ANONYMOUS_ID]);
+
+  foreach ($roles as $rid => $role) {
+    $options[$rid] = $role->label();
+  }
+
+  $form['privacy']['allow_hide_real_names']['roles'] = [
+    '#type' => 'checkboxes',
+    '#title' => t('Roles'),
+    '#description' => t("Chose user roles be able to hide real names."),
+    '#options' => $options,
+    '#default_value' => $config->get('allow_hide_real_names.roles') ?? [],
+    '#states' => [
+      'visible' => [
+        'input[name="allow_hide_real_names[status]"]' => ['checked' => TRUE],
+      ],
+      'required' => [
+        'input[name="allow_hide_real_names[status]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  // Enable "limit_search_and_mention" as we can't restrict searching users
+  // by real names in other way.
+  $form['privacy']['limit_search_and_mention']['#states'] = [
+    'checked' => [
+      'input[name="allow_hide_real_names[status]"]' => ['checked' => TRUE],
+    ],
+    'disabled' => [
+      'input[name="allow_hide_real_names[status]"]' => ['checked' => TRUE],
+    ],
+  ];
+
+  $form['#submit'][] = '_social_profile_hide_real_names_admin_settings_form_submit';
+}
+
+/**
+ * Ajax callback for "social_profile_admin_settings_form" form.
+ */
+function _social_profile_hide_real_names_admin_settings_form_ajax_callback($form, FormStateInterface $form_state) {
+  $element = $form_state->getTriggeringElement();
+  $value = $element['#value'];
+  $selector = '#allow-hide-full-name-wrapper';
+
+  if (!$value) {
+    // Return inform message.
+    $ajaxResponse = new ajaxResponse();
+    $content = [
+      '#theme' => 'status_messages',
+      '#message_list' => [
+        'warning' => [
+          [
+            '#type' => 'html_tag',
+            '#tag' => 'strong',
+            '#value' => t('Unchecking this settings will force visible real names for users already hidden it!'),
+          ],
+        ],
+      ],
+    ];
+    $ajaxResponse->addCommand(new PrependCommand($selector, $content));
+    return $ajaxResponse;
+  }
+  else {
+    // Remove inform message.
+    $ajaxResponse = new ajaxResponse();
+    $ajaxResponse->addCommand(new RemoveCommand($selector . ' .messages-list'));
+    return $ajaxResponse;
+  }
+}
+
+/**
+ * The submit function for "social_profile_admin_settings_form" form.
+ */
+function _social_profile_hide_real_names_admin_settings_form_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
+
+  $allow_hide_real_names = $form_state->getValue(['allow_hide_real_names', 'status']);
+  $config->set('allow_hide_real_names.status', $allow_hide_real_names);
+  $config->set('allow_hide_real_names.roles', $allow_hide_real_names
+    ? Checkboxes::getCheckedCheckboxes($form_state->getValue(['allow_hide_real_names', 'roles']))
+    : []
+  );
+
+  $config->save();
+  
+  // Also, if "hide real names" feature is enabled we need to restrict for users
+  // to create similar nicknames.
+  if ($allow_hide_real_names) {
+    $config = \Drupal::configFactory()->getEditable('social_profile_fields.settings');
+    $config->set('nickname_unique_validation', TRUE);
+    $config->save();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "user_form".
+ */
+function social_profile_hide_real_names_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+
+  if ($form_object->getOperation() !== 'default') {
+    return;
+  }
+
+  $config = \Drupal::config('social_profile_privacy.settings');
+  /* @var \Drupal\user\Entity\User $user */
+  $user = $form_object->getEntity();
+
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
+
+  if ($config->get('allow_hide_real_names.status')) {
+    // Addition check if user have a role allowed hide real names.
+    if (array_intersect($config->get('allow_hide_real_names.roles'), $user->getRoles())) {
+      $hide_real_names = $user_data->get('social_profile_privacy', $user->id(), 'hide_real_names');
+
+      $form['profile_privacy']['hide_real_names'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Hide my real names on the platform'),
+        '#description' => t('Enable this settings if you want to stay anonymous on the platform. Only site managers will be able to see your real name, other users will see only you nickname.'),
+        '#default_value' => $hide_real_names,
+        '#attributes' => [
+          'data-switch' => TRUE,
+        ],
+        '#weight' => 0,
+        '#element_validate' => ['_social_profile_hide_real_names_user_form_validate'],
+      ];
+
+      if ($hide_real_names) {
+        $fields = [
+          'field_profile_first_name' => SocialProfileHideRealNamesHelper::HIDE,
+          'field_profile_last_name' => SocialProfileHideRealNamesHelper::HIDE,
+          'field_profile_nick_name' => SocialProfileHideRealNamesHelper::SHOW,
+        ];
+
+        foreach ($fields as $field_name => $status) {
+          $form['profile_privacy']['fields'][$field_name]['#default_value'] = $status;
+        }
+      }
+    }
+  }
+
+  array_unshift($form['actions']['submit']['#submit'], '_social_profile_hide_real_names_user_form_submit');
+}
+
+/**
+ * Validate callback for "user_form".
+ */
+function _social_profile_hide_real_names_user_form_validate($element, FormStateInterface $form_state, array $form) {
+  // Check if user has filled nickname field in his profile.
+  $value = $form_state->getValue(['profile_privacy', 'hide_real_names']) ?? FALSE;
+  $profile = _social_profile_get_profile_from_route();
+
+  if (!$value || !$profile) {
+    return;
+  }
+
+  if (!$profile->hasField('field_profile_nick_name')) {
+    $form_state->setErrorByName('hide_real_names', t('Required field nickname does not exist in profile entity.'));
+  }
+
+  if ($profile->get('field_profile_nick_name')->isEmpty()) {
+    $form_state->setErrorByName('hide_real_names', t('You should fill your nickname @link.', [
+      '@link' => Link::createFromRoute(t('here'), 'profile.user_page.single', [
+        'user' => $form_state->get('account_id'),
+        'profile_type' => 'profile',
+      ])->toString(),
+    ]));
+  }
+
+}
+
+/**
+ * Submit function for "user_form".
+ */
+function _social_profile_hide_real_names_user_form_submit($form, FormStateInterface $form_state) {
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
+  $config = \Drupal::config('social_profile_privacy.settings');
+  
+  $uid = $form_state->get('account_id');
+
+  if ($config->get('allow_hide_real_names.status')) {
+    /* @var \Drupal\user\Entity\User $user */
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
+
+    if (array_intersect($config->get('allow_hide_real_names.roles'), $user->getRoles())) {
+      $hide_real_names = $form_state->getValue(['profile_privacy', 'hide_real_names']) ?? FALSE;
+      $user_data->set('social_profile_privacy', $uid, 'hide_real_names', $hide_real_names);
+
+      if ($hide_real_names) {
+        $values = (array) $user_data->get('social_profile_privacy', $uid, 'fields');
+
+        // If user want to hide his real names we need to add appropriate changes
+        // in fields list.
+        if (!empty($hide_real_names)) {
+          $values['field_profile_first_name'] = SocialProfileHideRealNamesHelper::HIDE;
+          $values['field_profile_last_name'] = SocialProfileHideRealNamesHelper::HIDE;
+          $values['field_profile_nick_name'] = SocialProfileHideRealNamesHelper::SHOW;
+        }
+
+        $user_data->set('social_profile_privacy', $uid, 'fields', $values);
+      }
+      else {
+        // If disabled just remove the values.
+        $values = (array) $user_data->get('social_profile_privacy', $uid, 'fields');
+        unset(
+          $values['field_profile_first_name'],
+          $values['field_profile_last_name'],
+          $values['field_profile_nick_name']
+        );
+        $user_data->set('social_profile_privacy', $uid, 'fields', $values);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_social_user_name_display_suggestions_alter().
+ */
+function social_profile_hide_real_names_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
+  $allow_hide_real_names = \Drupal::config('social_profile_privacy.settings')->get('allow_hide_real_names');
+
+  if (empty($allow_hide_real_names['status'])) {
+    return;
+  }
+
+  $user_data = \Drupal::service('user.data');
+  if (!$user_data->get('social_profile_privacy', $account->id(), 'hide_real_names')) {
+    return;
+  }
+
+  if (!isset($suggestions['full_name'], $suggestions['nickname'])) {
+    return;
+  }
+
+  // Show "full name" for SM even user hidden it.
+  if (\Drupal::currentUser()->hasPermission('social profile privacy view hidden fields')) {
+    $suggestions['full_name']['weight'] = isset($suggestions['nickname']['weight'])
+      ? ($suggestions['nickname']['weight'] - 1)
+      : -100;
+  }
+  // Show "nickname" instead "full name".
+  else {
+    if (isset($suggestions['full_name']['weight'], $suggestions['nickname']['weight'])) {
+      $suggestions['nickname']['weight'] = ($suggestions['full_name']['weight'] - 1);
+    }
+    else {
+      $suggestions['nickname']['weight'] = -100;
+    }
+  }
+}
