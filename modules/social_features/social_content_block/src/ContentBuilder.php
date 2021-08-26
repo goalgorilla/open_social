@@ -127,15 +127,17 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getEntities($block_id) {
-    $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
+    $block_content = $this->entityTypeManager->getStorage('block_content')
+      ->load($block_id);
 
-    $plugin_id = $block_content->field_plugin_id->value;
+    $plugin_id = $block_content->field_plugin_id->getValue()[0]['value'];
     $definition = $this->contentBlockManager->getDefinition($plugin_id);
 
     // When the user didn't select any filter in the "Content selection" field
     // then the block base query will be built based on all filled filterable
     // fields.
-    if ($block_content->field_plugin_field->isEmpty()) {
+    if (($field = $block_content->field_plugin_field)->isEmpty()) {
       // It could be that the plugin supports more fields than are currently
       // available, those are removed.
       $field_names = array_filter(
@@ -149,7 +151,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     // only condition based on this filter field will be added to the block base
     // query.
     else {
-      $field_names = [$block_content->field_plugin_field->value];
+      $field_names = array_column($field->getValue(), 'value');
     }
 
     $fields = [];
@@ -157,15 +159,13 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     foreach ($field_names as $field_name) {
       $field = $block_content->get($field_name);
 
-      // Make non-empty entity reference fields easier to use.
-      if ($field instanceof EntityReferenceFieldItemListInterface && !$field->isEmpty()) {
-        $fields[$field_name] = array_map(function ($item) {
-          return $item['target_id'];
-        }, $field->getValue());
-      }
-      // Other fields just get added as is.
-      elseif (!$field->isEmpty()) {
+      if (!$field->isEmpty()) {
         $fields[$field_name] = $field->getValue();
+
+        // Make non-empty entity reference fields easier to use.
+        if ($field instanceof EntityReferenceFieldItemListInterface) {
+          $fields[$field_name] = array_column($fields[$field_name], 'target_id');
+        }
       }
     }
 
@@ -427,27 +427,20 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The block content entity object.
    */
   protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, BlockContentInterface $block_content) : void {
-    $field = $block_content->field_sorting;
-
-    if ($field->isEmpty() || !isset($field->value)) {
+    if (($field = $block_content->field_sorting)->isEmpty()) {
       return;
     }
+
+    $sort_by = $field->getValue()[0]['value'];
 
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.
     // Sorry cool kids, your time's up.
-    if (($sort_by = $field->value) === 'trending') {
-      $field = $block_content->field_duration;
-
-      if (!$field->isEmpty() && isset($field->value)) {
-        $days = $field->value;
-      }
-      else {
-        $days = NULL;
-      }
+    if (!($field = $block_content->field_duration)->isEmpty()) {
+      $days = $field->getValue()[0]['value'];
     }
     else {
-      $days = 90;
+      $days = NULL;
     }
 
     if ($days) {
@@ -464,27 +457,34 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     // Provide some values that are often used in the query.
     $entity_type_id = $entity_type->id();
     $entity_id_key = $entity_type->getKey('id');
+    $arguments = ['entity_type' => $entity_type_id];
+    $is_group = $entity_type_id === 'group';
+    $base_field = 'base_table.' . $entity_id_key;
+    $sorting_field = 'base_table.' . $sort_by;
+    $direction = 'DESC';
 
     switch ($sort_by) {
       // Creates a join to select the number of comments for a given entity
       // in a recent timeframe and use that for sorting.
       case 'most_commented':
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
-          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post') OR (gfd.entity_id = cfd.entity_id AND cfd.entity_type='node')", ['entity_type' => $entity_type_id]);
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
-        // Otherwise only check direct votes.
+        // Otherwise, only check direct votes.
         else {
-          $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
 
-        $query->addExpression('COUNT(cfd.cid)', 'comment_count');
-        $query
-          ->condition('cfd.status', 1, '=')
-          ->condition('cfd.created', $popularity_time_start, '>')
-          ->groupBy("base_table.${entity_id_key}")
-          ->orderBy('comment_count', 'DESC');
+        $sorting_field = $query->addExpression("COUNT($comment_alias.cid)", 'comment_count');
+
+        $query->condition("$comment_alias.status", 1);
+
+        if ($popularity_time_start) {
+          $query->condition("$comment_alias.created", $popularity_time_start, '>');
+        }
+
         break;
 
       // Creates a join to select the number of likes for a given entity in a
@@ -493,79 +493,80 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         // For groups also check likes on posts in groups. This does not (yet)
         // take into account likes on comments on posts or likes on other group
         // content entities.
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
-          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type = 'post') OR (gfd.entity_id = vv.entity_id AND vv.entity_type = 'node')", ['entity_type' => $entity_type_id]);
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
-        // Otherwise only check direct votes.
+        // Otherwise, only check direct votes.
         else {
-          $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
-        $query->addExpression('COUNT(vv.id)', 'vote_count');
+
+        $sorting_field = $query->addExpression("COUNT($vote_alias.id)", 'vote_count');
+
         // This assumes all votes are likes and all likes are equal. To
         // support downvoting or rating, the query should be altered.
-        $query
-          ->condition('vv.type', 'like')
-          ->condition('vv.timestamp', $popularity_time_start, '>')
-          ->groupBy("base_table.${entity_id_key}")
-          ->orderBy('vote_count', 'DESC');
+        $query->condition("$vote_alias.type", 'like');
+
+        if ($popularity_time_start) {
+          $query->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+        }
+
         break;
 
       // Creates a join that pulls in all related entities, taking the highest
       // update time for all related entities as last interaction time and using
       // that as sort value.
       case 'last_interacted':
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
-          $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
-          $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          $query->leftjoin('comment_field_data', 'cfd', "pfd.id = cfd.entity_id AND cfd.entity_type = 'post'");
-          $query->leftJoin('votingapi_vote', 'vv', "pfd.id = vv.entity_id AND vv.entity_type = 'post'");
-          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
+        if ($is_group) {
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid");
+          $group_post_alias = $query->leftjoin('post__field_recipient_group', 'pst', "$base_field = %alias.field_recipient_group_target_id");
+          $post_alias = $query->leftjoin('post_field_data', 'pfd', "$group_post_alias.entity_id = %alias.id");
+          $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$post_alias.id = %alias.entity_id AND %alias.entity_type = 'post'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.id = %alias.entity_id AND %alias.entity_type = 'post'");
+          $node_alias = $query->leftjoin('node_field_data', 'nfd', "$group_alias.entity_id = %alias.nid");
 
-          $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
-            COALESCE(MAX(vv.timestamp), 0),
-            COALESCE(MAX(cfd.changed), 0),
-            COALESCE(MAX(nfd.changed), 0),
-            COALESCE(MAX(pfd.changed), 0))', 'newest_timestamp');
-
-          $query->groupBy("base_table.${entity_id_key}");
-          $query->orderBy('newest_timestamp', 'DESC');
+          $sorting_field = $query->addExpression("GREATEST(COALESCE(MAX($group_alias.changed), 0),
+            COALESCE(MAX($vote_alias.timestamp), 0),
+            COALESCE(MAX($comment_alias.changed), 0),
+            COALESCE(MAX($node_alias.changed), 0),
+            COALESCE(MAX($post_alias.changed), 0))", 'newest_timestamp');
         }
         elseif ($entity_type_id === 'node') {
-          $query->leftJoin('node_field_data', 'nfd', "base_table.${entity_id_key} = nfd.nid");
+          $node_alias = $query->leftJoin('node_field_data', 'nfd', "$base_field = %alias.nid");
+
           // Comment entity.
-          $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
+          $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$node_alias.nid = %alias.entity_id");
+
           // Like node or comment related to node.
-          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id AND vv.entity_type = :entity_type_id) OR (cfd.cid = vv.entity_id)', ['entity_type_id' => $entity_type_id]);
+          $vote_alias = $query->leftjoin('votingapi_vote', 'vv', "$node_alias.nid = %alias.entity_id AND %alias.entity_type = :entity_type_id OR $comment_alias.cid = %alias.entity_id", $arguments);
 
-          $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
-          COALESCE(MAX(cfd.changed), 0),
-          COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
-
-          $query->groupBy("base_table.${entity_id_key}");
-          $query->orderBy('newest_timestamp', 'DESC');
+          $sorting_field = $query->addExpression("GREATEST(COALESCE(MAX($vote_alias.timestamp), 0),
+          COALESCE(MAX($comment_alias.changed), 0),
+          COALESCE(MAX($node_alias.changed), 0))", 'newest_timestamp');
         }
+
         break;
 
       // Summed up likes and comments.
       case 'trending':
-        $base_field = 'base_table.' . $entity_id_key;
-
-        if ($entity_type_id === 'group') {
-          $post_alias = $query->leftJoin('post__field_recipient_group', NULL, "$base_field = %alias.field_recipient_group_target_id");
-          $group_alias = $query->leftJoin('group_content_field_data', NULL, "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
-          $comment_alias = $query->leftJoin('comment_field_data', NULL, "%alias.status = 1 AND ($post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node')");
-          $vote_alias = $query->leftJoin('votingapi_vote', NULL, "%alias.type = 'like' AND ($post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node')");
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
         else {
-          $arguments = ['entity_type' => $entity_type_id];
-          $comment_alias = $query->leftJoin('comment_field_data', NULL, "%alias.status = 1 AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
-          $vote_alias = $query->leftJoin('votingapi_vote', NULL, "%alias.type = 'like' AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "%alias.status = 1 AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "%alias.type = 'like' AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
 
-        $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)");
+        $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)", 'comment_vote_count');
+
+        $query
+          ->condition("$comment_alias.status", 1)
+          ->condition("$vote_alias.type", 'like');
 
         if ($popularity_time_start) {
           $query
@@ -573,20 +574,21 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
             ->condition("$vote_alias.timestamp", $popularity_time_start, '>');
         }
 
-        $query->groupBy($base_field)->orderBy($sorting_field, 'DESC');
-
         break;
 
       case 'event_date':
-        $nfed_alias = $query->leftJoin('node__field_event_date', 'nfed', "base_table.${entity_id_key} = %alias.entity_id");
-        $query->orderBy("${nfed_alias}.field_event_date_value", 'ASC');
+        $sorting_field = $query->leftJoin('node__field_event_date', 'nfed', "$base_field = %alias.entity_id");
+        $sorting_field .= '.field_event_date_value';
+        $direction = 'ASC';
+        $base_field = NULL;
         break;
-
-      // Fall back by assuming the sorting option is a field.
-      default:
-        $query->orderBy("base_table.${sort_by}", 'DESC');
     }
 
+    if ($base_field) {
+      $query->groupBy($base_field);
+    }
+
+    $query->orderBy($sorting_field, $direction);
   }
 
 }
