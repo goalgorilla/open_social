@@ -183,11 +183,29 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
       // We want to move the tagging field in new fieldset
       // "Tags". Only when the theme settings are updated.
       $use_social_content_forms = theme_get_setting('content_entity_form_style');
-      if (isset($form['#fieldgroups']['group_social_tags']) &&
-        $use_social_content_forms === 'open_social') {
+      if ($use_social_content_forms === 'open_social') {
+        if (!isset($form['#fieldgroups']['group_social_tags'])) {
+          $group_tags = new stdClass();
+          $group_tags->children = [];
+          $group_tags->parent_name = '';
+          $group_tags->label = t('Tags');
+          $group_tags->weight = '1';
+          $group_tags->format_type = 'fieldset';
+          $group_tags->format_settings = [
+            'required_fields' => TRUE,
+            'id' => 'tags',
+            'classes' => 'card',
+            'label' => t('Tags'),
+          ];
+          $group_tags->mode = 'default';
+          $group_tags->context = 'form';
+          $group_tags->entity_type = 'user';
+          $group_tags->group_name = 'group_social_tags';
+          $form['#fieldgroups']['group_social_tags'] = $group_tags;
+        }
         $form['tagging']['#type'] = 'details';
         $form['tagging']['#title'] = '';
-        $form['#fieldgroups']['group_social_tags']->children[] = 'tagging';
+        $form['tagging']['#group'] = 'group_social_tags';
         $form['#group_children']['tagging'] = 'group_social_tags';
       }
 
@@ -558,34 +576,4 @@ function social_tagging_preprocess_profile(array &$variables) {
       $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
     }
   }
-}
-
-/**
- * Implements hook_entity_form_display_alter().
- */
-function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
-
-  // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
-  // will be attached in that section when a user enable tagging options.
-  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
-    return;
-  }
-
-  $settings = [
-    "children" => [],
-    "parent_name" => "",
-    "weight" => '1',
-    "label" => "Tags",
-    "format_type" => "fieldset",
-    "format_settings" => [
-      "required_fields" => TRUE,
-      "id" => "tags",
-      "classes" => "card",
-      "label" => "Tags",
-    ],
-    "region" => "hidden",
-  ];
-
-  $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
-  $form_display->save();
 }
