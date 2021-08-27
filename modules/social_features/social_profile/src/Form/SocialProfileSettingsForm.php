@@ -5,15 +5,33 @@ namespace Drupal\social_profile\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_profile\FieldManager;
+use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Configure social profile settings.
+ * Configure behaviour of profiles in Open Social.
+ *
+ * This form modifies more than just module settings and uses a combination of
+ * field configuration and permissions to control access to viewing and editing
+ * of profile fields.
+ *
+ * Permissions are created per bundle to allow the same flexibility across all
+ * bundle types (e.g. company or organizational profiles). However this module
+ * contains only the default 'profile' profile type which is what Open Social
+ * supports out of the box.
+ *
+ * @todo Support individual address sub-fields.
+ *
+ * @see \Drupal\social_profile\ProfileFieldsPermissionProvider
+ * @see \social_profile_entity_field_access()
  */
 class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
@@ -32,6 +50,27 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   protected $languageMananger;
 
   /**
+   * Our Social Profile Field Manager.
+   *
+   * Contains methods to help us know whether we're managing particular fields.
+   */
+  private FieldManager $fieldManager;
+
+  /**
+   * Fields synced from User to Profile.
+   *
+   * The storage for some fields is on the user entity rather than the
+   * profile field, but the value is synced for display. So the user entity
+   * fields should be added to the registration field.
+   *
+   * @var string[]
+   */
+  protected static array $syncedProfileFields = [
+    "field_profile_email" => "mail",
+    "field_profile_preferred_language" => "preferred_langcode",
+  ];
+
+  /**
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -40,11 +79,14 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    *   The database.
    * @param \Drupal\Core\Language\LanguageManager $language_manager
    *   The language manager.
+   * @param \Drupal\social_profile\FieldManager $field_manager
+   *   The Social Profile Field Manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Connection $database, LanguageManager $language_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, Connection $database, LanguageManager $language_manager, FieldManager $field_manager) {
     parent::__construct($config_factory);
     $this->database = $database;
     $this->languageMananger = $language_manager;
+    $this->fieldManager = $field_manager;
   }
 
   /**
@@ -54,7 +96,8 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     return new static(
       $container->get('config.factory'),
       $container->get('database'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('social_profile.field_manager')
     );
   }
 
@@ -76,39 +119,280 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // @todo migrate social_profile_show_* settings to permissions.
     $config = $this->config('social_profile.settings');
 
+    // @todo When the verified user role is created allow configuration of `"view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"` permission to determine what role(s) count as community.
+    $form['fields'] = $this->buildFieldsFieldset();
+
+    // @todo Move to separate function.
+    // @todo Rename to "Nickname".
     $form['privacy'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Privacy settings'),
+      '#type' => 'fieldset',
+      '#title' => $this->t('Privacy'),
       '#open' => TRUE,
     ];
-    $form['privacy']['social_profile_show_email'] = [
+
+    // Add setting to hide Full Name for users without the `social profile
+    // privacy always show full name` permission.
+    $form['privacy']['limit_search_and_mention'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Show email on all user profiles'),
-      '#default_value' => $config->get('social_profile_show_email'),
-      '#description' => $this->t('When enabled, users are not able to hide their email address on their profile. When disabled, users will be able to control the visibility of their emailaddress.'),
+      '#title' => t('Limit search and mention'),
+      '#description' => t("Enabling this setting causes users' full name to be hidden on the platform when the user has filled in their nickname. This setting won't hide the full name of users who didn't fill in a nickname. Users with the '%display_name' permission will still see the full name whenever available. Only users with the '%search_name' permission will find users using their full name through search or mentions.", [
+        '%display_name' => t('View full name when restricted'),
+        '%search_name' => t('View full name when restricted'),
+      ]),
+      '#default_value' => $config->get('limit_search_and_mention'),
     ];
-    // Check if the website is multilingual.
-    if ($this->languageMananger->isMultilingual()) {
-      $form['privacy']['social_profile_show_language'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Show language on all user profiles'),
-        '#default_value' => $config->get('social_profile_show_language'),
-        '#description' => $this->t('When enabled, users are not able to hide their preferred language on their profile. When disabled, users will be able to control the visibility of their language preference.'),
-      ];
+
+    $form['nickname_unique_validation'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Unique nicknames'),
+      '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
+      '#default_value' => $config->get('nickname_unique_validation'),
+    ];
+
+    // Profile tagging settings.
+    $form['tagging'] = $this->buildTaggingFieldset();
+
+    return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * The fieldset to control profile field settings.
+   *
+   * @return array
+   *   The form fields for the profile fields configuration.
+   */
+  private function buildFieldsFieldset() : array {
+    $fields = [
+      '#type' => 'fieldset',
+      '#title' => t('Profile Fields'),
+      '#description' => t('Please choose which profile fields can be displayed in user profiles. Site managers can always see all the filled-in profile information.'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+
+    $fields['list'] = [
+      '#type' => 'table',
+      '#sticky' => TRUE,
+      '#header' => [
+        new TranslatableMarkup('Field name'),
+        new TranslatableMarkup('Visibility'),
+        new TranslatableMarkup('Always show for'),
+        new TranslatableMarkup('Allow editing'),
+        new TranslatableMarkup('At registration'),
+        new TranslatableMarkup('Required'),
+        new TranslatableMarkup('Disabled'),
+      ],
+    ];
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_user_form_display */
+    $registration_user_form_display = EntityFormDisplay::load("user.user.register");
+    // This should be created by the install or update hook. If this does not
+    // exist we have a configuration bug.
+    if ($registration_user_form_display === NULL) {
+      throw new \RuntimeException("Form display mode user.user.register does not exist.");
     }
 
-    $form['tagging'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Tag settings'),
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_profile_form_display */
+    $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
+    // This should be created by the install or update hook. If this does not
+    // exist we have a configuration bug.
+    if ($registration_profile_form_display === NULL) {
+      throw new \RuntimeException("Form display mode profile.profile.register does not exist.");
+    }
+
+    /** @var \Drupal\user\RoleInterface[] $roles */
+    $roles = Role::loadMultiple();
+
+    // The authenticated and site manager role have some special behaviour in
+    // Open Social so if they're not set we have a broken installation that we
+    // can't configure.
+    if (!isset($roles['authenticated'], $roles['sitemanager'])) {
+      return [];
+    }
+
+    // The roles that can be selected to "always view" or "always edit".
+    $override_roles = array_filter(
+      $roles,
+      fn (RoleInterface $role) => !in_array(
+        $role->id(),
+        ['anonymous', 'authenticated', 'administrator']
+      ),
+    );
+
+    /** @var string $field_name */
+    foreach ($this->fieldManager->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
+      $visibility_field = $this->fieldManager->getVisibilityFieldFor($field_config);
+
+      if ($visibility_field === NULL) {
+        $this->logger('social_profile')->warning("Managed field '${field_name}' does not have a visibility field for the profile bundle of profile.");
+        continue;
+      }
+      // Disable configuration fields if the field is disabled.
+      $disabled_states = [
+        'disabled' => [
+          ':input[name="fields[list][' . $field_name . '][disabled]"]' => ['checked' => TRUE],
+        ],
+      ];
+
+      // Build the row as individual parts to allow for some more creative
+      // processing that can't be done in a single array declaration.
+      $row = [];
+
+      // Field name.
+      $row['label'] = ['#plain_text' => $field_config->label()];
+
+      // Visibility.
+      $row['visibility'] = [
+        // Container needed until
+        // https://www.drupal.org/project/drupal/issues/2945727 is fixed
+        // because the #states API uses closest on a class that isn't added
+        // for radios and checkboxes.
+        '#type' => 'container',
+        'default' => [
+          '#type' => 'radios',
+          '#options' => [
+            SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC => new TranslatableMarkup('Public'),
+            SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY => new TranslatableMarkup('Community'),
+            SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE => new TranslatableMarkup('Private'),
+          ],
+          '#default_value' => $visibility_field->getDefaultValueLiteral()[0]['value'] ?? SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE,
+          '#states' => $disabled_states,
+        ],
+        'user' => [
+          '#type' => 'checkbox',
+          '#title' => new TranslatableMarkup('User can change'),
+          '#default_value' => $roles['authenticated']->hasPermission("edit own ${field_name} profile profile field visibility"),
+          '#states' => $disabled_states,
+        ],
+      ];
+
+      // Always show for.
+      $row['always_show'] = [
+        // Manually create a checkboxes-like element so that we can disable an
+        // individual checkbox to disallow editing the site manager setting.
+        '#type' => 'container',
+        '#attributes' => ['class' => ['form-checkboxes']],
+      ];
+
+      foreach ($override_roles as $role_id => $role) {
+        $row['always_show'][$role_id] = [
+          '#type' => 'checkbox',
+          '#title' => $role->label(),
+          '#default_value' => $role->hasPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields"),
+          '#disabled' => $role_id === 'sitemanager',
+          '#states' => $role_id === 'sitemanager' ? [] : $disabled_states,
+        ];
+      }
+
+      // Allow editing.
+      $row['allow_editing'] = [
+        // Container needed until
+        // https://www.drupal.org/project/drupal/issues/2945727 is fixed
+        // because the #states API uses closest on a class that isn't added
+        // for radios and checkboxes.
+        '#type' => 'container',
+        'user' => [
+          '#type' => 'checkbox',
+          '#title' => new TranslatableMarkup('User can edit'),
+          // Users can always change their preferred language.
+          // @todo Move this into a third party field setting rather than
+          // special-casing names.
+          '#disabled' => $field_name === 'field_profile_preferred_language',
+          '#default_value' => $roles['authenticated']->hasPermission("edit own ${field_name} profile profile field"),
+          '#states' => $field_name === 'field_profile_preferred_language' ? [] : $disabled_states,
+        ],
+        'other' => [
+          // Manually create a checkboxes-like element so that we can disable an
+          // individual checkbox to disallow editing the site manager setting.
+          '#type' => 'container',
+          '#attributes' => ['class' => ['form-checkboxes']],
+        ],
+      ];
+
+      foreach ($override_roles as $role_id => $role) {
+        $row['allow_editing']['other'][$role_id] = [
+          '#type' => 'checkbox',
+          '#title' => $role->label(),
+          '#default_value' => $role->hasPermission("edit any ${field_name} profile profile field"),
+          '#disabled' => $role_id === 'sitemanager',
+          '#states' => $role_id === 'sitemanager' ? [] : $disabled_states,
+        ];
+      }
+
+      // Show during registration.
+      $stored_on_user_entity = isset(static::$syncedProfileFields[$field_name]);
+      // Email is stored on the user entity but not configured in the view mode,
+      // it's added by AccountForm instead.
+      $registration_is_checked = $field_name === "field_profile_email" || (
+        $stored_on_user_entity
+          ? $registration_user_form_display->getComponent(static::$syncedProfileFields[$field_name]) !== NULL
+          : $registration_profile_form_display->getComponent($field_name) !== NULL
+      );
+      $row['registration'] = [
+        '#type' => 'checkbox',
+        '#title' => new TranslatableMarkup('Show'),
+        // Users are required to enter an email during registration so this
+        // setting can not be changed.
+        // @todo Move this into a third party field setting rather than
+        // special-casing names.
+        '#disabled' => $field_name === 'field_profile_email',
+        '#default_value' => $registration_is_checked,
+        '#states' => $field_name === 'field_profile_email' ? [] : $disabled_states,
+      ];
+
+      // Required.
+      $row['required'] = [
+        '#type' => 'checkbox',
+        '#title' => new TranslatableMarkup('Required'),
+        // Users must have an email and preferred language so these fields
+        // are required.
+        // @todo Move this into a third party field setting rather than
+        // special-casing names.
+        '#disabled' => $field_name === 'field_profile_email' || $field_name === 'field_profile_preferred_language',
+        '#default_value' => $field_config->isRequired(),
+        '#states' => ($field_name === 'field_profile_email' || $field_name === 'field_profile_preferred_language') ? [] : $disabled_states,
+      ];
+
+      // Disabled.
+      $row['disabled'] = [
+        '#type' => 'checkbox',
+        '#title' => new TranslatableMarkup('Disabled'),
+        // Email and preferred language are always available so these fields
+        // can't be disabled but only hidden.
+        // @todo Move this into a third party field setting rather than
+        // special-casing names.
+        '#disabled' => $field_name === 'field_profile_email' || $field_name === 'field_profile_preferred_language',
+        '#default_value' => !$field_config->status(),
+      ];
+
+      $fields['list'][$field_name] = $row;
+    }
+
+    return $fields;
+  }
+
+  /**
+   * The fieldset to control tagging settings.
+   *
+   * @return array
+   *   The form fields for the tagging configuration.
+   */
+  private function buildTaggingFieldset() : array {
+    $config = $this->config('social_profile.settings');
+
+    $tagging = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Profile Tags'),
       '#open' => TRUE,
     ];
 
     // Get profile vocabulary overview page link.
     $profile_tags = Link::createFromRoute('profile tags', 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'profile_tag']);
 
-    $form['tagging']['enable_profile_tagging'] = [
+    $tagging['enable_profile_tagging'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow profile tagging for content managers'),
       '#required' => FALSE,
@@ -119,7 +403,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
         ]),
     ];
 
-    $form['tagging']['allow_tagging_for_lu'] = [
+    $tagging['allow_tagging_for_lu'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow profile tagging for regular users'),
       '#default_value' => $config->get('allow_tagging_for_lu'),
@@ -132,7 +416,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
-    $form['tagging']['allow_category_split'] = [
+    $tagging['allow_category_split'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow category split'),
       '#default_value' => $config->get('allow_category_split'),
@@ -140,7 +424,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       '#description' => $this->t("Determine if the main categories of the vocabulary will be used as separate tag fields or as a single tag field when using tags on profile."),
     ];
 
-    $form['tagging']['use_category_parent'] = [
+    $tagging['use_category_parent'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow parents to be used as tag'),
       '#default_value' => $config->get('use_category_parent'),
@@ -153,41 +437,185 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ],
     ];
 
-    return parent::buildForm($form, $form_state);
+    return $tagging;
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Save config.
-    $config = $this->config('social_profile.settings');
-    $config->set('social_profile_show_email', $form_state->getValue('social_profile_show_email'));
-    $config->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'));
-    $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
-    $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
-    $config->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'));
-    $config->save();
+    $this->config('social_profile.settings')
+      ->set('limit_search_and_mention', $form_state->getValue('limit_search_and_mention'))
+      ->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'))
+      ->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'))
+      ->set('allow_category_split', $form_state->getValue('allow_category_split'))
+      ->set('use_category_parent', $form_state->getValue('use_category_parent'))
+      ->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'))
+      ->save();
 
-    // Check if the website is multilingual.
-    if ($this->languageMananger->isMultilingual()) {
-      $config->set('social_profile_show_language', $form_state->getValue('social_profile_show_language'))
-        ->save();
+    // Keep track of changed roles so we can only save once.
+    $modified_roles = [];
+
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_user_form_display */
+    $registration_user_form_display = EntityFormDisplay::load("user.user.register");
+    // This should be created by the install or update hook. If this does not
+    // exist we have a configuration bug.
+    if ($registration_user_form_display === NULL) {
+      throw new \RuntimeException("Form display mode user.user.register does not exist.");
     }
 
-    // Invalidate profile cache tags.
-    $query = $this->database->select('profile', 'p');
-    $query->addField('p', 'profile_id');
-    $query->condition('p.type', 'profile');
-    $query->condition('p.status', '1');
-    $ids = $query->execute()->fetchCol();
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_profile_form_display */
+    $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
+    // This should be created by the install or update hook. If this does not
+    // exist we have a configuration bug.
+    if ($registration_profile_form_display === NULL) {
+      throw new \RuntimeException("Form display mode profile.profile.register does not exist.");
+    }
 
-    if (!empty($ids)) {
-      $cache_tags = [];
-      foreach ($ids as $id) {
-        $cache_tags[] = 'profile:' . $id;
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $default_profile_form_display */
+    $default_profile_form_display = EntityFormDisplay::load("profile.profile.default");
+
+    // @todo Move permission changes to a single change permissions?
+    // i.e. user_role_*_permissions to user_role_change_permissions.
+    /** @var \Drupal\Core\Field\FieldConfigInterface&\Drupal\field\FieldConfigInterface $field_config */
+    // See https://www.drupal.org/project/drupal/issues/2818877.
+    foreach ($this->fieldManager->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
+      $visibility_field = $this->fieldManager->getVisibilityFieldFor($field_config);
+
+      if ($visibility_field === NULL) {
+        $this->logger('social_profile')
+          ->warning("Managed field '${field_name}' does not have a visibility field for the profile bundle of profile.");
+        continue;
       }
-      Cache::invalidateTags($cache_tags);
+
+      // Visibility.
+      $default_visibility = $form_state->getValue(
+        ["fields", "list", $field_name, "visibility", "default"]
+      );
+      $visibility_field_config = $visibility_field->getConfig('profile');
+      $visibility_field_config->setDefaultValue($default_visibility);
+      $visibility_field_config->save();
+
+      $user_can_edit_visibility = (bool) $form_state->getValue(
+        ["fields", "list", $field_name, "visibility", "user"]
+      );
+      if ($user_can_edit_visibility) {
+        user_role_grant_permissions('authenticated', ["edit own ${field_name} profile profile field visibility"]);
+      }
+      else {
+        user_role_revoke_permissions('authenticated', ["edit own ${field_name} profile profile field visibility"]);
+      }
+
+      // Always show for.
+      $always_show_roles = $form_state->getValue(
+        ["fields", "list", $field_name, "always_show"]
+      );
+      foreach ($always_show_roles as $role_id => $value) {
+        /** @var \Drupal\user\RoleInterface|NULL $role */
+        $role = Role::load($role_id);
+        if ($role === NULL) {
+          continue;
+        }
+
+        // The site manager is always granted the permission even if the value
+        // is empty (which happens when a field is disabled).
+        if ($role_id === "sitemanager" || (bool) $value) {
+          $role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
+        }
+        else {
+          $role->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
+        }
+
+        $modified_roles[$role->id()] = $role;
+      }
+
+      // Allow editing.
+      /** @var \Drupal\user\RoleInterface $authenticated_role */
+      $authenticated_role = Role::load('authenticated');
+
+      $user_can_edit_value = (bool) $form_state->getValue(
+        ["fields", "list", $field_name, "allow_editing", "user"]
+      );
+      if ($user_can_edit_value) {
+        $authenticated_role->grantPermission("edit own ${field_name} profile profile field");
+      }
+      else {
+        $authenticated_role->revokePermission("edit own ${field_name} profile profile field");
+      }
+
+      $modified_roles[$authenticated_role->id()] = $authenticated_role;
+
+      $allow_editing_roles = $form_state->getValue(
+        ["fields", "list", $field_name, "allow_editing", "other"]
+      );
+      foreach ($allow_editing_roles as $role_id => $value) {
+        /** @var \Drupal\user\RoleInterface|NULL $role */
+        $role = Role::load($role_id);
+        if ($role === NULL) {
+          continue;
+        }
+
+        // The site manager is always granted the permission even if the value
+        // is empty (which happens when a field is disabled).
+        if ($role_id === "sitemanager" || (bool) $value) {
+          $role->grantPermission("edit any ${field_name} profile profile field");
+        }
+        else {
+          $role->revokePermission("edit any ${field_name} profile profile field");
+        }
+
+        $modified_roles[$role->id()] = $role;
+      }
+
+      // Show during registration.
+      $field_on_registration = (bool) $form_state->getValue(
+        ["fields", "list", $field_name, "registration"]
+      );
+      $stored_on_user_entity = isset(static::$syncedProfileFields[$field_name]);
+      if (!$stored_on_user_entity) {
+        if (!$field_on_registration && $registration_profile_form_display->getComponent($field_name) !== NULL) {
+          $registration_profile_form_display->removeComponent($field_name);
+        }
+        elseif ($field_on_registration && $registration_profile_form_display->getComponent($field_name) === NULL) {
+          // Use the same settings as on the default form. This ensures a
+          // consistent order (weight) and consistent choice of widget.
+          $default_form_component = $default_profile_form_display->getComponent($field_name);
+
+          $registration_profile_form_display->setComponent(
+            $field_name,
+            $default_form_component ?? []
+          );
+        }
+      }
+      // Email is always added in AccountForm so we can't configure it.
+      elseif ($field_name !== "field_profile_email") {
+        $translated_field_name = static::$syncedProfileFields[$field_name];
+        if (!$field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) !== NULL) {
+          $registration_user_form_display->removeComponent($translated_field_name);
+        }
+        elseif ($field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) === NULL) {
+          $registration_user_form_display->setComponent($translated_field_name);
+        }
+      }
+
+      // Required.
+      $field_config->setRequired(
+        (bool) $form_state->getValue(["fields", "list", $field_name, "required"])
+      );
+
+      // Disabled.
+      $disabled = (bool) $form_state->getValue(
+        ["fields", "list", $field_name, "disabled"]
+      );
+      $field_config->setStatus(!$disabled);
+
+      $field_config->save();
+    }
+
+    $registration_profile_form_display->save();
+
+    foreach ($modified_roles as $role) {
+      $role->save();
     }
 
     parent::submitForm($form, $form_state);
