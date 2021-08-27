@@ -74,7 +74,7 @@ Feature: Move content after creation
     And I click "I love this sport"
     And I empty the queue
     And I click "Edit content"
-    And I select group "- None -"
+    And I clear group field
     And I wait for AJAX to finish
     And I press "Save"
     And I run cron
