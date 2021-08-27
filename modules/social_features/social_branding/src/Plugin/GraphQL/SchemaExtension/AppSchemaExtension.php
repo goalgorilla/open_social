@@ -31,6 +31,9 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
     $registry->addFieldResolver('Query', 'branding',
       $builder->produce('community_branding')
     );
+    $registry->addFieldResolver('Query', 'preferredFeatures',
+      $builder->produce('preferred_features')
+    );
 
     // CommunityAbout fields.
     $registry->addFieldResolver('CommunityAbout', 'name',
@@ -47,73 +50,70 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('branding_color_scheme')
         ->map('communityBranding', $builder->fromParent())
     );
-    $registry->addFieldResolver('CommunityBranding', 'preferredFeatures',
-      $builder->produce('platform_branding_preferred_features')
-    );
 
     // BrandingColorScheme fields.
     $registry->addFieldResolver('BrandingColorScheme', 'primary',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('brand-primary'))
         ->map('configName', $builder->fromValue('primary'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'secondary',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('brand-secondary'))
         ->map('configName', $builder->fromValue('secondary'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'accentBackground',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('brand-accent'))
         ->map('configName', $builder->fromValue('accent'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'accentText',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('brand-accent-text'))
         ->map('configName', $builder->fromValue('accent_text'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'link',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('brand-link'))
         ->map('configName', $builder->fromValue('link'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarBackground',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-bg'))
         ->map('configName', $builder->fromValue('navbar_bg'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarText',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-text'))
         ->map('configName', $builder->fromValue('navbar_text'))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarActiveBackground',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-active-bg'))
         ->map('configName', $builder->fromValue("navbar_active_bg'"))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarActiveText',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-active-text'))
         ->map('configName', $builder->fromValue("navbar_active_text'"))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarSecondaryBackground',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-sec-bg'))
         ->map('configName', $builder->fromValue("navbar_sec_bg'"))
     );
     $registry->addFieldResolver('BrandingColorScheme', 'navbarSecondaryText',
-      $builder->produce('color_scheme_load_color_by_name')
+      $builder->produce('branding_color_scheme_load_color_by_name')
         ->map('colorScheme', $builder->fromParent())
         ->map('paletteName', $builder->fromValue('navbar-sec-text'))
         ->map('configName', $builder->fromValue("navbar_sec_text'"))
@@ -151,9 +151,9 @@ class AppSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('color', $builder->fromParent())
     );
 
-    // PlatformFeature fields.
-    $registry->addFieldResolver('PlatformFeature', 'machineName',
-      $builder->produce('platform_feature_machine_name')
+    // Feature fields.
+    $registry->addFieldResolver('Feature', 'machineName',
+      $builder->produce('feature_machine_name')
         ->map('preferredFeature', $builder->fromParent())
     );
   }

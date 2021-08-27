@@ -15,7 +15,7 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  * - paletteName: color.theme.socialblue (socialblue theme settings customized)
  *
  * @DataProducer(
- *   id = "color_scheme_load_color_by_name",
+ *   id = "branding_color_scheme_load_color_by_name",
  *   name = @Translation("Color Scheme Color By Name"),
  *   description = @Translation("The brand color."),
  *   produces = @ContextDefinition("any",
@@ -37,7 +37,7 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  *   }
  * )
  */
-class ColorSchemeLoadColorByName extends EntityDataProducerPluginBase {
+class BrandingColorSchemeLoadColorByName extends EntityDataProducerPluginBase {
 
   /**
    * Returns the brand color by name.

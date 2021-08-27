@@ -187,9 +187,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
                 }
               }
             }
-            preferredFeatures {
-              machineName
-            }
+          }
+          preferredFeatures {
+            machineName
           }
         }
       ',
@@ -312,11 +312,11 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
               ],
             ],
           ],
-          'preferredFeatures' => [
-            ['machineName' => 'feature1'],
-            ['machineName' => 'feature2'],
-            ['machineName' => 'feature0'],
-          ],
+        ],
+        'preferredFeatures' => [
+          ['machineName' => 'feature1'],
+          ['machineName' => 'feature2'],
+          ['machineName' => 'feature0'],
         ],
       ],
       $this->defaultCacheMetaData()
@@ -394,9 +394,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test that the platform preferred features can return an empty array.
+   * Test that the preferred features can return an empty array.
    */
-  public function testPreferredFeeaturesReturnEmptyArray(): void {
+  public function testPreferredFeaturesReturnEmptyArray(): void {
     $system_theme = $this->config('system.theme');
     // Set anonymous user.
     $this->setUpCurrentUser();
@@ -407,21 +407,17 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $this->assertResults(
       '
         query {
-          branding {
-            preferredFeatures {
-              machineName
-            }
+          preferredFeatures {
+            machineName
           }
         }
       ',
       [],
       [
-        'branding' => [
-          'preferredFeatures' => [],
-        ],
+        'preferredFeatures' => [],
       ],
       $this->defaultCacheMetaData()
-        ->addCacheableDependency($system_theme)
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 

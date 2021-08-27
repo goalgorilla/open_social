@@ -30,14 +30,6 @@ type CommunityBranding {
   NULL if the community has not configured a branding color scheme.
   """
   colorScheme: BrandingColorScheme
-  """
-  The preferred features for this platform in order from most important to least important.
-
-  Provides focus about the focus of the platform and lets
-  external applications know what actions they should persent
-  to users in primary navigation.
-  """
-  preferredFeatures: [PlatformFeature!]!
 }
 
 """
@@ -192,9 +184,9 @@ type Color {
 }
 
 """
-A feature on the platform.
+A feature on the community.
 """
-type PlatformFeature {
+type Feature {
   """
   The machine name of this feature.
 
