@@ -154,7 +154,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildHierarchy(array $term_ids) {
+  public function buildHierarchy(array $term_ids, $vocabulary = 'profile_tag') {
     $tree = [];
     $terms = $this->taxonomyStorage->loadMultiple(array_column($term_ids, 'target_id'));
     if (empty($terms)) {
@@ -177,8 +177,15 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
       $route = 'view.search_users.page_no_value';
       $route_parameters = [
         'created_op' => '<',
-        'profile_tag[]' => $term->id(),
       ];
+
+      if ($vocabulary === 'profile_tag') {
+        $route_parameters['profile_tag[]'] = $term->id();
+      }
+      else {
+        $route_parameters[$vocabulary] = $term->getName();
+      }
+
 
       // Prepare the URL for the search by term.
       $url = Url::fromRoute($route, $route_parameters)->toString();

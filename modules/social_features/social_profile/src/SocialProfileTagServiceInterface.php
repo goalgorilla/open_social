@@ -77,10 +77,13 @@ interface SocialProfileTagServiceInterface {
    * @param array $term_ids
    *   An array of items that are selected.
    *
+   * @param string $vocabulary
+   *   The vocabulary we are building the hierarchy for.
+   *
    * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $term_ids);
+  public function buildHierarchy(array $term_ids, string $vocabulary);
 
   /**
    * Returns list of term names as option list.

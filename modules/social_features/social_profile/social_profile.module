@@ -446,6 +446,16 @@ function social_profile_preprocess_profile(array &$variables) {
     $tags = $profile->get('field_profile_profile_tag')->getValue();
     $variables['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
   }
+
+  if (!$profile->get('field_profile_expertise')->isEmpty()) {
+    $tags = $profile->get('field_profile_expertise')->getValue();
+    $variables['profile_expertise_hierarchy'] = $tag_service->buildHierarchy($tags, 'expertise');
+  }
+
+  if (!$profile->get('field_profile_interests')->isEmpty()) {
+    $tags = $profile->get('field_profile_interests')->getValue();
+    $variables['profile_interests_hierarchy'] = $tag_service->buildHierarchy($tags, 'interests');
+  }
 }
 
 /**
