@@ -194,7 +194,10 @@ class SocialGroupHelperService {
 
     // Get the memberships for the user if they aren't known yet.
     if (!isset($groups[$uid])) {
-      $group_content_types = GroupContentType::loadByEntityTypeId('user');
+      // We need to get all group memberships,
+      // GroupContentType::loadByEntityTypeId('user'); will also return
+      // requests and invites for a given user entity.
+      $group_content_types = GroupContentType::loadByContentPluginId('group_membership');
       $group_content_types = array_keys($group_content_types);
 
       $query = $this->database->select('group_content_field_data', 'gcfd');
