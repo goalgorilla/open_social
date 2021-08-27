@@ -593,8 +593,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
           $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
         else {
-          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "%alias.status = 1 AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
-          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "%alias.type = 'like' AND $base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
 
         $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)", 'comment_vote_count');
@@ -609,12 +609,19 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     }
 
     if (isset($comment_alias) || isset($vote_alias)) {
+      $are_both = isset($comment_alias) && isset($vote_alias);
+      $conditions = $are_both ? $query->orConditionGroup() : $query;
+
       if (isset($comment_alias)) {
-        $query->condition("$comment_alias.status", 1);
+        $conditions->condition("$comment_alias.status", 1);
       }
 
       if (isset($vote_alias)) {
-        $query->condition("$vote_alias.type", 'like');
+        $conditions->condition("$vote_alias.type", 'like');
+      }
+
+      if ($are_both) {
+        $query->condition($conditions);
       }
 
       $option = $options[$sort_by];
@@ -622,18 +629,21 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       if (
         $popularity_time_start &&
         (
-          (
-            is_array($option) &&
-            ((isset($option['limit']) && $option['limit']) || !isset($option['limit']))
-          ) ||
+          (is_array($option) && !(isset($option['limit']) && !$option['limit'])) ||
           !is_array($option))
       ) {
+        $conditions = $are_both ? $query->orConditionGroup() : $query;
+
         if (isset($comment_alias)) {
-          $query->condition("$comment_alias.created", $popularity_time_start, '>');
+          $conditions->condition("$comment_alias.created", $popularity_time_start, '>');
         }
 
         if (isset($vote_alias)) {
-          $query->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+          $conditions->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+        }
+
+        if ($are_both) {
+          $query->condition($conditions);
         }
       }
     }
