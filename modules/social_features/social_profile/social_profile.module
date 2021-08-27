@@ -334,6 +334,11 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       $element['target_id']['#selection_handler'] = 'social';
     }
   }
+
+  // Remove "Profiles" when embedding profile fields on the user register form.
+  if ($context['items']->getName() === 'profile_profiles' && $context['widget']->getPluginId() === 'profile_form') {
+    unset($element['#field_title']);
+  }
 }
 
 /**
@@ -1046,6 +1051,12 @@ function _social_profile_get_profile_from_route() {
 function social_profile_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Set User Register form Email field as required.
   $form['account']['mail']['#required'] = TRUE;
+
+  // Move the profile fields form into the account block.
+  if (isset($form['profile_profiles'])) {
+    $form['account']['profile_profiles'] = $form['profile_profiles'];
+    unset($form['profile_profiles']);
+  }
 }
 
 /**

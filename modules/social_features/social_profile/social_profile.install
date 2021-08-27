@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityFormMode;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -838,4 +840,135 @@ function social_profile_update_12006() : void {
   foreach (Role::loadMultiple() as $role) {
     user_role_revoke_permissions($role->id(), ['social profile fields change used profile fields']);
   }
+}
+
+/**
+ * Create a form mode for profiles during registration.
+ */
+function social_profile_update_12007() : void {
+  if (EntityFormMode::load('profile.register') === NULL) {
+    EntityFormMode::create([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => 'profile',
+      ],
+      'id' => 'profile.register',
+      'label' => 'Register',
+      'targetEntityType' => 'profile',
+      'cache' => TRUE,
+    ])->save();
+  }
+}
+
+/**
+ * Make default profile always available during registration.
+ *
+ * @todo This needs an install hook too.
+ */
+function social_profile_update_12008() : void {
+  // This makes the profile available in registration always so that we can
+  // control the fields that are shown by changing the registration view mode.
+  // We can also change this setting dynamically but that would not persist the
+  // separate view mode and we may not want to show the entire profile on
+  // registration.
+  /** @var \Drupal\profile\Entity\ProfileTypeInterface $profile_type */
+  $profile_type = ProfileType::load('profile');
+  $profile_type
+    ->setRegistration(TRUE)
+    ->save();
+
+  // Create a profile register display if it does not yet exist.
+  $register_profile_display = EntityFormDisplay::load('profile.profile.register');
+  if ($register_profile_display === NULL) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $register_default_display */
+    $register_default_display = EntityFormDisplay::load('profile.profile.default');
+    $register_profile_display = $register_default_display->createCopy('register');
+
+    // We don't want field groups on our registration form because nested
+    // fieldsets don't look right.
+    foreach ($register_profile_display->getThirdPartySettings('field_group') as $setting_name => $_) {
+      $register_profile_display->unsetThirdPartySetting('field_group', $setting_name);
+    }
+
+    // We don't touch preconfigured register fields but we don't add any by
+    // default.
+    foreach ($register_profile_display->getComponents() as $name => $_) {
+      $register_profile_display->removeComponent($name);
+    }
+
+    $register_profile_display->save();
+  }
+
+  // This user form display is made in ProfileType::postSave.
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $register_user_display */
+  $register_user_display = EntityFormDisplay::load('user.user.register');
+  $profile_widget = $register_user_display->getComponent('profile_profiles');
+  $profile_widget['settings']['form_mode'] = 'register';
+  $register_user_display->setComponent('profile_profiles', $profile_widget);
+  $register_user_display->save();
+
+  // @todo Clean up profile creation in `social_profile_user_insert`.
+  // @todo Create separate update hook for social_profile_registration
+  // extension.
+}
+
+/**
+ * Migrate social_profile_fields settings into social_profile.
+ */
+function social_profile_update_12009() : void {
+  $default_field_status = [
+    "field_profile_nick_name" => FALSE,
+    "field_profile_address" => TRUE,
+    "field_profile_banner_image" => TRUE,
+    "field_profile_expertise" => TRUE,
+    "field_profile_first_name" => TRUE,
+    "field_profile_function" => TRUE,
+    "field_profile_image" => TRUE,
+    "field_profile_interests" => TRUE,
+    "field_profile_last_name" => TRUE,
+    "field_profile_nationality" => TRUE,
+    "field_profile_organization" => TRUE,
+    "field_profile_organization_tag" => TRUE,
+    "field_profile_phone_number" => TRUE,
+    "field_profile_profile_tag" => TRUE,
+    "field_profile_self_introduction" => TRUE,
+  ];
+
+  $social_profile_settings = \Drupal::configFactory()->getEditable('social_profile.settings');
+
+  // Just try to load the fields config. If it doesn't exist we get an empty
+  // config object and can fall back to default values.
+  $social_profile_fields_settings = \Drupal::configFactory()->getEditable('social_profile_fields.settings');
+
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_config')
+    ->condition('id', 'profile.profile.', 'STARTS_WITH')
+    ->execute();
+  // Fetch all fields and key them by field name.
+  /** @var \Drupal\field\FieldConfigInterface[] $field_configs */
+  $field_configs = FieldConfig::loadMultiple($ids);
+  foreach ($field_configs as $field_config) {
+    // We're only interested in fields that contain actual values.
+    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
+    $field_storage = $field_config->getFieldStorageDefinition();
+    if ($field_storage->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
+      continue;
+    }
+
+    // Use the previously configured status if it exists, or fall back to our
+    // default settings. If neither exists we just enable the field because it's
+    // probably custom and added with a reason.
+    $field_config->setStatus($social_profile_fields_settings->get("profile_profile_" . $field_config->getName()) ?? $default_field_status[$field_config->getName()] ?? TRUE);
+    $field_config->save();
+  }
+
+  // @todo Add nickname_unique_validation schema.
+  $social_profile_settings->set("nickname_unique_validation", (bool) $social_profile_fields_settings->get("nickname_unique_validation"));
+  $social_profile_settings->save();
+
+  // @todo This doesn't handle "field_profile_show_email" => null,
+  // @todo This doesn't handle address subfields.
+  // Clean up the config that's no longer used.
+  $social_profile_fields_settings->delete();
 }
