@@ -526,7 +526,7 @@ function social_private_message_social_user_account_header_items(array $context)
  * Adds the mobile indicator for private messages under the profile icon menu.
  */
 function social_private_message_social_user_account_header_account_links(array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== TRUE) {
     return [];
   }
 
@@ -574,7 +574,7 @@ function social_private_message_social_user_account_header_account_links(array $
  * Adds an indicator to the user account menu on mobile.
  */
 function social_private_message_social_user_account_header_items_alter(array &$menu_links, array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== TRUE) {
     return;
   }
 
