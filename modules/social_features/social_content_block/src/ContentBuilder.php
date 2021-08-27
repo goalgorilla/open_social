@@ -169,9 +169,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       }
     }
 
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
     /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
@@ -185,6 +182,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       );
     }
 
+    $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
     if ($fields) {
       $plugin->query($query, $fields);
     }
@@ -193,7 +192,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
     // Apply our sorting logic.
-    $this->sortBy($query, $entity_type, $block_content);
+    $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
 
     // Add range.
     $query->range(0, $block_content->field_item_amount->value);
@@ -318,17 +317,17 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
       $fields = &$element['field_plugin_field']['widget'][0][$plugin_id]['#options'];
 
-      foreach ($fields as $field_name => $field_title) {
+      foreach ($fields as $field_name => &$field_title) {
         // When the filter field was absent during executing the code of the
         // field widget plugin for the filters list field then process this
         // field repeatedly.
         // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
         if ($field_name === $field_title) {
           if (isset($element[$field_name]['widget']['target_id'])) {
-            $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+            $field_title = $element[$field_name]['widget']['target_id']['#title'];
           }
           else {
-            $fields[$field_name] = $element[$field_name]['widget']['#title'];
+            $field_title = $element[$field_name]['widget']['#title'];
           }
 
           $element[$field_name]['#states'] = [
@@ -381,9 +380,48 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       }
     }
 
-    $element['field_sorting']['widget']['#options'] = $content_block_manager->createInstance($selected_plugin)->supportedSortOptions();
-    $element['field_sorting']['#prefix'] = '<div id="social-content-block-sorting-options">';
-    $element['field_sorting']['#suffix'] = '</div>';
+    $field = $element['field_sorting']['#group'];
+    $element[$field]['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
+    $element[$field]['#suffix'] = '</div>';
+
+    if (!$selected_plugin) {
+      return $element;
+    }
+
+    $plugin = $content_block_manager->createInstance($selected_plugin);
+    $options = $configurable = [];
+
+    foreach ($plugin->supportedSortOptions() as $name => $settings) {
+      $add_dependency = TRUE;
+
+      if (is_array($settings)) {
+        $options[$name] = $settings['label'];
+
+        if (isset($settings['limit']) && !$settings['limit']) {
+          $add_dependency = FALSE;
+        }
+      }
+      else {
+        $options[$name] = $settings;
+      }
+
+      if ($add_dependency) {
+        $configurable[] = $name;
+      }
+    }
+
+    $element['field_sorting']['widget']['#options'] = $options;
+
+    $element['field_duration']['#states'] = [
+      'visible' => [
+        ':input[name="field_sorting"]' => array_map(
+          function ($name) {
+            return ['value' => $name];
+          },
+          $configurable
+        ),
+      ],
+    ];
 
     return $element;
   }
@@ -413,6 +451,12 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $form_state->setValue($value_parents, key($options));
     }
 
+    $parents = [NestedArray::getValue($form, array_merge($parents, ['#group']))];
+
+    if ($form_state->has('layout_builder__component')) {
+      $parents = array_merge(['settings', 'block_form'], $parents);
+    }
+
     return NestedArray::getValue($form, $parents);
   }
 
@@ -425,8 +469,15 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The entity type that is being queried.
    * @param \Drupal\block_content\BlockContentInterface $block_content
    *   The block content entity object.
+   * @param array $options
+   *   The sort options.
    */
-  protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, BlockContentInterface $block_content) : void {
+  protected function sortBy(
+    SelectInterface $query,
+    EntityTypeInterface $entity_type,
+    BlockContentInterface $block_content,
+    array $options
+  ): void {
     if (($field = $block_content->field_sorting)->isEmpty()) {
       return;
     }
@@ -440,7 +491,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $days = $field->getValue()[0]['value'];
     }
     else {
-      $days = NULL;
+      $days = $field->getFieldDefinition()->getDefaultValue($block_content);
     }
 
     if ($days) {
@@ -478,13 +529,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         }
 
         $sorting_field = $query->addExpression("COUNT($comment_alias.cid)", 'comment_count');
-
-        $query->condition("$comment_alias.status", 1);
-
-        if ($popularity_time_start) {
-          $query->condition("$comment_alias.created", $popularity_time_start, '>');
-        }
-
         break;
 
       // Creates a join to select the number of likes for a given entity in a
@@ -504,15 +548,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         }
 
         $sorting_field = $query->addExpression("COUNT($vote_alias.id)", 'vote_count');
-
-        // This assumes all votes are likes and all likes are equal. To
-        // support downvoting or rating, the query should be altered.
-        $query->condition("$vote_alias.type", 'like');
-
-        if ($popularity_time_start) {
-          $query->condition("$vote_alias.timestamp", $popularity_time_start, '>');
-        }
-
         break;
 
       // Creates a join that pulls in all related entities, taking the highest
@@ -563,17 +598,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         }
 
         $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)", 'comment_vote_count');
-
-        $query
-          ->condition("$comment_alias.status", 1)
-          ->condition("$vote_alias.type", 'like');
-
-        if ($popularity_time_start) {
-          $query
-            ->condition("$comment_alias.created", $popularity_time_start, '>')
-            ->condition("$vote_alias.timestamp", $popularity_time_start, '>');
-        }
-
         break;
 
       case 'event_date':
@@ -582,6 +606,36 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         $direction = 'ASC';
         $base_field = NULL;
         break;
+    }
+
+    if (isset($comment_alias) || isset($vote_alias)) {
+      if (isset($comment_alias)) {
+        $query->condition("$comment_alias.status", 1);
+      }
+
+      if (isset($vote_alias)) {
+        $query->condition("$vote_alias.type", 'like');
+      }
+
+      $option = $options[$sort_by];
+
+      if (
+        $popularity_time_start &&
+        (
+          (
+            is_array($option) &&
+            ((isset($option['limit']) && $option['limit']) || !isset($option['limit']))
+          ) ||
+          !is_array($option))
+      ) {
+        if (isset($comment_alias)) {
+          $query->condition("$comment_alias.created", $popularity_time_start, '>');
+        }
+
+        if (isset($vote_alias)) {
+          $query->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+        }
+      }
     }
 
     if ($base_field) {

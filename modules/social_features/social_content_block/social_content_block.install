@@ -27,22 +27,20 @@ function _social_content_block_update_sorting_options() {
 
   // Retrieve all sort options, removing duplicates and format them to the
   // format of field storage configuration.
-  $sort_options_raw = [];
-  foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $content_block_manager->createInstance($plugin_id);
-    $sort_options_raw += $plugin->supportedSortOptions();
-  }
-
   $sort_options = [];
-  foreach ($sort_options_raw as $value => $label) {
-    $sort_options[] = [
-      'value' => $value,
-      'label' => $label,
-    ];
+
+  foreach (array_keys($content_block_manager->getDefinitions()) as $plugin_id) {
+    $plugin = $content_block_manager->createInstance($plugin_id);
+
+    foreach ($plugin->supportedSortOptions() as $name => $settings) {
+      $sort_options[] = [
+        'value' => $name,
+        'label' => is_array($settings) ? $settings['label'] : $settings,
+      ];
+    }
   }
 
-  // Load the existing cnofiguration and update it if it's different.
+  // Load the existing configuration and update it if it's different.
   $config_name = 'field.storage.block_content.field_sorting';
   $config = \Drupal::configFactory()->getEditable($config_name);
   $config_data = $config->getRawData();

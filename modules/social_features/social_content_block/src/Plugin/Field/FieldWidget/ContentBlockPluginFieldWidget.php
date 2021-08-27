@@ -129,7 +129,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
             elseif (isset($form[$field]['widget']['#title'])) {
               $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
             }
-            // Otherwise we show a helpful message to the developer or QA that
+            // Otherwise, we show a helpful message to the developer or QA that
             // they should implement an additional clause.
             else {
               $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
