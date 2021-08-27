@@ -264,7 +264,14 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     if ($target_accounts = $user_storage->loadMultiple($parameters['target_recipients'])) {
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
+        // Filter out blocked users early in the process.
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
+          // If a site manager decides emails should not be sent to users
+          // who have never logged in. We need to verify last accessed time,
+          // so those users are not processed.
+          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
+            continue;
+          }
           // Only for users that have access to related content.
           if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
             // If the website is multilingual, get the body text in

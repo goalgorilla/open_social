@@ -435,8 +435,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
-    $cache_tag = 'enrollment:' . $nid . '-' . $uid;
-    Cache::invalidateTags([$cache_tag]);
+    $cache_tags[] = 'enrollment:' . $nid . '-' . $uid;
+    $cache_tags[] = 'node:' . $nid;
+    Cache::invalidateTags($cache_tags);
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;

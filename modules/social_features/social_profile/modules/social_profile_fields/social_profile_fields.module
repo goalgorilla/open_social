@@ -68,15 +68,6 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     'type' => 'entity_reference_autocomplete_tags',
     'region' => 'content',
   ]);
-
-  $settings = $form_display->getThirdPartySetting('field_group', 'group_profile_contact_info');
-
-  if (!in_array('field_profile_nationality', $settings['children'])) {
-    $settings['children'][] = 'field_profile_nationality';
-    $form_display->setThirdPartySetting('field_group', 'group_profile_contact_info', $settings);
-  }
-
-  $form_display->save();
 }
 
 /**
@@ -113,6 +104,40 @@ function social_profile_fields_form_alter(&$form, FormStateInterface $form_state
   ) {
     $form['field_profile_nationality']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_fields_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\profile\Entity\ProfileInterface $form_entity */
+  $form_entity = $form_object->getEntity();
+
+  $user = \Drupal::currentUser();
+  $hide_revision_field = FALSE;
+
+  // Don't show revision field, if the user can't edit all profiles.
+  if (!$user->hasPermission('update any profile profile')) {
+    $hide_revision_field = TRUE;
+  }
+
+  // Don't show the revision field, if user is editing it's own profile.
+  if (
+    $form_object instanceof ContentEntityFormInterface &&
+    $form_entity->getEntityTypeId() === 'profile' &&
+    $user->id() == $form_entity->getOwnerId()
+  ) {
+    $hide_revision_field = TRUE;
+  }
+
+  if ($hide_revision_field) {
+    $form['revision_log_message']['#access'] = FALSE;
+  }
+
+  $form['field_profile_nationality']['#group'] = 'group_profile_contact_info';
+  $form['#group_children']['field_profile_nationality'] = 'group_profile_contact_info';
 }
 
 /**
@@ -301,6 +326,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
       $profile_fields[] = ['id' => 'profile_address_field_city'];
       $profile_fields[] = ['id' => 'profile_address_field_address'];
       $profile_fields[] = ['id' => 'profile_address_field_postalcode'];
+      $profile_fields[] = ['id' => 'profile_address_field_administrative_area'];
     }
 
     foreach ($profile_fields as $field) {
@@ -341,6 +367,7 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
         $setting['locality'] = !$config->get('profile_address_field_city') ? '0' : 'locality';
         $setting['addressLine1'] = !$config->get('profile_address_field_address') ? '0' : 'addressLine1';
         $setting['postalCode'] = !$config->get('profile_address_field_postalcode') ? '0' : 'postalCode';
+        $setting['administrativeArea'] = !$config->get('profile_address_field_administrative_area') ? '0' : 'administrativeArea';
 
         // Update the settings of address field.
         $fields['field_profile_address']->setSetting('fields', $setting);
@@ -365,6 +392,13 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
         }
         else {
           unset($setting['postalCode']);
+        }
+
+        if (!$config->get('profile_address_field_administrative_area')) {
+          $setting['administrativeArea'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['administrativeArea']);
         }
 
         // Update the settings of address field.
@@ -408,6 +442,9 @@ function social_profile_fields_preprocess_field(&$variables) {
           if (isset($variables['items'][0]['content']['#postal_code']) && !$config->get('profile_address_field_postalcode')) {
             $variables['items'][0]['content']['#postal_code'] = NULL;
           }
+          if (isset($variables['items'][0]['content']['#administrative_area']) && !$config->get('profile_address_field_administrative_area')) {
+            $variables['items'][0]['content']['#administrative_area'] = NULL;
+          }
           break;
 
         case 'address_default':
@@ -419,6 +456,9 @@ function social_profile_fields_preprocess_field(&$variables) {
           }
           if (isset($variables['items'][0]['content']['postal_code']['#value']) && !$config->get('profile_address_field_postalcode')) {
             $variables['items'][0]['content']['postal_code']['#value'] = '';
+          }
+          if (isset($variables['items'][0]['content']['administrative_area']['#value']) && !$config->get('profile_address_field_administrative_area')) {
+            $variables['items'][0]['content']['administrative_area']['#value'] = '';
           }
           break;
       }
