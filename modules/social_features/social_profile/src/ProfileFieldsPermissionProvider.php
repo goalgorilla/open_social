@@ -23,13 +23,23 @@ class ProfileFieldsPermissionProvider {
   protected $entityTypeManager;
 
   /**
+   * The Social Profile field manager.
+   *
+   * @var \Drupal\social_profile\FieldManager
+   */
+  protected $fieldManager;
+
+  /**
    * Create a new ProfileFieldsPermissionProvider instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Druapl entity type manager.
+   * @param \Drupal\social_profile\FieldManager $fieldManager
+   *   The Social Profile field manager.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, FieldManager $fieldManager) {
     $this->entityTypeManager = $entityTypeManager;
+    $this->fieldManager = $fieldManager;
   }
 
   /**
@@ -46,20 +56,54 @@ class ProfileFieldsPermissionProvider {
     // access only.
     $permissions = [];
 
+    // Create the permissions across bundles.
     // Gives access to SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE fields.
-    $permissions["view any profile fields"] = [];
+    $permissions["view any profile fields"] = [
+      'title' => $this->t("View any profile fields"),
+      'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings."),
+      'restrict access' => TRUE,
+    ];
 
     // Gives access to SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY fields.
-    $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"] = [];
+    $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"] = [
+      'title' => $this->t("View community profile fields"),
+    ];
 
     foreach ($profile_types as $id => $profile_type) {
-      $permissions["view any ${$id} profile fields"] = [];
+      // Create the permissions for all fields in a bundle.
+      $permissions["view any ${$id} profile fields"] = [
+        'title' => $this->t("View any %profile profile fields", ['%profile' => $profile_type->label()]),
+        'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings for the %bundle profile type.", ['%bundle' => $id]),
+        'restrict access' => TRUE,
+      ];
 
-      $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${$id} profile fields"] = [];
+      $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${$id} profile fields"] = [
+        'title' => $this->t("View community %profile profile fields", ['%profile' => $profile_type->label()]),
+      ];
+
+      // Create the permissions per field per bundle.
+      $fields = $this->fieldManager->getManagedProfileFieldDefinitions($id);
+      foreach ($fields as $field_name => $field_config) {
+        $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} ${id} profile fields"] = [
+          'title' => $this->t("View private %field %profile profile fields", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+          'description' => $this->t("Allows a user to view any %field field on a profile regardless of visibility settings for the %bundle profile type.", ['%field' => $field_name, '%bundle' => $id]),
+        ];
+
+        $permissions["edit own ${field_name} ${id} profile field"] = [
+          'title' => $this->t("Edit own %field %profile profile field", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+        ];
+
+        $permissions["edit any ${field_name} ${id} profile field"] = [
+          'title' => $this->t("Edit any %field %profile profile field", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+        ];
+
+        $permissions["edit own ${field_name} ${id} profile field visibility"] = [
+          'title' => $this->t("Edit own %field %profile profile visibility", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+        ];
+
+      }
     }
 
-    // @todo We could add per-field permissions here if we want more control for
-    // certain roles.
     return $permissions;
   }
 
