@@ -97,7 +97,8 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     if ($object instanceof EventEnrollmentInterface) {
-      $access = $object->access('delete', $account, TRUE);
+      // All users with the following access permission should be allowed.
+      $access = AccessResult::allowedIfHasPermission($account, 'manage everything enrollments');
 
       $event_id = $object->getFieldValue('field_event', 'target_id');
       $node = $this->entityTypeManager->getStorage('node')->load($event_id);
