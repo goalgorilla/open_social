@@ -9,21 +9,21 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  * Get the community about name.
  *
  * @DataProducer(
- *   id = "community_about_name",
+ *   id = "about_name",
  *   name = @Translation("Community About Name"),
  *   description = @Translation("The the community about name."),
  *   produces = @ContextDefinition("string",
  *     label = @Translation("Community about name")
  *   ),
  *   consumes = {
- *     "CommunityAbout" = @ContextDefinition("any",
+ *     "communityAbout" = @ContextDefinition("any",
  *       label = @Translation("Community about"),
  *       required = TRUE
  *     )
  *   }
  * )
  */
-class CommunityAboutName extends EntityDataProducerPluginBase {
+class AboutName extends EntityDataProducerPluginBase {
 
   /**
    * Returns the community about name.

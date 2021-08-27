@@ -55,9 +55,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Ensure the platform branding fields are properly added to the endpoint.
+   * Ensure the community branding fields are properly added to the endpoint.
    */
-  public function testPlatformBrandingFieldsPresence() : void {
+  public function testCommunityBrandingFieldsPresence() : void {
     $system_information = $this->config('system.site');
     $system_theme = $this->config('system.theme');
     $config = $this->config('socialblue.settings');
@@ -73,9 +73,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
           about {
             name
           }
-          platformBranding {
+          branding {
             logoUrl
-            brandingColors {
+            colorScheme {
               primary {
                 css
                 hexRGB
@@ -198,9 +198,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
         'about' => [
           'name' => $system_information->get('name'),
         ],
-        'platformBranding' => [
+        'branding' => [
           'logoUrl' => $expected_logo_url,
-          'brandingColors' => [
+          'colorScheme' => [
             'primary' => [
               'css' => $this->getColor($config->get('color_primary'))->css(),
               'hexRGB' => $this->getColor($config->get('color_primary'))->hexRgb(),
@@ -337,14 +337,14 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $this->assertResults(
       '
         query {
-          platformBranding {
+          branding {
             logoUrl
           }
         }
       ',
       [],
       [
-        'platformBranding' => [
+        'branding' => [
           'logoUrl' => NULL,
         ],
       ],
@@ -354,9 +354,9 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test that the platform branding colors can return null.
+   * Test that the community color scheme can return null.
    */
-  public function testBrandingColorsCanReturnNull(): void {
+  public function testBrandingColorSchemeCanReturnNull(): void {
     $system_theme = $this->config('system.theme');
     // Change default theme.
     $system_theme->set('default', 'bootstrap')->save();
@@ -366,8 +366,8 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $this->assertResults(
       '
         query {
-          platformBranding {
-            brandingColors {
+          branding {
+            colorScheme {
               primary {
                 hexRGB
                 css
@@ -384,8 +384,8 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       ',
       [],
       [
-        'platformBranding' => [
-          'brandingColors' => NULL,
+        'branding' => [
+          'colorScheme' => NULL,
         ],
       ],
       $this->defaultCacheMetaData()
@@ -407,7 +407,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
     $this->assertResults(
       '
         query {
-          platformBranding {
+          branding {
             preferredFeatures {
               machineName
             }
@@ -416,7 +416,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
       ',
       [],
       [
-        'platformBranding' => [
+        'branding' => [
           'preferredFeatures' => [],
         ],
       ],
