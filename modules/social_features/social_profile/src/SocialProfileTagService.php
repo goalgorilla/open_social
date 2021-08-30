@@ -186,7 +186,6 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
         $route_parameters[$vocabulary] = $term->getName();
       }
 
-
       // Prepare the URL for the search by term.
       $url = Url::fromRoute($route, $route_parameters)->toString();
 
