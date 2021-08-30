@@ -117,3 +117,17 @@ function _social_profile_fields_nationalities() {
     $term->setName($nationality)->save();
   }
 }
+
+/**
+ * Add description to nickname field.
+ */
+function social_profile_fields_update_8004() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile_fields', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
