@@ -478,23 +478,11 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     BlockContentInterface $block_content,
     array $options
   ): void {
-    if (($field = $block_content->field_sorting)->isEmpty()) {
-      return;
-    }
-
-    $sort_by = $field->getValue()[0]['value'];
-
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.
     // Sorry cool kids, your time's up.
     if (!($field = $block_content->field_duration)->isEmpty()) {
       $days = $field->getValue()[0]['value'];
-    }
-    else {
-      $days = $field->getFieldDefinition()->getDefaultValue($block_content);
-    }
-
-    if ($days) {
       $popularity_time_start = strtotime("-$days days", $this->time->getRequestTime());
 
       if ($popularity_time_start) {
@@ -506,6 +494,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     }
 
     // Provide some values that are often used in the query.
+    $sort_by = $block_content->field_sorting->getValue()[0]['value'];
     $entity_type_id = $entity_type->id();
     $entity_id_key = $entity_type->getKey('id');
     $arguments = ['entity_type' => $entity_type_id];
