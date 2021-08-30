@@ -32,3 +32,12 @@ core.entity_view_display.block_content.custom_content_list.default:
             - social_content_block
       hidden:
         field_duration: true
+field.storage.block_content.field_sorting:
+  expected_config:
+    settings:
+      allowed_values_function: ''
+  update_actions:
+    change:
+      settings:
+        allowed_values: {  }
+        allowed_values_function: '_social_content_block_allowed_values_callback'
