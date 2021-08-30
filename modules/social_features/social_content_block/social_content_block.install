@@ -426,3 +426,17 @@ function social_content_block_update_8801(&$sandbox) {
   $field_purchasers->setSetting('allowed_values', $allowed_values);
   $field_purchasers->save();
 }
+
+/**
+ * Add translations support for "Custom content list" custom block fields.
+ */
+function social_content_block_update_10300() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

@@ -1366,3 +1366,17 @@ function social_core_update_10105() {
     $config->save();
   }
 }
+
+/**
+ * Add translation support for custom blocks fields.
+ */
+function social_core_update_10300() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

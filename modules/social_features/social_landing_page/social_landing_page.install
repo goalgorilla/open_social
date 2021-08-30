@@ -696,6 +696,20 @@ function social_landing_page_update_8811() {
 }
 
 /**
+ * Update landing page form labels.
+ */
+function social_landing_page_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Allow CM+ translate "Landing Page" node type.
  */
 function social_landing_page_update_10301() {
@@ -705,14 +719,28 @@ function social_landing_page_update_10301() {
 }
 
 /**
- * Update configuration for the types of the block_field field.
+ * Make "Landing Page" translatable.
  */
 function social_landing_page_update_10302() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_10302');
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update configuration for the types of the block_field field.
+ */
+function social_landing_page_update_10303() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
