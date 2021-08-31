@@ -8,18 +8,18 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Gets the platform branding preferred features information.
+ * Gets the preferred features information.
  *
  * @DataProducer(
- *   id = "platform_branding_preferred_features",
- *   name = @Translation("Platform Branding Preferred Features"),
- *   description = @Translation("The platform branding preferred features information."),
+ *   id = "preferred_features",
+ *   name = @Translation("Preferred Features"),
+ *   description = @Translation("The preferred features information."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("Platform Branding Preferred Features")
+ *     label = @Translation("Preferred Features")
  *   )
  * )
  */
-class PlatformBrandingPreferredFeatures extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class PreferredFeatures extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The module handler.
@@ -41,7 +41,7 @@ class PlatformBrandingPreferredFeatures extends DataProducerPluginBase implement
   }
 
   /**
-   * PlatformBranding constructor.
+   * PreferredFeatures constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -58,7 +58,7 @@ class PlatformBrandingPreferredFeatures extends DataProducerPluginBase implement
   }
 
   /**
-   * Returns platform branding preferred features information.
+   * Returns preferred features information.
    *
    * @return array
    *   An array with the preferred features.
