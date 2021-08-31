@@ -5,6 +5,7 @@ namespace Drupal\social_management_overview\Plugin;
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for Social management overview group plugins.
  */
 abstract class SocialManagementOverviewGroupBase extends PluginBase implements SocialManagementOverviewGroupInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The overview item manager service.

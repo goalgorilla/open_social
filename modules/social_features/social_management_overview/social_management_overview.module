@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * @file
+ * Contains Social Management Overview module file.
+ */
+
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_toolbar().
+ */
+function social_management_overview_toolbar(): array {
+  $items = [];
+
+  if (\Drupal::currentUser()->hasPermission('access management overview')) {
+    $items['management_overview'] = [
+      '#type' => 'toolbar_item',
+      'tab' => [
+        '#type' => 'link',
+        '#title' => t('Management overview'),
+        '#url' => Url::fromRoute('social_management_overview.overview_page'),
+        '#options' => [
+          'attributes' => [
+            'title' => t('Management overview'),
+            'class' => [
+              'toolbar-icon',
+              'toolbar-item',
+              'toolbar-icon-system-admin-config',
+            ],
+          ],
+        ],
+      ],
+      '#cache' => [
+        'contexts' => ['user.permissions'],
+      ],
+      '#weight' => 999,
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Implements hook_toolbar_alter().
+ */
+function social_management_overview_toolbar_alter(&$items): void {
+  $moduleHandler = \Drupal::service('module_handler');
+  // Add the management overview link to the toolbar for GIN.
+  if (
+    !empty($items['administration']['tray']['toolbar_administration']) &&
+    $moduleHandler->moduleExists('gin_toolbar')
+  ) {
+    $items['administration']['tray']['toolbar_administration']['#pre_render'][] = '_social_management_overview_add_page';
+  }
+}
+
+/**
+ * Add management overview to administration menu toolbar.
+ *
+ * @param array $build
+ *   The build items.
+ *
+ * @return array
+ *   Render array.
+ */
+function _social_management_overview_add_page(array $build): array {
+  if (\Drupal::currentUser()->hasPermission('access management overview')) {
+    $item['management_overview'] = [
+      'is_expanded' => FALSE,
+      'gin_admin_toolbar_module' => TRUE,
+      'gin_id' => 'social_saas_core-dashboard_controller_content',
+      'title' => t('Management overview'),
+      'url' => Url::fromRoute('social_management_overview.overview_page', [], [
+        'attributes' => [
+          'title' => t('Management overview'),
+          'class' => [
+            'toolbar-icon',
+            'toolbar-icon-system-admin-config',
+          ],
+        ],
+      ]
+      ),
+      'attributes' => new Attribute([
+        'class' => [
+          'menu-item',
+          'menu-item--expanded',
+        ],
+      ]),
+    ];
+
+    $toolbar_keys = array_keys($build['administration_menu']['#items']);
+    $insert_before = array_search('system.admin_content', $toolbar_keys, TRUE);
+    $build['administration_menu']['#items'] = array_slice($build['administration_menu']['#items'], 0, $insert_before, TRUE) +
+      $item +
+      array_slice($build['administration_menu']['#items'], $insert_before, NULL, TRUE);
+  }
+
+  return $build;
+}
