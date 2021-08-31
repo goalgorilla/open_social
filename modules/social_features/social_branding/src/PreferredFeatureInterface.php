@@ -3,28 +3,28 @@
 namespace Drupal\social_branding;
 
 /**
- * Provides an interface defining a preferred platform feature.
+ * Provides an interface defining a preferred feature.
  */
-interface PreferredPlatformFeatureInterface {
+interface PreferredFeatureInterface {
 
   /**
-   * Get the name of the preferred platform feature.
+   * Get the name of the preferred feature.
    *
    * @return string
-   *   The preferred platform feature name.
+   *   The preferred feature name.
    */
   public function getName() : string;
 
   /**
-   * Get the weight of the preferred platform feature.
+   * Get the weight of the preferred feature.
    *
    * @return int
-   *   The preferred platform feature weight.
+   *   The preferred feature weight.
    */
   public function getWeight() : int;
 
   /**
-   * Set the weight of this preferred platform feature.
+   * Set the weight of this preferred feature.
    *
    * @param int $weight
    *   An integer used to indicate ordering, with higher weights
