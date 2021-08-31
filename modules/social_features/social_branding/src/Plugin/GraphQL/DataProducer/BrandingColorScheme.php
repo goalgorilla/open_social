@@ -9,24 +9,24 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * The brand colors for this platform.
+ * The brand colors for this community.
  *
  * @DataProducer(
- *   id = "platform_branding_colors",
- *   name = @Translation("Platform Branding Colors"),
- *   description = @Translation("The brand colors for this platform."),
+ *   id = "branding_color_scheme",
+ *   name = @Translation("Community Branding Colors"),
+ *   description = @Translation("The brand colors for this community."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("Platform Branding Colors")
+ *     label = @Translation("Community Branding Colors")
  *   ),
  *   consumes = {
- *     "platformBranding" = @ContextDefinition("any",
- *       label = @Translation("Platform Branding"),
+ *     "communityBranding" = @ContextDefinition("any",
+ *       label = @Translation("Community Branding"),
  *       required = TRUE
  *     )
  *   }
  * )
  */
-class PlatformBrandingColors extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class BrandingColorScheme extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
@@ -48,7 +48,7 @@ class PlatformBrandingColors extends DataProducerPluginBase implements Container
   }
 
   /**
-   * PlatformBrandingLogoUrl constructor.
+   * BrandingColorScheme constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -65,16 +65,16 @@ class PlatformBrandingColors extends DataProducerPluginBase implements Container
   }
 
   /**
-   * Returns platform branding colors.
+   * Returns community branding colors.
    *
-   * @param \Drupal\Core\Config\ImmutableConfig $platform_branding
-   *   The platform branding.
+   * @param \Drupal\Core\Config\ImmutableConfig $community_branding
+   *   The community branding.
    *
    * @return \Drupal\Core\Config\ImmutableConfig|null
-   *   The platform branding colors.
+   *   The community branding colors.
    */
-  public function resolve(ImmutableConfig $platform_branding) : ?ImmutableConfig {
-    if ($platform_branding->get('default') === 'socialblue') {
+  public function resolve(ImmutableConfig $community_branding) : ?ImmutableConfig {
+    if ($community_branding->get('default') === 'socialblue') {
       if ($this->config->get('color.theme.socialblue')->get('palette.brand-primary')) {
         return $this->config->get('color.theme.socialblue');
       }

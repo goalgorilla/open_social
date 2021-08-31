@@ -2,41 +2,43 @@
 #                              Type Information                                #
 ################################################################################
 """
-Information about the branding of the Platform.
+Information about the community
+"""
+type CommunityAbout {
+  """
+  The human readable name of the community.
+  """
+  name: String!
+}
+
+"""
+Information about the branding of the community.
 
 This provides access to branding information such as the logo url or 
-colors configured by a site manager of the platform.
+colors configured by a site manager of the community.
 """
-type PlatformBranding {
+type CommunityBranding {
   """
-  The platform's logo url.
+  The community logo url.
   
   This can be shown in elements such as a navbar. NULL if no logo is configured.
   """
   logoUrl: Url
   """
-  The brand colors for this platform.
+  The color scheme for this community.
   
-  NULL if the platform has not configured a brand color scheme.
+  NULL if the community has not configured a branding color scheme.
   """
-  brandingColors: PlatformBrandColorScheme
-  """
-  The preferred features for this platform in order from most important to least important.
-
-  Provides focus about the focus of the platform and lets 
-  external applications know what actions they should persent 
-  to users in primary navigation.
-  """
-  preferredFeatures: [PlatformFeature!]!
+  colorScheme: BrandingColorScheme
 }
 
 """
-The platform's brand colors.
+The community brand colors.
 
 The brand colors are configured by site managers. This provides a way to change 
-the colors of an Open Social platform in broad strokes.
+the colors of an Open Social community in broad strokes.
 """
-type PlatformBrandColorScheme {
+type BrandingColorScheme {
   """
   The primary brand color.
   
@@ -182,12 +184,12 @@ type Color {
 }
 
 """
-A feature on the platform.
+A feature on the community.
 """
-type PlatformFeature {
+type Feature {
   """
   The machine name of this feature.
-  
+
   e.g. "CHAT", "GROUPS" or "DISCUSSIONS".
   """
   machineName: String!
