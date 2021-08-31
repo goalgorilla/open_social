@@ -5,7 +5,7 @@ namespace Drupal\social_management_overview\Plugin\SocialManagementOverviewGroup
 use Drupal\social_management_overview\Plugin\SocialManagementOverviewGroupBase;
 
 /**
- * Provides a new group "Content management".
+ * Provides a new overview group "Content management".
  *
  * @SocialManagementOverviewGroup(
  *   id = "content_management_group",

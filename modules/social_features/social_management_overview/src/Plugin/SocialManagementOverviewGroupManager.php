@@ -3,10 +3,10 @@
 namespace Drupal\social_management_overview\Plugin;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -69,9 +69,21 @@ class SocialManagementOverviewGroupManager extends DefaultPluginManager {
         if (empty($children)) {
           continue;
         }
-        $label = $plugin->getLabel()->__toString();
-        $groups[$label][] = $plugin->getLabel()->render();
-        $groups[$label][] = $children;
+        $groups[$id] = [
+          '#theme' => 'admin_block',
+          '#block' => [
+            'title' => $plugin->getLabel()->render(),
+            'content' => [
+              '#theme' => 'admin_block_content',
+              '#content' => $children,
+            ],
+          ],
+          '#cache' => [
+            'contexts' => [
+              'user.permissions',
+            ],
+          ],
+        ];
       }
       catch (PluginException $e) {
         $message = $e->getMessage();
@@ -82,15 +94,8 @@ class SocialManagementOverviewGroupManager extends DefaultPluginManager {
     if (empty($groups)) {
       return [];
     }
-    return [
-      '#theme' => 'system_admin_index',
-      '#menu_items' => $groups,
-      '#cache' => [
-        'contexts' => [
-          'user.permissions',
-        ],
-      ],
-    ];
+
+    return $groups;
   }
 
 }

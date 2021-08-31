@@ -2,9 +2,10 @@
 
 namespace Drupal\social_management_overview\Plugin;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,6 +21,13 @@ abstract class SocialManagementOverviewGroupBase extends PluginBase implements S
   protected $overviewItemManager;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs a new SocialManagementOverviewGroupBase object.
    *
    * @param array $configuration
@@ -30,11 +38,14 @@ abstract class SocialManagementOverviewGroupBase extends PluginBase implements S
    *   The plugin implementation definition.
    * @param \Drupal\social_management_overview\Plugin\SocialManagementOverviewItemManager $overview_item_manager
    *   The overview item manager service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialManagementOverviewItemManager $overview_item_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialManagementOverviewItemManager $overview_item_manager, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->overviewItemManager = $overview_item_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -45,7 +56,8 @@ abstract class SocialManagementOverviewGroupBase extends PluginBase implements S
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.social_management_overview_item')
+      $container->get('plugin.manager.social_management_overview_item'),
+      $container->get('messenger')
     );
   }
 
@@ -73,13 +85,22 @@ abstract class SocialManagementOverviewGroupBase extends PluginBase implements S
     array_multisort($weights, SORT_ASC, $overview_items);
 
     // Add children o the list.
-    foreach ($overview_items as $overview_item) {
-      if (($url = Url::fromRoute($overview_item['route']))->access()) {
-        $items[] = [
-          'title' => $overview_item['label'],
-          'description' => $overview_item['description'],
-          'url' => $url,
-        ];
+    foreach ($overview_items as $id => $overview_item) {
+      /** @var \Drupal\social_management_overview\Plugin\SocialManagementOverviewItemInterface $plugin */
+      try {
+        $plugin = $this->overviewItemManager->createInstance($id);
+        $url = $plugin->getUrl();
+        if (!is_null($url) && $url->access()) {
+          $items[$id] = [
+            'title' => $overview_item['label'] ?? '',
+            'description' => $overview_item['description'] ?? '',
+            'url' => $url,
+          ];
+        }
+      }
+      catch (PluginException $e) {
+        $message = $e->getMessage();
+        $this->messenger->addWarning($this->t('@message', ['@message' => $message]));
       }
     }
 

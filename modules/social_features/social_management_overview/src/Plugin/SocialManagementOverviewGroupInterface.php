@@ -3,8 +3,8 @@
 namespace Drupal\social_management_overview\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Defines an interface for Social management overview group plugins.
