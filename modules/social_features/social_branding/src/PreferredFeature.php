@@ -3,26 +3,26 @@
 namespace Drupal\social_branding;
 
 /**
- * Defines the preferred platform feature class.
+ * Defines the preferred feature class.
  */
-class PreferredPlatformFeature implements PreferredPlatformFeatureInterface {
+class PreferredFeature implements PreferredFeatureInterface {
 
   /**
-   * The preferred platform feature name.
+   * The preferred feature name.
    *
    * @var string
    */
   private string $name;
 
   /**
-   * The preferred platform feature weight.
+   * The preferred feature weight.
    *
    * @var int
    */
   private int $weight;
 
   /**
-   * Create a new PreferredPlatformFeature instance.
+   * Create a new PreferredFeature instance.
    *
    * @param string $name
    *   The feature name as machine name. e.g. cool_feature.
