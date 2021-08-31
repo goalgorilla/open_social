@@ -9,18 +9,18 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Gets the platform branding information.
+ * Gets the community branding information.
  *
  * @DataProducer(
- *   id = "platform_branding",
- *   name = @Translation("Platform Branding"),
- *   description = @Translation("The platform branding information."),
+ *   id = "community_branding",
+ *   name = @Translation("Community Branding"),
+ *   description = @Translation("The community branding information."),
  *   produces = @ContextDefinition("any",
- *     label = @Translation("Platform Branding")
+ *     label = @Translation("Community Branding")
  *   )
  * )
  */
-class PlatformBranding extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class CommunityBranding extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
@@ -42,7 +42,7 @@ class PlatformBranding extends DataProducerPluginBase implements ContainerFactor
   }
 
   /**
-   * PlatformBranding constructor.
+   * CommunityBranding constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -59,10 +59,10 @@ class PlatformBranding extends DataProducerPluginBase implements ContainerFactor
   }
 
   /**
-   * Returns platform branding information.
+   * Returns community branding information.
    *
    * @return \Drupal\Core\Config\ImmutableConfig|null
-   *   The platform branding configuration.
+   *   The community branding configuration.
    */
   public function resolve() : ?ImmutableConfig {
     return $this->config->get('system.theme');

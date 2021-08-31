@@ -15,48 +15,48 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  * - paletteName: color.theme.socialblue (socialblue theme settings customized)
  *
  * @DataProducer(
- *   id = "platform_branding_colors_load_color_by_name",
- *   name = @Translation("Platform Branding Colors Color By Name"),
+ *   id = "branding_color_scheme_load_color_by_name",
+ *   name = @Translation("Color Scheme Color By Name"),
  *   description = @Translation("The brand color."),
  *   produces = @ContextDefinition("any",
  *     label = @Translation("Color")
  *   ),
  *   consumes = {
- *     "brandingColors" = @ContextDefinition("any",
- *       label = @Translation("Platform Branding Colors"),
+ *     "colorScheme" = @ContextDefinition("any",
+ *       label = @Translation("Color Scheme"),
  *       required = TRUE
  *     ),
  *     "paletteName" = @ContextDefinition("string",
- *       label = @Translation("Platform Brand Palette Color Name"),
+ *       label = @Translation("Community Brand Palette Color Name"),
  *       required = TRUE
  *     ),
  *     "configName" = @ContextDefinition("string",
- *       label = @Translation("Platform Brand Config Color Name"),
+ *       label = @Translation("Community Brand Config Color Name"),
  *       required = TRUE
  *     )
  *   }
  * )
  */
-class PlatformBrandingColorsColorByName extends EntityDataProducerPluginBase {
+class BrandingColorSchemeLoadColorByName extends EntityDataProducerPluginBase {
 
   /**
-   * Returns the accent background brand color.
+   * Returns the brand color by name.
    *
-   * @param \Drupal\Core\Config\ImmutableConfig $branding_colors
-   *   The branding colors.
+   * @param \Drupal\Core\Config\ImmutableConfig $color_scheme
+   *   The color scheme.
    * @param string $palette_color_name
    *   The palette color name.
    * @param string $config_color_name
    *   The config color name.
    *
    * @return \Drupal\social_branding\Wrappers\Color
-   *   The accent background brand color.
+   *   The brand color.
    */
-  public function resolve(ImmutableConfig $branding_colors, string $palette_color_name, string $config_color_name) : Color {
-    if ($customBrandColor = $branding_colors->get('palette.' . $palette_color_name)) {
-      return new Color($customBrandColor);
+  public function resolve(ImmutableConfig $color_scheme, string $palette_color_name, string $config_color_name) : Color {
+    if ($customColor = $color_scheme->get('palette.' . $palette_color_name)) {
+      return new Color($customColor);
     }
-    return new Color($branding_colors->get('color_' . $config_color_name));
+    return new Color($color_scheme->get('color_' . $config_color_name));
   }
 
 }
