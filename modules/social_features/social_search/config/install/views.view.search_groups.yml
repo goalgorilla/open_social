@@ -137,11 +137,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -160,11 +157,7 @@ display:
               administrator: '0'
               contentmanager: '0'
               sitemanager: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -177,7 +170,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: search_api_string
+          reduce_duplicates: false
+          plugin_id: search_api_options
         search_api_language:
           id: search_api_language
           table: search_api_index_social_groups
@@ -197,7 +191,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: { }
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -215,8 +209,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: { }
-            group_items: { }
+            default_group_multiple: {  }
+            group_items: {  }
           plugin_id: search_api_language
       sorts:
         search_api_relevance:
@@ -316,7 +310,8 @@ display:
         - url
         - url.query_args
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_groups'
   page:
     display_plugin: page
     id: page
@@ -333,7 +328,8 @@ display:
         - url
         - url.query_args
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_groups'
   page_no_value:
     display_plugin: page
     id: page_no_value
@@ -376,4 +372,5 @@ display:
         - url
         - url.query_args
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:search_api.index.social_groups'
