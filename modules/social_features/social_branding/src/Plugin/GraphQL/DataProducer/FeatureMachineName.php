@@ -2,18 +2,18 @@
 
 namespace Drupal\social_branding\Plugin\GraphQL\DataProducer;
 
-use Drupal\social_branding\PreferredPlatformFeature;
+use Drupal\social_branding\PreferredFeature;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 
 /**
- * The machine name of the preferred feature.
+ * The machine name of the feature.
  *
  * @DataProducer(
- *   id = "platform_feature_machine_name",
- *   name = @Translation("Platform Feature Machine Name"),
- *   description = @Translation("The machine name of the preferred feature."),
+ *   id = "feature_machine_name",
+ *   name = @Translation("Feature Machine Name"),
+ *   description = @Translation("The machine name of the feature."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Preferred Feature Machine Name")
+ *     label = @Translation("Feature Machine Name")
  *   ),
  *   consumes = {
  *     "preferredFeature" = @ContextDefinition("any",
@@ -23,18 +23,18 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerP
  *   }
  * )
  */
-class PlatformFeatureMachineName extends EntityDataProducerPluginBase {
+class FeatureMachineName extends EntityDataProducerPluginBase {
 
   /**
    * Returns the machine name of the preferred feature.
    *
-   * @param \Drupal\social_branding\PreferredPlatformFeature $preferred_feature
+   * @param \Drupal\social_branding\PreferredFeature $preferred_feature
    *   The preferred feature.
    *
    * @return string
    *   The machine name.
    */
-  public function resolve(PreferredPlatformFeature $preferred_feature) : string {
+  public function resolve(PreferredFeature $preferred_feature) : string {
     return $preferred_feature->getName();
   }
 
