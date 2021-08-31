@@ -237,6 +237,20 @@ function social_search_update_10301() {
 }
 
 /**
+ * Update the Search Groups "type" filter.
+ */
+function social_search_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Add the processor "Skip not Verified users" to indexes.
  */
 function social_search_update_11001() {
