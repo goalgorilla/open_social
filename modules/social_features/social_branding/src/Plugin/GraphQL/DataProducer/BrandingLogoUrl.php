@@ -9,24 +9,24 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Gets the platform branding logo url.
+ * Gets the community branding logo url.
  *
  * @DataProducer(
- *   id = "platform_branding_logo_url",
- *   name = @Translation("Platform Branding Logo Url"),
- *   description = @Translation("The Platform Branding Logo Url."),
+ *   id = "branding_logo_url",
+ *   name = @Translation("Community Branding Logo Url"),
+ *   description = @Translation("The Community Branding Logo Url."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Platform Branding Logo Url")
+ *     label = @Translation("Community Branding Logo Url")
  *   ),
  *   consumes = {
- *     "platformBranding" = @ContextDefinition("any",
- *       label = @Translation("Platform Branding"),
+ *     "communityBranding" = @ContextDefinition("any",
+ *       label = @Translation("Community Branding"),
  *       required = TRUE
  *     )
  *   }
  * )
  */
-class PlatformBrandingLogoUrl extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
+class BrandingLogoUrl extends DataProducerPluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
@@ -48,7 +48,7 @@ class PlatformBrandingLogoUrl extends DataProducerPluginBase implements Containe
   }
 
   /**
-   * PlatformBrandingLogoUrl constructor.
+   * BrandingLogoUrl constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -65,16 +65,16 @@ class PlatformBrandingLogoUrl extends DataProducerPluginBase implements Containe
   }
 
   /**
-   * Returns platform branding logo url.
+   * Returns community branding logo url.
    *
-   * @param \Drupal\Core\Config\ImmutableConfig $platform_branding
-   *   The platform branding configuration.
+   * @param \Drupal\Core\Config\ImmutableConfig $community_branding
+   *   The community branding configuration.
    *
    * @return string|null
-   *   The string with platform branding logo url.
+   *   The string with community branding logo url.
    */
-  public function resolve(ImmutableConfig $platform_branding) : ?string {
-    if ($platform_branding->get('default') === 'socialblue') {
+  public function resolve(ImmutableConfig $community_branding) : ?string {
+    if ($community_branding->get('default') === 'socialblue') {
       if ($this->config->get('socialblue.settings')->get('logo.path')) {
         $wrapper = \Drupal::service('stream_wrapper_manager')
           ->getViaUri($this->config->get('socialblue.settings')->get('logo.path'));
