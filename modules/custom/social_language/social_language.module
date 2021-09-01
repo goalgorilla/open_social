@@ -102,3 +102,29 @@ function social_language_field_group_form_process_alter(array &$element, &$group
   // from adding an incorrect suffix to the field group title.
   $element['#multilingual'] = TRUE;
 }
+
+/**
+ * Implements hook_modules_installed().
+ */
+function social_language_modules_installed($modules) {
+  // When "Content Translation" module enabled, it provides few additional
+  // fields for translated entities. After fields are added, Drupal requires
+  // these fields definitions to be updated. Technically this is proceeded
+  // after submit this form "/admin/config/regional/content-language".
+  // But in OS this approach doesn't work as SM doesn't have access to the page.
+  // So, here we track any module installation and check if there are updates for
+  // translations fields and run updates.
+  $change_list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+
+  if ($change_list) {
+    foreach ($change_list as $entity_type_id => $changes) {
+      // We check only "content_translation_source"
+      // as this field should exist everytime.
+      if (!empty($changes['field_storage_definitions']['content_translation_source'])) {
+        if (function_exists('_content_translation_install_field_storage_definitions')) {
+          _content_translation_install_field_storage_definitions($entity_type_id);
+        }
+      }
+    }
+  }
+}
