@@ -74,7 +74,7 @@ function social_search_alter_users_exposed_filter_block(&$form, FormStateInterfa
  */
 function social_search_alter_groups_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
   $options = [
-    '' => t('- Any -'),
+    'All' => t('- Any -'),
   ];
   $group_types = GroupType::loadMultiple();
   /** @var \Drupal\group\Entity\GroupType $group_type */
