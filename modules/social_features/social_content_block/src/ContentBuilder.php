@@ -564,7 +564,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
           $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$node_alias.nid = %alias.entity_id");
 
           // Like node or comment related to node.
-          $vote_alias = $query->leftjoin('votingapi_vote', 'vv', "$node_alias.nid = %alias.entity_id AND %alias.entity_type = :entity_type_id OR $comment_alias.cid = %alias.entity_id", $arguments);
+          $vote_alias = $query->leftjoin('votingapi_vote', 'vv', "$node_alias.nid = %alias.entity_id AND %alias.entity_type = :entity_type OR $comment_alias.cid = %alias.entity_id", $arguments);
 
           $sorting_field = $query->addExpression("GREATEST(COALESCE(MAX($vote_alias.timestamp), 0),
           COALESCE(MAX($comment_alias.changed), 0),
