@@ -4,6 +4,7 @@ dependencies:
   config:
     - core.entity_form_mode.user.register
   module:
+    - profile
     - user
 id: user.user.register
 targetEntityType: user
@@ -15,9 +16,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  profile_profiles:
+    type: profile_form
+    weight: 90
+    settings:
+      form_mode: register
+    third_party_settings: {  }
+    region: content
 hidden:
   contact: true
   groups: true
   language: true
-  profile_profiles: true
   timezone: true
