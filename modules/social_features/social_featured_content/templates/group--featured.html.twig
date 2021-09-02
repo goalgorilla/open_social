@@ -17,9 +17,10 @@
 {% endblock %}
 
 {% block card_teaser_type %}
-  <a href="{{ url }}">
+  <a href="{{ url }}" aria-hidden="true" title="{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}">
     <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon">
+      <svg class="teaser__teaser-type-icon" aria-labelledby="group-{{ group.id.value }}">
+        <title id="group-{{ group.id.value }}">{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
         <use xlink:href="#icon-group-white"></use>
       </svg>
     </div>
@@ -32,10 +33,12 @@
   <h4{{ title_attributes }} class="teaser__title">
     {% if closed_group_lock %}
       <svg class="icon-gray icon-small" aria-hidden="true">
+        <title>{% trans %}Closed group{% endtrans %}</title>
         <use xlink:href="#icon-lock"></use>
       </svg>
     {% elseif secret_group_shield %}
       <svg class="icon-gray icon-small" aria-hidden="true">
+        <title>{% trans %}Secret group{% endtrans %}</title>
         <use xlink:href="#icon-shield"></use>
       </svg>
     {% endif %}
@@ -50,8 +53,9 @@
 {% block card_body %}
   <small class="text-muted">
 
-    <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Group type{% endtrans %}">
+    <div class="teaser__content-line" title="{% trans %}Group type{% endtrans %}">
+      <svg class="teaser__content-type-icon" aria-hidden="true">
+        <title>{% trans %}Group type{% endtrans %}</title>
         <use xlink:href="#icon-label"></use>
       </svg>
       <span class="teaser__content-text">
@@ -62,8 +66,9 @@
     </div>
 
     {% if content.field_group_location|render or content.field_group_address|render %}
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Event location{% endtrans %}">
+      <div class="teaser__content-line" title="{% trans %}Event location{% endtrans %}">
+        <svg class="teaser__content-type-icon" aria-hidden="true">
+          <title>{% trans %}Located at:{% endtrans %}</title>
           <use xlink:href="#icon-location"></use>
         </svg>
         <span class="teaser__content-text">
@@ -84,9 +89,10 @@
 {% block card_actionbar %}
 
   {% if group_members is not empty %}
-    <div class="badge teaser__badge">
+    <div class="badge teaser__badge" title="{% trans %}Number of group members{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon" aria-hidden="true" title="{% trans %}Number of group members{% endtrans %}">
+        <svg class="badge__icon" aria-hidden="true">
+          <title>{% trans %}Number of group members{% endtrans %}</title>
           <use xlink:href="#icon-group"></use>
         </svg>
         <span class="badge__label">
