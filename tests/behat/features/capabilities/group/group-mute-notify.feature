@@ -64,18 +64,10 @@ Feature: Mute/Unmute group notifications
     Then I press "Send"
       And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
         | This e-mail has been sent from Open Social by the Swift Mailer module. |
-    # Log in and be sure that group notifications are not muted.
-    Given I am logged in as "dude_1st"
-    When I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
-      And I click "Ressinel's group 1st"
-    Then I should see the button "Joined"
-      And I press "Joined"
-      And I should see the link "Mute group"
-    Then I should see "Mute group"
+
     # Add content to the group by another user.
     Given I am logged in as "dude_2nd"
-    Then I am on "/all-groups"
+    When I am on "/all-groups"
       And I click "Ressinel's group 1st"
       And I click "Topics"
       And I click "Create Topic"
@@ -85,10 +77,20 @@ Feature: Mute/Unmute group notifications
       And I click radio button "Discussion"
       And I press "Create topic"
     Then I should see "Topic for unmute notify has been created."
+      And I wait for the queue to be empty
+
     # Log in and check if we have notifications.
     Given I am logged in as "dude_1st"
-    Then I wait for the queue to be empty
-      And I am on "/notifications"
+    # Ensure that group notifications are not muted.
+    When I click the xth "0" element with the css ".navbar-nav .profile"
+      And I click "My groups"
+      And I click "Ressinel's group 1st"
+    Then I should see the button "Joined"
+      And I press "Joined"
+      And I should see the link "Mute group"
+      And I should see "Mute group"
+    # There should be notifications.
+    When I am on "/notifications"
     Then I should see "dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group"
       And I should have an email with subject "Notification from Open Social" and in the content:
         | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
@@ -104,9 +106,10 @@ Feature: Mute/Unmute group notifications
     Then I press "Send"
     And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
       | This e-mail has been sent from Open Social by the Swift Mailer module. |
+
     # Login and mute group notifications.
     Given I am logged in as "dude_1st"
-    Then I click the xth "0" element with the css ".navbar-nav .profile"
+    When I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
       And I click "Ressinel's group 1st"
     Then I should see the button "Joined"
@@ -115,6 +118,7 @@ Feature: Mute/Unmute group notifications
     When I click "Mute group"
       And I wait for AJAX to finish
     Then I should see "Unmute group"
+
     # Add content to the group by another user.
     Given I am logged in as "dude_2nd"
     Then I am on "/all-groups"
@@ -127,10 +131,12 @@ Feature: Mute/Unmute group notifications
       And I click radio button "Discussion"
       And I press "Create topic"
     Then I should see "Topic for mute notify has been created."
+      And I wait for the queue to be empty
+
     # Log in and check if we exactly have no notifications.
     Given I am logged in as "dude_1st"
-    Then I wait for the queue to be empty
-      And I am on "/notifications"
+    # There shouldn't be any notifications.
+    When I am on "/notifications"
     Then I should not see "dude_2nd created a topic Topic for mute notify in the Ressinel's group 1st group"
       And I should not have an email with subject "Notification from Open Social" and in the content:
         | dude_2nd created a topic Topic for mute notify in the Ressinel's group 1st group |
