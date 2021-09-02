@@ -104,10 +104,10 @@ class InviteService {
 
     // Return specific data.
     if ($specific === 'name') {
-      return $route['name'];
+      return (string) $route['name'];
     }
     if ($specific === 'amount') {
-      return $route['amount'];
+      return (string) $route['amount'];
     }
 
     return $route;
