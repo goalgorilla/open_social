@@ -1,0 +1,157 @@
+social_management_overview.overview_page:
+  title: 'Management overview'
+  route_name: social_management_overview.overview_page
+  parent: system.admin
+  weight: -11
+  options:
+    attributes:
+      class:
+        - toolbar-icon-system-admin-config
+
+social_management_overview.overview_page.content_management:
+  title: 'Content management'
+  route_name: <nolink>
+  parent: social_management_overview.overview_page
+  weight: 0
+
+social_management_overview.overview_page.people:
+  title: 'People'
+  route_name: <nolink>
+  parent: social_management_overview.overview_page
+  weight: 1
+
+social_management_overview.overview_page.configuration:
+  title: 'Configuration'
+  route_name: <nolink>
+  parent: social_management_overview.overview_page
+  weight: 2
+
+social_management_overview.overview_page.menu_management:
+  title: 'Menu management'
+  route_name: <nolink>
+  parent: social_management_overview.overview_page
+  weight: 3
+
+social_management_overview.overview_page.appearance:
+  title: 'Appearance'
+  route_name: <nolink>
+  parent: social_management_overview.overview_page
+  weight: 4
+
+# Content management links.
+social_management_overview.overview_page.content_overview:
+  title: 'Content overview'
+  description: 'Overview of all the content on the platform.'
+  route_name: view.content.page_1
+  parent: social_management_overview.overview_page.content_management
+  weight: 0
+
+social_management_overview.overview_page.create_new_content:
+  title: 'Create new content'
+  description: 'Create new content.'
+  route_name: node.add_page
+  parent: social_management_overview.overview_page.content_management
+  weight: 1
+
+social_management_overview.overview_page.group_overview:
+  title: 'Group overview'
+  description: 'Overview of all the groups on the platform.'
+  route_name: entity.group.collection
+  parent: social_management_overview.overview_page.content_management
+  weight: 4
+
+social_management_overview.overview_page.comments_overview:
+  title: 'Comments overview'
+  description: 'Overview of all the comments on the platform.'
+  route_name: comment.admin
+  parent: social_management_overview.overview_page.content_management
+  weight: 2
+
+# People links.
+social_management_overview.overview_page.account_settings:
+  title: 'Account settings'
+  description: 'Who can register on your platform and adjust the contents of automatic emails sent by your platform.'
+  route_name: entity.user.admin_form
+  parent: social_management_overview.overview_page.people
+  weight: 0
+
+social_management_overview.overview_page.people_overview:
+  title: 'People overview'
+  description: 'Administration of all the people registered on the site.'
+  route_name: entity.user.collection
+  parent: social_management_overview.overview_page.people
+  weight: 1
+
+social_management_overview.overview_page.add_new_user:
+  title: 'Add new user'
+  description: 'Add new user.'
+  route_name: user.admin_create
+  parent: social_management_overview.overview_page.people
+  weight: 2
+
+# Configuration links.
+social_management_overview.overview_page.basic_site_settings:
+  title: 'Basic site settings'
+  description: 'Change the name and email address of your site.'
+  route_name: system.site_information_settings
+  parent: social_management_overview.overview_page.configuration
+  weight: 0
+
+social_management_overview.overview_page.taxonomy_settings:
+  title: 'Taxonomy settings'
+  description: 'Topic types, Event types, Profile tags, Organization tags, Expertise and Interests can be added, removed or changed here.'
+  route_name: entity.taxonomy_vocabulary.collection
+  parent: social_management_overview.overview_page.configuration
+  weight: 2
+
+social_management_overview.overview_page.regional_settings:
+  title: 'Regional settings'
+  description: 'Configure the locale and timezone settings.'
+  route_name: system.regional_settings
+  parent: social_management_overview.overview_page.configuration
+  weight: 3
+
+social_management_overview.overview_page.date_time_format:
+  title: 'Date and time formats'
+  description: 'Configure how dates and times are displayed.'
+  route_name: entity.date_format.collection
+  parent: social_management_overview.overview_page.configuration
+  weight: 4
+
+# Menu management links.
+social_management_overview.overview_page.main_menu:
+  title: 'Main menu'
+  description: 'Change or add links to the Main menu.'
+  route_name: entity.menu.edit_form
+  parent: social_management_overview.overview_page.menu_management
+  weight: 0
+  route_parameters:
+    menu: 'main'
+
+social_management_overview.overview_page.footer_menu:
+  title: 'Footer menu'
+  description: 'Change or add links to the Footer menu.'
+  route_name: entity.menu.edit_form
+  parent: social_management_overview.overview_page.menu_management
+  weight: 1
+  route_parameters:
+    menu: 'footer'
+
+# Appearance links.
+social_management_overview.overview_page.theme_settings:
+  title: 'Change colors and styling'
+  description: 'Determine the look and feel of your site.'
+  route_name: system.theme_settings_theme
+  parent: social_management_overview.overview_page.appearance
+  weight: 0
+  route_parameters:
+    theme: 'seven'
+
+social_management_overview.overview_page.home_page_settings:
+  title: 'Customize home page'
+  description: 'Change the image and text on the home page.'
+  route_name: entity.block_content.edit_form
+  parent: social_management_overview.overview_page.appearance
+  weight: 1
+  route_parameters:
+    block_content: '1'

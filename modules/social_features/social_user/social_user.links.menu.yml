@@ -16,3 +16,17 @@ social_user.admin.config.social.topic:
   route_name: social_user.settings
   description: 'User settings'
   parent: social_core.admin.config.social
+
+social_user.overview_page.user_settings:
+  title: 'Default user profile page'
+  description: "Choose a page that users will land on when visiting another users' profile (e.g., stream or about page)."
+  route_name: social_user.navigation_settings
+  parent: social_management_overview.overview_page.people
+  weight: 4
+
+social_user.overview_page.navigation_settings:
+  title: 'Navigation settings'
+  description: 'Select which icons to show or hide in the main (top) navigation bar.'
+  route_name: social_user.navigation_settings
+  parent: social_management_overview.overview_page.menu_management
+  weight: 3

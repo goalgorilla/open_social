@@ -5,97 +5,24 @@
  * Contains Social Management Overview module file.
  */
 
-use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
-
 /**
- * Implements hook_toolbar().
+ * Implements hook_menu_links_discovered_alter().
  */
-function social_management_overview_toolbar(): array {
-  $items = [];
+function social_management_overview_menu_links_discovered_alter(array &$links): void {
+  // Update theme settings link.
+  $theme = \Drupal::theme()->getActiveTheme()->getName();
+  $links['social_management_overview.overview_page.theme_settings']['route_parameters']['theme'] = $theme;
 
-  if (\Drupal::currentUser()->hasPermission('access management overview')) {
-    $items['management_overview'] = [
-      '#type' => 'toolbar_item',
-      'tab' => [
-        '#type' => 'link',
-        '#title' => t('Management overview'),
-        '#url' => Url::fromRoute('social_management_overview.overview_page'),
-        '#options' => [
-          'attributes' => [
-            'title' => t('Management overview'),
-            'class' => [
-              'toolbar-icon',
-              'toolbar-item',
-              'toolbar-icon-system-admin-config',
-            ],
-          ],
-        ],
-      ],
-      '#cache' => [
-        'contexts' => ['user.permissions'],
-      ],
-      '#weight' => 999,
-    ];
+  // Update homepage edit link.
+  $query = \Drupal::database()->select('block_content', 'bc');
+  $query->addField('bc', 'id');
+  $query->condition('bc.type', 'hero_call_to_action_block');
+  $query->range(0, 1);
+  $execute = $query->execute();
+  if (!is_null($execute)) {
+    $block_id = $execute->fetchField();
+    if ($block_id) {
+      $links['social_management_overview.overview_page.home_page_settings']['route_parameters']['block_content'] = $block_id;
+    }
   }
-
-  return $items;
-}
-
-/**
- * Implements hook_toolbar_alter().
- */
-function social_management_overview_toolbar_alter(&$items): void {
-  $moduleHandler = \Drupal::service('module_handler');
-  // Add the management overview link to the toolbar for GIN.
-  if (
-    !empty($items['administration']['tray']['toolbar_administration']) &&
-    $moduleHandler->moduleExists('gin_toolbar')
-  ) {
-    $items['administration']['tray']['toolbar_administration']['#pre_render'][] = '_social_management_overview_add_page';
-  }
-}
-
-/**
- * Add management overview to administration menu toolbar.
- *
- * @param array $build
- *   The build items.
- *
- * @return array
- *   Render array.
- */
-function _social_management_overview_add_page(array $build): array {
-  if (\Drupal::currentUser()->hasPermission('access management overview')) {
-    $item['management_overview'] = [
-      'is_expanded' => FALSE,
-      'gin_admin_toolbar_module' => TRUE,
-      'gin_id' => 'social_saas_core-dashboard_controller_content',
-      'title' => t('Management overview'),
-      'url' => Url::fromRoute('social_management_overview.overview_page', [], [
-        'attributes' => [
-          'title' => t('Management overview'),
-          'class' => [
-            'toolbar-icon',
-            'toolbar-icon-system-admin-config',
-          ],
-        ],
-      ]
-      ),
-      'attributes' => new Attribute([
-        'class' => [
-          'menu-item',
-          'menu-item--expanded',
-        ],
-      ]),
-    ];
-
-    $toolbar_keys = array_keys($build['administration_menu']['#items']);
-    $insert_before = array_search('system.admin_content', $toolbar_keys, TRUE);
-    $build['administration_menu']['#items'] = array_slice($build['administration_menu']['#items'], 0, $insert_before, TRUE) +
-      $item +
-      array_slice($build['administration_menu']['#items'], $insert_before, NULL, TRUE);
-  }
-
-  return $build;
 }
