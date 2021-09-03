@@ -12,26 +12,26 @@ use Symfony\Component\Yaml\Yaml;
 class ConfigurationsService {
 
   /**
-   * Helper function to import configurations.
+   * Helper function to import static configurations.
    *
    * @param array $configs
    *   Array of configuration file names and their folders.
    * @param string $module_name
    *   The module name for which we import configurations.
+   * @param int $n
+   *   The hook update number.
    */
-  public static function importConfigurations(array $configs, string $module_name) {
-    foreach ($configs as $folder => $config_files) {
-      foreach ($config_files as $config_file) {
-        $config = drupal_get_path('module', $module_name) . "/config/{$folder}/{$config_file}.yml";
+  public static function importStaticConfigurations(array $configs, string $module_name, int $n) {
+    foreach ($configs as $config) {
+      $config_file = drupal_get_path('module', $module_name) . "/config/static/{$config}_$n.yml";
 
-        if (is_file($config)) {
-          $settings = Yaml::parse(file_get_contents($config));
-          if (is_array($settings)) {
-            $update_config = \Drupal::configFactory()
-              ->getEditable($config_file);
+      if (is_file($config_file)) {
+        $settings = Yaml::parse(file_get_contents($config_file));
+        if (is_array($settings)) {
+          $update_config = \Drupal::configFactory()
+            ->getEditable($config);
 
-            $update_config->setData($settings)->save(TRUE);
-          }
+          $update_config->setData($settings)->save(TRUE);
         }
       }
     }

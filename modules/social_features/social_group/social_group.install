@@ -705,12 +705,10 @@ function social_group_update_10302() {
  */
 function social_group_update_10303() {
   $configs = [
-    'install' => [
-      'flag.flag.mute_group_notifications',
-    ],
+    'flag.flag.mute_group_notifications',
   ];
 
-  ConfigurationsService::importConfigurations($configs, 'social_group');
+  ConfigurationsService::importStaticConfigurations($configs, 'social_group', 10303);
 }
 
 /**
@@ -753,12 +751,10 @@ function social_group_update_10305() {
  */
 function social_group_update_10306() {
   $configs = [
-    'optional' => [
-      'block.block.exposed_form_groups_page_user_groups',
-    ],
+    'block.block.exposed_form_groups_page_user_groups',
   ];
 
-  ConfigurationsService::importConfigurations($configs, 'social_group');
+  ConfigurationsService::importStaticConfigurations($configs, 'social_group', 10306);
 }
 
 /**
