@@ -16,6 +16,8 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Database\Database;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -575,5 +577,92 @@ function social_tagging_preprocess_profile(array &$variables) {
       $variables['social_tagging_allow_split'] = $tag_service->allowSplit();
       $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
     }
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+
+  // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
+  // will be attached in that section when a user enable tagging options.
+  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
+    return;
+  }
+
+  $settings = [
+    "children" => [],
+    "parent_name" => "",
+    "weight" => '1',
+    "label" => "Tags",
+    "format_type" => "fieldset",
+    "format_settings" => [
+      "required_fields" => TRUE,
+      "id" => "tags",
+      "classes" => "card",
+      "label" => "Tags",
+    ],
+    "region" => "hidden",
+  ];
+
+  $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
+  $form_display->save();
+}
+
+/**
+ * Implements hook_preprocess_views_query_alter().
+ */
+function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+
+  if ($tag_service->queryCondition() == 'OR') {
+    return;
+  }
+
+  // View id and display id.
+  $tagging_views = [
+    'latest_topics' => 'page_latest_topics',
+    'upcoming_events' => 'page_community_events',
+    'events' => 'events_overview',
+    'group_topics' => 'default',
+    'group_events' => 'default',
+    'newest_groups' => 'page_all_groups',
+    'newest_users' => 'page',
+  ];
+
+  if (in_array($view->id(), array_keys($tagging_views)) && in_array($view->getDisplay()->getBaseId(), $tagging_views)) {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $org_query = $query->where['2'];
+    $conditions = isset($org_query['conditions']) ? $org_query['conditions'] : [];
+    $count_conditions = count($conditions);
+
+    // This only make sense if there are multiple
+    // search terms.
+    if ($count_conditions <= 1) {
+      return;
+    }
+
+    // Extract the term ids.
+    $values = [];
+    foreach ($conditions as $condition) {
+      $values[] = $condition['value'];
+    }
+
+    // Update the condition and use IN instead
+    // of =.
+    $new_condition = end($conditions);
+    $new_condition['value'] = $values;
+    $new_condition['operator'] = 'IN';
+    $field = $new_condition['field'];
+
+    // Make sure we only get results that has all the
+    // required terms.
+    $query->addHavingExpression(
+      0,
+      "COUNT(DISTINCT($field)) = $count_conditions",
+      [],
+    );
   }
 }
