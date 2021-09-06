@@ -758,14 +758,14 @@ function social_group_update_10306() {
 }
 
 /**
- * Update "Hero" view display for Group.
+ * Update view displays for Group.
  */
 function social_group_update_10307() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group', 'social_group_update_10307');
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

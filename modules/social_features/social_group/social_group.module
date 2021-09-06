@@ -249,13 +249,8 @@ function social_group_preprocess_group(array &$variables) {
 
   $account = \Drupal::currentUser();
 
-  // Prevent access to mute group notifications if a user is not a group member
-  // and show that link for specific regions only.
-  $allowed_regions = [
-    'hero',
-    'statistic',
-  ];
-  if (!$group->getMember($account) || !in_array($variables['view_mode'], $allowed_regions)) {
+  // Prevent access to mute group notifications if a user is not a group member.
+  if (!$group->getMember($account)) {
     unset($variables['content']['flag_mute_group_notifications']);
   }
   // Set joined to true for teaser when current logged in
