@@ -299,54 +299,25 @@ function social_activity_update_10301() {
 }
 
 /**
- * Add a new filter to "notifications" view.
+ * Update message templates.
  */
 function social_activity_update_10302() {
+  // Install new configs.
+  $config_files = [
+    'message.template.create_event_gc' => 'message.template.create_event_gc_10302',
+    'message.template.create_topic_gc' => 'message.template.create_topic_gc_10302',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $source = new FileStorage($config_path);
+  foreach ($config_files as $origin_name => $update_name) {
+    // Add new message templates.
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_activity', 'social_activity_update_10302');
-
-  // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
-}
-
-/**
- * Add changes to message templates.
- */
-function social_activity_update_10303() {
-  $config_path = drupal_get_path('module', 'social_activity') . '/config/install';
-  $source = new FileStorage($config_path);
-  $config_storage = \Drupal::service('config.storage');
-
-  // Add new message templates.
-  $config_names = [
-    'message.template.create_event_gc',
-    'message.template.create_topic_gc',
-
-  ];
-  foreach ($config_names as $name) {
-    $config_storage->write($name, $source->read($name));
-  }
-
-  // Modify existed message templates.
-  $config_factory = \Drupal::configFactory();
-  $config_names = [
-    'message.template.create_event_group',
-    'message.template.create_topic_group',
-    'message.template.moved_content_between_groups',
-    'message.template.create_content_in_joined_group',
-  ];
-
-  foreach ($config_names as $name) {
-    $config = $config_factory->getEditable($name);
-    // Update template text.
-    $updated_text = $source->read($name)['text'];
-    $config->set('text', $updated_text);
-    // Remove redundant destination.
-    $config->clear('third_party_settings.activity_logger.activity_destinations.stream_group');
-
-    $config->save();
-  }
 }

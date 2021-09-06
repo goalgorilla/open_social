@@ -715,22 +715,23 @@ function social_group_update_10303() {
   }
 
   // Install new configs.
-  $config_path = drupal_get_path('module', 'social_group') . '/config/install';
-  $source = new FileStorage($config_path);
-  $config_storage = \Drupal::service('config.storage');
-
-  $config_names = [
-    'core.entity_view_mode.group_content.activity',
-    'core.entity_view_display.group_content.closed_group-group_node-event.activity',
-    'core.entity_view_display.group_content.closed_group-group_node-topic.activity',
-    'core.entity_view_display.group_content.open_group-group_node-event.activity',
-    'core.entity_view_display.group_content.open_group-group_node-topic.activity',
-    'core.entity_view_display.group_content.public_group-group_node-event.activity',
-    'core.entity_view_display.group_content.public_group-group_node-topic.activity',
+  $config_files = [
+    'core.entity_view_mode.group_content.activity' => 'core.entity_view_mode.group_content.activity_10303',
+    'core.entity_view_display.group_content.closed_group-group_node-event.activity' => 'core.entity_view_display.group_content.closed_group-group_node-event.activity_10303',
+    'core.entity_view_display.group_content.closed_group-group_node-topic.activity' => 'core.entity_view_display.group_content.closed_group-group_node-topic.activity_10303',
+    'core.entity_view_display.group_content.open_group-group_node-event.activity' => 'core.entity_view_display.group_content.open_group-group_node-event.activity_10303',
+    'core.entity_view_display.group_content.open_group-group_node-topic.activity' => 'core.entity_view_display.group_content.open_group-group_node-topic.activity_10303',
+    'core.entity_view_display.group_content.public_group-group_node-event.activity' => 'core.entity_view_display.group_content.public_group-group_node-event.activity_10303',
+    'core.entity_view_display.group_content.public_group-group_node-topic.activity' => 'core.entity_view_display.group_content.public_group-group_node-topic.activity_10303',
   ];
 
-  foreach ($config_names as $name) {
-    $config_storage->write($name, $source->read($name));
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  foreach ($config_files as $origin_name => $update_name) {
+    // Add new message templates.
+    $config_storage->write($origin_name, $source->read($update_name));
   }
 
   // Set display mode for group content to display on stream.
