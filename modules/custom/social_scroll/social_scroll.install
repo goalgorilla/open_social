@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Contains social_scroll.install.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_scroll.
+ */
+function social_scroll_install() {
+  user_role_grant_permissions('sitemanager', ['administer social_scroll']);
+}
