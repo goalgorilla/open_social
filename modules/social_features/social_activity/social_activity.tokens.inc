@@ -129,7 +129,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
               $count = $count ? $count - 1 : $count;
               // Build the string like "(+ 4 groups more)".
               $replacements[$original] = $count
-                ? \Drupal::translation()->formatPlural($count, '(+ @count group more)', '(+ @count groups more)')
+                ? \Drupal::translation()->formatPlural($count, '(+ @count other groups)', '(+ @count other groups)')
                 : '';
             }
           }
