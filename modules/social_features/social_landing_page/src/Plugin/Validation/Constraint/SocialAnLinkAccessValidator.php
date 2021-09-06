@@ -28,6 +28,7 @@ class SocialAnLinkAccessValidator extends LinkAccessConstraintValidator {
       }
       // Disallow URLs if the anonymous user doesn't have access this URI.
       if (!$url->access(User::getAnonymousUser())) {
+        // @phpstan-ignore-next-line
         $this->context->addViolation($constraint->message, ['@uri' => $value->uri]);
       }
     }
