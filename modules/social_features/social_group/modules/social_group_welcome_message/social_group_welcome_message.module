@@ -176,6 +176,16 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // Add the joined user to the already existing recipients array.
     $recipients[] = $account;
 
+    /** @var \Drupal\social_group\GroupMuteNotify $group_mute_notify */
+    $group_mute_notify = \Drupal::service('social_group.group_mute_notify');
+    foreach ($recipients as $key => $recipient) {
+      // Skip the welcome message for recipients which have muted the group
+      // notification.
+      if ($group_mute_notify->groupNotifyIsMuted($group, $recipient)) {
+        unset($recipients[$key]);
+      }
+    }
+
     /** @var \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service */
     $private_message_service = \Drupal::service('private_message.service');
 
