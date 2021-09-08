@@ -155,10 +155,9 @@
     {% block card_actionbar %}
 
       {% if visibility_icon and visibility_label %}
-        <div class="badge teaser__badge no-padding"
-             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}">
+        <div class="badge teaser__badge no-padding">
         <span class="badge__container">
-          <svg class="badge__icon" aria-hidden="true">
+          <svg class="badge__icon">
             <title>{% trans %}Visibility{% endtrans %}</title>
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>

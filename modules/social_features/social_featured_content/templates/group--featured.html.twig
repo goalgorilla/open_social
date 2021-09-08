@@ -53,8 +53,8 @@
 {% block card_body %}
   <small class="text-muted">
 
-    <div class="teaser__content-line" title="{% trans %}Group type{% endtrans %}">
-      <svg class="teaser__content-type-icon" aria-hidden="true">
+    <div class="teaser__content-line">
+      <svg class="teaser__content-type-icon">
         <title>{% trans %}Group type{% endtrans %}</title>
         <use xlink:href="#icon-label"></use>
       </svg>
@@ -66,8 +66,8 @@
     </div>
 
     {% if content.field_group_location|render or content.field_group_address|render %}
-      <div class="teaser__content-line" title="{% trans %}Event location{% endtrans %}">
-        <svg class="teaser__content-type-icon" aria-hidden="true">
+      <div class="teaser__content-line">
+        <svg class="teaser__content-type-icon">
           <title>{% trans %}Located at:{% endtrans %}</title>
           <use xlink:href="#icon-location"></use>
         </svg>
@@ -89,9 +89,9 @@
 {% block card_actionbar %}
 
   {% if group_members is not empty %}
-    <div class="badge teaser__badge" title="{% trans %}Number of group members{% endtrans %}">
+    <div class="badge teaser__badge">
       <span class="badge__container">
-        <svg class="badge__icon" aria-hidden="true">
+        <svg class="badge__icon">
           <title>{% trans %}Number of group members{% endtrans %}</title>
           <use xlink:href="#icon-group"></use>
         </svg>
