@@ -4,6 +4,7 @@ Feature: Create Closed Group
   Role: As a LU
   Goal/desire: I want to create Closed Groups
 
+  @email-spool
   Scenario: Successfully create closed group
     Given users:
       | name           | mail                     | status |
@@ -95,6 +96,27 @@ Feature: Create Closed Group
     And I logout
     And I open and check the access of content in group "Test closed group" and I expect access "denied"
 
+    # Notify
+    And I am logged in as "Group User One"
+    When I am on "/all-groups"
+    And I click "Test closed group"
+    # Create a post inside the closed group, visible to group members only
+    When I click "Stream"
+    And I fill in "Say something to the group" with "This is a closed group post for notify."
+    And I select post visibility "Group members"
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a closed group post for notify."
+    And I wait for the queue to be empty
+
+    Given I am logged in as "Group User Two"
+    When I am on "/notifications"
+    Then I should see "Group User One created a post in the Test closed group group"
+    And I should have an email with subject "Notification from Open Social" and in the content:
+    | content |
+    | Hi Group User Two |
+    | Group User One created a post in the Test closed group group |
+    And break
   # As a non-member of the closed group, when I click on the closed group
   # I should be redirected to /group/x/about. I should not see the stream, events or topics page.
     Given users:

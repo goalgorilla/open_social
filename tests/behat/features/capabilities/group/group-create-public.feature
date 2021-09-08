@@ -4,6 +4,7 @@ Feature: Create Public Group
   Role: As a LU
   Goal/desire: I want to create Public Groups
 
+  @email-spool
   Scenario: Successfully create public group
     Given users:
       | name         | mail                     | status |
@@ -79,6 +80,19 @@ Feature: Create Public Group
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public group post."
+
+    And I wait for the queue to be empty
+    Given I am logged in as "GivenUserOne"
+
+    When I am on "/notifications"
+    Then I should see "GivenUserTwo created a post in the Test public group group"
+
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content |
+      | Hi GivenUserOne |
+      | GivenUserTwo created a post in the Test public group group |
+    And break
+    Given I am logged in as "GivenUserTwo"
 
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
