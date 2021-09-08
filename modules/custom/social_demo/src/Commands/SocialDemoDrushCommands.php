@@ -51,28 +51,26 @@ class SocialDemoDrushCommands extends DrushCommands {
   ) {
     $this->currentUser = $accountProxy;
     $this->demoContentManager = $demoContentManager;
-    $this->loadDrushStub();
     parent::__construct();
   }
 
   /**
    * Create demo content.
    *
-   * @param $content_types
-   *   Content types for content creation.
+   * @param array $content_types
+   *   A space-separated list of content types.
    *
    * @command social-demo:add
    * @aliases sda
    * @option profile
    *   Profile to install.
-   * @usage social-demo:add foo
-   *   foo is the type of content type
+   * @usage social-demo:add user topic --profile=EEA
+   *   Generates demo content for users and topics from the EEA profile.
    *
    * @bootstrap root
    */
   public function addDemoContent(array $content_types, $options = ['profile' => '']) {
     $content_types = StringUtils::csvToArray($content_types);
-    $this->convertContentTypes($content_types);
     $this->currentUser->setAccount(User::load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
 
@@ -92,20 +90,18 @@ class SocialDemoDrushCommands extends DrushCommands {
   /**
    * Removes demo content.
    *
-   * @param $content_types
-   *   Type of node to update
-   *   Argument provided to the drush command.
+   * @param array $content_types
+   *   A space-separated list of content types.
    *
    * @command social-demo:remove
    * @aliases sdr
    * @option profile
    *   Profile to install.
-   * @usage social-demo:remove foo
-   *   foo is the type of content type
+   * @usage social-demo:remove user topic --profile=EEA
+   *   Removes demo content for users and topics from the EEA profile.
    */
-  public function removeDemoContent(array $content_types = [], $options = ['profile' => '']) {
+  public function removeDemoContent(array $content_types, array $options = ['profile' => '']) {
     $content_types = StringUtils::csvToArray($content_types);
-    $this->convertContentTypes($content_types);
     $this->currentUser->setAccount(User::load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
 
@@ -122,30 +118,45 @@ class SocialDemoDrushCommands extends DrushCommands {
   }
 
   /**
-   * Convert old keys of content types to new.
+   * Removes demo content.
    *
-   * @param array $content_types
-   *   Array containing content types.
+   * @param array $input_args
+   *   Type of node to update
+   *   Argument provided to the drush command.
+   *
+   * @command social-demo:generate
+   * @aliases sdg
+   *
+   * @usage drush social-demo:generate user:100 topic:2000 event:500 group:100
+   *   Generates 100 demo users and 2000 topics.
    */
-  private function convertContentTypes(array &$content_types) {
-    $replacements = [
-      'eventenrollment' => 'event_enrollment',
-      'eventtype' => 'event_type',
-      'likes' => 'like',
-    ];
+  public function generateBulkDemoContent(array $input_args) {
+    $input_args = StringUtils::csvToArray($input_args);
+    $this->currentUser->setAccount(User::load(1));
 
-    foreach ($content_types as &$content_type) {
-      if (isset($replacements[$content_type])) {
-        $content_type = $replacements[$content_type];
+    $content_types = [];
+
+    // Separate content types and their count.
+    foreach ($input_args as $input_arg) {
+      $pieces = explode(':', $input_arg);
+      $content_type = $pieces[0];
+      $content_types[] = $content_type;
+      $num_content_types[$content_type] = $pieces[1];
+    }
+
+    $plugins = $this->demoContentManager->createInstances($content_types);
+
+    /** @var \Drupal\social_demo\DemoContentInterface $plugin */
+    foreach ($plugins as $plugin) {
+      $num = $num_content_types[$plugin->getPluginId()];
+      $definition = $plugin->getPluginDefinition();
+      $plugin->createContent(TRUE, $num);
+      $count = $plugin->count();
+
+      if ($count !== FALSE) {
+        $this->logger()->success(dt("{$count} {$definition['label']}(s) created"));
       }
     }
-  }
-
-  /**
-   * Load the Drush stub class.
-   */
-  private function loadDrushStub() {
-    require_once DRUPAL_ROOT . '/profiles/contrib/social/modules/custom/social_demo/social_demo.drush_testing.inc';
   }
 
 }
