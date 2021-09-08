@@ -59,6 +59,8 @@ class SocialDemoDrushCommands extends DrushCommands {
    *
    * @param array $content_types
    *   A space-separated list of content types.
+   * @param array $options
+   *   Options for drush command.
    *
    * @command social-demo:add
    * @aliases sda
@@ -69,7 +71,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    *
    * @bootstrap root
    */
-  public function addDemoContent(array $content_types, $options = ['profile' => '']) {
+  public function addDemoContent(array $content_types, array $options = ['profile' => '']) {
     $content_types = StringUtils::csvToArray($content_types);
     $this->currentUser->setAccount(User::load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
@@ -92,6 +94,8 @@ class SocialDemoDrushCommands extends DrushCommands {
    *
    * @param array $content_types
    *   A space-separated list of content types.
+   * @param array $options
+   *   Options for drush command.
    *
    * @command social-demo:remove
    * @aliases sdr
@@ -121,8 +125,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    * Removes demo content.
    *
    * @param array $input_args
-   *   Type of node to update
-   *   Argument provided to the drush command.
+   *   Types of content and amount.
    *
    * @command social-demo:generate
    * @aliases sdg

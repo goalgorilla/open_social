@@ -2,62 +2,12 @@
 
 namespace Drupal\social_demo;
 
-use Drupal\user\UserStorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Logger\LoggerChannelFactory;
-
 /**
  * Class for generating demo comments.
  *
  * @package Drupal\social_demo
  */
 abstract class DemoComment extends DemoContent {
-
-  /**
-   * The user storage.
-   *
-   * @var \Drupal\user\UserStorageInterface
-   */
-  protected UserStorageInterface $userStorage;
-
-  /**
-   * Logger service.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected LoggerChannelFactory $loggerChannelFactory;
-
-  /**
-   * DemoComment constructor.
-   */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    DemoContentParserInterface $parser,
-    UserStorageInterface $user_storage,
-    LoggerChannelFactory $logger_channel_factory
-  ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
-    $this->userStorage = $user_storage;
-    $this->loggerChannelFactory = $logger_channel_factory;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('social_demo.yaml_parser'),
-      $container->get('entity_type.manager')->getStorage('user'),
-      $container->get('logger.factory')
-    );
-  }
 
   /**
    * {@inheritdoc}

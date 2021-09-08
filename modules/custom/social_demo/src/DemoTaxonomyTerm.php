@@ -2,36 +2,12 @@
 
 namespace Drupal\social_demo;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drush\Log\LogLevel;
-
 /**
- * Class DemoTaxonomyTerm.
+ * Creates taxonomy terms for demo.
  *
  * @package Drupal\social_demo
  */
 abstract class DemoTaxonomyTerm extends DemoContent {
-
-  /**
-   * DemoTaxonomyTerm constructor.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('social_demo.yaml_parser')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -45,7 +21,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
       if ($uuid !== $item['uuid']) {
-        drush_log(dt("Term with uuid: {$uuid} has a different uuid in content."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("Term with uuid: {$uuid} has a different uuid in content.");
         continue;
       }
 
@@ -55,7 +31,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
       ]);
 
       if ($terms) {
-        drush_log(dt("Term with uuid: {$uuid} already exists."), LogLevel::WARNING);
+        $this->loggerChannelFactory->get('social_demo')->warning("Term with uuid: {$uuid} already exists.");
         continue;
       }
 
