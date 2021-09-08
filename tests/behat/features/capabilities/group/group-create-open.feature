@@ -4,6 +4,7 @@ Feature: Create Open Group
   Role: As a LU
   Goal/desire: I want to create Open Groups
 
+  @email-spool
   Scenario: Successfully create open group
     Given users:
       | name           | mail                     | status |
@@ -73,6 +74,26 @@ Feature: Create Open Group
     And I press "Join group"
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
+
+    # Create a post inside the public group, visible to public only
+    When I fill in "Say something to the group" with "This is a open group post."
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a open group post."
+
+
+    And I wait for the queue to be empty
+    Given I am logged in as "Group User One"
+
+    When I am on "/notifications"
+    Then I should see "Group User Two created a post in the Test open group group"
+
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content |
+      | Hi Group User One |
+      | Group User Two created a post in the Test open group group |
+    And break
+    Given I am logged in as "Group User Two"
 
   # DS-643 As a LU I want to see the events of a group
     When I click "Events"
