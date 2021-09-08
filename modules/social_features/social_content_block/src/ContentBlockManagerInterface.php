@@ -28,18 +28,47 @@ interface ContentBlockManagerInterface extends ContextAwarePluginManagerInterfac
   public function createInstance($plugin_id, array $configuration = []);
 
   /**
+   * Build the parent elements list.
+   *
+   * @param string $field_name
+   *   The field name.
+   * @param string|null $column
+   *   (optional) The field column name. Defaults to NULL.
+   * @param array|null $element
+   *   (optional) The element. Defaults to NULL.
+   * @param bool $is_field
+   *   (optional) TRUE if the element is a single field. Defaults to FALSE.
+   *
+   * @return array
+   *   The list.
+   */
+  public function getParents(
+    string $field_name,
+    string $column = NULL,
+    array $element = NULL,
+    bool $is_field = FALSE
+  );
+
+  /**
    * Build the States API selector.
    *
    * @param string $field_name
    *   The field name.
-   * @param string $column
-   *   The field column name.
-   * @param array|null $field_parents
-   *   (optional) The field parents.
+   * @param string|null $column
+   *   (optional) The field column name. Defaults to NULL.
+   * @param array|null $element
+   *   (optional) The element. Defaults to NULL.
+   * @param bool $is_field
+   *   (optional) TRUE if the element is a single field. Defaults to FALSE.
    *
    * @return string
    *   The selector.
    */
-  public function getSelector($field_name, $column, $field_parents = NULL);
+  public function getSelector(
+    string $field_name,
+    string $column = NULL,
+    array $element = NULL,
+    bool $is_field = FALSE
+  );
 
 }

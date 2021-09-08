@@ -351,14 +351,9 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       'wrapper' => 'social-content-block-sorting-options',
     ];
 
-    $parents = array_merge(
-      $element['field_plugin_id']['widget']['#field_parents'],
-      ['field_plugin_id']
-    );
-
     // Set the sorting options based on the selected plugins.
-    $value_parents = array_merge($parents, ['0', 'value']);
-    $selected_plugin = $form_state->getValue($value_parents);
+    $parents = $content_block_manager->getParents('field_plugin_id', 'value', $element);
+    $selected_plugin = $form_state->getValue($parents);
 
     // If there's no value in the form state check if there was anything in the
     // submissions.
@@ -366,8 +361,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $input = $form_state->getUserInput();
       $field = $element['field_plugin_id']['widget'][0]['value'];
 
-      if (NestedArray::keyExists($input, $value_parents)) {
-        $input_value = NestedArray::getValue($input, $value_parents);
+      if (NestedArray::keyExists($input, $parents)) {
+        $input_value = NestedArray::getValue($input, $parents);
 
         if (!empty($input_value) && isset($field['#options'][$input_value])) {
           $selected_plugin = $input_value;
@@ -412,9 +407,11 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
 
     $element['field_sorting']['widget']['#options'] = $options;
 
+    $selector = $content_block_manager->getSelector('field_sorting', NULL, $element);
+
     $element['field_duration']['#states'] = [
       'visible' => [
-        ':input[name="field_sorting"]' => array_map(
+        $selector => array_map(
           function ($name) {
             return ['value' => $name];
           },
