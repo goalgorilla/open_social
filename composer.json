@@ -94,10 +94,6 @@
             "drupal/bootstrap": {
                 "Dropdown toggle variable ignored when using links__dropbutton": "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
             },
-            "drupal/lazy": {
-                "Make sure we grab active config for lazy settings": "https://www.drupal.org/files/issues/2019-05-23/3056630-2.patch",
-                "Make sure lazy doesnt do anything on cron": "https://www.drupal.org/files/issues/2019-07-30/3071331-lazy-cron-empty-path-2.patch"
-            },
             "drupal/ajax_comments": {
                 "Fix display mode issue": "https://www.drupal.org/files/issues/2021-03-19/ajax_comments-ajax_not_working_when_using_non_default_view_mode-2896916-beta3.patch"
             },
@@ -120,6 +116,7 @@
         }
     },
     "require": {
+        "bower-asset/lazysizes": "^5.3",
         "cweagans/composer-patches": "^1.6.0",
         "composer/installers": "~1.0 || ~2.0",
         "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
@@ -150,7 +147,7 @@
         "drupal/group": "1.0-rc5",
         "drupal/image_effects": "3.1",
         "drupal/image_widget_crop": "2.3.0",
-        "drupal/lazy": "2.0",
+        "drupal/lazy": "3.10",
         "drupal/like_and_dislike": "1.0-beta2",
         "drupal/link_css": "1.x-dev",
         "drupal/message": "1.2",
