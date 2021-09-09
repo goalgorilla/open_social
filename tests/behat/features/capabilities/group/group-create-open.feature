@@ -1,4 +1,4 @@
-@api @group @DS-811 @DS-816 @DS-4211 @stability @stability-1 @group-create-open
+@api @group @notifications @TB-6072 @DS-811 @DS-816 @DS-4211 @stability @stability-1 @group-create-open
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -75,25 +75,26 @@ Feature: Create Open Group
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
 
-    # Create a post inside the public group, visible to public only
+    # Create a post inside the open group.
     When I fill in "Say something to the group" with "This is a open group post."
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a open group post."
 
-
+    # Lets check notifications for open group.
     And I wait for the queue to be empty
     Given I am logged in as "Group User One"
-
     When I am on "/notifications"
     Then I should see "Group User Two created a post in the Test open group group"
-
     And I should have an email with subject "Notification from Open Social" and in the content:
-      | content |
-      | Hi Group User One |
+      | content                                                    |
+      | Hi Group User One                                          |
       | Group User Two created a post in the Test open group group |
-    And break
+
     Given I am logged in as "Group User Two"
+    Then I am on "all-groups"
+    And I should see "Test open group"
+    And I click "Test open group"
 
   # DS-643 As a LU I want to see the events of a group
     When I click "Events"
