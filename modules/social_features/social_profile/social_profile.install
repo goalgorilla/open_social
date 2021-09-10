@@ -30,6 +30,41 @@ use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * Implements hook_requirements().
+ */
+function social_profile_requirements(string $phase) : array {
+  $requirements = [];
+
+  // Check that there are no modules that depend on any of the modules that will
+  // be uninstalled in 11.0.
+  if ($phase === 'update') {
+    $module_handler = \Drupal::moduleHandler();
+    $modules = [
+      'social_profile_fields',
+      'social_profile_privacy',
+      'social_registration_fields',
+    ];
+
+    /** @var \Drupal\Core\Extension\Extension[] $dependency_info */
+    $dependency_info = $module_handler->buildModuleDependencies($module_handler->getModuleList());
+
+    foreach ($modules as $module_id) {
+      if (isset($dependency_info[$module_id]) && !empty($dependency_info[$module_id]->required_by)) {
+        $dependents = array_keys($dependency_info[$module_id]->required_by);
+        $requirements['social_profile_remove_' . $module_id] = [
+          'title' => new TranslatableMarkup("%module has dependents", ["%module" => $dependency_info[$module_id]->getName()]),
+          'value' => implode(", ", $dependents),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+    }
+
+  }
+
+  return $requirements;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_profile.
@@ -926,10 +961,6 @@ function social_profile_update_12008() : void {
   $profile_widget['settings']['form_mode'] = 'register';
   $register_user_display->setComponent('profile_profiles', $profile_widget);
   $register_user_display->save();
-
-  // @todo Clean up profile creation in `social_profile_user_insert`.
-  // @todo Create separate update hook for social_profile_registration
-  // extension.
 }
 
 /**
@@ -990,4 +1021,356 @@ function social_profile_update_12009() : void {
   // @todo This doesn't handle address subfields.
   // Clean up the config that's no longer used.
   $social_profile_fields_settings->delete();
+}
+
+/**
+ * Migrate platform visibility settings to new visibility fields.
+ */
+function social_profile_update_12010() : void {
+  // Define SocialProfilePrivacyHelperInterface::* constants so we can reference
+  // them and keep the update hook working while throwing out the interface.
+  // $constant_hide = 2; // for completeness but we don't use it.
+  $constant_configurable = 1;
+  $constant_show = 0;
+
+  // The existing privacy settings.
+  $privacy_settings = \Drupal::config('social_profile_privacy.settings');
+  $global_states = $privacy_settings->get('fields');
+
+  /** @var \Drupal\user\Entity\Role|NULL $authenticated_role */
+  $authenticated_role = Role::load('authenticated');
+
+  if ($authenticated_role === NULL) {
+    throw new \Exception("Environment is corrupted. The 'authenticated' role should exist but didn't.");
+  }
+
+  // Fetch all fields manually since our helper service may not be available.
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_config')
+    ->condition('id', 'profile.profile.', 'STARTS_WITH')
+    ->execute();
+  /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
+  $field_configs = FieldConfig::loadMultiple($ids);
+  foreach ($field_configs as $field_config) {
+    // We're only interested in fields that contain visibility data.
+    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
+    $field_storage = $field_config->getFieldStorageDefinition();
+    $field_visibility_for = $field_storage->getThirdPartySetting('social_profile', 'visibility_for');
+    if ($field_visibility_for === NULL) {
+      continue;
+    }
+
+    [
+      $_profile_type,
+      $field_visibility_for_name,
+    ] = explode(".", $field_visibility_for);
+
+    // The social profile privacy defaults to showing a profile field without
+    // the user being able to configure it. So we persist that default.
+    // In a default installation only `field_profile_phone_number` and
+    // `field_profile_address` are configurable. If a field is configurable and
+    // a user has no value then the field defaults to being visible.
+    // In previous versions "visible" meant visible to the community. So with a
+    // few exceptions that's what we default to now as well.
+    $field_state = $global_states[$field_visibility_for_name] ?? $constant_show;
+    $default_visibility_value = ($field_state === $constant_show || $field_state === $constant_configurable) ? SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY : SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
+    $is_visibility_editable = $field_state === $constant_configurable;
+
+    // Set the default value for the field.
+    $field_config
+      ->setDefaultValue($default_visibility_value)
+      ->save();
+
+    if ($is_visibility_editable) {
+      $authenticated_role->grantPermission("edit own ${field_visibility_for_name} profile profile field visibility");
+    }
+    else {
+      $authenticated_role->revokePermission("edit own ${field_visibility_for_name} profile profile field visibility");
+    }
+  }
+
+  $authenticated_role->save();
+}
+
+/**
+ * Migrate user visibility preferences to new visibility fields.
+ */
+function social_profile_update_12011(array &$sandbox) : void {
+  // Define SocialProfilePrivacyHelperInterface::* constants so we can reference
+  // them and keep the update hook working while throwing out the interface.
+  // $constant_hide = 2; // for completeness but we don't use it.
+  $constant_configurable = 1;
+  $constant_show = 0;
+
+  // Site managers and users didn't have control over what was public and
+  // private but could only say "visible" or "not visible" with Open Social
+  // deciding to whom the setting was visible. In the new system the SM can
+  // decide so for visible fields we map to Open Social's old hardcoded
+  // decision.
+  $public_fields = [
+    'field_profile_first_name' => SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC,
+    'field_profile_last_name' => SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC,
+    'field_profile_nick_name' => SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC,
+    'field_profile_image' => SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC,
+  ];
+
+  if (!isset($sandbox['user_ids'])) {
+    /** @var int[] $uids */
+    $uids = \Drupal::entityQuery('user')
+      ->condition('uid', 0, '!=')
+      ->accessCheck(FALSE)
+      ->execute();
+    $sandbox['user_ids'] = $uids;
+    $sandbox['total'] = count($uids);
+
+    if ($sandbox['total'] === 0) {
+      return;
+    }
+
+    $sandbox['processed'] = 0;
+    $sandbox['batch_size'] = Settings::get('entity_update_batch_size', 50);
+
+    // The fields that store visibility data keyed by the fields they store
+    // visibility data for.
+    $sandbox['visibility_map'] = [];
+
+    // Fetch all fields manually since our helper service may not be available.
+    /** @var int[] $ids */
+    $ids = \Drupal::entityQuery('field_config')
+      ->condition('id', 'profile.', 'STARTS_WITH')
+      ->execute();
+    /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
+    $field_configs = FieldConfig::loadMultiple($ids);
+
+    foreach ($field_configs as $field_config) {
+      // We're only interested in fields that contain visibility data.
+      /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
+      $field_storage = $field_config->getFieldStorageDefinition();
+      $field_visibility_for = $field_storage->getThirdPartySetting('social_profile', 'visibility_for');
+      if ($field_visibility_for === NULL) {
+        continue;
+      }
+
+      [
+        $_profile_type,
+        $field_visibility_for_name,
+      ] = explode(".", $field_visibility_for);
+
+      $sandbox['visibility_map'][$field_visibility_for] = $field_config->getName();
+    }
+  }
+
+  // The existing privacy settings.
+  $privacy_settings = \Drupal::config('social_profile_privacy.settings');
+  $global_states = $privacy_settings->get('fields');
+
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  $user_ids = array_slice($sandbox['user_ids'], $sandbox['processed'], $sandbox['batch_size'], TRUE);
+  /** @var \Drupal\user\UserInterface[] $users */
+  $users = User::loadMultiple($user_ids);
+  foreach ($users as $uid => $user) {
+    $profile = $profile_storage->loadByUser($user, 'profile');
+    // If the user doesn't have a profile, create one.
+    if ($profile === NULL) {
+      $profile = Profile::create(['type' => 'profile']);
+    }
+
+    // The old per-user privacy settings.
+    $user_data = \Drupal::service('user.data')->get('social_profile_privacy', $uid, 'fields');
+
+    foreach ($sandbox['visibility_map'] as $value_field_name => $visibility_field_name) {
+      // The social profile privacy defaults to showing a profile field without
+      // the user being able to configure it. So we persist that default.
+      // In a default installation only `field_profile_phone_number` and
+      // `field_profile_address` are configurable. If a field is configurable
+      // and a user has no value then the field defaults to being visible.
+      // In previous versions "visible" meant visible to the community. So with
+      // a few exceptions that's what we default to now as well.
+      $field_state = $global_states[$value_field_name] ?? $constant_show;
+
+      $default_visible = ($field_state === $constant_show || $field_state === $constant_configurable);
+      $is_visible = $user_data[$value_field_name] ?? $default_visible;
+
+      // Map fields marked as visible in the old system to their hardcoded
+      // behaviour of public vs community only.
+      if ($is_visible) {
+        $new_visibility = $public_fields[$value_field_name] ?? SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY;
+      }
+      else {
+        $new_visibility = SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
+      }
+
+      $profile->set($visibility_field_name, $new_visibility);
+    }
+
+    $profile->save();
+    $sandbox['processed']++;
+  }
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
+ * Migrate user edit permissions for profile fields.
+ */
+function social_profile_update_12012() : void {
+  // By default all fields were editable for a user except some site manager
+  // only fields such as profile tagging or site manager notes.
+  // Some extensions (e.g. using SSO) may disable editing of some fields but
+  // usually do so through form alter hooks. To upgrade, those extensions should
+  // remove the edit permissions for the fields that are managed by it and alter
+  // the site manager setting form to prevent SM from changing those settings.
+  $sitemanager_only_fields = [
+    'field_profile_profile_tag',
+    // See social_profile_manager_notes.
+    'field_manager_notes',
+  ];
+
+  /** @var \Drupal\user\Entity\Role|NULL $authenticated_role */
+  $authenticated_role = Role::load('authenticated');
+
+  if ($authenticated_role === NULL) {
+    throw new \Exception("Environment is corrupted. The 'authenticated' role should exist but didn't.");
+  }
+
+  // Fetch all fields manually since our helper service may not be available.
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_config')
+    ->condition('id', 'profile.profile.', 'STARTS_WITH')
+    ->execute();
+  /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
+  $field_configs = FieldConfig::loadMultiple($ids);
+  foreach ($field_configs as $field_config) {
+    // We're only interested in fields that contain values.
+    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
+    $field_storage = $field_config->getFieldStorageDefinition();
+    $visibility_stored_by = $field_storage->getThirdPartySetting('social_profile', 'visibility_stored_by');
+    if ($visibility_stored_by === NULL) {
+      continue;
+    }
+
+    $field_name = $field_config->getName();
+
+    if (!in_array($field_name, $sitemanager_only_fields, TRUE)) {
+      $authenticated_role->grantPermission("edit own ${field_name} profile profile field");
+    }
+    else {
+      $authenticated_role->revokePermission("edit own ${field_name} profile profile field");
+    }
+  }
+
+  $authenticated_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields");
+
+  $authenticated_role->save();
+}
+
+/**
+ * Set default site manager permissions for profile fields.
+ */
+function social_profile_update_12013() : void {
+  // @todo This should probably also do "View all hidden profile fields".
+  /** @var \Drupal\user\Entity\Role|NULL $sitemanager_role */
+  $sitemanager_role = Role::load('sitemanager');
+
+  if ($sitemanager_role === NULL) {
+    throw new \Exception("Environment is corrupted. The 'sitemanager' roles should exist but didn't.");
+  }
+
+  // Fetch all fields manually since our helper service may not be available.
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_config')
+    ->condition('id', 'profile.profile.', 'STARTS_WITH')
+    ->execute();
+  /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
+  $field_configs = FieldConfig::loadMultiple($ids);
+  foreach ($field_configs as $field_config) {
+    // We're only interested in fields that contain visibility data.
+    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
+    $field_storage = $field_config->getFieldStorageDefinition();
+    $is_visibility_managed = NULL !== $field_storage->getThirdPartySetting('social_profile', 'visibility_stored_by');
+    if (!$is_visibility_managed) {
+      continue;
+    }
+
+    // A site manager can always edit profile information of any user.
+    $sitemanager_role->grantPermission("edit any {$field_config->getName()} profile profile field");
+
+    // A site manager can always view the profile information.
+    $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field_config->getName()} profile profile fields");
+  }
+
+  $sitemanager_role->save();
+}
+
+/**
+ * Migrate existing custom profile related config and permissions.
+ */
+function social_profile_update_12014() : void {
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = Role::loadMultiple();
+
+  if (!isset($roles['authenticated'], $roles['contentmanager'], $roles['sitemanager'])) {
+    throw new \Exception("Environment is corrupted. Expected 'authenticated', 'contentmanager', and 'sitemanager' roles but one or more is missing.");
+  }
+
+  $settings = \Drupal::config('social_profile.settings');
+
+  // Migrate whether tagging is enabled or disabled.
+  /** @var \Drupal\field\Entity\FieldConfig $tagging_field */
+  $tagging_field = FieldConfig::load("profile.profile.field_profile_profile_tag");
+  if ($tagging_field !== NULL) {
+    $tagging_field->setStatus($settings->get('enable_profile_tagging'));
+  }
+
+  if ($settings->get('allow_tagging_for_lu')) {
+    $roles['authenticated']->grantPermission("edit own field_profile_profile_tag profile profile field");
+  }
+
+  foreach ($roles as $role) {
+    // Edit profile tags was used as "edit any".
+    if ($role->hasPermission('edit profile tags')) {
+      $role->grantPermission("edit any field_profile_profile_tag profile profile field");
+    }
+
+    // View profile email is used as "view always".
+    if ($role->hasPermission('view profile email')) {
+      $role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " field_profile_email profile profile fields");
+    }
+
+    // View profile language was used as "view always".
+    if ($role->hasPermission('view profile language')) {
+      $role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " field_profile_preferred_language profile profile fields");
+    }
+
+    $role->save();
+  }
+}
+
+/**
+ * Clean up migrated settings and permissions.
+ */
+function social_profile_update_12015() : void {
+  // This is done as a separate step on purpose. This allows extending modules
+  // to set their update dependencies between an update hook performing set-up
+  // but before the settings are removed. In case they want to make any changes
+  // to the default upgrade path.
+  // A hook_requirements checks that uninstalling these modules does not take
+  // any others with it. If modules still rely on any of these then the update
+  // to 11.0.0 is blocked.
+  $modules = [
+    'social_profile_fields',
+    'social_profile_privacy',
+    'social_registration_fields',
+  ];
+
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall($modules);
+
+  // Manually remove user data in case modules didn't properly clean up.
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
+  $user_data->delete($modules);
 }
