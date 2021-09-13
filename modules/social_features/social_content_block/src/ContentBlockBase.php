@@ -33,7 +33,7 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
         'label' => 'Last interacted',
         'limit' => FALSE,
       ],
-      'trending' => 'Comments and likes',
+      'trending' => 'Most comments and likes',
     ];
   }
 
