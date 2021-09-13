@@ -1,0 +1,66 @@
+message.template.create_event_group:
+  expected_config: { }
+  update_actions:
+    delete:
+      # Delete text before we can change it.
+      text:
+      # Delete redundant activity destination.
+      third_party_settings:
+        activity_logger:
+          activity_destinations:
+            stream_group:
+    change:
+      text:
+        -
+          format: full_html
+          value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created an event in <a href="[message:gurl]">[message:gtitle]</a> [message:count_groups_per_node]</p>'
+message.template.create_topic_group:
+  expected_config: { }
+  update_actions:
+    delete:
+      # Delete text before we can change it.
+      text:
+      # Delete redundant activity destination.
+      third_party_settings:
+        activity_logger:
+          activity_destinations:
+            stream_group:
+    change:
+      text:
+        -
+          format: full_html
+          value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created a topic in <a href="[message:gurl]">[message:gtitle]</a> [message:count_groups_per_node]</p>'
+message.template.create_content_in_joined_group:
+  expected_config: { }
+  update_actions:
+    delete:
+      # Delete text before we can change it.
+      text:
+      # Delete redundant activity destination.
+      third_party_settings:
+        activity_logger:
+          activity_destinations:
+            stream_group:
+    change:
+      third_party_settings:
+        activity_logger:
+          activity_entity_condition: group_content_node_single_group
+      text:
+        -
+          value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_group:created_entity_link_html] in the <a href="[message:gurl]">[message:gtitle]</a> group [message:count_groups_per_node]</p>'
+          format: full_html
+        -
+          value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_group:created_entity_link_html] in the <a href="[message:gurl]">[message:gtitle]</a> group [message:count_groups_per_node]</p>'
+          format: full_html
+        -
+          value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_group:created_entity_link_html] in the <a href="[message:gurl]">[message:gtitle]</a> group [message:count_groups_per_node]</p><p>[message:additional_information]</p>'
+          format: full_html
+message.template.moved_content_between_groups:
+  expected_config: { }
+  update_actions:
+    delete:
+      # Delete redundant activity destination.
+      third_party_settings:
+        activity_logger:
+          activity_destinations:
+            stream_group:
