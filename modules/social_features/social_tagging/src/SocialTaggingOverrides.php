@@ -72,30 +72,25 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       return $overrides;
     }
 
-    // Add tagging field to the search index.
-    $config_search = [
-      'search_api.index.social_content' => 'node',
-    ];
-    if ($tag_service->groupActive()) {
-      $config_search['search_api.index.social_groups'] = 'group';
-    }
-    if ($tag_service->profileActive()) {
-      $config_search['search_api.index.social_users'] = 'profile';
+    // Remove tagging field from search index if not needed.
+    if (!$tag_service->groupActive()) {
+      $field_settings = \Drupal::configFactory()
+        ->getEditable('search_api.index.social_groups')
+        ->get('field_settings');
+
+      unset($field_settings['social_tagging']);
+
+      $overrides['search_api.index.social_groups']['field_settings'] = $field_settings;
     }
 
-    foreach ($config_search as $config_name => $type) {
-      if (in_array($config_name, $names)) {
-        $field_settings = \Drupal::configFactory()->getEditable($config_name)
-          ->get('field_settings');
+    if (!$tag_service->profileActive()) {
+      $field_settings = \Drupal::configFactory()
+        ->getEditable('search_api.index.social_users')
+        ->get('field_settings');
 
-        $field_settings['social_tagging'] = [
-          'label' => 'Tags',
-          'datasource_id' => 'entity:' . $type,
-          'property_path' => 'social_tagging',
-          'type' => 'integer',
-        ];
-        $overrides[$config_name]['field_settings'] = $field_settings;
-      }
+      unset($field_settings['social_tagging']);
+
+      $overrides['search_api.index.social_users']['field_settings'] = $field_settings;
     }
 
     // Prepare fields.
