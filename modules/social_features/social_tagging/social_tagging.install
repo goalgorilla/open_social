@@ -201,3 +201,23 @@ function social_tagging_update_8004() {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
 }
+
+/**
+ * Add the search api fields.
+ */
+function social_tagging_update_8005() {
+  _social_tagging_add_fields_search_api();
+
+  // Update field definitions.
+  _social_tagging_field_definitions_update();
+  // Toggle the index users.
+  try {
+    // If the search module is enabled we need to update the group index.
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_users']);
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
+}
