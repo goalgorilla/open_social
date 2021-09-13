@@ -5,6 +5,7 @@ namespace Drupal\social_post_album;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Provides an overridden elements.
@@ -12,6 +13,23 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_post_album
  */
 class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected RouteMatchInterface $routeMatch;
+
+  /**
+   * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   */
+  public function __construct(RouteMatchInterface $route_match) {
+    $this->routeMatch = $route_match;
+  }
 
   /**
    * Field widget or formatter type per configuration.
@@ -24,7 +42,7 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     foreach (self::TYPES as $config_name => $type) {
@@ -40,20 +58,29 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
       $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'social_x_large';
     }
 
+    // We want to change the image style for the post view page.
+    if ($this->routeMatch->getRouteName() === 'entity.post.canonical') {
+      $config_name = 'core.entity_view_display.post.photo.default';
+
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name]['content']['field_post_image']['settings']['image_style'] = 'social_x_large';
+      }
+    }
+
     return $overrides;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialPostPhotoAlbumConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
