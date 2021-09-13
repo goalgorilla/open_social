@@ -279,7 +279,7 @@ function social_landing_page_preprocess_field(&$variables) {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(NodeInterface $node): array {
+function _social_landing_page_get_hero_image(NodeInterface $node) {
   // Must be a valid node.
   if (
     $node->getType() !== 'landing_page' ||

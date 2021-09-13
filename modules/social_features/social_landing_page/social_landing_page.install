@@ -734,7 +734,7 @@ function social_landing_page_update_10302() {
 /**
  * Revoke permission.
  */
-function social_landing_page_update_10303(): void {
+function social_landing_page_update_10303() {
   foreach (['contentmanager', 'sitemanager'] as $role) {
     user_role_revoke_permissions($role, ['link to any page']);
   }
