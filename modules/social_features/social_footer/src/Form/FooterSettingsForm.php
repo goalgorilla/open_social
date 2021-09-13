@@ -174,7 +174,7 @@ class FooterSettingsForm extends FormBase {
 
       $file->setPermanent();
       $file->save();
-      $this->fileUsage->add($file, 'editor', 'file', $file->id());
+      $this->fileUsage->add($file, 'social_footer', 'file', $file->id());
     }
   }
 
