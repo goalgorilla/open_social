@@ -6,6 +6,9 @@ services:
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
     arguments: ['@database', '@module_handler']
+  social_group.cross_posting:
+    class: Drupal\social_group\CrossPostingService
+    arguments: ['@entity_type.manager', '@database', '@plugin.manager.group_content_enabler']
   social_group.set_groups_for_node_service:
     class: Drupal\social_group\SetGroupsForNodeService
     arguments: ['@entity_type.manager', '@module_handler']
@@ -39,6 +42,10 @@ services:
   social_group.group_statistics:
     class: Drupal\social_group\GroupStatistics
     arguments: ['@database']
+  social_group.group_mute_notify:
+    class: Drupal\social_group\GroupMuteNotify
+    arguments:
+      - '@flag'
   cache_context.social_group_join_method:
     class: Drupal\social_group\CacheContext\SocialGroupJoinMethodCacheContext
     arguments: []

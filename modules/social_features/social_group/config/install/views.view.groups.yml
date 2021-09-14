@@ -5,6 +5,7 @@ dependencies:
     - core.entity_view_mode.group.small_teaser
     - core.entity_view_mode.group.teaser
   module:
+    - better_exposed_filters
     - group
     - social_group
     - user
@@ -316,6 +317,109 @@ display:
         weight: 0
         context: '0'
         menu_name: main
+      cache:
+        options: {  }
+        type: tag
+      defaults:
+        cache: false
+        exposed_form: false
+        filter_groups: false
+        filters: false
+        group_by: false
+        relationships: false
+        use_ajax: false
+      exposed_block: true
+      exposed_form:
+        options:
+          bef:
+            flagged:
+              bef_format: bef_single
+              more_options:
+                bef_collapsible: false
+                bef_select_all_none: false
+                is_secondary: false
+                rewrite:
+                  filter_rewrite_values: ''
+            general:
+              allow_secondary: false
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: false
+              secondary_label: 'Advanced options'
+          expose_sort_order: true
+          exposed_sorts_label: 'Sort by'
+          input_required: false
+          reset_button: true
+          reset_button_label: Reset
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          submit_button: Apply
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
+        type: bef
+      filter_groups:
+        groups: {  }
+        operator: AND
+      filters:
+        flagged:
+          admin_label: ''
+          entity_type: flagging
+          expose:
+            description: ''
+            identifier: muted
+            label: 'Muted groups'
+            multiple: false
+            operator: flagged_op
+            operator_id: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            remember: false
+            remember_roles:
+              administrator: '0'
+              anonymous: '0'
+              authenticated: authenticated
+              contentmanager: '0'
+              sitemanager: '0'
+            required: false
+            use_operator: false
+          exposed: true
+          field: flagged
+          group: 1
+          group_info:
+            default_group: All
+            default_group_multiple: {  }
+            description: ''
+            group_items: {  }
+            identifier: ''
+            label: ''
+            multiple: false
+            optional: true
+            remember: false
+            widget: select
+          group_type: group
+          id: flagged
+          is_grouped: false
+          null_is_false: 1
+          operator: '='
+          plugin_id: flag_filter
+          relationship: flag_relationship
+          table: flagging
+          value: All
+      group_by: false
+      relationships:
+        flag_relationship:
+          admin_label: Flags
+          entity_type: group
+          field: flag_relationship
+          flag: mute_group_notifications
+          group_type: group
+          id: flag_relationship
+          plugin_id: flag_relationship
+          relationship: none
+          required: false
+          table: groups_field_data
+          user_scope: current
+      use_ajax: false
       rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
