@@ -55,7 +55,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $config = $this->configFactory->getEditable($config_name);
 
-      $settings = $config->getOriginal('settings', FALSE)['plugin_ids'];
+      $settings = $config->getOriginal('settings', FALSE)['selection_settings']['plugin_ids'];
 
       // Get all the blocks from this custom block type.
       $storage = self::getBlockContent();
