@@ -8,6 +8,8 @@
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_content_block\ContentBuilder;
 
@@ -144,4 +146,48 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
 function custom_content_block_form_submit($form, FormStateInterface $form_state) {
   // Clear plugin cache.
   \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+}
+
+/**
+ * Sets dynamic allowed values for the sorting field.
+ *
+ * @param \Drupal\Core\Field\FieldStorageDefinitionInterface $definition
+ *   The field storage definition.
+ * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
+ *   (optional) The entity object.
+ *
+ * @return array
+ *   The options list.
+ */
+function _social_content_block_allowed_values_callback(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+  $values = [];
+
+  if (
+    $definition->getName() !== 'field_sorting' ||
+    $definition->getTargetEntityTypeId() !== 'block_content' ||
+    !$entity instanceof BlockContentInterface ||
+    $entity->bundle() !== 'custom_content_list'
+  ) {
+    return $values;
+  }
+
+  /** @var \Drupal\social_content_block\ContentBlockManagerInterface $manager */
+  $manager = \Drupal::service('plugin.manager.content_block');
+
+  if ($entity->field_plugin_id->isEmpty()) {
+    $plugin_ids = array_keys($manager->getDefinitions());
+  }
+  else {
+    $plugin_ids = array_column($entity->field_plugin_id->getValue(), 'value');
+  }
+
+  foreach ($plugin_ids as $plugin_id) {
+    $plugin = $manager->createInstance($plugin_id);
+
+    foreach ($plugin->supportedSortOptions() as $name => $settings) {
+      $values[$name] = is_array($settings) ? $settings['label'] : $settings;
+    }
+  }
+
+  return $values;
 }

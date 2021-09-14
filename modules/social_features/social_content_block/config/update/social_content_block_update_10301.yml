@@ -1,0 +1,43 @@
+core.entity_form_display.block_content.custom_content_list.default:
+  expected_config:
+    third_party_settings:
+      field_group:
+        group_display_options:
+          children:
+            - field_sorting
+  update_actions:
+    add:
+      content:
+        field_duration:
+          weight: 13
+          settings:
+            placeholder: ''
+          third_party_settings: { }
+          type: number
+          region: content
+    change:
+      third_party_settings:
+        field_group:
+          group_display_options:
+            children:
+              - field_sorting
+              - field_duration
+core.entity_view_display.block_content.custom_content_list.default:
+  expected_config: {  }
+  update_actions:
+    add:
+      dependencies:
+        enforced:
+          module:
+            - social_content_block
+      hidden:
+        field_duration: true
+field.storage.block_content.field_sorting:
+  expected_config:
+    settings:
+      allowed_values_function: ''
+  update_actions:
+    change:
+      settings:
+        allowed_values: {  }
+        allowed_values_function: '_social_content_block_allowed_values_callback'
