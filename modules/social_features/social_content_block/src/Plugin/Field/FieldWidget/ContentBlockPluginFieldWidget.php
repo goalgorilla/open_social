@@ -93,7 +93,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $selected_plugin_id = $items->getEntity()->field_plugin_id->value;
-    $selector = $this->contentBlockManager->getSelector('field_plugin_id', 'value', $element['#field_parents']);
+    $selector = $this->contentBlockManager->getSelector('field_plugin_id', 'value', $element, TRUE);
 
     foreach ($this->contentBlockManager->getDefinitions() as $plugin_id => $plugin_definition) {
       $element[$plugin_id] = [
@@ -129,7 +129,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
             elseif (isset($form[$field]['widget']['#title'])) {
               $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
             }
-            // Otherwise we show a helpful message to the developer or QA that
+            // Otherwise, we show a helpful message to the developer or QA that
             // they should implement an additional clause.
             else {
               $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
