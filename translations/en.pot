@@ -236,6 +236,7 @@
 #  modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml: n/a
 #  modules/custom/alternative_frontpage/alternative_frontpage.routing.yml: n/a
 #  modules/custom/alternative_frontpage/alternative_frontpage.permissions.yml: n/a
+#  modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php: n/a
 #  modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageSettings.php: n/a
 #  modules/custom/download_count/download_count.module: n/a
 #  modules/custom/download_count/download_count.install: n/a
@@ -510,6 +511,11 @@
 #  modules/social_features/social_book/src/ContentTranslationDefaultsConfigOverride.php: n/a
 #  modules/social_features/social_book/src/Plugin/Block/BookAddBlock.php: n/a
 #  modules/social_features/social_book/src/Plugin/Block/GroupAddBookBlock.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/AboutName.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorScheme.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityBranding.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php: n/a
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorAlpha.php: n/a
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorBlue.php: n/a
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorCSS.php: n/a
@@ -517,12 +523,9 @@
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorHex.php: n/a
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorRGBA.php: n/a
 #  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorRed.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBranding.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColors.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingLogoUrl.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingPreferredFeatures.php: n/a
-#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformFeatureMachineName.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityAbout.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/FeatureMachineName.php: n/a
+#  modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PreferredFeatures.php: n/a
 #  modules/social_features/social_comment/social_comment.tokens.inc: n/a
 #  modules/social_features/social_mentions/social_mentions.tokens.inc: n/a
 #  modules/social_features/social_mentions/social_mentions.module: n/a
@@ -1507,7 +1510,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2021-08-20 00:14+0000\n"
+"POT-Creation-Date: 2021-09-07 00:14+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1648,7 +1651,7 @@ msgid "- All -"
 msgstr ""
 
 #: modules/social_features/social_search/social_search.module:77
-#: modules/social_features/social_tagging/social_tagging.module:501;524
+#: modules/social_features/social_tagging/social_tagging.module:503;526
 #: modules/social_features/social_user/social_user.module:133
 msgid "- Any -"
 msgstr ""
@@ -2826,7 +2829,7 @@ msgstr ""
 #: modules/social_features/social_footer/social_footer.module:18
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_page/social_page.module:21
-#: modules/social_features/social_tagging/social_tagging.module:28
+#: modules/social_features/social_tagging/social_tagging.module:30
 msgid "About"
 msgstr ""
 
@@ -4722,7 +4725,7 @@ msgstr ""
 msgid "Clear selection when exposed filters change"
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:171
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:179
 msgid "Click here to go to the social tagging overview"
 msgstr ""
 
@@ -4777,6 +4780,7 @@ msgstr ""
 msgid "Collaboration Settings"
 msgstr ""
 
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorAlpha.php:8
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorBlue.php:8
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorCSS.php:8
@@ -4784,8 +4788,15 @@ msgstr ""
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorHex.php:8
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorRGBA.php:8;8;8
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorRed.php:8
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
 msgid "Color"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
+msgid "Color Scheme"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
+msgid "Color Scheme Color By Name"
 msgstr ""
 
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorAlpha.php:8;8
@@ -4878,8 +4889,46 @@ msgstr ""
 msgid "Community - visible only to logged in members"
 msgstr ""
 
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityAbout.php:11;11
+msgid "Community About"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/AboutName.php:8
+msgid "Community About Name"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
+msgid "Community Brand Config Color Name"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
+msgid "Community Brand Palette Color Name"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorScheme.php:11
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php:11
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityBranding.php:11;11
+msgid "Community Branding"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorScheme.php:11;11
+msgid "Community Branding Colors"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php:11;11
+msgid "Community Branding Logo Url"
+msgstr ""
+
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Form/LetsConnectUsageSettingsForm.php:44
 msgid "Community URL"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/AboutName.php:8
+msgid "Community about"
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/AboutName.php:8
+msgid "Community about name"
 msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0;0
@@ -4964,7 +5013,7 @@ msgstr ""
 msgid "Configure the display of icons in the main navigation."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:128
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:129
 msgid ""
 "Configure the email you want to send to the one enrollee you have selected."
 msgid_plural ""
@@ -5086,7 +5135,7 @@ msgstr ""
 msgid "Content selection"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:29
+#: modules/social_features/social_tagging/social_tagging.module:31
 #: modules/social_features/social_tagging/social_tagging.info.yml:0
 msgid "Content tagging module"
 msgstr ""
@@ -6878,6 +6927,10 @@ msgstr ""
 msgid "Extra"
 msgstr ""
 
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/FeatureMachineName.php:8;8
+msgid "Feature Machine Name"
+msgstr ""
+
 #: modules/social_features/social_activity/social_activity.install:184
 #: modules/social_features/social_post/social_post.install:162
 #: modules/social_features/social_activity/config/install/core.entity_view_mode.activity.featured.yml:0
@@ -7363,7 +7416,7 @@ msgstr ""
 #: modules/social_features/social_group/social_group.module:1813
 #: modules/social_features/social_group/social_group.routing.yml:0
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:145
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:147
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:155
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_group.yml:0
 #: modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml:0
@@ -8621,7 +8674,7 @@ msgstr ""
 msgid "Mail HTML"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:68
+#: modules/social_features/social_tagging/social_tagging.module:70
 msgid "Main category"
 msgstr ""
 
@@ -9408,7 +9461,7 @@ msgstr ""
 msgid "Not reply comment"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:39
+#: modules/social_features/social_tagging/social_tagging.module:41
 msgid ""
 "Notice: Drag and drop has intentionally been disabled for this vocabulary."
 msgstr ""
@@ -10016,43 +10069,8 @@ msgstr ""
 msgid "Photo"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:63
+#: modules/social_features/social_tagging/social_tagging.module:65
 msgid "Placement"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
-msgid "Platform Brand Config Color Name"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
-msgid "Platform Brand Palette Color Name"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBranding.php:11;11
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColors.php:11
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingLogoUrl.php:11
-msgid "Platform Branding"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColors.php:11;11
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
-msgid "Platform Branding Colors"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
-msgid "Platform Branding Colors Color By Name"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingLogoUrl.php:11;11
-msgid "Platform Branding Logo Url"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingPreferredFeatures.php:10;10
-msgid "Platform Branding Preferred Features"
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformFeatureMachineName.php:8
-msgid "Platform Feature Machine Name"
 msgstr ""
 
 #: modules/custom/activity_basics/src/Plugin/ActivityContext/PlatformActivityContext.php:7
@@ -10260,12 +10278,12 @@ msgstr ""
 msgid "Powered by block"
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformFeatureMachineName.php:8
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/FeatureMachineName.php:8
 msgid "Preferred Feature"
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformFeatureMachineName.php:8
-msgid "Preferred Feature Machine Name"
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PreferredFeatures.php:10;10
+msgid "Preferred Features"
 msgstr ""
 
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
@@ -10407,7 +10425,7 @@ msgid "Processing"
 msgstr ""
 
 #: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:16
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:154
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:162
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
@@ -13142,7 +13160,7 @@ msgid "Tag"
 msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module:149
-#: modules/social_features/social_tagging/social_tagging.module:176
+#: modules/social_features/social_tagging/social_tagging.module:178
 msgid "Tag content"
 msgstr ""
 
@@ -13152,12 +13170,12 @@ msgstr ""
 msgid "Tag settings"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:341
+#: modules/social_features/social_tagging/social_tagging.module:343
 #: modules/social_features/social_tagging/social_tagging.install:88
 msgid "Tagging"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:342
+#: modules/social_features/social_tagging/social_tagging.module:344
 #: modules/social_features/social_tagging/social_tagging.install:89
 msgid "Tagging field."
 msgstr ""
@@ -13165,7 +13183,7 @@ msgstr ""
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:164
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php:157
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
-#: modules/social_features/social_tagging/social_tagging.module:191;198;217;274;432
+#: modules/social_features/social_tagging/social_tagging.module:193;200;219;276;434
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/config/install/field.field.block_content.follow_tags.field_tags.yml:0
 #: modules/social_features/social_tagging/config/optional/block.block.socialtagsblock.yml:0
 msgid "Tags"
@@ -13270,6 +13288,14 @@ msgid ""
 "link\" target=\"_blank\">For more information check our readme</a>"
 msgstr ""
 
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityAbout.php:11
+msgid "The Community About."
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php:11
+msgid "The Community Branding Logo Url."
+msgstr ""
+
 #: modules/social_features/social_event/src/Entity/EventEnrollmentViewsData.php:22
 msgid "The Event enrollment ID."
 msgstr ""
@@ -13297,10 +13323,6 @@ msgstr ""
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/AdvancedQueue/JobType/ActivitySendEmailJobType.php:178
 #: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:146
 msgid "The Job was not finished correctly, no error thrown."
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingLogoUrl.php:11
-msgid "The Platform Branding Logo Url."
 msgstr ""
 
 #: modules/social_features/social_post/src/Entity/PostViewsData.php:22
@@ -13391,12 +13413,12 @@ msgstr ""
 msgid "The body of notification e-mails for anonymous enrollees."
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColorsColorByName.php:9
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorSchemeLoadColorByName.php:9
 msgid "The brand color."
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingColors.php:11
-msgid "The brand colors for this platform."
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingColorScheme.php:11
+msgid "The brand colors for this community."
 msgstr ""
 
 #: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/ColorAlpha.php:8
@@ -13421,6 +13443,10 @@ msgstr ""
 
 #: modules/social_features/social_comment/social_comment.tokens.inc:47
 msgid "The commented content type."
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/CommunityBranding.php:11
+msgid "The community branding information."
 msgstr ""
 
 #: modules/custom/social_demo/social_demo.drush.inc:23;49
@@ -13626,8 +13652,8 @@ msgstr ""
 msgid "The link to the request page of the group."
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformFeatureMachineName.php:8
-msgid "The machine name of the preferred feature."
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/FeatureMachineName.php:8
+msgid "The machine name of the feature."
 msgstr ""
 
 #: modules/social_features/social_private_message/social_private_message.module:67
@@ -13699,18 +13725,14 @@ msgid ""
 "The path for the authenticated frontpage should start with a forward slash."
 msgstr ""
 
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBranding.php:11
-msgid "The platform branding information."
-msgstr ""
-
-#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PlatformBrandingPreferredFeatures.php:10
-msgid "The platform branding preferred features information."
-msgstr ""
-
 #: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php:219
 msgid ""
 "The possible values this field can contain. Enter one value per line, in the "
 "format value|label|description."
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/PreferredFeatures.php:10
+msgid "The preferred features information."
 msgstr ""
 
 #: modules/custom/mentions/src/Entity/Mentions.php:44
@@ -13803,6 +13825,10 @@ msgstr ""
 
 #: modules/social_features/social_core/config/install/field.field.block_content.platform_intro.field_text_block.yml:0
 msgid "The text to show in this block."
+msgstr ""
+
+#: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/AboutName.php:8
+msgid "The the community about name."
 msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserFloodForm.php:50
@@ -14050,6 +14076,12 @@ msgstr ""
 
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
 msgid "This month"
+msgstr ""
+
+#: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php:157
+msgid ""
+"This page is redirected to @url_link, but we deferred the redirect to give "
+"you an opportunity to edit the content."
 msgstr ""
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
@@ -14320,7 +14352,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:142
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:150
 msgid "Type configuration"
 msgstr ""
 
@@ -15109,6 +15141,14 @@ msgid ""
 "When enabled, users are not able to hide their preferred language on their "
 "profile. When disabled, users will be able to control the visibility of "
 "their language preference."
+msgstr ""
+
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:142
+msgid "When filtering use AND condition."
+msgstr ""
+
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:145
+msgid "When filtering with multiple terms use AND condition in the query."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:47

@@ -289,13 +289,18 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       ];
     }
 
-    $config_name = 'message.template.create_content_in_joined_group';
-    if (in_array($config_name, $names, FALSE)) {
-      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
-        [
-          'group_content-flexible_group-group_node-event' => 'group_content-flexible_group-group_node-event',
-          'group_content-flexible_group-group_node-topic' => 'group_content-flexible_group-group_node-topic',
-        ];
+    $config_names = [
+      'message.template.create_content_in_joined_group',
+    ];
+
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names, FALSE)) {
+        $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+          [
+            'group_content-flexible_group-group_node-event' => 'group_content-flexible_group-group_node-event',
+            'group_content-flexible_group-group_node-topic' => 'group_content-flexible_group-group_node-topic',
+          ];
+      }
     }
 
     $config_name = 'message.template.join_to_group';

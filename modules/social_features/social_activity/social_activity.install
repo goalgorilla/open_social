@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Config\FileStorage;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 
@@ -295,4 +296,28 @@ function social_activity_update_10301() {
       \Drupal::logger('system')->info('Filter removed from display: %name', ['%name' => $display_name]);
     }
   }
+}
+
+/**
+ * Update message templates.
+ */
+function social_activity_update_10302() {
+  // Install new configs.
+  $config_files = [
+    'message.template.create_event_gc' => 'message.template.create_event_gc_10302',
+    'message.template.create_topic_gc' => 'message.template.create_topic_gc_10302',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $source = new FileStorage($config_path);
+  foreach ($config_files as $origin_name => $update_name) {
+    // Add new message templates.
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_10302');
+  return $updateHelper->logger()->output();
 }

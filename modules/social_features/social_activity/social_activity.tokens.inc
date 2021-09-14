@@ -14,14 +14,19 @@ use Drupal\node\NodeInterface;
  * Implements hook_token_info().
  */
 function social_activity_token_info() {
-  $additional_information['additional_information'] = [
+  $tokens['additional_information'] = [
     'name' => t('Additional information.'),
     'description' => t('Additional message information.'),
   ];
 
+  $tokens['count_groups_per_node'] = [
+    'name' => t('Groups count per node.'),
+    'description' => t('Number of groups where node is added.'),
+  ];
+
   return [
     'tokens' => [
-      'message' => $additional_information,
+      'message' => $tokens,
     ],
   ];
 }
@@ -45,8 +50,8 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $replacements[$original] = '';
             $summary = '';
 
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
+            $target_type = $message->get('field_message_related_object')->getValue()[0]['target_type'];
+            $target_id = $message->get('field_message_related_object')->getValue()[0]['target_id'];
 
             $entity = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
@@ -106,7 +111,28 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
               }
             }
           }
+          break;
 
+        case 'count_groups_per_node':
+          if (!$message->get('field_message_related_object')->isEmpty()) {
+            $target_type = $message->get('field_message_related_object')->getValue()[0]['target_type'];
+            $target_id = $message->get('field_message_related_object')->getValue()[0]['target_id'];
+
+            if ($entity = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id)) {
+              // For the moment we can count only for group_content and node entities.
+              $count = \Drupal::service('social_group.cross_posting')
+                ->countGroupsByGroupContentNode($entity);
+              // Recount as token renders in group context and we need to
+              // exclude the one.
+              $count = $count ? $count - 1 : $count;
+              // Build the string like "(+ 4 groups more)".
+              $replacements[$original] = $count
+                ? \Drupal::translation()->formatPlural($count, '(+ @count other groups)', '(+ @count other groups)')
+                : '';
+            }
+          }
           break;
 
       }

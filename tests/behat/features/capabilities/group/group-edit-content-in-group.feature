@@ -58,6 +58,7 @@ Feature: Move content after creation
     And I wait for AJAX to finish
     And I press "Save"
     Then I should see "Motorboats"
+    And I wait for the queue to be empty
 
     When I am logged in as "harry"
     And I am on the stream of group "Motorboats"
@@ -73,7 +74,7 @@ Feature: Move content after creation
     And I click "I love this sport"
     And I empty the queue
     And I click "Edit content"
-    And I select group "- None -"
+    And I clear group field
     And I wait for AJAX to finish
     And I press "Save"
     And I run cron
@@ -88,6 +89,9 @@ Feature: Move content after creation
     And I am on the stream of group "Kayaking"
     And I should not see "I love this sport"
     And I click "Home"
-    Then I should see "harry created a topic"
+    # Now activity in group context can be created depending on "node" or "group content" entities.
+    # So, if user moving "node" between groups and remove a node from a group in the end there is
+    # no way to create message after "group content" deletion (removing node from a group).
+    Then I should not see "harry created a topic"
     And I should see "I love this sport"
 
