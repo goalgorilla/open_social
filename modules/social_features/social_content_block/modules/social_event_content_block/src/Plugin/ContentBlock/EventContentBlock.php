@@ -27,14 +27,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EventContentBlock extends ContentBlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Module handler.
+   * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
   /**
-   * BookAddBlock constructor.
+   * EventContentBlock constructor.
    *
    * @param array $configuration
    *   The given configuration.
@@ -43,7 +43,7 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
    * @param mixed $plugin_definition
    *   The given plugin definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   Module handler.
+   *   The module handler.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -174,10 +174,12 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function supportedSortOptions() : array {
-    $defaults = parent::supportedSortOptions();
-    return [
-      'event_date' => 'Event date',
-    ] + $defaults;
+    return parent::supportedSortOptions() + [
+      'event_date' => [
+        'label' => 'Event date',
+        'limit' => FALSE,
+      ],
+    ];
   }
 
 }
