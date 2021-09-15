@@ -57,7 +57,7 @@ function _social_profile_manager_notes_form_submit(array $form, FormStateInterfa
     Cache::invalidateTags(['user:breadcrumb:' . $uid]);
     // Set redirect to the profile page when a SM submits a note.
     $form_state->setRedirect(
-      'view.user_information.user_information', [
+      'social_profile.view_user_profile', [
         'user' => $uid,
       ]
     );

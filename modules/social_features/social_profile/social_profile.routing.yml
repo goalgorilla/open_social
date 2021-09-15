@@ -13,3 +13,12 @@ social_profile_fields.settings:
     _title: 'Social profile fields'
   requirements:
     _permission: 'administer profile settings'
+
+social_profile.view_user_profile:
+  path: 'user/{user}/information'
+  defaults:
+    _controller: '\Drupal\social_profile\Controller\UserProfileController::view'
+    _title_callback: '\Drupal\social_profile\Controller\UserProfileController::title'
+    profile_type: 'profile'
+  requirements:
+    _custom_access: '\Drupal\social_profile\Controller\UserProfileController::checkAccess'
