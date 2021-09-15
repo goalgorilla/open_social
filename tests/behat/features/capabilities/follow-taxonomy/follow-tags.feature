@@ -19,7 +19,7 @@ Feature: Follow Tags
       | Category 2.2 | Category 2 |
     And users:
       | name            | mail                      | status | roles          | field_profile_first_name | field_profile_last_name |
-      | follower        | follower@test.user        | 1      |                | Jack                     | Richer                  |
+      | follower        | follower@test.user        | 1      | verified       | Jack                     | Richer                  |
       | content_creator | content.creator@test.user | 1      | contentmanager | Mike                     | Tyson                   |
 
     # Save tag config to clear form cache.

@@ -19,6 +19,7 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
+use Drupal\social_core\Service\ConfigurationsService;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\field\Entity\FieldConfig;
@@ -1445,40 +1446,14 @@ function social_core_update_10300() {
 }
 
 /**
- * Helper function to import configurations.
- *
- * @param array $configs
- *   Array of configuration file names and their folders.
- */
-function _social_core_features_import_config_helper(array $configs) {
-  foreach ($configs as $folder => $config_files) {
-    foreach ($config_files as $config_file) {
-      $config = drupal_get_path('module', 'social_core') . "/config/{$folder}/{$config_file}.yml";
-
-      if (is_file($config)) {
-        $settings = Yaml::parse(file_get_contents($config));
-        if (is_array($settings)) {
-          $update_config = \Drupal::configFactory()
-            ->getEditable($config_file);
-
-          $update_config->setData($settings)->save(TRUE);
-        }
-      }
-    }
-  }
-}
-
-/**
  * Import configurations for the new Verified role.
  */
 function social_core_update_11001() {
   $configs = [
-    'install' => [
-      'user.role.verified',
-    ],
+    'user.role.verified',
   ];
 
-  _social_core_features_import_config_helper($configs);
+  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
 }
 
 /**

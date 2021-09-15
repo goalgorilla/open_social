@@ -258,7 +258,7 @@ function social_search_update_11001() {
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_search', 'social_search_update_11001');
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
