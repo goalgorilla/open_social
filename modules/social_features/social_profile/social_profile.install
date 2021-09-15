@@ -20,6 +20,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\social_profile\FieldManager;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
@@ -27,6 +28,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\views\Entity\View;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -181,6 +183,7 @@ function _social_profile_create_menu_links() {
   }
 }
 
+// TODO: Provide a comment and copy into update hook since field_profile_show_email clause is not for new installs.
 function _social_profile_install_visibility_fields() : void {
   // Create visibility fields for each field on the profile.
   /** @var int[] $ids */
@@ -188,6 +191,7 @@ function _social_profile_install_visibility_fields() : void {
     ->condition('id', 'profile.', 'STARTS_WITH')
     ->execute();
   // Fetch all fields and key them by field name.
+  // TODO: Load FieldConfig's instead and use FieldManager class for if statements.
   /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storages */
   $field_storages = FieldStorageConfig::loadMultiple($ids);
   foreach ($field_storages as $field_storage_config) {
@@ -212,7 +216,7 @@ function _social_profile_install_visibility_fields() : void {
 
     $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
 
-    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->id());
+    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
     $field_storage_config->save();
 
     // If there's a configured field on the profile bundle then we also ensure
@@ -981,9 +985,7 @@ function social_profile_update_12009() : void {
   $field_configs = FieldConfig::loadMultiple($ids);
   foreach ($field_configs as $field_config) {
     // We're only interested in fields that contain actual values.
-    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
-    $field_storage = $field_config->getFieldStorageDefinition();
-    if ($field_storage->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
+    if (!FieldManager::isManagedValueField($field_config)) {
       continue;
     }
 
@@ -1034,17 +1036,12 @@ function social_profile_update_12010() : void {
   $field_configs = FieldConfig::loadMultiple($ids);
   foreach ($field_configs as $field_config) {
     // We're only interested in fields that contain visibility data.
-    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
-    $field_storage = $field_config->getFieldStorageDefinition();
-    $field_visibility_for = $field_storage->getThirdPartySetting('social_profile', 'visibility_for');
-    if ($field_visibility_for === NULL) {
+    if (!FieldManager::isVisibilityField($field_config)) {
       continue;
     }
 
-    [
-      $_profile_type,
-      $field_visibility_for_name,
-    ] = explode(".", $field_visibility_for);
+    $field_name = FieldManager::getManagedValueFieldName($field_config);
+    $visibility_field_name = $field_config->getName();
 
     // The social profile privacy defaults to showing a profile field without
     // the user being able to configure it. So we persist that default.
@@ -1053,7 +1050,7 @@ function social_profile_update_12010() : void {
     // a user has no value then the field defaults to being visible.
     // In previous versions "visible" meant visible to the community. So with a
     // few exceptions that's what we default to now as well.
-    $field_state = $global_states[$field_visibility_for_name] ?? $constant_show;
+    $field_state = $global_states[$field_name] ?? $constant_show;
     $default_visibility_value = ($field_state === $constant_show || $field_state === $constant_configurable) ? SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY : SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
     $is_visibility_editable = $field_state === $constant_configurable;
 
@@ -1063,10 +1060,10 @@ function social_profile_update_12010() : void {
       ->save();
 
     if ($is_visibility_editable) {
-      $authenticated_role->grantPermission("edit own ${field_visibility_for_name} profile profile field visibility");
+      $authenticated_role->grantPermission("edit own ${$visibility_field_name} profile profile field");
     }
     else {
-      $authenticated_role->revokePermission("edit own ${field_visibility_for_name} profile profile field visibility");
+      $authenticated_role->revokePermission("edit own ${$visibility_field_name} profile profile field");
     }
   }
 
@@ -1125,19 +1122,11 @@ function social_profile_update_12011(array &$sandbox) : void {
 
     foreach ($field_configs as $field_config) {
       // We're only interested in fields that contain visibility data.
-      /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
-      $field_storage = $field_config->getFieldStorageDefinition();
-      $field_visibility_for = $field_storage->getThirdPartySetting('social_profile', 'visibility_for');
-      if ($field_visibility_for === NULL) {
+      if (!FieldManager::isVisibilityField($field_config)) {
         continue;
       }
 
-      [
-        $_profile_type,
-        $field_visibility_for_name,
-      ] = explode(".", $field_visibility_for);
-
-      $sandbox['visibility_map'][$field_visibility_for] = $field_config->getName();
+      $sandbox['visibility_map'][FieldManager::getManagedValueFieldName($field_config)] = $field_config->getName();
     }
   }
 
@@ -1225,15 +1214,11 @@ function social_profile_update_12012() : void {
   $field_configs = FieldConfig::loadMultiple($ids);
   foreach ($field_configs as $field_config) {
     // We're only interested in fields that contain values.
-    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
-    $field_storage = $field_config->getFieldStorageDefinition();
-    $visibility_stored_by = $field_storage->getThirdPartySetting('social_profile', 'visibility_stored_by');
-    if ($visibility_stored_by === NULL) {
+    if (!FieldManager::isManagedValueField($field_config)) {
       continue;
     }
 
     $field_name = $field_config->getName();
-
     if (!in_array($field_name, $sitemanager_only_fields, TRUE)) {
       $authenticated_role->grantPermission("edit own ${field_name} profile profile field");
     }
@@ -1259,7 +1244,7 @@ function social_profile_update_12013() : void {
     throw new \Exception("Environment is corrupted. The 'sitemanager' roles should exist but didn't.");
   }
 
-  // Fetch all fields manually since our helper service may not be available.
+  // Load all profile fields so we can find the ones we need.
   /** @var int[] $ids */
   $ids = \Drupal::entityQuery('field_config')
     ->condition('id', 'profile.profile.', 'STARTS_WITH')
@@ -1267,19 +1252,18 @@ function social_profile_update_12013() : void {
   /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
   $field_configs = FieldConfig::loadMultiple($ids);
   foreach ($field_configs as $field_config) {
-    // We're only interested in fields that contain visibility data.
-    /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
-    $field_storage = $field_config->getFieldStorageDefinition();
-    $is_visibility_managed = NULL !== $field_storage->getThirdPartySetting('social_profile', 'visibility_stored_by');
-    if (!$is_visibility_managed) {
+    // We're only interested in fields that contain values.
+    if (!FieldManager::isManagedValueField($field_config)) {
       continue;
     }
 
+    $field_name = $field_config->getName();
+
     // A site manager can always edit profile information of any user.
-    $sitemanager_role->grantPermission("edit any {$field_config->getName()} profile profile field");
+    $sitemanager_role->grantPermission("edit any ${field_name} profile profile field");
 
     // A site manager can always view the profile information.
-    $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field_config->getName()} profile profile fields");
+    $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
   }
 
   $sitemanager_role->save();
@@ -1355,4 +1339,108 @@ function social_profile_update_12015() : void {
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
   $user_data->delete($modules);
+}
+
+/**
+ * Create profile visibility form.
+ */
+function social_profile_update_12016() : void {
+  if (EntityFormMode::load("profile.visibility") === NULL) {
+    EntityFormMode::create([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'profile',
+        ],
+      ],
+      'id' => 'profile.visibility',
+      'label' => 'Visibility Settings',
+      'targetEntityType' => 'profile',
+      'cache' => TRUE,
+    ])->save();
+  }
+
+  // Create a profile visibility form display if it does not yet exist.
+  $visibility_profile_display = EntityFormDisplay::load('profile.profile.visibility');
+  if ($visibility_profile_display === NULL) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $default_profile_display */
+    $default_profile_display = EntityFormDisplay::load('profile.profile.default');
+    $visibility_profile_display = $default_profile_display->createCopy('visibility');
+  }
+
+  // We don't want field groups on our registration form because nested
+  // fieldsets don't look right.
+  foreach ($visibility_profile_display->getThirdPartySettings('field_group') as $setting_name => $_) {
+    $visibility_profile_display->unsetThirdPartySetting('field_group', $setting_name);
+  }
+
+  // Clear out all the fields by default.
+  foreach ($visibility_profile_display->getComponents() as $name => $_) {
+    $visibility_profile_display->removeComponent($name);
+  }
+
+  // Load all profile fields so we can find the ones we need.
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_config')
+    ->condition('id', 'profile.profile.', 'STARTS_WITH')
+    ->execute();
+  /** @var \Drupal\field\Entity\FieldConfig[] $field_configs */
+  $field_configs = FieldConfig::loadMultiple($ids);
+  foreach ($field_configs as $field_config) {
+    // We're only interested in fields that contain visibility data.
+    if (!FieldManager::isVisibilityField($field_config)) {
+      continue;
+    }
+
+    $visibility_profile_display->setComponent(
+      $field_config->getName(),
+      [
+        'label' => $field_config->label(),
+        'type' => 'options_select',
+      ]
+    );
+  }
+
+  $visibility_profile_display->save();
+
+  // Add the visibility form to the user's default form mode so that it shows up
+  // in user settings.
+  // See \Drupal\profile\Entity\ProfileType::postSave.
+  // The default visibility form always exists.
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $user_display */
+  $user_display = EntityFormDisplay::load('user.user.default');
+  $user_display->setComponent('profile_profiles', [
+    'type' => 'profile_form',
+    'weight' => 90,
+    'title' => "Profile Visibility",
+    'description' => "Profile visibility description",
+    'settings' => [
+      'form_mode' => 'visibility',
+    ],
+  ]);
+  $user_display->save();
+
+  // @todo Move this update hook to the start and add visibility form mode
+  // configuration to the FieldConfig creation or check if default visibility
+  // can be configured.
+}
+
+/**
+ * Delete user profile view.
+ */
+function social_profile_update_12017() : void {
+  // Update the user profile landing page if it was set to the view.
+  $social_user_settings = \Drupal::configFactory()->getEditable('social_user.settings');
+  if ($social_user_settings->get('social_user_profile_landingpage') === 'view.user_information.user_information') {
+    $social_user_settings
+      ->set('social_user_profile_landingpage', 'social_profile.view_user_profile')
+      ->save(TRUE);
+  }
+
+  // The view is replaced with just rendering the profile on the same page.
+  $user_information_view = View::load("user_information");
+  if ($user_information_view !== NULL) {
+    $user_information_view->delete();
+  }
 }

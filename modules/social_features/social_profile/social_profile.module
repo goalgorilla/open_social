@@ -33,6 +33,7 @@ use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\social_profile\FieldManager;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\UserInterface;
@@ -55,7 +56,8 @@ function social_profile_field_storage_config_insert(FieldStorageConfigInterface 
   if ($field_storage_config->getTargetEntityTypeId() === "profile" && $field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') === NULL) {
     $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
 
-    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->id());
+    var_dump($visibility_storage_config->getName());
+    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
     $field_storage_config->save();
   }
 }
@@ -91,13 +93,16 @@ function social_profile_create_visibility_field_storage_config_for(FieldStorageC
   /** @var \Drupal\field\FieldStorageConfigInterface $visibility_storage_config */
   $visibility_storage_config = FieldStorageConfig::create([
     'field_name' => social_profile_get_visibility_field_name($field_storage_config->getName()),
-    'entity_type' => 'profile',
-    'type' => 'string',
+    'entity_type' => $field_storage_config->getTargetEntityTypeId(),
+    'type' => 'list_string',
     'module' => 'social_profile',
     'translatable' => FALSE,
     'locked' => TRUE,
+    'settings' => [
+      'allowed_values_function' => 'social_profile_field_visibility_values',
+    ],
   ]);
-  $visibility_storage_config->setThirdPartySetting('social_profile', 'visibility_for', $field_storage_config->id());
+  $visibility_storage_config->setThirdPartySetting('social_profile', 'visibility_for', $field_storage_config->getName());
   $visibility_storage_config->save();
 
   return $visibility_storage_config;
@@ -116,11 +121,11 @@ function social_profile_delete_visibility_field_storage_config_for(FieldStorageC
   }
 
   /** @var \Drupal\field\FieldStorageConfigInterface|null $visibility_storage_config */
-  $visibility_storage_config = FieldStorageConfig::load($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by'));
+  $visibility_storage_config = FieldStorageConfig::loadByName($field_storage_config->getTargetEntityTypeId(), $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by'));
 
   // If we can't load a visibility storage config then we're done.
   if ($visibility_storage_config !== NULL) {
-    if ($visibility_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== $field_storage_config->id()) {
+    if ($visibility_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== $field_storage_config->getName()) {
       throw new RuntimeException("A field storage config indicated that its visibility was stored by a visibility field storage that was not intended for this field.");
     }
 
@@ -158,8 +163,10 @@ function social_profile_field_config_delete(FieldConfigInterface $field_config) 
  *   created.
  */
 function social_profile_ensure_associated_visibility_field_config(FieldConfigInterface $field_config) : void {
-  // We only support this visibility set-up on the user profile.
-  if ($field_config->getTargetEntityTypeId() !== "profile") {
+  // We only support storage configs from the field module, not those in Drupal
+  // core (i.e. entity base fields).
+  $field_storage_config = $field_config->getFieldStorageDefinition();
+  if (!$field_storage_config instanceof FieldStorageConfigInterface) {
     return;
   }
 
@@ -167,13 +174,6 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   $bundle = $field_config->getTargetBundle();
   if ($bundle === NULL) {
     throw new \InvalidArgumentException("Field config ({$field_config->getName()}) requesting visibility field must be associated with a bundle.");
-  }
-
-  // We only support storage configs from the field module, not those in Drupal
-  // core (i.e. entity base fields).
-  $field_storage_config = $field_config->getFieldStorageDefinition();
-  if (!$field_storage_config instanceof FieldStorageConfigInterface) {
-    return;
   }
 
   // Don't do anything when we're called for a field config that belongs to a
@@ -186,14 +186,14 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   // Avoid trying to create a field config when there's no visibility storage
   // for the field that we're configuring visibility info for. This can happen
   // if a field has asked to opt-out of visibility configurability.
-  $visibility_storage_config_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
-  if ($visibility_storage_config_name === NULL) {
+  $visibility_field_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
+  if ($visibility_field_name === NULL) {
     return;
   }
 
-  $visibility_storage_config = FieldStorageConfig::load($visibility_storage_config_name);
+  $visibility_storage_config = FieldStorageConfig::loadByName($field_storage_config->getTargetEntityTypeId(), $visibility_field_name);
   if ($visibility_storage_config === NULL) {
-    throw new RuntimeException("{$field_storage_config->id()} indicated visibility storage in {$visibility_storage_config_name} but that storage does not exist.");
+    throw new RuntimeException("{$field_storage_config->getName()} indicated visibility storage in {$visibility_field_name} but that field has no storage entity.");
   }
 
   // Nothing to do if the visibility field config already exists.
@@ -202,13 +202,18 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   }
 
   FieldConfig::create([
-    'field_name' => $visibility_storage_config->getName(),
+    'label' => new TranslatableMarkup("%field_name Visibility", ['%field_name' => $field_config->label()]),
+    'field_name' => $visibility_field_name,
     'entity_type' => $field_config->getTargetEntityTypeId(),
     'bundle' => $bundle,
-    'type' => 'string',
+    'type' => 'list_string',
     'module' => 'social_profile',
     'translatable' => FALSE,
     'locked' => TRUE,
+    'required' => TRUE,
+    'settings' => [
+      'allowed_values_function' => 'social_profile_field_visibility_values',
+    ],
   ])->save();
 }
 
@@ -220,11 +225,6 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
  *   visibility field config.
  */
 function social_profile_delete_associated_visibility_field_config(FieldConfigInterface $field_config) : void {
-  // We only support this visibility set-up on the user profile.
-  if ($field_config->getTargetEntityTypeId() !== "profile") {
-    return;
-  }
-
   // We only support storage configs from the field module, not those in Drupal
   // core (i.e. entity base fields).
   $field_storage_config = $field_config->getFieldStorageDefinition();
@@ -232,23 +232,25 @@ function social_profile_delete_associated_visibility_field_config(FieldConfigInt
     return;
   }
 
+  // We only support fields for a bundle.
+  $bundle = $field_config->getTargetBundle();
+  if ($bundle === NULL) {
+    throw new \InvalidArgumentException("Field config ({$field_config->getName()}) requesting visibility field must be associated with a bundle.");
+  }
+
   // No need to delete an associated visibility field config if the deleted
   // field doesn't have one.
-  $visibility_storage_config_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
-  if ($visibility_storage_config_name === NULL) {
+  $visibility_field_name = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
+  if ($visibility_field_name === NULL) {
     return;
   }
 
-  $visibility_storage_config = FieldStorageConfig::load($visibility_storage_config_name);
+  $visibility_storage_config = FieldStorageConfig::loadByName($field_config->getTargetEntityTypeId(), $visibility_field_name);
   if ($visibility_storage_config === NULL) {
-    throw new RuntimeException("{$field_storage_config->id()} indicated visibility storage in {$visibility_storage_config_name} but that storage does not exist.");
+    throw new RuntimeException("{$field_storage_config->getName()} indicated visibility storage in {$visibility_field_name} but that storage does not exist.");
   }
 
-  $visibility_config = FieldConfig::loadByName(
-    $field_config->getTargetEntityTypeId(),
-    $field_config->getTargetBundle() ?? $field_config->getTargetEntityTypeId(),
-    $visibility_storage_config->getName()
-  );
+  $visibility_config = FieldConfig::loadByName($field_config->getTargetEntityTypeId(), $bundle, $visibility_storage_config->getName());
 
   // Nothing to delete if it's already gone.
   if ($visibility_config === NULL) {
@@ -286,6 +288,28 @@ function social_profile_get_visibility_field_name(string $field_name) : string {
 }
 
 /**
+ * Provides the available allowed visibility values.
+ *
+ * The values available are not meant to be editable. However, using a value
+ * function allows Open Social to add new allowed values (such as FRIENDS) in
+ * the future without having to provide configuration updates for a lot of
+ * fields.
+ *
+ * If you're thinking of adding a value here, please discuss with the core team
+ * first. There may be other ways to achieve what you want.
+ *
+ * @return array
+ *   The values allowed in visibility fields.
+ */
+function social_profile_field_visibility_values() : array {
+  return [
+    SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC => new TranslatableMarkup("Public"),
+    SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY => new TranslatableMarkup("Community"),
+    SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE => new TranslatableMarkup("Private"),
+  ];
+}
+
+/**
  * Implements hook_field_widget_form_alter().
  */
 function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -303,25 +327,16 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
 
-    case 'field_profile_nick_name':
-      $element['value']['#attributes']['autocomplete'][] = 'nickname';
+    // Alter how profiles are embedded within the user edit for.
+    case 'profile_profiles':
+      social_profile_user_form_profiles_field_alter($element, $form_state, $context);
       break;
+  }
 
-    case 'field_profile_first_name':
-      $element['value']['#attributes']['autocomplete'][] = 'given-name';
-      break;
-
-    case 'field_profile_last_name':
-      $element['value']['#attributes']['autocomplete'][] = 'family-name';
-      break;
-
-    case 'field_profile_organization':
-      $element['value']['#attributes']['autocomplete'][] = 'organization';
-      break;
-
-    case 'field_profile_function':
-      $element['value']['#attributes']['autocomplete'][] = 'organization-title';
-      break;
+  if (FieldManager::isVisibilityField($field_definition)) {
+    // The field is required but we don't want to display this for all fields.
+    // The select element itself already enforces that a value is selected.
+    $element['#required'] = FALSE;
   }
 
   // This replaces all user entity references with our EntityReferenceSelection.
@@ -334,11 +349,64 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       $element['target_id']['#selection_handler'] = 'social';
     }
   }
+}
 
-  // Remove "Profiles" when embedding profile fields on the user register form.
-  if ($context['items']->getName() === 'profile_profiles' && $context['widget']->getPluginId() === 'profile_form') {
-    unset($element['#field_title']);
+/**
+ * Alter how an embedded profile form works in the user edit form.
+ *
+ * Not called as actual alter hook but called from the social profile widget
+ * form alter.
+ */
+function social_profile_user_form_profiles_field_alter(array &$element, FormStateInterface $form_state, array $context) : void {
+  // We require a form entity to know how we're being displayed.
+  if (!isset($element['entity'])) {
+    return;
   }
+
+  switch ($element['entity']['#form_mode']) {
+    // Remove "Profiles" when embedding profile fields on the user register
+    // form.
+    case 'register':
+      unset($element['#field_title']);
+      break;
+
+    // Add a useful title and explainer text to our visibility settings.
+    case 'visibility':
+      $element['#type'] = 'fieldset';
+      $element['#field_title'] = new TranslatableMarkup("Visibility Settings");
+      $element['#description'] = new TranslatableMarkup("Below you can configure the visibility of your profile fields. Visibility for some fields may be enforced on a site-wide level in which case they will not show up here.");
+      $element['#after_build'][] = 'social_profile_display_visibility_fields_horizontal';
+      break;
+  }
+}
+
+/**
+ * Make the visibility fields show horizontally.
+ *
+ * This is called as after-build hook for the profile.profile.visibility form
+ * mode shown on the user settings page.
+ *
+ * @param array $element
+ *   The profiles visibility sub-form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ *
+ * @return array
+ *   The modified form element.
+ *
+ * @see social_profile_user_form_profiles_field_alter()
+ */
+function social_profile_display_visibility_fields_horizontal(array $element, FormStateInterface $form_state) {
+  foreach ($element['entity'] as $field_name => &$field) {
+    // We're only interested in visibility fields.
+    if (strpos($field_name, "vis_") !== 0 && strpos($field_name, "visibility_") !== 0) {
+      continue;
+    }
+
+    $field['#attributes']['class'][] = "form-horizontal";
+  }
+
+  return $element;
 }
 
 /**
@@ -482,7 +550,7 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   $form['actions']['cancel'] = [
     '#type' => 'link',
     '#title' => t('Cancel'),
-    '#url' => Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]),
+    '#url' => Url::fromRoute('social_profile.view_user_profile', ['user' => $profile->getOwnerId()]),
   ];
 }
 
@@ -506,7 +574,7 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
     Cache::invalidateTags(['user:breadcrumb:' . $uid]);
     // Set redirect to the profile page when a user saves their profile.
     $form_state->setRedirect(
-      'view.user_information.user_information', [
+      'social_profile.view_user_profile', [
         'user' => $uid,
       ]
     );
@@ -652,25 +720,6 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['#cache']['contexts'][] = 'user';
   }
 
-  // @todo This can be removed, we now have `field_profile_email` instead.
-  if (_social_profile_check_property_access($profile, $current_user, 'email')) {
-    // Derived from MailToFormatter.php.
-    $email = $user->getEmail();
-    if (!empty($email)) {
-      $variables['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
-    }
-  }
-
-  // Language field.
-  // @todo This can be removed, we now have `field_profile_preferred_language`.
-  // @todo Add langcode to language field formatter.
-  $language_manager = \Drupal::languageManager();
-  if ($language_manager->isMultilingual() &&
-    _social_profile_check_property_access($profile, $current_user, 'language')) {
-    // Add the user language.
-    $variables['user_lang'] = $language_manager->getLanguageName($user->getPreferredLangcode());
-  }
-
   // Edit profile URL.
   // Get the current route name to check if the user is on the edit or delete
   // page.
@@ -687,7 +736,7 @@ function social_profile_preprocess_profile(array &$variables) {
   }
 
   // Profile information URL.
-  $variables['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
+  $variables['profile_info_url'] = Url::fromRoute('social_profile.view_user_profile', ['user' => $profile->getOwnerId()]);
 
   // Prepare variables for statistic block.
   if ($variables['elements']['#view_mode'] === 'statistic') {
@@ -727,22 +776,12 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
   // phpcs:ignore
   @trigger_error("_social_profile_check_property_access is deprecated and will be removed in 11.0.0. Use a field access check for the `view` operation instead.", E_USER_DEPRECATED);
 
-  // Flag to set.
-  $flag = FALSE;
   switch ($property) {
     case 'email':
-      /** @var \Drupal\user\UserInterface $profile_user */
-      $profile_user = $profile->getOwner();
-      /** @var bool $access */
-      $access = $profile_user->get('mail')->access('view', $current_user);
-      return $access;
+      return $profile->get('field_profile_email')->access('view', $current_user);
 
     case 'language':
-      /** @var \Drupal\user\UserInterface $profile_user */
-      $profile_user = $profile->getOwner();
-      /** @var bool $access */
-      $access = $profile_user->get('preferred_langcode')->access('view', $current_user);
-      return $access;
+      return $profile->get('field_profile_preferred_language')->access('view', $current_user);
   }
 
   return FALSE;
@@ -755,66 +794,112 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
  * @todo Take visibility_ field into account.
  */
 function social_profile_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) : AccessResultInterface {
-  if ($operation === 'view' && $field_definition->getTargetEntityTypeId() === 'user') {
-    if ($field_definition->getName() === 'mail') {
-      // Allowed if the user has a permission to always see the email.
-      $can_view_all_hidden = AccessResult::allowedIfHasPermission($account, 'social profile privacy view hidden fields');
-      $can_view_email_always = AccessResult::allowedIfHasPermission($account, 'view profile email');
+  $entity_type = $field_definition->getTargetEntityTypeId();
+  $entity_bundle = $field_definition->getTargetBundle();
+  $field_name = $field_definition->getName();
+  /** @var \Drupal\social_profile\FieldManager $field_manager */
+  $field_manager = \Drupal::service('social_profile.field_manager');
 
-      // Allowed if the email is configured to be visible for everyone.
-      $profile_settings = \Drupal::config('social_profile.settings');
-      $email_is_global_visible = AccessResult::allowedIf($profile_settings->get('social_profile_show_email'))
-        ->addCacheableDependency($profile_settings);
+  // Allow bypassing complex checks if a profile is being viewed by a user with
+  // access bypass permissions.
+  if ($entity_type === 'profile' && $operation === 'view') {
+    $result = AccessResult::allowedIfHasPermission($account, "view any profile fields")
+      ->orIf(AccessResult::allowedIfHasPermission($account, "view any ${entity_bundle} profile fields"));
 
-      // Allowed if the user chose to share their email.
-      $email_field_shared = AccessResult::neutral();
-      if ($items !== NULL) {
-        $profile = $items->getEntity();
-        if ($profile->hasField('field_profile_show_email')) {
-          $show_email_field = $profile->get('field_profile_show_email');
-          $show_email_field_item = $show_email_field->first();
-          if ($show_email_field_item !== NULL) {
-            $email_field_shared = AccessResult::allowedIf(
-              $show_email_field_item->getValue()
-            )->addCacheableDependency($show_email_field);
-          }
-        }
-        $email_field_shared->addCacheableDependency($profile);
-      }
-
-      // Chain all possible access result to ensure Drupal can determine the
-      // correct cache metadata.
-      return $can_view_all_hidden
-        ->orIf($can_view_email_always)
-        ->orIf($email_is_global_visible)
-        ->orIf($email_field_shared);
+    if ($result->isAllowed()) {
+      return $result;
     }
+  }
 
-    if ($field_definition->getName() === 'preferred_langcode') {
-      // If the current user has this permission, return true straight away.
-      $can_view_language_always = AccessResult::allowedIfHasPermission($account, 'view profile language');
+  // We only apply our visibility field based access management to fields that
+  // we manage.
+  if ($entity_type === 'profile' && $operation === 'view' && $field_manager::isManagedValueField($field_definition)) {
+    /** @var string $visibility_stored_by */
+    $visibility_stored_by = $field_manager::getVisibilityFieldName($field_definition);
 
-      // Allowed if the language is configured to be visible for everyone.
-      $profile_settings = \Drupal::config('social_profile.settings');
-      $language_is_global_visible = AccessResult::allowedIf($profile_settings->get('social_profile_show_language'))
-        ->addCacheableDependency($profile_settings);
+    // If there's no item we're actually checking for then we use the default
+    // value.
+    if ($items === NULL) {
+      // To check the default value we just create a new profile entity.
+      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+      $profile = Profile::create(['type' => $entity_bundle]);
+    }
+    // Otherwise we get the profile the item belongs to and use it if the
+    // owner of the profile is allowed to alter visibility.
+    else {
+      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+      $profile = $items->getEntity();
+      $profile_user = $profile->getOwner();
 
-      // Allowed if the user chose to share their language.
-      $language_field_shared = AccessResult::neutral();
-      if ($items !== NULL) {
+      // If the user can't change the visibility then we also check against a
+      // dummy profile so that we use the default value set by a site manager.
+      // This ensures that if a site manager re-enables user configurability
+      // that the value the user had previously set is respected again.
+      if (!$profile_user->hasPermission("edit own ${visibility_stored_by} ${entity_bundle} ${entity_type} field")) {
         /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-        $profile = $items->getEntity();
-        $profile_show_lang = \Drupal::service('user.data')->get('social_profile_privacy', $profile->getOwnerId(), 'lang_info') ?? FALSE;
-
-        $language_field_shared = AccessResult::allowedIf($profile_show_lang);
+        $profile = Profile::create(['type' => $entity_bundle]);
       }
-
-      // Chain all possible access result to ensure Drupal can determine the
-      // correct cache metadata.
-      return $can_view_language_always
-        ->orIf($language_is_global_visible)
-        ->orIf($language_field_shared);
     }
+
+    if (!$profile->hasField($visibility_stored_by)) {
+      return AccessResult::neutral("Visibility for {$field_definition->getName()} is stored in {visibility_stored_by} but that field does not exist.");
+    }
+
+    $field_visibility = $profile->get($visibility_stored_by)->value;
+    switch ($field_visibility) {
+      case SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC:
+        return AccessResult::allowed();
+
+      case SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY:
+        return AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${entity_bundle} ${entity_type} fields")
+          ->orIf(AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"));
+
+      case SOCIAL_PROFILE_FIELD_VISIBILITY_FRIENDS:
+        return AccessResult::forbidden("Friends visibility access checks are not yet implemented. This is an illegal visibility field value.");
+
+      case SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE:
+        return AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} ${entity_bundle} ${entity_type} fields");
+
+      default:
+        return AccessResult::neutral("Unknown visibility field value '${field_visibility}'.");
+    }
+
+  }
+  elseif ($entity_type === "profile" && $operation === 'edit') {
+    // If a user doesn't have express permission to edit a field then we must
+    // forbid it.
+    $permissions = [
+      "edit any ${field_name} ${entity_bundle} ${entity_type} field",
+    ];
+
+    // If there is an item we can check if it belongs to the user.
+    if ($items !== NULL) {
+      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+      $profile = $items->getEntity();
+      $profile_user = $profile->getOwner();
+
+      if ($profile_user->id() === $account->id()) {
+        $permissions[] = "edit own ${field_name} ${entity_bundle} ${entity_type} field";
+      }
+    }
+
+    $result = AccessResult::allowedIfHasPermissions($account, $permissions, "OR");
+
+    // If a profile entity was checked we must add it as a dependency for the
+    // permission checks because viewing a different profile requires different
+    // checks.
+    if (isset($profile)) {
+      $result->addCacheableDependency($profile);
+    }
+
+    // Fields are allowed by default, but unless the user has express permission
+    // to change these fields we want to deny. We do it this way to keep the
+    // cacheability metadata and the reason from the permission check.
+    if ($result->isNeutral()) {
+      $result = $result->andIf(AccessResult::forbidden());
+    }
+
+    return $result;
   }
 
   return AccessResult::neutral();
@@ -857,7 +942,7 @@ function social_profile_user_insert(UserInterface $account) {
   // If the new account has a UID, we can create a default profile.
   // Default image is added through the field settings.
   if (!empty($account->id())) {
-    /** @var \Drupal\profile\Entity\ProfileType $profile_type */
+    /** @var \Drupal\profile\Entity\ProfileTypeInterface $profile_type */
     $profile_type = ProfileType::load('profile');
     // Sometimes profile fields are already requested during registration.
     // In those cases, the profile will already be created from that.
@@ -925,99 +1010,10 @@ function social_profile_sync_user_fields_to_profile(UserInterface $user, Profile
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for user_form().
+ * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_user_form_alter(&$form, FormStateInterface $form_state) {
-  $profile = _social_profile_get_profile_from_route();
-
-  if ($profile instanceof Profile) {
-    // @todo Move privacy settings to a separate entity.
-    // Check what the global value is.
-    $social_profile_settings_config = \Drupal::config('social_profile.settings');
-    $global_values = [
-      'social_profile_show_email' => $social_profile_settings_config->get('social_profile_show_email'),
-    ];
-    // Account values.
-    $show_email = $profile->field_profile_show_email->value;
-    $form['profile_privacy'] = [
-      '#type' => 'fieldset',
-      '#title' => t('Privacy settings'),
-      '#tree' => TRUE,
-    ];
-    $form['profile_privacy']['social_profile_show_email'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Show my email on my profile'),
-      '#default_value' => $show_email,
-      '#attributes' => [
-        'data-switch' => TRUE,
-      ],
-    ];
-    $is_multilingual = \Drupal::languageManager()->isMultilingual();
-    if ($is_multilingual) {
-      $user_data = \Drupal::service('user.data');
-      $lang_info = $user_data->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info');
-      $global_values['social_profile_show_language'] = $social_profile_settings_config->get('social_profile_show_language');
-      $form['profile_privacy']['social_profile_show_language'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Show my language on my profile'),
-        '#default_value' => $lang_info,
-        '#attributes' => [
-          'data-switch' => TRUE,
-        ],
-      ];
-    }
-    // If global setting is set, disable the setting and give a reason why.
-    foreach ($global_values as $key => $value) {
-      if ($value && (($key == 'social_profile_show_language' && $is_multilingual) || $key == 'social_profile_show_email')) {
-        $form['profile_privacy']["$key"]['#disabled'] = TRUE;
-        $form['profile_privacy']["$key"]['#value'] = TRUE;
-        $form['profile_privacy']["$key"]['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
-      }
-    }
-
-    // Add Submit function only when the data is actually editable.
-    if (empty($global_values['social_profile_show_email']) || empty($global_values['social_profile_show_language'])) {
-      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
-    }
-  }
-
   $form['#pre_render'][] = [SocialProfileUserFormAlter::class, 'preRender'];
-}
-
-/**
- * Form submit for user_form.
- *
- * @param array $form
- *   Commnent on a post form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_profile_form_user_form_submit(array $form, FormStateInterface $form_state) {
-  $profile = _social_profile_get_profile_from_route();
-  $profile_privacy = $form_state->getValue('profile_privacy');
-
-  if ($profile instanceof Profile) {
-    if (isset($profile->field_profile_show_email)) {
-      $profile->field_profile_show_email->value = $profile_privacy['social_profile_show_email'];
-      $profile->save();
-    }
-
-    $uid = $profile->getOwnerId();
-
-    if (isset($profile_privacy['social_profile_show_language'])) {
-      // Save language info in the user data.
-      // @todo Move privacy settings to a separate entity.
-      \Drupal::service('user.data')->set(
-        'social_profile_privacy',
-        $uid,
-        'lang_info',
-        $profile_privacy['social_profile_show_language']
-      );
-    }
-
-    // Invalidate profile cache tags.
-    Cache::invalidateTags(['profile:' . $uid]);
-  }
 }
 
 /**

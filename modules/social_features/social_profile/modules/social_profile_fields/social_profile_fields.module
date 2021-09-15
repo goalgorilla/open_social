@@ -5,7 +5,6 @@
  * The social profile fields module file.
  */
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -13,40 +12,10 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
-
-/**
- * Implements hook_entity_field_access().
- */
-function social_profile_fields_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-
-  // By default, we return Switzerland.
-  $access_result = AccessResult::neutral();
-
-  if ($field_definition->getTargetEntityTypeId() === 'profile') {
-    $config = \Drupal::config('social_profile_fields.settings');
-    $setting_name = $field_definition->getTargetEntityTypeId() . '_' . $field_definition->getTargetBundle() . '_' . $field_definition->getName();
-    $setting_value = $config->get($setting_name);
-
-    if (isset($setting_value) && !$setting_value) {
-      // For the profile image field we have an exception. We'll fix it before
-      // display.
-      if ($setting_name === 'profile_profile_field_profile_image' && $operation === 'view') {
-        $access_result = AccessResult::neutral();
-      }
-      else {
-        $access_result = AccessResult::forbidden();
-      }
-    }
-  }
-
-  return $access_result;
-}
 
 /**
  * Implements hook_entity_form_display_alter().

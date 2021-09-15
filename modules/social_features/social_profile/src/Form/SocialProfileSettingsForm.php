@@ -12,6 +12,7 @@ use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_profile\FieldManager;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -224,10 +225,19 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
 
     /** @var string $field_name */
     foreach ($this->fieldManager->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
-      $visibility_field = $this->fieldManager->getVisibilityFieldFor($field_config);
+      $visibility_field_name = $this->fieldManager::getVisibilityFieldName($field_config);
 
+      // A field shouldn't show up in getManagedProfileFieldDefinitions if
+      // getVisibilityFieldName returns NULL.
+      if ($visibility_field_name === NULL) {
+        $this->logger('social_profile')->critical("Field '${field_name}' is marked as managed but does not have a visibility field name. This is an implementation error.");
+        continue;
+      }
+
+      /** @var \Drupal\field\FieldConfigInterface|NULL $visibility_field */
+      $visibility_field = FieldConfig::loadByName("profile", "profile", $visibility_field_name);
       if ($visibility_field === NULL) {
-        $this->logger('social_profile')->warning("Managed field '${field_name}' does not have a visibility field for the profile bundle of profile.");
+        $this->logger('social_profile')->warning("Visibility field '${visibility_field_name}' is configured for '${field_name}' but the visibility field does not exist on the profile profile.");
         continue;
       }
       // Disable configuration fields if the field is disabled.
@@ -242,7 +252,11 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       $row = [];
 
       // Field name.
-      $row['label'] = ['#plain_text' => $field_config->label()];
+      $label = $field_config->label();
+      if ($this->currentUser()->hasPermission("view debug info")) {
+        $label .= " (${field_name}, ${visibility_field_name})";
+      }
+      $row['label'] = ['#plain_text' => $label];
 
       // Visibility.
       $row['visibility'] = [
@@ -264,7 +278,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
         'user' => [
           '#type' => 'checkbox',
           '#title' => new TranslatableMarkup('User can change'),
-          '#default_value' => $roles['authenticated']->hasPermission("edit own ${field_name} profile profile field visibility"),
+          '#default_value' => $roles['authenticated']->hasPermission("edit own ${visibility_field_name} profile profile field"),
           '#states' => $disabled_states,
         ],
       ];
@@ -475,16 +489,30 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $default_profile_form_display */
     $default_profile_form_display = EntityFormDisplay::load("profile.profile.default");
 
-    // @todo Move permission changes to a single change permissions?
-    // i.e. user_role_*_permissions to user_role_change_permissions.
-    /** @var \Drupal\Core\Field\FieldConfigInterface&\Drupal\field\FieldConfigInterface $field_config */
-    // See https://www.drupal.org/project/drupal/issues/2818877.
-    foreach ($this->fieldManager->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
-      $visibility_field = $this->fieldManager->getVisibilityFieldFor($field_config);
+    /** @var \Drupal\user\RoleInterface[] $roles */
+    $roles = Role::loadMultiple();
 
+    // @todo Move permission changes to a single change permissions?
+    // i.e. user_role_*_permissions to user_role_change_permissions
+    // See https://www.drupal.org/project/drupal/issues/2818877.
+    /**
+     * @var string $field_name
+     * @var \Drupal\Core\Field\FieldConfigInterface&\Drupal\field\FieldConfigInterface $field_config
+     */
+    foreach ($this->fieldManager->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
+      $visibility_field_name = $this->fieldManager::getVisibilityFieldName($field_config);
+
+      // A field shouldn't show up in getManagedProfileFieldDefinitions if
+      // getVisibilityFieldName returns NULL.
+      if ($visibility_field_name === NULL) {
+        $this->logger('social_profile')->critical("Field '${field_name}' is marked as managed but does not have a visibility field name. This is an implementation error.");
+        continue;
+      }
+
+      /** @var \Drupal\field\FieldConfigInterface|NULL $visibility_field */
+      $visibility_field = FieldConfig::loadByName("profile", "profile", $visibility_field_name);
       if ($visibility_field === NULL) {
-        $this->logger('social_profile')
-          ->warning("Managed field '${field_name}' does not have a visibility field for the profile bundle of profile.");
+        $this->logger('social_profile')->warning("Visibility field '${visibility_field_name}' is configured for '${field_name}' but the visibility field does not exist on the profile profile.");
         continue;
       }
 
@@ -500,10 +528,10 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
         ["fields", "list", $field_name, "visibility", "user"]
       );
       if ($user_can_edit_visibility) {
-        user_role_grant_permissions('authenticated', ["edit own ${field_name} profile profile field visibility"]);
+        $roles['authenticated']->grantPermission("edit own ${visibility_field_name} profile profile field");
       }
       else {
-        user_role_revoke_permissions('authenticated', ["edit own ${field_name} profile profile field visibility"]);
+        $roles['authenticated']->revokePermission("edit own ${visibility_field_name} profile profile field");
       }
 
       // Always show for.
@@ -511,60 +539,53 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
         ["fields", "list", $field_name, "always_show"]
       );
       foreach ($always_show_roles as $role_id => $value) {
-        /** @var \Drupal\user\RoleInterface|NULL $role */
-        $role = Role::load($role_id);
-        if ($role === NULL) {
+        if (!isset($roles[$role_id])) {
           continue;
         }
 
         // The site manager is always granted the permission even if the value
         // is empty (which happens when a field is disabled).
         if ($role_id === "sitemanager" || (bool) $value) {
-          $role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
+          $roles[$role_id]->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
         }
         else {
-          $role->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
+          $roles[$role_id]->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
         }
 
-        $modified_roles[$role->id()] = $role;
+        $modified_roles[$role_id] = $roles[$role_id];
       }
 
       // Allow editing.
-      /** @var \Drupal\user\RoleInterface $authenticated_role */
-      $authenticated_role = Role::load('authenticated');
-
       $user_can_edit_value = (bool) $form_state->getValue(
         ["fields", "list", $field_name, "allow_editing", "user"]
       );
       if ($user_can_edit_value) {
-        $authenticated_role->grantPermission("edit own ${field_name} profile profile field");
+        $roles['authenticated']->grantPermission("edit own ${field_name} profile profile field");
       }
       else {
-        $authenticated_role->revokePermission("edit own ${field_name} profile profile field");
+        $roles['authenticated']->revokePermission("edit own ${field_name} profile profile field");
       }
 
-      $modified_roles[$authenticated_role->id()] = $authenticated_role;
+      $modified_roles['authenticated'] = $roles['authenticated'];
 
       $allow_editing_roles = $form_state->getValue(
         ["fields", "list", $field_name, "allow_editing", "other"]
       );
       foreach ($allow_editing_roles as $role_id => $value) {
-        /** @var \Drupal\user\RoleInterface|NULL $role */
-        $role = Role::load($role_id);
-        if ($role === NULL) {
+        if (!isset($roles[$role_id])) {
           continue;
         }
 
         // The site manager is always granted the permission even if the value
         // is empty (which happens when a field is disabled).
         if ($role_id === "sitemanager" || (bool) $value) {
-          $role->grantPermission("edit any ${field_name} profile profile field");
+          $roles[$role_id]->grantPermission("edit any ${field_name} profile profile field");
         }
         else {
-          $role->revokePermission("edit any ${field_name} profile profile field");
+          $roles[$role_id]->revokePermission("edit any ${field_name} profile profile field");
         }
 
-        $modified_roles[$role->id()] = $role;
+        $modified_roles[$role_id] = $roles[$role_id];
       }
 
       // Show during registration.
