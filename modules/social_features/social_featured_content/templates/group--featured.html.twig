@@ -19,8 +19,8 @@
 {% block card_teaser_type %}
   <a href="{{ url }}" aria-hidden="true" title="{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}">
     <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon" aria-labelledby="group-{{ group.id.value }}">
-        <title id="group-{{ group.id.value }}">{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
+      <svg class="teaser__teaser-type-icon">
+        <title>{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
         <use xlink:href="#icon-group-white"></use>
       </svg>
     </div>
