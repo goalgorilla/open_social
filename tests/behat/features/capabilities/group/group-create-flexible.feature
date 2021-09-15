@@ -268,8 +268,8 @@ Feature: Create flexible Group
     And I should not see the link "Topics"
 
     # And a GM receives a notification about the joined user.
-    When I am logged in as "GivenUserOne"
     And I wait for the queue to be empty
+    When I am logged in as "GivenUserOne"
     And I am at "notifications"
     Then I should see text matching "GivenUserTwo joined the Test flexible group"
     # Notification about the created post.
