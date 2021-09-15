@@ -88,20 +88,7 @@ Feature: Create flexible Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a flexible group post."
 
-    # Lets check notifications for flexible group.
-    And I wait for the queue to be empty
-    Given I am logged in as "GivenUserOne"
-    When I am on "/notifications"
-    Then I should see "GivenUserTwo created a post in the Test flexible group group"
-    And I should have an email with subject "Notification from Open Social" and in the content:
-      | content                                                      |
-      | Hi GivenUserOne                                              |
-      | GivenUserTwo created a post in the Test flexible group group |
-
-    Given I am logged in as "GivenUserTwo"
-    Then I am on "all-groups"
-    And I should see "Test flexible group"
-    And I click "Test flexible group"
+    # Create a event inside the flexible group.
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
@@ -285,3 +272,27 @@ Feature: Create flexible Group
     And I wait for the queue to be empty
     And I am at "notifications"
     Then I should see text matching "GivenUserTwo joined the Test flexible group"
+    # Notification about the created post.
+    And I should see "GivenUserTwo created a post in the Test flexible group group"
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content                                                      |
+      | Hi GivenUserOne                                              |
+      | GivenUserTwo created a post in the Test flexible group group |
+    # Notification about the created community topic.
+    And I should see "GivenUserTwo created a topic Test group community topic in the Test flexible group group"
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content                                                       |
+      | Hi GivenUserOne                                               |
+      | GivenUserTwo created a topic Test group community topic in the Test flexible group group |
+    # Notification about the created private topic.
+    And I should see "GivenUserTwo created a topic Test group private topic in the Test flexible group group"
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content                                                       |
+      | Hi GivenUserOne                                               |
+      | GivenUserTwo created a topic Test group private topic in the Test flexible group group |
+    # Notification about the created event.
+    And I should see "GivenUserTwo created an event Test group event in the Test flexible group group"
+    And I should have an email with subject "Notification from Open Social" and in the content:
+      | content                                                        |
+      | Hi GivenUserOne                                                |
+      | GivenUserTwo created an event Test group event in the Test flexible group group |
