@@ -1,6 +1,14 @@
 extend type Query {
   """
-  Branding information for this Open Social platform.
+  Information about the community itself.
   """
-  platformBranding: PlatformBranding!
+  about: CommunityAbout!
+  """
+  The brand identity for the community.
+  """
+  branding: CommunityBranding!
+  """
+  The preferred features for this community   
+  """
+  preferredFeatures: [Feature!]!
 }

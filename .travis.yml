@@ -47,7 +47,7 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - git clone https://github.com/goalgorilla/drupal_social.git install
+  - git clone -b 1.0.0 https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
