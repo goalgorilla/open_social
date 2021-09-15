@@ -768,14 +768,18 @@ function social_event_field_widget_form_alter(&$element, FormStateInterface $for
  * Add 'All day' checkbox to event datetime field.
  */
 function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
-  // Time field should disappear when 'All day' is checked.
-  $state = [
-    ':input[name="event_all_day"]' => [
-      'checked' => TRUE,
-    ],
-  ];
+  // Time field should disappear and optional when 'All day' is checked.
   $element['time']['#states'] = [
-    'invisible' => $state,
+    'invisible' => [
+      ':input[name="event_all_day"]' => [
+        'checked' => TRUE,
+      ],
+    ],
+    'required' => [
+      ':input[name="event_all_day"]' => [
+        'checked' => FALSE,
+      ],
+    ],
   ];
   $form_input = $form_state->getUserInput();
   $date = $element['#value']['object'];
