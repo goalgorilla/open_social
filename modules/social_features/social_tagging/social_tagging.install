@@ -88,9 +88,10 @@ function _social_tagging_add_fields_search_api() {
   foreach ($fields as $index => $type) {
     $index_storage = \Drupal::entityTypeManager()
       ->getStorage('search_api_index');
+
+    /** @var \Drupal\search_api\IndexInterface $index */
     $index = $index_storage->load($index);
 
-    // Index the Intro field.
     $field_intro = new Field($index, 'social_tagging');
     $field_intro->setType('integer');
     $field_intro->setPropertyPath('social_tagging');
@@ -111,6 +112,8 @@ function _social_tagging_remove_fields_search_api() {
   foreach ($fields as $index => $type) {
     $index_storage = \Drupal::entityTypeManager()
       ->getStorage('search_api_index');
+
+    /** @var \Drupal\search_api\IndexInterface $index */
     $index = $index_storage->load($index);
 
     $index->removeField('social_tagging');
