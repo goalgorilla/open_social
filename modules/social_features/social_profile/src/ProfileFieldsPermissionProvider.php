@@ -60,7 +60,7 @@ class ProfileFieldsPermissionProvider {
     // Gives access to SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE fields.
     $permissions["view any profile fields"] = [
       'title' => $this->t("View any profile fields"),
-      'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings."),
+      'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings. Prefer using a field specific permission instead as only those are reflected in the settings form."),
       'restrict access' => TRUE,
     ];
 
@@ -73,7 +73,7 @@ class ProfileFieldsPermissionProvider {
       // Create the permissions for all fields in a bundle.
       $permissions["view any ${$id} profile fields"] = [
         'title' => $this->t("View any %profile profile fields", ['%profile' => $profile_type->label()]),
-        'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings for the %bundle profile type.", ['%bundle' => $id]),
+        'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings for the %bundle profile type. Prefer using a field specific permission instead as only those are reflected in the settings form.", ['%bundle' => $id]),
         'restrict access' => TRUE,
       ];
 
@@ -82,25 +82,24 @@ class ProfileFieldsPermissionProvider {
       ];
 
       // Create the permissions per field per bundle.
-      $fields = $this->fieldManager->getManagedProfileFieldDefinitions($id);
+      $fields = $this->fieldManager->getFieldDefinitions("profile", "profile");
       foreach ($fields as $field_name => $field_config) {
+        if ($this->fieldManager::isOptedOutOfFieldAccessManagement($field_config)) {
+          continue;
+        }
+
         $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} ${id} profile fields"] = [
-          'title' => $this->t("View private %field %profile profile fields", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+          'title' => $this->t("View private %field %profile profile fields", ['%field' => $field_config->getLabel(), '%profile' => $profile_type->label()]),
           'description' => $this->t("Allows a user to view any %field field on a profile regardless of visibility settings for the %bundle profile type.", ['%field' => $field_name, '%bundle' => $id]),
         ];
 
         $permissions["edit own ${field_name} ${id} profile field"] = [
-          'title' => $this->t("Edit own %field %profile profile field", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+          'title' => $this->t("Edit own %field %profile profile field", ['%field' => $field_config->getLabel(), '%profile' => $profile_type->label()]),
         ];
 
         $permissions["edit any ${field_name} ${id} profile field"] = [
-          'title' => $this->t("Edit any %field %profile profile field", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
+          'title' => $this->t("Edit any %field %profile profile field", ['%field' => $field_config->getLabel(), '%profile' => $profile_type->label()]),
         ];
-
-        $permissions["edit own ${field_name} ${id} profile field visibility"] = [
-          'title' => $this->t("Edit own %field %profile profile visibility", ['%field' => $field_config->getName(), '%profile' => $profile_type->label()]),
-        ];
-
       }
     }
 

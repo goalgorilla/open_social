@@ -40,7 +40,7 @@ class SocialUserSettingsForm extends ConfigFormBase {
       '#description' => t('When visiting a profile the user will end up at this page first'),
       '#options' => [
         'social_user.stream' => t('Stream'),
-        'view.user_information.user_information' => t('Information'),
+        'social_profile.view_user_profile' => t('Information'),
       ],
       '#default_value' => $config->get('social_user_profile_landingpage'),
     ];
