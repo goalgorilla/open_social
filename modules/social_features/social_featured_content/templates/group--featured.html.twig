@@ -54,7 +54,7 @@
   <small class="text-muted">
 
     <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon">
+      <svg class="teaser__content-type-icon" aria-hidden="true">
         <title>{% trans %}Group type{% endtrans %}</title>
         <use xlink:href="#icon-label"></use>
       </svg>
@@ -67,7 +67,7 @@
 
     {% if content.field_group_location|render or content.field_group_address|render %}
       <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
+        <svg class="teaser__content-type-icon" aria-hidden="true">
           <title>{% trans %}Located at:{% endtrans %}</title>
           <use xlink:href="#icon-location"></use>
         </svg>
@@ -91,7 +91,7 @@
   {% if group_members is not empty %}
     <div class="badge teaser__badge">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <title>{% trans %}Number of group members{% endtrans %}</title>
           <use xlink:href="#icon-group"></use>
         </svg>
