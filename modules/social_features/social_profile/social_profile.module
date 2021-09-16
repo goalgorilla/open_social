@@ -36,6 +36,7 @@ use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\FieldManager;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
+use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
@@ -141,6 +142,7 @@ function social_profile_delete_visibility_field_storage_config_for(FieldStorageC
  */
 function social_profile_field_config_insert(FieldConfigInterface $field_config) : void {
   social_profile_ensure_associated_visibility_field_config($field_config);
+  social_profile_ensure_sitemanager_can_view_private_field($field_config);
 }
 
 /**
@@ -210,6 +212,7 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
     'translatable' => FALSE,
     'locked' => TRUE,
     'required' => TRUE,
+    'default_value' => SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY,
     'settings' => [
       'allowed_values_function' => 'social_profile_field_visibility_values',
     ],
@@ -257,6 +260,32 @@ function social_profile_delete_associated_visibility_field_config(FieldConfigInt
   }
 
   $visibility_config->delete();
+}
+
+/**
+ * Give the site manager the view private file permission.
+ *
+ * Only applies to fields that are managed by our visibility system.
+ *
+ * @param \Drupal\Core\Field\FieldConfigInterface $field_config
+ *   The field config to set the permission for.
+ */
+function social_profile_ensure_sitemanager_can_view_private_field(FieldConfigInterface $field_config) : void {
+  // Ignore fields that opted out of being managed.
+  if (!FieldManager::isOptedOutOfFieldAccessManagement($field_config)) {
+    return;
+  }
+
+  $sitemanager_role = Role::load('sitemanager');
+
+  // This would be a platform configuration error but its safe to ignore here.
+  if ($sitemanager_role === NULL) {
+    return;
+  }
+
+  $sitemanager_role
+    ->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field_config->getName()} {$field_config->getTargetBundle()} {$field_config->getTargetEntityTypeId()} fields")
+    ->save();
 }
 
 /**
