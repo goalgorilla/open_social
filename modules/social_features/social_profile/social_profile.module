@@ -997,7 +997,7 @@ function social_profile_user_update(UserInterface $user) : void {
 /**
  * Implements hook_ENTITY_TYPE_presave().
  */
-function social_profile_profile_presave(ProfileInterface $profile) {
+function social_profile_profile_presave(ProfileInterface $profile) : void {
   // Copy any data from the user to the profile. We do this in a profile
   // pre-save rather than on user update to account for the scenario where an
   // embedded profile form on a user form will overwrite some of our own

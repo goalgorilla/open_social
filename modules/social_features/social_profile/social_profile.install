@@ -1004,7 +1004,6 @@ function social_profile_update_12009() : void {
   $social_profile_settings->set("nickname_unique_validation", (bool) $social_profile_fields_settings->get("nickname_unique_validation"));
   $social_profile_settings->save();
 
-  // @todo This doesn't handle "field_profile_show_email" => null,
   // @todo This doesn't handle address subfields.
   // Clean up the config that's no longer used.
   $social_profile_fields_settings->delete();
@@ -1019,6 +1018,18 @@ function social_profile_update_12010() : void {
   // $constant_hide = 2; // for completeness but we don't use it.
   $constant_configurable = 1;
   $constant_show = 0;
+
+  // Site managers and users didn't have control over what was public and
+  // private but could only say "visible" or "not visible" with Open Social
+  // deciding to whom the setting was visible. In the new system the SM can
+  // decide so for visible fields we map to Open Social's old hardcoded
+  // decision.
+  $public_fields = [
+    'field_profile_first_name',
+    'field_profile_last_name',
+    'field_profile_nick_name',
+    'field_profile_image',
+  ];
 
   // The existing privacy settings.
   $privacy_settings = \Drupal::config('social_profile_privacy.settings');
@@ -1055,7 +1066,9 @@ function social_profile_update_12010() : void {
     // In previous versions "visible" meant visible to the community. So with a
     // few exceptions that's what we default to now as well.
     $field_state = $global_states[$field_name] ?? $constant_show;
-    $default_visibility_value = ($field_state === $constant_show || $field_state === $constant_configurable) ? SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY : SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
+    $is_visible = ($field_state === $constant_show || $field_state === $constant_configurable);
+    $visible_where = in_array($field_name, $public_fields, TRUE) ? SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC : SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY;
+    $default_visibility_value = $is_visible ? $visible_where : SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
     $is_visibility_editable = $field_state === $constant_configurable;
 
     // Set the default value for the field.
@@ -1174,6 +1187,15 @@ function social_profile_update_12011(array &$sandbox) : void {
       }
       else {
         $new_visibility = SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
+      }
+
+      // For the email field we can overwrite our found visibility by what the
+      // user had already configured.
+      if ($value_field_name === 'field_profile_email' && $profile->hasField('field_profile_show_email')) {
+        $email_visibility = $profile->get('field_profile_show_email')->first();
+        if ($email_visibility !== NULL) {
+          $new_visibility = $email_visibility->getValue() ? SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY : SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE;
+        }
       }
 
       $profile->set($visibility_field_name, $new_visibility);
@@ -1344,7 +1366,16 @@ function social_profile_update_12015() : void {
   $user_data = \Drupal::service('user.data');
   $user_data->delete($modules);
 
-  // TODO: Delete old fields (e.g. field_show_email).
+  // Clean up the old show email setting.
+  $field_show_email = FieldConfig::load("profile.profile.field_profile_show_email");
+  if ($field_show_email) {
+    $field_show_email->delete();
+  }
+
+  $field_show_email_storage = FieldStorageConfig::load("profile.field_profile_show_email");
+  if ($field_show_email_storage) {
+    $field_show_email_storage->delete();
+  }
 }
 
 /**
