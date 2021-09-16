@@ -811,12 +811,3 @@ function social_group_update_10308() {
   // Set display mode for group content to display on stream.
   activity_creator_set_entity_view_mode('group_content', 'activity');
 }
-
-/**
- * Disable the "group_nodes" view.
- */
-function social_group_update_10309() {
-  /** @var \Drupal\views\Entity\View $view */
-  $view = \Drupal::entityTypeManager()->getStorage('view')->load('group_nodes');
-  $view->setStatus(FALSE)->save();
-}

@@ -3,6 +3,7 @@
 namespace Drupal\social_group\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\social_group\Controller\SocialGroupController;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -64,6 +65,16 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('view.groups.page_user_groups')) {
       $requirements = $route->getRequirements();
       $requirements['_custom_access'] = "\Drupal\social_group\Controller\SocialGroupController::myGroupAccess";
+      $route->setRequirements($requirements);
+    }
+
+    // We don't want to display the "Nodes" tab on groups anymore. Before, we
+    // just disabled the view on hook update, but sometimes it is back to us,
+    // this is the reason why we want to add custom access to that route to
+    // have more access control.
+    if ($route = $collection->get('view.group_nodes.page_1')) {
+      $requirements = $route->getRequirements();
+      $requirements['_custom_access'] = SocialGroupController::class . '::myGroupNodesAccess';
       $route->setRequirements($requirements);
     }
 
