@@ -56,7 +56,6 @@ function social_profile_field_storage_config_insert(FieldStorageConfigInterface 
   if ($field_storage_config->getTargetEntityTypeId() === "profile" && $field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') === NULL) {
     $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
 
-    var_dump($visibility_storage_config->getName());
     $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
     $field_storage_config->save();
   }
@@ -964,8 +963,9 @@ function social_profile_user_insert(UserInterface $account) {
 
       // Create a profile.
       $profile = Profile::create($default_values);
-      $profile->save();
     }
+    // Trigger a save of the profile since a new user was just created, this is
+    // needed to copy the new profile data.
     else {
       /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
       $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -973,7 +973,7 @@ function social_profile_user_insert(UserInterface $account) {
       assert($profile !== NULL, "Profile type 'profile' was configured to be created during registration but no profile existed for the user ({$account->id()}).");
     }
 
-    social_profile_sync_user_fields_to_profile($account, $profile);
+    $profile->save();
   }
 }
 
@@ -985,11 +985,28 @@ function social_profile_user_update(UserInterface $user) : void {
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
   $profile = $profile_storage->loadByUser($user, 'profile');
   assert($profile !== NULL, "User updated without a profile, this means the user insert logic that should automatically create a profile is broken.");
-  social_profile_sync_user_fields_to_profile($user, $profile);
+  $has_changed = social_profile_copy_shared_user_data_to_profile($user, $profile);
+  // Skip saving the profile if nothing actually changed. This prevents
+  // unnecessary noise for other modules who may be listening to profile
+  // updates.
+  if ($has_changed) {
+    $profile->save();
+  }
 }
 
 /**
- * Synchronise shared fields from the user entity to the profile.
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_profile_profile_presave(ProfileInterface $profile) {
+  // Copy any data from the user to the profile. We do this in a profile
+  // pre-save rather than on user update to account for the scenario where an
+  // embedded profile form on a user form will overwrite some of our own
+  // changes.
+  social_profile_copy_shared_user_data_to_profile($profile->getOwner(), $profile);
+}
+
+/**
+ * Copies data from the user entity to the profile for shared fields.
  *
  * Some data for users such as email and langcode should be displayed on the
  * users profile depending on user configuration. Managing all this display data
@@ -1001,12 +1018,26 @@ function social_profile_user_update(UserInterface $user) : void {
  *   The user to synchronise data for.
  * @param \Drupal\profile\Entity\ProfileInterface $profile
  *   The profile entity to synchronise data to.
+ *
+ * @return bool
+ *   Whether the profile entity has been modified.
  */
-function social_profile_sync_user_fields_to_profile(UserInterface $user, ProfileInterface $profile) : void {
-  $profile
-    ->set('field_profile_email', $user->getEmail())
-    ->set('field_profile_preferred_language', $user->getPreferredLangcode())
-    ->save();
+function social_profile_copy_shared_user_data_to_profile(UserInterface $user, ProfileInterface $profile) : bool {
+  $has_changed = FALSE;
+
+  $user_email = $user->getEmail();
+  if ((!$current_email = $profile->get('field_profile_email')->first()) || $current_email->getValue() !== $user_email) {
+    $profile->set('field_profile_email', $user_email, FALSE);
+    $has_changed = TRUE;
+  }
+
+  $user_preferred_language = $user->getPreferredLangcode();
+  if ((!$current_preferred_language = $profile->get('field_profile_preferred_language')->first()) || $current_preferred_language->getValue() !== $user_preferred_language) {
+    $profile->set('field_profile_preferred_language', $user_preferred_language, FALSE);
+    $has_changed = TRUE;
+  }
+
+  return $has_changed;
 }
 
 /**

@@ -693,7 +693,11 @@ function social_profile_update_12003(array &$sandbox) : void {
         throw new \RuntimeException("User (id: {$user->id()} is missing a profile.");
       }
     }
-    social_profile_sync_user_fields_to_profile($user, $profile);
+
+    $has_changed = social_profile_copy_shared_user_data_to_profile($user, $profile);
+    if ($has_changed) {
+      $profile->save();
+    }
   }
 
   $sandbox['processed'] += count($user_ids);
@@ -1339,6 +1343,8 @@ function social_profile_update_12015() : void {
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
   $user_data->delete($modules);
+
+  // TODO: Delete old fields (e.g. field_show_email).
 }
 
 /**
