@@ -5,19 +5,21 @@
  * The Social Embed module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\File\FileSystemInterface;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
 
 /**
  * Function that creates an embed button with a custom icon.
  */
-function social_embed_create_media_button() {
+function _social_embed_create_media_button() {
 
   // Create a File entity for the icon.
   $path = drupal_get_path('module', 'social_embed');
-  $image_path = $path . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
+  $image_path = $path . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
   $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
@@ -40,4 +42,30 @@ function social_embed_create_media_button() {
   ]);
   $button->save();
 
+}
+
+/**
+ * Save embed content consent settings a user.
+ */
+function _social_embed_form_user_form_submit($form, FormStateInterface $form_state) {
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
+
+  $uid = $form_state->getValue('uid');
+
+  $user_consent_settings = $form_state->getValue([
+    'profile_privacy',
+    'user_embed_consent',
+  ]);
+
+  $user_data->set('social_embed', $uid, 'user_embed_consent', $user_consent_settings);
+
+  if ($user_data->get('social_embed', $uid, 'user_embed_consent') != $user_consent_settings) {
+    // Let's invalidate our custom tags so that render cache of such content
+    // can be rebuilt and the effect of changed settings can take place.
+    // @see: SocialEmbedConvertUrlToEmbedFilter
+    // @see: SocialEmbedUrlEmbedFilter
+    // @see: SocialEmbedHelper::addDependencies()
+    Cache::invalidateTags(["social_embed.filter.$uid"]);
+  }
 }
