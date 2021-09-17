@@ -1449,11 +1449,17 @@ function social_core_update_10300() {
  * Import configurations for the new Verified role.
  */
 function social_core_update_11001() {
-  $configs = [
-    'user.role.verified',
-  ];
+  $config_file = drupal_get_path('module', 'social_core') . '/config/static/user.role.verified_11001.yml';
 
-  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('user.role.verified');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }
 
 /**
