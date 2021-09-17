@@ -155,6 +155,32 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * @Then /^The embedded content in the body description should have the src "([^"]*)"$/
+     */
+    public function embeddedContentInBodyDescriptionShouldHaveTheSrc($src) {
+
+      $cssSelector = 'article .card__body .body-text .social-embed-container iframe';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $iframe_source = $element->getAttribute('src');
+
+      // the sources could contain certain metadata making it hard to test
+      // if it matches the given source. So we don't strict check rather
+      // check if part of the source matches.
+      if (strpos($iframe_source, $src) === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The iframe source does not contain the src: "%s" it is however: "%s"', $src, $iframe_source));
+      }
+    }
+
+    /**
      * @When /^I click on the image icon in the WYSIWYG editor$/
      */
     public function clickImageIconInWysiwygEditor() {
