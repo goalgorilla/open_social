@@ -77,7 +77,6 @@ function social_profile_install() {
   // Add default profile image.
   _social_profile_add_default_profile_image();
 
-  _social_profile_install_visibility_fields();
   _social_profile_populate_nationalities_vocabulary('10.3.0');
 
   // Grant the default permissions for this feature.
@@ -181,52 +180,6 @@ function _social_profile_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
-}
-
-// TODO: Provide a comment and copy into update hook since field_profile_show_email clause is not for new installs.
-function _social_profile_install_visibility_fields() : void {
-  // Create visibility fields for each field on the profile.
-  /** @var int[] $ids */
-  $ids = \Drupal::entityQuery('field_storage_config')
-    ->condition('id', 'profile.', 'STARTS_WITH')
-    ->execute();
-  // Fetch all fields and key them by field name.
-  // TODO: Load FieldConfig's instead and use FieldManager class for if statements.
-  /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storages */
-  $field_storages = FieldStorageConfig::loadMultiple($ids);
-  foreach ($field_storages as $field_storage_config) {
-    // We skip field_profile_show_email because its value will be put into
-    // field_profile_email_visibility instead and the field will then be
-    // removed.
-    if ($field_storage_config->getName() === 'field_profile_show_email') {
-      continue;
-    }
-
-    // If this was a field added by an update hook before this one runs in the
-    // same update cycle then our hook_insert has already created the visibility
-    // field
-    if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') !== NULL) {
-      continue;
-    }
-
-    // Skip fields used for storing visibility settings.
-    if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
-      continue;
-    }
-
-    $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
-
-    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
-    $field_storage_config->save();
-
-    // If there's a configured field on the profile bundle then we also ensure
-    // there's a field config entity.
-    $field_config = FieldConfig::loadByName('profile', 'profile', $field_storage_config->getName());
-    if ($field_config !== NULL) {
-      social_profile_ensure_associated_visibility_field_config($field_config);
-    }
-  }
-
 }
 
 /**
@@ -730,7 +683,48 @@ function social_profile_update_12004() : void {
   // We do this for all currently existing fields regardless of when this update
   // hook runs since we have other methods in place to catch newly created
   // fields and filter out previously updated fields.
-  _social_profile_install_visibility_fields();
+  // Create visibility fields for each field on the profile.
+  /** @var int[] $ids */
+  $ids = \Drupal::entityQuery('field_storage_config')
+    ->condition('id', 'profile.', 'STARTS_WITH')
+    ->execute();
+  // Fetch all fields and key them by field name.
+  // @todo Load FieldConfig's instead and use FieldManager class for if
+  // statements.
+  /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storages */
+  $field_storages = FieldStorageConfig::loadMultiple($ids);
+  foreach ($field_storages as $field_storage_config) {
+    // We skip field_profile_show_email because its value will be put into
+    // field_profile_email_visibility instead and the field will then be
+    // removed.
+    if ($field_storage_config->getName() === 'field_profile_show_email') {
+      continue;
+    }
+
+    // If this was a field added by an update hook before this one runs in the
+    // same update cycle then our hook_insert has already created the visibility
+    // field.
+    if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') !== NULL) {
+      continue;
+    }
+
+    // Skip fields used for storing visibility settings.
+    if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') !== NULL) {
+      continue;
+    }
+
+    $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
+
+    $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
+    $field_storage_config->save();
+
+    // If there's a configured field on the profile bundle then we also ensure
+    // there's a field config entity.
+    $field_config = FieldConfig::loadByName('profile', 'profile', $field_storage_config->getName());
+    if ($field_config !== NULL) {
+      social_profile_ensure_associated_visibility_field_config($field_config);
+    }
+  }
 }
 
 /**
@@ -1566,3 +1560,18 @@ function social_profile_update_12018() : void {
     $field_show_email_storage->delete();
   }
 }
+
+/**
+ * Update field configuration to match removed profile template.
+ */
+function social_profile_update_12019() : string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_12019');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+

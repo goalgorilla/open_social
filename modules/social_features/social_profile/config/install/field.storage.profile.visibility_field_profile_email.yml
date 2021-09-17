@@ -1,0 +1,25 @@
+uuid: fe7210c9-eccc-4bca-bad4-b5bc69f08019
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - profile
+    - social_profile
+third_party_settings:
+  social_profile:
+    visibility_for: field_profile_email
+id: profile.visibility_field_profile_email
+field_name: visibility_field_profile_email
+entity_type: profile
+type: list_string
+settings:
+  allowed_values_function: social_profile_field_visibility_values
+  allowed_values: {  }
+module: options
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

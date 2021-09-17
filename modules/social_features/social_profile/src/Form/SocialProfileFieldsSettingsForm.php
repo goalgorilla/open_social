@@ -15,8 +15,8 @@ use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile_fields\SocialProfileFieldsHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-// TODO Before removal: nickname_unique_validation
-// TODO Before removal: address subfields
+// @todo Before removal: nickname_unique_validation.
+// @todo Before removal: address subfields.
 
 /**
  * Allows configuring what fields are enabled on a platform.
