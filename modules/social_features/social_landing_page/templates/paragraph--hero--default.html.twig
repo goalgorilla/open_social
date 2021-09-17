@@ -52,7 +52,7 @@
   ]
 %}
 
-<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
+<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" data-copyright="{{ data_copyright }}"{% endif %}>
   <div class="hero__bgimage-overlay"></div>
   {% if node_edit_url %}
     <div class="hero-action-button">
