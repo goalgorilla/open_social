@@ -45,8 +45,20 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
    */
   protected function getOptions(FieldableEntityInterface $entity) {
     $options = parent::getOptions($entity);
+    $option = $options['_none'];
 
-    return ['_none' => $options['_none'], '_add' => $this->t('Create new album')] + $options;
+    unset($options['_none']);
+
+    // @todo FIX issues with options, if user selects an option
+    // we need to update the Post visibility accordingly with ajax.
+    // imagine a user on the home stream, selecting an existing album in a
+    // close group, the visibility needs to be updated to Group members, which
+    // it doesn't, so for now we're not rendering any other option.
+    // Return [...] + $options.
+    return [
+      '_none' => $option,
+      '_add' => $this->t('Create new album'),
+    ];
   }
 
   /**
