@@ -40,3 +40,16 @@ views.field.profile_entity_sortable:
     view_mode:
       type: string
       label: 'View mode'
+
+field.storage.*.*.third_party.social_profile:
+  type: mapping
+  label: 'Social Profile field settings'
+  mapping:
+    visibility_stored_by:
+      type: string
+      label: 'Visibility stored by'
+      description: 'The name of the field that contains visibility preferences for this field.'
+    visibility_for:
+      type: string
+      label: 'Visibility for'
+      description: 'The name of the field that this field stores visibility preferences for.'

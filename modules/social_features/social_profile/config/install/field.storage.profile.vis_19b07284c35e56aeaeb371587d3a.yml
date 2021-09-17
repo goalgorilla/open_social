@@ -1,0 +1,25 @@
+uuid: 9c2380bf-0a68-4077-a86b-eadbd7c60f9a
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - profile
+    - social_profile
+third_party_settings:
+  social_profile:
+    visibility_for: field_profile_profile_tag
+id: profile.vis_19b07284c35e56aeaeb371587d3a
+field_name: vis_19b07284c35e56aeaeb371587d3a
+entity_type: profile
+type: list_string
+settings:
+  allowed_values_function: social_profile_field_visibility_values
+  allowed_values: {  }
+module: options
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

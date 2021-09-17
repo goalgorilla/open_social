@@ -3,16 +3,17 @@ status: true
 dependencies:
   module:
     - profile
+    - social_profile
+third_party_settings:
+  social_profile:
+    visibility_stored_by: visibility_field_profile_email
 id: profile.field_profile_email
 field_name: field_profile_email
 entity_type: profile
-type: string
-settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
+type: email
+settings: {  }
 module: social_profile
-locked: false
+locked: true
 cardinality: 1
 translatable: false
 indexes: {  }
