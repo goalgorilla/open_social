@@ -1943,7 +1943,10 @@ function social_event_update_10305() {
 
   if (!empty($events)) {
     foreach ($events as $event) {
-      if (!$event->hasField('field_event_enable_enrollment')) {
+      if (
+        !$event->hasField('field_event_enable_enrollment') ||
+        $event->get('field_event_enable_enrollment')->isEmpty()
+      ) {
         continue;
       }
 
