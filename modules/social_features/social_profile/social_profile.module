@@ -17,6 +17,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
@@ -87,6 +88,24 @@ function social_profile_create_visibility_field_storage_config_for(FieldStorageC
   }
 
   if ($field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by') !== NULL) {
+    // In case we're adding fields during module install we ignore fields that
+    // ship with their storage. This allows visibility field config to be safely
+    // exported and imported.
+    if (\Drupal::isConfigSyncing() || InstallerKernel::installationAttempted()) {
+      $visibility_storage_config = FieldStorageConfig::loadByName(
+        $field_storage_config->getTargetEntityTypeId(),
+        $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by')
+      );
+
+      if ($visibility_storage_config === NULL) {
+        throw new RuntimeException("A field indicated it already had visibility field but the field itself seems to have been deleted.");
+      }
+
+      return $visibility_storage_config;
+    }
+
+    // In other cases we don't expect fields to already have this setting so
+    // this probably indicates a programmer caused error.
     throw new RuntimeException("Tried to create a visibility field storage config for a field that already has a visibility field storage config.");
   }
 
