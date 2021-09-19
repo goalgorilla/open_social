@@ -113,9 +113,9 @@ Feature: Create Closed Group
     When I am on "/notifications"
     Then I should see "Group User One created a post in the Test closed group group"
     And I should have an email with subject "Notification from Open Social" and in the content:
-    | content                                                      |
-    | Hi Group User Two                                            |
-    | Group User One created a post in the Test closed group group |
+    | content                                                        |
+    | Hi Group User Two                                              |
+    | Group User One published a post in the Test closed group group |
 
   # As a non-member of the closed group, when I click on the closed group
   # I should be redirected to /group/x/about. I should not see the stream, events or topics page.
