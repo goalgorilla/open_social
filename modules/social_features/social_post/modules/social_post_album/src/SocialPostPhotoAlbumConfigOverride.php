@@ -19,7 +19,7 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected RouteMatchInterface $routeMatch;
+  protected $routeMatch;
 
   /**
    * Constructs the configuration override.
@@ -42,7 +42,7 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names): array {
+  public function loadOverrides($names) {
     $overrides = [];
 
     foreach (self::TYPES as $config_name => $type) {
@@ -73,14 +73,14 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix(): string {
+  public function getCacheSuffix() {
     return 'SocialPostPhotoAlbumConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name): CacheableMetadata {
+  public function getCacheableMetadata($name) {
     return new CacheableMetadata();
   }
 
