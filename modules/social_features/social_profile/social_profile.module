@@ -982,38 +982,62 @@ function _social_profile_get_contact_url(UserInterface $account) {
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
- *
- * In order to save a new default profile on user creation.
  */
-function social_profile_user_insert(UserInterface $account) {
-  // If the new account has a UID, we can create a default profile.
-  // Default image is added through the field settings.
-  if (!empty($account->id())) {
-    /** @var \Drupal\profile\Entity\ProfileTypeInterface $profile_type */
-    $profile_type = ProfileType::load('profile');
-    // Sometimes profile fields are already requested during registration.
-    // In those cases, the profile will already be created from that.
-    if ($profile_type !== NULL && $profile_type->getRegistration() === FALSE) {
-      $default_values = [
-        'type' => $profile_type->id(),
-        'uid' => $account->id(),
-      ];
+function social_profile_user_insert(UserInterface $user) {
+  social_profile_ensure_default_user_profile($user);
+}
 
-      // Get all field instances for the profile entity and check if the address
-      // field exists.
-      $instances = \Drupal::service('entity_field.manager')
-        ->getFieldDefinitions('profile', $profile_type->id());
-      if (array_key_exists('field_profile_address', $instances)) {
-        // Set the users default country to the site default country.
-        $default_values['field_profile_address'][0]['country_code'] = \Drupal::config('system.date')
-          ->get('country.default');
-      }
+/**
+ * Ensures that a default profile exists for the user.
+ *
+ * Many functions in Open Social expect the user to have a default profile.
+ * Depending on how the user is created the profile module itself may or may not
+ * create a user profile. This function ensures such profile exists.
+ *
+ * @param \Drupal\user\UserInterface $user
+ *   The user to check or create a profile for, must be a user that is persisted
+ *   to the database. The anonymous user is ignored.
+ *
+ * @return \Drupal\profile\Entity\ProfileInterface
+ *   The existing or created user profile. In case the anonymous user was passed
+ *   in an unsaved profile is returned.
+ */
+function social_profile_ensure_default_user_profile(UserInterface $user) : ProfileInterface {
+  // If the user is not saved yet we can't create a profile.
+  if ($user->id() === NULL) {
+    throw new InvalidArgumentException("The user must be saved before a profile can be created.");
+  }
 
-      // Create a profile.
-      $profile = Profile::create($default_values);
+  $profile_type_id = 'profile';
+  /** @var \Drupal\profile\Entity\ProfileTypeInterface|NULL $profile_type */
+  $profile_type = ProfileType::load($profile_type_id);
+  if ($profile_type === NULL) {
+    throw new RuntimeException("The 'profile' profile type is required for Open Social to function.");
+  }
+
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  $profile = $profile_storage->loadByUser($user, $profile_type_id);
+
+  // Only create the profile if the user does not already have one.
+  if ($profile === NULL) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $profile_storage->create([
+      'type' => $profile_type_id,
+      'uid' => $user->id(),
+    ]);
+
+    // We don't store the profile for the anonymous user since by default in
+    // Open Social we don't want that user to have a profile. However, we still
+    // return the unsaved profile to make the type-checking easier for calling
+    // code.
+    if (!$user->isAnonymous()) {
       $profile->save();
     }
   }
+
+  return $profile;
 }
 
 /**
