@@ -71,13 +71,13 @@ class ProfileFieldsPermissionProvider {
 
     foreach ($profile_types as $id => $profile_type) {
       // Create the permissions for all fields in a bundle.
-      $permissions["view any ${$id} profile fields"] = [
+      $permissions["view any ${id} profile fields"] = [
         'title' => $this->t("View any %profile profile fields", ['%profile' => $profile_type->label()]),
         'description' => $this->t("Allows a user to view all fields on a profile regardless of visibility settings for the %bundle profile type. Prefer using a field specific permission instead as only those are reflected in the settings form.", ['%bundle' => $id]),
         'restrict access' => TRUE,
       ];
 
-      $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${$id} profile fields"] = [
+      $permissions["view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${id} profile fields"] = [
         'title' => $this->t("View community %profile profile fields", ['%profile' => $profile_type->label()]),
       ];
 
