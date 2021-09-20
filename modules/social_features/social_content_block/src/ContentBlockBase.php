@@ -20,7 +20,7 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
   public function supportedSortOptions() : array {
     return [
       'created' => [
-        'label' => 'Last created',
+        'label' => 'Most recent',
         'limit' => FALSE,
       ],
       'changed' => [
@@ -30,10 +30,10 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
       'most_commented' => 'Most commented',
       'most_liked' => 'Most liked',
       'last_interacted' => [
-        'label' => 'Last interacted',
+        'label' => 'Trending',
         'limit' => FALSE,
       ],
-      'trending' => 'Most comments and likes',
+      'trending' => 'Most popular',
     ];
   }
 
