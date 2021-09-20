@@ -31,6 +31,7 @@ interface ContentBlockPluginInterface {
    *   An array with sorting option's system name as key and a human-readable
    *   label as value or value is an associative array with the following keys:
    *   - label: The human-readable label.
+   *   - description: (optional) The human-readable description.
    *   - limit: (optional) Whether the limitation by creation date is required.
    *     Defaults to TRUE.
    */
