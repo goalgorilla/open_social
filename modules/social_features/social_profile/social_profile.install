@@ -1071,10 +1071,10 @@ function social_profile_update_12010() : void {
       ->save();
 
     if ($is_visibility_editable) {
-      $authenticated_role->grantPermission("edit own ${$visibility_field_name} profile profile field");
+      $authenticated_role->grantPermission("edit own ${visibility_field_name} profile profile field");
     }
     else {
-      $authenticated_role->revokePermission("edit own ${$visibility_field_name} profile profile field");
+      $authenticated_role->revokePermission("edit own ${visibility_field_name} profile profile field");
     }
   }
 
