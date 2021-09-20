@@ -6,14 +6,14 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
-use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Url;
+use Drupal\social_landing_page\Plugin\Validation\Constraint\SocialAnLinkAccess;
 
 /**
  * Implements hook_form_alter().
@@ -175,7 +175,9 @@ function social_landing_page_preprocess_page(&$variables) {
     $variables['node'] instanceof NodeInterface &&
     $variables['node']->bundle() === 'landing_page'
   ) {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.node.edit_form') {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+
+    if ($route_name === 'entity.node.edit_form' || $route_name === 'entity.node.content_translation_add') {
       $variables['attributes'] = new Attribute();
       $variables['attributes']->addClass('container');
     }
@@ -271,7 +273,7 @@ function social_landing_page_preprocess_field(&$variables) {
 /**
  * Fetches the first available hero section image from a landing page.
  *
- * @param \Drupal\node\Entity\Node $node
+ * @param \Drupal\node\NodeInterface $node
  *   The landing page.
  *
  * @return array
@@ -279,26 +281,30 @@ function social_landing_page_preprocess_field(&$variables) {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(Node $node) {
+function _social_landing_page_get_hero_image(NodeInterface $node) {
   // Must be a valid node.
-  if (!$node instanceof Node || $node->getType() !== 'landing_page') {
+  if (
+    $node->getType() !== 'landing_page' ||
+    $node->get('field_landing_page_section')->isEmpty()
+  ) {
     return [];
   }
 
   // Loop over the landing page sections of the landing page.
-  foreach ($node->get('field_landing_page_section') as $section) {
-    // Get the referenced paragraph.
-    $referenced = $section->getValue();
-    $paragraph_id = $referenced['target_id'];
-    // First paragraph is always of type section.
-    $paragraph_section = Paragraph::load($paragraph_id);
+  /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $landing_page_section_field */
+  $landing_page_section_field = $node->get('field_landing_page_section');
 
+  /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_section */
+  foreach ($landing_page_section_field->referencedEntities() as $paragraph_section) {
     // Get the related paragraph (the one with the actual content)
     $section_id = $paragraph_section->get('field_section_paragraph')->target_id;
     $paragraph_content = Paragraph::load($section_id);
 
     // Must be of type hero.
     if ($paragraph_content && $paragraph_content->getType() === 'hero') {
+      if ($paragraph_content->get('field_hero_image')->isEmpty()) {
+        return [];
+      }
       $fid = $paragraph_content->get('field_hero_image')->target_id;
       $file = File::load($fid);
       // Check if it's an existing file.
@@ -315,9 +321,9 @@ function _social_landing_page_get_hero_image(Node $node) {
           '#type' => 'link',
           '#url' => $node->toUrl('canonical'),
         ];
+        // We immediately return the 1st found hero.
+        return render($build);
       }
-      // We immediately return the 1st found hero.
-      return render($build);
     }
   }
 
@@ -365,4 +371,14 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
 function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
   $compatible_content_type_forms[] = 'node_landing_page_form';
   $compatible_content_type_forms[] = 'node_landing_page_edit_form';
+}
+
+/**
+ * Implements hook_validation_constraint_alter().
+ */
+function social_landing_page_validation_constraint_alter(array &$definitions): void {
+  // Alter linkaccess check.
+  if (isset($definitions['LinkAccess'])) {
+    $definitions['LinkAccess']['class'] = SocialAnLinkAccess::class;
+  }
 }
