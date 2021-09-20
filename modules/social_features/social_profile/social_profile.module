@@ -1011,17 +1011,8 @@ function social_profile_user_insert(UserInterface $account) {
 
       // Create a profile.
       $profile = Profile::create($default_values);
+      $profile->save();
     }
-    // Trigger a save of the profile since a new user was just created, this is
-    // needed to copy the new profile data.
-    else {
-      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-      $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-      $profile = $profile_storage->loadByUser($account, 'profile');
-      assert($profile !== NULL, "Profile type 'profile' was configured to be created during registration but no profile existed for the user ({$account->id()}).");
-    }
-
-    $profile->save();
   }
 }
 
@@ -1032,13 +1023,16 @@ function social_profile_user_update(UserInterface $user) : void {
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
   $profile = $profile_storage->loadByUser($user, 'profile');
-  assert($profile !== NULL, "User updated without a profile, this means the user insert logic that should automatically create a profile is broken.");
-  $has_changed = social_profile_copy_shared_user_data_to_profile($user, $profile);
-  // Skip saving the profile if nothing actually changed. This prevents
-  // unnecessary noise for other modules who may be listening to profile
-  // updates.
-  if ($has_changed) {
-    $profile->save();
+
+  // Only update the profile if the user has a profile.
+  if ($profile !== NULL) {
+    $has_changed = social_profile_copy_shared_user_data_to_profile($user, $profile);
+    // Skip saving the profile if nothing actually changed. This prevents
+    // unnecessary noise for other modules who may be listening to profile
+    // updates.
+    if ($has_changed) {
+      $profile->save();
+    }
   }
 }
 
