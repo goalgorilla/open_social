@@ -21,7 +21,6 @@ use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
@@ -807,38 +806,7 @@ function social_profile_preprocess_profile(array &$variables) {
 }
 
 /**
- * Helps determine if current user has access to view the property of user.
- *
- * @param \Drupal\profile\Entity\Profile $profile
- *   The profile the current user is viewing.
- * @param \Drupal\Core\Session\AccountProxyInterface $current_user
- *   The current user.
- * @param string $property
- *   The property against we need to check the access.
- *
- * @return bool
- *   Return TRUE if current user is allowed to see the property else FALSE.
- */
-function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property) {
-  // phpcs:ignore
-  @trigger_error("_social_profile_check_property_access is deprecated and will be removed in 11.0.0. Use a field access check for the `view` operation instead.", E_USER_DEPRECATED);
-
-  switch ($property) {
-    case 'email':
-      return $profile->get('field_profile_email')->access('view', $current_user);
-
-    case 'language':
-      return $profile->get('field_profile_preferred_language')->access('view', $current_user);
-  }
-
-  return FALSE;
-}
-
-/**
  * Implements hook_entity_field_access().
- *
- * @todo Remove user access checks and move to field_profile duplicates.
- * @todo Take visibility_ field into account.
  */
 function social_profile_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) : AccessResultInterface {
   $entity_type = $field_definition->getTargetEntityTypeId();
