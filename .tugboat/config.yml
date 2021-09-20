@@ -62,6 +62,11 @@ services:
         # Allow site managers to enable modules so developers can change the
         # set-up during testing.
         ../vendor/bin/drush role:add:perm --yes 'sitemanager' 'administer modules'
+        # Uninstall the social_demo module since demo content has been 
+        # installed and the module silences useful status messages.
+        ../vendor/bin/drush \
+          --yes \
+          pmu social_demo
         # Change file owner again because of the way demo content is copied.
         chown -R www-data:www-data $DOCROOT
       build: |
