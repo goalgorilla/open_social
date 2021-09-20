@@ -11,9 +11,9 @@
 function social_event_enrolments_export_update_dependencies() {
   // New config changes should run after the VBO module changes
   // the structure of views.
-  $dependencies['social_event_enrolments_export'][10201] = [
+  $dependencies['social_event_enrolments_export'][11001] = [
     'views_bulk_operations' => 8034,
-    'social_event_managers' => 10201,
+    'social_event_managers' => 11001,
   ];
 
   return $dependencies;
@@ -53,6 +53,6 @@ function _social_event_enrolments_export_alter_event_manage_enrollments_view() {
  *
  * Action ID:  'social_event_enrolments_export_enrollments_action'.
  */
-function social_event_enrolments_export_update_10201(&$sandbox) {
+function social_event_enrolments_export_update_11001(&$sandbox) {
   _social_event_enrolments_export_alter_event_manage_enrollments_view();
 }

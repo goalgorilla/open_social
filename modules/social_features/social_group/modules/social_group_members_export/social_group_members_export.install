@@ -11,9 +11,9 @@
 function social_group_members_export_update_dependencies() {
   // New config changes should run after the VBO module changes
   // the structure of views.
-  $dependencies['social_group_members_export'][10201] = [
+  $dependencies['social_group_members_export'][11001] = [
     'views_bulk_operations' => 8034,
-    'social_group' => 10201,
+    'social_group' => 11001,
   ];
 
   return $dependencies;
@@ -52,6 +52,6 @@ function _social_group_members_export_alter_group_manage_members_view() {
  *
  * Action ID: 'social_group_members_export_member_action'.
  */
-function social_group_members_export_update_10201(&$sandbox) {
+function social_group_members_export_update_11001(&$sandbox) {
   _social_group_members_export_alter_group_manage_members_view();
 }

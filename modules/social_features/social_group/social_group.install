@@ -41,13 +41,13 @@ function social_group_update_dependencies() {
 
   // New config changes should run after the VBO module changes
   // the structure of views.
-  $dependencies['social_group'][10201] = [
+  $dependencies['social_group'][11001] = [
     'views_bulk_operations' => 8034,
   ];
 
   // New config changes should run after the VBO module changes
   // the structure of views.
-  $dependencies['social_group'][10202] = [
+  $dependencies['social_group'][11002] = [
     'views_bulk_operations' => 8034,
   ];
 
@@ -929,8 +929,8 @@ function social_group_update_11001(): string {
 /**
  * Update 'views.view.group_manage_members' after VBO module updates.
  */
-function social_group_update_10201(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_10201.yml';
+function social_group_update_11001(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_11001.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
