@@ -251,14 +251,4 @@ class SocialGroupController extends ControllerBase {
     return $this->t('Create a @name', ['@name' => $group_content_type->label()]);
   }
 
-  /**
-   * Checks if the user has access to the group nodes page.
-   *
-   * @return \Drupal\Core\Access\AccessResult
-   *   The result of the access check.
-   */
-  public function myGroupNodesAccess(): AccessResult {
-    return AccessResult::forbidden();
-  }
-
 }
