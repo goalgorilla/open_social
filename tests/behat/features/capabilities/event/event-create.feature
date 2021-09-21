@@ -69,3 +69,4 @@ Feature: Create Event
     And I press "Create event"
     Then I should see the link "Online Event" in the "Hero block" region
     Then I set the configuration item "socialblue.settings" with key "style" to "default"
+    And the cache has been cleared
