@@ -1931,9 +1931,23 @@ function social_event_update_10304() {
 }
 
 /**
- * Update event values.
+ * Remove translation filter for the Event Enrollments view.
  */
 function social_event_update_10305() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10305');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update event values.
+ */
+function social_event_update_10306() {
   /** @var \Drupal\node\NodeInterface[] $events */
   $events = \Drupal::entityTypeManager()
     ->getStorage('node')
@@ -1961,7 +1975,7 @@ function social_event_update_10305() {
 /**
  * Delete not needed field "field_event_enable_enrollment".
  */
-function social_event_update_10306() {
+function social_event_update_10307() {
   $entity_type_manager = \Drupal::entityTypeManager();
   $entity_type = 'node';
   $bundle = 'event';
@@ -1991,12 +2005,12 @@ function social_event_update_10306() {
 /**
  * Update event display.
  */
-function social_event_update_10307() {
+function social_event_update_10308() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_10307');
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10308');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
