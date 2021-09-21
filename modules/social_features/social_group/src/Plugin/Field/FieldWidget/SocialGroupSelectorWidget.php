@@ -73,11 +73,6 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   protected GroupContentEnablerManager $pluginManager;
 
   /**
-   * The entity type manager.
-   */
-  protected EntityTypeManagerInterface $entityTypeManager;
-
-  /**
    * The user entity storage..
    */
   protected UserStorageInterface $userManager;
