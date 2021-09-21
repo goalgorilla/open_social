@@ -3,16 +3,10 @@
 namespace Drupal\social_event\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
-use Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer;
-use Drupal\graphql\GraphQL\Buffers\EntityUuidBuffer;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Plugin\GraphQL\QueryHelper\EventManagersQueryHelper;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Queries the managers of the event on the platform.

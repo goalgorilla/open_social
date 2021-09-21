@@ -46,9 +46,8 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * @var array
    *
-   * @todo
-   *   Should be removed after merging patch in the core:
-   *   https://www.drupal.org/files/issues/2923353-5.patch
+   * @todo Should be removed after merging patch in the core:
+   * https://www.drupal.org/files/issues/2923353-5.patch
    */
   protected $options;
 
@@ -170,7 +169,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
     // Set required property for the current object.
-    // todo@: Should be removed after https://www.drupal.org/files/issues/2923353-5.patch will be merged in the core.
+    // @todo @: Should be removed after https://www.drupal.org/files/issues/2923353-5.patch will be merged in the core.
     /* @see \Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsWidgetBase::getOptions() */
     if (!isset($this->options)) {
       $this->options = $options ?? parent::getOptions($entity);
@@ -326,7 +325,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       ->loadMultiple($gids);
 
     foreach ($groups as $group) {
-      /* @var \Drupal\group\Entity\GroupInterface $group */
+      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group_type_id = $group->getGroupType()->id();
       $options[] = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $group);
     }
