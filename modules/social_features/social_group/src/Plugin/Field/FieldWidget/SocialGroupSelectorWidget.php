@@ -19,6 +19,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Plugin\GroupContentEnablerManager;
 use Drupal\user\Entity\User;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -51,12 +52,35 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    */
   protected $options;
 
-  protected $configFactory;
-  protected $moduleHander;
-  protected $currentUser;
-  protected $pluginManager;
-  protected $entityTypeManager;
-  protected $userManager;
+  /**
+   * The config factory.
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The module handler.
+   */
+  protected ModuleHandler $moduleHander;
+
+  /**
+   * The current user.
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
+   * The plugin manager.
+   */
+  protected GroupContentEnablerManager $pluginManager;
+
+  /**
+   * The entity type manager.
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The user entity storage..
+   */
+  protected UserStorageInterface $userManager;
 
   /**
    * Creates a SocialGroupSelectorWidget instance.
