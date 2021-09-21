@@ -1389,6 +1389,14 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
       }
     }
   }
+  // We don't want to display the "Nodes" tab on groups anymore. Before, we
+  // just disabled the view on hook update, but sometimes it is back to us,
+  // this is the reason why we want to hide the tab. Also, we don't want to
+  // add custom access to that route since some other developers of Open Social
+  // might use it.
+  if (isset($data['tabs'][0]['views_view:view.group_nodes.page_1'])) {
+    unset($data['tabs'][0]['views_view:view.group_nodes.page_1']);
+  }
 }
 
 /**
