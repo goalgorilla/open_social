@@ -1929,17 +1929,3 @@ function social_event_update_10304() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
-
-/**
- * Remove translation filter for the Event Enrollments view.
- */
-function social_event_update_10305() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_10305');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
