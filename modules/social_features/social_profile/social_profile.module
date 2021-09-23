@@ -221,7 +221,7 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   }
 
   FieldConfig::create([
-    'label' => new TranslatableMarkup("%field_name Visibility", ['%field_name' => $field_config->label()]),
+    'label' => new TranslatableMarkup("@field_name Visibility", ['@field_name' => $field_config->label()]),
     'field_name' => $visibility_field_name,
     'entity_type' => $field_config->getTargetEntityTypeId(),
     'bundle' => $bundle,
