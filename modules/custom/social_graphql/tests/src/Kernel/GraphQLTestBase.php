@@ -48,10 +48,10 @@ abstract class GraphQLTestBase extends KernelTestBase {
    * it extends, and so on up the class hierarchy. It is not necessary to
    * include modules in your list that a parent class has already declared.
    *
+   * @var string[]
+   *
    * @see \Drupal\Tests\KernelTestBase::enableModules()
    * @see \Drupal\Tests\KernelTestBase::bootKernel()
-   *
-   * @var string[]
    */
   protected static $modules = [
     'system',
