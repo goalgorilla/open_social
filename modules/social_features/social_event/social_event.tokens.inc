@@ -200,7 +200,7 @@ function _social_event_get_name_from_enrollment($id) {
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
   if ($enrollment instanceof EventEnrollmentInterface) {
-    // If there is a Uid. Lets load the user and return it's display name.
+    // If there is a Uid. Lets load the user and return their display name.
     if ($enrollment !== NULL &&
       $enrollment->hasField('field_account') &&
       $enrollment->getFieldValue('field_account', 'target_id') > 0) {

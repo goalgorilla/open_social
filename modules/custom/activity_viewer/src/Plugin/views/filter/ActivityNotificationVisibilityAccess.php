@@ -44,7 +44,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $open_groups = [];
     $group_memberships = [];
     if (\Drupal::moduleHandler()->moduleExists('social_group')) {
-      // TODO: This creates a dependency on Social Group which shouldn't exist,
+      // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
       $open_groups = social_group_get_all_open_groups();
       $group_memberships = \Drupal::service('social_group.helper_service')
