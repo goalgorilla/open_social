@@ -99,7 +99,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   public function testUserProfileFieldsPresence() : void {
     // Test as the admin users, this allows us to test all the fields that are
     // available in an all-access scenario.
-    $this->setCurrentUser(User::load(1));
+    $this->setUpCurrentUser([], [], TRUE);
     $test_user = $this->createUser();
     $profile = $this->ensureTestProfile($test_user, 'profile');
     $query = "
