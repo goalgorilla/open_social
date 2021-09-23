@@ -211,7 +211,7 @@ function hook_social_user_name_display_suggestions(AccountInterface $account) : 
 
   switch ($account->id()) {
     case 1:
-      // Show our admin user the respect she deserves.
+      // Show our admin user the respect they deserve.
       $suggestions['respect_admin'] = [
         'weight' => -1000,
         'name' => 'Jane Almighty',
