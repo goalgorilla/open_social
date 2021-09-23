@@ -4,11 +4,10 @@ namespace Drupal\Tests\social_graphql\Kernel;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\graphql\Entity\Server;
-use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
 use GraphQL\Server\OperationParams;
 
 /**
- * Bass class for Open Social GraphQL tests.
+ * Base class for Open Social GraphQL tests.
  *
  * Provides utility methods for testing Open Social GraphQL endpoints. Ensures
  * the Open Social GraphQL server is loaded and configured.
