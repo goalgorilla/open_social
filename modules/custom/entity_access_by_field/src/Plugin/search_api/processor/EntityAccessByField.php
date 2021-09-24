@@ -80,7 +80,7 @@ class EntityAccessByField extends ContentAccess {
 
     // Get the field definitions of the node.
     $field_definitions = $node->getFieldDefinitions();
-    /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
     foreach ($field_definitions as $field_name => $field_definition) {
       // Lets get a node access realm if the field is implemented.
       if ($field_definition->getType() === 'entity_access_field') {

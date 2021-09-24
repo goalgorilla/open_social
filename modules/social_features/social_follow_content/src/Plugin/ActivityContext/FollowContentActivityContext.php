@@ -137,7 +137,7 @@ class FollowContentActivityContext extends ActivityContextBase {
         continue;
       }
 
-      // The owner of a node automatically follows his / her own content.
+      // The owner of a node automatically follows their own content.
       // Because of this, we do not want to send a follow notification.
       if ($original_related_entity instanceof Comment) {
         // We need to compare the owner ID of the original node to the one
