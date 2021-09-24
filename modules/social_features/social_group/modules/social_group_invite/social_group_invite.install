@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\group\Entity\GroupType;
 
 /**
@@ -112,4 +113,24 @@ function social_group_invite_update_8007() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add new field to the groups.
+ */
+function social_group_invite_update_10301() {
+  $field_storage_definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Allow members to share the group with others'))
+    ->setDefaultValue(FALSE)
+    ->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+      'weight' => 99,
+    ])
+    ->setDisplayConfigurable('form', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('send_invites_by_member', 'group', 'group', $field_storage_definition);
 }
