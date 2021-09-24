@@ -13,6 +13,7 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Link;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Session\AccountInterface;
@@ -40,11 +41,13 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
   }
 }
 
-
 /**
  * Implements hook_theme().
+ *
+ * @return mixed[]
+ *   List of themes.
  */
-function social_group_invite_theme() {
+function social_group_invite_theme(): array {
   return [
     'invite_to_group_by_member' => [
       'variables' => [
@@ -368,8 +371,13 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * @param mixed[] $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
  */
-function social_group_invite_form_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_invite_form_group_form_alter(array &$form, FormStateInterface $form_state): void {
   $group_settings = \Drupal::config('social_group.settings');
 
   // The Group manager is able to allow members to share group or invite to it
@@ -551,7 +559,7 @@ function social_group_invite_preprocess_group(&$variables) {
     if (
       ($group->hasField('field_flexible_group_visibility') &&
         !$group->get('field_flexible_group_visibility')->isEmpty() &&
-        $group->get('field_flexible_group_visibility')->value === 'members') ||
+        $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
       in_array($group->bundle(), ['closed_group', 'secret_group'])
     ) {
       $group_url = NULL;
@@ -711,7 +719,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     isset($context["data"]["group"]) &&
     $context["type"] === 'group_content'
   ) {
-    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+    /** @var \Drupal\group\Entity\GroupContentInterface|mixed[] $group_content */
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
     $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
@@ -722,10 +730,13 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     if (
       ($group->hasField('field_flexible_group_visibility') &&
       !$group->get('field_flexible_group_visibility')->isEmpty() &&
-      $group->get('field_flexible_group_visibility')->value === 'members') ||
+      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
       in_array($group->bundle(), ['closed_group', 'secret_group'])
     ) {
       $url = Url::fromRoute('social_core.my_invites')->toString();
+      if ($url instanceof GeneratedUrl) {
+        $url = $url->getGeneratedUrl();
+      }
       $destination = 'destination=' . $url;
     }
     // Attach destination to accept invite. So, after sign up/sign step the
@@ -744,6 +755,9 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     ) {
       // For existing users for my_invitations_link token.
       $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
+      if ($group_invitations_link instanceof GeneratedUrl) {
+        $group_invitations_link = $group_invitations_link->getGeneratedUrl();
+      }
       $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
     }
   }
@@ -751,8 +765,11 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
 
 /**
  * Implements hook_entity_base_field_info().
+ *
+ * @return mixed[]
+ *   The list of fields.
  */
-function social_group_invite_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_group_invite_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
 
   if ($entity_type->id() === 'group') {

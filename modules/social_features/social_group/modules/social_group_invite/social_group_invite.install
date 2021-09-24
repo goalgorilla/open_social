@@ -118,7 +118,7 @@ function social_group_invite_update_8007() {
 /**
  * Add new field to the groups.
  */
-function social_group_invite_update_10301() {
+function social_group_invite_update_10301(): void {
   $field_storage_definition = BaseFieldDefinition::create('boolean')
     ->setLabel(t('Allow members to share the group with others'))
     ->setDefaultValue(FALSE)

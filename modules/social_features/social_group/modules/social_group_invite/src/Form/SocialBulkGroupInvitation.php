@@ -466,7 +466,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * Returns access to the invite page.
    *
-   * @param \Drupal\group\Entity\GroupInterface $group
+   * @param \Drupal\group\Entity\GroupInterface|mixed[] $group
    *   The group entity.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
@@ -488,11 +488,11 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       return AccessResult::forbidden();
     }
 
-    // Allow sharing/invitates for members only if allowed by the group manager.
+    // Allow sharing/invites for members only if allowed by the group manager.
     if (
       $group->hasField('send_invites_by_member') &&
       !$group->get('send_invites_by_member')->isEmpty() &&
-      $group->get('send_invites_by_member')->value === '1'
+      $group->get('send_invites_by_member')->getValue()[0]['value'] === '1'
     ) {
       return AccessResult::allowed();
     }
