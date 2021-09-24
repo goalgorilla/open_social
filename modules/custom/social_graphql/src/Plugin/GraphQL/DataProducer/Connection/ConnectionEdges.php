@@ -5,7 +5,6 @@ namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Connection;
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\GraphQL\ConnectionInterface;
-use Drupal\social_graphql\GraphQL\EntityConnection;
 
 /**
  * Produces the edges from a connection object.
