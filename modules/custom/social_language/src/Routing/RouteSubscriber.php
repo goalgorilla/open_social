@@ -54,7 +54,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     }
 
     // Restrict access to translations if user can't edit the original content.
-    // @todo: make there restrictions more general (for custom entities, blocks, etc)
+    // @todo make there restrictions more general (for custom entities, blocks, etc)
     $entity_types = ['node', 'group'];
     foreach ($entity_types as $entity_type_id) {
       $routes = [
