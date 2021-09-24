@@ -3,6 +3,7 @@
 namespace Drupal\social_scroll;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class SocialScrollManager.
@@ -17,13 +18,23 @@ class SocialScrollManager implements SocialScrollManagerInterface {
   protected $configFactory;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a new SocialScrollManager object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory interface.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler) {
     $this->configFactory = $config_factory;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -43,39 +54,26 @@ class SocialScrollManager implements SocialScrollManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockedViewIds(): array {
-    return [
-      // Some system or distro views.
-      'who_voted_this_entity',
-      'who_liked_this_entity',
-      'watchdog',
-      'user_admin_people',
-      'report_overview',
-      'redirect',
-      'recipient_group_reference',
-      'inbox',
-      'featured_profile_reference',
-      'featured_group_reference',
-      'featured_content_reference',
-      'event_manage_enrollments',
-      'event_enrollments',
-      'content',
-      'community_activities',
-      'comment',
-      'activity_stream_profile',
-      'activity_stream_notifications',
-      'activity_stream_group',
-      'activity_stream',
-      // Temporarily here because ajax does not work correctly with these views,
-      // probably because of we have a lot config overrides for these views.
-      'search_all',
-      'search_all_autocomplete',
-      'search_content',
-      'search_groups',
-      'search_users',
-      // Replace the results to no result.
+  public function getAllowedViewIds(): array {
+    $allowed_ids = [
+      // Overview pages.
+      'newest_groups',
+      'latest_topics',
+      'upcoming_events',
+      'newest_users',
+      // User overview pages.
+      'groups',
+      'topics',
       'events',
+      // Group overview pages.
+      'group_topics',
+      'group_events',
+      'group_members',
     ];
+
+    $this->moduleHandler->alter('social_scroll_allowed_views', $allowed_ids);
+
+    return $allowed_ids;
   }
 
   /**

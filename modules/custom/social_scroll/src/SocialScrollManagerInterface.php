@@ -29,12 +29,12 @@ interface SocialScrollManagerInterface {
   public function getEnabledViewIds(): array;
 
   /**
-   * Get blocked views.
+   * Get allowed views.
    *
    * @return string[]
-   *   Some system and distro views.
+   *   Array of allowed view ids.
    */
-  public function getBlockedViewIds(): array;
+  public function getAllowedViewIds(): array;
 
   /**
    * Get view config name by view ID.

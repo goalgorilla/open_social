@@ -42,12 +42,12 @@ function social_scroll_form_view_edit_form_alter(array &$form, FormStateInterfac
       $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
       /** @var \Drupal\views_ui\ViewEditForm $form_object */
       $form_object = $form_state->getFormObject();
-      $module_name = \Drupal::moduleHandler()
-        ->getName(SocialScrollManagerInterface::MODULE_NAME);
+      $module_name = \Drupal::moduleHandler()->getName(SocialScrollManagerInterface::MODULE_NAME);
+
       $form_object->messenger()
-        ->addWarning(t('You cannot change the pager settings because it is overridden by the "@module_name" module. You can change the settings @here', [
+        ->addWarning(t('Pager options are overridden by the "@module_name" module, so pager settings configured in this view will not work while that view is selected in @these options.', [
           '@module_name' => $module_name,
-          '@here' => Link::createFromRoute(t('here'), 'social_scroll.settings')
+          '@these' => Link::createFromRoute(t('these'), 'social_scroll.settings')
             ->toString(),
         ]));
     }

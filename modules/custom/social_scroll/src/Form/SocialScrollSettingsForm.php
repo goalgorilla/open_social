@@ -90,12 +90,7 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
    *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $all_views = array_map(function ($view_id) {
-      return str_replace('views.view.', '', $view_id);
-    }, $this->configFactory->listAll('views'));
-
-    $blocked_views = $this->socialScrollManager->getBlockedViewIds();
-    $views = array_diff($all_views, $blocked_views);
+    $views = $this->socialScrollManager->getAllowedViewIds();
     $config = $this->config(self::CONFIG_NAME);
 
     $form['page_display'] = [
