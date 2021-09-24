@@ -29,23 +29,21 @@ class SocialScrollManager implements SocialScrollManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllAvailableViewIds() {
-    return $this->configFactory->getEditable('social_scroll.settings')->getOriginal('views_list');
+  public function getAllAvailableViewIds(): array {
+    return $this->configFactory->getEditable('social_scroll.settings')->getOriginal('views_list') ?? [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEnabledViewIds() {
-    $all_views = $this->getAllAvailableViewIds();
-
-    return is_array($all_views) ? array_filter($all_views) : [];
+  public function getEnabledViewIds(): array {
+    return array_filter($this->getAllAvailableViewIds());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getBlockedViewIds() {
+  public function getBlockedViewIds(): array {
     return [
       // Some system or distro views.
       'who_voted_this_entity',
@@ -83,7 +81,7 @@ class SocialScrollManager implements SocialScrollManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getConfigName($view_id) {
+  public function getConfigName(string $view_id): string {
     return 'views.view.' . $view_id;
   }
 

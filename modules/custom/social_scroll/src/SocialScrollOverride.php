@@ -54,8 +54,18 @@ class SocialScrollOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param string[] $names
+   *   A list of configuration names that are being loaded.
+   *
+   * @return mixed[]
+   *   An array keyed by configuration name of override data. Override data
+   *   contains a nested array structure of overrides.
+   *
+   * @codingStandardsIgnoreStart
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
+    // @codingStandardsIgnoreEnd
     $overrides = [];
     $enabled_views = array_keys($this->socialScrollManager->getEnabledViewIds());
 
@@ -105,7 +115,7 @@ class SocialScrollOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialScrollOverride';
   }
 

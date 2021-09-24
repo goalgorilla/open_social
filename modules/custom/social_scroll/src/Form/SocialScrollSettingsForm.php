@@ -11,7 +11,7 @@ use Drupal\social_scroll\SocialScrollManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialScrollSettingsForm.
+ * Class for providing a configuration form.
  *
  * @package Drupal\social_scroll\Form
  */
@@ -52,7 +52,7 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('module_handler'),
@@ -63,21 +63,33 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_scroll_settings';
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return string[]
+   *   An array of configuration object names that are editable if called in
+   *   conjunction with the trait's config() method.
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [self::CONFIG_NAME];
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param mixed[] $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return mixed[]
+   *   The form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $all_views = array_map(function ($view_id) {
       return str_replace('views.view.', '', $view_id);
     }, $this->configFactory->listAll('views'));
@@ -127,7 +139,7 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
         }
 
         if (!empty($pages)) {
-          $options[$view] = $label;
+          $options[(string) $view] = $label;
         }
       }
     }
@@ -142,9 +154,14 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
   }
 
   /**
-   * {@inheritdoc}
+   * Form submission handler.
+   *
+   * @param mixed[] $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::CONFIG_NAME)
       ->set('views_list', $form_state->getValue('list'))
       ->set('button_text', $form_state->getValue('button_text'))

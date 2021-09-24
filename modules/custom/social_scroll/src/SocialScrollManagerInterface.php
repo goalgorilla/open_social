@@ -15,26 +15,26 @@ interface SocialScrollManagerInterface {
   /**
    * Get all available views from social infinite scroll settings.
    *
-   * @return array
+   * @return string[]
    *   All available view ids from social infinite scroll settings.
    */
-  public function getAllAvailableViewIds();
+  public function getAllAvailableViewIds(): array;
 
   /**
    * Get only enabled views from social infinite scroll settings.
    *
-   * @return array
+   * @return string[]
    *   Enabled view ids from social infinite scroll settings.
    */
-  public function getEnabledViewIds();
+  public function getEnabledViewIds(): array;
 
   /**
    * Get blocked views.
    *
-   * @return array
+   * @return string[]
    *   Some system and distro views.
    */
-  public function getBlockedViewIds();
+  public function getBlockedViewIds(): array;
 
   /**
    * Get view config name by view ID.
@@ -45,6 +45,6 @@ interface SocialScrollManagerInterface {
    * @return string
    *   The view config name.
    */
-  public function getConfigName($view_id);
+  public function getConfigName(string $view_id): string;
 
 }

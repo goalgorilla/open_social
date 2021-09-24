@@ -173,9 +173,10 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   // You can't place content in a group you are not a member of anyway.
   if ($view->id() == 'group_topics' && $view->getDisplay()->display['id'] == 'page_group_topics') {
     $group_from_route = _social_group_get_current_group();
+    $membership = FALSE;
+
     if ($group_from_route instanceof GroupInterface) {
       $current_user = \Drupal::currentUser();
-      $membership = FALSE;
       $group_membership = $group_from_route->getMember($current_user);
       if ($group_membership) {
         $membership = TRUE;
