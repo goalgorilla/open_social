@@ -173,8 +173,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             else {
               $this->prepareBatch($data, $recipients);
             }
-            // We split up in batches. We can stop processing this specific queue
-            // item.
+            // We split up in batches. We can stop processing this specific
+            // queue item.
             $this->getLogger('activity_send_email_worker')->notice('The Job was not finished correctly, no error thrown.');
             return JobResult::success('The Job was has been split up in batches.');
           }

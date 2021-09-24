@@ -17,7 +17,10 @@ class SocialGroupHero {
    */
   protected $configFactory;
 
-  protected $isSmall = FALSE;
+  /**
+   * Whether the hero is shown in the small view mode.
+   */
+  protected bool $isSmall = FALSE;
 
   /**
    * Constructor.
