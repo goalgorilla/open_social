@@ -112,8 +112,8 @@ function social_language_modules_installed($modules) {
   // these fields definitions to be updated. Technically this is proceeded
   // after submit this form "/admin/config/regional/content-language".
   // But in OS this approach doesn't work as SM doesn't have access to the page.
-  // So, here we track any module installation and check if there are updates for
-  // translations fields and run updates.
+  // So, here we track any module installation and check if there are updates
+  // for translations fields and run updates.
   $change_list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
 
   if ($change_list) {

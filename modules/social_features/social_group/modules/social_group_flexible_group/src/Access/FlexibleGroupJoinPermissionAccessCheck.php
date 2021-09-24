@@ -125,7 +125,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     }
 
     // LU Can only see members tabs for joining directly
-    // or when he is a GM/GA.
+    // or when they are a GM/GA.
     if (!$direct_option &&
       $route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members' &&
       $account->isAuthenticated() &&
