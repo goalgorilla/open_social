@@ -125,6 +125,8 @@ Feature: Enroll for an event without an account
     Given I am logged in as an "administrator"
       And I turn off translations import
     When I am on "/admin/config/regional/language"
+    Then I should see the text "Add language"
+      And I click the xth "0" element with the css ".local-actions .button--action"
       And I click "Add language"
       And I select "Dutch" from "Language name"
       And I press "Add language"
