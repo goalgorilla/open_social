@@ -45,10 +45,14 @@ Feature: Mute/Unmute group notifications
     When I click the xth "0" element with the css ".navbar-nav .profile"
       And I click "My groups"
     Then I should see "Ressinel's group 2nd"
-    When I check the box "edit-muted--2"
+    When I select "My muted groups" from "Muted groups"
       And I press the "Apply" button
     Then I should not see "Ressinel's group 2nd"
-    But I should see "Ressinel's group 1st"
+      But I should see "Ressinel's group 1st"
+    When I select "My unmuted groups" from "Muted groups"
+      And I press the "Apply" button
+    Then I should not see "Ressinel's group 1st"
+      But I should see "Ressinel's group 2nd"
     When I press the "Reset" button
     Then I should see "Ressinel's group 1st"
       And I should see "Ressinel's group 2nd"
