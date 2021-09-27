@@ -299,7 +299,7 @@ function social_group_request_preprocess_activity(array &$variables) {
   $activity = $variables['elements']['#activity'];
 
   if (!$activity->get('field_activity_message')->isEmpty()) {
-    /** @var \Drupal\message\MessageInterface $message */
+    /** @var Drupal\message\Entity\Message $message */
     $message = $activity->field_activity_message->entity;
 
     if (!$message->get('template')->isEmpty()) {

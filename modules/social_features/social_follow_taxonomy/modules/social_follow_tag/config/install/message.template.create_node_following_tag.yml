@@ -1,11 +1,11 @@
 langcode: en
 status: true
 dependencies:
-  module:
-    - activity_logger
   enforced:
     module:
       - social_follow_tag
+  module:
+    - activity_logger
 third_party_settings:
   activity_logger:
     activity_bundle_entities:
@@ -24,13 +24,13 @@ label: 'Create node with following tag'
 description: 'A person create content with tag I am following'
 text:
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> with the tag(s) that you follow.</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> with the tag(s) that you follow.</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a> with the tag(s) that you follow.</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> with the tag(s) that you follow.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

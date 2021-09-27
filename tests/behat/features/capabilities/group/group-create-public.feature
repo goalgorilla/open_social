@@ -87,9 +87,9 @@ Feature: Create Public Group
     When I am on "/notifications"
     Then I should see "GivenUserTwo created a post in the Test public group group"
     And I should have an email with subject "Notification from Open Social" and in the content:
-      | content                                                    |
-      | Hi GivenUserOne                                            |
-      | GivenUserTwo created a post in the Test public group group |
+      | content                                                      |
+      | Hi GivenUserOne                                              |
+      | GivenUserTwo published a post in the Test public group group |
 
     Given I am logged in as "GivenUserTwo"
     Then I am on "all-groups"
