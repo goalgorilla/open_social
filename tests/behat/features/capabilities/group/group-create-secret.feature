@@ -116,9 +116,9 @@ Feature: Create Secret Group
     When I am on "/notifications"
     Then I should see "SecretGroup User Two created a post in the Test secret group group"
     And I should have an email with subject "Notification from Open Social" and in the content:
-      | content                                                            |
-      | Hi SecretGroup User One                                            |
-      | SecretGroup User Two created a post in the Test secret group group |
+      | content                                                              |
+      | Hi SecretGroup User One                                              |
+      | SecretGroup User Two published a post in the Test secret group group |
 
   # As a non-member of the secret group, I should not see anything.
     Given users:
