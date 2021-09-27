@@ -767,10 +767,16 @@ function social_group_update_10302() {
  */
 function social_group_update_10303() {
   $configs = [
-    'flag.flag.mute_group_notifications',
+    'flag.flag.mute_group_notifications' => 'flag.flag.mute_group_notifications_10303',
   ];
 
-  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
 
 /**
@@ -813,10 +819,16 @@ function social_group_update_10305() {
  */
 function social_group_update_10306() {
   $configs = [
-    'block.block.exposed_form_groups_page_user_groups',
+    'block.block.exposed_form_groups_page_user_groups' => 'block.block.exposed_form_groups_page_user_groups_10306',
   ];
 
-  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
 
 /**

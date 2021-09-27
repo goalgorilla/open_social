@@ -7,20 +7,20 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Link;
+use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Drupal\user\UserInterface;
-use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class EnrollActionForm.
@@ -39,7 +39,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   /**
    * The node storage for event enrollments.
    *
-   * @var \Drupal\Core\entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $entityStorage;
 
@@ -99,11 +99,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   The route match.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
    * @param \Drupal\social_event\Service\SocialEventEnrollServiceInterface $event_enroll_service
    *   The event enroll service.
@@ -111,18 +111,18 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public function __construct(
     RouteMatchInterface $route_match,
     EntityTypeManagerInterface $entity_type_manager,
-    AccountProxyInterface $current_user,
-    ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler,
-     SocialEventEnrollServiceInterface $event_enroll_service
+    AccountProxyInterface $currentUser,
+    ConfigFactoryInterface $configFactory,
+    ModuleHandlerInterface $moduleHandler,
+    SocialEventEnrollServiceInterface $event_enroll_service
   ) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_type_manager->getStorage('event_enrollment');
     $this->userStorage = $entity_type_manager->getStorage('user');
     $this->entityTypeManager = $entity_type_manager;
-    $this->currentUser = $current_user;
-    $this->configFactory = $config_factory;
-    $this->moduleHandler = $module_handler;
+    $this->currentUser = $currentUser;
+    $this->configFactory = $configFactory;
+    $this->moduleHandler = $moduleHandler;
     $this->eventEnrollService = $event_enroll_service;
   }
 
@@ -274,7 +274,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
 
       // Use the ajax submit if the enrollments are empty, or if the
-      // user cancelled his enrollment and tries again.
+      // user cancelled their enrollment and tries again.
       if ($enrollment_open === TRUE) {
         if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST)
           || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
@@ -441,13 +441,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
-      // The user is enrolled, but cancels his enrollment.
+      // The user is enrolled, but cancels their enrollment.
       if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
         // The user is enrolled by invited or request, but either the user or
         // event manager is declining or invalidating the enrollment.
         if ($enrollment->field_request_or_invite_status
           && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
-          // Mark this user his enrollment as declined.
+          // Mark this user's enrollment as declined.
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
           // If the user is cancelling, un-enroll.
           $current_enrollment_status = $enrollment->field_enrollment_status->value;
@@ -456,7 +456,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           }
           $enrollment->save();
         }
-        // Else, the user simply wants to cancel his enrollment, so at
+        // Else, the user simply wants to cancel their enrollment, so at
         // this point we can safely delete the enrollment record as well.
         else {
           $enrollment->delete();

@@ -58,7 +58,6 @@ function social_landing_page_install() {
       'override landing_page revision option',
       'override landing_page sticky option',
       'view node.landing_page.field_content_visibility:group content',
-      'link to any page',
     ]
   );
   user_role_grant_permissions(
@@ -82,7 +81,6 @@ function social_landing_page_install() {
       'override landing_page revision option',
       'override landing_page sticky option',
       'view node.landing_page.field_content_visibility:group content',
-      'link to any page',
     ]
   );
 }
@@ -747,4 +745,13 @@ function social_landing_page_update_10303() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Revoke permission.
+ */
+function social_landing_page_update_10304() {
+  foreach (['contentmanager', 'sitemanager'] as $role) {
+    user_role_revoke_permissions($role, ['link to any page']);
+  }
 }
