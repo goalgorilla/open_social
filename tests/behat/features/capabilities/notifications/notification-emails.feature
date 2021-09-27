@@ -187,6 +187,7 @@ Feature: Receive email notifications and choose frequency
     And I click "Email notifications"
     And I wait for "2" seconds
     And I click "Message to me"
+    And I wait for "2" seconds
     And I should see "Never" in the "select[name='email_notifications[message_to_me][create_mention_post]'] option[selected='selected']" element
 
     Given I am logged in as "user2"

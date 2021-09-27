@@ -671,11 +671,6 @@ parameters:
 			path: modules/custom/activity_creator/activity_creator.post_update.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity_creator.tokens.inc
-
-		-
 			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity_creator.tokens.inc
@@ -1698,11 +1693,6 @@ parameters:
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_recipient_group\\.$#"
 			count: 1
-			path: modules/custom/activity_logger/activity_logger.tokens.inc
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 2
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
 		-
@@ -4161,6 +4151,11 @@ parameters:
 			path: modules/custom/mentions/src/Entity/Mentions.php
 
 		-
+			message: "#^Configuration entity must define a `config_export` key\\. See https\\://www\\.drupal\\.org/node/2481909$#"
+			count: 1
+			path: modules/custom/mentions/src/Entity/MentionsType.php
+
+		-
 			message: "#^Method Drupal\\\\mentions\\\\Entity\\\\MentionsType\\:\\:getInputSettings\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/Entity/MentionsType.php
@@ -5351,6 +5346,11 @@ parameters:
 			path: modules/custom/social_graphql/tests/src/Kernel/FieldDataProducerAccessTest.php
 
 		-
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Field\\\\Field\\:\\:resolve\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 2
+			path: modules/custom/social_graphql/tests/src/Kernel/FieldDataProducerAccessTest.php
+
+		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$alt\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
@@ -6501,6 +6501,11 @@ parameters:
 			path: modules/custom/social_queue_storage/src/Entity/QueueStorageEntityInterface.php
 
 		-
+			message: "#^Configuration entity must define a `config_export` key\\. See https\\://www\\.drupal\\.org/node/2481909$#"
+			count: 1
+			path: modules/custom/social_queue_storage/src/Entity/QueueStorageEntityType.php
+
+		-
 			message: "#^Method Drupal\\\\social_queue_storage\\\\Form\\\\QueueStorageEntityForm\\:\\:buildForm\\(\\) has parameter \\$form with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/custom/social_queue_storage/src/Form/QueueStorageEntityForm.php
@@ -7251,6 +7256,11 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.install
 
 		-
+			message: "#^Function social_activity_update_10303\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/social_activity.install
+
+		-
 			message: "#^Function social_activity_update_8002\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.install
@@ -7297,6 +7307,11 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$menu_link has no value type specified in iterable type Drupal\\\\menu_link_content\\\\Entity\\\\MenuLinkContent\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/social_activity.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.install
 
@@ -7401,11 +7416,6 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.module
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value\\.$#"
-			count: 1
-			path: modules/social_features/social_activity/social_activity.tokens.inc
-
-		-
 			message: "#^Function social_activity_token_info\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.tokens.inc
@@ -7436,17 +7446,17 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\PostInterface\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\Post\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\MessageInterface\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$node has no value type specified in iterable type Drupal\\\\node\\\\NodeInterface\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$node has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
@@ -7456,9 +7466,84 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
-			message: "#^Parameter \\#1 \\$str of function mb_strtolower expects string, string\\|null given\\.$#"
-			count: 1
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 2
 			path: modules/social_features/social_activity/social_activity.tokens.inc
+
+		-
+			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCommentPreview\\(\\) has parameter \\$comment with no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCommentPreview\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getContentPreview\\(\\) has parameter \\$node with no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getContentPreview\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getGroupPreview\\(\\) has parameter \\$group with no value type specified in iterable type Drupal\\\\group\\\\Entity\\\\Group\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getGroupPreview\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getPostPreview\\(\\) has parameter \\$post with no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\Post\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getPostPreview\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getRelatedObject\\(\\) has parameter \\$message with no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getUserPreview\\(\\) has parameter \\$user with no value type specified in iterable type Drupal\\\\user\\\\Entity\\\\User\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getUserPreview\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$profile has no value type specified in iterable type Drupal\\\\profile\\\\Entity\\\\Profile\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of function strtoupper expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
 
 		-
 			message: "#^Method Drupal\\\\social_activity\\\\Plugin\\\\ActivityEntityCondition\\\\GroupContentSingleActivityEntityCondition\\:\\:__construct\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
@@ -8946,22 +9031,17 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 2
-			path: modules/social_features/social_comment/social_comment.tokens.inc
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_type\\.$#"
-			count: 2
-			path: modules/social_features/social_comment/social_comment.tokens.inc
-
-		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value\\.$#"
 			count: 2
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
 		-
 			message: "#^Binary operation \"\\.\" between '\\<a href\\=\"' and Drupal\\\\Core\\\\GeneratedUrl\\|string results in an error\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.tokens.inc
+
+		-
+			message: "#^Binary operation \"\\.\" between Drupal\\\\Core\\\\GeneratedUrl\\|string and '\\#comment\\-' results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
@@ -9031,8 +9111,28 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			message: "#^Function social_comment_tokens_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
+			path: modules/social_features/social_comment/social_comment.tokens.inc
+
+		-
+			message: "#^Function social_comment_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.tokens.inc
+
+		-
+			message: "#^Function social_comment_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$comment has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
 		-
@@ -10276,7 +10376,17 @@ parameters:
 			path: modules/social_features/social_content_report/social_content_report.install
 
 		-
+			message: "#^Function social_content_report_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.install
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$term has no value type specified in iterable type Drupal\\\\taxonomy\\\\TermInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.install
 
@@ -10426,12 +10536,47 @@ parameters:
 			path: modules/social_features/social_content_report/social_content_report.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$flagging has no value type specified in iterable type Drupal\\\\flag\\\\FlaggingInterface\\.$#"
+			message: "#^Function social_content_report_tokens_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.tokens.inc
 
 		-
+			message: "#^Function social_content_report_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^Function social_content_report_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\Post\\.$#"
+			count: 1
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$flagging has no value type specified in iterable type Drupal\\\\flag\\\\FlaggingInterface\\.$#"
+			count: 2
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
+			path: modules/social_features/social_content_report/social_content_report.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.tokens.inc
 
@@ -13216,11 +13361,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc
-
-		-
 			message: "#^Cannot call method id\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc
@@ -13791,6 +13931,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.install
 
 		-
+			message: "#^Function social_event_managers_update_10302\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.install
+
+		-
 			message: "#^Function social_event_managers_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.install
@@ -13817,7 +13962,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.install
 
 		-
@@ -15046,6 +15191,11 @@ parameters:
 			path: modules/social_features/social_event/social_event.install
 
 		-
+			message: "#^Function social_event_update_10309\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.install
+
+		-
 			message: "#^Function social_event_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.install
@@ -15217,7 +15367,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 5
+			count: 6
 			path: modules/social_features/social_event/social_event.install
 
 		-
@@ -15716,27 +15866,12 @@ parameters:
 			path: modules/social_features/social_event/social_event.post_update.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getFieldValue\\(\\)\\.$#"
-			count: 4
-			path: modules/social_features/social_event/social_event.tokens.inc
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:hasField\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.tokens.inc
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\social_event\\\\EventEnrollmentInterface\\:\\:getFieldValue\\(\\)\\.$#"
-			count: 2
-			path: modules/social_features/social_event/social_event.tokens.inc
-
-		-
 			message: "#^Cannot call method getGeneratedUrl\\(\\) on Drupal\\\\Core\\\\GeneratedUrl\\|string\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
 
 		-
-			message: "#^Function get_link_to_event_from_enrollment\\(\\) never returns null so it can be removed from the return typehint\\.$#"
+			message: "#^Function _social_event_get_event_from_enrollment\\(\\) return type has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
 
@@ -15771,13 +15906,38 @@ parameters:
 			path: modules/social_features/social_event/social_event.tokens.inc
 
 		-
+			message: "#^Function social_event_tokens_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.tokens.inc
+
+		-
+			message: "#^Function social_event_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.tokens.inc
+
+		-
+			message: "#^Function social_event_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$enrollment has no value type specified in iterable type Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.tokens.inc
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$event has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
-			count: 1
+			count: 2
+			path: modules/social_features/social_event/social_event.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
 			path: modules/social_features/social_event/social_event.tokens.inc
 
 		-
@@ -15786,12 +15946,7 @@ parameters:
 			path: modules/social_features/social_event/social_event.tokens.inc
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.tokens.inc
-
-		-
-			message: "#^Variable \\$entity in PHPDoc tag @var does not match assigned variable \\$enrollment\\.$#"
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
 
@@ -16719,7 +16874,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/tests/src/Kernel/GraphQL/QueryEventTest.php
-
 		-
 			message: "#^Method Drupal\\\\Tests\\\\social_event\\\\Kernel\\\\GraphQL\\\\QueryEventsTest\\:\\:testAnonymousUserCanNotViewEventsWithoutPermission\\(\\) has no return typehint specified\\.$#"
 			count: 1
@@ -16811,12 +16965,22 @@ parameters:
 			path: modules/social_features/social_follow_content/social_follow_content.install
 
 		-
+			message: "#^Function social_follow_content_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_content/social_follow_content.install
+
+		-
 			message: "#^Function social_follow_content_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/social_follow_content.install
 
 		-
 			message: "#^Function social_follow_content_update_dependencies\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_content/social_follow_content.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/social_follow_content.install
 
@@ -17056,6 +17220,16 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
 
 		-
+			message: "#^Function social_follow_tag_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
+
+		-
+			message: "#^Function social_follow_tag_update_10302\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
+
+		-
 			message: "#^Function social_follow_tag_update_8801\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
@@ -17092,7 +17266,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
+			count: 3
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
 
 		-
@@ -17297,17 +17471,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$entity\\.$#"
-			count: 2
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 2
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_type\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
@@ -17441,59 +17605,84 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
-			message: "#^Function social_follow_taxonomy_token_info\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Function social_follow_taxonomy_tokens\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$tokens with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$type with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\MessageInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
 			message: "#^PHPDoc tag @var for variable \\$old_entity has no value type specified in iterable type Drupal\\\\node\\\\NodeInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
 			message: "#^PHPDoc tag @var for variable \\$term has no value type specified in iterable type Drupal\\\\taxonomy\\\\TermInterface\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
+			message: "#^Function social_follow_taxonomy_token_info\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$tokens with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens\\(\\) has parameter \\$type with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Function social_follow_taxonomy_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
+			count: 3
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 3
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$term has no value type specified in iterable type Drupal\\\\taxonomy\\\\TermInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var has no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\Post\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
 
 		-
 			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
@@ -19106,6 +19295,16 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
 
 		-
+			message: "#^Function social_group_request_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
+
+		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$entity\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
@@ -19296,7 +19495,7 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\MessageInterface\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
 
@@ -19309,16 +19508,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$count of method Drupal\\\\Core\\\\StringTranslation\\\\TranslationManager\\:\\:formatPlural\\(\\) expects int, array\\|int given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_type\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
 		-
 			message: "#^Function social_group_request_token_info\\(\\) has no return typehint specified\\.$#"
@@ -19351,12 +19540,37 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$group_content has no value type specified in iterable type Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\.$#"
+			message: "#^Function social_group_request_tokens_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\MessageInterface\\.$#"
+			message: "#^Function social_group_request_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
+
+		-
+			message: "#^Function social_group_request_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$group_content has no value type specified in iterable type Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$user has no value type specified in iterable type Drupal\\\\user\\\\Entity\\\\User\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
@@ -21096,16 +21310,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.tokens.inc
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_type\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.tokens.inc
-
-		-
 			message: "#^Binary operation \"\\.\" between '\\<a href\\=\"' and Drupal\\\\Core\\\\GeneratedUrl\\|string results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.tokens.inc
@@ -21146,13 +21350,43 @@ parameters:
 			path: modules/social_features/social_group/social_group.tokens.inc
 
 		-
+			message: "#^Function social_group_tokens_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
+			message: "#^Function social_group_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
+			message: "#^Function social_group_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$entity has no value type specified in iterable type Drupal\\\\group\\\\Entity\\\\GroupContent\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$group has no value type specified in iterable type Drupal\\\\group\\\\Entity\\\\Group\\.$#"
 			count: 1
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$user has no value type specified in iterable type Drupal\\\\user\\\\Entity\\\\User\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 2
 			path: modules/social_features/social_group/social_group.tokens.inc
 
 		-
@@ -22831,6 +23065,11 @@ parameters:
 			path: modules/social_features/social_like/social_like.install
 
 		-
+			message: "#^Function social_like_update_10302\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.install
+
+		-
 			message: "#^Function social_like_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.install
@@ -22852,6 +23091,11 @@ parameters:
 
 		-
 			message: "#^Function social_like_update_8005\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.install
 
@@ -22911,11 +23155,6 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 1
-			path: modules/social_features/social_like/social_like.tokens.inc
-
-		-
 			message: "#^Binary operation \"\\.\" between '\\<a href\\=\"' and Drupal\\\\Core\\\\GeneratedUrl\\|string results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
@@ -22956,6 +23195,11 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
+			message: "#^Cannot call method toUrl\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
 			message: "#^Function social_like_token_info\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
@@ -22986,12 +23230,57 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			message: "#^Function social_like_tokens_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
+			message: "#^Function social_like_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^Function social_like_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$commented_entity has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$vote has no value type specified in iterable type Drupal\\\\votingapi\\\\Entity\\\\Vote\\.$#"
+			count: 2
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$voted_entity has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$voted_entity has no value type specified in iterable type Drupal\\\\node\\\\Entity\\\\Node\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$voted_entity has no value type specified in iterable type Drupal\\\\social_post\\\\Entity\\\\Post\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$comment of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCommentPreview\\(\\) expects Drupal\\\\comment\\\\Entity\\\\Comment, Drupal\\\\comment\\\\Entity\\\\Comment\\|Drupal\\\\Core\\\\Entity\\\\Entity given\\.$#"
+			count: 1
+			path: modules/social_features/social_like/social_like.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
@@ -23003,11 +23292,6 @@ parameters:
 		-
 			message: "#^Variable \\$content_type_label might not be defined\\.$#"
 			count: 3
-			path: modules/social_features/social_like/social_like.tokens.inc
-
-		-
-			message: "#^Variable \\$vote in PHPDoc tag @var does not exist\\.$#"
-			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
@@ -23081,7 +23365,17 @@ parameters:
 			path: modules/social_features/social_mentions/social_mentions.install
 
 		-
+			message: "#^Function social_mentions_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.install
+
+		-
 			message: "#^Function social_mentions_update_8001\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.install
+
+		-
+			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.install
 
@@ -23256,16 +23550,6 @@ parameters:
 			path: modules/social_features/social_mentions/social_mentions.module
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
-			count: 2
-			path: modules/social_features/social_mentions/social_mentions.tokens.inc
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_type\\.$#"
-			count: 2
-			path: modules/social_features/social_mentions/social_mentions.tokens.inc
-
-		-
 			message: "#^Cannot call method getDisplayName\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
@@ -23316,13 +23600,38 @@ parameters:
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
 		-
+			message: "#^Function social_mentions_tokens_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.tokens.inc
+
+		-
+			message: "#^Function social_mentions_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.tokens.inc
+
+		-
+			message: "#^Function social_mentions_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$comment has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
+			count: 1
+			path: modules/social_features/social_mentions/social_mentions.tokens.inc
+
+		-
 			message: "#^PHPDoc tag @var for variable \\$mention has no value type specified in iterable type Drupal\\\\mentions\\\\Entity\\\\Mentions\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$mentioned_entity has no value type specified in iterable type Drupal\\\\comment\\\\Entity\\\\Comment\\.$#"
 			count: 1
+			path: modules/social_features/social_mentions/social_mentions.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 2
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
 		-
@@ -24651,6 +24960,11 @@ parameters:
 			path: modules/social_features/social_post/src/Entity/PostInterface.php
 
 		-
+			message: "#^Configuration entity must define a `config_export` key\\. See https\\://www\\.drupal\\.org/node/2481909$#"
+			count: 1
+			path: modules/social_features/social_post/src/Entity/PostType.php
+
+		-
 			message: "#^Method Drupal\\\\social_post\\\\Entity\\\\PostViewsData\\:\\:getViewsData\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Entity/PostViewsData.php
@@ -25476,6 +25790,11 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.install
 
 		-
+			message: "#^Function social_private_message_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.install
+
+		-
 			message: "#^Function social_private_message_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.install
@@ -25507,7 +25826,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_private_message/social_private_message.install
 
 		-
@@ -25834,6 +26153,36 @@ parameters:
 			message: "#^Variable \\$member might not be defined\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
+			message: "#^Function social_private_message_tokens_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
+
+		-
+			message: "#^Function social_private_message_tokens_alter\\(\\) has parameter \\$context with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
+
+		-
+			message: "#^Function social_private_message_tokens_alter\\(\\) has parameter \\$replacements with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$message has no value type specified in iterable type Drupal\\\\message\\\\Entity\\\\Message\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$private_message has no value type specified in iterable type Drupal\\\\private_message\\\\Entity\\\\PrivateMessage\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
+
+		-
+			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.tokens.inc
 
 		-
 			message: "#^Method Drupal\\\\social_private_message\\\\Controller\\\\SocialPrivateMessageController\\:\\:inbox\\(\\) has no return typehint specified\\.$#"
@@ -27936,6 +28285,10 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSearchApiSplitProfileTerms.php
 
 		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSearchApiSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSearchApiSplitProfileTerms.php
+		-
 			message: "#^Method Drupal\\\\social_profile\\\\SocialProfileNameService\\:\\:getProfileName\\(\\) has parameter \\$profile with no value type specified in iterable type Drupal\\\\profile\\\\Entity\\\\ProfileInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/SocialProfileNameService.php
@@ -28497,6 +28850,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_search\\\\Plugin\\\\views\\\\filter\\\\SocialDate\\:\\:valueForm\\(\\) has parameter \\$form with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php
+
+		-
+			message: "#^Method Drupal\\\\social_search\\\\Plugin\\\\views\\\\filter\\\\SocialDate\\:\\:valueForm\\(\\) has parameter \\$form with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php
 
@@ -29621,11 +29979,6 @@ parameters:
 			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicTypesTest.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicTypesTest.php
-
-		-
 			message: "#^Method Drupal\\\\Tests\\\\social_topic\\\\Kernel\\\\GraphQL\\\\QueryTopicsTest\\:\\:testAnonymousUserCanNotViewTopicsWithoutPermission\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicsTest.php
@@ -29644,6 +29997,11 @@ parameters:
 			message: "#^Property Drupal\\\\Tests\\\\social_topic\\\\Kernel\\\\GraphQL\\\\QueryTopicsTest\\:\\:\\$modules type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicsTest.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicTypesTest.php
 
 		-
 			message: "#^Function _social_user_get_permissions\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -30921,7 +31279,12 @@ parameters:
 			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLViewerEndpointTest.php
 
 		-
-			message: "#^Method Drupal\\\\social_user\\\\Tests\\\\SocialUserNameConstraintTest\\:\\:buildViolationList\\(\\) should return Drupal\\\\social_user\\\\Tests\\\\ConstraintViolationListInterface but returns array\\<int, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject&Symfony\\\\Component\\\\Validator\\\\ConstraintViolationInterface\\>\\.$#"
+			message: "#^Method Drupal\\\\social_user\\\\Tests\\\\SocialUserNameConstraintTest\\:\\:buildViolationList\\(\\) should return Drupal\\\\social_user\\\\Tests\\\\ConstraintViolationListInterface but returns array\\<int, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject\\>\\.$#"
+			count: 1
+			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
+
+		-
+			message: "#^Method Drupal\\\\social_user\\\\Tests\\\\SocialUserNameConstraintTest\\:\\:buildViolationList\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
 
@@ -30962,6 +31325,16 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_user\\\\Tests\\\\SocialUserNameConstraintTest\\:\\:testValidate\\(\\) has parameter \\$name with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$context of method Symfony\\\\Component\\\\Validator\\\\ConstraintValidator\\:\\:initialize\\(\\) expects Symfony\\\\Component\\\\Validator\\\\Context\\\\ExecutionContextInterface, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 1
+			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$typed_data_manager of class Drupal\\\\social_user\\\\Plugin\\\\Validation\\\\Constraint\\\\SocialUserNameConstraintValidator constructor expects Drupal\\\\Core\\\\TypedData\\\\TypedDataManagerInterface, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
 			count: 1
 			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
 

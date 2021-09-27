@@ -87,9 +87,9 @@ Feature: Create Open Group
     When I am on "/notifications"
     Then I should see "Group User Two created a post in the Test open group group"
     And I should have an email with subject "Notification from Open Social" and in the content:
-      | content                                                    |
-      | Hi Group User One                                          |
-      | Group User Two created a post in the Test open group group |
+      | content                                                      |
+      | Hi Group User One                                            |
+      | Group User Two published a post in the Test open group group |
 
     Given I am logged in as "Group User Two"
     Then I am on "all-groups"
