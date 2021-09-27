@@ -2015,3 +2015,20 @@ function social_event_update_10308() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_event_update_10309() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/message.template.activity_on_events_im_organizing_10309.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.activity_on_events_im_organizing');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
