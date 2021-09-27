@@ -23,7 +23,7 @@ function social_user_post_update_convert_navigation_settings() {
  * Give all existing users on the platform the new role to ensure backward
  * compatibility (even blocked users).
  *
- * @param array<array> $sandbox
+ * @param string[] $sandbox
  *   Stores information for batch updates.
  *
  * @return bool

@@ -25,7 +25,7 @@ interface SocialUserHelperInterface {
   /**
    * Verified user roles.
    *
-   * @return string[]
+   * @return mixed[]
    *   List of verified user roles.
    */
   public static function verifiedUserRoles(): array;

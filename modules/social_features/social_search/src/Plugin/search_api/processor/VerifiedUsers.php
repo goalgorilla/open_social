@@ -42,7 +42,12 @@ class VerifiedUsers extends ProcessorPluginBase {
    */
   public function alterIndexedItems(array &$items) {
     foreach ($items as $item_id => $item) {
+      if ($item->getOriginalObject() === NULL) {
+        return;
+      }
+
       $object = $item->getOriginalObject()->getValue();
+
       if ($object instanceof ProfileInterface) {
         // Profile owner ID is the user ID.
         if (!SocialUserHelper::isVerifiedUser($object->getOwner())) {
