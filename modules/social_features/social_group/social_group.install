@@ -882,3 +882,17 @@ function social_group_update_10308() {
   // Set display mode for group content to display on stream.
   activity_creator_set_entity_view_mode('group_content', 'activity');
 }
+
+/**
+ * Update BEF filter in the User Groups view.
+ */
+function social_group_update_11001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_advanced_queue\Plugin\ActivitySend;
 
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend;
 use Drupal\advancedqueue\Entity\Queue;
 use Drupal\advancedqueue\Job;
@@ -14,7 +15,7 @@ class EmailActivitySendAdvancedQueue extends EmailActivitySend {
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function process(ActivityInterface $entity) : void {
     $data = [];
     $data['entity_id'] = $entity->id();
     // Create a new Email Job and add to the "default" queue using

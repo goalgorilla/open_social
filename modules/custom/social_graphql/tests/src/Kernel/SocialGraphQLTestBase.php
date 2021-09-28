@@ -4,11 +4,11 @@ namespace Drupal\Tests\social_graphql\Kernel;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\graphql\Entity\Server;
-use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
+use Drupal\graphql\Entity\ServerInterface;
 use GraphQL\Server\OperationParams;
 
 /**
- * Bass class for Open Social GraphQL tests.
+ * Base class for Open Social GraphQL tests.
  *
  * Provides utility methods for testing Open Social GraphQL endpoints. Ensures
  * the Open Social GraphQL server is loaded and configured.
@@ -44,7 +44,9 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     $this->installConfig("social_graphql");
 
     // Set up the schema and use the Open Social GraphQL server in queries.
-    $this->server = Server::load("open_social_graphql");
+    $server = Server::load("open_social_graphql");
+    self::assertInstanceOf(ServerInterface::class, $server, "Test set-up failed: 'open_social_graphql' server is not installed.");
+    $this->server = $server;
 
     // Manually enable query_access checks, until `use_entity_access_api` is no
     // longer a setting. This is done in the social_graphql_install hook but
