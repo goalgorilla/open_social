@@ -565,8 +565,12 @@ function social_group_invite_preprocess_group(&$variables) {
       $group_url = NULL;
     }
 
+    $group_settings = \Drupal::config('social_group.settings');
     // Show share/invite button only if member is allowed to do that.
-    if ($url->access(\Drupal::currentUser())) {
+    if (
+      (bool) $group_settings->get('group_invite.invite_by_members') &&
+      $url->access(\Drupal::currentUser())
+    ) {
       $variables['members_allowed_to_invite'] = TRUE;
       $variables['invite_content'] = [
         '#theme' => 'invite_to_group_by_member',
