@@ -529,7 +529,7 @@ function social_profile_update_10301() {
 /**
  * Grant Profile permissions for the Authenticated user role.
  */
-function social_profile_update_11001() {
+function social_profile_update_11001(): void {
   // Authenticated user role permissions.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
@@ -545,7 +545,7 @@ function social_profile_update_11001() {
 /**
  * Add roles filter to the Newest users views.
  */
-function social_profile_update_11002() {
+function social_profile_update_11002(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

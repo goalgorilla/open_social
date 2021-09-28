@@ -295,7 +295,7 @@ function social_album_update_10201() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_album_update_dependencies() {
+function social_album_update_dependencies(): array {
   // Run the update hook with the "Grant Profile permissions for the
   // Authenticated user role" only after an update hook "Reassign permissions
   // between roles" in social_core.
@@ -309,7 +309,7 @@ function social_album_update_dependencies() {
 /**
  * Grant Profile permissions for the Authenticated user role.
  */
-function social_album_update_11001() {
+function social_album_update_11001(): void {
   // Authenticated user role permissions.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,

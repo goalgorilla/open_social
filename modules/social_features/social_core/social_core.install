@@ -1448,7 +1448,7 @@ function social_core_update_10300() {
 /**
  * Import configurations for the new Verified role.
  */
-function social_core_update_11001() {
+function social_core_update_11001(): void {
   $config_file = drupal_get_path('module', 'social_core') . '/config/static/user.role.verified_11001.yml';
 
   if (is_file($config_file)) {
@@ -1465,7 +1465,7 @@ function social_core_update_11001() {
 /**
  * Resign permissions between roles.
  */
-function social_core_update_11002() {
+function social_core_update_11002(): void {
   /** @var \Drupal\user\RoleInterface $auth_role */
   $auth_role = \Drupal::entityTypeManager()->getStorage('user_role')->load(RoleInterface::AUTHENTICATED_ID);
   // Assign all permissions from Authenticated role to Verified role.
