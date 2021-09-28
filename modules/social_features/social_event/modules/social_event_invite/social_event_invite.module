@@ -56,11 +56,22 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   ];
 
   // Only set this message when the request status is pending.
-  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY &&
-    empty($eventEnrollment->get('field_account')->getString())) {
-    // Send a normal mail when the user has no account yet.
-    $params['existing_user'] = FALSE;
-    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+    $not_empty = FALSE;
+    $to = NULL;
+    if (!$eventEnrollment->get('field_account')->isEmpty()) {
+      $to_uid = $eventEnrollment->get('field_account')->getString();
+      /** @var \Drupal\user\UserInterface $to */
+      $to = \Drupal::entityTypeManager()->getStorage('user')->load($to_uid);
+      $not_empty = TRUE;
+      $mail = $to->getEmail();
+    }
+
+    if (!$not_empty || ($to instanceof UserInterface && !$to->hasPermission('view published event enrollment entities'))) {
+      // Send a normal mail when the user has no account yet.
+      $params['existing_user'] = FALSE;
+      $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+    }
   }
 }
 
@@ -233,7 +244,11 @@ function social_event_invite_preprocess_node(array &$variables) {
       $variables['#cache']['contexts'][] = 'user';
     }
 
-    if ($node->bundle() === 'event') {
+    $event_invite_settings = \Drupal::config('social_event_invite.settings');
+    if (
+      $event_invite_settings->get('invite_by_users') &&
+      $node->bundle() === 'event'
+    ) {
       $url = Url::fromRoute('social_event_invite.invite_email', ['node' => $node->id()]);
       $node_url = $node->toUrl('canonical', ['absolute' => TRUE]);
       if ($url->access(\Drupal::currentUser())) {
