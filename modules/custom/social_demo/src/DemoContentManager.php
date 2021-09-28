@@ -7,7 +7,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class DemoContentManager.
+ * Plugin manager for DemoContent plugin.
  *
  * @package Drupal\social_demo
  */
