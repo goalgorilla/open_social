@@ -7,7 +7,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
- * Interface DemoContentInterface.
+ * Interface for demo content.
  *
  * @package Drupal\social_demo
  */

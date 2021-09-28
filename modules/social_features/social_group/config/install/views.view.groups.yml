@@ -4,8 +4,10 @@ dependencies:
   config:
     - core.entity_view_mode.group.small_teaser
     - core.entity_view_mode.group.teaser
+    - flag.flag.mute_group_notifications
   module:
     - better_exposed_filters
+    - flag
     - group
     - social_group
     - user
@@ -330,8 +332,36 @@ display:
         use_ajax: false
       exposed_block: true
       exposed_form:
+        type: bef
         options:
+          submit_button: Apply
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: basic_html
           bef:
+            general:
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              flagged:
+                plugin_id: default
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: "- Any -|- Any -\r\nTrue|My muted groups\r\nFalse|My unmuted groups"
+                  collapsible: false
+                  is_secondary: false
             flagged:
               bef_format: bef_single
               more_options:
@@ -340,23 +370,7 @@ display:
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
-            general:
-              allow_secondary: false
-              autosubmit: false
-              autosubmit_exclude_textfield: false
-              autosubmit_hide: false
-              secondary_label: 'Advanced options'
-          expose_sort_order: true
-          exposed_sorts_label: 'Sort by'
           input_required: false
-          reset_button: true
-          reset_button_label: Reset
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-          submit_button: Apply
-          text_input_required: 'Select any filter and click on Apply to see results'
-          text_input_required_format: basic_html
-        type: bef
       filter_groups:
         groups: {  }
         operator: AND
