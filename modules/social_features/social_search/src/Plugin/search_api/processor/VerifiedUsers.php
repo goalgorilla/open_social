@@ -40,7 +40,7 @@ class VerifiedUsers extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function alterIndexedItems(array &$items) {
+  public function alterIndexedItems(array &$items): void {
     foreach ($items as $item_id => $item) {
       if ($item->getOriginalObject() === NULL) {
         return;

@@ -1452,7 +1452,7 @@ function social_core_update_11001(): void {
   $config_file = drupal_get_path('module', 'social_core') . '/config/static/user.role.verified_11001.yml';
 
   if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
+    $settings = Yaml::parse((string) file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('user.role.verified');
