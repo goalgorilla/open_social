@@ -16,6 +16,6 @@ interface ActivitySendInterface extends PluginInspectionInterface {
    * @param \Drupal\activity_creator\ActivityInterface $entity
    *   The activity entity object.
    */
-  public function process(ActivityInterface $entity);
+  public function process(ActivityInterface $entity) : void;
 
 }

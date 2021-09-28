@@ -162,19 +162,19 @@ class FooterSettingsForm extends FormBase {
    * @param string $text
    *   Text editor value.
    */
-  public function setInlineImagesAsPermanent($text) {
+  public function setInlineImagesAsPermanent($text) : void {
     $uuids = _editor_parse_file_uuids($text);
     foreach ($uuids as $uuid) {
+      /** @var \Drupal\file\FileInterface|NULL $file */
       $file = $this->entityRepository->loadEntityByUuid('file', $uuid);
 
-      /** @var \Drupal\file\FileInterface $file */
-      if (empty($file) || !$file->isTemporary()) {
+      if ($file === NULL || !$file->isTemporary()) {
         continue;
       }
 
       $file->setPermanent();
       $file->save();
-      $this->fileUsage->add($file, 'social_footer', 'file', $file->id());
+      $this->fileUsage->add($file, 'social_footer', 'file', (string) $file->id());
     }
   }
 
