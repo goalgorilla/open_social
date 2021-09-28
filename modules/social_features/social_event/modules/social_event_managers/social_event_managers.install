@@ -121,3 +121,34 @@ function social_event_managers_update_8006() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove translation filter for the Manage All Enrollments view.
+ */
+function social_event_managers_update_10301() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_managers', 'social_event_managers_update_10301');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_event_managers_update_10302() {
+  $config_file = drupal_get_path('module', 'social_event_managers') . '/config/static/message.template.member_added_by_event_organiser_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.member_added_by_event_organiser');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

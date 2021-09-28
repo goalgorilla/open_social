@@ -44,7 +44,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     $open_groups = [];
     $group_memberships = [];
     if (\Drupal::moduleHandler()->moduleExists('social_group')) {
-      // TODO: This creates a dependency on Social Group which shouldn't exist,
+      // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
       $open_groups = social_group_get_all_open_groups();
       $group_memberships = \Drupal::service('social_group.helper_service')
@@ -141,6 +141,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
+      $posts_in_groups->condition('post__field_visibility.field_visibility_value', '3');
 
       $or->condition($posts_in_groups);
     }
@@ -148,7 +149,6 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     // Posts: all the posts the user has access to by permission.
     $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-    $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
     if (!$account->hasPermission('view public posts')) {
       $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');

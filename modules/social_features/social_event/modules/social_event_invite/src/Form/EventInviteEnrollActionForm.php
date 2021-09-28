@@ -2,11 +2,11 @@
 
 namespace Drupal\social_event_invite\Form;
 
-use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event\Form\EnrollActionForm;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Cache\Cache;
+use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\Form\EnrollActionForm;
 
 /**
  * Class EventInviteEnrollActionForm.

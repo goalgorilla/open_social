@@ -2,17 +2,19 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\file\FileStorageInterface;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\taxonomy\TermStorageInterface;
-use Drush\Log\LogLevel;
 
 /**
- * Class DemoUser.
+ * Creates users.
  *
  * @package Drupal\social_demo
  */
@@ -26,29 +28,31 @@ abstract class DemoUser extends DemoContent {
   protected $profileStorage;
 
   /**
-   * The file storage.
-   *
-   * @var \Drupal\file\FileStorageInterface
-   */
-  protected $fileStorage;
-
-  /**
-   * The taxonomy term storage.
-   *
-   * @var \Drupal\taxonomy\TermStorageInterface
-   */
-  protected $termStorage;
-
-  /**
    * DemoUser constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, ProfileStorageInterface $profile_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    DemoContentParserInterface $parser,
+    UserStorageInterface $user_storage,
+    EntityStorageInterface $group_storage,
+    FileStorageInterface $file_storage,
+    TermStorageInterface $term_storage,
+    LoggerChannelFactoryInterface $logger_channel_factory,
+    ProfileStorageInterface $profile_storage) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $parser,
+      $user_storage,
+      $group_storage,
+      $file_storage,
+      $term_storage,
+      $logger_channel_factory
+    );
     $this->profileStorage = $profile_storage;
-    $this->fileStorage = $file_storage;
-    $this->termStorage = $term_storage;
   }
 
   /**
@@ -60,9 +64,12 @@ abstract class DemoUser extends DemoContent {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity_type.manager')->getStorage('profile'),
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
       $container->get('entity_type.manager')->getStorage('file'),
-      $container->get('entity_type.manager')->getStorage('taxonomy_term')
+      $container->get('entity_type.manager')->getStorage('taxonomy_term'),
+      $container->get('logger.factory'),
+      $container->get('entity_type.manager')->getStorage('profile'),
     );
   }
 
@@ -78,7 +85,7 @@ abstract class DemoUser extends DemoContent {
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
       if ($uuid !== $item['uuid']) {
-        drush_log(dt("User with uuid: {$uuid} has a different uuid in content."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("User with uuid: {$uuid} has a different uuid in content.");
         continue;
       }
 
@@ -88,7 +95,7 @@ abstract class DemoUser extends DemoContent {
       ]);
 
       if ($accounts) {
-        drush_log(dt("User with uuid: {$uuid} already exists."), LogLevel::WARNING);
+        $this->loggerChannelFactory->get('social_demo')->warning("User with uuid: {$uuid} already exists.");
         continue;
       }
 
