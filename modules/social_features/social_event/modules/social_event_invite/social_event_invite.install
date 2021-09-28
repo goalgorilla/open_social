@@ -156,7 +156,7 @@ function social_event_invite_update_10301() {
 /**
  * Add a new field to event.
  */
-function social_event_invite_update_10302() {
+function social_event_invite_update_10302(): void {
   $config_path = drupal_get_path('module', 'social_event_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
@@ -167,17 +167,19 @@ function social_event_invite_update_10302() {
   // Create field storages.
   $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
   $data = $source->read('field.storage.node.field_event_send_invite_by_user_10302');
-  $class = $field_type_manager->getPluginClass($data['type']);
-  if (is_null($field_storage_config_storage->load($data['id']))) {
-    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
-    $field_storage_config_storage->create($data)->save();
+  if (is_array($data)) {
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
   }
 
   /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
   $field_config_storage = $entity_type_manager->getStorage('field_config');
   // Create field settings.
   $data = $source->read('field.field.node.event.field_event_send_invite_by_user_10302');
-  if (is_null($field_config_storage->load($data['id']))) {
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
     $field_config_storage->create($data)->save();
   }
 }

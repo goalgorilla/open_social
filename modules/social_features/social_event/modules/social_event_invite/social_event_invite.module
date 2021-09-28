@@ -22,7 +22,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_theme().
  */
-function social_event_invite_theme() {
+function social_event_invite_theme(): array {
   return [
     'invite_to_event_by_user' => [
       'variables' => [
@@ -400,7 +400,7 @@ function social_event_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
 /**
  * Implements hook_entity_form_display_alter().
  */
-function social_event_invite_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+function social_event_invite_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
   if ($form_display->id() === 'node.event.default') {
     $content = $form_display->get('content');
     $hidden = $form_display->get('hidden');
@@ -426,7 +426,7 @@ function social_event_invite_entity_form_display_alter(EntityFormDisplayInterfac
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
-function social_event_invite_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_invite_form_node_form_alter(array &$form, FormStateInterface $form_state): void {
   if (!isset($form['field_event_send_invite_by_user'])) {
     return;
   }

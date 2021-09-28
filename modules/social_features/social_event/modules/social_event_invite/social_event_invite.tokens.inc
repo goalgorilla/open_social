@@ -71,7 +71,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           '-',
           '_',
           '',
-        ], base64_encode($mail));
+        ], base64_encode((string) $mail));
 
         $destination = Url::fromRoute('entity.node.canonical', ['node' => $event->id()])->toString();
 
