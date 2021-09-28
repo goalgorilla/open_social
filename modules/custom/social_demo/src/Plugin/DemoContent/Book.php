@@ -4,11 +4,6 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 
 use Drupal\node\Entity\Node;
 use Drupal\social_demo\DemoNode;
-use Drupal\social_demo\DemoContentParserInterface;
-use Drupal\user\UserStorageInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\file\FileStorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Book Plugin for demo content.
@@ -21,37 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class Book extends DemoNode {
-
-  /**
-   * The file storage.
-   *
-   * @var \Drupal\file\FileStorageInterface
-   */
-  protected $fileStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
-
-    $this->fileStorage = $file_storage;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('social_demo.yaml_parser'),
-      $container->get('entity_type.manager')->getStorage('user'),
-      $container->get('entity_type.manager')->getStorage('group'),
-      $container->get('entity_type.manager')->getStorage('file')
-    );
-  }
 
   /**
    * {@inheritdoc}
