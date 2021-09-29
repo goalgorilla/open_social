@@ -8,7 +8,7 @@
 /**
  * Implements hook_update_dependencies().
  */
-function social_event_enrolments_export_update_dependencies() {
+function social_event_enrolments_export_update_dependencies(): array {
   // New config changes should run after the VBO module changes
   // the structure of views.
   $dependencies['social_event_enrolments_export'][11001] = [
@@ -25,7 +25,7 @@ function social_event_enrolments_export_update_dependencies() {
  * Perform actions related to the installation of
  * social_event_enrolments_export.
  */
-function social_event_enrolments_export_install() {
+function social_event_enrolments_export_install(): void {
   // Add changes to event_manage_enrollments view.
   _social_event_enrolments_export_alter_event_manage_enrollments_view();
 }
@@ -35,7 +35,7 @@ function social_event_enrolments_export_install() {
  *
  * Action ID:  'social_event_enrolments_export_enrollments_action'.
  */
-function _social_event_enrolments_export_alter_event_manage_enrollments_view() {
+function _social_event_enrolments_export_alter_event_manage_enrollments_view(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
   $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
   $selected_actions[] = [
@@ -53,6 +53,6 @@ function _social_event_enrolments_export_alter_event_manage_enrollments_view() {
  *
  * Action ID:  'social_event_enrolments_export_enrollments_action'.
  */
-function social_event_enrolments_export_update_11001(&$sandbox) {
+function social_event_enrolments_export_update_11001(array &$sandbox): void {
   _social_event_enrolments_export_alter_event_manage_enrollments_view();
 }
