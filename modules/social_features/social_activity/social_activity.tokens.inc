@@ -66,7 +66,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           /** @var \Drupal\social_post\Entity\Post $entity */
 
           // Prepare the link to post.
-          $link = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+          $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
 
           // Prepare the preview information.
           $preview_info = $email_token_services->getPostPreview($entity);
@@ -90,7 +90,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $preview_info = $email_token_services->getContentPreview($node);
 
             // Prepare the link to node.
-            $link = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
+            $link = $node->toUrl('canonical', ['absolute' => TRUE]);
 
             // Prepare the CTA button markup.
             $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more'));

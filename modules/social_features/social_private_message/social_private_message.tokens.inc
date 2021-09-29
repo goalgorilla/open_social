@@ -42,7 +42,7 @@ function social_private_message_tokens_alter(array &$replacements, array $contex
                 $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
                   ['private_message_thread' => $thread_id],
                   ['absolute' => TRUE]
-                )->toString();
+                );
                 $cta_button = $email_token_services->getCtaButton($thread_url, new TranslatableMarkup('Reply to this message'));
                 if (!empty($cta_button)) {
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);

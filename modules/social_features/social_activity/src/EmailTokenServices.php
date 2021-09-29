@@ -234,7 +234,7 @@ class EmailTokenServices {
   /**
    * Generates the renderable array for creation of a CTA button.
    *
-   * @param string $link
+   * @param \Drupal\Core\Url $url
    *   The href property for the button.
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $text
    *   The label of the button.
@@ -242,14 +242,10 @@ class EmailTokenServices {
    * @return array
    *   The renderable array.
    */
-  public function getCtaButton(string $link, TranslatableMarkup $text) {
-    if ($link === "") {
-      return [];
-    }
-
+  public function getCtaButton(Url $url, TranslatableMarkup $text) {
     return [
       '#theme' => 'message_cta_button',
-      '#link' => $link,
+      '#link' => $url,
       '#text' => $text,
     ];
   }
