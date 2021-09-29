@@ -43,9 +43,10 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    * {@inheritdoc}
    */
   public function validate($items, Constraint $constraint) {
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
       // Next check if the value is unique.
-      if (!$this->isUnique($item->value)) {
+      if (!$item->isEmpty() && !$this->isUnique($item->value)) {
         $this->context->addViolation($constraint->notUnique, ['%value' => $item->value]);
       }
     }
