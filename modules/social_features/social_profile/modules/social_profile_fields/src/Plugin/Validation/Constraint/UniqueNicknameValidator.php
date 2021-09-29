@@ -47,8 +47,13 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item */
     foreach ($items as $item) {
       // Next check if the value is unique.
-      if (!$item->isEmpty() && !$this->isUnique($item->value)) {
-        $this->context->addViolation($constraint->notUnique, ['%value' => $item->value]);
+      if (
+        !$item->isEmpty() &&
+        !$this->isUnique($item->get('value')->getString())
+      ) {
+        $this->context->addViolation($constraint->notUnique, [
+          '%value' => $item->get('value')->getString(),
+        ]);
       }
     }
   }
@@ -75,7 +80,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
 
       if (
         $current_profile instanceof ProfileInterface &&
-        $profile->id() === $current_profile->get('profile_id')->value
+        $profile->id() === $current_profile->get('profile_id')->getString()
       ) {
         unset($profiles[$key]);
       }
