@@ -3,6 +3,7 @@
 namespace Drupal\social_profile_fields\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -62,16 +63,20 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    *   Returns TRUE if the name is not taken. Returns FALSE if the name is
    *   taken.
    */
-  private function isUnique($value) {
+  private function isUnique(string $value): bool {
     // Get all profiles with the provided nickname.
     $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
 
     // Remove current profile from profiles.
     foreach ($profiles as $key => $profile) {
       // Get the profile we're performing actions on.
+      /** @var \Drupal\profile\Entity\ProfileInterface $current_profile */
       $current_profile = _social_profile_get_profile_from_route();
 
-      if ($profile->id() === $current_profile->get('profile_id')->value) {
+      if (
+        $current_profile instanceof ProfileInterface &&
+        $profile->id() === $current_profile->get('profile_id')->value
+      ) {
         unset($profiles[$key]);
       }
     }
