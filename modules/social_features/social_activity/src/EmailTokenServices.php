@@ -6,6 +6,7 @@ use Drupal\comment\Entity\Comment;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
@@ -231,28 +232,22 @@ class EmailTokenServices {
   }
 
   /**
-   * Generates the renderable array for creation of CTA button.
+   * Generates the renderable array for creation of a CTA button.
    *
-   * @param string $link
-   *   The href property for button.
-   * @param string $text
-   *   The label of button.
+   * @param \Drupal\Core\Url $url
+   *   The href property for the button.
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup $text
+   *   The label of the button.
    *
    * @return array
    *   The renderable array.
    */
-  public function getCtaButton(string $link, string $text) {
-    $cta_button = [];
-
-    if (!empty($text) && !empty($link)) {
-      $cta_button = [
-        '#theme' => 'message_cta_button',
-        '#link' => $link,
-        '#text' => $this->t($text),
-      ];
-    }
-
-    return $cta_button;
+  public function getCtaButton(Url $url, TranslatableMarkup $text) {
+    return [
+      '#theme' => 'message_cta_button',
+      '#link' => $url,
+      '#text' => $text,
+    ];
   }
 
 }
