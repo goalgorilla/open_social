@@ -95,7 +95,7 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    */
   public function notifyAboutPendingInvitations(GetResponseEvent $event) {
     // Only show this message when a user is logged in.
-    if($this->currentUser->isAuthenticated()) {
+    if ($this->currentUser->isAuthenticated()) {
       $data = $this->inviteService->getInviteData();
       /** @var \Symfony\Component\HttpFoundation\Request $request */
       $request = $event->getRequest();
