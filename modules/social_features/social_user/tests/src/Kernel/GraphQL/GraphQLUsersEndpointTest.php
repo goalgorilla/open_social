@@ -3,7 +3,6 @@
 namespace Drupal\Tests\social_user\Kernel\GraphQL;
 
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
