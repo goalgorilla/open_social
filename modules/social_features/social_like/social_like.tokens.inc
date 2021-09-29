@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 use Drupal\votingapi\Entity\Vote;
 use Drupal\Core\Render\Markup;
@@ -169,7 +170,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                   $link = $commented_entity->toUrl('canonical', $url_options)
                     ->toString();
                 }
-                $cta_button = $email_token_services->getCtaButton($link, 'See all likes');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all likes'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

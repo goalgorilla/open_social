@@ -8,6 +8,7 @@
 use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Markup;
 
@@ -175,7 +176,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
               switch ($message_template_id) {
                 case 'approve_request_join_group':
                   if (isset($context['tokens']['cta_button'])) {
-                    $cta_button = $email_token_services->getCtaButton($link, 'Explore the group');
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group'));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }
@@ -189,7 +190,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                 case 'join_to_group':
                   if (isset($context['tokens']['cta_button'])) {
                     $link = Url::fromRoute('view.group_members.page_group_members', ['group' => $group_content->getGroup()->id()])->toString();
-                    $cta_button = $email_token_services->getCtaButton($link, 'See all members');
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members'));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }

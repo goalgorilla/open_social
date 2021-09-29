@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
@@ -95,7 +96,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
                 if (isset($context['tokens']['cta_button'])) {
                   $link = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group->id()],
                     ['absolute' => TRUE])->toString();
-                  $cta_button = $email_token_services->getCtaButton($link, 'View the requests');
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests'));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                 }

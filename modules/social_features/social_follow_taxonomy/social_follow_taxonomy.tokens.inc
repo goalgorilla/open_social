@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
@@ -202,7 +203,7 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
             case 'create_node_following_tag_stream':
               if (isset($context['tokens']['cta_button'])) {
                 $link = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
-                $cta_button = $email_token_services->getCtaButton($link, 'Read more about it');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more about it'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

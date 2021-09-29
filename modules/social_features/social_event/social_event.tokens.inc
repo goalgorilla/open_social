@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -110,7 +111,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
           switch ($message_template_id) {
             case 'activity_on_events_im_organizing':
               if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollments', 'View enrollments');
+                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollments', new TranslatableMarkup('View enrollments'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }
@@ -118,7 +119,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
 
             case 'request_event_enrollment':
               if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollment-requests', 'View enrollment requests');
+                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollment-requests', new TranslatableMarkup('View enrollment requests'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }
@@ -127,7 +128,7 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
             case 'member_added_by_event_organiser':
             case 'event_request_approved':
               if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link, 'See the event');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

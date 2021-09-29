@@ -7,6 +7,7 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\mentions\Entity\Mentions;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
@@ -231,7 +232,7 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                 if ($comment instanceof CommentInterface) {
                   $link .= '#comment-' . $comment->id();
                 }
-                $cta_button = $email_token_services->getCtaButton($link, 'Reply to this comment');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

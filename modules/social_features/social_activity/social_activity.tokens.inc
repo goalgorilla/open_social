@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\node\NodeInterface;
 
@@ -71,7 +72,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           $preview_info = $email_token_services->getPostPreview($entity);
 
           // Prepare CTA button information.
-          $cta_button = $email_token_services->getCtaButton($link, 'Leave a comment');
+          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment'));
 
           // This is for token deprecated token 'additional_information'.
           $additional_information = [
@@ -92,7 +93,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $link = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
 
             // Prepare the CTA button markup.
-            $cta_button = $email_token_services->getCtaButton($link, 'Read more');
+            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more'));
 
             // This is for token deprecated token 'additional_information'.
             $additional_information = [
