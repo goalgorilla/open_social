@@ -82,7 +82,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
 
     $form['invite_by_users'] = [
       '#type' => 'checkbox',
-      '#title' => t('Event managers is able to allow users send invites'),
+      '#title' => t('Event managers are able to allow users send invites'),
       '#description' => t('If enabled, event managers can allow users to send invitations to event.'),
       '#default_value' => $social_event_config->get('invite_by_users'),
     ];
