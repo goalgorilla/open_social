@@ -6,8 +6,6 @@
  */
 
 use Drupal\block\Entity\Block;
-use Drupal\bootstrap\Bootstrap;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -43,9 +41,6 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
 
 /**
  * Implements hook_theme().
- *
- * @return mixed[]
- *   List of themes.
  */
 function social_group_invite_theme(): array {
   return [
@@ -371,11 +366,6 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
- *
- * @param mixed[] $form
- *   An associative array containing the structure of the form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   The current state of the form.
  */
 function social_group_invite_form_group_form_alter(array &$form, FormStateInterface $form_state): void {
   $group_settings = \Drupal::config('social_group.settings');
@@ -385,35 +375,6 @@ function social_group_invite_form_group_form_alter(array &$form, FormStateInterf
   if (!(bool) $group_settings->get('group_invite.invite_by_members')) {
     $form['send_invites_by_member']['#access'] = FALSE;
   }
-
-  $id = Html::getUniqueId('tooltip-send_invites_by_member');
-  $icon = Bootstrap::glyphicon('question-sign');
-
-  // The tooltip to show more details about sharing/invite.
-  $tooltip = [
-    'icon' => [
-      '#type' => 'link',
-      '#url' => Url::fromUserInput("#$id"),
-      '#icon' => $icon,
-      '#attributes' => [
-        'class' => ['icon-before'],
-        'data-toggle' => 'popover',
-        'data-container' => 'body',
-        'data-html' => 'true',
-        'data-placement' => 'bottom',
-        'data-title' => t('Sharing option'),
-      ],
-    ],
-    'popover' => [
-      '#type' => 'container',
-      '#theme_wrappers' => ['container__file_upload_help'],
-      '#attributes' => [
-        'id' => $id,
-        'class' => ['hidden', 'help-block'],
-        'aria-hidden' => 'true',
-      ],
-    ],
-  ];
 
   // Wrapper for the sharing/invitation group settings field.
   $form['group_sharing'] = [
@@ -426,17 +387,6 @@ function social_group_invite_form_group_form_alter(array &$form, FormStateInterf
       '#attributes' => [
         'class' => [
           'control-label',
-        ],
-      ],
-      '#suffix' => \Drupal::service('renderer')->render($tooltip),
-    ],
-    'description' => [
-      '#type' => 'html_tag',
-      '#tag' => 'div',
-      '#value' => t('How pople can share the group.'),
-      '#attributes' => [
-        'class' => [
-          'help-block',
         ],
       ],
     ],
@@ -655,7 +605,7 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
   ];
   $form['group_invite']['invite_by_members'] = [
     '#type' => 'checkbox',
-    '#title' => t('Group managers is able to allow members send invites'),
+    '#title' => t('Group managers are able to allow members send invites'),
     '#description' => t('If enabled, group managers can allow group members to send invitations to their group.'),
     '#default_value' => !empty($invite_config['invite_by_members']) ?? FALSE,
   ];
@@ -769,9 +719,6 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
 
 /**
  * Implements hook_entity_base_field_info().
- *
- * @return mixed[]
- *   The list of fields.
  */
 function social_group_invite_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
