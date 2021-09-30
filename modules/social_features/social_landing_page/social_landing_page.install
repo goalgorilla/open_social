@@ -73,7 +73,6 @@ function _social_landing_page_get_permissions($role) {
     'override landing_page revision option',
     'override landing_page sticky option',
     'view node.landing_page.field_content_visibility:group content',
-    'link to any page',
   ]);
 
   // Site manager.
@@ -696,10 +695,61 @@ function social_landing_page_update_8811() {
 }
 
 /**
+ * Update landing page form labels.
+ */
+function social_landing_page_update_10201() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_10201');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Allow CM+ translate "Landing Page" node type.
  */
 function social_landing_page_update_10301() {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate landing_page node']);
+  }
+}
+
+/**
+ * Make "Landing Page" translatable.
+ */
+function social_landing_page_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update configuration for the types of the block_field field.
+ */
+function social_landing_page_update_10303() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Revoke permission.
+ */
+function social_landing_page_update_10304() {
+  foreach (['contentmanager', 'sitemanager'] as $role) {
+    user_role_revoke_permissions($role, ['link to any page']);
   }
 }

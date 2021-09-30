@@ -10,6 +10,7 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\search_api\Entity\Index;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_install().
@@ -406,5 +407,38 @@ function social_group_flexible_group_update_8912() {
 function social_group_flexible_update_10301() {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate flexible_group group']);
+  }
+}
+
+/**
+ * Update view display for Flexible Group.
+ */
+function social_group_flexible_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_flexible_group_update_10302');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Install display view modes for group contents for Flexible group type.
+ */
+function social_group_flexible_group_update_10303(&$sandbox) {
+  // Install new configs.
+  $config_files = [
+    'core.entity_view_display.group_content.flexible_group-group_node-event.activity' => 'core.entity_view_display.group_content.flexible_group-group_node-event.activity_10303',
+    'core.entity_view_display.group_content.flexible_group-group_node-topic.activity' => 'core.entity_view_display.group_content.flexible_group-group_node-topic.activity_10303',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group_flexible_group') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  foreach ($config_files as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
   }
 }

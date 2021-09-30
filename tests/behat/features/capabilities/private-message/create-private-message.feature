@@ -33,10 +33,13 @@
       | Your message has been created. |
 
     # I want to send a new message from a user`s profile
+    And the cache has been cleared
     When I am on the profile of "PM User Two"
-    Then I should see the link "Private message" in the "Hero block"
+    Then I should see the link "Private message"
     And I click "Private message"
+    And I wait for "3" seconds
     Then I should see "PM User Two"
+    And I should see the button "Send"
     And I should see "You"
     When I fill in "Message" with "Hi PM User Two, are we going to eat some pizza tomorrow?"
     And I press "Send"
@@ -58,7 +61,7 @@
 
     # Delete the thread.
     When I click "View thread"
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the xth "0" element with the css ".dropdown-toggle" in the "Main content"
     Then I click "Delete thread"
     And I should see "This action cannot be undone."
     And I press "Delete thread"

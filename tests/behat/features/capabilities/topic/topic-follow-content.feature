@@ -29,7 +29,7 @@ Feature: Follow Content
     And I should see the link "Follow content"
     And I should not see the link "Unfollow content"
 
-  @topic-follow-content-notification
+  @email-spool
   Scenario: Receive (email) notification of topic you are following
     Given users:
       | name   | mail               | status |
@@ -88,7 +88,7 @@ Feature: Follow Content
       And I should not have an email with subject "Notification from Open Social" and in the content:
         | content                                                                     |
         | Hi Dude 1                                                                   |
-        | Dude 3 commented on Dude 1's topic This is a follow topic you are following |
+        | Dude 3 commented on topic This is a follow topic you are following |
         | This is a test comment                                                      |
 
     # Check if the Dude 2 got a notification.
@@ -98,5 +98,5 @@ Feature: Follow Content
       And I should have an email with subject "Notification from Open Social" and in the content:
         | content                                                                     |
         | Hi Dude 2                                                                   |
-        | Dude 3 commented on Dude 1's topic This is a follow topic you are following |
+        | Dude 3 commented on topic This is a follow topic you are following |
         | This is a test comment                                                      |

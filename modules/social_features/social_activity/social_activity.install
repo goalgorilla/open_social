@@ -7,8 +7,10 @@
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Config\FileStorage;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Social activity install function.
@@ -259,4 +261,107 @@ function social_activity_update_8807() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Resolve missing filter on Activity Stream view.
+ */
+function social_activity_update_10301() {
+  // Set the key for the filter to remove from all displays.
+  $filter_to_remove = 'activity_filter_nodes_from_my_groups_filter';
+
+  $config_factory = \Drupal::configFactory();
+  // Load the activity stream.
+  $view = $config_factory->getEditable('views.view.activity_stream');
+  // Get the displays.
+  $displays = $view->get('display');
+
+  // Remove the filter from any displays where it is used.
+  $updated = [];
+  if (is_array($displays)) {
+    foreach ($displays as $display_name => &$display) {
+      // Remove the redundant filter.
+      if (isset($display['display_options']['filters'][$filter_to_remove])) {
+        unset($display['display_options']['filters'][$filter_to_remove]);
+        $updated[] = $display_name;
+      }
+    }
+  }
+
+  // Save and log if we changed a display.
+  if (count($updated)) {
+    $view->set('display', $displays);
+    $view->save(TRUE);
+    // Log the updates.
+    foreach ($updated as $display_name) {
+      \Drupal::logger('system')->info('Filter removed from display: %name', ['%name' => $display_name]);
+    }
+  }
+}
+
+/**
+ * Update message templates.
+ */
+function social_activity_update_10302() {
+  // Install new configs.
+  $config_files = [
+    'message.template.create_event_gc' => 'message.template.create_event_gc_10302',
+    'message.template.create_topic_gc' => 'message.template.create_topic_gc_10302',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $source = new FileStorage($config_path);
+  foreach ($config_files as $origin_name => $update_name) {
+    // Add new message templates.
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_10302');
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update the listed below message template files as per new email style.
+ *
+ * 1. message.template.create_comment_author_node_post
+ * 2. message.template.create_comment_post_profile
+ * 3. message.template.create_comment_reply
+ * 4. message.template.create_content_in_joined_group
+ * 5. message.template.create_post_profile
+ * 6. message.template.event_request_approved
+ * 7. message.template.request_event_enrollment.
+ *
+ * Added new 'preview' and 'cta_button' tokens to these templates.
+ */
+function social_activity_update_10303() {
+  // Prepare the path.
+  $path = drupal_get_path('module', 'social_activity') . '/config/static/';
+
+  $message_templates = [
+    'message.template.create_comment_author_node_post' => $path . 'message.template.create_comment_author_node_post_10303.yml',
+    'message.template.create_comment_post_profile' => $path . 'message.template.create_comment_post_profile_10303.yml',
+    'message.template.create_comment_reply' => $path . 'message.template.create_comment_reply_10303.yml',
+    'message.template.create_content_in_joined_group' => $path . 'message.template.create_content_in_joined_group_10303.yml',
+    'message.template.create_post_profile' => $path . 'message.template.create_post_profile_10303.yml',
+    'message.template.event_request_approved' => $path . 'message.template.event_request_approved_10303.yml',
+    'message.template.join_to_group' => $path . 'message.template.join_to_group_10303.yml',
+    'message.template.request_event_enrollment' => $path . 'message.template.request_event_enrollment_10303.yml',
+  ];
+
+  // Retrieves the configuration factory.
+  $config_factory = \Drupal::configFactory();
+
+  // Update each template file.
+  foreach ($message_templates as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = $config_factory->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
 }

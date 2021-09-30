@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\ActivitySend;
 
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send\Plugin\ActivitySendBase;
 
 /**
@@ -17,7 +18,7 @@ class EmailActivitySend extends ActivitySendBase {
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function process(ActivityInterface $entity) : void {
     $data['entity_id'] = $entity->id();
     $queue = \Drupal::queue('activity_send_email_worker');
     $queue->createItem($data);

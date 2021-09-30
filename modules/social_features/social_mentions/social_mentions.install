@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -85,4 +86,38 @@ function _social_mentions_set_default_config() {
   $config->set('suggestions_amount', 8);
 
   $config->save();
+}
+
+/**
+ * Update the listed below message template files as per new email style.
+ *
+ * 1. message.template.create_comment_reply_mention
+ * 2. message.template.create_mention_comment
+ * 3. message.template.create_mention_post.
+ *
+ * Added new 'preview' and 'cta_button' tokens to these templates.
+ */
+function social_mentions_update_10301() {
+  // Prepare the path.
+  $path = drupal_get_path('module', 'social_mentions') . '/config/static/';
+
+  $message_templates = [
+    'message.template.create_comment_reply_mention' => $path . 'message.template.create_comment_reply_mention_10301.yml',
+    'message.template.create_mention_comment' => $path . 'message.template.create_mention_comment_10301.yml',
+    'message.template.create_mention_post' => $path . 'message.template.create_mention_post_10301.yml',
+  ];
+
+  // Retrieves the configuration factory.
+  $config_factory = \Drupal::configFactory();
+
+  // Update each template file.
+  foreach ($message_templates as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = $config_factory->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
 }

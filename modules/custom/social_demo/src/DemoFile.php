@@ -2,16 +2,20 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\file\FileInterface;
+use Drupal\file\FileStorageInterface;
 use Drupal\image_widget_crop\ImageWidgetCropManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\taxonomy\TermStorageInterface;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drush\Log\LogLevel;
 use Drupal\crop\Entity\CropType;
 
 /**
- * Class DemoFile.
+ * Abstract file for creating demo files.
  *
  * @package Drupal\social_demo
  */
@@ -34,10 +38,30 @@ abstract class DemoFile extends DemoContent {
   /**
    * DemoFile constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, ImageWidgetCropManager $image_widget_crop_manager, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    DemoContentParserInterface $parser,
+    UserStorageInterface $user_storage,
+    EntityStorageInterface $group_storage,
+    FileStorageInterface $file_storage,
+    TermStorageInterface $term_storage,
+    LoggerChannelFactoryInterface $logger_channel_factory,
+    ImageWidgetCropManager $image_widget_crop_manager,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    parent::__construct(
+    $configuration,
+    $plugin_id,
+    $plugin_definition,
+    $parser,
+    $user_storage,
+    $group_storage,
+    $file_storage,
+    $term_storage,
+    $logger_channel_factory
+    );
     $this->imageWidgetCropManager = $image_widget_crop_manager;
     $this->entityTypeManager = $entity_type_manager;
   }
@@ -51,6 +75,11 @@ abstract class DemoFile extends DemoContent {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('entity_type.manager')->getStorage('taxonomy_term'),
+      $container->get('logger.factory'),
       $container->get('image_widget_crop.manager'),
       $container->get('entity_type.manager')
     );
@@ -65,7 +94,7 @@ abstract class DemoFile extends DemoContent {
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
       if ($uuid !== $item['uuid']) {
-        drush_log(dt("File with uuid: {$uuid} has a different uuid in content."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("File with uuid: {$uuid} has a different uuid in content.");
         continue;
       }
 
@@ -75,7 +104,7 @@ abstract class DemoFile extends DemoContent {
       ]);
 
       if ($files) {
-        drush_log(dt("File with uuid: {$uuid} already exists."), LogLevel::WARNING);
+        $this->loggerChannelFactory->get('social_demo')->warning("File with uuid: {$uuid} already exists.");
         continue;
       }
 

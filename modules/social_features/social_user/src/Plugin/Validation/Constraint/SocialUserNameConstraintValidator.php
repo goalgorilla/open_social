@@ -13,7 +13,11 @@ use Symfony\Component\Validator\ConstraintValidator;
  * Validates the UserName constraint no email address allowed in the username.
  */
 class SocialUserNameConstraintValidator extends ConstraintValidator implements ContainerInjectionInterface {
-  protected $typedDataManager;
+
+  /**
+   * The typed data manager.
+   */
+  protected TypedDataManagerInterface $typedDataManager;
 
   /**
    * {@inheritdoc}

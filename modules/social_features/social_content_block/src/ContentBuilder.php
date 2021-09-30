@@ -3,9 +3,11 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -18,7 +20,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
 /**
- * Class ContentBuilder.
+ * Defines the content builder service.
  *
  * @package Drupal\social_content_block
  */
@@ -55,6 +57,20 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   protected $contentBlockManager;
 
   /**
+   * The entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * ContentBuilder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -67,19 +83,27 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The string translation.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
-    ContentBlockManagerInterface $content_block_manager
+    ContentBlockManagerInterface $content_block_manager,
+    EntityRepositoryInterface $entity_repository,
+    TimeInterface $time
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
+    $this->entityRepository = $entity_repository;
+    $this->time = $time;
   }
 
   /**
@@ -103,15 +127,17 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getEntities($block_id) {
-    $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
+    $block_content = $this->entityTypeManager->getStorage('block_content')
+      ->load($block_id);
 
-    $plugin_id = $block_content->field_plugin_id->value;
+    $plugin_id = $block_content->field_plugin_id->getValue()[0]['value'];
     $definition = $this->contentBlockManager->getDefinition($plugin_id);
 
     // When the user didn't select any filter in the "Content selection" field
     // then the block base query will be built based on all filled filterable
     // fields.
-    if ($block_content->field_plugin_field->isEmpty()) {
+    if (($field = $block_content->field_plugin_field)->isEmpty()) {
       // It could be that the plugin supports more fields than are currently
       // available, those are removed.
       $field_names = array_filter(
@@ -125,39 +151,27 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     // only condition based on this filter field will be added to the block base
     // query.
     else {
-      $field_names = [$block_content->field_plugin_field->value];
+      $field_names = array_column($field->getValue(), 'value');
     }
-
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
     $fields = [];
 
     foreach ($field_names as $field_name) {
       $field = $block_content->get($field_name);
 
-      // Make non-empty entity reference fields easier to use.
-      if ($field instanceof EntityReferenceFieldItemListInterface && !$field->isEmpty()) {
-        $fields[$field_name] = array_map(function ($item) {
-          return $item['target_id'];
-        }, $field->getValue());
-      }
-      // Other fields just get added as is.
-      elseif (!$field->isEmpty()) {
+      if (!$field->isEmpty()) {
         $fields[$field_name] = $field->getValue();
+
+        // Make non-empty entity reference fields easier to use.
+        if ($field instanceof EntityReferenceFieldItemListInterface) {
+          $fields[$field_name] = array_column($fields[$field_name], 'target_id');
+        }
       }
     }
-
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $this->contentBlockManager->createInstance($plugin_id);
 
     /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
-    /** @var \Drupal\Core\Database\Query\SelectInterface $query */
     $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
       ->fields('base_table', [$entity_type->getKey('id')]);
 
@@ -168,6 +182,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       );
     }
 
+    $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
     if ($fields) {
       $plugin->query($query, $fields);
     }
@@ -176,7 +192,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
     // Apply our sorting logic.
-    $this->sortBy($query, $entity_type, $block_content->field_sorting->value);
+    $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
 
     // Add range.
     $query->range(0, $block_content->field_item_amount->value);
@@ -193,6 +209,10 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       foreach ($entities as $key => $entity) {
         if ($entity->access('view') === FALSE) {
           unset($entities[$key]);
+        }
+        else {
+          // Get entity translation if exists.
+          $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
         }
       }
 
@@ -249,6 +269,10 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       return [];
     }
 
+    // Get block translation if exists.
+    /** @var \Drupal\block_content\BlockContentInterface $block_content */
+    $block_content = $this->entityRepository->getTranslationFromContext($block_content);
+
     $build['content'] = [];
 
     $build['content']['entities'] = [
@@ -293,17 +317,17 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
       $fields = &$element['field_plugin_field']['widget'][0][$plugin_id]['#options'];
 
-      foreach ($fields as $field_name => $field_title) {
+      foreach ($fields as $field_name => &$field_title) {
         // When the filter field was absent during executing the code of the
         // field widget plugin for the filters list field then process this
         // field repeatedly.
         // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
         if ($field_name === $field_title) {
           if (isset($element[$field_name]['widget']['target_id'])) {
-            $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+            $field_title = $element[$field_name]['widget']['target_id']['#title'];
           }
           else {
-            $fields[$field_name] = $element[$field_name]['widget']['#title'];
+            $field_title = $element[$field_name]['widget']['#title'];
           }
 
           $element[$field_name]['#states'] = [
@@ -327,14 +351,9 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       'wrapper' => 'social-content-block-sorting-options',
     ];
 
-    $parents = array_merge(
-      $element['field_plugin_id']['widget']['#field_parents'],
-      ['field_plugin_id']
-    );
-
     // Set the sorting options based on the selected plugins.
-    $value_parents = array_merge($parents, ['0', 'value']);
-    $selected_plugin = $form_state->getValue($value_parents);
+    $parents = $content_block_manager->getParents('field_plugin_id', 'value', $element);
+    $selected_plugin = $form_state->getValue($parents);
 
     // If there's no value in the form state check if there was anything in the
     // submissions.
@@ -342,8 +361,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $input = $form_state->getUserInput();
       $field = $element['field_plugin_id']['widget'][0]['value'];
 
-      if (NestedArray::keyExists($input, $value_parents)) {
-        $input_value = NestedArray::getValue($input, $value_parents);
+      if (NestedArray::keyExists($input, $parents)) {
+        $input_value = NestedArray::getValue($input, $parents);
 
         if (!empty($input_value) && isset($field['#options'][$input_value])) {
           $selected_plugin = $input_value;
@@ -356,9 +375,50 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       }
     }
 
-    $element['field_sorting']['widget']['#options'] = $content_block_manager->createInstance($selected_plugin)->supportedSortOptions();
-    $element['field_sorting']['#prefix'] = '<div id="social-content-block-sorting-options">';
-    $element['field_sorting']['#suffix'] = '</div>';
+    $field = $element['field_sorting']['#group'];
+    $element[$field]['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
+    $element[$field]['#suffix'] = '</div>';
+
+    if (!$selected_plugin) {
+      return $element;
+    }
+
+    $plugin = $content_block_manager->createInstance($selected_plugin);
+    $options = $configurable = [];
+
+    foreach ($plugin->supportedSortOptions() as $name => $settings) {
+      $add_dependency = TRUE;
+
+      if (is_array($settings)) {
+        $options[$name] = $settings['label'];
+
+        if (isset($settings['limit']) && !$settings['limit']) {
+          $add_dependency = FALSE;
+        }
+      }
+      else {
+        $options[$name] = $settings;
+      }
+
+      if ($add_dependency) {
+        $configurable[] = $name;
+      }
+    }
+
+    $element['field_sorting']['widget']['#options'] = $options;
+
+    $selector = $content_block_manager->getSelector('field_sorting', NULL, $element);
+
+    $element['field_duration']['#states'] = [
+      'visible' => [
+        $selector => array_map(
+          function ($name) {
+            return ['value' => $name];
+          },
+          $configurable
+        ),
+      ],
+    ];
 
     return $element;
   }
@@ -376,12 +436,22 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     // Check that the currently selected value is valid and change it otherwise.
     $value_parents = array_merge($parents, ['0', 'value']);
     $sort_value = $form_state->getValue($value_parents);
-    $options = NestedArray::getValue($form, array_merge($parents, ['widget', '#options']));
+
+    $options = NestedArray::getValue(
+      $form,
+      array_merge($parents, ['widget', '#options'])
+    );
 
     if ($sort_value === NULL || !isset($options[$sort_value])) {
       // Unfortunately this has already triggered a validation error.
       $form_state->clearErrors();
       $form_state->setValue($value_parents, key($options));
+    }
+
+    $parents = [NestedArray::getValue($form, array_merge($parents, ['#group']))];
+
+    if ($form_state->has('layout_builder__component')) {
+      $parents = array_merge(['settings', 'block_form'], $parents);
     }
 
     return NestedArray::getValue($form, $parents);
@@ -394,39 +464,57 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *   The query.
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type that is being queried.
-   * @param string $sort_by
-   *   The type of sorting that should happen.
+   * @param \Drupal\block_content\BlockContentInterface $block_content
+   *   The block content entity object.
+   * @param array $options
+   *   The sort options.
    */
-  protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, string $sort_by) : void {
+  protected function sortBy(
+    SelectInterface $query,
+    EntityTypeInterface $entity_type,
+    BlockContentInterface $block_content,
+    array $options
+  ): void {
     // Define a lower limit for popular content so that content with a large
     // amount of comments/votes is not popular forever.
     // Sorry cool kids, your time's up.
-    $popularity_time_start = strtotime('-90 days');
+    if (!($field = $block_content->field_duration)->isEmpty()) {
+      $days = $field->getValue()[0]['value'];
+      $popularity_time_start = strtotime("-$days days", $this->time->getRequestTime());
+
+      if ($popularity_time_start) {
+        $popularity_time_start = (string) $popularity_time_start;
+      }
+    }
+    else {
+      $popularity_time_start = NULL;
+    }
 
     // Provide some values that are often used in the query.
+    $sort_by = $block_content->field_sorting->getValue()[0]['value'];
     $entity_type_id = $entity_type->id();
     $entity_id_key = $entity_type->getKey('id');
+    $arguments = ['entity_type' => $entity_type_id];
+    $is_group = $entity_type_id === 'group';
+    $base_field = 'base_table.' . $entity_id_key;
+    $sorting_field = 'base_table.' . $sort_by;
+    $direction = 'DESC';
 
     switch ($sort_by) {
       // Creates a join to select the number of comments for a given entity
       // in a recent timeframe and use that for sorting.
       case 'most_commented':
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
-          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post') OR (gfd.entity_id = cfd.entity_id AND cfd.entity_type='node')", ['entity_type' => $entity_type_id]);
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
-        // Otherwise only check direct votes.
+        // Otherwise, only check direct votes.
         else {
-          $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
 
-        $query->addExpression('COUNT(cfd.cid)', 'comment_count');
-        $query
-          ->condition('cfd.status', 1, '=')
-          ->condition('cfd.created', $popularity_time_start, '>')
-          ->groupBy("base_table.${entity_id_key}")
-          ->orderBy('comment_count', 'DESC');
+        $sorting_field = $query->addExpression("COUNT($comment_alias.cid)", 'comment_count');
         break;
 
       // Creates a join to select the number of likes for a given entity in a
@@ -435,72 +523,122 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         // For groups also check likes on posts in groups. This does not (yet)
         // take into account likes on comments on posts or likes on other group
         // content entities.
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
-          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type = 'post') OR (gfd.entity_id = vv.entity_id AND vv.entity_type = 'node')", ['entity_type' => $entity_type_id]);
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
         }
-        // Otherwise only check direct votes.
+        // Otherwise, only check direct votes.
         else {
-          $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
         }
-        $query->addExpression('COUNT(vv.id)', 'vote_count');
-        // This assumes all votes are likes and all likes are equal. To
-        // support downvoting or rating, the query should be altered.
-        $query
-          ->condition('vv.type', 'like')
-          ->condition('vv.timestamp', $popularity_time_start, '>')
-          ->groupBy("base_table.${entity_id_key}")
-          ->orderBy('vote_count', 'DESC');
+
+        $sorting_field = $query->addExpression("COUNT($vote_alias.id)", 'vote_count');
         break;
 
       // Creates a join that pulls in all related entities, taking the highest
       // update time for all related entities as last interaction time and using
       // that as sort value.
       case 'last_interacted':
-        if ($entity_type_id === 'group') {
-          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
-          $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
-          $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          $query->leftjoin('comment_field_data', 'cfd', "pfd.id = cfd.entity_id AND cfd.entity_type = 'post'");
-          $query->leftJoin('votingapi_vote', 'vv', "pfd.id = vv.entity_id AND vv.entity_type = 'post'");
-          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
+        if ($is_group) {
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid");
+          $group_post_alias = $query->leftjoin('post__field_recipient_group', 'pst', "$base_field = %alias.field_recipient_group_target_id");
+          $post_alias = $query->leftjoin('post_field_data', 'pfd', "$group_post_alias.entity_id = %alias.id");
+          $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$post_alias.id = %alias.entity_id AND %alias.entity_type = 'post'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.id = %alias.entity_id AND %alias.entity_type = 'post'");
+          $node_alias = $query->leftjoin('node_field_data', 'nfd', "$group_alias.entity_id = %alias.nid");
 
-          $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
-            COALESCE(MAX(vv.timestamp), 0),
-            COALESCE(MAX(cfd.changed), 0),
-            COALESCE(MAX(nfd.changed), 0),
-            COALESCE(MAX(pfd.changed), 0))', 'newest_timestamp');
-
-          $query->groupBy("base_table.${entity_id_key}");
-          $query->orderBy('newest_timestamp', 'DESC');
+          $sorting_field = $query->addExpression("GREATEST(COALESCE(MAX($group_alias.changed), 0),
+            COALESCE(MAX($vote_alias.timestamp), 0),
+            COALESCE(MAX($comment_alias.changed), 0),
+            COALESCE(MAX($node_alias.changed), 0),
+            COALESCE(MAX($post_alias.changed), 0))", 'newest_timestamp');
         }
         elseif ($entity_type_id === 'node') {
-          $query->leftJoin('node_field_data', 'nfd', "base_table.${entity_id_key} = nfd.nid");
+          $node_alias = $query->leftJoin('node_field_data', 'nfd', "$base_field = %alias.nid");
+
           // Comment entity.
-          $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
+          $comment_alias = $query->leftjoin('comment_field_data', 'cfd', "$node_alias.nid = %alias.entity_id");
+
           // Like node or comment related to node.
-          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id AND vv.entity_type = :entity_type_id) OR (cfd.cid = vv.entity_id)', ['entity_type_id' => $entity_type_id]);
+          $vote_alias = $query->leftjoin('votingapi_vote', 'vv', "$node_alias.nid = %alias.entity_id AND %alias.entity_type = :entity_type OR $comment_alias.cid = %alias.entity_id", $arguments);
 
-          $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
-          COALESCE(MAX(cfd.changed), 0),
-          COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
-
-          $query->groupBy("base_table.${entity_id_key}");
-          $query->orderBy('newest_timestamp', 'DESC');
+          $sorting_field = $query->addExpression("GREATEST(COALESCE(MAX($vote_alias.timestamp), 0),
+          COALESCE(MAX($comment_alias.changed), 0),
+          COALESCE(MAX($node_alias.changed), 0))", 'newest_timestamp');
         }
+
+        break;
+
+      // Summed up likes and comments.
+      case 'trending':
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
+        }
+        else {
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+          $vote_alias = $query->leftJoin('votingapi_vote', 'vv', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+        }
+
+        $sorting_field = $query->addExpression("COUNT(DISTINCT $comment_alias.cid) + COUNT(DISTINCT $vote_alias.id)", 'comment_vote_count');
         break;
 
       case 'event_date':
-        $nfed_alias = $query->leftJoin('node__field_event_date', 'nfed', "base_table.${entity_id_key} = %alias.entity_id");
-        $query->orderBy("${nfed_alias}.field_event_date_value", 'ASC');
+        $sorting_field = $query->leftJoin('node__field_event_date', 'nfed', "$base_field = %alias.entity_id");
+        $sorting_field .= '.field_event_date_value';
+        $direction = 'ASC';
+        $base_field = NULL;
         break;
-
-      // Fall back by assuming the sorting option is a field.
-      default:
-        $query->orderBy("base_table.${sort_by}", 'DESC');
     }
 
+    if (isset($comment_alias) || isset($vote_alias)) {
+      $are_both = isset($comment_alias) && isset($vote_alias);
+      $conditions = $are_both ? $query->orConditionGroup() : $query;
+
+      if (isset($comment_alias)) {
+        $conditions->condition("$comment_alias.status", 1);
+      }
+
+      if (isset($vote_alias)) {
+        $conditions->condition("$vote_alias.type", 'like');
+      }
+
+      if ($are_both) {
+        $query->condition($conditions);
+      }
+
+      $option = $options[$sort_by];
+
+      if (
+        $popularity_time_start &&
+        (
+          (is_array($option) && !(isset($option['limit']) && !$option['limit'])) ||
+          !is_array($option))
+      ) {
+        $conditions = $are_both ? $query->orConditionGroup() : $query;
+
+        if (isset($comment_alias)) {
+          $conditions->condition("$comment_alias.created", $popularity_time_start, '>');
+        }
+
+        if (isset($vote_alias)) {
+          $conditions->condition("$vote_alias.timestamp", $popularity_time_start, '>');
+        }
+
+        if ($are_both) {
+          $query->condition($conditions);
+        }
+      }
+    }
+
+    if ($base_field) {
+      $query->groupBy($base_field);
+    }
+
+    $query->orderBy($sorting_field, $direction);
   }
 
 }

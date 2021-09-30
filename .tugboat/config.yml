@@ -58,10 +58,15 @@ services:
           en social_demo
         ../vendor/bin/drush \
           sda \
-          file user group topic event eventenrollment post comment like
+          file user group topic event event_enrollment post comment like
         # Allow site managers to enable modules so developers can change the
         # set-up during testing.
-        ../vendor/bin/drush role:add:perm --yes 'sitemanager' 'administer modules'
+        ../vendor/bin/drush role:perm:add --yes 'sitemanager' 'administer modules'
+        # Uninstall the social_demo module since demo content has been
+        # installed and the module silences useful status messages.
+        ../vendor/bin/drush \
+          --yes \
+          pmu social_demo
         # Change file owner again because of the way demo content is copied.
         chown -R www-data:www-data $DOCROOT
       build: |
@@ -71,7 +76,6 @@ services:
         composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
         composer install --optimize-autoloader
         cd html && ../vendor/bin/drush updatedb -y
-
   # A database for storage of Open Social data.
   db:
     image: tugboatqa/mariadb:latest

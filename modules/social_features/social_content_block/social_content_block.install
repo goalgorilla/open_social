@@ -9,6 +9,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_modules_installed().
@@ -27,22 +28,20 @@ function _social_content_block_update_sorting_options() {
 
   // Retrieve all sort options, removing duplicates and format them to the
   // format of field storage configuration.
-  $sort_options_raw = [];
-  foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
-    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
-    $plugin = $content_block_manager->createInstance($plugin_id);
-    $sort_options_raw += $plugin->supportedSortOptions();
-  }
-
   $sort_options = [];
-  foreach ($sort_options_raw as $value => $label) {
-    $sort_options[] = [
-      'value' => $value,
-      'label' => $label,
-    ];
+
+  foreach (array_keys($content_block_manager->getDefinitions()) as $plugin_id) {
+    $plugin = $content_block_manager->createInstance($plugin_id);
+
+    foreach ($plugin->supportedSortOptions() as $name => $settings) {
+      $sort_options[] = [
+        'value' => $name,
+        'label' => is_array($settings) ? $settings['label'] : $settings,
+      ];
+    }
   }
 
-  // Load the existing cnofiguration and update it if it's different.
+  // Load the existing configuration and update it if it's different.
   $config_name = 'field.storage.block_content.field_sorting';
   $config = \Drupal::configFactory()->getEditable($config_name);
   $config_data = $config->getRawData();
@@ -425,4 +424,136 @@ function social_content_block_update_8801(&$sandbox) {
   // Set updated allowed values and save.
   $field_purchasers->setSetting('allowed_values', $allowed_values);
   $field_purchasers->save();
+}
+
+/**
+ * Add translations support for "Custom content list" custom block fields.
+ */
+function social_content_block_update_10300() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Add a field for days number.
+ */
+function social_content_block_update_10301() {
+  $entity_type_ids = [
+    'field.storage.block_content' => 'field_storage_config',
+    'field.field.block_content.custom_content_list' => 'field_config',
+  ];
+
+  $path = drupal_get_path('module', 'social_content_block') . '/config/static/';
+
+  foreach ($entity_type_ids as $prefix => $entity_type_id) {
+    $config_file = $path . $prefix . '.field_duration_10301.yml';
+    $settings = Yaml::parseFile($config_file);
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($settings)->save();
+  }
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Set limit by days number.
+ */
+function social_content_block_update_10302(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('block_content')
+      ->accessCheck(FALSE)
+      ->condition('type', 'custom_content_list')
+      ->notExists('field_duration')
+      ->count()
+      ->execute();
+
+    if (!$sandbox['total']) {
+      return;
+    }
+
+    $sandbox['sort_by'] = NULL;
+    $sandbox['last'] = $sandbox['processed'] = 0;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+  }
+
+  $entity_ids = \Drupal::entityQuery('block_content')
+    ->accessCheck(FALSE)
+    ->condition('type', 'custom_content_list')
+    ->condition('id', $sandbox['last'], '>')
+    ->notExists('field_duration')
+    ->sort('id')
+    ->sort('field_sorting')
+    ->range(0, $sandbox['limit'])
+    ->execute();
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block_content');
+
+  /** @var \Drupal\social_content_block\ContentBlockManagerInterface $manager */
+  $manager = \Drupal::service('plugin.manager.content_block');
+
+  foreach ($entity_ids as $entity_id) {
+    /** @var \Drupal\block_content\BlockContentInterface $entity */
+    $entity = $storage->load($entity_id);
+
+    $sort_by = $entity->field_sorting->getValue()[0]['value'];
+
+    if ($sort_by !== $sandbox['sort_by']) {
+      $plugin_id = $entity->field_plugin_id->getValue()[0]['value'];
+      $plugin = $manager->createInstance($plugin_id);
+      $settings = $plugin->supportedSortOptions()[$sort_by];
+
+      if (is_array($settings) && isset($settings['limit']) && !$settings['limit']) {
+        $sandbox['duration'] = NULL;
+      }
+      else {
+        if (!isset($sandbox['default'])) {
+          $sandbox['default'] = $entity->field_duration->getFieldDefinition()
+            ->getDefaultValue($entity)[0]['value'];
+        }
+
+        $sandbox['duration'] = $sandbox['default'];
+      }
+
+      $sandbox['sort_by'] = $sort_by;
+    }
+
+    if ($sandbox['duration']) {
+      $entity->field_duration->setValue($sandbox['duration']);
+      $entity->save();
+    }
+  }
+
+  $sandbox['last'] = end($entity_ids);
+  $sandbox['processed'] += count($entity_ids);
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
+ * Change widget of sorting field.
+ */
+function social_content_block_update_10303(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -85,7 +86,7 @@ function _social_like_set_defaults() {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   $container = \Drupal::getContainer()->get('config.factory');
   $config = $container->getEditable('like_and_dislike.settings');
-  $config->set('hide_vote_widget', TRUE)->save();
+  $config->set('hide_vote_widget', FALSE)->save();
   $config->set(
     'enabled_types',
     [
@@ -134,4 +135,30 @@ function _social_like_get_permissions($role) {
   }
 
   return [];
+}
+
+/**
+ * Disable the setting "Hide vote widget instead of disabling it".
+ */
+function social_like_update_10301() {
+  \Drupal::configFactory()->getEditable('like_and_dislike.settings')
+    ->set('hide_vote_widget', FALSE)
+    ->save();
+}
+
+/**
+ * Update message template "message.template.create_like_node_or_post".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_like_update_10302() {
+  $config_file = drupal_get_path('module', 'social_like') . '/config/static/message.template.create_like_node_or_post_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_like_node_or_post');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

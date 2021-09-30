@@ -1,22 +1,24 @@
 includes:
-  - vendor/mglaman/phpstan-drupal/extension.neon
-  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
   - phpstan-baseline.neon
 
 parameters:
-  level: 5
+  level: 8
   paths:
       - src
       - modules/custom
       - modules/social_features
+  excludePaths:
+    analyseAndScan:
+      - */social_demo/*
+    analyse:
+      - *SocialProfileTrait.php
   drupal:
       drupal_root: %currentWorkingDirectory%/core
-  excludes_analyse:
-    - */GraphQL*
-    - */social_graphql/*
-    - */social_demo/*
-    - *SocialProfileTrait.php
-    - */tests/*
+  # When writing Drupal code we have arrays all over the place and even all
+  # entities are considered iterable type. Thus it's more sensible to disable
+  # this check than work with an ever expanding baseline.
+  # See https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type
+  checkMissingIterableValueType: false
   ignoreErrors:
     - '#Plugin manager has cache backend specified but does not declare cache tags.#' # See - https://github.com/mglaman/phpstan-drupal/issues/112#issue-557001157
     - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
