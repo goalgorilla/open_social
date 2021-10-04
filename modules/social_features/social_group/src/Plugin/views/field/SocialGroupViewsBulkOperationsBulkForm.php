@@ -61,47 +61,6 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     }
 
     return $bulk_options;
-
-    $bulk_options = parent::getBulkOptions();
-
-    if ($this->view->id() !== 'group_manage_members') {
-      return $bulk_options;
-    }
-
-    foreach ($bulk_options as $id => &$label) {
-      if (!empty($this->options['preconfiguration'][$id]['label_override'])) {
-        $real_label = $this->options['preconfiguration'][$id]['label_override'];
-      }
-      else {
-        $real_label = $this->actions[$id]['label'];
-      }
-
-      switch ($id) {
-        case 'social_group_members_export_member_action':
-        case 'social_group_delete_group_content_action':
-          $label = $this->t('<b>@action</b> selected members', [
-            '@action' => $real_label,
-          ]);
-
-          break;
-
-        case 'social_group_send_email_action':
-          $label = $this->t('<b>@action</b>', [
-            '@action' => $real_label,
-          ]);
-
-          break;
-
-        case 'social_group_change_member_role_action':
-          $label = $this->t('<b>@action</b> of selected members', [
-            '@action' => $real_label,
-          ]);
-
-          break;
-      }
-    }
-
-    return $bulk_options;
   }
 
   /**
