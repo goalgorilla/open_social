@@ -301,6 +301,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
         'status' => TRUE,
         'field_account' => $this->currentUser()->id(),
         'field_event' => $node->id(),
+        'field_enrollment_status' => '1',
       ]);
     if (
       !$event_invite_settings->get('invite_by_users') ||
