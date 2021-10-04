@@ -67,7 +67,7 @@ class SocialScrollOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names): array {
     // @codingStandardsIgnoreEnd
     $overrides = [];
-    $enabled_views = array_keys($this->socialScrollManager->getEnabledViewIds());
+    $enabled_views = $this->socialScrollManager->getEnabledViewIds();
 
     foreach ($enabled_views as $key) {
       $config_name = $this->socialScrollManager->getConfigName($key);
@@ -88,22 +88,20 @@ class SocialScrollOverride implements ConfigFactoryOverrideInterface {
           }
         }
 
-        if ($this->routeMatch->getRouteName() !== 'view.group_information.page_group_about') {
-          foreach ($pages as $display_page) {
-            $display_options = $current_view->getOriginal('display.' . $display_page . '.display_options');
-            $overrides[$config_name]['display'][$display_page]['display_options'] = array_merge($display_options, [
-              'pager' => [
-                'type' => 'infinite_scroll',
-                'options' => [
-                  'views_infinite_scroll' => [
-                    'button_text' => $button_text,
-                    'automatically_load_content' => $automatically_load_content,
-                  ],
+        foreach ($pages as $display_page) {
+          $display_options = $current_view->getOriginal('display.' . $display_page . '.display_options');
+          $overrides[$config_name]['display'][$display_page]['display_options'] = array_merge($display_options, [
+            'pager' => [
+              'type' => 'infinite_scroll',
+              'options' => [
+                'views_infinite_scroll' => [
+                  'button_text' => $button_text,
+                  'automatically_load_content' => $automatically_load_content,
                 ],
               ],
-              'use_ajax' => TRUE,
-            ]);
-          }
+            ],
+            'use_ajax' => TRUE,
+          ]);
         }
 
       }
@@ -127,12 +125,17 @@ class SocialScrollOverride implements ConfigFactoryOverrideInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Creates a configuration object for use during install and synchronization.
+   *
+   * @param string $name
+   *   The configuration object name.
+   * @param string $collection
+   *   The configuration collection.
+   *
+   * @return \Drupal\Core\Config\StorableConfigBase|null
+   *   The configuration object for the provided name and collection.
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
-    // The interface says we should return an object here, but we don't care and
-    // this does not seem to break anything.
-    // @phpstan-ignore-next-line
     return NULL;
   }
 

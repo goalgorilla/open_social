@@ -11,7 +11,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class SocialScrollManager implements SocialScrollManagerInterface {
 
   /**
-   * The config factory interface.
+   * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
@@ -28,7 +28,7 @@ class SocialScrollManager implements SocialScrollManagerInterface {
    * Constructs a new SocialScrollManager object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory interface.
+   *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
@@ -48,7 +48,7 @@ class SocialScrollManager implements SocialScrollManagerInterface {
    * {@inheritdoc}
    */
   public function getEnabledViewIds(): array {
-    return array_filter($this->getAllAvailableViewIds());
+    return array_keys(array_filter($this->getAllAvailableViewIds()));
   }
 
   /**

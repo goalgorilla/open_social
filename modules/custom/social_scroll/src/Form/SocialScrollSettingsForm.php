@@ -2,12 +2,9 @@
 
 namespace Drupal\social_scroll\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_scroll\SocialScrollManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,30 +31,22 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
   protected $socialScrollManager;
 
   /**
-   * SocialScrollSettingsForm constructor.
+   * A cache backend interface instance.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler service.
-   * @param \Drupal\social_scroll\SocialScrollManagerInterface $social_scroll_manager
-   *   The SocialScrollManager manager.
+   * @var \Drupal\Core\Cache\CacheBackendInterface
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, SocialScrollManagerInterface $social_scroll_manager) {
-    parent::__construct($config_factory);
-    $this->moduleHandler = $moduleHandler;
-    $this->socialScrollManager = $social_scroll_manager;
-  }
+  protected $cacheRender;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('module_handler'),
-      $container->get('social_scroll.manager')
-    );
+    $instance = parent::create($container);
+    $instance->moduleHandler = $container->get('module_handler');
+    $instance->socialScrollManager = $container->get('social_scroll.manager');
+    $instance->cacheRender = $container->get('cache.render');
+
+    return $instance;
   }
 
   /**
@@ -142,7 +131,7 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
     $form['settings']['views']['list'] = [
       '#type' => 'checkboxes',
       '#options' => $options,
-      '#default_value' => array_keys($this->socialScrollManager->getEnabledViewIds()),
+      '#default_value' => $this->socialScrollManager->getEnabledViewIds(),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -164,6 +153,7 @@ class SocialScrollSettingsForm extends ConfigFormBase implements ContainerInject
       ->save();
 
     parent::submitForm($form, $form_state);
+    $this->cacheRender->invalidateAll();
   }
 
 }
