@@ -7,29 +7,39 @@
 
   'use strict';
 
-  function setInviteJoinMethod(context) {
-    $('input[name="field_group_allowed_join_method"]', context)
-      .filter('[value="added"]')
-      .click();
-
-    $('input[name="field_group_allowed_join_method"]', context)
-      .filter('[value="request"]')
-      .attr('disabled', true);
-
-    $('input[name="field_group_allowed_join_method"]', context)
-      .filter('[value="direct"]')
-      .attr('disabled', true);
-  }
-
   /**
    * @type {Drupal~behavior}
    */
   Drupal.behaviors.fieldGroupAllowedJoinMethods = {
     attach: function (context, settings) {
+
+      // Sets the invite only option and disables the rest.
+      function setInviteJoinMethod(context) {
+        $('input[name="field_group_allowed_join_method"]', context)
+          .filter('[value="added"]')
+          .click();
+
+        $('input[name="field_group_allowed_join_method"]', context)
+          .filter('[value="request"]')
+          .attr('disabled', true);
+
+        $('input[name="field_group_allowed_join_method"]', context)
+          .filter('[value="direct"]')
+          .attr('disabled', true);
+      }
+
       // Initial.
       const groupVisibility = $('input[name="field_flexible_group_visibility"]:checked', context).val();
 
-      if (groupVisibility == 'members') {
+      // If we don't have any existing values, then default to request.
+      // If we have members selected, then make sure the other options are
+      // disabled.
+      if (!groupVisibility) {
+        $('input[name="field_group_allowed_join_method"]', context)
+          .filter('[value="request"]')
+          .click();
+      }
+      else if (groupVisibility == 'members') {
         setInviteJoinMethod(context);
       }
 
