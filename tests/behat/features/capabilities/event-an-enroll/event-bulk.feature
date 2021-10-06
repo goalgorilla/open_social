@@ -64,7 +64,6 @@ Feature: Event bulk actions
       And I fill in the "edit-message-value" WYSIWYG editor with "Test message"
       And I press "Send email"
     Then I should see "Are you sure you want to send your email to to the following 3 enrollees?"
-      And I should see "Selected 3 entities:"
       And I press "Execute action"
       And I wait for AJAX to finish
       # And I wait for the queue to be empty
