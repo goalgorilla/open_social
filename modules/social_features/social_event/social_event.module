@@ -435,7 +435,6 @@ function social_event_user_delete(EntityInterface $entity) {
  * Formats the event start end date.
  */
 function _social_event_format_date($event, $view_mode) {
-
   $event_date = '';
   $event_config = \Drupal::config('social_event.settings');
   $add_timezone = $event_config->get('show_user_timezone');
@@ -481,25 +480,15 @@ function _social_event_format_date($event, $view_mode) {
   $time_format = 'social_time';
 
   if (!empty($start_datetime)) {
-    if ($date_formatter->format($start_datetime, 'custom', 'i') === '01') {
-      $start_date = $date_formatter->format($start_datetime, $date_format, '', $utc_timezone);
-      $add_timezone = FALSE;
-    }
-    else {
-      $start_date = $date_formatter->format($start_datetime, $date_format);
-    }
+    $start_date = $date_formatter->format($start_datetime, $date_format);
+
     // Default time should not be displayed.
-    $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
+    $start_time = social_event_date_is_all_day($event->id()) ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
-      if ($date_formatter->format($end_datetime, 'custom', 'i') === '01') {
-        $end_date = $date_formatter->format($end_datetime, $date_format, '', $utc_timezone);
-      }
-      else {
-        $end_date = $date_formatter->format($end_datetime, $date_format);
-      }
+      $end_date = $date_formatter->format($end_datetime, $date_format);
       // Default time should not be displayed.
-      $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
+      $end_time = social_event_date_is_all_day($event->id()) ? '' : $date_formatter->format($end_datetime, $time_format);
     }
 
     // Date are the same or there are no end date.
@@ -647,9 +636,8 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     ];
 
     // Set default value and fieldgroup for all day checkbox.
-    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
-      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
-      $form['event_all_day']['#default_value'] = $all_day_value;
+    if ($form['field_event_date']['widget'][0]['value']['#default_value']) {
+      $form['event_all_day']['#default_value'] = social_event_date_is_all_day($form_state->getFormObject()->getEntity()->id());
     }
 
     // Get user timezone.
@@ -723,6 +711,12 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
 function social_event_date_after_build($form, &$form_state) {
   array_unshift($form['field_event_date']['widget'][0]['value']['#element_validate'], 'social_event_date_validate');
   array_unshift($form['field_event_date_end']['widget'][0]['value']['#element_validate'], 'social_event_date_validate');
+
+  // We want to process only after submit entity, in case when we are on the
+  // build form, then the userInput will be empty.
+  if (!empty($form_state->getUserInput())) {
+    social_event_date_set_all_day($form_state->getFormObject()->getEntity()->id(), $form_state->getValue('event_all_day'));
+  }
   return $form;
 }
 
@@ -736,10 +730,7 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
   // Skip default validation for required time when date is required.
   if (!empty($input['date']) && (empty($input['time']) || !empty($form_input['event_all_day']))) {
     $input['time'] = '00:01:00';
-    $storage_format = DrupalDateTime::FORMAT;
-    $datetime = trim($input['date'] . ' ' . $input['time']);
-    $storage_timezone = new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
-    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $storage_timezone);
+    $input['object'] = $input['object']->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
     }
@@ -773,20 +764,36 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
   $date = $element['#value']['object'];
 
   if (!empty($form_input['op']) && isset($form_input['event_all_day'])) {
-    $element['time']['#value'] = '00:01:00';
     $element['event_all_day']['#value'] = (bool) $form_input['event_all_day'];
   }
   elseif ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
-    $element['time']['#value'] = '00:01:00';
     $element['event_all_day']['#value'] = TRUE;
   }
 }
 
 /**
  * Check if event date is all day.
+ *
+ * @param string $event_id
+ *   The event ID.
+ *
+ * @return bool
+ *   TRUE if all-day event, FALSE otherwise.
  */
-function social_event_date_is_all_day(DrupalDateTime $date) {
-  return $date->format('i') === '01';
+function social_event_date_is_all_day(string $event_id): bool {
+  return \Drupal::state()->get('event_all_day_' . $event_id) ?? FALSE;
+}
+
+/**
+ * Set TRUE for all-day event.
+ *
+ * @param string $event_id
+ *   The event ID.
+ * @param bool $status
+ *   TRUE for all-day event, FALSE otherwise.
+ */
+function social_event_date_set_all_day(string $event_id, bool $status) {
+  \Drupal::state()->set('event_all_day_' . $event_id, $status);
 }
 
 /**
