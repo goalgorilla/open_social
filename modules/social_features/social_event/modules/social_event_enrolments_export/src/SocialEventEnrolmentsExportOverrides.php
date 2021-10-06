@@ -9,7 +9,12 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Configuration override.
  *
- * @deprecated in social:10.2.x and is removed from social:11.0.x
+ * @deprecated in social:10.2.0 and is removed from social:11.0.0. Use
+ *   _social_event_enrolments_export_alter_event_manage_enrollments_view()
+ *   instead.
+ *
+ * @todo Change @see to point to a change record.
+ * @see _social_event_enrolments_export_alter_event_manage_enrollments_view()
  */
 class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInterface {
 

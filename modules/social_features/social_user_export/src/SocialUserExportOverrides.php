@@ -9,7 +9,11 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Configuration override.
  *
- * @deprecated in social:10.2.x and is removed from social:11.0.x
+ * @deprecated in social:10.2.0 and is removed from social:11.0.0. Use
+ *   _social_user_export_alter_user_admin_people_view() instead.
+ *
+ * @todo Change @see to point to a change record.
+ * @see _social_user_export_alter_user_admin_people_view()
  */
 class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
 
