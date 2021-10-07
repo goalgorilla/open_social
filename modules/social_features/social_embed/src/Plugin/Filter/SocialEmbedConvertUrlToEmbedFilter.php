@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -185,11 +186,15 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
                 try {
                   $info = \Drupal::service('url_embed')->getUrlInfo(Html::decodeEntities($match[1]));
                   if ($info) {
-                    /** @var \Drupal\user\UserDataInterface $user_data */
-                    $user_data = \Drupal::service('user.data');
+                    /** @var \Drupal\user\Entity\User $user */
+                    $user = \Drupal::currentUser()->isAnonymous() ? NULL : User::load(\Drupal::currentUser()->id());
+                    $embed_settings = $this->configFactory->get('social_embed.settings');
                     if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')
-                      && $user_data->get('social_embed', \Drupal::currentUser()->id(), 'user_embed_consent')
                       && !empty($info['code'])
+                      && (
+                        ($user instanceof User && $user->get('field_user_embed_content_consent')->getValue()[0]['value'])
+                        || ($user === NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+                      )
                     ) {
                       // Replace URL with consent button.
                       return \Drupal::service('social_embed.helper_service')->getPlaceholderMarkupForProvider($info['providerName'], $match[1]);

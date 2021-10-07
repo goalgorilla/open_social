@@ -9,7 +9,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\url_embed\UrlEmbed;
-use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,13 +17,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Controller for Social Embed endpoint handling.
  */
 class EmbedController extends ControllerBase {
-
-  /**
-   * The user data services.
-   *
-   * @var \Drupal\user\UserDataInterface
-   */
-  protected UserDataInterface $userData;
 
   /**
    * Url Embed services.
@@ -36,13 +28,10 @@ class EmbedController extends ControllerBase {
   /**
    * The EmbedController constructor.
    *
-   * @param \Drupal\user\UserDataInterface $user_data
-   *   The user data services.
    * @param \Drupal\url_embed\UrlEmbed $url_embed
    *   The url embed services.
    */
-  public function __construct(UserDataInterface $user_data, UrlEmbed $url_embed) {
-    $this->userData = $user_data;
+  public function __construct(UrlEmbed $url_embed) {
     $this->urlEmbed = $url_embed;
   }
 
@@ -56,7 +45,6 @@ class EmbedController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('user.data'),
       $container->get('url_embed')
     );
   }

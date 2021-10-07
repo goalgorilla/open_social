@@ -11,7 +11,7 @@ use Drupal\filter\FilterProcessResult;
 use Drupal\social_embed\Service\SocialEmbedHelper;
 use Drupal\url_embed\Plugin\Filter\UrlEmbedFilter;
 use Drupal\url_embed\UrlEmbedInterface;
-use Drupal\user\UserDataInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -55,13 +55,6 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   protected AccountProxyInterface $currentUser;
 
   /**
-   * The user data object.
-   *
-   * @var \Drupal\user\UserDataInterface
-   */
-  protected UserDataInterface $userData;
-
-  /**
    * Constructs a SocialEmbedUrlEmbedFilter object.
    *
    * @param array $configuration
@@ -78,8 +71,6 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   The config factory services.
    * @param \Drupal\social_embed\Service\SocialEmbedHelper $embed_helper
    *   The social embed helper class object.
-   * @param \Drupal\user\UserDataInterface $user_data
-   *   The user date object.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   Current user object.
    */
@@ -91,14 +82,12 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     Php $uuid,
     ConfigFactory $config_factory,
     SocialEmbedHelper $embed_helper,
-    UserDataInterface $user_data,
     AccountProxyInterface $current_user
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $url_embed);
     $this->uuid = $uuid;
     $this->configFactory = $config_factory;
     $this->embedHelper = $embed_helper;
-    $this->userData = $user_data;
     $this->currentUser = $current_user;
   }
 
@@ -114,7 +103,6 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $container->get('uuid'),
       $container->get('config.factory'),
       $container->get('social_embed.helper_service'),
-      $container->get('user.data'),
       $container->get('current_user'),
     );
   }
@@ -133,9 +121,15 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         $url_output = '';
         $info = $this->urlEmbed->getUrlInfo($url);
         try {
-          if ($this->configFactory->get('social_embed.settings')->get('embed_consent_settings')
-            && $this->userData->get('social_embed', $this->currentUser->id(), 'user_embed_consent')
+          /** @var \Drupal\user\Entity\User $user */
+          $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
+          $embed_settings = $this->configFactory->get('social_embed.settings');
+          if ($embed_settings->get('embed_consent_settings')
             && !empty($info['code'])
+            && (
+              ($user instanceof User && $user->get('field_user_embed_content_consent')->getValue()[0]['value'])
+              || ($user === NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+            )
           ) {
             // Replace URL with consent button.
             $url_output = $this->embedHelper->getPlaceholderMarkupForProvider($info['providerName'], $url);

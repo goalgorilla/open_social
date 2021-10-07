@@ -569,25 +569,6 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
       $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
-
-    // Add options to enable embedded content consent settings for the current
-    // user.
-    if (\Drupal::moduleHandler()->moduleExists('social_embed')
-      && \Drupal::config('social_embed.settings')->get('embed_consent_settings')) {
-      /** @var \Drupal\user\UserDataInterface $user_data */
-      $user_data = \Drupal::service('user.data');
-
-      $form['profile_privacy']['user_embed_consent'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Enforce consent for all embedded content'),
-        '#default_value' => $user_data->get('social_embed', $profile->getFieldValue('uid', 'target_id'), 'user_embed_consent'),
-        '#attributes' => [
-          'data-switch' => TRUE,
-        ],
-        '#description' => t('This options enables you to provide consent for embedded content before it is displayed in your stream. For example, YouTube videos.'),
-      ];
-      $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';
-    }
   }
 
   $form['#pre_render'][] = [SocialProfileUserFormAlter::class, 'preRender'];
