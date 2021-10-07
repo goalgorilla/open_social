@@ -365,17 +365,16 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
     if ($status_code == 404) {
 
       // Get current node.
-      if ($node = \Drupal::routeMatch()->getParameter('node')) {
-        if (!is_object($node)) {
-          $node = \Drupal::service('entity_type.manager')
-            ->getStorage('node')
-            ->load($node);
-        }
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = \Drupal::routeMatch()->getParameter('node');
+      if (!is_object($node)) {
+        $node = \Drupal::service('entity_type.manager')
+          ->getStorage('node')
+          ->load($node);
       }
-
-      // Use custom template for 404 page only if target node has a landing page
+      // Overrides template for 404 page only if target node has a landing page
       // type.
-      if (isset($node) && is_object($node) && $node->getType() == 'landing_page') {
+      if ($node instanceof NodeInterface && $node->getType() == 'landing_page') {
         $suggestions[] = 'page__node__' . $node->getType();
       }
     }
