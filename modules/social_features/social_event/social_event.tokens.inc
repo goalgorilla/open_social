@@ -6,7 +6,9 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -105,40 +107,43 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
         $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
 
         if ($target_type === 'event_enrollment' && $event_enrollment_id = $message->getFieldValue('field_message_related_object', 'target_id')) {
-          $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id, TRUE);
-          $message_template_id = $message->getTemplate()->id();
-          switch ($message_template_id) {
-            case 'activity_on_events_im_organizing':
-              if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollments', 'View enrollments');
-                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
-              }
-              break;
+          if (isset($context['tokens']['cta_button'])) {
+            $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+            if ($event !== NULL) {
+              $message_template_id = $message->getTemplate()->id();
+              switch ($message_template_id) {
+                case 'activity_on_events_im_organizing':
+                  $link = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $event->id()]);
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
 
-            case 'request_event_enrollment':
-              if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link . '/all-enrollment-requests', 'View enrollment requests');
-                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
-              }
-              break;
+                case 'request_event_enrollment':
+                  $link = Url::fromRoute('view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $event->id()]);
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
 
-            case 'member_added_by_event_organiser':
-            case 'event_request_approved':
-              if (isset($context['tokens']['cta_button'])) {
-                $cta_button = $email_token_services->getCtaButton($link, 'See the event');
-                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
-                  ->renderPlain($cta_button);
+                case 'member_added_by_event_organiser':
+                case 'event_request_approved':
+                  $link = $event->toUrl('canonical');
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
               }
-              break;
+            }
           }
           // Replace the preview token.
           if (isset($context['tokens']['preview'])) {
-            if ($event = _social_event_get_event_from_enrollment($event_enrollment_id)) {
+            $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+            if ($event !== NULL) {
               /** @var \Drupal\node\Entity\Node $event */
               $preview_info = $email_token_services->getContentPreview($event);
-              $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+              $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
+                ->renderPlain($preview_info);
             }
           }
         }
