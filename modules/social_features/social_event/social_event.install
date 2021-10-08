@@ -1961,11 +1961,15 @@ function social_event_update_10204(array &$sandbox): void {
 
     if (!$event->get('field_event_date')->isEmpty()) {
       $start_datetime = strtotime($event->get('field_event_date')->getString());
-      $start_date_is_full_day = $date_formatter->format($start_datetime, 'custom', 'i') === '01';
+      if ($start_datetime) {
+        $start_date_is_full_day = $date_formatter->format($start_datetime, 'custom', 'i') === '01';
+      }
     }
     if (!$event->get('field_event_date_end')->isEmpty()) {
       $end_datetime = strtotime($event->get('field_event_date_end')->getString());
-      $end_date_is_full_day = $date_formatter->format($end_datetime, 'custom', 'i') === '01';
+      if ($end_datetime) {
+        $end_date_is_full_day = $date_formatter->format($end_datetime, 'custom', 'i') === '01';
+      }
     }
 
     if (
