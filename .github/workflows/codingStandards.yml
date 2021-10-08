@@ -1,0 +1,43 @@
+name: Coding Standards
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: { }
+
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default PHP7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHP Stan
+        run: vendor/bin/phpstan analyse -c phpstan.neon
+
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default PHP7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHPCS
+        uses: chekalsky/phpcs-action@v1
+        with:
+          phpcs_bin_path: './vendor/bin/phpcs'
+          enable_warnings: true
