@@ -1833,8 +1833,9 @@ function _social_group_delete_group() {
  * Get all open groups.
  */
 function social_group_get_all_open_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->condition('type', 'open_group');
   return $query->execute();
 }
@@ -1843,8 +1844,9 @@ function social_group_get_all_open_groups() {
  * Get all open groups.
  */
 function social_group_get_all_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->sort('type');
   return $query->execute();
 }
