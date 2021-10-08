@@ -1880,6 +1880,118 @@ function social_event_update_10201() {
 }
 
 /**
+ * Create a new 'All day' field for events.
+ */
+function social_event_update_10202(): void {
+  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.node.field_event_all_day_10202');
+  if (is_array($data) && is_null($field_storage_config_storage->load($data['id']))) {
+    $class = $field_type_manager->getPluginClass($data['type']);
+    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+    $field_storage_config_storage->create($data)->save();
+  }
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  // Create field settings.
+  $data = $source->read('field.field.node.event.field_event_all_day_10202');
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
+}
+
+/**
+ * Update event display.
+ */
+function social_event_update_10203(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10203');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Sets all day value for events.
+ *
+ * Now we do not use the time check if it is an event for all-day, we use the
+ * 'All day' field in event, in which case we must make an entry in database
+ * (State API) for all events that were for all-day, use the old logic for
+ * checking.
+ */
+function social_event_update_10204(array &$sandbox): void {
+  if (!isset($sandbox['total'])) {
+    $sandbox['ids'] = \Drupal::entityQuery('node')
+      ->condition('type', 'event')
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $sandbox['total'] = is_array($sandbox['ids']) ? count($sandbox['ids']) : 0;
+    $sandbox['current'] = 0;
+  }
+
+  // Do not continue if no entities are found.
+  if (empty($sandbox['total']) || empty($sandbox['ids'])) {
+    $sandbox['#finished'] = 1;
+  }
+
+  // Try to update 25 events at a time.
+  $nids = array_slice($sandbox['ids'], $sandbox['current'], 25);
+
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $date_formatter = \Drupal::service('date.formatter');
+
+  foreach ($nids as $nid) {
+    /** @var \Drupal\node\NodeInterface $event */
+    $event = $node_storage->load($nid);
+    $start_date_is_full_day = FALSE;
+    $end_date_is_full_day = FALSE;
+
+    if (!$event->get('field_event_date')->isEmpty()) {
+      $start_datetime = strtotime($event->get('field_event_date')->getString());
+      $start_date_is_full_day = $date_formatter->format($start_datetime, 'custom', 'i') === '01';
+    }
+    if (!$event->get('field_event_date_end')->isEmpty()) {
+      $end_datetime = strtotime($event->get('field_event_date_end')->getString());
+      $end_date_is_full_day = $date_formatter->format($end_datetime, 'custom', 'i') === '01';
+    }
+
+    if (
+      $start_date_is_full_day &&
+      $end_date_is_full_day &&
+      $event->get('field_event_all_day')->isEmpty()
+    ) {
+      $event->set('field_event_all_day', TRUE);
+      $event->save();
+    }
+
+    $sandbox['current']++;
+  }
+
+  \Drupal::messenger()
+    ->addMessage($sandbox['current'] . ' nodes processed.', 'status');
+
+  if ($sandbox['total'] == 0) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
+  }
+}
+
+/**
  * Allow CM+ translate "Event" node type.
  */
 function social_event_update_10301() {
@@ -2029,69 +2141,6 @@ function social_event_update_10309() {
       $config = \Drupal::configFactory()
         ->getEditable('message.template.activity_on_events_im_organizing');
       $config->setData($settings)->save(TRUE);
-    }
-  }
-}
-
-/**
- * Adds existing all-day events to State API.
- *
- * Now we do not use the time check if it is an event for all-day, we use a
- * record with State API, in which case we must make an entry in database
- * (State API) for all events that were for all-day, use the old logic for
- * checking.
- */
-function social_event_update_10310(&$sandbox) {
-  if (!isset($sandbox['total'])) {
-    $nids = \Drupal::entityQuery('node')
-      ->condition('type', 'event')
-      ->execute();
-
-    $sandbox['total'] = count($nids);
-    $sandbox['current'] = 0;
-
-    $nodes_per_batch = 25;
-
-    $nids = \Drupal::entityQuery('node')
-      ->condition('type', 'event')
-      ->range($sandbox['current'], $sandbox['current'] + $nodes_per_batch)
-      ->execute();
-
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-    $date_formatter = \Drupal::service('date.formatter');
-
-    foreach ($nids as $nid) {
-      $event = $node_storage->load($nid);
-      $start_date_is_full_day = FALSE;
-      $end_date_is_full_day = FALSE;
-
-      if ($start_date_field = $event->field_event_date) {
-        if (!empty($start_date_field->value)) {
-          $start_datetime = strtotime($event->field_event_date->value);
-          $start_date_is_full_day = $date_formatter->format($start_datetime, 'custom', 'i') === '01';
-        }
-      }
-      if ($end_date_field = $event->field_event_date_end) {
-        if (!empty($end_date_field->value)) {
-          $end_datetime = strtotime($event->field_event_date_end->value);
-          $end_date_is_full_day = $date_formatter->format($end_datetime, 'custom', 'i') === '01';
-        }
-      }
-
-      if ($start_date_is_full_day && $end_date_is_full_day) {
-        social_event_date_set_all_day($event->id(), TRUE);
-      }
-
-      $sandbox['current']++;
-    }
-
-    \Drupal::messenger()->addMessage($sandbox['current'] . ' nodes processed.', 'status');
-
-    if ($sandbox['total'] == 0) {
-      $sandbox['#finished'] = 1;
-    }
-    else {
-      $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
     }
   }
 }
