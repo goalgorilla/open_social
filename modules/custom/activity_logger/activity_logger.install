@@ -55,8 +55,8 @@ function activity_logger_update_10301() {
     // Set default subject line to empty, this way the activity_send_email
     // will default to Notification from %site_name.
     $activity_logger_settings['email_subject'] = '';
-    if (in_array($template_defaults, $template, TRUE)) {
-      $activity_logger_settings['email_subject'] = $template_defaults['template'];
+    if (!empty($template_defaults[$template])) {
+      $activity_logger_settings['email_subject'] = $template_defaults[$template];
     }
     $config->set('third_party_settings.activity_logger', $activity_logger_settings);
     $config->save();
