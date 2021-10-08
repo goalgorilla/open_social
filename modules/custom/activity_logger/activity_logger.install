@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the activity_logger module.
+ */
+
+/**
+ * Update message templates with new Subject schema.
+ */
+function activity_logger_update_10301() {
+  /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
+  $message_templates = \Drupal::entityTypeManager()->getStorage('message_template')->loadMultiple();
+  // Lets update all existing message templates.
+  foreach ($message_templates as $message_template) {
+    $template = $message_template->getTemplate();
+
+    // Grab the config for each of the templates.
+    // That is where the third party settings are stored.
+    $config_name = "message.template.{$template}";
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
+    $activity_logger_settings = $config->get('third_party_settings.activity_logger');
+
+    // Set default subject line to empty, this way the activity_send_email
+    // will default to Notification from %site_name.
+    $activity_logger_settings['email_subject'] = '';
+    $config->set('third_party_settings.activity_logger', $activity_logger_settings);
+    $config->save();
+  }
+}

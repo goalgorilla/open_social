@@ -87,7 +87,9 @@ class Immediately extends EmailFrequencyBase {
 
     // Construct the body & subject for email sending.
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
-    if ($subject) {
+    if ($subject !== '') {
+      // We don't support tokens in our subject at the moment, if needs be
+      // we can check out how the ActivityFactory processTokens method does it.
       $params['subject'] = t($subject, [], ['langcode' => $langcode])->render();
     }
 
