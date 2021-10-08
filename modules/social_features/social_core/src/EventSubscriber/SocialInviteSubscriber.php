@@ -94,39 +94,43 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    *   The GetResponseEvent to process.
    */
   public function notifyAboutPendingInvitations(GetResponseEvent $event) {
-    $data = $this->inviteService->getInviteData();
-    /** @var \Symfony\Component\HttpFoundation\Request $request */
-    $request = $event->getRequest();
-    $request_path = $request->getPathInfo();
-    $route_name = $this->currentRoute->getRouteName();
-    $default_front = $this->siteSettings->get('page.front');
-    $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user') ?: '';
+    // Only show this message when a user is logged in.
+    if ($this->currentUser->isAuthenticated()) {
+      $data = $this->inviteService->getInviteData();
+      /** @var \Symfony\Component\HttpFoundation\Request $request */
+      $request = $event->getRequest();
+      $request_path = $request->getPathInfo();
+      $route_name = $this->currentRoute->getRouteName();
+      $default_front = $this->siteSettings->get('page.front');
+      $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user') ?: '';
 
-    // Either allow on paths.
-    $paths_allowed = [
-      $default_front,
-      $frontpage_lu,
-      '/',
-    ];
-    // Or allow on route names.
-    $routes_allowed = [
-      'social_core.homepage',
-    ];
+      // Either allow on paths.
+      $paths_allowed = [
+        $default_front,
+        $frontpage_lu,
+        '/',
+      ];
+      // Or allow on route names.
+      $routes_allowed = [
+        'social_core.homepage',
+      ];
 
-    // We want to show this message either on:
-    // the default site front page
-    // the front page set for authenticated users
-    // or the stream being the social_core.homepage.
-    if (in_array($request_path, $paths_allowed) || in_array($route_name, $routes_allowed)) {
-      if (!empty($data['name']) && !empty($data['amount'])) {
-        $replacement_url = [
-          '@url' => Url::fromRoute($data['name'], ['user' => $this->currentUser->id()])->toString(),
-        ];
-        $message = $this->formatPlural($data['amount'],
-          'You have 1 pending invite <a href="@url">visit your invite overview</a> to see it.',
-          'You have @count pending invites <a href="@url">visit your invite overview</a> to see them.', $replacement_url);
+      // We want to show this message either on:
+      // the default site front page
+      // the front page set for authenticated users
+      // or the stream being the social_core.homepage.
+      if (in_array($request_path, $paths_allowed) || in_array($route_name, $routes_allowed)) {
+        if (!empty($data['name']) && !empty($data['amount'])) {
+          $replacement_url = [
+            '@url' => Url::fromRoute($data['name'], ['user' => $this->currentUser->id()])
+              ->toString(),
+          ];
+          $message = $this->formatPlural($data['amount'],
+            'You have 1 pending invite <a href="@url">visit your invite overview</a> to see it.',
+            'You have @count pending invites <a href="@url">visit your invite overview</a> to see them.', $replacement_url);
 
-        $this->messenger->addMessage($message, 'warning');
+          $this->messenger->addMessage($message, 'warning');
+        }
       }
     }
   }
