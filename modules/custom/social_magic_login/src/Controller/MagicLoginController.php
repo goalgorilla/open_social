@@ -3,6 +3,7 @@
 namespace Drupal\social_magic_login\Controller;
 
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Url;
@@ -32,6 +33,13 @@ class MagicLoginController extends ControllerBase {
   protected $logger;
 
   /**
+   * The config.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  public $config;
+
+  /**
    * MagicLoginController constructor.
    *
    * @param \Drupal\user\UserStorageInterface $user_storage
@@ -40,11 +48,14 @@ class MagicLoginController extends ControllerBase {
    *   The logger service.
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    *   The module handler service.
+   * @param \Drupal\Core\Config\ConfigFactory $config
+   *   The configuration.
    */
-  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandler $module_handler) {
+  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandler $module_handler, ConfigFactory $config) {
     $this->userStorage = $user_storage;
     $this->logger = $logger;
     $this->moduleHandler = $module_handler;
+    $this->config = $config;
   }
 
   /**
@@ -54,7 +65,8 @@ class MagicLoginController extends ControllerBase {
     return new static(
       $container->get('entity_type.manager')->getStorage('user'),
       $container->get('logger.factory')->get('user'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('config.factory')
     );
   }
 
@@ -158,7 +170,11 @@ class MagicLoginController extends ControllerBase {
     }
 
     $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-    $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+    $config = $this->config->get('social_magic_login.settings');
+
+    if ($config->get('show_used_message') === TRUE) {
+      $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+    }
 
     return new RedirectResponse($destination);
   }
