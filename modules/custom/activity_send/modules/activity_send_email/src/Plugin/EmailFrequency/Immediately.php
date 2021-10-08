@@ -90,7 +90,7 @@ class Immediately extends EmailFrequencyBase {
     if ($subject !== '') {
       // We don't support tokens in our subject at the moment, if needs be
       // we can check out how the ActivityFactory processTokens method does it.
-      $params['subject'] = t($subject, [], ['langcode' => $langcode])->render();
+      $params['subject'] = t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
     }
 
     // Send the email.
