@@ -260,7 +260,7 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
 
             /** @var \Drupal\Core\Path\AliasStorage $pas */
-            $pas = \Drupal::service('path.alias_storage');
+            $pas = \Drupal::entityTypeManager()->getStorage('path_alias');
 
             // Check of the alias is an alias or path.
             $is_alias = $pas->aliasExists($grouptab_alias, $entity_language);
