@@ -67,11 +67,6 @@ class EmbedConsentForm extends ConfigFormBase {
             'checked' => TRUE,
           ],
         ],
-        'unchecked' => [
-          ':input[name="embed_consent_settings"]' => [
-            'unchecked' => TRUE,
-          ],
-        ],
       ],
     ];
 
@@ -99,7 +94,7 @@ class EmbedConsentForm extends ConfigFormBase {
       ]);
       // Set the submitted configuration setting.
       $config->set('embed_consent_settings', $new_value_consent_settings)
-        ->set('embed_consent_settings_anonymous', $new_value_consent_settings_anonymous)
+        ->set('embed_consent_settings_anonymous', ($new_value_consent_settings == 0) ? 0 : $new_value_consent_settings_anonymous)
         ->save();
     }
 
