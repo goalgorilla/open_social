@@ -991,6 +991,16 @@ parameters:
 			path: modules/custom/activity_creator/src/Plugin/QueueWorker/ActivityWorkerLogger.php
 
 		-
+			message: "#^Function activity_logger_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
+
+		-
+			message: "#^Function activity_logger_update_dependencies\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.module
