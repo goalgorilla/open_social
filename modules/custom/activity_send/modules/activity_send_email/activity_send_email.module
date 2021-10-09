@@ -292,6 +292,12 @@ function activity_send_email_mail($key, &$message, $params) {
     case 'activity_send_email':
       // Mail subject.
       $message['subject'] = t('Notification from %site_name', $variables, $options);
+      // It could be we have a email subject coming from
+      // our message.
+      if (!empty($params['subject'])) {
+        $message['subject'] = $params['subject'];
+      }
+
       // Mail body.
       $message['body'][] = $params['body'];
       break;

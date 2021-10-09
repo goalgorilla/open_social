@@ -58,6 +58,14 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
   /** @var \Drupal\message\MessageTemplateInterface $message_template */
   $message_template = $form_state->getFormObject()->getEntity();
 
+  $form['email_subject'] = [
+    '#title' => t('Subject line for email notifications'),
+    '#required' => FALSE,
+    '#type' => 'textfield',
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'email_subject', t('Notification from [site:name]')),
+    '#description' => t('The subject used when sending email notifications.'),
+  ];
+
   $wrapper_id = 'edit-activity-entity-condition-ajax-wrapper';
 
   $config_entity_bundles = _activity_logger_get_content_entities();
@@ -185,6 +193,7 @@ function activity_logger_form_message_template_form_builder($entity_type, Messag
   $message_template->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_aggregate', $form_state->getValue('activity_aggregate'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_entity_condition', $form_state->getValue('activity_entity_condition'));
+  $message_template->setThirdPartySetting('activity_logger', 'email_subject', $form_state->getValue('email_subject'));
 }
 
 /**
