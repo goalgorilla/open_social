@@ -6,6 +6,19 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function activity_logger_update_dependencies() {
+  // Make sure we run our update after the email consistency
+  // improvements ran.
+  $dependencies['activity_logger'][10301] = [
+    'social_activity' => 10303,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Update message templates with new Subject schema.
  */
 function activity_logger_update_10301() {
