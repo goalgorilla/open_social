@@ -23,6 +23,7 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
@@ -2746,4 +2747,33 @@ function social_group_allowed_visibility_description($key) {
   \Drupal::moduleHandler()->alter('social_group_content_visibility_description', $key, $description);
 
   return $description;
+}
+
+/**
+ * Implements hook_entity_display_build_alter().
+ */
+function social_group_entity_display_build_alter(&$build, $context) {
+  // For our nodes, renderd as small_teaser
+  // since thee Group 1.0 update it renders all group details.
+  // As our group types are optional and not a dependency
+  // we cant update our yml files but have to do it like this.
+  if (!$context['entity'] instanceof Node && !$context['view_mode'] === 'small_teaser') {
+    return;
+  }
+  $os_groups = [
+    'groups_type_flexible_group',
+    'groups_type_public_group',
+    'groups_type_open_group',
+    'groups_type_secret_group',
+    'groups_type_closed_group',
+    'groups',
+  ];
+  // For each Open Social group type we check if there are any
+  // group details in the build array, if so unset it.
+  // If it's not an OS group, people likely wanted to add it.
+  foreach ($os_groups as $key){
+    if (array_key_exists($key,  $build)) {
+      unset($build[$key]);
+    }
+  }
 }
