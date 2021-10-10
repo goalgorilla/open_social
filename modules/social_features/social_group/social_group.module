@@ -2736,12 +2736,12 @@ function social_group_allowed_visibility_description($key) {
 /**
  * Implements hook_entity_display_build_alter().
  */
-function social_group_entity_display_build_alter(&$build, $context) {
+function social_group_entity_display_build_alter(array &$build, array $context) {
   // For our nodes, renderd as small_teaser
   // since thee Group 1.0 update it renders all group details.
   // As our group types are optional and not a dependency
   // we cant update our yml files but have to do it like this.
-  if (!$context['entity'] instanceof Node && !$context['view_mode'] === 'small_teaser') {
+  if (!$context['entity'] instanceof Node && $context['view_mode'] !== 'small_teaser') {
     return;
   }
   $os_groups = [
@@ -2758,6 +2758,34 @@ function social_group_entity_display_build_alter(&$build, $context) {
   foreach ($os_groups as $key){
     if (array_key_exists($key,  $build)) {
       unset($build[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function social_group_preprocess_page(array &$variables) {
+  /** @var \Drupal\Core\Routing\AdminContext $admin_context */
+  $admin_context = \Drupal::service('router.admin_context');
+  // Don't add the modal for admin pages.
+  // Only for sky theme.
+  if ($admin_context->isAdminRoute() || theme_get_setting('style') !== 'sky') {
+    return;
+  }
+
+  $route_matches = [
+    'social_group_gvbo.views_bulk_operations.confirm',
+    'views_bulk_operations.confirm',
+    'views_bulk_operations.execute_batch',
+    'social_group_gvbo.views_bulk_operations.execute_configurable'
+  ];
+
+  // Make sure we do the expensive checks only after we see that there's
+  // something in the URL for nodes.
+  foreach ($route_matches as $route_name) {
+    if (\Drupal::routeMatch()->getRouteName() === $route_name) {
+      $variables['page']['complementary_top'] = [];
     }
   }
 }
