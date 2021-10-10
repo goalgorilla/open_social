@@ -277,15 +277,6 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
               ])->save();
             }
 
-            // If it is an Alias, lets update it.
-            if ($alias_details !== NULL) {
-              $path_alias = $pas->load($alias_details['id']);
-              $path_alias->path = '/group/' . $entity->id() . '/' . $suffix;
-              $path_alias->alias = $path['alias'] . '/' . $suffix;
-              $path_alias->langcode = $entity_language;
-              $path_alias->save();
-            }
-
             // Update alias by deleting the old one and creating a new one.
             // This is necessary because path alias doesn't update our
             // group view aliases whenever we update the Group entity.
