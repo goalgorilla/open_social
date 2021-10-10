@@ -65,6 +65,7 @@ class LanguageSwitcherBlock extends LanguageBlock {
     $switchLinks = $this->languageManager->getLanguageSwitchLinks($type, Url::fromRoute($route_name));
 
     // Use the default URL generator that does not rewrite the language.
+    // @phpstan-ignore-next-line
     $url_generator = \Drupal::service('drupal_core_url_generator');
 
     // Add languages as links.

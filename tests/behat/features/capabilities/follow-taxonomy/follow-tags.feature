@@ -116,12 +116,12 @@ Feature: Follow Tags
     And I am at "notifications"
     Then I should see "Mike Tyson created a topic Topic with tags second with the tag(s) that you follow."
     Then I should see "Mike Tyson added tag(s) you follow to a topic."
-    Then I should have an email with subject "Notification from Open Social" and in the content:
+    Then I should have an email with subject "Someone added content you might be interested in" and in the content:
       | content                                                                            |
       | Hi Jack Richer                                                                     |
       | Mike Tyson created a topic Topic with tags second with the tag(s) that you follow. |
       | the notification above is sent to you Immediately                                  |
-    And I should have an email with subject "Notification from Open Social" and in the content:
+    And I should have an email with subject "Someone added content you might be interested in" and in the content:
       | content                                                     |
       | Hi Jack Richer                                              |
       | Mike Tyson added tag(s) you follow to a topic Simple topic. |
