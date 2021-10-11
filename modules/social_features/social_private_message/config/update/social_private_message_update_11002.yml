@@ -1,0 +1,19 @@
+views.view.inbox:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            relationships:
+              last_delete_time_target_id:
+                id: last_delete_time_target_id
+                table: private_message_thread__last_delete_time
+                field: last_delete_time_target_id
+                relationship: none
+                group_type: group
+                admin_label: 'Private Message Thread Delete Time'
+                required: false
+                entity_type: private_message_thread
+                entity_field: last_delete_time
+                plugin_id: standard
