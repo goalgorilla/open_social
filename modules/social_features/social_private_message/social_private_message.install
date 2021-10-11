@@ -298,9 +298,16 @@ function social_private_message_update_10301() {
 }
 
 /**
+ * Install the message_notify module.
+ */
+function social_private_message_update_11002(): void {
+  \Drupal::service('module_installer')->install(['message_notify']);
+}
+
+/**
  * Update the Inbox view configurations.
  */
-function social_private_message_update_11002(): string {
+function social_private_message_update_11003(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
