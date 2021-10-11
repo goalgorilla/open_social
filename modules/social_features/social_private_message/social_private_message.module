@@ -620,20 +620,19 @@ function social_private_message_views_query_alter(ViewExecutable $view, QueryPlu
     $current_user_id = \Drupal::currentUser()->id();
     // Add join definition.
     $definition = [
-      'table' => 'pm_thread_delete_time',
-      'field' => 'id',
-      'left_table' => 'private_message_thread__last_delete_time',
-      'left_field' => 'last_delete_time_target_id',
+      'table' => 'pm_thread_history',
+      'field' => 'thread_id',
+      'left_table' => 'private_message_threads',
+      'left_field' => 'id',
       'operator' => '=',
-      'extra' => 'pm_thread_delete_time.delete_time <= private_messages_private_message_thread__private_messages.created',
+      'extra' => 'pm_thread_history.delete_timestamp <= private_message_threads.updated',
     ];
-    // Create a join stement from plugin.
+    // Create a join statement from plugin.
     $join = Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
     // Add join to the query.
-    $query->addRelationship('pm_thread_delete_time', $join, 'delete_time');
+    $query->addRelationship('pm_thread_history', $join, 'delete_timestamp');
     // Add some extra where statements.
-    $query->addWhere(NULL, 'private_message_thread__members.members_target_id', $current_user_id, '=');
-    $query->addWhere(NULL, 'pm_thread_delete_time.owner', $current_user_id, '=');
+    $query->addWhere(NULL, 'pm_thread_history.uid', $current_user_id);
   }
 }
 
