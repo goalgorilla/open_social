@@ -740,7 +740,9 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
     }
   }
   else {
-    $input['object'] = new DrupalDateTime($input['object']->format('Y-m-d H:i:s'), new DateTimeZone(date_default_timezone_get()));
+    if ($input['object'] instanceof DrupalDateTime) {
+      $input['object'] = new DrupalDateTime($input['object']->format('Y-m-d H:i:s'), new DateTimeZone(date_default_timezone_get()));
+    }
   }
 
   if ($input['object'] instanceof DrupalDateTime) {
