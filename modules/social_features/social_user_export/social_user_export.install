@@ -67,5 +67,14 @@ function _social_user_export_alter_user_admin_people_view(): void {
  * Action ID: 'social_user_export_enrollments_action' action.
  */
 function social_user_export_update_11001(array &$sandbox): void {
-  _social_user_export_alter_user_admin_people_view();
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_user_export_user_action',
+    'preconfiguration' => [
+      'label_override' => '',
+    ],
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
 }

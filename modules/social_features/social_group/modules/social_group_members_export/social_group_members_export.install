@@ -53,5 +53,14 @@ function _social_group_members_export_alter_group_manage_members_view(): void {
  * Action ID: 'social_group_members_export_member_action'.
  */
 function social_group_members_export_update_11001(array &$sandbox): void {
-  _social_group_members_export_alter_group_manage_members_view();
+  $config = \Drupal::configFactory()->getEditable('views.view.group_manage_members');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_group_members_export_member_action',
+    'preconfiguration' => [
+      'label_override' => t('Export'),
+    ],
+  ];
+  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
+  $config->save();
 }
