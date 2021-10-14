@@ -118,7 +118,7 @@
         };
         this.updateValues();
         trigger = this.mentions.settings.trigger;
-        match = new RegExp("(?:^|\s)[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
+        match = new RegExp("[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
         if (!match) {
           this.element.mentionsAutocomplete("close");
           return;
@@ -352,7 +352,7 @@
           window.clearTimeout(this.timer);
         }
         trigger = this.mentions.settings.trigger;
-        match = new RegExp("(?:^|\s)[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
+        match = new RegExp("[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
         if (!match) {
           this.element.mentionsAutocomplete("close");
           return;
