@@ -2,15 +2,18 @@
 
 namespace Drupal\social_embed\Controller;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\url_embed\UrlEmbed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -26,13 +29,23 @@ class EmbedController extends ControllerBase {
   protected UrlEmbed $urlEmbed;
 
   /**
+   * The flood service.
+   *
+   * @var \Drupal\Core\Flood\FloodInterface
+   */
+  protected FloodInterface $flood;
+
+  /**
    * The EmbedController constructor.
    *
    * @param \Drupal\url_embed\UrlEmbed $url_embed
    *   The url embed services.
+   * @param \Drupal\Core\Flood\FloodInterface $flood
+   *   The flood service.
    */
-  public function __construct(UrlEmbed $url_embed) {
+  public function __construct(UrlEmbed $url_embed, FloodInterface $flood) {
     $this->urlEmbed = $url_embed;
+    $this->flood = $flood;
   }
 
   /**
@@ -45,7 +58,8 @@ class EmbedController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('url_embed')
+      $container->get('url_embed'),
+      $container->get('flood')
     );
   }
 
@@ -81,21 +95,30 @@ class EmbedController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    // Let's prepare the response.
-    $response = new AjaxResponse();
+    $hashedValue = Crypt::hashBase64($uuid);
+    $floodIdentifier = $request->getClientIP() . $hashedValue;
 
-    // Use uuid to set the selector to the specific div we need to replace.
-    $selector = "#social-embed-iframe-$uuid";
-    // If the content is embeddable then return the iFrame.
-    $info = $this->urlEmbed->getUrlInfo($url);
-    if ($info && !empty($iframe = $info['code'])) {
-      $provider = strtolower($info['providerName']);
-      $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
+    if (!$this->flood->isAllowed('social_embed.generateembed_flood_event', 50, 3600, $floodIdentifier)) {
+      throw new AccessDeniedHttpException();
     }
     else {
-      // Else return the link itself.
-      $content = Link::fromTextAndUrl($url, Url::fromUri($url))->toString();
+      $this->flood->register('social_embed.generateembed_flood_event', 3600, $floodIdentifier);
+      // Use uuid to set the selector to the specific div we need to replace.
+      $selector = "#social-embed-iframe-$uuid";
+      // If the content is embeddable then return the iFrame.
+      $info = $this->urlEmbed->getUrlInfo($url);
+      if ($info && !empty($iframe = $info['code'])) {
+        $provider = strtolower($info['providerName']);
+        $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
+      }
+      else {
+        // Else return the link itself.
+        $content = Link::fromTextAndUrl($url, Url::fromUri($url))->toString();
+      }
     }
+
+    // Let's prepare the response.
+    $response = new AjaxResponse();
 
     // And return the response which will replace the button
     // with embeddable content.
