@@ -323,7 +323,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
    */
-  public function iWaitForSeconds($seconds, $condition = "") {
+  public function iWaitForSeconds($seconds, $condition = 'false') {
     $milliseconds = (int) ($seconds * 1000);
     $this->getSession()->wait($milliseconds, $condition);
   }
