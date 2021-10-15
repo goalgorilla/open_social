@@ -6,9 +6,13 @@
  */
 
 /**
- * Remove not used fieldgroup.
+ * Remove the not used fieldgroup 'group_welcome_message' from group forms.
+ *
+ * Config override that adds the 'group_welcome_message' fieldgroup was removed
+ * but for some reason this field group still exist in group form configuration.
+ * As we add a new wrapper in form alter we should remove it from configuration.
  */
-function social_group_welcome_message_update_10001(): void {
+function social_group_welcome_message_update_10101(): void {
   $social_group_types = [
     'open_group',
     'closed_group',
