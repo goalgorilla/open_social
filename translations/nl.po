@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
 "POT-Creation-Date: 2021-10-10 00:14+0000\n"
-"PO-Revision-Date: 2021-10-12 16:17+0000\n"
-"Last-Translator: Bas Knaapen <b.knaapen@simgroep.nl>\n"
+"PO-Revision-Date: 2021-10-18 12:44+0000\n"
+"Last-Translator: Stefano Tabarelli <stefanotabarelli@getopensocial.com>\n"
 "Language-Team: Dutch <https://translate.getopensocial.com/projects/"
 "open-social/distribution/nl/>\n"
 "Language: nl\n"
@@ -489,6 +489,15 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> heeft een [social_taxonomy:indefinite_article] "
+"[social_taxonomy:content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> geplaatst over een trefwoord dat je volgt.</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.update_node_following_tag.yml:0;0
 msgid ""
@@ -496,6 +505,10 @@ msgid ""
 "a> added tag(s) you follow to [social_taxonomy:indefinite_article] "
 "[social_taxonomy:content_type].</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> heeft een [social_taxonomy:indefinite_article] "
+"[social_taxonomy:content_type] geplaatst over een trefwoord dat je volgt.</p>"
+"\n"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0
 msgid ""
@@ -789,6 +802,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> waardeert je [social_like:liked_entity_link_html]</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0;0
 msgid ""
@@ -1466,7 +1485,7 @@ msgstr "Iemand reageerde op een bericht in mijn profiel"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid "A person commented on content I am following"
-msgstr "Iemand reageerde op inhoud die ik volg"
+msgstr "Iemand reageerde op Items die ik volg"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid "A person commented on content created or organised by me"
@@ -4018,7 +4037,7 @@ msgstr "Inhoud"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0;0
 msgid "Content I follow"
-msgstr "Inhoud die ik volg"
+msgstr "Items die ik volg"
 
 #: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
 msgid "Content Reporting"
@@ -4224,7 +4243,7 @@ msgstr "Onderwerp aanmaken"
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:225
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:251
 msgid "Create a @name"
-msgstr ""
+msgstr "Nieuwe @name"
 
 #: modules/social_features/social_user/src/Plugin/Block/SocialUserLoginBlock.php:50
 msgid "Create a new user account."
@@ -4687,7 +4706,7 @@ msgstr "Standaard zichtbaarheidsinstelling"
 #: modules/social_features/social_post/src/PostViewBuilder.php:219
 #: modules/social_features/social_post/src/Form/PostTypeDeleteForm.php:32
 msgid "Delete"
-msgstr "Verwijderen"
+msgstr "Verwijder"
 
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:25
 msgid "Delete @type \"@title\""
@@ -5270,7 +5289,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/optional/field.field.event_enrollment.event_enrollment.field_email.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/config/optional/field.field.event_enrollment.event_enrollment.field_email.yml:0
 msgid "Email address"
-msgstr "Email adres"
+msgstr "E-mailadres"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:81
 msgid "Email notification"
@@ -6259,7 +6278,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/social_follow_content.module:112
 msgid "Following"
-msgstr "Volgend"
+msgstr "Items die ik volg"
 
 #: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:16
 msgid "Following content activity context"
@@ -6271,7 +6290,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module:48
 msgid "Following tags"
-msgstr "Volgende tags"
+msgstr "Tags die ik volg"
 
 #: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php:17
 msgid "Following taxonomy activity context"
@@ -11192,7 +11211,7 @@ msgstr "E-mail tonen"
 
 #: modules/social_features/social_user/social_user.module:690
 msgid "Show email address in help messages"
-msgstr "Toon email adres in help berichten"
+msgstr "Toon e-mailadres in help berichten"
 
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:88
 msgid "Show email on all user profiles"
@@ -11249,11 +11268,11 @@ msgstr "Registreren"
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:93
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:44
 msgid "Sign up"
-msgstr "Inschrijven"
+msgstr "Registratie"
 
 #: modules/social_features/social_user/social_user.module:189
 msgid "Sign up with <b>email</b>"
-msgstr "Inschrijven via <b>e-mail</b>"
+msgstr "Registreren via <b>e-mail</b>"
 
 #: modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php:194
 msgid "Signed in as"
@@ -14084,7 +14103,7 @@ msgstr "Community-berichten bekijken"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:110
 msgid "View content I'm following"
-msgstr "De inhoud die ik volg weergeven"
+msgstr "De items die ik volg weergeven"
 
 #: modules/social_features/social_event/social_event.tokens.inc:124
 msgid "View enrollment requests"
