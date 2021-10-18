@@ -124,12 +124,13 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * This limits access for pages like all-members to authenticated users.
    */
   public function testUsersNotEnumerableWithoutListPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
     // Create some test users.
     for ($i = 0; $i < 10; ++$i) {
       $users[] = $this->createUser();
     }
 
-    $this->setUpCurrentUser([], ['access user profiles']);
     $this->assertResults(
       '
         query {
@@ -176,12 +177,13 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * individual users we still don't see anything.
    */
   public function testUsersEnumerableInvisibleWithoutAccessPermission() : void {
+    $this->setUpCurrentUser([], ['list user']);
+
     // Create some test users.
     for ($i = 0; $i < 10; ++$i) {
       $users[] = $this->createUser();
     }
 
-    $this->setUpCurrentUser([], ['list user']);
     $this->assertResults(
       '
         query {
@@ -226,10 +228,11 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * Test that everyone can access a user's id.
    */
   public function testIdAlwaysVisible() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
     $test_user = $this->createUser([], "test_user");
     self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
 
-    $this->setUpCurrentUser([], ['access user profiles']);
     $this->assertResults(
       '
         query ($id: ID!) {
@@ -254,10 +257,11 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * Test that everyone can see a user's display name.
    */
   public function testDisplayNameAlwaysVisible() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
     $test_user = $this->createUser([], "test_user");
     self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
 
-    $this->setUpCurrentUser([], ['access user profiles']);
     $this->assertResults(
       '
         query ($id: ID!) {
@@ -279,13 +283,14 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   }
 
   /**
-   * Test users without permission can't see the email.
+   * Test users without permission can not see the email.
    */
   public function testMailNotVisibleWithoutPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
     $test_user = $this->createUser();
     self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
 
-    $this->setUpCurrentUser([], ['access user profiles']);
     $this->assertResults(
       '
         query ($id: ID!) {
@@ -301,36 +306,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
         ],
       ],
       $this->defaultCacheMetaData()
-        ->addCacheableDependency($test_user)
         ->addCacheContexts(['languages:language_interface'])
-    );
-  }
-
-  /**
-   * Test users that can view profiles can see the mail.
-   */
-  public function testMailVisibleForViewProfilePermission() : void {
-    $test_user = $this->createUser();
-    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
-
-    $this->setUpCurrentUser([], ['access user profiles', 'SOME EXTRA PERMISSION']);
-    $this->assertResults(
-      '
-        query ($id: ID!) {
-          user(id: $id) {
-            mail
-          }
-        }
-      ',
-      ['id' => $test_user->uuid()],
-      [
-        'user' => [
-          'mail' => $test_user->getEmail(),
-        ],
-      ],
-      $this->defaultCacheMetaData()
         ->addCacheableDependency($test_user)
-        ->addCacheContexts(['languages:language_interface'])
     );
   }
 

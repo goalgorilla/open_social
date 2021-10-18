@@ -30,13 +30,11 @@ use Drupal\social_user\SocialUserSearchContentBlockAlter;
  * Implements hook_ENTITY_TYPE_access().
  */
 function social_user_user_access(UserInterface $user, string $operation, AccountInterface $account) : AccessResultInterface {
-  // We don't want to show blocked users unless the user is specifically allowed
-  // to.
+  // By default blocked users may not be viewed (AccessResultNeutral is returned
+  // in \Drupal\user\UserAccessControlHandler). To counteract this we explicitly
+  // allow viewing a blocked user if a user has the permission.
   if ($operation === 'view' && $user->isBlocked()) {
-    return AccessResult::forbiddenIf(
-      !$account->hasPermission("view blocked user"),
-      "The 'view blocked user' permission is required."
-    )->addCacheContexts(['user.permissions']);
+    return AccessResult::allowedIfHasPermission($account, "view blocked user");
   }
 
   return AccessResult::neutral();
