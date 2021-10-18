@@ -492,8 +492,6 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     /** @var \Drupal\user\RoleInterface[] $roles */
     $roles = Role::loadMultiple();
 
-    // @todo Move permission changes to a single change permissions?
-    // i.e. user_role_*_permissions to user_role_change_permissions
     // See https://www.drupal.org/project/drupal/issues/2818877.
     /**
      * @var string $field_name
