@@ -191,16 +191,6 @@ parameters:
 			path: modules/custom/activity_creator/activity.page.inc
 
 		-
-			message:
-				"""
-					#^Call to deprecated method getMaxAge\\(\\) of class Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\:
-					in drupal\\:8\\.1\\.9 and is removed from drupal\\:9\\.0\\.0\\. Use
-					  \\\\Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\:\\:getCacheMaxAge\\(\\) instead\\.$#
-				"""
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
 			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity.page.inc
@@ -989,6 +979,16 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Plugin/QueueWorker/ActivityWorkerLogger.php
+
+		-
+			message: "#^Function activity_logger_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
+
+		-
+			message: "#^Function activity_logger_update_dependencies\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
@@ -2426,16 +2426,6 @@ parameters:
 			path: modules/custom/improved_theme_settings/improved_theme_settings.module
 
 		-
-			message:
-				"""
-					#^Call to deprecated method getBaseThemes\\(\\) of class Drupal\\\\Core\\\\Theme\\\\ActiveTheme\\:
-					in drupal\\:8\\.7\\.0 and is removed from drupal\\:9\\.0\\.0\\. Use
-					  \\\\Drupal\\\\Core\\\\Theme\\\\ActiveTheme\\:\\:getBaseThemeExtensions\\(\\) instead\\.$#
-				"""
-			count: 1
-			path: modules/custom/improved_theme_settings/improved_theme_settings.module
-
-		-
 			message: "#^Function improved_theme_settings_form_system_theme_settings_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/improved_theme_settings/improved_theme_settings.module
@@ -3076,16 +3066,6 @@ parameters:
 			path: modules/custom/social_font/social_font.module
 
 		-
-			message:
-				"""
-					#^Call to deprecated method getBaseThemes\\(\\) of class Drupal\\\\Core\\\\Theme\\\\ActiveTheme\\:
-					in drupal\\:8\\.7\\.0 and is removed from drupal\\:9\\.0\\.0\\. Use
-					  \\\\Drupal\\\\Core\\\\Theme\\\\ActiveTheme\\:\\:getBaseThemeExtensions\\(\\) instead\\.$#
-				"""
-			count: 1
-			path: modules/custom/social_font/social_font.module
-
-		-
 			message: "#^Function social_font_help\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_font/social_font.module
@@ -3556,11 +3536,6 @@ parameters:
 			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
 
 		-
-			message: "#^The \"drupal_core_url_generator\" service is deprecated\\. You should use the 'url_generator' service instead\\. See https\\://www\\.drupal\\.org/project/social/issues/3098046$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
@@ -3942,11 +3917,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.module
-
-		-
-			message: "#^The \"path\\.alias_storage\" service is deprecated\\. Use the \"path_alias\\.repository\" service instead, or the entity storage handler for the \"path_alias\" entity type for CRUD methods\\. See https\\://www\\.drupal\\.org/node/3013865$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.module
 
@@ -5427,16 +5397,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.module
-
-		-
-			message:
-				"""
-					#^Call to deprecated method getMaxAge\\(\\) of class Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\:
-					in drupal\\:8\\.1\\.9 and is removed from drupal\\:9\\.0\\.0\\. Use
-					  \\\\Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\:\\:getCacheMaxAge\\(\\) instead\\.$#
-				"""
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -13713,11 +13673,6 @@ parameters:
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^The \"entity\\.query\" service is deprecated\\. Use the 'entity_type\\.manager' service to get an entity type's storage object and then call \\\\Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:getQuery\\(\\) or \\\\Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:getAggregateQuery\\(\\) instead\\. See https\\://www\\.drupal\\.org/node/2849874$#"
-			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-

@@ -112,7 +112,7 @@ Feature: Create Closed Group
     Given I am logged in as "Group User Two"
     When I am on "/notifications"
     Then I should see "Group User One created a post in the Test closed group group"
-    And I should have an email with subject "Notification from Open Social" and in the content:
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
     | content                                                        |
     | Hi Group User Two                                              |
     | Group User One published a post in the Test closed group group |

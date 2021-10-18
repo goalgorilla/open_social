@@ -259,24 +259,36 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             // Get alias of the group tab.
             $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
 
-            /** @var \Drupal\Core\Path\AliasStorage $pas */
-            $pas = \Drupal::service('path.alias_storage');
+            /** @var \Drupal\path_alias\PathAliasStorage $pas */
+            $pas = \Drupal::entityTypeManager()->getStorage('path_alias');
+            /** @var \Drupal\path_alias\AliasRepositoryInterface $alias_repository */
+            $alias_repository = \Drupal::service('path_alias.repository');
 
             // Check of the alias is an alias or path.
-            $is_alias = $pas->aliasExists($grouptab_alias, $entity_language);
+            $alias_details = $alias_repository->lookupByAlias($grouptab_alias, $entity_language);
 
             // Create a new alias when it does not exist.
-            if ($op === 'create' && $is_alias === FALSE) {
+            if ($alias_details === NULL) {
               // Insert the alias for the other views.
-              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, $entity_language);
+              $pas->create([
+                'path' => '/group/' . $entity->id() . '/' . $suffix,
+                'alias' => $path['alias'] . '/' . $suffix,
+                'langcode' => $entity_language,
+              ])->save();
             }
 
             // Update alias by deleting the old one and creating a new one.
+            // This is necessary because path alias doesn't update our
+            // group view aliases whenever we update the Group entity.
             if ($op === 'update' || $op === 'all') {
               \Drupal::service('pathauto.alias_storage_helper')
                 ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
 
-              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, $entity_language);
+              $pas->create([
+                'path' => '/group/' . $entity->id() . '/' . $suffix,
+                'alias' => $path['alias'] . '/' . $suffix,
+                'langcode' => $entity_language,
+              ])->save();
             }
           }
 
