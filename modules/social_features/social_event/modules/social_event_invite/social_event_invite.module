@@ -65,7 +65,7 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
       $mail = $to->getEmail();
     }
 
-    if (!$not_empty || ($to instanceof UserInterface && !$to->hasPermission('view published event enrollment entities'))) {
+    if (!empty($mail) && (!$not_empty || ($to instanceof UserInterface && !$to->hasPermission('view published event enrollment entities')))) {
       // Send a normal mail when the user has no account yet.
       $params['existing_user'] = FALSE;
       $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
