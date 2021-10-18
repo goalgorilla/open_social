@@ -732,17 +732,11 @@ function social_landing_page_update_10302() {
 }
 
 /**
- * Update configuration for the types of the block_field field.
+ * Moved to OS 11.0.0.
  */
 function social_landing_page_update_10303() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+  // Removed in OS 10.3.1 and moved to OS 11.0.0.
+  // @see https://www.drupal.org/project/social/issues/3243511
 }
 
 /**

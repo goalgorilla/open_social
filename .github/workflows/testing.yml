@@ -1,6 +1,10 @@
-name: PHPUnit Testing
+name: Testing
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request: { }
 
 jobs:
   phpcs:
