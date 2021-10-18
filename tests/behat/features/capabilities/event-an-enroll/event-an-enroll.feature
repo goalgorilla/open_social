@@ -92,7 +92,7 @@ Feature: Enroll for an event without an account
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public"
+    And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"
     And I press "Create event"
 
     Given I am an anonymous user
