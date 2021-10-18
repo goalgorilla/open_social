@@ -26,7 +26,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ExportAllEnrolments extends ExportEnrolments {
 
-  protected $entities;
+  /**
+   * The entities that we're executing for.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface[]
+   */
+  protected array $entities;
 
   /**
    * The event an enroll manager.

@@ -2,10 +2,7 @@
 
 namespace Drupal\social_follow_tag\Plugin\ActivityContext;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\social_follow_taxonomy\Plugin\ActivityContext\FollowTaxonomyActivityContext;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
 /**

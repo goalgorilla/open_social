@@ -1,0 +1,6 @@
+services:
+  social_demo.commands:
+    class: \Drupal\social_demo\Commands\SocialDemoDrushCommands
+    tags:
+      - { name: drush.command }
+    arguments: ['@current_user', '@plugin.manager.demo_content']

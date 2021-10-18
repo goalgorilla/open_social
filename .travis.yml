@@ -1,4 +1,4 @@
-dist: trusty
+dist: focal
 sudo: required
 
 cache:
@@ -14,7 +14,7 @@ addons:
 language: php
 
 php:
-  - 7.3
+  - 7.4
 
 env:
   global:
@@ -47,7 +47,7 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - git clone -b 1.0.0 https://github.com/goalgorilla/drupal_social.git install
+  - git clone https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
@@ -75,7 +75,6 @@ install:
 
 script:
   - set -e
-  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts /var/www/scripts/social/run-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "notifications --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-2 --stop-on-failure --strict"; fi

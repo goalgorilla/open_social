@@ -18,9 +18,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class PostForm extends ContentEntityForm {
 
-  private $postViewDefault;
-  private $postViewProfile;
-  private $postViewGroup;
+  /**
+   * The view mode.
+   */
+  private ?string $postViewDefault;
+
+  /**
+   * The view mode for use on profiles.
+   */
+  private ?string $postViewProfile;
+
+  /**
+   * The view mode for use in groups.
+   */
+  private ?string $postViewGroup;
 
   /**
    * The Current User object.

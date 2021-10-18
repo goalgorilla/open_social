@@ -9,7 +9,6 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
-use Drupal\social_core\Service\ConfigurationsService;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
@@ -708,10 +707,16 @@ function social_group_update_10302() {
  */
 function social_group_update_10303() {
   $configs = [
-    'flag.flag.mute_group_notifications',
+    'flag.flag.mute_group_notifications' => 'flag.flag.mute_group_notifications_10303',
   ];
 
-  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
 
 /**
@@ -754,10 +759,16 @@ function social_group_update_10305() {
  */
 function social_group_update_10306() {
   $configs = [
-    'block.block.exposed_form_groups_page_user_groups',
+    'block.block.exposed_form_groups_page_user_groups' => 'block.block.exposed_form_groups_page_user_groups_10306',
   ];
 
-  ConfigurationsService::importStaticConfigurations($configs, __FUNCTION__);
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
 
 /**
@@ -810,4 +821,18 @@ function social_group_update_10308() {
 
   // Set display mode for group content to display on stream.
   activity_creator_set_entity_view_mode('group_content', 'activity');
+}
+
+/**
+ * Update BEF filter in the User Groups view.
+ */
+function social_group_update_11001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

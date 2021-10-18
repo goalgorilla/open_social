@@ -1,11 +1,11 @@
 langcode: en
 status: true
 dependencies:
-  module:
-    - activity_logger
   enforced:
     module:
       - social_follow_tag
+  module:
+    - activity_logger
 third_party_settings:
   activity_logger:
     activity_bundle_entities:
@@ -20,18 +20,19 @@ third_party_settings:
     activity_create_direct: false
     activity_aggregate: false
     activity_entity_condition: ''
+    email_subject: 'Someone added content you might be interested in'
 template: update_node_following_tag
 label: 'Update node with following tag'
 description: 'A person update content and add tag I am following'
 text:
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type].</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href="[message:field_message_related_object:entity:url:absolute]">[message:node-title]</a>.</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> added tag(s) you follow to [social_taxonomy:indefinite_article] [social_taxonomy:content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a>.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

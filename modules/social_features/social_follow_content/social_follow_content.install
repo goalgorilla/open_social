@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -92,4 +93,21 @@ function social_follow_content_update_8001() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update message template "message.template.create_comment_following_node".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_follow_content_update_10301() {
+  $config_file = drupal_get_path('module', 'social_follow_content') . '/config/static/message.template.create_comment_following_node_10301.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_comment_following_node');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

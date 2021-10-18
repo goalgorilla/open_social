@@ -5,7 +5,7 @@ namespace Drupal\social_demo;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class DemoContentParser.
+ * Plugin manager for DemoContentParser plugin.
  *
  * @package Drupal\social_demo
  */
