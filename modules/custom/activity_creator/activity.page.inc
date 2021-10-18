@@ -41,6 +41,7 @@ function template_preprocess_activity(array &$variables) {
   $full_url = $activity->getRelatedEntityUrl();
 
   // Display activity created date in format 'time ago'.
+  /** @var \Drupal\Core\Datetime\FormattedDateDiff $created_time_ago */
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($activity->getCreatedTime(), [
       'granularity' => 1,
@@ -59,7 +60,7 @@ function template_preprocess_activity(array &$variables) {
       $variables['date'] = Link::fromTextAndUrl($date, $full_url)->toRenderable();
     }
   }
-  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
+  $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $entities = $activity->field_activity_entity->referencedEntities();
   if (!empty($entities)) {

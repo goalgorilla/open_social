@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the activity_logger module.
+ */
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function activity_logger_update_dependencies() {
+  // Make sure we run our update after the email consistency
+  // improvements ran.
+  $dependencies['activity_logger'][10301] = [
+    'social_activity' => 10303,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Update message templates with new Subject schema.
+ */
+function activity_logger_update_10301() {
+  // Lets declare the defaults already, even if it is a schema
+  // update it's a config schema, so we can just set it
+  // without having to do a post_update hook or anything.
+  $template_defaults = [
+    'background_process_finished' => 'A background task has been finished',
+    'create_comment_author_node_post' => 'Someone commented on your content',
+    'create_comment_post_profile' => 'You have a new comment on a post',
+    'create_comment_reply' => 'You have a new reply to your comment',
+    'create_content_in_joined_group' => 'New content has been added to a group you are in',
+    'create_post_profile' => 'There is a new post in your stream',
+    'event_request_approved' => 'Your request to enroll to an event has been accepted',
+    'join_to_group' => 'Someone joined one of your groups',
+    'request_event_enrollment' => 'Someone wants to enroll to your event',
+    'content_reported' => 'Someone reported content as inappropriate',
+    'activity_on_events_im_organizing' => 'You have a new enrollment to your event',
+    'invite_event_enrollment' => 'You have been invited to an event',
+    'member_added_by_event_organiser' => 'You have been added to an event',
+    'create_comment_following_node' => 'Someone commented on your content',
+    'create_node_following_tag' => 'Someone added content you might be interested in',
+    'create_node_following_tag_stream' => 'Someone added content you might be interested in',
+    'update_node_following_tag' => 'Someone added content you might be interested in',
+    'invited_to_join_group' => 'You have been invited to join a group',
+    'approve_request_join_group' => 'Your request to join a group has been accepted',
+    'request_to_join_a_group' => 'Someone wants to join your group',
+    'create_like_node_or_post' => 'Your content has been liked',
+    'create_comment_reply_mention' => 'You have a new reply to a thread you were mentioned in',
+    'create_mention_comment' => 'You have been mentioned',
+    'create_mention_post' => 'You have been mentioned',
+    'create_private_message' => 'You have received a new private message',
+  ];
+
+  /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
+  $message_templates = \Drupal::entityTypeManager()->getStorage('message_template')->loadMultiple();
+  // Lets update all existing message templates.
+  foreach ($message_templates as $message_template) {
+    $template = $message_template->getTemplate();
+
+    // Grab the config for each of the templates.
+    // That is where the third party settings are stored.
+    $config_name = "message.template.{$template}";
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
+    $activity_logger_settings = $config->get('third_party_settings.activity_logger');
+
+    // Set default subject line to empty, this way the activity_send_email
+    // will default to Notification from %site_name.
+    $activity_logger_settings['email_subject'] = '';
+    if (!empty($template_defaults[$template])) {
+      $activity_logger_settings['email_subject'] = $template_defaults[$template];
+    }
+    $config->set('third_party_settings.activity_logger', $activity_logger_settings);
+    $config->save();
+  }
+}

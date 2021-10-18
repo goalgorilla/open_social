@@ -34,6 +34,15 @@ class Immediately extends EmailFrequencyBase {
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
+      $subject = '';
+      // If configured grab the email subject.
+      $template = $message->getTemplate();
+      if ($template !== NULL) {
+        $settings = $template->getThirdPartySettings('activity_logger');
+        if ($settings['email_subject']) {
+          $subject = $settings['email_subject'];
+        }
+      }
 
       // If no body text is provided, get it from message for given language.
       if (!$body_text) {
@@ -41,7 +50,7 @@ class Immediately extends EmailFrequencyBase {
       }
 
       if ($langcode && !empty($body_text)) {
-        $this->sendEmail($body_text, $langcode, $target);
+        $this->sendEmail($body_text, $langcode, $target, $subject);
       }
     }
   }
@@ -55,8 +64,11 @@ class Immediately extends EmailFrequencyBase {
    *   The langcode of the target user.
    * @param \Drupal\user\Entity\User $target
    *   The target account to send the email to.
+   * @param string $subject
+   *   The email subject.
    */
-  protected function sendEmail(string $body_text, string $langcode, User $target) {
+  protected function sendEmail(string $body_text, string $langcode, User $target, string $subject = '') {
+    $params = [];
     // Translating frequency instance in the language of the user.
     // @codingStandardsIgnoreStart
     $frequency_translated = t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
@@ -73,7 +85,13 @@ class Immediately extends EmailFrequencyBase {
       ['langcode' => $langcode]),
     ];
 
+    // Construct the body & subject for email sending.
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
+    if ($subject !== '') {
+      // We don't support tokens in our subject at the moment, if needs be
+      // we can check out how the ActivityFactory processTokens method does it.
+      $params['subject'] = t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
+    }
 
     // Send the email.
     $mail_manager = \Drupal::service('plugin.manager.mail');
