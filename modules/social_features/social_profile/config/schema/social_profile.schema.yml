@@ -45,6 +45,10 @@ field.storage.*.*.third_party.social_profile:
   type: mapping
   label: 'Social Profile field settings'
   mapping:
+    managed_access:
+      type: boolean
+      label: 'Field has managed access'
+      description: 'Whether field access is managed by the `social_profile` module. An empty value is interpreted as TRUE. Set to FALSE to opt-out'
     visibility_stored_by:
       type: string
       label: 'Visibility stored by'

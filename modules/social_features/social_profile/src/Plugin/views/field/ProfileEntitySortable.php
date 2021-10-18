@@ -192,6 +192,7 @@ class ProfileEntitySortable extends RenderedEntity {
         // for others to their nickname. In such a case their full name is
         // visible anyway. This can be solved by forcing a nickname to be
         // public but that's out of the scope of the work being done here.
+        // @phpstan-ignore-next-line
         $limit_search_and_mention = \Drupal::config('social_profile_privacy.settings')
           ->get('limit_search_and_mention');
         if ($view_any) {

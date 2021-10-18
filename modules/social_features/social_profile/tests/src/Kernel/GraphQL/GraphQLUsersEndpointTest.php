@@ -4,67 +4,15 @@ namespace Drupal\Tests\social_profile\Kernel\GraphQL;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
  * Tests the additions made to the user endpoint by this module.
  *
  * @group social_graphql
+ * @group social_profile
  */
-class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    "social_user",
-    // User creation in social_user requires a service in role_delegation.
-    // @todo Possibly untangle this?
-    "role_delegation",
-    // Profile is needed for the profile storage.
-    "profile",
-    // Required for third party config schema.
-    "field_group",
-    // Modules needed for profile fields.
-    "file",
-    "image",
-    "address",
-    "taxonomy",
-    "telephone",
-    "text",
-    "options",
-    "filter",
-    "lazy",
-    "image_widget_crop",
-    "crop",
-    // The actual module under test.
-    "social_profile",
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $configSchemaCheckerExclusions = [
-    // @todo when https://www.drupal.org/project/social/issues/3238713 is fixed.
-    "core.entity_form_display.profile.profile.default",
-    // We don't need views in the GraphQL API so no sense in enabling the views
-    // module or validating the schema.
-    "views.view.newest_users",
-    "views.view.user_information",
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() : void {
-    parent::setUp();
-
-    $this->installEntitySchema('profile_type');
-    $this->installEntitySchema('profile');
-    $this->installConfig('social_profile');
-  }
+class GraphQLUsersEndpointTest extends ProfileGraphQLTestBase {
 
   /**
    * Ensure that the profile fields are properly added to the user endpoint.
@@ -200,6 +148,173 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($test_user)
         ->addCacheContexts(['languages:language_interface'])
         ->addCacheTags(['profile_list'])
+    );
+  }
+
+  /**
+   * Test users without permission can not see the email.
+   *
+   * This duplicates the test from social_user but ensures that the
+   * social_profile module actually properly protects the email.
+   *
+   * This is part of the tests that confirms that user.mail access is governed
+   * by the settings for mail on the profile entity.
+   */
+  public function testMailNotVisibleWithoutPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
+    $test_user = $this->createUser();
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            mail
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => [
+          'mail' => NULL,
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that if the mail is configured as public it respects visibility.
+   *
+   * This is part of the tests that confirms that user.mail access is governed
+   * by the settings for mail on the profile entity.
+   */
+  public function testPublicMailVisibleWithoutPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+
+    // Allow user to edit visibility so that the profile value is respected.
+    $test_user = $this->createUser(["edit own visibility_field_profile_email profile profile field"]);
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    $profile = $profile_storage->loadByUser($test_user, 'profile');
+
+    self::assertInstanceOf(ProfileInterface::class, $profile, "Test set-up failed: could not load profile profile.");
+
+    $profile
+      ->get('visibility_field_profile_email')
+      ->set(0, SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC);
+    $profile->save();
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            mail
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => [
+          'mail' => $test_user->getEmail(),
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that if the mail is configured as community it respects visibility.
+   *
+   * This is part of the tests that confirms that user.mail access is governed
+   * by the settings for mail on the profile entity.
+   */
+  public function testCommunityMailVisibleWithPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles', "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields"]);
+
+    // Allow user to edit visibility so that the profile value is respected.
+    $test_user = $this->createUser(["edit own visibility_field_profile_email profile profile field"]);
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    $profile = $profile_storage->loadByUser($test_user, 'profile');
+
+    self::assertInstanceOf(ProfileInterface::class, $profile, "Test set-up failed: could not load profile profile.");
+
+    $profile
+      ->get('visibility_field_profile_email')
+      ->set(0, SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY);
+    $profile->save();
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            mail
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => [
+          'mail' => $test_user->getEmail(),
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Test that if mail is configured as private it respects visibility.
+   *
+   * This is part of the tests that confirms that user.mail access is governed
+   * by the settings for mail on the profile entity.
+   */
+  public function testPrivateMailVisibleWithPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles', "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " field_profile_email profile profile fields"]);
+
+    // Allow user to edit visibility so that the profile value is respected.
+    $test_user = $this->createUser(["edit own visibility_field_profile_email profile profile field"]);
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = $this->container->get('entity_type.manager')->getStorage('profile');
+    $profile = $profile_storage->loadByUser($test_user, 'profile');
+
+    self::assertInstanceOf(ProfileInterface::class, $profile, "Test set-up failed: could not load profile profile.");
+
+    $profile
+      ->get('visibility_field_profile_email')
+      ->set(0, SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE);
+    $profile->save();
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            mail
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => [
+          'mail' => $test_user->getEmail(),
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        ->addCacheContexts(['languages:language_interface'])
     );
   }
 

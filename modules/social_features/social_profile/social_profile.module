@@ -36,6 +36,7 @@ use Drupal\social_profile\FieldManager;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\Role;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
@@ -113,6 +114,7 @@ function social_profile_create_visibility_field_storage_config_for(FieldStorageC
     'entity_type' => $field_storage_config->getTargetEntityTypeId(),
     'type' => 'list_string',
     'module' => 'social_profile',
+    'cardinality' => 1,
     'translatable' => FALSE,
     'locked' => TRUE,
     'settings' => [
@@ -229,7 +231,9 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
     'translatable' => FALSE,
     'locked' => TRUE,
     'required' => TRUE,
-    'default_value' => SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY,
+    'default_value' => [
+      0 => ['value' => SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY],
+    ],
     'settings' => [
       'allowed_values_function' => 'social_profile_field_visibility_values',
     ],
@@ -808,26 +812,122 @@ function social_profile_preprocess_profile(array &$variables) {
  * Implements hook_entity_field_access().
  */
 function social_profile_entity_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) : AccessResultInterface {
+  /** @var \Drupal\social_profile\FieldManager $field_manager */
+  $field_manager = \Drupal::service('social_profile.field_manager');
+
+  // We manage access for any profile field that hasn't explicitly opted out.
+  if ($field_definition->getTargetEntityTypeId() === 'profile' && !$field_manager::isOptedOutOfFieldAccessManagement($field_definition)) {
+    return social_profile_entity_social_managed_field_access($operation, $field_definition, $account, $items);
+  }
+
+  // Users manage the visibility of their e-mail using their profile. Email
+  // display on the profile happens by copying the value to the profile itself.
+  // However the email may also be accessed on the user entity directly, for
+  // example in the GraphQL API. To ensure that the email is also protected
+  // through that path we apply the profile's access determination to the
+  // User.email field. Currently we offer no way for a user to modify the
+  // profile they share with the community separately from their account email.
+  // When we do add that in the future we may want to implement stricter account
+  // permission checks and keep the profile access checks only for the profile
+  // email field (which the user should then be able to configure).
+  // The settings for other operations also respect those as configured for the
+  // profile email, to accommodate e.g. disabling editing of email for SSO
+  // integrations. That would need to be preserved in a refactor.
+  if ($field_definition->getTargetEntityTypeId() === 'user' && $field_definition->getName() === 'mail') {
+    // Type annotation needed until Drupal 9.2.0.
+    /** @var \Drupal\field\FieldConfigInterface|NULL $profile_field_definition */
+    $profile_field_definition = FieldConfig::loadByName('profile', 'profile', 'field_profile_email');
+    if ($profile_field_definition === NULL) {
+      return AccessResult::neutral("Field 'field_profile_email' is not installed.");
+    }
+
+    $user_items = NULL;
+    if ($items !== NULL) {
+      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+      $profile_storage = \Drupal::service('entity_type.manager')
+        ->getStorage('profile');
+      /** @var \Drupal\user\UserInterface $user */
+      $user = $items->getEntity();
+      $profile = $profile_storage->loadByUser($user, 'profile');
+
+      if ($profile === NULL) {
+        return AccessResult::neutral("User has no profile so can not perform email access management.");
+      }
+
+      $user_items = $profile->get('field_profile_email');
+    }
+
+    return social_profile_entity_social_managed_field_access($operation, $profile_field_definition, $account, $user_items);
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Handles field access checks for managed fields.
+ *
+ * Implements hook_entity_field_access though it contains only logic for fields
+ * that have not explicitly opted out of access management.
+ *
+ * This is currently only used for profiles but is abstract enough that it could
+ * be moved to social_core and used for other entity types too.
+ *
+ * @param string $operation
+ *   The operation to be performed. See
+ *   \Drupal\Core\Entity\EntityAccessControlHandlerInterface::fieldAccess()
+ *   for possible values.
+ * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+ *   The field definition.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user account to check.
+ * @param \Drupal\Core\Field\FieldItemListInterface $items
+ *   (optional) The entity field object for which to check access, or NULL if
+ *   access is checked for the field definition, without any specific value
+ *   available. Defaults to NULL.
+ *
+ * @return \Drupal\Core\Access\AccessResultInterface
+ *   The access result.
+ */
+function social_profile_entity_social_managed_field_access(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) : AccessResultInterface {
   $entity_type = $field_definition->getTargetEntityTypeId();
   $entity_bundle = $field_definition->getTargetBundle();
   $field_name = $field_definition->getName();
   /** @var \Drupal\social_profile\FieldManager $field_manager */
   $field_manager = \Drupal::service('social_profile.field_manager');
+  /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
+  $storage = \Drupal::service('entity_type.manager')->getStorage($entity_type);
 
-  // Allow bypassing complex checks if a profile is being viewed by a user with
-  // access bypass permissions.
-  if ($entity_type === 'profile' && $operation === 'view') {
-    $result = AccessResult::allowedIfHasPermission($account, "view any profile fields")
-      ->orIf(AccessResult::allowedIfHasPermission($account, "view any ${entity_bundle} profile fields"));
+  if ($operation === 'view') {
+    // Bypass more complex access checks if a user is viewing their own profile
+    // and can see that field.
+    if ($items !== NULL) {
+      $entity = $items->getEntity();
+      if ($entity instanceof EntityOwnerInterface && $entity->getOwnerId() === $account->id()) {
+        // We're okay with the user seeing this but we defer to other modules
+        // for possibly restricting.
+        return AccessResult::neutral();
+      }
+    }
+
+    // Allow bypassing complex checks if a profile is being viewed by a user
+    // with access bypass permissions.
+    $result = AccessResult::allowedIfHasPermission($account, "view any ${entity_type} fields")
+      ->orIf(AccessResult::allowedIfHasPermission($account, "view any ${entity_bundle} ${entity_type} fields"));
 
     if ($result->isAllowed()) {
       return $result;
     }
   }
 
-  // We only apply our visibility field based access management to fields that
-  // we manage.
-  if ($entity_type === 'profile' && $operation === 'view' && $field_manager::isManagedValueField($field_definition)) {
+  // We have no opinion about viewing a visibility field value.
+  if ($operation === "view" && !$field_manager::isManagedValueField($field_definition)) {
+    return AccessResult::neutral();
+  }
+  // For value fields we must check if the entity owner is allowed to set the
+  // visibility themselves. Depending on that we look either at the value
+  // contained in the visibility field or use the default setting provided by
+  // the site manager.
+  if ($operation === "view") {
     /** @var string $visibility_stored_by */
     $visibility_stored_by = $field_manager::getVisibilityFieldName($field_definition);
 
@@ -835,51 +935,81 @@ function social_profile_entity_field_access(string $operation, FieldDefinitionIn
     // value.
     if ($items === NULL) {
       // To check the default value we just create a new profile entity.
-      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-      $profile = Profile::create(['type' => $entity_bundle]);
+      /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+      $entity = $storage->create(['type' => $entity_bundle]);
+      $depends_on_profile_value = FALSE;
     }
-    // Otherwise we get the profile the item belongs to and use it if the
-    // owner of the profile is allowed to alter visibility.
+    // Otherwise we get the entity the item belongs to and use it if the
+    // owner of the entity is allowed to alter visibility.
     else {
-      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-      $profile = $items->getEntity();
-      $profile_user = $profile->getOwner();
+      /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+      $entity = $items->getEntity();
+      $entity_owner = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
+      $depends_on_profile_value = TRUE;
 
       // If the user can't change the visibility then we also check against a
       // dummy entity so that we use the default value set by a site manager.
       // This ensures that if a site manager re-enables user configuration
       // that the value the user had previously set is respected again.
-      if (!$profile_user->hasPermission("edit own ${visibility_stored_by} ${entity_bundle} ${entity_type} field")) {
-        /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-        $profile = Profile::create(['type' => $entity_bundle]);
+      if ($entity_owner === NULL || !$entity_owner->hasPermission("edit own ${visibility_stored_by} ${entity_bundle} ${entity_type} field")) {
+        /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+        $entity = $storage->create(['type' => $entity_bundle]);
+        $depends_on_profile_value = FALSE;
       }
     }
 
-    if (!$profile->hasField($visibility_stored_by)) {
+    if (!$entity->hasField($visibility_stored_by)) {
       return AccessResult::neutral("Visibility for {$field_definition->getName()} is stored in {visibility_stored_by} but that field does not exist.");
     }
 
-    $field_visibility = $profile->get($visibility_stored_by)->value;
+    $field_visibility = $entity->get($visibility_stored_by)->value;
     switch ($field_visibility) {
       case SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC:
-        return AccessResult::allowed();
+        $result = AccessResult::allowed();
+        break;
 
       case SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY:
-        return AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${entity_bundle} ${entity_type} fields")
+        $result = AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " ${entity_bundle} ${entity_type} fields")
           ->orIf(AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"));
+        break;
 
       case SOCIAL_PROFILE_FIELD_VISIBILITY_FRIENDS:
+        // Unsupported access type would have an additional dependency on the
+        // friend relationship between the entity owner and viewer. However,
+        // being unsupported it has no cache dependencies and can be cached
+        // forever.
         return AccessResult::forbidden("Friends visibility access checks are not yet implemented. This is an illegal visibility field value.");
 
       case SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE:
-        return AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} ${entity_bundle} ${entity_type} fields");
+        $result = AccessResult::allowedIfHasPermission($account, "view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} ${entity_bundle} ${entity_type} fields");
+        break;
 
       default:
-        return AccessResult::neutral("Unknown visibility field value '${field_visibility}'.");
+        $result = AccessResult::neutral("Unknown visibility field value '${field_visibility}'.");
     }
 
+    // Result always depends on either the permissions of the viewing user or
+    // those of the entity owner.
+    $result->cachePerPermissions();
+
+    // Sometimes it depends on the value of the visibility field on the entity
+    // itself.
+    if ($depends_on_profile_value) {
+      $result->addCacheableDependency($entity);
+    }
+
+    // Fields are allowed by default in Drupal. However, unless the user has
+    // express permission to view managed fields then we want to deny. Thus we
+    // convert neutral to forbidden using andIf so that we keep the
+    // cacheability metadata and the reason from the actual permission check.
+    if ($result->isNeutral()) {
+      $result = $result->andIf(AccessResult::forbidden());
+    }
+
+    return $result;
   }
-  elseif ($entity_type === "profile" && $operation === 'edit') {
+
+  if ($operation === 'edit') {
     // If a user doesn't have express permission to edit a field then we must
     // forbid it.
     $permissions = [
@@ -888,27 +1018,28 @@ function social_profile_entity_field_access(string $operation, FieldDefinitionIn
 
     // If there is an item we can check if it belongs to the user.
     if ($items !== NULL) {
-      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-      $profile = $items->getEntity();
-      $profile_user = $profile->getOwner();
+      /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+      $entity = $items->getEntity();
+      $entity_owner = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
 
-      if ($profile_user->id() === $account->id()) {
+      if ($entity_owner !== NULL && $entity_owner->id() === $account->id()) {
         $permissions[] = "edit own ${field_name} ${entity_bundle} ${entity_type} field";
       }
     }
 
     $result = AccessResult::allowedIfHasPermissions($account, $permissions, "OR");
 
-    // If a profile entity was checked we must add it as a dependency for the
-    // permission checks because viewing a different profile requires different
+    // If an entity was checked we must add it as a dependency for the
+    // permission checks because viewing a different entity requires different
     // checks.
-    if (isset($profile)) {
-      $result->addCacheableDependency($profile);
+    if (isset($entity)) {
+      $result->addCacheableDependency($entity);
     }
 
-    // Fields are allowed by default, but unless the user has express permission
-    // to change these fields we want to deny. We do it this way to keep the
-    // cacheability metadata and the reason from the permission check.
+    // Fields are allowed by default in Drupal. However, unless the user has
+    // express permission to change managed fields then we want to deny. Thus we
+    // convert neutral to forbidden using andIf so that we keep the
+    // cacheability metadata and the reason from the actual permission check.
     if ($result->isNeutral()) {
       $result = $result->andIf(AccessResult::forbidden());
     }
@@ -916,7 +1047,7 @@ function social_profile_entity_field_access(string $operation, FieldDefinitionIn
     return $result;
   }
 
-  return AccessResult::neutral();
+  return AccessResult::neutral("Unknown operation '${operation}'.");
 }
 
 /**
@@ -1321,6 +1452,9 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
 
 /**
  * Implements hook_ENTITY_TYPE_access().
+ *
+ * @todo This can be removed since as of 11.0.0 we allow viewing all profiles
+ * and handle permissions on a field level.
  */
 function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
 
