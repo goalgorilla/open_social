@@ -732,10 +732,10 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
   // Skip default validation for required time when date is required.
   if ((bool) $form_state->getValue(['field_event_all_day', 'value'])) {
     $input['time'] = '00:00:00';
-    if (is_null($input['object'])) {
+    if (is_null($input['object']) && !empty($input['date'])) {
       $input['object'] = new DrupalDateTime($input['date'] . ' ' . $input['time'], new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     }
-    else {
+    elseif ($input['object'] instanceof DrupalDateTime) {
       $input['object'] = $input['object']->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->setTime(0, 0);
     }
   }
