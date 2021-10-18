@@ -33,7 +33,7 @@ class ProfileFieldsPermissionProvider {
    * Create a new ProfileFieldsPermissionProvider instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The Druapl entity type manager.
+   *   The Drupal entity type manager.
    * @param \Drupal\social_profile\FieldManager $fieldManager
    *   The Social Profile field manager.
    */
