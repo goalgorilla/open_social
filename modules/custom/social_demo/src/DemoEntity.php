@@ -2,36 +2,12 @@
 
 namespace Drupal\social_demo;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drush\Log\LogLevel;
-
 /**
- * Class DemoEntity.
+ * Abstract class for creating demo entity.
  *
  * @package Drupal\social_demo
  */
 abstract class DemoEntity extends DemoContent {
-
-  /**
-   * DemoEntity constructor.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('social_demo.yaml_parser')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -46,7 +22,7 @@ abstract class DemoEntity extends DemoContent {
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
       if ($uuid !== $item['uuid']) {
-        drush_log(dt("{$entity_type_id} with uuid: {$uuid} has a different uuid in content."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("{$entity_type_id} with uuid: {$uuid} has a different uuid in content.");
         continue;
       }
 
@@ -56,7 +32,7 @@ abstract class DemoEntity extends DemoContent {
       ]);
 
       if ($entities) {
-        drush_log(dt("{$entity_type_id} with uuid: {$uuid} already exists."), LogLevel::WARNING);
+        $this->loggerChannelFactory->get('social_demo')->warning("{$entity_type_id} with uuid: {$uuid} already exists.");
         continue;
       }
 

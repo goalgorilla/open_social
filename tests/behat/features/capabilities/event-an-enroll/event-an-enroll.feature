@@ -92,7 +92,7 @@ Feature: Enroll for an event without an account
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public"
+    And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"
     And I press "Create event"
 
     Given I am an anonymous user
@@ -100,3 +100,88 @@ Feature: Enroll for an event without an account
     When I click "Enroll"
     Then I should see "Enroll in Anonymous event Enrollment"
     And I should see "Enroll as guest"
+
+  @see-event-enrollments-list
+  Scenario: LUs with different languages are able to see a list of all event enrollments
+
+    Given I enable the module "social_language"
+    Given I enable the module "social_event_an_enroll"
+
+    Given users:
+      | name           | mail                     | status | roles       |
+      | sm             | sm@example.com           | 1      | sitemanager |
+      | Dude (English) | event_user_1@example.com | 1      |             |
+      | Dude (Dutch)   | event_user_2@example.com | 1      |             |
+
+    Given I am logged in as an "authenticated user"
+    Given I am viewing my event:
+      | title                    | My Behat Event |
+      | field_event_date         | +8 days        |
+      | status                   | 1              |
+      | field_content_visibility | public         |
+      | langcode                 | und            |
+
+    # Add Dutch language.
+    Given I am logged in as an "administrator"
+      And I turn off translations import
+    When I am on "/admin/config/regional/language"
+    Then I should see the text "Add language"
+      And I click the xth "0" element with the css ".local-actions .button--action"
+      And I select "Dutch" from "Language name"
+      And I press "Add language"
+      And I wait for AJAX to finish
+
+    # Let's enable User language detection is enabled.
+    When I go to "/admin/config/regional/language/detection"
+      And I check the box "Enable user language detection method"
+      And I press "Save settings"
+
+    # Language field on user form should be visible when site has more than one
+    # language and the User language detection is enabled.
+    Given I am logged in as "Dude (Dutch)"
+      And I click the xth "0" element with the css ".navbar-nav .profile"
+      And I click "Settings"
+    Then I should see the text "Interface language"
+      And I should see the text "Select the language you want to use this site in."
+      And I select "Dutch" from "Interface language"
+      And I press "Save"
+
+    # Add created users directly to the event.
+    Given I am logged in as "sm"
+      And I am on "/community-events"
+      And I click "My Behat Event"
+    When I click "Manage enrollments"
+    # Add a first one.
+    Then I should see "Add enrollees"
+    When I click the xth "1" element with the css ".btn.dropdown-toggle"
+      And I click "Add directly"
+    Then I should see "Find people by name or email address"
+      And I fill in select2 input ".form-type-select" with "event_user_1@example.com" and select "event_user_1@example.com"
+      And I press "Save"
+    # Add a second one.
+    Then I should see "Add enrollees"
+    When I click the xth "1" element with the css ".btn.dropdown-toggle"
+      And I click "Add directly"
+    Then I should see "Find people by name or email address"
+      And I fill in select2 input ".form-type-select" with "event_user_2@example.com" and select "event_user_2@example.com"
+      And I press "Save"
+
+    # Check a list of all event enrollments by the English user.
+    And I am logged in as "Dude (English)"
+    When I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My events"
+    And I click "My Behat Event"
+    And I should see the link "All enrollments"
+    And I click "All enrollments"
+    Then I should see "Dude (English)"
+    Then I should see "Dude (Dutch)"
+
+    # Check a list of all event enrollments by the Dutch user.
+    And I am logged in as "Dude (Dutch)"
+    When I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My events"
+    And I click "My Behat Event"
+    And I should see the link "All enrollments"
+    And I click "All enrollments"
+    Then I should see "Dude (English)"
+    Then I should see "Dude (Dutch)"

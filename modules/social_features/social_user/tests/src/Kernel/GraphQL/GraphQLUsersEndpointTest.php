@@ -3,7 +3,7 @@
 namespace Drupal\Tests\social_user\Kernel\GraphQL;
 
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Tests the users endpoint added to the Open Social schema by this module.
@@ -32,25 +32,18 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * Test the filter for the users query.
    */
   public function testUsersQueryFilter(): void {
-    // Load the existing non-anonymous users as they're part of the dataset that
-    // we want to verify test output against.
-    $users = array_values(
-      array_filter(
-        User::loadMultiple(),
-        static function (User $u) {
-          return !$u->isAnonymous();
-        }
-      )
-    );
     // Create a set of 10 test users that we can query. The data of the users
     // shouldn't matter.
     for ($i = 0; $i < 10; ++$i) {
       $users[] = $this->createUser();
     }
 
+    // We must include the current user in the test data because it'll also be
+    // listed.
+    $users[] = $this->setUpCurrentUser([], ['administer users', 'access content', 'bypass graphql access']);
     $this->assertEndpointSupportsPagination(
       'users',
-      array_map(static fn ($user) => $user->uuid(), $users)
+      array_map(static fn (UserInterface $user) => $user->uuid(), $users)
     );
   }
 
@@ -110,9 +103,11 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     // Testing should be done with individual permissions rather than as
     // anonymous user but the correct permissions don't exist yet.
     // @todo Fix with DS-7613.
-    /** @var \Drupal\user\UserInterface $test_user */
-    $test_user = User::load(0);
-    $this->setCurrentUser($test_user);
+    $this->setUpCurrentUser([
+      'uid' => 0,
+      'status' => 0,
+      'name' => '',
+    ]);
     $this->assertResults(
       '
         query {

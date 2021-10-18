@@ -14,6 +14,8 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -55,6 +57,9 @@ function social_group_theme() {
         'join_method' => NULL,
         'allowed_visibility' => NULL,
       ],
+    ],
+    'flag__mute_group_notifications' => [
+      'base hook' => 'flag',
     ],
   ];
 }
@@ -246,6 +251,10 @@ function social_group_preprocess_group(array &$variables) {
 
   $account = \Drupal::currentUser();
 
+  // Prevent access to mute group notifications if a user is not a group member.
+  if (!$group->getMember($account)) {
+    unset($variables['content']['flag_mute_group_notifications']);
+  }
   // Set joined to true for teaser when current logged in
   // user is member of the group.
   if ($group->getMember($account)) {
@@ -823,6 +832,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   // Check if form is group content create form.
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
+    // Add custom validate handler to check if groups field values in node.
+    $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
+
     $group = _social_group_get_current_group();
 
     if (!empty($group)) {
@@ -958,6 +970,44 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         }
       }
     }
+  }
+
+  // Add custom validation for "group_type" group field.
+  if (!empty($form['#entity_type']) && $form['#entity_type'] === 'group') {
+    if (isset($form['group_type']) && Element::isVisibleElement($form['group_type'])) {
+      $form['group_type']['#element_validate'][] = '_social_group_cross_posting_group_type_validate';
+    }
+  }
+}
+
+/**
+ * Validation callback checking if group can be converted to another group type.
+ *
+ * @param array $element
+ *   Form element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state object.
+ */
+function _social_group_cross_posting_group_type_validate(array $element, FormStateInterface $form_state) {
+  // Cross posting is disabled globally.
+  $group_settings = \Drupal::config('social_group.settings');
+  if (!$group_settings->get('cross_posting.status')) {
+    return;
+  }
+
+  $allowed_group_types = $group_settings->get('cross_posting.group_types');
+
+  $value = $element['widget']['#value'];
+  $previous_value = $element['widget'][$value]['#default_value'];
+  // If the value changed nothing to validate.
+  if ($value === $previous_value) {
+    return;
+  }
+
+  // Allow change "group_type" only for group if the previous and current
+  // group type are using cross-group posting feature.
+  if (in_array($previous_value, $allowed_group_types) && !in_array($value, $allowed_group_types)) {
+    $form_state->setError($element['widget'], t('Cross-group posting for @group_type is disabled', ['@group_type' => $element['widget'][$value]['#title']]));
   }
 }
 
@@ -1189,6 +1239,41 @@ function _social_group_cancel_join_leave_form(array $form, FormStateInterface $f
 }
 
 /**
+ * Validation callback for group content create form.
+ *
+ * @param array $form
+ *   Group node form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_group_node_form_cross_posting_validate(array $form, FormStateInterface $form_state) {
+  if (empty($form_state->getValue('groups'))) {
+    return;
+  }
+  // Cross posting is disabled globally.
+  $group_settings = \Drupal::config('social_group.settings');
+  if (!$group_settings->get('cross_posting.status')) {
+    return;
+  }
+  // Check if group type enabled for cross-group posting.
+  $allowed_group_types = $group_settings->get('cross_posting.group_types');
+
+  $values = $form_state->getValue('groups');
+  // We need to check only if user try to add a node to multiple groups.
+  if (is_array($values) && count($values) > 1) {
+    $gids = array_column($values, 'target_id');
+    foreach (Group::loadMultiple($gids) as $group) {
+      // If the group type for the group is not allowed - raise the error.
+      if (!in_array($group->getGroupType()->id(), $allowed_group_types)) {
+        $form_state->setErrorByName('groups', t('Cross posting is not allowed for @type group type', [
+          '@type' => $group->getGroupType()->label(),
+        ]));
+      }
+    }
+  }
+}
+
+/**
  * Form submit for group content create form.
  *
  * @param array $form
@@ -1388,6 +1473,14 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
         }
       }
     }
+  }
+  // We don't want to display the "Nodes" tab on groups anymore. Before, we
+  // just disabled the view on hook update, but sometimes it is back to us,
+  // this is the reason why we want to hide the tab. Also, we don't want to
+  // add custom access to that route since some other developers of Open Social
+  // might use it.
+  if (isset($data['tabs'][0]['views_view:view.group_nodes.page_1'])) {
+    unset($data['tabs'][0]['views_view:view.group_nodes.page_1']);
   }
 }
 
@@ -1740,8 +1833,9 @@ function _social_group_delete_group() {
  * Get all open groups.
  */
 function social_group_get_all_open_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->condition('type', 'open_group');
   return $query->execute();
 }
@@ -1750,8 +1844,9 @@ function social_group_get_all_open_groups() {
  * Get all open groups.
  */
 function social_group_get_all_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->sort('type');
   return $query->execute();
 }
@@ -1795,15 +1890,6 @@ function social_group_get_all_group_members($uid) {
 }
 
 /**
- * Implements hook_field_info_alter().
- */
-function social_group_field_info_alter(&$info) {
-  if (isset($info['groups'])) {
-    $info['groups']['default widget'] = 'social_group_selector_widget';
-  }
-}
-
-/**
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
@@ -1813,8 +1899,9 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
       ->setLabel(t('Group'))
       ->setDescription('')
       ->setSetting('handler', 'social')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('form', [
-        'type' => 'options_select',
+        'type' => 'social_group_selector_widget',
         'settings' => [],
         'weight' => 16,
       ])
@@ -2021,6 +2108,22 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // User Groups view.
+  if ($view->id() == 'groups' && $view->getDisplay()->display['id'] == 'page_user_groups') {
+    // Change Join type if we want to see muted groups.
+    // @todo Remove changing Join type below when will be fixed issue where
+    // exposed flag filter can't show unflagged groups.
+    // @see https://www.drupal.org/project/group/issues/3219902
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    if (isset($query->where[1]['conditions'][0]['operator']) && $query->where[1]['conditions'][0]['operator'] === 'IS NOT NULL') {
+      $table = $query->getTableInfo('flagging_groups_field_data');
+      if (isset($table['join']->type) && $table['join']->type === 'LEFT') {
+        // Change Join type.
+        $table['join']->type = 'INNER';
+      }
+    }
+  }
+
   if (\Drupal::currentUser()->isAuthenticated()) {
     return;
   }

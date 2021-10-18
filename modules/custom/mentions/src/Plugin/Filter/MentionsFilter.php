@@ -33,16 +33,53 @@ use Drupal\filter\Entity\FilterFormat;
  */
 class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterface {
 
-  protected $entityManager;
-  protected $renderer;
-  protected $config;
-  protected $mentionsManager;
+  /**
+   * The entity type manager.
+   */
+  protected EntityTypeManagerInterface $entityManager;
 
-  private $tokenService;
-  private $mentionTypes = [];
-  private $inputSettings = [];
-  private $outputSettings = [];
-  private $textFormat;
+  /**
+   * The renderer service.
+   */
+  protected RendererInterface $renderer;
+
+  /**
+   * The config factory.
+   */
+  protected ConfigFactory $config;
+
+  /**
+   * The mentions plugin manager.
+   */
+  protected MentionsPluginManager $mentionsManager;
+
+  /**
+   * The token service.
+   */
+  private Token $tokenService;
+
+  /**
+   * The available mention types.
+   *
+   * @var string[]
+   */
+  private array $mentionTypes = [];
+
+  /**
+   * The input settings per config.
+   */
+  private array $inputSettings = [];
+
+  /**
+   * The output settings per config.
+   */
+  private array $outputSettings = [];
+
+
+  /**
+   * The text format id used for mentions.
+   */
+  private ?string $textFormat;
 
   /**
    * MentionsFilter constructor.

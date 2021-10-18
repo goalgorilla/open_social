@@ -11,20 +11,22 @@ third_party_settings:
     activity_context: private_message_activity_context
     activity_destinations:
       email: email
-    activity_create_direct: 0
-    activity_aggregate: 0
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+    email_subject: 'You have received a new private message'
 template: create_private_message
 label: 'Create private message'
 description: 'A user sends a private message to me'
 text:
   -
-    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    value: "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>\r\n"
     format: full_html
   -
-    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    value: "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>\r\n"
     format: full_html
   -
-    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    value: "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

@@ -1,9 +1,10 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible @javascript
+@api @group @notifications @TB-6072 @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible @javascript
 Feature: Create flexible Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
   Goal/desire: I want to create flexible Groups
 
+  @email-spool
   Scenario: Successfully create flexible group
     Given I enable the module "social_group_flexible_group"
     Given users:
@@ -87,6 +88,7 @@ Feature: Create flexible Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a flexible group post."
 
+    # Create a event inside the flexible group.
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
@@ -266,7 +268,35 @@ Feature: Create flexible Group
     And I should not see the link "Topics"
 
     # And a GM receives a notification about the joined user.
-    When I am logged in as "GivenUserOne"
     And I wait for the queue to be empty
+    When I am logged in as "GivenUserOne"
     And I am at "notifications"
     Then I should see text matching "GivenUserTwo joined the Test flexible group"
+    # Notification about the created post.
+    And I should see "GivenUserTwo created a post in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                        |
+      | Hi GivenUserOne                                                |
+      | GivenUserTwo published a post in the Test flexible group group |
+      | This is a flexible group post.                                 |
+    # Notification about the created community topic.
+    And I should see "GivenUserTwo created a topic Test group community topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group community topic                                      |
+    # Notification about the created private topic.
+    And I should see "GivenUserTwo created a topic Test group private topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group private topic                                        |
+    # Notification about the created event.
+    And I should see "GivenUserTwo created an event Test group event in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                          |
+      | Hi GivenUserOne                                                  |
+      | GivenUserTwo published an event in the Test flexible group group |
+      | Test group event                                                 |

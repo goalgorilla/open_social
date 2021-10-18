@@ -13,6 +13,7 @@ use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_update_dependencies().
@@ -53,6 +54,7 @@ function social_group_install() {
 
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('group', 'stream');
+  activity_creator_set_entity_view_mode('group_content', 'activity');
 
   // Make sure the admin theme is not used when managing groups.
   $group_settings = \Drupal::configFactory()->getEditable('group.settings');
@@ -110,6 +112,8 @@ function _social_group_get_permissions($role) {
     'view groups on my profile',
     'view groups on other profiles',
     'create public_group group',
+    'flag mute_group_notifications',
+    'unflag mute_group_notifications',
   ]);
 
   $config = \Drupal::config('entity_access_by_field.settings');
@@ -128,6 +132,7 @@ function _social_group_get_permissions($role) {
     'view node.page.field_content_visibility:group content',
     'access group overview',
     'edit group types',
+    'access cross-group posting',
   ]);
 
   // Site manager.
@@ -692,6 +697,141 @@ function social_group_update_10302() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_group', 'social_group_update_10302');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Import flag "Mute Group Notifications" configurations.
+ */
+function social_group_update_10303() {
+  $configs = [
+    'flag.flag.mute_group_notifications' => 'flag.flag.mute_group_notifications_10303',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+}
+
+/**
+ * Update the permissions for social_group.
+ */
+function social_group_update_10304() {
+  $permissions = [
+    'flag mute_group_notifications',
+    'unflag mute_group_notifications',
+  ];
+
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'anonymous') {
+      continue;
+    }
+
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Update User Groups view configurations.
+ */
+function social_group_update_10305() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_10305');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Import exposed block filter configurations of User Groups view.
+ */
+function social_group_update_10306() {
+  $configs = [
+    'block.block.exposed_form_groups_page_user_groups' => 'block.block.exposed_form_groups_page_user_groups_10306',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+}
+
+/**
+ * Update view displays for Group.
+ */
+function social_group_update_10307() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Set the default group configuration for cross-posting settings.
+ */
+function social_group_update_10308() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('cross_posting.status', FALSE);
+  $config->set('cross_posting.content_types', []);
+  $config->save();
+
+  // Grand roles to use cross-posting feature.
+  foreach (['sitemanager', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, ['access cross-group posting']);
+  }
+
+  // Install new configs.
+  $config_files = [
+    'core.entity_view_mode.group_content.activity' => 'core.entity_view_mode.group_content.activity_10308',
+    'core.entity_view_display.group_content.closed_group-group_node-event.activity' => 'core.entity_view_display.group_content.closed_group-group_node-event.activity_10308',
+    'core.entity_view_display.group_content.closed_group-group_node-topic.activity' => 'core.entity_view_display.group_content.closed_group-group_node-topic.activity_10308',
+    'core.entity_view_display.group_content.open_group-group_node-event.activity' => 'core.entity_view_display.group_content.open_group-group_node-event.activity_10308',
+    'core.entity_view_display.group_content.open_group-group_node-topic.activity' => 'core.entity_view_display.group_content.open_group-group_node-topic.activity_10308',
+    'core.entity_view_display.group_content.public_group-group_node-event.activity' => 'core.entity_view_display.group_content.public_group-group_node-event.activity_10308',
+    'core.entity_view_display.group_content.public_group-group_node-topic.activity' => 'core.entity_view_display.group_content.public_group-group_node-topic.activity_10308',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_group') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  foreach ($config_files as $origin_name => $update_name) {
+    // Add new message templates.
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
+
+  // Set display mode for group content to display on stream.
+  activity_creator_set_entity_view_mode('group_content', 'activity');
+}
+
+/**
+ * Update BEF filter in the User Groups view.
+ */
+function social_group_update_11001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

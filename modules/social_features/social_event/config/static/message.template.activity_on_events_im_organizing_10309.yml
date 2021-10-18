@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      event_enrollment-event_enrollment: event_enrollment-event_enrollment
+    activity_action: create_entitiy_action
+    activity_context: organizer_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: activity_on_events_im_organizing
+label: 'Activity on events I am organizing'
+description: 'Activity on events I am organizing'
+text:
+  -
+    value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has enrolled to the event [social_event:event_iam_organizing] you are organizing</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has enrolled to the event [social_event:event_iam_organizing] you are organizing</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has enrolled to the event [social_event:event_iam_organizing] you are organizing</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

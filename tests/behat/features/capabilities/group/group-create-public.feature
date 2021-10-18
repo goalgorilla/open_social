@@ -1,9 +1,10 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
+@api @group @notifications @TB-6072 @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
   Goal/desire: I want to create Public Groups
 
+  @email-spool
   Scenario: Successfully create public group
     Given users:
       | name         | mail                     | status |
@@ -80,6 +81,20 @@ Feature: Create Public Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public group post."
 
+    # Lets check notifications for public group.
+    And I wait for the queue to be empty
+    Given I am logged in as "GivenUserOne"
+    When I am on "/notifications"
+    Then I should see "GivenUserTwo created a post in the Test public group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                      |
+      | Hi GivenUserOne                                              |
+      | GivenUserTwo published a post in the Test public group group |
+
+    Given I am logged in as "GivenUserTwo"
+    Then I am on "all-groups"
+    And I should see "Test public group"
+    And I click "Test public group"
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"

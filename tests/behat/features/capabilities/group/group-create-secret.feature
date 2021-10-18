@@ -1,14 +1,15 @@
-@api @group @stability @stability-1 @group-create-secret
+@api @group @notifications @TB-6072 @stability @stability-1 @group-create-secret
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
   Role: As a LU
   Goal/desire: I want to create Secret Groups
 
+  @email-spool
   Scenario: Successfully create secret group
     Given users:
-      | name             | mail                     | status | roles       |
-      |  SecretGroup User One   | group_user_1@example.com | 1      | sitemanager |
-      |  SecretGroup User Two   | group_user_2@example.com | 1      |             |
+      | name                 | mail                     | status | roles       |
+      | SecretGroup User One | group_user_1@example.com | 1      | sitemanager |
+      | SecretGroup User Two | group_user_2@example.com | 1      |             |
     And I enable the module "social_group_secret"
     And I am logged in as an "authenticated user"
     And I am on "group/add"
@@ -98,6 +99,26 @@ Feature: Create Secret Group
     And I open and check the access of content in group "Test secret group" and I expect access "allowed"
     And I logout
     And I open and check the access of content in group "Test secret group" and I expect access "denied"
+
+  # Lets check notifications for secret group.
+    Given I am logged in as "SecretGroup User Two"
+    And I am on "/all-groups"
+    Then I should see "Test secret group"
+    When I click "Test secret group"
+    # Create a post inside the secret group.
+    When I fill in "Say something to the group" with "This is a secret group post."
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a secret group post."
+    And I wait for the queue to be empty
+    # Check if SecretGroup User One has notifications.
+    Given I am logged in as "SecretGroup User One"
+    When I am on "/notifications"
+    Then I should see "SecretGroup User Two created a post in the Test secret group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                              |
+      | Hi SecretGroup User One                                              |
+      | SecretGroup User Two published a post in the Test secret group group |
 
   # As a non-member of the secret group, I should not see anything.
     Given users:

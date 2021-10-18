@@ -142,3 +142,37 @@ function social_follow_tag_update_8806() {
   $message_template->set('text', $text);
   $message_template->save();
 }
+
+/**
+ * Update message template "message.template.update_node_following_tag".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_follow_tag_update_10301() {
+  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.update_node_following_tag_10301.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.update_node_following_tag');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update message template "message.template.create_node_following_tag_stream".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_follow_tag_update_10302() {
+  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.create_node_following_tag_stream_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_node_following_tag_stream');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

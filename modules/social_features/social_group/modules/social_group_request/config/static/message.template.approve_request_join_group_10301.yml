@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - social_group_request
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      group_content-closed_group-group_membership: group_content-closed_group-group_membership
+    activity_action: create_entitiy_action
+    activity_context: approved_request_join_group_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: true
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: approve_request_join_group
+label: 'Approve request to join a group'
+description: 'My group membership request is approved'
+text:
+  -
+    value: "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> group has been approved</p>\r\n"
+    format: basic_html
+  -
+    value: "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> group has been approved</p>\r\n"
+    format: basic_html
+  -
+    value: "<p>Your request to join the <a href=\"[message:gurl]\">[message:gtitle]</a> group has been approved! You are now a member of the group and can start posting.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

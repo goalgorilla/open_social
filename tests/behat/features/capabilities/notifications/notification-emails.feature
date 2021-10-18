@@ -17,7 +17,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "Hello [~user2]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should have an email with subject "Notification from Open Social" and in the content:
+    Then I should have an email with subject "You have been mentioned" and in the content:
       | content                                           |
       | Hi Cathy Willis                                   |
       | Christopher Conway mentioned you in a post        |
@@ -45,7 +45,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're not going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
   @email-spool
   Scenario: User is able to set a daily mail for activities if he so desires
@@ -158,7 +158,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're not going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
     Given I set the configuration item "social_swiftmail.settings" with key "do_not_send_emails_new_users" to 0
     And I am logged in as "user2"
@@ -166,7 +166,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
   @email-spool
   Scenario: User should not receive notification as default
@@ -187,6 +187,7 @@ Feature: Receive email notifications and choose frequency
     And I click "Email notifications"
     And I wait for "2" seconds
     And I click "Message to me"
+    And I wait for "2" seconds
     And I should see "Never" in the "select[name='email_notifications[message_to_me][create_mention_post]'] option[selected='selected']" element
 
     Given I am logged in as "user2"
@@ -195,7 +196,7 @@ Feature: Receive email notifications and choose frequency
     And I press "Post"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
 #   Enable mention notifications
     Given I am logged in as an "sitemanager"

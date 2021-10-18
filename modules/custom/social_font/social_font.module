@@ -39,7 +39,7 @@ function social_font_render($font_id = NULL) {
 
   if ($font_id == NULL) {
     $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
-    if (array_key_exists('socialbase', \Drupal::service('theme.manager')->getActiveTheme()->getBaseThemes())) {
+    if (array_key_exists('socialbase', \Drupal::service('theme.manager')->getActiveTheme()->getBaseThemeExtensions())) {
       $config = \Drupal::config($system_theme_settings . '.settings');
       $font_id = $config->get('font_primary');
     }

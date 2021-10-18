@@ -5,7 +5,7 @@ namespace Drupal\social_content_block;
 use Drupal\Core\Database\Query\SelectInterface;
 
 /**
- * Interface ContentBlockPluginInterface.
+ * Provides an interface for content block plugins.
  *
  * @package Drupal\social_content_block
  */
@@ -28,8 +28,12 @@ interface ContentBlockPluginInterface {
    * form.
    *
    * @return array
-   *   An array with sorting option's system name as key and a human readable
-   *   label as value.
+   *   An array with sorting option's system name as key and a human-readable
+   *   label as value or value is an associative array with the following keys:
+   *   - label: The human-readable label.
+   *   - description: (optional) The human-readable description.
+   *   - limit: (optional) Whether the limitation by creation date is required.
+   *     Defaults to TRUE.
    */
   public function supportedSortOptions() : array;
 

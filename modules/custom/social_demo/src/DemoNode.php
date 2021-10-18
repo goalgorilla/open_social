@@ -4,58 +4,15 @@ namespace Drupal\social_demo;
 
 use Drupal\Core\Entity\EntityBase;
 use Drupal\flag\Entity\Flagging;
-use Drupal\user\UserStorageInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
-use Drush\Log\LogLevel;
 
 /**
- * Class DemoNode.
+ * Abstract class for creating demo nodes.
  *
  * @package Drupal\social_demo
  */
 abstract class DemoNode extends DemoContent {
-
-  /**
-   * The user storage.
-   *
-   * @var \Drupal\user\UserStorageInterface
-   */
-  protected $userStorage;
-
-  /**
-   * The entity storage.
-   *
-   * @var \Drupal\Core\entity\EntityStorageInterface
-   */
-  protected $groupStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->parser = $parser;
-    $this->groupStorage = $group_storage;
-    $this->userStorage = $user_storage;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('social_demo.yaml_parser'),
-      $container->get('entity_type.manager')->getStorage('user'),
-      $container->get('entity_type.manager')->getStorage('group')
-    );
-  }
 
   /**
    * {@inheritdoc}
@@ -69,7 +26,7 @@ abstract class DemoNode extends DemoContent {
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
       if ($uuid !== $item['uuid']) {
-        drush_log(dt("Node with uuid: {$uuid} has a different uuid in content."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("Node with uuid: {$uuid} has a different uuid in content.");
         continue;
       }
 
@@ -79,7 +36,7 @@ abstract class DemoNode extends DemoContent {
       ]);
 
       if (reset($nodes)) {
-        drush_log(dt("Node with uuid: {$uuid} already exists."), LogLevel::WARNING);
+        $this->loggerChannelFactory->get('social_demo')->warning("Node with uuid: {$uuid} already exists.");
         continue;
       }
 
@@ -87,7 +44,7 @@ abstract class DemoNode extends DemoContent {
       $account = $this->loadByUuid('user', $item['uid']);
 
       if (!$account) {
-        drush_log(dt("Account with uuid: {$item['uid']} doesn't exists."), LogLevel::ERROR);
+        $this->loggerChannelFactory->get('social_demo')->error("Account with uuid: {$item['uid']} doesn't exists.");
         continue;
       }
 

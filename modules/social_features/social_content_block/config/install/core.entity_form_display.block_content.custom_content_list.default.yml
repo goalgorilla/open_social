@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - block_content.type.custom_content_list
+    - field.field.block_content.custom_content_list.field_duration
     - field.field.block_content.custom_content_list.field_item_amount
     - field.field.block_content.custom_content_list.field_link
     - field.field.block_content.custom_content_list.field_plugin_field
@@ -12,11 +13,13 @@ dependencies:
   module:
     - field_group
     - link
+    - social_content_block
 third_party_settings:
   field_group:
     group_display_options:
       children:
         - field_sorting
+        - field_duration
       parent_name: ''
       weight: 11
       format_type: fieldset
@@ -63,6 +66,13 @@ targetEntityType: block_content
 bundle: custom_content_list
 mode: default
 content:
+  field_duration:
+    weight: 13
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
   field_item_amount:
     weight: 10
     settings:
@@ -94,7 +104,7 @@ content:
     weight: 12
     settings: {  }
     third_party_settings: {  }
-    type: options_select
+    type: content_block_sorting
     region: content
   field_subtitle:
     weight: 2

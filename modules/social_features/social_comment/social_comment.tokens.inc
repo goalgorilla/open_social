@@ -8,6 +8,7 @@
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -103,9 +104,9 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'comment_text':
         case 'comment_reply_link_html':
 
-          if (isset($message->field_message_related_object)) {
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
+          if (!empty($message->get('field_message_related_object'))) {
+            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
             $comment = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
@@ -189,15 +190,15 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'commented_entity_link':
         case 'commented_entity_link_html':
 
-          if (isset($message->field_message_related_object)) {
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
+          if (!empty($message->get('field_message_related_object'))) {
+            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
             $comment = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
 
             if ($comment instanceof CommentInterface) {
-              /** @var \Drupal\Core\Entity\Entity $entity */
+              /** @var \Drupal\Core\Entity\EntityInterface $entity */
               $entity = $comment->getCommentedEntity();
               if (!empty($entity)) {
                 if ($entity instanceof PostInterface) {
@@ -247,6 +248,54 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_comment_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    /** @var Drupal\message\Entity\Message $message */
+    $message = $context['data']['message'];
+
+    // Alter the [message:cta_button] token, and replace it with the rendered
+    // content with new text and link.
+    if (isset($context['tokens']['cta_button']) || isset($context['tokens']['preview'])) {
+      if (isset($message->field_message_related_object)) {
+
+        /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
+        $email_token_services = \Drupal::service('social_activity.email_token_services');
+
+        /** @var Drupal\comment\Entity\Comment $comment */
+        $comment = $email_token_services->getRelatedObject($message);
+
+        if ($comment instanceof CommentInterface && $commented_entity = $comment->getCommentedEntity()) {
+          $message_template_id = $message->getTemplate()->id();
+          switch ($message_template_id) {
+            case 'create_comment_author_node_post':
+            case 'create_comment_post_profile':
+            case 'create_comment_following_node':
+            case 'create_comment_reply':
+              // Replace the cta_button token value.
+              if (isset($context['tokens']['cta_button'])) {
+                /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
+                $link = $commented_entity->toUrl('canonical', ['absolute' => TRUE, 'fragment' => 'comment-' . $comment->id()]);
+
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment'));
+                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
+              }
+
+              // Replace the preview token.
+              if (isset($context['tokens']['preview'])) {
+                $preview_info = $email_token_services->getCommentPreview($comment);
+                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+              }
+              break;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**

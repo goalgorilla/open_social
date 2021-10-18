@@ -1929,3 +1929,106 @@ function social_event_update_10304() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove translation filter for the Event Enrollments view.
+ */
+function social_event_update_10305() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10305');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update event values.
+ */
+function social_event_update_10306() {
+  /** @var \Drupal\node\NodeInterface[] $events */
+  $events = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties([
+      'type' => 'event',
+    ]);
+
+  if (!empty($events)) {
+    foreach ($events as $event) {
+      if (
+        !$event->hasField('field_event_enable_enrollment') ||
+        $event->get('field_event_enable_enrollment')->isEmpty()
+      ) {
+        continue;
+      }
+
+      if ($event->get('field_event_enable_enrollment')->first()->getValue()['value'] == '0') {
+        $event->set('field_event_enroll', '0');
+        $event->save();
+      }
+    }
+  }
+}
+
+/**
+ * Delete not needed field "field_event_enable_enrollment".
+ */
+function social_event_update_10307() {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type = 'node';
+  $bundle = 'event';
+  $field_name = 'field_event_enable_enrollment';
+
+  // Delete field config.
+  /** @var \Drupal\field\FieldConfigStorage $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+
+  /** @var \Drupal\field\FieldConfigInterface|null $field */
+  $field = $field_config_storage->load($entity_type . '.' . $bundle . '.' . $field_name);
+  if (!is_null($field)) {
+    $field->delete();
+  }
+
+  // Delete storage.
+  /** @var \Drupal\field\FieldStorageConfigStorage $field_storage_storage */
+  $field_storage_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  /** @var \Drupal\field\FieldStorageConfigInterface|null $field_storage */
+  $field_storage = $field_storage_storage->load($entity_type . '.' . $field_name);
+  if (!is_null($field_storage)) {
+    $field_storage->delete();
+  }
+}
+
+/**
+ * Update event display.
+ */
+function social_event_update_10308() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_10308');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_event_update_10309() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/message.template.activity_on_events_im_organizing_10309.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.activity_on_events_im_organizing');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

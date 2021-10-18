@@ -15,6 +15,7 @@ third_party_settings:
     activity_create_direct: false
     activity_aggregate: false
     activity_entity_condition: ''
+    email_subject: 'Someone wants to enroll to your event'
 template: request_event_enrollment
 label: 'Request event enrollment'
 description: 'A user request an enrollment for event'
@@ -26,7 +27,7 @@ text:
     value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>\r\n"
     format: full_html
   -
-    value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>\r\n"
+    value: "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':
