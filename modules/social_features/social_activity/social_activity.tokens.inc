@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\node\NodeInterface;
 
@@ -65,13 +66,13 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           /** @var \Drupal\social_post\Entity\Post $entity */
 
           // Prepare the link to post.
-          $link = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+          $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
 
           // Prepare the preview information.
           $preview_info = $email_token_services->getPostPreview($entity);
 
           // Prepare CTA button information.
-          $cta_button = $email_token_services->getCtaButton($link, 'Leave a comment');
+          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment'));
 
           // This is for token deprecated token 'additional_information'.
           $additional_information = [
@@ -89,10 +90,10 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $preview_info = $email_token_services->getContentPreview($node);
 
             // Prepare the link to node.
-            $link = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
+            $link = $node->toUrl('canonical', ['absolute' => TRUE]);
 
             // Prepare the CTA button markup.
-            $cta_button = $email_token_services->getCtaButton($link, 'Read more');
+            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more'));
 
             // This is for token deprecated token 'additional_information'.
             $additional_information = [
@@ -121,9 +122,11 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 ->countGroupsByGroupContentNode($entity);
               // Recount as token renders in group context, and we need to
               // exclude the one.
-              $count = $count ? $count - 1 : $count;
+              if ($count > 0) {
+                $count--;
+              }
               // Build the string like "(+ 4 groups more)".
-              $replacements[$original] = $count
+              $replacements[$original] = $count > 0
                 ? \Drupal::translation()->formatPlural($count, '(+ @count other groups)', '(+ @count other groups)')
                 : '';
               break;

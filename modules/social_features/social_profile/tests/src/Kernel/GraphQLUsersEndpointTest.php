@@ -24,6 +24,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "role_delegation",
     // Profile is needed for the profile storage.
     "profile",
+    // Required for third party config schema.
+    "field_group",
     // Modules needed for profile fields.
     "file",
     "image",
@@ -31,10 +33,12 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "taxonomy",
     "telephone",
     "text",
+    "options",
     "filter",
     "lazy",
     "image_widget_crop",
     "crop",
+    // The actual module under test.
     "social_profile",
   ];
 
@@ -42,9 +46,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * {@inheritdoc}
    */
   protected static $configSchemaCheckerExclusions = [
-    // The third party settings in this config fail and since the lazy module
-    // doesn't have a schema we can't fix this either.
-    "core.entity_view_display.profile.profile.medium_teaser",
+    // @todo when https://www.drupal.org/project/social/issues/3238713 is fixed.
     "core.entity_form_display.profile.profile.default",
     // We don't need views in the GraphQL API so no sense in enabling the views
     // module or validating the schema.
@@ -97,7 +99,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   public function testUserProfileFieldsPresence() : void {
     // Test as the admin users, this allows us to test all the fields that are
     // available in an all-access scenario.
-    $this->setCurrentUser(User::load(1));
+    $this->setUpCurrentUser([], [], TRUE);
     $test_user = $this->createUser();
     $profile = $this->ensureTestProfile($test_user, 'profile');
     $query = "

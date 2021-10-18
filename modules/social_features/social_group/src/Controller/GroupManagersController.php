@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -68,7 +69,7 @@ class GroupManagersController extends ControllerBase {
     $group = _social_group_get_current_group();
 
     // Lets allow group managers as well.
-    if ($group->hasPermission('administer members', $account)) {
+    if ($group instanceof GroupInterface && $group->hasPermission('administer members', $account)) {
       return AccessResult::allowed();
     }
 
