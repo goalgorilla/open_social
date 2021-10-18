@@ -122,9 +122,11 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 ->countGroupsByGroupContentNode($entity);
               // Recount as token renders in group context, and we need to
               // exclude the one.
-              $count = $count ? $count - 1 : $count;
+              if ($count > 0) {
+                $count--;
+              }
               // Build the string like "(+ 4 groups more)".
-              $replacements[$original] = $count
+              $replacements[$original] = $count > 0
                 ? \Drupal::translation()->formatPlural($count, '(+ @count other groups)', '(+ @count other groups)')
                 : '';
               break;

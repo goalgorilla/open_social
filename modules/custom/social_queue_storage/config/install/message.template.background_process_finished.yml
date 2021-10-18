@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - filter.format.basic_html
   module:
     - activity_logger
 third_party_settings:
@@ -15,6 +17,7 @@ third_party_settings:
     activity_create_direct: true
     activity_aggregate: false
     activity_entity_condition: queue_store_entity_send_activity_condition
+    email_subject: 'A background task has been finished'
 template: background_process_finished
 label: 'Background process finished'
 description: 'A background process (e.g. sending bulk emails) has finished'
