@@ -49,6 +49,7 @@ Feature: Create Public Group
     And I should see "Lviv oblast" in the "Hero block"
 
     When I click "About" in the "Tabs"
+    And I wait for "1" seconds
     Then I should see "Description text" in the "Main content"
 
     And I am logged in as "GivenUserTwo"
@@ -56,6 +57,7 @@ Feature: Create Public Group
     And I click "GivenUserOne"
     And I should see "Test public group" in the "Sidebar second"
     And I click "Groups" in the "Tabs"
+    And I wait for "1" seconds
     And I should see "Test public group" in the "Main content"
     And I should not see the link "Add a group" in the "Main content"
     And I click "Test public group"
@@ -96,6 +98,7 @@ Feature: Create Public Group
     And I should see "Test public group"
     And I click "Test public group"
     When I click "Events"
+    And I wait for "1" seconds
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
@@ -113,10 +116,12 @@ Feature: Create Public Group
     And I should see the link "Test public group"
     And I click "Test public group"
     And I click "Events"
+    And I wait for "1" seconds
     And I should see "Test group event" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
     When I click "Topics"
+    And I wait for "1" seconds
     And I should see the link "Create Topic" in the "Sidebar second"
     And I click "Create Topic"
     When I fill in "Title" with "Test group topic"
@@ -128,6 +133,7 @@ Feature: Create Public Group
     And I should see the link "Test public group"
     And I click "Test public group"
     And I click "Topics"
+    And I wait for "1" seconds
     And I should see "Test group topic" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
@@ -147,6 +153,7 @@ Feature: Create Public Group
     Given I am logged in as "Outsider"
     When I am on "/community-events"
     And I click "Test group event"
+    And I wait for "1" seconds
     And I should not see "Enroll" in the "Hero buttons"
 
     When I am on "stream"

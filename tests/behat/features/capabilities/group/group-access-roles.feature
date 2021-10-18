@@ -61,6 +61,7 @@ Feature: Group access roles
   # DS-647 As a LU I want to join a group
     Then I should see the link "Join"
     And I click "Join"
+    And I wait for "2" seconds
     And I should see "Join group Test closed group 3"
     And I should see the button "Cancel"
     And I press "Join group"

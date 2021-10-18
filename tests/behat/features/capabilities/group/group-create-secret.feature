@@ -79,8 +79,10 @@ Feature: Create Secret Group
   # Lets add another user on the Manage members tab.
     When I click "Test secret group"
     And I click "Manage members"
+    And I wait for "1" seconds
     And I click the group member dropdown
     And I click "Add directly"
+    And I wait for "1" seconds
     And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
     And I press "Save"
     Then I click "Members"

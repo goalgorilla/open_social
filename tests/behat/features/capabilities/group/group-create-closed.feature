@@ -48,6 +48,7 @@ Feature: Create Closed Group
 
   # Create a topic inside the closed group
     When I click "Topics"
+    And I wait for "1" seconds
     And I should see the link "Create Topic" in the "Sidebar second"
     And I click "Create Topic"
     When I fill in the following:
@@ -60,6 +61,7 @@ Feature: Create Closed Group
   # Create an event inside the closed group
     And I click "Test closed group"
     When I click "Events"
+    And I wait for "1" seconds
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
@@ -75,8 +77,10 @@ Feature: Create Closed Group
   # Lets add another user on the Manage members tab.
     When I click "Test closed group"
     And I click "Manage members"
+    And I wait for "1" seconds
     And I click the group member dropdown
     And I click "Add directly"
+    And I wait for "1" seconds
     And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
     And I press "Save"
     Then I click "Members"
