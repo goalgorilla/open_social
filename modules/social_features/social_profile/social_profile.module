@@ -1447,44 +1447,6 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
 }
 
 /**
- * Implements hook_ENTITY_TYPE_access().
- *
- * @todo This can be removed since as of 11.0.0 we allow viewing all profiles
- * and handle permissions on a field level.
- */
-function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
-
-  $display_profile_teaser = FALSE;
-  $route_match = \Drupal::service('current_route_match');
-  $allowed_node_types = [
-    'landing_page',
-    'dashboard',
-  ];
-
-  if ($route_match->getRouteName() === 'entity.node.canonical') {
-    $node = $route_match->getParameter('node');
-
-    if (!is_null($node) && !$node instanceof Node) {
-      $node = Node::load($node);
-    }
-    if ($node instanceof Node && in_array($node->getType(), $allowed_node_types)) {
-      $display_profile_teaser = TRUE;
-    }
-  }
-
-  // Provides access only to viewing user profile info, like referenced data in
-  // featured items for landing & dashboard pages, if the current user has no
-  // permissions.
-  if (
-    $operation === 'view' &&
-    $display_profile_teaser &&
-    !$account->hasPermission('view any profile profile')
-  ) {
-    return AccessResult::allowed();
-  }
-}
-
-/**
  * Show exposed filters block only when tagging filters are enabled for profile.
  *
  * Implements hook_block_access().
