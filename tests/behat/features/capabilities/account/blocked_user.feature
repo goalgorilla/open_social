@@ -6,8 +6,8 @@ Feature: Notification that account is blocked
 
   Scenario: Login as a blocked user
     Given users:
-      | name      | status | pass |
-      | User Case |      0 | UseCase123 |
+      | name      | status | pass       | role     |
+      | User Case |      0 | UseCase123 | verified |
     And I am on the homepage
     When I click "Log in"
     And I fill in the following:
@@ -19,8 +19,8 @@ Feature: Notification that account is blocked
 
   Scenario: Login as blocked user with incorrect password
     Given users:
-      | name      | status | pass |
-      | User Case |      0 | wrongpassword |
+      | name      | status | pass          | role     |
+      | User Case |      0 | wrongpassword | verified |
     And I am on the homepage
     When I click "Log in"
     And I fill in the following:

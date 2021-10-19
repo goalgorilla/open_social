@@ -19,7 +19,7 @@ Feature: Follow Tags
       | Category 2.2 | Category 2 |
     And users:
       | name            | mail                      | status | roles          | field_profile_first_name | field_profile_last_name |
-      | follower        | follower@test.user        | 1      |                | Jack                     | Richer                  |
+      | follower        | follower@test.user        | 1      | verified       | Jack                     | Richer                  |
       | content_creator | content.creator@test.user | 1      | contentmanager | Mike                     | Tyson                   |
 
     # Save tag config to clear form cache.
@@ -116,12 +116,12 @@ Feature: Follow Tags
     And I am at "notifications"
     Then I should see "Mike Tyson created a topic Topic with tags second with the tag(s) that you follow."
     Then I should see "Mike Tyson added tag(s) you follow to a topic."
-    Then I should have an email with subject "Notification from Open Social" and in the content:
+    Then I should have an email with subject "Someone added content you might be interested in" and in the content:
       | content                                                                            |
       | Hi Jack Richer                                                                     |
       | Mike Tyson created a topic Topic with tags second with the tag(s) that you follow. |
       | the notification above is sent to you Immediately                                  |
-    And I should have an email with subject "Notification from Open Social" and in the content:
+    And I should have an email with subject "Someone added content you might be interested in" and in the content:
       | content                                                     |
       | Hi Jack Richer                                              |
       | Mike Tyson added tag(s) you follow to a topic Simple topic. |

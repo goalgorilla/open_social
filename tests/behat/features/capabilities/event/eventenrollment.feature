@@ -1,12 +1,12 @@
 @api @event @eventenrollment @stability @perfect @DS-479 @profile @stability-2
 Feature: Enroll for an event
   Benefit: In order to attend an Event
-  Role: LU
+  Role: As a Verified
   Goal/desire: I want to enroll for an Event
 
-  @LU @critical
+  @verified @critical
   Scenario: Successfully enroll for an event
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     Given I am viewing my event:
       | title                    | My Behat Event created |
       | field_event_date         | +8 days                |
@@ -29,18 +29,18 @@ Feature: Enroll for an event
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
     Given users:
-      | name            | pass            | mail                        | status |
-      | eventenrollment | eventenrollment | eventenrollment@example.com | 1      |
-    Given I am logged in as an "authenticated user"
+      | name            | pass            | mail                        | status | roles    |
+      | eventenrollment | eventenrollment | eventenrollment@example.com | 1      | verified |
+    Given I am logged in as an "verified"
     And I am on "node/add/event"
     When I fill in the following:
-      | Title         | Enrollment redirect test event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time          | 11:00:00 |
-      | Location name | GG HQ |
+      | Title                                  | Enrollment redirect test event |
+      | edit-field-event-date-0-value-date     | 2025-01-01                     |
+      | edit-field-event-date-end-0-value-date | 2025-01-01                     |
+      | Time                                   | 11:00:00                       |
+      | Location name                          | GG HQ                          |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public"
+    And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"
     And I press "Create event"
     And I logout
     Given I open the "event" node with title "Enrollment redirect test event"
@@ -60,9 +60,9 @@ Feature: Enroll for an event
     And I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
-  @LU
+  @verified
   Scenario: Successfully cancel enrollment for an event
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     When I am viewing my event:
       | title                    | My Behat Event created |
       | field_event_date         | +8 days                |
@@ -90,11 +90,11 @@ Feature: Enroll for an event
     Then I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
-  @LU @cache
+  @verified @cache
   Scenario: Successfully changed enrollment and see changes in teaser
     Given users:
-      | name            | pass            | mail                        | status |
-      | eventenrollment | eventenrollment | eventenrollment@example.com | 1      |
+      | name            | pass            | mail                        | status | roles    |
+      | eventenrollment | eventenrollment | eventenrollment@example.com | 1      | verified |
     When I am logged in as "eventenrollment"
     And I am viewing my event:
       | title            | Enrollment test event |
@@ -113,7 +113,7 @@ Feature: Enroll for an event
 
   @closed_enrollments
   Scenario: Can no longer enroll to an event when it has finished.
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     When I am viewing my event:
       | title                    | My Behat Event created |
       | field_event_date         | -1 days                |

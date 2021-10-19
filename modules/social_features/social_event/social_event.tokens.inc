@@ -6,7 +6,9 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -48,13 +50,14 @@ function social_event_token_info() {
 function social_event_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
   if ($type === 'social_event' && !empty($data['message'])) {
+    /** @var Drupal\message\Entity\Message $message */
+    $message = $data['message'];
+    $event_enrollment_id = $message->getFieldValue('field_message_related_object', 'target_id');
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'event_iam_organizing':
-          $enrollment = $data['message']->getFieldValue('field_message_related_object', 'target_id');
-          if (!empty($enrollment)) {
-            $link = get_link_to_event_from_enrollment($enrollment, FALSE);
-
+          if (!empty($event_enrollment_id)) {
+            $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id);
             if ($link !== NULL) {
               $replacements[$original] = $link;
             }
@@ -62,10 +65,8 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
           break;
 
         case 'enrolled_event_url':
-          $enrollment = $data['message']->getFieldValue('field_message_related_object', 'target_id');
-          if (!empty($enrollment)) {
-            $link = get_link_to_event_from_enrollment($enrollment, TRUE);
-
+          if (!empty($event_enrollment_id)) {
+            $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id, TRUE);
             if ($link !== NULL) {
               $replacements[$original] = $link;
             }
@@ -73,9 +74,8 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
           break;
 
         case 'enrolled_user':
-          $id = $data['message']->getFieldValue('field_message_related_object', 'target_id');
-          if (!empty($id)) {
-            $enrollment_name = get_name_from_enrollment($id);
+          if (!empty($event_enrollment_id)) {
+            $enrollment_name = _social_event_get_name_from_enrollment($event_enrollment_id);
 
             if ($enrollment_name !== NULL) {
               $replacements[$original] = $enrollment_name;
@@ -90,39 +90,97 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
 }
 
 /**
+ * Implements hook_tokens_alter().
+ */
+function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    /** @var Drupal\message\Entity\Message $message */
+    $message = $context['data']['message'];
+
+    // Alter the [message:cta_button] token, and [message:cta_button]
+    // and replace it with the rendered content with new text and link.
+    if (isset($context['tokens']['cta_button'])|| isset($context['tokens']['preview'])) {
+      if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
+        /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
+        $email_token_services = \Drupal::service('social_activity.email_token_services');
+
+        $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+
+        if ($target_type === 'event_enrollment' && $event_enrollment_id = $message->getFieldValue('field_message_related_object', 'target_id')) {
+          if (isset($context['tokens']['cta_button'])) {
+            $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+            if ($event !== NULL) {
+              $message_template_id = $message->getTemplate()->id();
+              switch ($message_template_id) {
+                case 'activity_on_events_im_organizing':
+                  $link = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $event->id()]);
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
+
+                case 'request_event_enrollment':
+                  $link = Url::fromRoute('view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $event->id()]);
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
+
+                case 'member_added_by_event_organiser':
+                case 'event_request_approved':
+                  $link = $event->toUrl('canonical');
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
+              }
+            }
+          }
+          // Replace the preview token.
+          if (isset($context['tokens']['preview'])) {
+            $event = _social_event_get_event_from_enrollment($event_enrollment_id);
+            if ($event !== NULL) {
+              /** @var \Drupal\node\Entity\Node $event */
+              $preview_info = $email_token_services->getContentPreview($event);
+              $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
+                ->renderPlain($preview_info);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
  * Render a link to an event as full link with title or just absolute as string.
  *
- * @param int $object_id
+ * @param int $event_enrollment_id
  *   The ID of the event enrollment.
  * @param bool $as_link
  *   True if you want the full link otherwise just a canonical URL string.
  *
  * @return string|null
  *   the Url.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
-  $entity_storage = \Drupal::entityTypeManager()
-    ->getStorage('event_enrollment');
-  /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
-  $entity = $entity_storage->load($object_id);
-  if ($entity !== NULL) {
-    $event_id = $entity->getFieldValue('field_event', 'target_id');
-    $storage = \Drupal::entityTypeManager()->getStorage('node');
-    /** @var \Drupal\node\Entity\Node $event */
-    $event = $storage->load($event_id);
-
-    // Check if the event still exists.
-    if ($event !== NULL) {
-      if ($as_link) {
-        $url_string = $event->toUrl('canonical')->toString(TRUE);
-        return $url_string->getGeneratedUrl();
-      }
-
+function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_id, bool $as_link = FALSE) {
+  // Check if the event still exists.
+  if ($event = _social_event_get_event_from_enrollment($event_enrollment_id)) {
+    if ($as_link) {
+      $url_string = $event->toUrl('canonical')->toString(TRUE);
+      return $url_string->getGeneratedUrl();
+    }
+    else {
       return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
     }
   }
-
-  return NULL;
+  else {
+    return NULL;
+  }
 }
 
 /**
@@ -137,10 +195,10 @@ function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function get_name_from_enrollment($id) {
+function _social_event_get_name_from_enrollment($id) {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
-  /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+  /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
   $enrollment = $entity_storage->load($id);
 
   // User is AN by default.
@@ -171,4 +229,29 @@ function get_name_from_enrollment($id) {
   }
 
   return $enrollment_name;
+}
+
+/**
+ * Gets the event object from event enrollment ID.
+ *
+ * @param int $event_enrollment_id
+ *   Event enrollment ID.
+ *
+ * @return \Drupal\node\Entity\Node|null
+ *   Event object.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _social_event_get_event_from_enrollment(int $event_enrollment_id) {
+  $entity_storage = \Drupal::entityTypeManager()
+    ->getStorage('event_enrollment');
+  if ($entity = $entity_storage->load($event_enrollment_id)) {
+    /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+    $event_id = $entity->getFieldValue('field_event', 'target_id');
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    /** @var \Drupal\node\Entity\Node $event */
+    $event = $storage->load($event_id);
+  }
+  return $event ?? NULL;
 }

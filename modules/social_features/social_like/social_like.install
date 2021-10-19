@@ -6,6 +6,8 @@
  */
 
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -13,8 +15,49 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_like.
  */
 function social_like_install() {
-  // Set some default permissions.
-  _social_like_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view like widget',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view like widget',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'add or remove like votes on post',
+      'add or remove like votes on comment of comment',
+      'add or remove like votes on post_comment of comment',
+      'add or remove like votes on topic of node',
+      'add or remove like votes on event of node',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'add or remove like votes on post',
+      'add or remove like votes on comment of comment',
+      'add or remove like votes on post_comment of comment',
+      'add or remove like votes on topic of node',
+      'add or remove like votes on event of node',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'add or remove like votes on post',
+      'add or remove like votes on comment of comment',
+      'add or remove like votes on post_comment of comment',
+      'add or remove like votes on topic of node',
+      'add or remove like votes on event of node',
+    ]
+  );
   _social_like_set_defaults();
 }
 
@@ -112,10 +155,13 @@ function _social_like_set_defaults() {
  */
 function _social_like_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = ['view like widget'];
+  $permissions[RoleInterface::ANONYMOUS_ID] = ['view like widget'];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'add or remove like votes on post',
     'add or remove like votes on comment of comment',
     'add or remove like votes on post_comment of comment',
@@ -124,7 +170,7 @@ function _social_like_get_permissions($role) {
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
@@ -143,4 +189,21 @@ function social_like_update_10301() {
   \Drupal::configFactory()->getEditable('like_and_dislike.settings')
     ->set('hide_vote_widget', FALSE)
     ->save();
+}
+
+/**
+ * Update message template "message.template.create_like_node_or_post".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_like_update_10302() {
+  $config_file = drupal_get_path('module', 'social_like') . '/config/static/message.template.create_like_node_or_post_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_like_node_or_post');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

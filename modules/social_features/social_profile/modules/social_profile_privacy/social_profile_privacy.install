@@ -7,63 +7,21 @@
 
 use Drupal\Core\Site\Settings;
 use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
-use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
  */
 function social_profile_privacy_install() {
-  // Set some default permissions.
-  _social_profile_privacy_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'social profile privacy view hidden fields',
+    ]
+  );
 
   // Update our search indexes for our custom processor..
   _social_profile_privacy_resave_search_indexes();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_profile_privacy_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    $permissions = _social_profile_privacy_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_profile_privacy_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'social profile privacy view hidden fields',
-  ]);
-
-  // If the requested role is not defined we return no permissions.
-  // Drupal will make them inherit the authenticated user permissions.
-  if (!isset($permissions[$role])) {
-    return [];
-  }
-
-  return $permissions[$role];
 }
 
 /**
