@@ -7,6 +7,7 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -32,6 +33,32 @@ function social_comment_entity_type_alter(array &$entity_types) {
     if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
       $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
     }
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_comment_query_comment_filter_alter(AlterableInterface $query): void {
+  if ($query->getMetaData('base_table') !== 'comment') {
+    return;
+  }
+
+  /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+  $order_by = &$query->getOrderBy();
+
+  if (isset($order_by['c.cid'])) {
+    $order_by['c.cid'] = 'DESC';
+  }
+
+  if (isset($order_by['torder'])) {
+    $order_by['torder'] = 'DESC';
+
+    $expression = &$query->getExpressions();
+    $expression['torder']['expression'] = 'SUBSTRING_INDEX(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.\', 1)';
+
+    $alias = $query->addExpression('CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')');
+    $query->orderBy($alias, 'DESC');
   }
 }
 
