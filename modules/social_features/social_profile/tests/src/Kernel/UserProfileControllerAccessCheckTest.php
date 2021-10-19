@@ -3,11 +3,11 @@
 namespace Drupal\Tests\social_profile\Kernel;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\profile\Entity\ProfileTypeInterface;
-use Drupal\social_profile\Controller\UserProfileController;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\UserInterface;
 
@@ -34,11 +34,16 @@ class UserProfileControllerAccessCheckTest extends ProfileKernelTestBase {
     $profile_type = ProfileType::load('profile');
     self::assertInstanceOf(ProfileTypeInterface::class, $profile_type, "Could not load 'profile' profile type.");
 
-    /** @var callable $controller_method */
-    $controller_method = $this->container->get('controller_resolver')->getControllerFromDefinition(UserProfileController::class . "::checkAccess");
+    $access_manager = $this->container->get('access_manager');
+    /** @var \Drupal\Core\Access\AccessResult $result */
+    $result = $access_manager->checkNamedRoute(
+      "social_profile.view_user_profile",
+      ['user' => $test_user->id()],
+      $viewer,
+      TRUE
+    );
 
-    $result = call_user_func($controller_method, $test_user, $profile_type, $viewer);
-    $expected = AccessResult::neutral()
+    $expected = AccessResult::forbidden()
       ->cachePerPermissions()
       ->addCacheableDependency($test_user);
 
@@ -68,16 +73,22 @@ class UserProfileControllerAccessCheckTest extends ProfileKernelTestBase {
 
     self::assertInstanceOf(ProfileInterface::class, $profile, "Profile was not automatically created for user.");
 
-    /** @var callable $controller_method */
-    $controller_method = $this->container->get('controller_resolver')->getControllerFromDefinition(UserProfileController::class . "::checkAccess");
+    $access_manager = $this->container->get('access_manager');
+    /** @var \Drupal\Core\Access\AccessResult $result */
+    $result = $access_manager->checkNamedRoute(
+      "social_profile.view_user_profile",
+      ['user' => $test_user->id()],
+      $viewer,
+      TRUE
+    );
 
-    $result = call_user_func($controller_method, $test_user, $profile_type, $viewer);
     $expected = AccessResult::allowed()
       ->cachePerPermissions()
       ->addCacheableDependency($profile_type)
       ->addCacheableDependency($profile);
 
-    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type.");
+    $reason = $result instanceof AccessResultReasonInterface && !empty($result->getReason()) ? " ('{$result->getReason()}')" : "";
+    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type{$reason}.");
     $this->assertAccessMetadata($expected, $result);
   }
 
@@ -105,15 +116,21 @@ class UserProfileControllerAccessCheckTest extends ProfileKernelTestBase {
       $profile->delete();
     }
 
-    /** @var callable $controller_method */
-    $controller_method = $this->container->get('controller_resolver')->getControllerFromDefinition(UserProfileController::class . "::checkAccess");
+    $access_manager = $this->container->get('access_manager');
+    /** @var \Drupal\Core\Access\AccessResult $result */
+    $result = $access_manager->checkNamedRoute(
+      "social_profile.view_user_profile",
+      ['user' => $test_user->id()],
+      $viewer,
+      TRUE
+    );
 
-    $result = call_user_func($controller_method, $test_user, $profile_type, $viewer);
     $expected = AccessResult::allowed()
       ->cachePerPermissions()
       ->addCacheableDependency($profile_type);
 
-    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type.");
+    $reason = $result instanceof AccessResultReasonInterface && !empty($result->getReason()) ? " ('{$result->getReason()}')" : "";
+    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type{$reason}.");
     $this->assertAccessMetadata($expected, $result);
   }
 
@@ -141,15 +158,21 @@ class UserProfileControllerAccessCheckTest extends ProfileKernelTestBase {
       $profile->delete();
     }
 
-    /** @var callable $controller_method */
-    $controller_method = $this->container->get('controller_resolver')->getControllerFromDefinition(UserProfileController::class . "::checkAccess");
+    $access_manager = $this->container->get('access_manager');
+    /** @var \Drupal\Core\Access\AccessResult $result */
+    $result = $access_manager->checkNamedRoute(
+      "social_profile.view_user_profile",
+      ['user' => $test_user->id()],
+      $viewer,
+      TRUE
+    );
 
-    $result = call_user_func($controller_method, $test_user, $profile_type, $viewer);
     $expected = AccessResult::neutral()
       ->cachePerPermissions()
       ->cachePerUser();
 
-    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type.");
+    $reason = $result instanceof AccessResultReasonInterface && !empty($result->getReason()) ? " ('{$result->getReason()}')" : "";
+    static::assertInstanceOf(get_class($expected), $result, "Unexpected access result type{$reason}.");
     $this->assertAccessMetadata($expected, $result);
   }
 
