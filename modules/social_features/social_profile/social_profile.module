@@ -29,7 +29,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
-use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -1443,7 +1442,31 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
   $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
     ->getViewBuilder('profile')
     ->view($profile, 'small');
+}
 
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_profile_profile_access(ProfileInterface $profile, string $operation, AccountInterface $account) : AccessResultInterface {
+  // Users may only view profiles if they are also allowed to view the user that
+  // the profile belongs to. This ensures that profiles for blocked users or
+  // unverified users are hidden from the right people.
+  // We don't apply the same logic for other operations because it may be
+  // desirable to let a certain role edit user profile data without editing a
+  // user's personal settings.
+  if ($operation === 'view') {
+    $user_access = $profile->getOwner()->access($operation, $account, TRUE);
+    if ($user_access->isNeutral()) {
+      // Profile is allowed by default whereas a user may be denied for neutral
+      // so we must convert neutral to forbidden while preserving cache info.
+      $user_access = $user_access->andIf(AccessResult::forbidden());
+    }
+    if ($user_access->isForbidden()) {
+      return $user_access;
+    }
+  }
+
+  return AccessResult::neutral();
 }
 
 /**
