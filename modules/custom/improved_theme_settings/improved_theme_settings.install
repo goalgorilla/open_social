@@ -37,10 +37,6 @@ function improved_theme_settings_update_8001() {
     'navbar-active-text' => '#f3f3f3',
     'navbar-sec-bg' => '#1f7ea7',
     'navbar-sec-text' => '#f9f9f9',
-    'second-line-navbar-bg' => '#004494',
-    'second-line-navbar-text' => '#ffffff',
-    'second-line-navbar-active-bg' => '#f2f5f9',
-    'second-line-navbar-active-text' => '#002f67',
   ];
 
   // Fetch values from the old theme and overrode em.
@@ -62,6 +58,26 @@ function improved_theme_settings_update_8001() {
 
   // overwrite.
   $colors['palette'] = $new_colors;
+
+  // Save the new config.
+  $config->setData($colors)->save();
+}
+
+/**
+ * Add new color settings.
+ */
+function improved_theme_settings_update_11001(): void {
+  // Get the current default theme.
+  $theme = \Drupal::configFactory()->get('system.theme')->get('default');
+  // Get the color values.
+  $config = \Drupal::configFactory()->getEditable('color.theme.' . $theme);
+  $colors = $config->getRawData();
+
+  // Set new colors.
+  $colors['palette']['second-line-navbar-bg'] = '#004494';
+  $colors['palette']['second-line-navbar-text'] = '#fffff1';
+  $colors['palette']['second-line-navbar-active-bg'] = '#f2f5f9';
+  $colors['palette']['second-line-navbar-active-text'] = '#002f67';
 
   // Save the new config.
   $config->setData($colors)->save();
