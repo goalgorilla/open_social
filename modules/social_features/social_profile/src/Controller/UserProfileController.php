@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile\Controller;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -52,7 +53,12 @@ class UserProfileController extends ControllerBase {
   }
 
   /**
-   * Checks access for the single/multiple pages.
+   * Checks access for user profiles.
+   *
+   * We can't use `profile.view` directly because our route is based on the user
+   * ID so the profile ID is not yet known at the time. Creating a custom access
+   * check is simpler than creating a custom parameter converter but that could
+   * be an alternative in the future.
    *
    * @param \Drupal\user\UserInterface $user
    *   The user account.
@@ -64,17 +70,7 @@ class UserProfileController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkAccess(UserInterface $user, ProfileTypeInterface $profile_type, AccountInterface $account) {
-    /** @var \Drupal\Core\Access\AccessResult $user_access */
-    $user_access = $user->access('view', $account, TRUE);
-    if (!$user_access->isAllowed()) {
-      // The account does not have access to the user's canonical page
-      // ("/user/{user}"), don't allow access to any sub-pages either.
-      return $user_access;
-    }
-
-    $access_control_handler = $this->entityTypeManager()
-      ->getAccessControlHandler('profile');
+  public function checkAccess(UserInterface $user, ProfileTypeInterface $profile_type, AccountInterface $account) : AccessResultInterface {
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = $this->entityTypeManager()->getStorage('profile');
     $profile_type_id = $profile_type->id();
@@ -84,7 +80,7 @@ class UserProfileController extends ControllerBase {
     $profile = $profile_storage->loadByUser($user, $profile_type_id);
 
     // If the target user has no profile then we test against a stub. This
-    // ensures we don't leak non-existant profiles for existing users to anyone
+    // ensures we don't leak non-existent profiles for existing users to anyone
     // who is not allowed to view any profiles.
     if ($profile === NULL) {
       $profile = $profile_storage->create([
@@ -93,9 +89,9 @@ class UserProfileController extends ControllerBase {
       ]);
     }
 
-    /** @var \Drupal\Core\Access\AccessResult $access */
-    $access = $access_control_handler->access($profile, 'view', $account, TRUE);
-    return $access;
+    /** @var \Drupal\Core\Access\AccessResultInterface $access_result */
+    $access_result = $profile->access('view', $account, TRUE);
+    return $access_result;
   }
 
 }
