@@ -151,4 +151,44 @@ class UserAccessCheckTest extends KernelTestBase {
     );
   }
 
+  /**
+   * We want to hide blocked users from the platform for most users.
+   */
+  public function testCanNotViewBlockedUserWithoutPermission() : void {
+    $viewer = $this->setUpCurrentUser([], ['access user profiles']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+    self::assertInstanceOf(UserInterface::class, $viewer, "Test set-up failed: could not create user.");
+
+    $this->assertEntityAccess(
+      $test_user,
+      'view',
+      $viewer,
+      AccessResult::neutral()
+        ->addCacheableDependency($test_user)
+        ->cachePerPermissions()
+    );
+  }
+
+  /**
+   * The permission can be given to SM so they can view who is blocked.
+   */
+  public function testCanViewBlockedUserWithPermission() : void {
+    $viewer = $this->setUpCurrentUser([], ['access user profiles', 'view blocked user']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+    self::assertInstanceOf(UserInterface::class, $viewer, "Test set-up failed: could not create user.");
+
+    $this->assertEntityAccess(
+      $test_user,
+      'view',
+      $viewer,
+      AccessResult::allowed()
+        ->addCacheableDependency($test_user)
+        ->cachePerPermissions()
+    );
+  }
+
 }
