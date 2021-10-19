@@ -1,11 +1,12 @@
 @api @tour @critical @DS-3710
 Feature: Take the tour
   Benefit: In order to get to know the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to take the tour
 
 Scenario: Successfully take the tour and see all pop-ups
-  Given I am logged in as an "authenticated user"
+  Given I enable the module "social_tour"
+  Given I am logged in as an "verified"
     And I enable the tour setting
     # Necessary, because homepage tour is already marked as seen
     And I reset tour "social-home"
@@ -75,10 +76,12 @@ Scenario: Successfully take the tour and see all pop-ups
    When I close the open tip
    Then I should not see "Welcome on this group page!"
     And I should not see "Don't show tips like this anymore"
+    And I disable the module "social_tour"
 
 @nomoretips
 Scenario: Stop showing me tips
-   When I am logged in as an "authenticated user"
+  Given I enable the module "social_tour"
+  When I am logged in as an "verified"
     And I enable the tour setting
     And I am on "all-topics"
    Then I should see "Use the topic filter to filter on topic type."
@@ -89,3 +92,4 @@ Scenario: Stop showing me tips
   Given I am on "community-events"
    Then I should not see "Use the event filter if you only want to see either upcoming or past events"
     And I should not see "Don't show tips like this anymore"
+    And I disable the module "social_tour"

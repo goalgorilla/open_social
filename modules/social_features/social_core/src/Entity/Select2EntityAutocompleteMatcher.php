@@ -2,8 +2,11 @@
 
 namespace Drupal\social_core\Entity;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
+use Drupal\social_user\Service\SocialUserHelper;
+use Drupal\user\Entity\User;
 
 /**
  * Class Select2EntityAutocompleteMatcher.
@@ -38,6 +41,15 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           // '#selection_settings' => [ 'skip_entity' => ['7', '8', '9'] ].
           if (!empty($selection_settings['skip_entity']) && in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
             continue;
+          }
+
+          // Ensure that we are able to select Verified+ users only.
+          if ($target_type === 'user' && $selection_handler === 'social') {
+            /** @var \Drupal\user\UserInterface $account */
+            $account = User::load($entity_id);
+            if ($account instanceof AccountInterface && !SocialUserHelper::isVerifiedUser($account)) {
+              continue;
+            }
           }
 
           $label = !empty($selection_settings['hide_id']) ? $label : "$label ($entity_id)";

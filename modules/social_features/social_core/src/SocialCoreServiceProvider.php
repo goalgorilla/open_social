@@ -6,6 +6,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Drupal\social_core\Service\LayoutService;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class SocialCoreServiceProvider.
