@@ -19,6 +19,7 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
+use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\field\Entity\FieldConfig;
@@ -1448,17 +1449,13 @@ function social_core_update_10300() {
  * Import configurations for the new Verified role.
  */
 function social_core_update_11001(): void {
-  $config_file = drupal_get_path('module', 'social_core') . '/config/static/user.role.verified_11001.yml';
-
-  if (is_file($config_file)) {
-    $settings = Yaml::parse((string) file_get_contents($config_file));
-    if (is_array($settings)) {
-      $config = \Drupal::configFactory()
-        ->getEditable('user.role.verified');
-
-      $config->setData($settings)->save(TRUE);
-    }
-  }
+  Role::create([
+    'id' => 'verified',
+    'label' => 'Verified User',
+    'weight' => 5,
+    'is_admin' => NULL,
+    'permissions' => [],
+  ])->save();
 }
 
 /**
