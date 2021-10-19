@@ -3,6 +3,7 @@
 namespace Drupal\Tests\social_user\Kernel\GraphQL;
 
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
@@ -307,6 +308,142 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       ],
       $this->defaultCacheMetaData()
         ->addCacheContexts(['languages:language_interface'])
+        ->addCacheableDependency($test_user)
+    );
+  }
+
+  /**
+   * Blocked users should not be queryable without the right permission.
+   */
+  public function testCanNotViewBlockedUserWithoutPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            id
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => NULL,
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        // @todo It's unclear why this cache context is added.
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * Blocked users should not show up in user listing without permission.
+   */
+  public function testCanNotListBlockedUserWithoutPermission() : void {
+    $viewer = $this->setUpCurrentUser([], ['access user profiles', 'list user']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+    self::assertInstanceOf(UserInterface::class, $viewer, "Test set-up failed: could not create user.");
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    $admin = User::load(1);
+    self::assertInstanceOf(UserInterface::class, $admin, "Test set-up failed: could not load user.");
+
+    $this->assertResults(
+      '
+        query {
+          users(last: 5) {
+            nodes {
+              id
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'users' => [
+          'nodes' => [
+            ['id' => $admin->uuid()],
+            ['id' => $viewer->uuid()],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->setCacheMaxAge(0)
+        ->addCacheableDependency($admin)
+        ->addCacheableDependency($viewer)
+    );
+  }
+
+  /**
+   * With sufficient permissions blocked users should be queryable.
+   */
+  public function testCanViewBlockedUserWithPermission() : void {
+    $this->setUpCurrentUser([], ['access user profiles', 'view blocked user']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    $this->assertResults(
+      '
+        query ($id: ID!) {
+          user(id: $id) {
+            id
+          }
+        }
+      ',
+      ['id' => $test_user->uuid()],
+      [
+        'user' => [
+          'id' => $test_user->uuid(),
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        // @todo It's unclear why this cache context is added.
+        ->addCacheContexts(['languages:language_interface'])
+    );
+  }
+
+  /**
+   * With sufficient permissions blocked users should show up in lists.
+   */
+  public function testCanListBlockedUserWithPermission() : void {
+    $viewer = $this->setUpCurrentUser([], ['access user profiles', 'list user', 'view blocked user']);
+    $test_user = $this->createUser([], NULL, FALSE, ['status' => 0]);
+    self::assertInstanceOf(UserInterface::class, $viewer, "Test set-up failed: could not create user.");
+    self::assertInstanceOf(UserInterface::class, $test_user, "Test set-up failed: could not create user.");
+
+    $admin = User::load(1);
+    self::assertInstanceOf(UserInterface::class, $admin, "Test set-up failed: could not load user.");
+
+    $this->assertResults(
+      '
+        query {
+          users(last: 5) {
+            nodes {
+              id
+            }
+          }
+        }
+      ',
+      [],
+      [
+        'users' => [
+          'nodes' => [
+            ['id' => $admin->uuid()],
+            ['id' => $viewer->uuid()],
+            ['id' => $test_user->uuid()],
+          ],
+        ],
+      ],
+      $this->defaultCacheMetaData()
+        ->addCacheContexts(['languages:language_interface'])
+        ->setCacheMaxAge(0)
+        ->addCacheableDependency($admin)
+        ->addCacheableDependency($viewer)
         ->addCacheableDependency($test_user)
     );
   }

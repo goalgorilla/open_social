@@ -12,6 +12,7 @@ use Drupal\graphql\GraphQL\Buffers\EntityUuidBuffer;
 use Drupal\social_graphql\GraphQL\EmptyEntityConnection;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
+use Drupal\social_user\GraphQL\QueryHelper\ActiveUserQueryHelper;
 use Drupal\social_user\GraphQL\QueryHelper\UserQueryHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -149,7 +150,13 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
       return new EmptyEntityConnection();
     }
 
-    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
+    if ($this->currentUser->hasPermission('view blocked user')) {
+      $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
+    }
+    else {
+      $query_helper = new ActiveUserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
+    }
+
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);
