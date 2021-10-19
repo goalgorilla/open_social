@@ -2,10 +2,9 @@
 
 namespace Drupal\social_core\Entity;
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
-use Drupal\social_user\Service\SocialUserHelper;
+use Drupal\social_user\VerifyableUserInterface;
 use Drupal\user\Entity\User;
 
 /**
@@ -45,9 +44,9 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
 
           // Ensure that we are able to select Verified+ users only.
           if ($target_type === 'user' && $selection_handler === 'social') {
-            /** @var \Drupal\user\UserInterface $account */
+            /** @var \Drupal\user\UserInterface|NULL $account */
             $account = User::load($entity_id);
-            if ($account instanceof AccountInterface && !SocialUserHelper::isVerifiedUser($account)) {
+            if ($account instanceof VerifyableUserInterface && !$account->isVerified()) {
               continue;
             }
           }
