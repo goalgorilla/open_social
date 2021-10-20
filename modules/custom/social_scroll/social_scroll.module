@@ -17,33 +17,24 @@ function social_scroll_form_view_edit_form_alter(array &$form, FormStateInterfac
   $social_scroll_manager = \Drupal::service('social_scroll.manager');
   $display_id = $form_state->get('display_id');
 
-  foreach ($social_scroll_manager->getEnabledViewIds() as $view) {
-    $config_name = $social_scroll_manager->getConfigName($view);
-    $current_view = \Drupal::configFactory()->getEditable($config_name);
-    $displays = $current_view->getOriginal('display');
-    $pages = [];
+  /** @var \Drupal\views_ui\ViewUI $view */
+  $view = $form_state->get('view');
+  /** @var \Drupal\views\Entity\View $view_storage */
+  $view_storage = $form_state->get('view')->get('storage');
+  $display_plugin = $view_storage->get('display')[$display_id]['display_plugin'] ?? 'block';
 
-    if (is_array($displays)) {
-      foreach ($displays as $id => $display) {
-        if ($display['display_plugin'] !== 'block') {
-          $pages[] = $id;
-        }
-      }
-    }
+  if ($display_plugin !== 'block' && in_array($view->id(), $social_scroll_manager->getEnabledViewIds(), TRUE)) {
+    // Hide the pager block if this view is overridden by this module.
+    $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
+    /** @var \Drupal\views_ui\ViewEditForm $form_object */
+    $form_object = $form_state->getFormObject();
+    $module_name = \Drupal::moduleHandler()->getName(SocialScrollManagerInterface::MODULE_NAME);
 
-    if (in_array($display_id, $pages)) {
-      // Hide the pager block if this view is overridden by this module.
-      $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
-      /** @var \Drupal\views_ui\ViewEditForm $form_object */
-      $form_object = $form_state->getFormObject();
-      $module_name = \Drupal::moduleHandler()->getName(SocialScrollManagerInterface::MODULE_NAME);
-
-      $form_object->messenger()
-        ->addWarning(t('Pager options are overridden by the "@module_name" module, so pager settings configured in this view will not work while that view is selected in @these options.', [
-          '@module_name' => $module_name,
-          '@these' => Link::createFromRoute(t('these'), 'social_scroll.settings')
-            ->toString(),
-        ]));
-    }
+    $form_object->messenger()
+      ->addWarning(t('Pager options are overridden by the "@module_name" module, so pager settings configured in this view will not work while that view is selected in @these options.', [
+        '@module_name' => $module_name,
+        '@these' => Link::createFromRoute(t('these'), 'social_scroll.settings')
+          ->toString(),
+      ]));
   }
 }
