@@ -40,7 +40,10 @@ function social_comment_entity_type_alter(array &$entity_types) {
  * Implements hook_query_TAG_alter().
  */
 function social_comment_query_comment_filter_alter(AlterableInterface $query): void {
-  if ($query->getMetaData('base_table') !== 'comment') {
+  if (
+    $query->getMetaData('base_table') !== 'comment' ||
+    !\Drupal::config('social_comment.comment_settings')->get('reverse')
+  ) {
     return;
   }
 
@@ -50,14 +53,17 @@ function social_comment_query_comment_filter_alter(AlterableInterface $query): v
   if (isset($order_by['c.cid'])) {
     $order_by['c.cid'] = 'DESC';
   }
-
-  if (isset($order_by['torder'])) {
+  elseif (isset($order_by['torder'])) {
     $order_by['torder'] = 'DESC';
 
     $expression = &$query->getExpressions();
     $expression['torder']['expression'] = 'SUBSTRING_INDEX(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.\', 1)';
 
-    $alias = $query->addExpression('CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')');
+    $alias = $query->addExpression(
+      'CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')',
+      'children_order',
+    );
+
     $query->orderBy($alias, 'DESC');
   }
 }

@@ -1,3 +1,13 @@
+social_comment.settings:
+  path: '/admin/config/opensocial/comment'
+  defaults:
+    _form: '\Drupal\social_comment\Form\SocialCommentSettingsForm'
+    _title: 'Comment settings'
+  requirements:
+    _permission: 'administer social_comment settings'
+  options:
+    _admin_route: TRUE
+
 social_comment.unpublish:
   path: '/comment/{comment}/unpublish'
   defaults:
