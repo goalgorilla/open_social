@@ -5,7 +5,8 @@
  * The Social comment module.
  */
 
-use Drupal\comment\CommentInterface;
+use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -14,25 +15,35 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\comment\CommentInterface;
 use Drupal\social_comment\Entity\Access\CommentQueryAccessHandler;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentFieldItemList;
+use Drupal\social_comment\SocialCommentStorage;
 use Drupal\social_comment\SocialCommentViewBuilder;
 
 /**
  * Implements hook_entity_type_alter().
  */
 function social_comment_entity_type_alter(array &$entity_types) {
-  if (isset($entity_types['comment'])) {
-    $entity_types['comment']->setClass(Comment::class);
-    $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+  if (!isset($entity_types['comment'])) {
+    return;
+  }
 
-    // When the platform has opted in to using the entity_access api we set our
-    // custom handler. This ensures we don't break existing projects who may
-    // already have their own query_access handlers.
-    if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
-      $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
-    }
+  $entity_types['comment']
+    ->setClass(Comment::class)
+    ->setStorageClass(SocialCommentStorage::class)
+    ->setViewBuilderClass(SocialCommentViewBuilder::class);
+
+  // When the platform has opted in to using the entity_access api we set our
+  // custom handler. This ensures we don't break existing projects who may
+  // already have their own query_access handlers.
+  if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
+    $entity_types['comment']->setHandlerClass(
+      'query_access',
+      CommentQueryAccessHandler::class,
+    );
   }
 }
 
@@ -40,31 +51,70 @@ function social_comment_entity_type_alter(array &$entity_types) {
  * Implements hook_query_TAG_alter().
  */
 function social_comment_query_comment_filter_alter(AlterableInterface $query): void {
-  if (
-    $query->getMetaData('base_table') !== 'comment' ||
-    !\Drupal::config('social_comment.comment_settings')->get('reverse')
-  ) {
+  /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+  if ($query->getMetaData('base_table') !== 'comment') {
     return;
   }
 
-  /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+  $data = $query->getMetaData('field_name');
+  $valid = TRUE;
+
+  try {
+    $items = Json::decode($data);
+  }
+  catch (InvalidDataTypeException $exception) {
+    $valid = FALSE;
+  }
+
+  if ($valid && isset($items['field_name'], $items['formatter'])) {
+    $conditions = &$query->conditions();
+
+    foreach ($conditions as &$condition) {
+      if (is_array($condition) && $condition['field'] === 'c.field_name') {
+        $condition['value'] = $items['field_name'];
+        break;
+      }
+    }
+
+    /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
+    $manager = \Drupal::service('plugin.manager.field.formatter');
+
+    if ($manager->hasDefinition($items['formatter'])) {
+      $definition = $manager->getDefinition($items['formatter']);
+
+      unset($items['field_name'], $items['formatter']);
+
+      /** @var callable $callback */
+      $callback = [$definition['class'], 'alterQuery'];
+
+      call_user_func($callback, $query, $items);
+    }
+  }
+
+  if (!\Drupal::config('social_comment.comment_settings')->get('reverse')) {
+    return;
+  }
+
   $order_by = &$query->getOrderBy();
 
   if (isset($order_by['c.cid'])) {
-    $order_by['c.cid'] = 'DESC';
+    $order_by['c.cid'] = $order_by['c.cid'] === 'ASC' ? 'DESC' : 'ASC';
   }
   elseif (isset($order_by['torder'])) {
-    $order_by['torder'] = 'DESC';
+    $is_asc = $order_by['torder'] === 'ASC';
+    $order_by['torder'] = $is_asc ? 'DESC' : 'ASC';
 
-    $expression = &$query->getExpressions();
-    $expression['torder']['expression'] = 'SUBSTRING_INDEX(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.\', 1)';
+    if ($is_asc) {
+      $expression = &$query->getExpressions();
+      $expression['torder']['expression'] = 'SUBSTRING_INDEX(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.\', 1)';
 
-    $alias = $query->addExpression(
-      'CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')',
-      'children_order',
-    );
+      $alias = $query->addExpression(
+        'CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')',
+        'children_order',
+      );
 
-    $query->orderBy($alias, 'DESC');
+      $query->orderBy($alias, 'DESC');
+    }
   }
 }
 

@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides a form to configure Album settings.
+ * Provides a form to configure Comment settings.
  *
  * @package Drupal\social_comment\Form
  */
@@ -35,7 +35,7 @@ class SocialCommentSettingsForm extends ConfigFormBase {
     $form['reverse'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Reverse'),
-      '#description' => $this->t('Display comments from newest to oldest.'),
+      '#description' => $this->t('Display comments in reverse order.'),
       '#default_value' => $config->get('reverse'),
     ];
 
