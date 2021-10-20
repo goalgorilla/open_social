@@ -82,11 +82,6 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
       continue;
     }
 
-    // Key must have submit in it.
-    if (strpos($key, 'submit-') === FALSE) {
-      continue;
-    }
-
     $actions['#value'] = t('Send');
     $actions['#submit'][] = 'social_private_message_redirect';
     unset($actions['#ajax']);
@@ -349,28 +344,12 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
 
   // Private message entity.
   elseif ($entity->getEntityTypeId() === 'private_message') {
-    // View mode inbox.
-    if ($build['#view_mode'] === 'inbox') {
-      // Remove prefix and suffix.
-      $build['#prefix'] = '';
-      $build['#suffix'] = '';
-    }
-    elseif ($build['#view_mode'] === 'full') {
-      $wrapper_class = NULL;
-
+    // Default view mode.
+    if ($build['#view_mode'] === 'default') {
       /** @var \Drupal\private_message\Entity\PrivateMessage $entity */
       if (\Drupal::currentUser()->id() === $entity->getOwnerId()) {
-        $wrapper_class = 'message__by-me';
         // Current user is 'You'.
         $build['owner'][0]['#plain_text'] = t('You');
-      }
-      elseif (empty($entity->getOwner())) {
-        $wrapper_class = 'message__deleted';
-      }
-
-      if (!empty($wrapper_class)) {
-        $build['#prefix'] = '<div class="' . $wrapper_class . '">' . $build['#prefix'];
-        $build['#suffix'] = '</div>' . $build['#suffix'];
       }
     }
   }
@@ -420,7 +399,7 @@ function social_private_message_preprocess_field(&$variables) {
 
   $element = &$variables['element'];
 
-  if (isset($element['#view_mode']) && $element['#view_mode'] == 'full' && $variables['field_name'] == 'message') {
+  if (isset($element['#view_mode']) && $element['#view_mode'] == 'default' && $variables['field_name'] == 'message') {
     $variables['view_mode'] = 'full';
 
     if (empty($element['#object']->getOwner())) {
@@ -609,6 +588,7 @@ function social_private_message_views_data_alter(array &$data) {
       'id' => 'social_private_message_deleted_threads',
     ],
   ];
+
 }
 
 /**
@@ -657,4 +637,39 @@ function social_private_message_private_message_thread_access(PrivateMessageThre
  */
 function social_private_message_private_message_create_access(AccountInterface $account, array $context, $entity_bundle) {
   return AccessResult::forbiddenIf(!($account->hasPermission('use private messaging system') && $account->hasPermission('create private messages thread')));
+}
+
+/**
+ * Implements hook_private_message_view_alter().
+ */
+function social_private_message_private_message_view_alter(array &$build, EntityInterface $privateMessage, $viewMode): void {
+  // Inbox view mode.
+  if ($viewMode === 'inbox') {
+    // Remove wrapper from private message.
+    $build['wrapper'] = $build['wrapper']['message'];
+  }
+  // Default view mode.
+  elseif ($viewMode === 'default') {
+    // Replace class "private-message-default" by "private-message-full".
+    $class_key = array_search('private-message-default', $build['wrapper']['#attributes']['class']);
+    if ($class_key !== NULL) {
+      $build['wrapper']['#attributes']['class'][$class_key] = 'private-message-full';
+    }
+
+    // Add a wrapper for a message if it is a current user message.
+    $wrapper_class = NULL;
+
+    /** @var \Drupal\private_message\Entity\PrivateMessage $privateMessage */
+    if (\Drupal::currentUser()->id() === $privateMessage->getOwnerId()) {
+      $wrapper_class = 'message__by-me';
+    }
+    elseif (empty($privateMessage->getOwner())) {
+      $wrapper_class = 'message__deleted';
+    }
+
+    if (!empty($wrapper_class)) {
+      $build['#prefix'] = '<div class="' . $wrapper_class . '">';
+      $build['#suffix'] = '</div>';
+    }
+  }
 }
