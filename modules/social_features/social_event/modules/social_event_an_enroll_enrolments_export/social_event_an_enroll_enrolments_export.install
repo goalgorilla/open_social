@@ -23,9 +23,6 @@ function social_event_an_enroll_enrolments_export_install() {
 function social_event_an_enroll_enrolments_export_uninstall() {
   // Set the export plugins access based on their enroll counterpart access.
   _enrolments_export_plugin_access(TRUE);
-
-  // Add changes to event_manage_enrollments view.
-  _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view();
 }
 
 /**
@@ -112,11 +109,13 @@ function _social_event_an_enroll_enrolments_export_alter_event_manage_enrollment
   $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
   $selected_actions = $config->get('display.default.display_options.fields.social_event_enrolments_export_enrollments_action.selected_actions');
 
-  // Remove 'social_event_enrolments_export_enrollments_action' action.
-  // This is added via
-  // _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view().
   if (!empty($selected_actions) && \Drupal::moduleHandler()->moduleExists('social_event_enrolments_export')) {
-    $selected_actions = _social_core_remove_element_with_value($selected_actions, 'action_id', 'social_event_enrolments_export_enrollments_action') ?? $selected_actions;
+    // Get the action_key of social_event_enrolments_export_enrollments_action.
+    $action_key = array_search('social_event_enrolments_export_enrollments_action', array_column($selected_actions, 'action_id'));
+    // Remove 'social_event_enrolments_export_enrollments_action' action.
+    // This is added via
+    // _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view().
+    unset($selected_actions[$action_key]);
   }
 
   $selected_actions[] = [
@@ -139,11 +138,13 @@ function social_event_an_enroll_enrolments_export_update_11001(array &$sandbox):
   $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
   $selected_actions = $config->get('display.default.display_options.fields.social_event_enrolments_export_enrollments_action.selected_actions');
 
-  // Remove 'social_event_enrolments_export_enrollments_action' action.
-  // This is added via
-  // _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view().
   if (!empty($selected_actions) && \Drupal::moduleHandler()->moduleExists('social_event_enrolments_export')) {
-    $selected_actions = _social_core_remove_element_with_value($selected_actions, 'action_id', 'social_event_enrolments_export_enrollments_action') ?? $selected_actions;
+    // Get the action_key of social_event_enrolments_export_enrollments_action.
+    $action_key = array_search('social_event_enrolments_export_enrollments_action', array_column($selected_actions, 'action_id'));
+    // Remove 'social_event_enrolments_export_enrollments_action' action.
+    // This is added via
+    // _social_event_an_enroll_enrolments_export_alter_event_manage_enrollments_view().
+    unset($selected_actions[$action_key]);
   }
 
   $selected_actions[] = [

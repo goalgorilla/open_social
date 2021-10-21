@@ -933,7 +933,7 @@ function social_group_update_11001(): string {
  * Update 'views.view.group_manage_members' after VBO module updates.
  */
 function social_group_update_11002(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_11002.yml';
+  $config_file = drupal_get_path('module', 'social_group') . '/config/static/views.view.group_manage_members_11002.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));
