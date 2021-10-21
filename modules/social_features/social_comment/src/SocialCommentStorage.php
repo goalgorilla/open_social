@@ -5,7 +5,6 @@ namespace Drupal\social_comment;
 use Drupal\comment\CommentStorage;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterInterface;
 
 /**
  * Defines the storage handler class for comments.
@@ -19,17 +18,20 @@ class SocialCommentStorage extends CommentStorage implements SocialCommentStorag
    * {@inheritdoc}
    */
   public function loadFormatterThread(
-    SocialCommentFormatterInterface $formatter,
+    string $formatter,
     EntityInterface $entity,
     string $field_name,
     int $mode,
-    int $comments_per_page = 0,
-    int $pager_id = 0,
-    array $items = []
+    int $comments_per_page,
+    int $pager_id,
+    string $order,
+    int $limit
   ): array {
-    $items += [
+    $items = [
       'field_name' => $field_name,
-      'formatter' => $formatter->getBaseId(),
+      'formatter' => $formatter,
+      'order' => $order,
+      'limit' => $limit,
     ];
 
     return parent::loadThread(

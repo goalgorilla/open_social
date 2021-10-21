@@ -2,13 +2,11 @@
 
 namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
-use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterInterface;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterBase;
 
 /**
  * Provides a post comment formatter.
@@ -25,7 +23,7 @@ use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterInte
  *   }
  * )
  */
-class CommentPostFormatter extends CommentDefaultFormatter implements SocialCommentFormatterInterface {
+class CommentPostFormatter extends SocialCommentFormatterBase {
 
   /**
    * {@inheritdoc}
@@ -41,8 +39,7 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = [];
-    $output = [];
+    $elements = $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
@@ -51,38 +48,43 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if (
+      $status != CommentItemInterface::HIDDEN &&
+      empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
-      !in_array($this->viewMode, ['search_result', 'search_index'])) {
+      !in_array($this->viewMode, ['search_result', 'search_index'])
+    ) {
       $comment_settings = $this->getFieldSettings();
-
-      $comment_count = $entity->get($field_name)->comment_count;
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in
       // $entity->get($field_name)->comment_count, but unpublished comments
       // should display if the user is an administrator.
       $elements['#cache']['contexts'][] = 'user.permissions';
-      if ($this->currentUser->hasPermission('access comments') || $this->currentUser->hasPermission('administer comments')) {
+
+      if (
+        $this->currentUser->hasPermission('access comments') ||
+        $this->currentUser->hasPermission('administer comments')
+      ) {
         $output['comments'] = [];
 
-        if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
-          /** @var \Drupal\social_comment\SocialCommentStorageInterface $storage */
-          $storage = $this->storage;
+        $comment_count = $entity->get($field_name)->comment_count;
 
-          $comments = $storage->loadFormatterThread(
-            $this,
+        if (
+          $comment_count ||
+          $this->currentUser->hasPermission('administer comments')
+        ) {
+          $comments = $this->storage->loadFormatterThread(
+            $this->getBaseId(),
             $entity,
             $field_name,
             $comment_settings['default_mode'],
             0,
             0,
-            [
-              'order' => $this->getSetting('order'),
-              'limit' => $comments_per_page,
-            ],
+            $this->getSetting('order'),
+            $comments_per_page,
           );
 
           if ($comments) {
@@ -120,7 +122,11 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
 
       // Append comment form if the comments are open and the form is set to
       // display below the entity. Do not show the form for the print view mode.
-      if ($status == CommentItemInterface::OPEN && $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW && $this->viewMode != 'print') {
+      if (
+        $status == CommentItemInterface::OPEN &&
+        $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW &&
+        $this->viewMode !== 'print'
+      ) {
         // Only show the add comment form if the user has permission.
         $elements['#cache']['contexts'][] = 'user';
         $add_comment_form = FALSE;
@@ -143,6 +149,7 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
         elseif ($this->currentUser->hasPermission('post comments')) {
           $add_comment_form = TRUE;
         }
+
         if ($add_comment_form) {
           $output['comment_form'] = [
             '#lazy_builder' => ['comment.lazy_builders:renderForm', [
@@ -174,6 +181,7 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = [];
+
     $element['num_comments'] = [
       '#type' => 'number',
       '#min' => 0,
@@ -181,17 +189,18 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
     ];
-    $orders = [
-      'ASC' => $this->t('Oldest first'),
-      'DESC' => $this->t('Newest first'),
-    ];
+
     $element['order'] = [
       '#type' => 'select',
       '#title' => $this->t('Order'),
       '#description' => $this->t('Select the order used to show the list of comments.'),
       '#default_value' => $this->getSetting('order'),
-      '#options' => $orders,
+      '#options' => [
+        'ASC' => $this->t('Oldest first'),
+        'DESC' => $this->t('Newest first'),
+      ],
     ];
+
     return $element;
   }
 
@@ -200,26 +209,6 @@ class CommentPostFormatter extends CommentDefaultFormatter implements SocialComm
    */
   public function settingsSummary() {
     return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function alterQuery(SelectInterface $query, array $items = []): void {
-    if (isset($items['order'])) {
-      $order_by = &$query->getOrderBy();
-
-      foreach (['c.cid', 'torder'] as $field) {
-        if (isset($order_by[$field]) && $order_by[$field] !== $items['order']) {
-          $order_by[$field] = $items['order'];
-          break;
-        }
-      }
-    }
-
-    if (isset($items['limit'])) {
-      $query->range(0, $items['limit']);
-    }
   }
 
 }

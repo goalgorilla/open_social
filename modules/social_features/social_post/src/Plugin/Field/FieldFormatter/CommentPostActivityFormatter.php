@@ -24,12 +24,12 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function alterQuery(SelectInterface $query, array $items = []): void {
-    if (isset($items['order'])) {
-      $items['order'] = 'ASC';
-    }
-
-    parent::alterQuery($query, $items);
+  public static function alterQuery(
+    SelectInterface $query,
+    int $limit,
+    string $order = 'ASC'
+  ): void {
+    parent::alterQuery($query, $limit);
   }
 
 }

@@ -82,12 +82,10 @@ function social_comment_query_comment_filter_alter(AlterableInterface $query): v
     if ($manager->hasDefinition($items['formatter'])) {
       $definition = $manager->getDefinition($items['formatter']);
 
-      unset($items['field_name'], $items['formatter']);
-
       /** @var callable $callback */
       $callback = [$definition['class'], 'alterQuery'];
 
-      call_user_func($callback, $query, $items);
+      call_user_func($callback, $query, $items['order'], $items['limit']);
     }
   }
 
