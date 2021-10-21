@@ -25,7 +25,7 @@ use Drupal\social_comment\SocialCommentViewBuilder;
 /**
  * Implements hook_entity_type_alter().
  */
-function social_comment_entity_type_alter(array &$entity_types) {
+function social_comment_entity_type_alter(array &$entity_types): void {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (!isset($entity_types['comment'])) {
     return;
@@ -298,6 +298,18 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
         break;
       }
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_comment_preprocess_field(array &$variables): void {
+  $element = $variables['element'];
+
+  if ($element['#formatter'] === 'comment_node') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
   }
 }
 
