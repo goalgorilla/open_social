@@ -1,16 +1,16 @@
 @api @group @DS-4357 @stability @stability-3 @group-edit-content-in-group
 Feature: Move content after creation
   Benefit: Have full control over where I place my content
-  Role: As a LU+
+  Role: As a Verified+
   Goal/desire: Being able to move content during and after creation
 
   Scenario: Successfully add new content with the group selector
 
     Given users:
-      | name  | pass | mail              | status | roles         |
-      | harry | 1234 | harry@example.com | 1      |               |
-      | sally | 1234 | sally@example.com | 1      |               |
-      | smith | 1234 | sm@example.com    | 1      |  sitemanager  |
+      | name  | pass | mail              | status | roles       |
+      | harry | 1234 | harry@example.com | 1      | verified    |
+      | sally | 1234 | sally@example.com | 1      | verified    |
+      | smith | 1234 | sm@example.com    | 1      | sitemanager |
     Given groups:
       | title      | description    | author | type         | language |
       | Motorboats | Vroem vroem..  | sally  | open_group   | en       |
@@ -94,4 +94,3 @@ Feature: Move content after creation
     # no way to create message after "group content" deletion (removing node from a group).
     Then I should not see "harry created a topic"
     And I should see "I love this sport"
-

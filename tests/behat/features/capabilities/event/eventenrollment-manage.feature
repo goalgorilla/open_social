@@ -1,16 +1,16 @@
 @api @event @eventenrollment @stability @perfect @GPI-10 @profile @stability-2 @enrollment-manage
 Feature: Manage event enrollment
   Benefit: In order to attend an Event
-  Role: LU
+  Role: As a Verified
   Goal/desire: I want to manage event enrollment
 
-  @LU
+  @verified
   Scenario: Successfully manage enrollment
     Given users:
       | name            | pass            | mail                        | status | roles        |
       | event_creator   | event_creator   | event_creator@example.com   | 1      | sitemanager  |
-      | event_organiser | event_organiser | event_organiser@example.com | 1      |              |
-      | event_enrollee  | event_enrollee  | event_enrollee@example.com  | 1      |              |
+      | event_organiser | event_organiser | event_organiser@example.com | 1      | verified     |
+      | event_enrollee  | event_enrollee  | event_enrollee@example.com  | 1      | verified     |
     When I am logged in as "event_creator"
     Given event content:
       | title           | field_event_date | field_event_date_end | status | field_content_visibility | alias         |
