@@ -427,11 +427,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Load each action and check the access.
     foreach ($bulkOptions as $id => $name) {
-      // Create plugin instance.
-      $action = $this->entityTypeManager->getStorage('action')->load($id);
+      /** @var \Drupal\Core\Action\ActionInterface $action */
       $action = $this->actionManager->createInstance($id);
 
       // Check the access.
+      /** @var bool $access */
       $access = $action->access($eventEnrollment, $this->currentUser);
       if (!$access) {
         unset($bulkOptions[$id]);
