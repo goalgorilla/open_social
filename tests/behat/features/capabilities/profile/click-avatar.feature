@@ -1,14 +1,14 @@
 @api @DS-2936 @click-avatar
   Feature: I want to visit another profile by clicking on their avatar
     Benefit: Better interaction upon viewing other's profiles
-    Role: LU
+    Role: As a Verified
     Goal/desire: I want to visit another profile by clicking on their avatar
 
   Scenario: Click an avatar from the stream, on an activity item, a node and a comment
     Given users:
-      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
-      | user_1   | user_1@example.com | 1      | Albert                   | Einstein                |
-      | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  |
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user_1   | user_1@example.com | 1      | Albert                   | Einstein                | verified |
+      | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  | verified |
     And I am logged in as "user_1"
     And I am on the homepage
 

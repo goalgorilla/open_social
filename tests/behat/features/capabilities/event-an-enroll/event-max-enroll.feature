@@ -1,10 +1,10 @@
 @api @javascript @event @eventenrollment @stability @perfect @TB-1764 @profile @stability-3 @event-max-enroll
 Feature: Limitation event enrollments
   Benefit: In order to attend an Event
-  Role: LU
+  Role: As a Verified
   Goal/desire: I want to limit event enrollments
 
-  @LU
+  @verified
   Scenario: Successfully limited event enrollments
     Given I enable the module "social_event_max_enroll"
     When I am logged in as a user with the "sitemanager" role
@@ -38,9 +38,9 @@ Feature: Limitation event enrollments
     And I should see "1 people have enrolled (1 spot left)"
 
     Given users:
-      | name              | mail                     | status |
-      | First Behat User  | behat_user_1@example.com | 1      |
-      | Second Behat User | behat_user_2@example.com | 1      |
+      | name              | mail                     | status | roles    |
+      | First Behat User  | behat_user_1@example.com | 1      | verified |
+      | Second Behat User | behat_user_2@example.com | 1      | verified |
     When I am logged in as "First Behat User"
     And I click "All Upcoming events"
     And I click "My Behat Event"
