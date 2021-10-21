@@ -8,8 +8,8 @@ Feature: Create Landing Page and add Featured Content section with user profile
 
     Given I enable the module "social_featured_content"
     And users:
-      | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name |
-      | user_profile_1 | user_profile_1@example.localhost | 1      | Open teaser profile                   |                     |                         |
+      | name           | mail                             | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name | roles    |
+      | user_profile_1 | user_profile_1@example.localhost | 1      | Open teaser profile      |                         |                         | verified |
 
     # Create Landing Page featured content section with profiles.
     Given I am logged in as an "contentmanager"

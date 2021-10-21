@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\social_user\SocialUserSearchContentBlockAlter;
 
@@ -318,6 +319,20 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 
   $form['timezone']['#title'] = '';
+
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  if ($form_object->getEntity()->isNew()) {
+    // Special handling for the inevitable "Verified user" role in case when
+    // "Verified immediately" setting is enabled.
+    $config = \Drupal::config('social_user.settings');
+    if ($config->get('verified_immediately')) {
+      $form['account']['roles']['verified'] = [
+        '#default_value' => TRUE,
+        '#disabled' => TRUE,
+      ];
+    }
+  }
 }
 
 /**
@@ -663,6 +678,14 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
     '#weight' => 20,
   ];
 
+  $form['registration_cancellation']['verified_immediately'] = [
+    '#type' => 'checkbox',
+    '#title' => new TranslatableMarkup('Registered users are verified immediately'),
+    '#description' => new TranslatableMarkup('New registered users get the "verified user & authenticated" role when they are registered. With this setting disabled, new registered users get the "authenticated" role when they are registered.'),
+    '#default_value' => $config->get('verified_immediately'),
+    '#weight' => -10,
+  ];
+
   $form['#submit'][] = 'social_user_form_user_admin_settings_submit';
 }
 
@@ -674,6 +697,7 @@ function social_user_form_user_admin_settings_submit($form, FormStateInterface $
     ->getEditable('social_user.settings');
   $config->set('signup_help', $form_state->getValue("signup_help"));
   $config->set('login_help', $form_state->getValue("login_help"));
+  $config->set('verified_immediately', $form_state->getValue("verified_immediately"));
   $config->save();
 }
 
@@ -799,5 +823,22 @@ function social_user_module_implements_alter(&$implementations, $hook) {
     $social_user = $implementations['social_user'];
     unset($implementations['social_user']);
     $implementations['social_user'] = $social_user;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_user_user_insert(UserInterface $user): void {
+  // If site setting "Registered users are verified immediately" is enabled:
+  // new registered users get the "verified user & authenticated" role when they
+  // are registered.
+  $config = \Drupal::config('social_user.settings');
+  $verified_immediately = $config->get('verified_immediately');
+  if ($verified_immediately) {
+    $user->addRole('verified');
+    $user->save();
   }
 }
