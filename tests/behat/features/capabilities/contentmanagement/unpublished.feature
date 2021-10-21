@@ -1,11 +1,11 @@
 @api @topic @stability @perfect @critical @DS-486 @stability-3 @unpublished
 Feature: Un/publish a node
   Benefit: In order to make drafts
-  Role: as a LU
+  Role: as a Verified
   Goal/desire: I want to un/publish
 
   Scenario: Successfully create unpublished topic
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
       And I am on "node/add/topic"
     When I fill in "Title" with "This is a test topic"
       And I fill in the following:
@@ -35,3 +35,10 @@ Feature: Un/publish a node
       And I click "Topics"
       Then I should see "This is a test topic"
       And I should see "Discussion"
+
+    Given I disable that the registered users to be verified immediately
+      And I am logged in as an "authenticated user"
+      And I am on "node/add/topic"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately

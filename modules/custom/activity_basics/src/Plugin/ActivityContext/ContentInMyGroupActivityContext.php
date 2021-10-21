@@ -28,7 +28,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected GroupMuteNotify $groupMuteNotify;
+  protected $groupMuteNotify;
 
   /**
    * Constructs a GroupContentInMyGroupActivityContext object.

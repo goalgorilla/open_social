@@ -8,7 +8,7 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
-use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_update_dependencies().
@@ -28,59 +28,39 @@ function social_search_update_dependencies() {
  * Perform actions related to the installation of social_search.
  */
 function social_search_install() {
-
-  // Set some default permissions.
-  _social_search_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_search_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_search_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_search_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [
-    'access content search',
-  ];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'access users search',
-    'access group search',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'access content search',
+      'access group search',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'access content search',
+      'access group search',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access users search',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access users search',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access users search',
+    ]
+  );
 }
 
 /**
@@ -260,6 +240,20 @@ function social_search_update_10301() {
  * Update the Search Groups "type" filter.
  */
 function social_search_update_10302() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add the processor "Skip not Verified users" to indexes.
+ */
+function social_search_update_11001(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

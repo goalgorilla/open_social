@@ -1,14 +1,14 @@
-@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053 @stability-3 @lu-homepage-my-events
+@api @event @stability @perfect @my @upcoming @profile @block @verified @critical @DS-1053 @stability-3 @lu-homepage-my-events
 Feature: See my upcoming events
   Benefit: In order to know which events I signed up for
-  Role: LU
+  Role: As a Verified
   Goal/desire: I want to see an overview of upcoming events on my profile
 
-  Scenario: Successfully show my upcoming events as a LU
+  Scenario: Successfully show my upcoming events as a Verified
     Given I am on the homepage
     Then I should not see "My upcoming events"
 
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     Then I should see "My upcoming events"
     And I should see "No upcoming events"
 

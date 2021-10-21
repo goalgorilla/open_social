@@ -17,6 +17,7 @@ use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -25,8 +26,45 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_profile.
  */
 function social_profile_install() {
-  // Set some default permissions.
-  _social_profile_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'add own profile profile',
+      'update own profile profile',
+      'view own profile profile',
+      'view profile',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'view any profile profile',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'view any profile profile',
+      'add any profile profile',
+      'update any profile profile',
+      'edit profile tags',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'view any profile profile',
+      'add any profile profile',
+      'update any profile profile',
+      'edit profile tags',
+      'delete terms in profile_tag',
+      'edit terms in profile_tag',
+      'administer profile settings',
+      'view profile email',
+      'view profile language',
+    ]
+  );
   // Add some links.
   _social_profile_create_menu_links();
   // Add default profile image.
@@ -67,67 +105,6 @@ function _social_profile_add_default_profile_image() {
 
   $field_image_config->set('settings.default_image', $default_image)->save(TRUE);
   drupal_flush_all_caches();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_profile_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_profile_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_profile_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'add own profile profile',
-    'update own profile profile',
-    'view any profile profile',
-    'view own profile profile',
-    'view profile',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'add any profile profile',
-    'update any profile profile',
-    'edit profile tags',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'delete terms in profile_tag',
-    'edit terms in profile_tag',
-    'administer profile settings',
-    'view profile email',
-    'view profile language',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**
@@ -342,6 +319,12 @@ function social_profile_update_dependencies() {
   $dependencies['social_profile'][8808] = [
     'social_core' => 8805,
   ];
+  // Run the update hook with the "Grant Profile permissions for the
+  // Authenticated user role" only after an update hook "Reassign permissions
+  // between roles" in social_core.
+  $dependencies['social_profile'][11001] = [
+    'social_core' => 11002,
+  ];
 
   return $dependencies;
 }
@@ -538,6 +521,36 @@ function social_profile_update_10301() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_profile', 'social_profile_update_10301');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Grant Profile permissions for the Authenticated user role.
+ */
+function social_profile_update_11001(): void {
+  // Authenticated user role permissions.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'add own profile profile',
+      'update own profile profile',
+      'view own profile profile',
+      'view profile',
+    ]
+  );
+}
+
+/**
+ * Add roles filter to the Newest users views.
+ */
+function social_profile_update_11002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
