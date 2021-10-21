@@ -1,14 +1,14 @@
 @api @group @DS-677 @DS-642 @DS-4211 @stability @stability-3 @post-group
 Feature: Create Post on Group
   Benefit: In order to share knowledge with people in group
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Posts
 
   Scenario: Successfully create, edit and delete post in group
     Given users:
-      | name           | mail                     | status |
-      | Group User One | group_user_1@example.com | 1      |
-      | Group User Two | group_user_2@example.com | 1      |
+      | name           | mail                     | status | roles    |
+      | Group User One | group_user_1@example.com | 1      | verified |
+      | Group User Two | group_user_2@example.com | 1      | verified |
     And I am logged in as "Group User One"
     And I am on "group/add"
     And I press "Continue"
@@ -18,9 +18,9 @@ Feature: Create Post on Group
     And I select "NL" from "Country"
     And I wait for AJAX to finish
     And I fill in the following:
-      | City | Enschede |
+      | City           | Enschede          |
       | Street address | Oldenzaalsestraat |
-      | Postal code | 7514DR |
+      | Postal code    | 7514DR            |
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I should see "GG HQ"
