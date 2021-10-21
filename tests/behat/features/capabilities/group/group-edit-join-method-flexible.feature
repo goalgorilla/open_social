@@ -6,8 +6,8 @@ Feature: Edit my group as a group manager
 
   Scenario: Successfully change join method of my group as a group manager and still be able to add members
     Given users:
-      | name              | mail             | field_profile_organization | status |
-      | Group Manager     | gm_1@example.com | GoalGorilla                | 1      |
+      | name              | mail             | field_profile_organization | status | roles    |
+      | Group Manager     | gm_1@example.com | GoalGorilla                | 1      | verified |
 
     And I am logged in as "Group Manager"
     And I am on "group/add"

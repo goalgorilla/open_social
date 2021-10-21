@@ -16,56 +16,32 @@ use Drupal\Core\Config\FileStorage;
  * Implements hook_install().
  */
 function social_group_flexible_group_install() {
-  // Set some default permissions.
-  _social_group_flexible_group_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'create flexible_group group',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create flexible_group group',
+      'translate flexible_group group',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create flexible_group group',
+      'translate flexible_group group',
+    ]
+  );
 
   // Set module weight higher as the weight of the "Social Group" module because
   // needs have the Views group type field which added via the "Social Group"
   // module.
   module_set_weight('social_group_flexible_group', 5);
-}
-
-/**
- * Function to set permissions.
- */
-function _social_group_flexible_group_set_permissions() {
-  $roles = \Drupal::entityQuery('user_role')
-    ->condition('id', 'administrator', '<>')
-    ->execute();
-
-  foreach ($roles as $role) {
-    $permissions = _social_group_flexible_group_get_permissions($role);
-    user_role_grant_permissions($role, $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_group_flexible_group_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'create flexible_group group',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'translate flexible_group group',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  return $permissions[$role] ?? [];
 }
 
 /**
