@@ -169,6 +169,13 @@ function social_private_message_thread_delete_redirect(array $form, FormStateInt
           }
         }
       }
+
+      // Invalidate the user's cache tags is not enough to clear the Inbox page
+      // cache, add private_message_thread_list tag additionally.
+      // @todo Remove this tag after found solution to keep working with the
+      //   user cache only.
+      $cache_tags[] = 'private_message_thread_list';
+
       \Drupal::service('cache_tags.invalidator')->invalidateTags($cache_tags);
     }
   }
