@@ -1,15 +1,15 @@
 @api @post @stability @perfect @critical @YANG-4860 @database @stability-3 @album @post-album
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Posts with photo's
 
   Scenario: Successfully create, edit and delete post
 
     Given I enable the module "social_album"
     Given users:
-      | name     | status | pass     |
-      | PostUser |      1 | PostUser |
+      | name     | status | pass     | roles    |
+      | PostUser |      1 | PostUser | verified |
     And I am logged in as "PostUser"
 
     When I attach the file "/files/opensocial.jpg" to hidden field "edit-field-post-image-0-upload"

@@ -7,7 +7,7 @@ Feature: Mute/Unmute group notifications
   Background:
     Given users:
       | name     | pass | mail                 | status | roles       |
-      | dude_1st | 1234 | dude_1st@example.com | 1      |             |
+      | dude_1st | 1234 | dude_1st@example.com | 1      | verified    |
       | dude_2nd | 1234 | dude_1st@example.com | 1      | sitemanager |
     Given groups:
       | title                | description            | author       | type           | language |
