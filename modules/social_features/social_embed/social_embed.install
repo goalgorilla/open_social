@@ -5,12 +5,16 @@
  * Install, update and uninstall functions for the social_embed module.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
 /**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_embed.
  */
-function social_embed_install() {
+function social_embed_install($is_syncing) {
   // Create the social_embed icon.
   _social_embed_create_media_button();
   // Grant the default permissions for this feature.
@@ -26,6 +30,10 @@ function social_embed_install() {
       'administer social embed settings',
     ]
   );
+
+  if (!$is_syncing) {
+    social_embed_update_11003();
+  }
 }
 
 /**
@@ -46,7 +54,106 @@ function social_embed_update_10301() {
 /**
  * Add permissions for site manager to access embed consent settings form.
  */
-function social_embed_update_10302() {
+function social_embed_update_11001() {
   user_role_grant_permissions('authenticated', ['generate social embed content']);
   user_role_grant_permissions('sitemanager', ['administer social embed settings']);
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function social_embed_update_11002(&$sandbox) {
+  $embedded_content_consent_storage = FieldStorageConfig::create(
+    [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'field_name' => 'field_user_embed_content_consent',
+      'entity_type' => 'user',
+      'type' => 'boolean',
+      'settings' => [],
+      'module' => 'core',
+      'locked' => FALSE,
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ]);
+  $embedded_content_consent_storage->save();
+
+  FieldConfig::create([
+    'langcode' => 'en',
+    'status' => TRUE,
+    'field_name' => 'field_user_embed_content_consent',
+    'entity_type' => 'user',
+    'bundle' => 'user',
+    'label' => new TranslatableMarkup('Enforce consent for all embedded content'),
+    'description' => new TranslatableMarkup('This options enables you to provide consent for embedded content before it is displayed in your stream. For example, YouTube videos.'),
+    'required' => FALSE,
+    'translatable' => FALSE,
+    'default_value' =>
+      [
+        0 =>
+          [
+            'value' => 0,
+          ],
+      ],
+    'default_value_callback' => '',
+    'settings' =>
+      [
+        'on_label' => 'On',
+        'off_label' => 'Off',
+      ],
+    'field_type' => 'boolean',
+    'field_storage' => $embedded_content_consent_storage,
+  ])->save();
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function social_embed_update_11003() {
+  // Add the new field group.
+  $group_remote_content_settings = [
+    'group_remote_content_settings' => [
+      'children' => [
+        0 => 'field_user_embed_content_consent',
+      ],
+      'parent_name' => '',
+      'weight' => 2,
+      'format_type' => 'fieldset',
+      'region' => 'hidden',
+      'format_settings' => [
+        'show_empty_fields' => FALSE,
+        'id' => '',
+        'classes' => '',
+        'description' => '',
+        'required_fields' => TRUE,
+      ],
+      'label' => 'Remote content settings',
+    ],
+  ];
+
+  // Add the new field to entity form view.
+  $field_user_embed_content_consent = [
+    'field_user_embed_content_consent' => [
+      'type' => 'boolean_checkbox',
+      'weight' => 3,
+      'region' => 'content',
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+      'third_party_settings' => [],
+    ],
+  ];
+
+  if ($user_config = \Drupal::configFactory()->getEditable('core.entity_form_display.user.user.default')) {
+    if (is_array($existing_field_groups = $user_config->get('third_party_settings.field_group'))) {
+      $user_config->set('third_party_settings.field_group', array_merge($existing_field_groups, $group_remote_content_settings));
+    }
+    if (is_array($existing_content = $user_config->get('content'))) {
+      $user_config->set('content', array_merge($existing_content, $field_user_embed_content_consent));
+    }
+    $user_config->save();
+  }
 }
