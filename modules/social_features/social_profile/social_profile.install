@@ -81,7 +81,7 @@ function social_profile_install() {
 
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
-    'authenticated',
+    RoleInterface::AUTHENTICATED_ID,
     [
       'add own profile profile',
       'update own profile profile',
@@ -111,13 +111,57 @@ function social_profile_install() {
       'view profile language',
     ]
   );
+  social_profile_setup_per_profile_field_permissions();
 
   // Create a profile for user 1.
   Profile::create([
     'type' => ProfileType::load('profile')->id(),
     'uid' => 1,
   ])->save();
+}
 
+/**
+ * Set the default field permissions for profile fields.
+ *
+ * Iterates over all fields in the profile and allows users to edit the value
+ * and visibility of those fields. Also ensures site managers can always edit
+ * the values and can always view the fields.
+ */
+function social_profile_setup_per_profile_field_permissions() : void {
+  /** @var \Drupal\social_profile\FieldManager $field_manager */
+  $field_manager = \Drupal::service('social_profile.field_manager');
+  $fields = $field_manager->getManagedProfileFieldDefinitions();
+
+  /** @var \Drupal\user\RoleInterface $authenticated_role */
+  $authenticated_role = Role::load(RoleInterface::AUTHENTICATED_ID);
+  /** @var \Drupal\user\RoleInterface|NULL $sitemanager_role */
+  $sitemanager_role = Role::load('sitemanager');
+  if ($sitemanager_role === NULL) {
+    throw new RuntimeException("sitemanager role is not installed.");
+  }
+
+  foreach ($fields as $field_name => $field_config) {
+    $visibility_field_name = $visibility_field_name = $field_manager::getVisibilityFieldName($field_config);
+    // By default users can change the visibility of all the fields on their
+    // profile.
+    $authenticated_role->grantPermission("edit own ${visibility_field_name} profile profile field");
+
+    // By default users can change all their own profile fields.
+    $authenticated_role->grantPermission("edit own ${field_name} profile profile field");
+
+    // By default site managers can view all private fields.
+    $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
+
+    // By default site managers can edit any profile field.
+    $sitemanager_role->grantPermission("edit any ${field_name} profile profile field");
+  }
+
+  // By default authenticated users can view other people's community profile
+  // fields. The site manager can change this to require a role instead.
+  $authenticated_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields");
+
+  $authenticated_role->save();
+  $sitemanager_role->save();
 }
 
 /**
