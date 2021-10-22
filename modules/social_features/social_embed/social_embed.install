@@ -60,7 +60,7 @@ function social_embed_update_11001() {
 }
 
 /**
- * Implements hook_update_N().
+ * Adds field_user_embed_content_consent field to user entity.
  */
 function social_embed_update_11002(&$sandbox) {
   $embedded_content_consent_storage = FieldStorageConfig::create(
@@ -110,7 +110,12 @@ function social_embed_update_11002(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
+ * Add new fieldgroup and field to user edit form.
+ *
+ * 1. Fieldgroup => group_remote_content_settings
+ * 2. Field => field_user_embed_content_consent.
+ *
+ * This enables the user to toggle the option for embedded content settings.
  */
 function social_embed_update_11003() {
   // Add the new field group.

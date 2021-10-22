@@ -6,13 +6,11 @@
  */
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\File\FileSystemInterface;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
-use Drupal\user\Entity\User;
 
 /**
  * Function that creates an embed button with a custom icon.
@@ -50,18 +48,25 @@ function _social_embed_create_media_button() {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_embed_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add options to enable embedded content consent settings for the current
-  // user.
   $current_user = \Drupal::currentUser();
-  $user = NULL;
-  if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')
-    && ($form_state->getFormObject() instanceof EntityForm)
-    && ($user = $form_state->getFormObject()->getEntity() && $user instanceof User)
-    && ($user->hasField('field_user_embed_content_consent'))
-    && ($user->id() == $current_user->id())
-  ) {
-    /** @var \Drupal\user\Entity\User $user */
-    $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';
+  /** @var \Drupal\user\Entity\User $user */
+  $user = $form_state->getFormObject()->getEntity();
+  if ($user->hasField('field_user_embed_content_consent')) {
+    // We need to invalidate few tags if the user toggles
+    // field_user_embed_content_consent value.
+    // @see _social_embed_form_user_form_submit().
+    if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')) {
+      /** @var \Drupal\user\Entity\User $user */
+      $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';
+    }
+    else {
+      // If the site manager has not enabled this feature on the platform
+      // simply hide the field from the user on settings page.
+      $form['field_user_embed_content_consent'] = [
+        '#disable' => TRUE,
+      ];
+      unset($form['#fieldgroups']['group_remote_content_settings']);
+    }
   }
 }
 
