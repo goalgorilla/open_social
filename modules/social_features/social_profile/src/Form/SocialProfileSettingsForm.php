@@ -168,10 +168,20 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   private function buildFieldsFieldset() : array {
     $fields = [
       '#type' => 'fieldset',
-      '#title' => t('Profile Fields'),
-      '#description' => t('Please choose which profile fields can be displayed in user profiles. Site managers can always see all the filled-in profile information.'),
+      '#title' => new TranslatableMarkup('Profile Fields'),
       '#open' => TRUE,
       '#tree' => TRUE,
+    ];
+
+    // We use a separate description here because the Gin theme only renders the
+    // description for the fieldset at the bottom which is not discoverable for
+    // users.
+    $fields['description'] = [
+      '#type' => 'inline_template',
+      '#template' => '<div class="form-item__description">{{ description }}</div>',
+      '#context' => [
+        'description' => new TranslatableMarkup("This form allows you to control the availability and behaviour of profile fields in your community. <em class='placeholder'>Public</em> visibility make fields visible to anonymous users. <em class='placeholder'>Community</em> visibility fields are only visible to logged in users. <em class='placeholder'>Private</em> fields are visible only to the user themselves. When users are allowed to edit the visibility the field will be made available on their account settings page. Roles selected under <em class='placeholder'>Always show for</em> will be able to view fields from a user's profile regardless of the visibility. Disabling a field will remove it from all places on the platform, data that users have filled in previously will not be lost."),
+      ],
     ];
 
     $fields['list'] = [
@@ -265,6 +275,12 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
         // because the #states API uses closest on a class that isn't added
         // for radios and checkboxes.
         '#type' => 'container',
+        'user' => [
+          '#type' => 'checkbox',
+          '#title' => new TranslatableMarkup('User can edit'),
+          '#default_value' => $roles['authenticated']->hasPermission("edit own ${visibility_field_name} profile profile field"),
+          '#states' => $disabled_states,
+        ],
         'default' => [
           '#type' => 'radios',
           '#options' => [
@@ -273,12 +289,6 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
             SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE => new TranslatableMarkup('Private'),
           ],
           '#default_value' => $visibility_field->getDefaultValueLiteral()[0]['value'] ?? SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE,
-          '#states' => $disabled_states,
-        ],
-        'user' => [
-          '#type' => 'checkbox',
-          '#title' => new TranslatableMarkup('User can change'),
-          '#default_value' => $roles['authenticated']->hasPermission("edit own ${visibility_field_name} profile profile field"),
           '#states' => $disabled_states,
         ],
       ];
