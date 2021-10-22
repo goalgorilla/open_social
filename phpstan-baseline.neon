@@ -16642,7 +16642,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
@@ -16762,6 +16762,11 @@ parameters:
 
 		-
 			message: "#^Function social_private_message_private_message_thread_insert\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
+			message: "#^Function social_private_message_private_message_view_alter\\(\\) has parameter \\$viewMode with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
@@ -16901,11 +16906,6 @@ parameters:
 			path: modules/social_features/social_private_message/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\PrivateMessageMailer\\:\\:send\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/PrivateMessageMailer.php
-
-		-
 			message: "#^Cannot call method fetchAllKeyed\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|int\\|string\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
@@ -16917,16 +16917,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:deleteUserDataThreadInfo\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has parameter \\$uid with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
 
