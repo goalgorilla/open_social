@@ -222,7 +222,7 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   }
 
   FieldConfig::create([
-    'label' => new TranslatableMarkup("@field_name Visibility", ['@field_name' => $field_config->label()]),
+    'label' => new TranslatableMarkup("@field_name visibility", ['@field_name' => $field_config->label()]),
     'field_name' => $visibility_field_name,
     'entity_type' => $field_config->getTargetEntityTypeId(),
     'bundle' => $bundle,
@@ -431,7 +431,7 @@ function social_profile_user_form_profiles_field_alter(array &$element, FormStat
     // Add a useful title and explainer text to our visibility settings.
     case 'visibility':
       $element['#type'] = 'fieldset';
-      $element['#field_title'] = new TranslatableMarkup("Visibility Settings");
+      $element['#field_title'] = new TranslatableMarkup("Visibility settings");
       $element['#description'] = new TranslatableMarkup("Below you can configure the visibility of your profile fields. Visibility for some fields may be enforced on a site-wide level in which case they will not show up here.");
       $element['#after_build'][] = 'social_profile_display_visibility_fields_horizontal';
       break;
