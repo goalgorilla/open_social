@@ -6,7 +6,6 @@
  */
 
 use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
-use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -59,8 +58,11 @@ function social_comment_query_comment_filter_alter(AlterableInterface $query): v
   $data = $query->getMetaData('field_name');
   $valid = TRUE;
 
+  /** @var \Drupal\Component\Serialization\SerializationInterface $serialization */
+  $serialization = \Drupal::service('serialization.json');
+
   try {
-    $items = Json::decode($data);
+    $items = $serialization->decode($data);
   }
   catch (InvalidDataTypeException $exception) {
     $valid = FALSE;
@@ -85,7 +87,7 @@ function social_comment_query_comment_filter_alter(AlterableInterface $query): v
       /** @var callable $callback */
       $callback = [$definition['class'], 'alterQuery'];
 
-      call_user_func($callback, $query, $items['order'], $items['limit']);
+      call_user_func($callback, $query, $items['limit'], $items['order']);
     }
   }
 

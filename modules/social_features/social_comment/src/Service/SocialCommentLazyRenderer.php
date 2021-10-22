@@ -86,12 +86,11 @@ class SocialCommentLazyRenderer implements SocialCommentLazyRendererInterface {
       $method = 'loadThread';
     }
 
-    if (!($definition = $this->entityTypeManager->getDefinition('comment'))) {
-      return [];
-    }
-
     /** @var callable $callback */
-    $callback = [$definition->getStorageClass(), $method];
+    $callback = [
+      $this->entityTypeManager->getStorage('comment'),
+      $method,
+    ];
 
     /** @var \Drupal\comment\CommentInterface[] $comments */
     $comments = call_user_func_array($callback, $arguments);

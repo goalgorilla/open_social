@@ -3,8 +3,10 @@
 namespace Drupal\social_comment;
 
 use Drupal\comment\CommentStorage;
-use Drupal\Component\Serialization\Json;
+use Drupal\Component\Serialization\SerializationInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the storage handler class for comments.
@@ -13,6 +15,25 @@ use Drupal\Core\Entity\EntityInterface;
  * adding required special handling for comment entities.
  */
 class SocialCommentStorage extends CommentStorage implements SocialCommentStorageInterface {
+
+  /**
+   * The JSON serialization.
+   */
+  private SerializationInterface $serialization;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(
+    ContainerInterface $container,
+    EntityTypeInterface $entity_info
+  ) {
+    $instance = parent::createInstance($container, $entity_info);
+
+    $instance->serialization = $container->get('serialization.json');
+
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -36,7 +57,7 @@ class SocialCommentStorage extends CommentStorage implements SocialCommentStorag
 
     return parent::loadThread(
       $entity,
-      Json::encode($items),
+      $this->serialization->encode($items),
       $mode,
       $comments_per_page,
       $pager_id,
