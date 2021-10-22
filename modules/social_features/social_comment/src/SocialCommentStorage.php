@@ -55,7 +55,7 @@ class SocialCommentStorage extends CommentStorage implements SocialCommentStorag
       'limit' => $limit,
     ];
 
-    return parent::loadThread(
+    return $this->loadThread(
       $entity,
       $this->serialization->encode($items),
       $mode,
