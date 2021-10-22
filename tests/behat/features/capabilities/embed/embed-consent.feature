@@ -53,3 +53,7 @@ Feature: Embed
     And I am on the homepage
     And I click "Embed consent"
     And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+
+    # Check the content as AN again
+    And I open the "topic" node with title "Embed consent"
+    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
