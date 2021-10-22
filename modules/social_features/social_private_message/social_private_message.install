@@ -45,8 +45,8 @@ function social_private_message_install() {
   \Drupal::getContainer()
     ->get('config.factory')
     ->getEditable('private_message.settings')
-    ->set('enable_email_notifications', FALSE)
-    ->set('send_by_default', FALSE)
+    ->set('enable_notifications', FALSE)
+    ->set('notify_by_default', FALSE)
     ->save();
 
   // Set module weight.
@@ -57,6 +57,11 @@ function social_private_message_install() {
   _social_private_message_set_private_message_default_view_settings();
   _social_private_message_set_private_message_inbox_view_settings();
   _social_private_message_set_private_message_thread_default_view_settings();
+
+  // Disable the default message template provided by private_message.
+  \Drupal::configFactory()->getEditable('message.template.private_message_notification')
+    ->set('status', FALSE)
+    ->save();
 }
 
 /**
@@ -295,4 +300,46 @@ function social_private_message_update_10301() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Install the message_notify module.
+ */
+function social_private_message_update_11002(): void {
+  \Drupal::service('module_installer')->install(['message_notify']);
+}
+
+/**
+ * Update the Inbox view configurations.
+ */
+function social_private_message_update_11003(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_private_message', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Disable the default message template provided by private_message.
+ */
+function social_private_message_update_11004(): void {
+  \Drupal::configFactory()->getEditable('message.template.private_message_notification')
+    ->set('status', FALSE)
+    ->save();
+}
+
+/**
+ * Disable the email notification provided by private_message.
+ */
+function social_private_message_update_11005(): void {
+  \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('private_message.settings')
+    ->set('enable_notifications', FALSE)
+    ->set('notify_by_default', FALSE)
+    ->save();
 }
