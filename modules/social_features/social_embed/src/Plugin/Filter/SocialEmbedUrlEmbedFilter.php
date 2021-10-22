@@ -128,7 +128,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
             && !empty($info['code'])
             && (
               ($user instanceof User && $user->get('field_user_embed_content_consent')->getValue()[0]['value'])
-              || ($user === NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+              || ($user == NULL && $embed_settings->get('embed_consent_settings_anonymous'))
             )
           ) {
             // Replace URL with consent button.

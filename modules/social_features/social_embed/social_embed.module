@@ -55,10 +55,10 @@ function social_embed_form_user_form_alter(&$form, FormStateInterface $form_stat
   $current_user = \Drupal::currentUser();
   $user = NULL;
   if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')
-    && $form_state->getFormObject() instanceof EntityForm
+    && ($form_state->getFormObject() instanceof EntityForm)
     && ($user = $form_state->getFormObject()->getEntity() && $user instanceof User)
-    && $user->hasField('field_user_embed_content_consent')
-    && $user->id() == $current_user->id()
+    && ($user->hasField('field_user_embed_content_consent'))
+    && ($user->id() == $current_user->id())
   ) {
     /** @var \Drupal\user\Entity\User $user */
     $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';

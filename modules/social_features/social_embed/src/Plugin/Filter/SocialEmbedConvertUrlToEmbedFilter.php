@@ -188,12 +188,12 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
                   if ($info) {
                     /** @var \Drupal\user\Entity\User $user */
                     $user = \Drupal::currentUser()->isAnonymous() ? NULL : User::load(\Drupal::currentUser()->id());
-                    $embed_settings = $this->configFactory->get('social_embed.settings');
+                    $embed_settings = \Drupal::configFactory()->get('social_embed.settings');
                     if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')
                       && !empty($info['code'])
                       && (
                         ($user instanceof User && $user->get('field_user_embed_content_consent')->getValue()[0]['value'])
-                        || ($user === NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+                        || ($user == NULL && $embed_settings->get('embed_consent_settings_anonymous'))
                       )
                     ) {
                       // Replace URL with consent button.
