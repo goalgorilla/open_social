@@ -161,7 +161,7 @@ function social_profile_delete_visibility_field_storage_config_for(FieldStorageC
  */
 function social_profile_field_config_insert(FieldConfigInterface $field_config) : void {
   social_profile_ensure_associated_visibility_field_config($field_config);
-  social_profile_ensure_sitemanager_can_view_private_field($field_config);
+  social_profile_ensure_sitemanager_managed_field_permissions($field_config);
 }
 
 /**
@@ -284,14 +284,20 @@ function social_profile_delete_associated_visibility_field_config(FieldConfigInt
 }
 
 /**
- * Give the site manager the view private file permission.
+ * Ensure the permissions are correct for the site manager for managed fields.
+ *
+ * These are permissions that the site manager themselves can not give or take
+ * using the profile settings page. They can control all other permissions.
+ *
+ * Gives the site manager the view private file permission. Gives the site
+ * manager the edit any profile field permission.
  *
  * Only applies to fields that are managed by our visibility system.
  *
  * @param \Drupal\Core\Field\FieldConfigInterface $field_config
  *   The field config to set the permission for.
  */
-function social_profile_ensure_sitemanager_can_view_private_field(FieldConfigInterface $field_config) : void {
+function social_profile_ensure_sitemanager_managed_field_permissions(FieldConfigInterface $field_config) : void {
   // Ignore fields that opted out of being managed.
   if (!FieldManager::isOptedOutOfFieldAccessManagement($field_config)) {
     return;
@@ -304,8 +310,11 @@ function social_profile_ensure_sitemanager_can_view_private_field(FieldConfigInt
     return;
   }
 
+  $field_name = $field_config->getName();
+
   $sitemanager_role
-    ->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field_config->getName()} {$field_config->getTargetBundle()} {$field_config->getTargetEntityTypeId()} fields")
+    ->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} {$field_config->getTargetBundle()} {$field_config->getTargetEntityTypeId()} fields")
+    ->grantPermission("edit any ${field_name} profile profile field")
     ->save();
 }
 
