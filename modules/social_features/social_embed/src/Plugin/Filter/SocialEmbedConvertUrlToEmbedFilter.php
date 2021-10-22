@@ -193,7 +193,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
                       && !empty($info['code'])
                       && (
                         ($user instanceof User && !empty($user->get('field_user_embed_content_consent')->getValue()))
-                        || ($user == NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+                        || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_anonymous')))
                       )
                     ) {
                       // Replace URL with consent button.

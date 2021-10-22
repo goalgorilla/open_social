@@ -128,14 +128,14 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
             && !empty($info['code'])
             && (
               ($user instanceof User && !empty($user->get('field_user_embed_content_consent')->getValue()))
-              || ($user == NULL && $embed_settings->get('embed_consent_settings_anonymous'))
+              || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_anonymous')))
             )
           ) {
             // Replace URL with consent button.
             $url_output = $this->embedHelper->getPlaceholderMarkupForProvider($info['providerName'], $url);
           }
           else {
-            $url_output = $info['code'];
+            $url_output = $info['code'] ?? $info['url'];
           }
         }
         catch (\Exception $e) {
