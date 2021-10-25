@@ -2809,8 +2809,8 @@ function social_group_entity_display_build_alter(array &$build, array $context) 
   // For each Open Social group type we check if there are any
   // group details in the build array, if so unset it.
   // If it's not an OS group, people likely wanted to add it.
-  foreach ($os_groups as $key){
-    if (array_key_exists($key,  $build)) {
+  foreach ($os_groups as $key) {
+    if (array_key_exists($key, $build)) {
       unset($build[$key]);
     }
   }
@@ -2832,7 +2832,7 @@ function social_group_preprocess_page(array &$variables) {
     'social_group_gvbo.views_bulk_operations.confirm',
     'views_bulk_operations.confirm',
     'views_bulk_operations.execute_batch',
-    'social_group_gvbo.views_bulk_operations.execute_configurable'
+    'social_group_gvbo.views_bulk_operations.execute_configurable',
   ];
 
   // Make sure we do the expensive checks only after we see that there's
