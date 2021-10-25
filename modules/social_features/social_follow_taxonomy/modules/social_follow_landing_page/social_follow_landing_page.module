@@ -55,8 +55,9 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
             /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $parent_field */
             $parent_field = $term->get('parent');
             if (!$parent_field->isEmpty()) {
+              $parents = $parent_field->referencedEntities();
               /** @var \Drupal\taxonomy\TermInterface $parent */
-              $parent = $parent_field->referencedEntities();
+              $parent = reset($parents);
               $category = $parent->getName();
               // Use the name of parent term as id of the filter parameter.
               $parameter = social_tagging_to_machine_name($category);
