@@ -253,7 +253,7 @@ function social_group_preprocess_group(array &$variables) {
   $account = \Drupal::currentUser();
 
   // Prevent access to mute group notifications if a user is not a group member.
-  if (!$group->getMember($account)) {
+  if (!in_array($variables['view_mode'], ['statistic', 'hero']) || !$group->getMember($account)) {
     unset($variables['content']['flag_mute_group_notifications']);
   }
   // Set joined to true for teaser when current logged in
@@ -666,21 +666,27 @@ function social_group_allowed_join_method_description($key) {
 
   // Add explanatory descriptive text after the icon.
   switch ($key) {
-    case 'added':
-      $description = '<p><strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
-
     case 'direct':
-      $description = '<p><strong>' . t('Open to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_open"></use></svg></strong>';
+      $description .= '<strong>' . t('Open to join')->render() . '</strong>';
       $description .= ' - ' . t('users can join this group without approval.')->render();
       $description .= '</p>';
       break;
 
     case 'request':
-      $description = '<p><strong>' . t('Request to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_close"></use></svg></strong>';
+      $description .= '<strong>' . t('Request to join')->render() . '</strong>';
       $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'added':
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-invite"></use></svg></strong>';
+      $description .= '<strong>' . t('Invite only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
       $description .= '</p>';
       break;
   }

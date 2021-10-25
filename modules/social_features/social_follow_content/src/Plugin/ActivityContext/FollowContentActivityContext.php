@@ -28,7 +28,7 @@ class FollowContentActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected GroupMuteNotify $groupMuteNotify;
+  protected $groupMuteNotify;
 
   /**
    * Constructs a MentionActivityContext object.

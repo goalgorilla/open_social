@@ -19,6 +19,8 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
+use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -66,9 +68,68 @@ function social_core_requirements($phase) {
  * Perform actions related to the installation of social_core.
  */
 function social_core_install() {
-
-  // Set some default permissions.
-  _social_core_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'access content',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'access content',
+      'view own unpublished content',
+      'use text format basic_html',
+      'use text format simple_text',
+      'view the administration theme',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access content overview',
+      'access toolbar',
+      'administer nodes',
+      'administer menu',
+      'access site reports',
+      'access administration pages',
+      'view all revisions',
+      'revert all revisions',
+      'delete all revisions',
+      'create url aliases',
+      'use text format full_html',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access content overview',
+      'access toolbar',
+      'administer nodes',
+      'administer menu',
+      'access site reports',
+      'access administration pages',
+      'view all revisions',
+      'revert all revisions',
+      'delete all revisions',
+      'create url aliases',
+      'use text format full_html',
+      'administer taxonomy',
+      'delete terms in expertise',
+      'edit terms in expertise',
+      'delete terms in interests',
+      'edit terms in interests',
+      'delete terms in topic_types',
+      'edit terms in topic_types',
+      'administer site configuration',
+      'administer users',
+      'administer account settings',
+      'administer themes',
+      'administer blocks',
+      'access contextual links',
+    ]
+  );
   // Create AN Homepage block.
   _social_core_create_an_homepage_block();
   // Add menu items.
@@ -130,20 +191,23 @@ function _social_core_set_permissions() {
  */
 function _social_core_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access content',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
     'view own unpublished content',
     'use text format basic_html',
     'use text format simple_text',
     'view the administration theme',
   ]);
 
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
+
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'access content overview',
     'access toolbar',
     'administer nodes',
@@ -1379,4 +1443,60 @@ function social_core_update_10300() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Import configurations for the new Verified role.
+ */
+function social_core_update_11001(): void {
+  Role::create([
+    'id' => 'verified',
+    'label' => 'Verified User',
+    'weight' => 5,
+    'is_admin' => NULL,
+    'permissions' => [],
+  ])->save();
+}
+
+/**
+ * Resign permissions between roles.
+ */
+function social_core_update_11002(): void {
+  /** @var \Drupal\user\RoleInterface $auth_role */
+  $auth_role = \Drupal::entityTypeManager()->getStorage('user_role')->load(RoleInterface::AUTHENTICATED_ID);
+  // Assign all permissions from Authenticated role to Verified role.
+  user_role_grant_permissions('verified', $auth_role->getPermissions());
+
+  /** @var \Drupal\user\RoleInterface $verified_role */
+  $verified_role = \Drupal::entityTypeManager()->getStorage('user_role')->load('verified');
+  // Revoke all permissions from Authenticated role that contain in Verified
+  // role.
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, $verified_role->getPermissions());
+
+  /** @var \Drupal\user\RoleInterface $anon_role */
+  $anon_role = \Drupal::entityTypeManager()->getStorage('user_role')->load(RoleInterface::ANONYMOUS_ID);
+  // Assign all permissions from Anonymous role to Authenticated role and
+  // additionally other necessary permissions.
+  $permissions = array_merge(
+    $anon_role->getPermissions(),
+    [
+      'view own unpublished content',
+      'use text format basic_html',
+      'use text format simple_text',
+      'view the administration theme',
+    ]
+  );
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $permissions);
+}
+
+/**
+ * Install jQuery UI Accordion module.
+ */
+function social_core_update_11003(): void {
+  // Check if jquery_ui_accordion module exists.
+  if (\Drupal::service('extension.list.module')
+    ->getName('jquery_ui_accordion')) {
+    \Drupal::service('module_installer')
+      ->install(['jquery_ui_accordion'], TRUE);
+  }
 }

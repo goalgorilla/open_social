@@ -1,14 +1,14 @@
 @api @comment @stability @DS-642 @comment-redirect @stability-3
 Feature: Redirect comment page
   Benefit: See the full scope of the comment thread
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be redirected from comment page to full entity display
 
-  @LU @perfect
+  @verified @perfect
   Scenario: Successfully redirect comment page
     Given users:
-      | name              | mail                     | status |
-      | Comment view user | comment-view@example.com | 1      |
+      | name              | mail                     | status | roles    |
+      | Comment view user | comment-view@example.com | 1      | verified |
     And I am logged in as "Comment view user"
     And I am viewing a "topic" with the title "Comment redirect topic"
     When I fill in the following:

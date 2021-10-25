@@ -1,14 +1,14 @@
 @api @embed @stability @perfect @critical @DS-3666 @DS-5350 @stability-4
 Feature: Embed
   Benefit: More dynamic look and feel in the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: Embed objects in posts, comments and nodes with or without WYSIWYG fields
 
   Scenario: Create the files
     Given I enable the module "social_embed"
     And users:
-      | name                  | mail                            | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
-      | embed_1               | embed_1@example.com             | 1      | Em                        | Bed                     | Youtube                    | Anything               |
+      | name                  | mail                            | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function | roles    |
+      | embed_1               | embed_1@example.com             | 1      | Em                        | Bed                     | Youtube                    | Anything               | verified |
     And I am logged in as "embed_1"
 
     # Create a topic with one attachment.

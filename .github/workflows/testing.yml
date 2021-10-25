@@ -52,4 +52,5 @@ jobs:
 
       - name: PHPUnit
         run: $GITHUB_WORKSPACE/vendor/bin/phpunit -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpunit.xml.dist --log-junit $GITHUB_WORKSPACE/test-reports/phpunit.xml
-
+        env:
+          SIMPLETEST_DB: sqlite://tmp/db.sqlite

@@ -9,6 +9,7 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -17,9 +18,60 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_book.
  */
 function social_book_install() {
-
-  // Set some default permissions.
-  _social_book_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.book.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view node.book.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'view node.book.field_content_visibility:community content',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create new books',
+      'add content to books',
+      'create book content',
+      'delete any book content',
+      'delete own book content',
+      'delete book revisions',
+      'revert book revisions',
+      'edit any book content',
+      'edit own book content',
+      'view book revisions',
+      'translate book node',
+      'view node.book.field_content_visibility:community content',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create new books',
+      'add content to books',
+      'create book content',
+      'delete any book content',
+      'delete own book content',
+      'delete book revisions',
+      'revert book revisions',
+      'edit any book content',
+      'edit own book content',
+      'view book revisions',
+      'translate book node',
+      'administer visibility settings',
+      'view node.book.field_content_visibility:community content',
+    ]
+  );
 }
 
 /**
@@ -38,63 +90,6 @@ function social_book_update_dependencies() {
   ];
 
   return $dependencies;
-}
-
-/**
- * Function to set permissions.
- */
-function _social_book_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_book_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_book_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = ['view node.book.field_content_visibility:public content'];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], ['view node.book.field_content_visibility:community content']);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'create new books',
-    'add content to books',
-    'create book content',
-    'delete any book content',
-    'delete own book content',
-    'delete book revisions',
-    'revert book revisions',
-    'edit any book content',
-    'edit own book content',
-    'view book revisions',
-    'translate book node',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], ['administer visibility settings']);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

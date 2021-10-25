@@ -1,29 +1,29 @@
 @api @event-management @stability @javascript @DS-1258 @stability-2
 Feature: Event Management
   Benefit: In order to organise an event
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to assign event organiser
 
-  @LU @perfect @critical
+  @verified @perfect @critical
   Scenario: Successfully assign event organiser
     Given I enable the module "social_event_managers"
     And users:
-      | name            | mail             | field_profile_organization | status |
-      | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      |
-      | event_organiser_2 | eo_2@example.com | Drupal                     | 1      |
+      | name              | mail             | field_profile_organization | status | roles    |
+      | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      | verified |
+      | event_organiser_2 | eo_2@example.com | Drupal                     | 1      | verified |
     And groups:
-      | title           | description      | author         | type        | language |
+      | title                                    | description      | author            | type        | language |
       | Springfield local business collaboration | Description text | event_organiser_1 | open_group  | en       |
-    And I am logged in as an "authenticated user"
+    And I am logged in as an "verified"
     And I am on "user"
     And I click "Events"
     And I click "Create Event"
     When I fill in the following:
-      | Title | This is an event with event organisers |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time | 11:00:00 |
-      | Location name | GG HQ |
+      | Title                                  | This is an event with event organisers |
+      | edit-field-event-date-0-value-date     | 2025-01-01                             |
+      | edit-field-event-date-end-0-value-date | 2025-01-01                             |
+      | Time                                   | 11:00:00                               |
+      | Location name                          | GG HQ                                  |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
@@ -44,11 +44,11 @@ Feature: Event Management
     And I click "Events"
     And I click "Create Event"
     When I fill in the following:
-      | Title | This is an event with event organisers in group |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time | 11:00:00 |
-      | Location name | GG HQ |
+      | Title                                  | This is an event with event organisers in group |
+      | edit-field-event-date-0-value-date     | 2025-01-01                                      |
+      | edit-field-event-date-end-0-value-date | 2025-01-01                                      |
+      | Time                                   | 11:00:00                                        |
+      | Location name                          | GG HQ                                           |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
