@@ -53,11 +53,6 @@ function social_gdpr_form_user_register_form_alter(&$form, FormStateInterface $f
  * Implements hook_social_user_account_header_account_links().
  */
 function social_gdpr_social_user_account_header_account_links(array $context): array {
-  // We require a logged in user for this indicator.
-  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
-    return [];
-  }
-
   if (\Drupal::service('data_policy.manager')->needConsent()) {
     return [
       'data_policy_agreement' => [
