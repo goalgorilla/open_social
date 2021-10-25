@@ -70,6 +70,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     // social_topic should be removed from $modules when
     // https://github.com/drupal-graphql/graphql/pull/1220 is merged.
     'social_topic',
+    'variationcache',
   ];
 
   /**
