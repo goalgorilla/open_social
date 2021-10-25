@@ -5,15 +5,36 @@
  * Installation code for the alternative_frontpage module.
  */
 
+use Drupal\alternative_frontpage\Form\AlternativeFrontpageSettings;
+use Drupal\user\RoleInterface;
+
 /**
  * Implements hook_install().
  *
  * Perform actions related to the installation of Alternative Frontpage.
  */
-function alternative_frontpage_install() {
+function alternative_frontpage_install(): void {
   // Set some default permissions for the site_manager and administrator.
   $permissions = ['administer alternative frontpage settings'];
 
   user_role_grant_permissions('administrator', $permissions);
   user_role_grant_permissions('sitemanager', $permissions);
+}
+
+/**
+ * Migrate the old configuration to the new one.
+ *
+ * We changed the configuration structure and extended it for other roles, so
+ * we need to migrate the existing configuration to the new one.
+ */
+function alternative_frontpage_update_10301(): void {
+  $config = \Drupal::configFactory()->get('alternative_frontpage.settings');
+
+  $frontpage_for_anonymous_users = $config->get('frontpage_for_anonymous_users');
+  $frontpage_for_authenticated_user = $config->get('frontpage_for_authenticated_user');
+
+  $config->set('pages.' . AlternativeFrontpageSettings::FORM_PREFIX . RoleInterface::ANONYMOUS_ID, $frontpage_for_anonymous_users);
+  $config->set('pages.' . AlternativeFrontpageSettings::FORM_PREFIX . RoleInterface::AUTHENTICATED_ID, $frontpage_for_authenticated_user);
+
+  $config->save();
 }
