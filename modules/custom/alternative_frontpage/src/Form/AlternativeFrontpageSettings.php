@@ -4,6 +4,7 @@ namespace Drupal\alternative_frontpage\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -54,9 +55,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    $role_ids = user_role_names();
-
-    foreach ($role_ids as $role_id => $role_label) {
+    foreach (user_role_names() as $role_id => $role_label) {
       // No configuration/redirection is needed for administrators.
       if ($role_id === 'administrator') {
         continue;
@@ -136,7 +135,12 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
     $values = $form_state->getValue('pages');
     $this->config(self::CONFIG_NAME)->set('pages', $values)->save();
 
-    $this->configFactory->getEditable('system.site')->set('page.front', $form_state->getValue('frontpage_for_anonymous_user'))->save();
+    $this->configFactory->getEditable('system.site')
+      ->set('page.front', $form_state->getValue([
+        'pages',
+        self::FORM_PREFIX . RoleInterface::ANONYMOUS_ID,
+      ]))
+      ->save();
   }
 
 }
