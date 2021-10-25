@@ -58,6 +58,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'views',
     'group',
+    'variationcache',
   ];
 
   /**
