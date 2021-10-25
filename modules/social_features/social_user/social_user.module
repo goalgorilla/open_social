@@ -149,16 +149,25 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 /**
  * Returns array with titles of all groups, ordered by their label.
  */
-function _social_user_get_groups() {
-  $data = &drupal_static(__FUNCTION__);
+function _social_user_get_groups(): array {
+  if (!empty($data = &drupal_static(__FUNCTION__, []))) {
+    return $data;
+  }
 
-  if (empty($data)) {
-    $data = \Drupal::database()
-      ->select('groups_field_data', 'gfd')
-      ->fields('gfd', ['id', 'label'])
-      ->orderBy('label')
-      ->execute()
-      ->fetchAllKeyed(0, 1);
+  $groups = \Drupal::database()->select('groups_field_data', 'gfd')
+    ->fields('gfd', ['id', 'label', 'type'])
+    ->orderBy('type')
+    ->orderBy('label')
+    ->execute();
+
+  if ($groups === NULL || !($groups = $groups->fetchAll())) {
+    return $data;
+  }
+
+  $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('group');
+
+  foreach ($groups as $group) {
+    $data[$bundles[$group->type]['label']][$group->id] = $group->label;
   }
 
   return $data;
