@@ -374,6 +374,7 @@ function social_group_invite_form_group_form_alter(array &$form, FormStateInterf
   // only if SM+ is enabled this feature.
   if (!(bool) $group_settings->get('group_invite.invite_by_members')) {
     $form['send_invites_by_member']['#access'] = FALSE;
+    return;
   }
 
   // Wrapper for the sharing/invitation group settings field.
