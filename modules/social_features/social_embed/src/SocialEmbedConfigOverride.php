@@ -9,7 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialEmbedConfigOverride.
+ * Provides an overridden elements.
  *
  * @package Drupal\social_embed
  */
@@ -47,6 +47,21 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = [];
+    $found = FALSE;
+
+    foreach ($names as $name) {
+      if (
+        strpos($name, 'filter.format.') === 0 ||
+        strpos($name, 'editor.editor.') === 0
+      ) {
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if (!$found) {
+      return $overrides;
+    }
 
     $formats = [
       'basic_html' => TRUE,
@@ -132,7 +147,6 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
       return;
     }
 
-    $overrides = [];
     $button_exists = FALSE;
 
     foreach ($settings['toolbar']['rows'] as $row) {
