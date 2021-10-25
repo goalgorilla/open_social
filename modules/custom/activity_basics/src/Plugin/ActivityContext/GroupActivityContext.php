@@ -104,7 +104,12 @@ class GroupActivityContext extends ActivityContextBase {
   public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
-      return (bool) $entity->getCommentedEntity();
+      /** @var \Drupal\comment\CommentInterface $comment */
+      $comment = $entity;
+      $entity = $comment->getCommentedEntity();
+      if (!($entity instanceof EntityInterface)) {
+        return FALSE;
+      }
     }
 
     if ($entity->getEntityTypeId() === 'group_content') {
@@ -112,7 +117,9 @@ class GroupActivityContext extends ActivityContextBase {
     }
 
     if ($entity->getEntityTypeId() === 'post') {
-      if ($entity->hasField('field_recipient_group') && !$entity->get('field_recipient_group')->isEmpty()) {
+      /** @var \Drupal\social_post\Entity\PostInterface $post */
+      $post = $entity;
+      if ($post->hasField('field_recipient_group') && !$post->get('field_recipient_group')->isEmpty()) {
         return TRUE;
       }
     }
