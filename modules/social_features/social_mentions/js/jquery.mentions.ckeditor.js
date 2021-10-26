@@ -108,7 +108,7 @@
       };
 
       MentionsInput.prototype.handleInput = function() {
-        var match1, match2, position, query, trigger, value;
+        var match, position, query, trigger, value;
         position = this.element.caret("pos");
         value = this.element.val().substring(0, position);
         this.refreshMentions(this.cache.value.compiled, this.compile(this.element.val()));
@@ -117,20 +117,15 @@
           compiled: this.compile(this.element.val())
         };
         this.updateValues();
-        match1 = /(\S+)$/g.exec(value);
-        if (!match1) {
-          this.element.mentionsAutocomplete("close");
-          return;
-        }
         trigger = this.mentions.settings.trigger;
-        match2 = new RegExp("(?:^|\s)[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(match1[0]);
-        if (!match2) {
+        match = new RegExp("[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
+        if (!match) {
           this.element.mentionsAutocomplete("close");
           return;
         }
-        this.start = match1.index;
-        this.end = this.start + match2[0].length;
-        query = match2[1];
+        this.start = match.index;
+        this.end = this.start + match[0].length;
+        query = match[1];
         if (this.timer) {
           window.clearTimeout(this.timer);
         }
@@ -332,6 +327,11 @@
             return _this.handleInput();
           };
         })(this));
+        this.editor.document.on("keyup", (function(_this) {
+          return function() {
+            return _this.handleInput();
+          };
+        })(this));
         return $(this.editor.window.$.document.body).on("click", (function(_this) {
           return function() {
             return _this.element.mentionsAutocomplete("close");
@@ -340,7 +340,7 @@
       };
 
       MentionsCKEditor.prototype.handleInput = function() {
-        var match1, match2, node, position, query, selection, trigger, value;
+        var match, node, position, query, selection, trigger, value;
         this.refreshMentions();
         this.updateValues();
         selection = this.editor.window.$.getSelection();
@@ -348,23 +348,18 @@
         value = node.textContent;
         position = selection.focusOffset;
         value = value.substring(0, position);
-        match1 = /(\S+)$/g.exec(value);
         if (this.timer) {
           window.clearTimeout(this.timer);
         }
-        if (!match1) {
-          this.element.mentionsAutocomplete("close");
-          return;
-        }
         trigger = this.mentions.settings.trigger;
-        match2 = new RegExp("(?:^|\s)[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(match1[0]);
-        if (!match2) {
+        match = new RegExp("[" + trigger + "]([^" + trigger + "]{" + this.mentions.settings.length.join(",") + "})$").exec(value);
+        if (!match) {
           this.element.mentionsAutocomplete("close");
           return;
         }
-        this.start = match1.index;
-        this.end = this.start + match2[0].length;
-        query = match2[1];
+        this.start = match.index;
+        this.end = this.start + match[0].length;
+        query = match[1];
         return this.timer = window.setTimeout((function(_this) {
           return function() {
             return _this.mentions.fetchData(query, function(response) {
