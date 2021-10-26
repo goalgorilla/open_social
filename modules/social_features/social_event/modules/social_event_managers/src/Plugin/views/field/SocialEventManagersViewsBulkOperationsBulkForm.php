@@ -115,9 +115,6 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       return $bulk_options;
     }
 
-    // Check access.
-    $bulk_options = $this->bulkOptionAccess($bulk_options);
-
     foreach ($this->options['selected_actions'] as $key => $selected_action_data) {
       $definition = $this->actions[$selected_action_data['action_id']];
       if (!empty($selected_action_data['preconfiguration']['label_override'])) {
@@ -132,7 +129,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       ]);
     }
 
-    return $bulk_options;
+    // Check access and return.
+    return $this->bulkOptionAccess($bulk_options);
   }
 
   /**
@@ -430,8 +428,9 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Load each action and check the access.
     foreach ($bulkOptions as $id => $name) {
+      $action_id = $this->options['selected_actions'][$id]['action_id'];
       /** @var \Drupal\Core\Action\ActionInterface $action */
-      $action = $this->actionManager->createInstance($id);
+      $action = $this->actionManager->createInstance($action_id);
 
       // Check the access.
       /** @var bool $access */
