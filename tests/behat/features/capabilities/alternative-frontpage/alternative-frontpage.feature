@@ -16,21 +16,21 @@ Feature: Set alternative frontpage
     When I am on "admin/config/alternative_frontpage"
     # Error validation
     And I fill in the following:
-      | Frontpage for anonymous users     |              |
-      | Frontpage for authenticated users | /user/logout |
+      | Frontpage for Anonymous user     |              |
+      | Frontpage for Authenticated user | /user/logout |
     And I press "Save configuration"
     Then I should see "The path for the anonymous frontpage cannot be empty."
     And I should see "The path for the authenticated frontpage is not allowed."
     When I fill in the following:
-      | Frontpage for anonymous users     | stream       |
-      | Frontpage for authenticated users | invalid page |
+      | Frontpage for Anonymous user     | stream       |
+      | Frontpage for Authenticated user | invalid page |
     And I press "Save configuration"
     Then I should see "The path for the anonymous frontpage should start with a forward slash."
     And I should see "The path for the authenticated frontpage is not valid."
     # Fill in the correct settings.
     When I fill in the following:
-      | Frontpage for anonymous users     | /frontpage-an |
-      | Frontpage for authenticated users | /frontpage-lu |
+      | Frontpage for Anonymous user     | /frontpage-an |
+      | Frontpage for Authenticated user | /frontpage-lu |
     And I press "Save configuration"
     And I am on "frontpage-an"
     Then I should see "Frontpage LU"
@@ -44,7 +44,7 @@ Feature: Set alternative frontpage
     Given I am on "admin/config/alternative_frontpage"
     # Error validation
     When I fill in the following:
-      | Frontpage for anonymous users     | /stream |
-      | Frontpage for authenticated users |         |
+      | Frontpage for Anonymous user     | /stream |
+      | Frontpage for Authenticated user |         |
     And I press "Save configuration"
     Then I should see "The configuration options have been saved."

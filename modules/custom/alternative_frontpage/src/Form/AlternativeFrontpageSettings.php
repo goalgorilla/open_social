@@ -63,12 +63,14 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
 
       $form['pages'][self::FORM_PREFIX . $role_id] = [
         '#type' => 'textfield',
-        '#title' => $this->t('Frontpage for @role_label', ['@role_label' => $role_label . 's']),
+        '#title' => $this->t('Frontpage for @role_label', ['@role_label' => $role_label]),
         '#maxlength' => 64,
         '#size' => 64,
         '#default_value' => $this->config(self::CONFIG_NAME)->get('pages.frontpage_for_' . $role_id),
       ];
     }
+
+    $form['pages'][self::FORM_PREFIX . RoleInterface::ANONYMOUS_ID]['#default_value'] = $this->configFactory->get('system.site')->get('page.front');
 
     $form['description'] = [
       '#markup' => $this->t('Enter the front page for users per role. This setting will override the homepage which is set in the Site Configuration form. Enter the path starting with a forward slash. Default: /stream.'),
@@ -82,6 +84,14 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $pages = $form_state->getValue('pages');
+
+    // The "Frontpage for Anonymous user" field can not be empty.
+    if (!$form_state->getValue([
+      'pages',
+      self::FORM_PREFIX . RoleInterface::ANONYMOUS_ID,
+    ])) {
+      $form_state->setErrorByName(self::FORM_PREFIX . RoleInterface::ANONYMOUS_ID, $this->t('The path for the anonymous frontpage cannot be empty.'));
+    }
 
     foreach ($pages as $id => $url) {
       if (empty($url)) {

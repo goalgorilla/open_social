@@ -27,10 +27,11 @@ function alternative_frontpage_install(): void {
  * We changed the configuration structure and extended it for other roles, so
  * we need to migrate the existing configuration to the new one.
  */
-function alternative_frontpage_update_10301(): void {
-  $config = \Drupal::configFactory()->get('alternative_frontpage.settings');
+function alternative_frontpage_update_11001(): void {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('alternative_frontpage.settings');
 
-  $frontpage_for_anonymous_users = $config->get('frontpage_for_anonymous_users');
+  $frontpage_for_anonymous_users = $config->get('frontpage_for_anonymous_users') ?? $config_factory->get('system.site')->get('page.front');
   $frontpage_for_authenticated_user = $config->get('frontpage_for_authenticated_user');
 
   $config->set('pages.' . AlternativeFrontpageSettings::FORM_PREFIX . RoleInterface::ANONYMOUS_ID, $frontpage_for_anonymous_users);
