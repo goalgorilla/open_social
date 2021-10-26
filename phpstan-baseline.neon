@@ -1411,6 +1411,36 @@ parameters:
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
 
 		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:processItem\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Cannot call method fetchAllKeyed\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Method Drupal\\\\activity_send_email\\\\Plugin\\\\QueueWorker\\\\ActivitySendEmailWorker\\:\\:prepareBatch\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Method Drupal\\\\activity_send_email\\\\Plugin\\\\QueueWorker\\\\ActivitySendEmailWorker\\:\\:processItem\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Method Drupal\\\\activity_send_email\\\\Plugin\\\\QueueWorker\\\\ActivitySendEmailWorker\\:\\:sendToFrequencyManager\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
 			message: "#^Function activity_send_push_notification_form_user_form_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.module
