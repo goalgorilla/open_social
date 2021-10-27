@@ -53,35 +53,6 @@ class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
       ];
     }
 
-    $config_name = 'views.view.event_manage_enrollments';
-    if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
-
-      $preconfiguration = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.preconfiguration.social_event_managers_send_email_action');
-
-      $overrides[$config_name] = [
-        'display' => [
-          'default' => [
-            'display_options' => [
-              'fields' => [
-                'social_views_bulk_operations_bulk_form_enrollments_1' => [
-                  'selected_actions' => [
-                    'social_event_an_enroll_send_email_action' => 'social_event_an_enroll_send_email_action',
-                  ],
-                  'preconfiguration' => [
-                    'social_event_an_enroll_send_email_action' => $preconfiguration,
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ],
-      ];
-
-      // Unset the regular Email.
-      $overrides[$config_name]['display']['default']['display_options']['fields']['social_views_bulk_operations_bulk_form_enrollments_1']['selected_actions']['social_event_managers_send_email_action'] = 0;
-    }
-
     return $overrides;
   }
 
