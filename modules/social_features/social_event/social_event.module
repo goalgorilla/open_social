@@ -726,8 +726,12 @@ function social_event_date_after_build($form, &$form_state) {
  * Set default time to the date field if time was not set.
  */
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
-  $form_values = $form_state->getValues();
-  $input = NestedArray::getValue($form_values, $element['#parents']);
+  $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+
+  if (empty($input['date'])) {
+    // Field is empty.
+    return;
+  }
 
   // Skip default validation for required time when date is required.
   if ((bool) $form_state->getValue(['field_event_all_day', 'value'])) {
