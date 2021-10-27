@@ -128,7 +128,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
             && (($user instanceof User
                 && $embed_settings->get('embed_consent_settings_lu')
                 && $user->hasField('field_user_embed_content_consent')
-                && !empty($user->get('field_user_embed_content_consent')->getValue()))
+                && !empty($user->get('field_user_embed_content_consent')->getValue()[0]['value']))
               || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_an')))
             )
           ) {

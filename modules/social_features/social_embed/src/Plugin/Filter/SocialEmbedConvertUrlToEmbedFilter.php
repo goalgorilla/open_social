@@ -190,7 +190,10 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
                     $user = \Drupal::currentUser()->isAnonymous() ? NULL : User::load(\Drupal::currentUser()->id());
                     $embed_settings = \Drupal::configFactory()->get('social_embed.settings');
                     if (!empty($info['code'])
-                      && (($user instanceof User && !empty($user->get('field_user_embed_content_consent')->getValue()) && $embed_settings->get('embed_consent_settings_lu'))
+                      && (($user instanceof User
+                          && $user->hasField('field_user_embed_content_consent')
+                          && !empty($user->get('field_user_embed_content_consent')->getValue()[0]['value'])
+                          && $embed_settings->get('embed_consent_settings_lu'))
                         || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_an')))
                       )
                     ) {
