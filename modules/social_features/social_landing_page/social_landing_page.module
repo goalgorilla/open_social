@@ -375,7 +375,7 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
       // Overrides template for 404 page only if target node has a landing page
       // type.
       if ($node instanceof NodeInterface && $node->getType() == 'landing_page') {
-        $suggestions[] = 'page__node__' . $node->getType();
+        $suggestions[] = 'page__node__landing_page';
       }
     }
   }
