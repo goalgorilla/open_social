@@ -8,6 +8,7 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
@@ -368,12 +369,7 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function social_group_invite_form_group_form_alter(array &$form, FormStateInterface $form_state): void {
-  $group_settings = \Drupal::config('social_group.settings');
-
-  // The Group manager is able to allow members to share group or invite to it
-  // only if SM+ is enabled this feature.
-  if (!(bool) $group_settings->get('group_invite.invite_by_members')) {
-    $form['send_invites_by_member']['#access'] = FALSE;
+  if (!isset($form['field_group_invite_by_member'])) {
     return;
   }
 
@@ -391,19 +387,16 @@ function social_group_invite_form_group_form_alter(array &$form, FormStateInterf
         ],
       ],
     ],
-    'send_invites_by_member' => $form['send_invites_by_member'],
+    'field_group_invite_by_member' => $form['field_group_invite_by_member'],
   ];
 
   // Remove default field as it was added to the wrapper and to remove
   // duplicates on the form.
-  unset($form['send_invites_by_member']);
+  unset($form['field_group_invite_by_member']);
 
   // Add wrapper for the sharing/invitation to the specific field group.
   if (isset($form['#fieldgroups']['group_access_permissions'])) {
     $form['#fieldgroups']['group_access_permissions']->children[] = 'group_sharing';
-  }
-  else {
-    $form['#fieldgroups']['group_settings']->children[] = 'group_sharing';
   }
 }
 
@@ -719,25 +712,28 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
 }
 
 /**
- * Implements hook_entity_base_field_info().
+ * Implements hook_entity_form_display_alter().
  */
-function social_group_invite_entity_base_field_info(EntityTypeInterface $entity_type): array {
-  $fields = [];
-
-  if ($entity_type->id() === 'group') {
-    // This field will be added when we install the module.
-    $fields['send_invites_by_member'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Allow members to share the group with others'))
-      ->setDefaultValue(FALSE)
-      ->setDisplayOptions('form', [
-        'type' => 'boolean_checkbox',
-        'settings' => [
-          'display_label' => TRUE,
-        ],
-        'weight' => 99,
-      ])
-      ->setDisplayConfigurable('form', TRUE);
+function social_group_invite_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if ($form_display->id() !== 'group.flexible_group.default') {
+    return;
   }
+  $group_settings = \Drupal::config('social_group.settings');
 
-  return $fields;
+  // The Group manager is able to allow members to share group or invite to it
+  // only if SM+ is enabled this feature.
+  if (
+    !$form_display->getComponent('field_group_invite_by_member') &&
+    (bool) $group_settings->get('group_invite.invite_by_members')
+  ) {
+    $form_display->setComponent('field_group_invite_by_member', [
+      'type' => 'boolean_checkbox',
+      'region' => 'content',
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+      'weight' => 99,
+      'third_party_settings' => [],
+    ]);
+  }
 }

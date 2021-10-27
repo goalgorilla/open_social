@@ -490,9 +490,9 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
     // Allow sharing/invites for members only if allowed by the group manager.
     if (
-      $group->hasField('send_invites_by_member') &&
-      !$group->get('send_invites_by_member')->isEmpty() &&
-      $group->get('send_invites_by_member')->getValue()[0]['value'] === '1'
+      $group->hasField('field_group_invite_by_member') &&
+      !$group->get('field_group_invite_by_member')->isEmpty() &&
+      $group->get('field_group_invite_by_member')->getString() === '1'
     ) {
       return AccessResult::allowed();
     }
