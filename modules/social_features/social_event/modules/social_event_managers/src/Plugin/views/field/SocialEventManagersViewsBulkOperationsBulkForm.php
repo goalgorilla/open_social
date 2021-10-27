@@ -115,23 +115,22 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       return $bulk_options;
     }
 
-    // Check access.
-    $bulk_options = $this->bulkOptionAccess($bulk_options);
-
-    foreach ($bulk_options as $id => &$label) {
-      if (!empty($this->options['preconfiguration'][$id]['label_override'])) {
-        $real_label = $this->options['preconfiguration'][$id]['label_override'];
+    foreach ($this->options['selected_actions'] as $key => $selected_action_data) {
+      $definition = $this->actions[$selected_action_data['action_id']];
+      if (!empty($selected_action_data['preconfiguration']['label_override'])) {
+        $real_label = $selected_action_data['preconfiguration']['label_override'];
       }
       else {
-        $real_label = $this->actions[$id]['label'];
+        $real_label = $definition['label'];
       }
 
-      $label = $this->t('<b>@action</b> selected enrollees', [
+      $bulk_options[$key] = $this->t('<b>@action</b> selected enrollees', [
         '@action' => $real_label,
       ]);
     }
 
-    return $bulk_options;
+    // Check access and return.
+    return $this->bulkOptionAccess($bulk_options);
   }
 
   /**
@@ -251,7 +250,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
       $items = [];
       foreach ($wrapper['action']['#options'] as $key => $value) {
-        if (!empty($key) && array_key_exists($key, $this->bulkOptions)) {
+        if ($key !== '' && array_key_exists($key, $this->bulkOptions)) {
           $items[] = [
             '#type' => 'submit',
             '#value' => $value,
@@ -266,6 +265,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // Remove the Views select list and submit button.
     $form['actions']['#type'] = 'hidden';
     $form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['action']['#access'] = FALSE;
+    // Hide multipage list.
+    $form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['multipage']['list']['#access'] = FALSE;
   }
 
   /**
@@ -278,20 +279,20 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       // Grab all the actions that are available.
       foreach (Element::children($this->actions) as $action) {
         // If the option is not in our selected options, next.
-        if (empty($available_options[$action])) {
+        if (($action_key = array_search($action, array_column($this->options['selected_actions'], 'action_id'))) === FALSE) {
           continue;
         }
 
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $available_options[$action];
+        $label = $available_options[$action_key];
 
         // Match the Users action from our custom dropdown.
         // Find the action from the VBO selection.
         // And set that as the chosen action in the form_state.
         if (strip_tags($label->render()) === $user_input['op']) {
-          $user_input['action'] = $action;
+          $user_input['action'] = $action_key;
           $form_state->setUserInput($user_input);
-          $form_state->setValue('action', $action);
+          $form_state->setValue('action', $action_key);
           $form_state->setTriggeringElement($this->actions[$action]);
           break;
         }
@@ -427,8 +428,9 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Load each action and check the access.
     foreach ($bulkOptions as $id => $name) {
+      $action_id = $this->options['selected_actions'][$id]['action_id'];
       /** @var \Drupal\Core\Action\ActionInterface $action */
-      $action = $this->actionManager->createInstance($id);
+      $action = $this->actionManager->createInstance($action_id);
 
       // Check the access.
       /** @var bool $access */

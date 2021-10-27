@@ -41,24 +41,6 @@ class NotificationsController extends ControllerBase {
   }
 
   /**
-   * Ajax callback to mark notifications as read.
-   *
-   * @deprecated in social:8.x-7.0 and is removed from social:8.x-8.0. Use NotificationsController::getNotificationListCallback() instead.
-   * @see https://www.drupal.org/project/social/issues/3056821
-   */
-  public function readNotificationCallback(): AjaxResponse {
-    // Create AJAX Response object.
-    $response = new AjaxResponse();
-    $data = [
-      'remaining_notifications' => $this->activities->markAllNotificationsAsSeen($this->currentUser()),
-    ];
-    $response->setData($data);
-
-    // Return ajax response.
-    return $response;
-  }
-
-  /**
    * Get the notification list.
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
