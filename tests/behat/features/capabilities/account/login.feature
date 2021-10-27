@@ -7,8 +7,8 @@ Feature: Login
   @critical
   Scenario: Successfully login with e-mail
     Given users:
-      | name             | status | pass             | mail                         |
-      | test_email_login |      1 | test_email_login | test_email_login@example.com |
+      | name             | status | pass             | mail                         | role     |
+      | test_email_login |      1 | test_email_login | test_email_login@example.com | verified |
     And I am on the homepage
     When I click "Log in"
     And I fill in the following:
@@ -20,16 +20,16 @@ Feature: Login
     And I should see "test_email_login"
 
   @security
-  Scenario: unsuccessful login without leaking data
+  Scenario: Unsuccessful login without leaking data
     Given I am an anonymous user
     And I am on the homepage
     When I click "Log in"
     And I fill in the following:
       | Username or email address | test@test.com |
-      | Password | test |
+      | Password                  | test          |
     And I press "Log in"
     Then I should not see the following error messages:
-      | error messages |
-      | Unrecognized username or password |
+      | error messages                                                                                |
+      | Unrecognized username or password                                                             |
       | There have been more than 5 failed login attempts for this account. It is temporarily blocked |
     And I should see the error message "This may have happened for the following reasons:"

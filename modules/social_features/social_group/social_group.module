@@ -252,7 +252,7 @@ function social_group_preprocess_group(array &$variables) {
   $account = \Drupal::currentUser();
 
   // Prevent access to mute group notifications if a user is not a group member.
-  if (!$group->getMember($account)) {
+  if (!in_array($variables['view_mode'], ['statistic', 'hero']) || !$group->getMember($account)) {
     unset($variables['content']['flag_mute_group_notifications']);
   }
   // Set joined to true for teaser when current logged in
@@ -665,21 +665,27 @@ function social_group_allowed_join_method_description($key) {
 
   // Add explanatory descriptive text after the icon.
   switch ($key) {
-    case 'added':
-      $description = '<p><strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
-
     case 'direct':
-      $description = '<p><strong>' . t('Open to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_open"></use></svg></strong>';
+      $description .= '<strong>' . t('Open to join')->render() . '</strong>';
       $description .= ' - ' . t('users can join this group without approval.')->render();
       $description .= '</p>';
       break;
 
     case 'request':
-      $description = '<p><strong>' . t('Request to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_close"></use></svg></strong>';
+      $description .= '<strong>' . t('Request to join')->render() . '</strong>';
       $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'added':
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-invite"></use></svg></strong>';
+      $description .= '<strong>' . t('Invite only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
       $description .= '</p>';
       break;
   }
@@ -1849,44 +1855,6 @@ function social_group_get_all_groups() {
     ->getQuery()
     ->sort('type');
   return $query->execute();
-}
-
-/**
- * Get all group memberships for a certain user.
- *
- * @param int $uid
- *   The UID for which we fetch the groups it is member of.
- *
- * @return array
- *   List of group IDs the user is member of.
- *
- * @deprecated in social:8.x-4.2 and is removed from social:8.x-9.6.
- *   This function is moved to the service social_group.helper_service, use
- *   getAllGroupsForUser() instead.
- *
- * @see https://www.drupal.org/node/3026220
- */
-function social_group_get_all_group_members($uid) {
-  @trigger_error(__FUNCTION__ . ' is deprecated in social:8.x-4.2 and is removed from social:8.x-9.6. This function is moved to the service social_group.helper_service, use getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220', E_USER_DEPRECATED);
-
-  $groups = &drupal_static(__FUNCTION__);
-
-  // Get the memberships for the user if they aren't known yet.
-  if (!isset($groups[$uid])) {
-    $group_content_types = GroupContentType::loadByEntityTypeId('user');
-    $group_content_types = array_keys($group_content_types);
-
-    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-    $query->addField('gcfd', 'gid');
-    $query->condition('gcfd.entity_id', $uid);
-    $query->condition('gcfd.type', $group_content_types, 'IN');
-    $query->execute()->fetchAll();
-
-    $group_ids = $query->execute()->fetchAllAssoc('gid');
-    $groups[$uid] = array_keys($group_ids);
-  }
-
-  return $groups[$uid];
 }
 
 /**

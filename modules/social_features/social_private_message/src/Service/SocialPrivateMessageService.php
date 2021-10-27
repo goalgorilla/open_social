@@ -67,8 +67,13 @@ class SocialPrivateMessageService extends PrivateMessageService {
 
     // Get the user.
     $uid = $this->currentUser->id();
+    /** @var \Drupal\user\UserStorageInterface $user_storage */
+    $user_storage = $this->userManager;
+    /** @var \Drupal\user\UserInterface $user */
+    $user = $user_storage->load($uid);
+
     // Get all the thread id's for this user.
-    $threads = $this->getAllThreadIdsForUser($uid);
+    $threads = $this->mapper->getThreadIdsForUser($user);
 
     if (empty($threads)) {
       return $unread;
@@ -94,37 +99,6 @@ class SocialPrivateMessageService extends PrivateMessageService {
       }
     }
     return $unread;
-  }
-
-  /**
-   * Copy function of the one in the private_message module to disable count.
-   *
-   * {@inheritdoc}
-   */
-  public function getAllThreadIdsForUser($uid) {
-    $query = 'SELECT DISTINCT(thread.id), MAX(thread.updated) ' .
-      'FROM {private_message_threads} AS thread ' .
-      'JOIN {private_message_thread__members} AS member ' .
-      'ON member.entity_id = thread.id AND member.members_target_id = :uid ' .
-      'JOIN {private_message_thread__private_messages} AS thread_messages ' .
-      'ON thread_messages.entity_id = thread.id ' .
-      'JOIN {private_messages} AS messages ' .
-      'ON messages.id = thread_messages.private_messages_target_id ' .
-      'JOIN {private_message_thread__last_delete_time} AS thread_delete_time ' .
-      'ON thread_delete_time.entity_id = thread.id ' .
-      'JOIN {pm_thread_delete_time} as owner_delete_time ' .
-      'ON owner_delete_time.id = thread_delete_time.last_delete_time_target_id AND owner_delete_time.owner = :uid ' .
-      'WHERE owner_delete_time.delete_time <= messages.created ';
-    $vars = [':uid' => $uid];
-
-    $query .= 'GROUP BY thread.id ORDER BY MAX(thread.updated) DESC, thread.id';
-
-    $thread_ids = $this->database->query(
-      $query,
-      $vars
-    )->fetchCol();
-
-    return is_array($thread_ids) ? $thread_ids : [];
   }
 
   /**

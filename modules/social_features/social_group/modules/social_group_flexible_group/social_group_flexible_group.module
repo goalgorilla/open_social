@@ -383,6 +383,12 @@ function social_group_flexible_group_preprocess_form_element(&$variables) {
 
   if ($variables['element']['#type'] === 'radio' &&
     !empty($variables['name']) &&
+    $variables['name'] === 'field_group_allowed_join_method') {
+    $variables['label']['#render_icon'] = TRUE;
+    $variables['attributes']['class'][] = 'inline-item';
+  }
+  if ($variables['element']['#type'] === 'radio' &&
+    !empty($variables['name']) &&
     $variables['name'] === 'field_flexible_group_visibility') {
     $variables['label']['#render_icon'] = TRUE;
     $variables['attributes']['class'][] = 'inline-item';

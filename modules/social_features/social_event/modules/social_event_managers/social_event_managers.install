@@ -41,6 +41,19 @@ function social_event_managers_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_managers_update_dependencies(): array {
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_event_managers'][11001] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Perform actions related to the installation of social_event_managers.
  */
 function social_event_managers_update_8001() {
@@ -77,7 +90,7 @@ function social_event_managers_update_8004() {
   $config_file = drupal_get_path('module', 'social_event_managers') . '/config/update/social_event_managers_update_8004.yml';
 
   if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
+    $settings = Yaml::parse((string) file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('views.view.event_manage_enrollments');
@@ -148,6 +161,23 @@ function social_event_managers_update_10302() {
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('message.template.member_added_by_event_organiser');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update 'views.view.event_manage_enrollments' after VBO module updates.
+ */
+function social_event_managers_update_11001(array &$sandbox): void {
+  $config_file = drupal_get_path('module', 'social_event_managers') . '/config/static/views.view.event_manage_enrollments_11001.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse((string) file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollments');
+
       $config->setData($settings)->save(TRUE);
     }
   }

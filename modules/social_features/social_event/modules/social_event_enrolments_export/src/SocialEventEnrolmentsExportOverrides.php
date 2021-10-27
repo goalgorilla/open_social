@@ -8,6 +8,13 @@ use Drupal\Core\Config\StorageInterface;
 
 /**
  * Configuration override.
+ *
+ * @deprecated in social:10.2.0 and is removed from social:11.0.0. Use
+ *   _social_event_enrolments_export_alter_event_manage_enrollments_view()
+ *   instead.
+ *
+ * @todo Change @see to point to a change record.
+ * @see _social_event_enrolments_export_alter_event_manage_enrollments_view()
  */
 class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInterface {
 
@@ -16,32 +23,8 @@ class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInter
    */
   public function loadOverrides($names) {
     $overrides = [];
-
-    $config_name = 'views.view.event_manage_enrollments';
-
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name] = [
-        'display' => [
-          'default' => [
-            'display_options' => [
-              'fields' => [
-                'social_views_bulk_operations_bulk_form_enrollments_1' => [
-                  'selected_actions' => [
-                    'social_event_enrolments_export_enrollments_action' => 'social_event_enrolments_export_enrollments_action',
-                  ],
-                  'preconfiguration' => [
-                    'social_event_enrolments_export_enrollments_action' => [
-                      'label_override' => 'Export',
-                    ],
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ],
-      ];
-    }
-
+    // Code has been moved to
+    // _social_event_enrolments_export_alter_event_manage_enrollments_view().
     return $overrides;
   }
 
