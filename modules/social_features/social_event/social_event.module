@@ -729,8 +729,20 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
   $form_values = $form_state->getValues();
   $input = NestedArray::getValue($form_values, $element['#parents']);
 
+  $all_day = (bool) $form_state->getValue(['field_event_all_day', 'value']);
+
+  // End date should not be empty if "All day" option was enabled.
+  if ($all_day) {
+    if (strpos($element['#name'], 'field_event_date_end') !== FALSE) {
+      if (empty($input['date'])) {
+        $form_state->setError($element, t('End date is required!'));
+        return;
+      }
+    }
+  }
+
   // Skip default validation for required time when date is required.
-  if ((bool) $form_state->getValue(['field_event_all_day', 'value'])) {
+  if ($all_day) {
     $input['time'] = '00:00:00';
     if (is_null($input['object']) && !empty($input['date'])) {
       $input['object'] = new DrupalDateTime($input['date'] . ' ' . $input['time'], new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
