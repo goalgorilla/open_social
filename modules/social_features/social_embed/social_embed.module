@@ -55,7 +55,7 @@ function social_embed_form_user_form_alter(&$form, FormStateInterface $form_stat
     // We need to invalidate few tags if the user toggles
     // field_user_embed_content_consent value.
     // @see _social_embed_form_user_form_submit().
-    if (\Drupal::config('social_embed.settings')->get('embed_consent_settings')) {
+    if (\Drupal::config('social_embed.settings')->get('embed_consent_settings_lu')) {
       /** @var \Drupal\user\Entity\User $user */
       $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';
     }

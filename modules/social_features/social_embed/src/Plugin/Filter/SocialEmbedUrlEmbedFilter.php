@@ -124,11 +124,12 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           $embed_settings = $this->configFactory->get('social_embed.settings');
-          if ($embed_settings->get('embed_consent_settings')
-            && !empty($info['code'])
-            && (
-              ($user instanceof User && !empty($user->get('field_user_embed_content_consent')->getValue()))
-              || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_anonymous')))
+          if (!empty($info['code'])
+            && (($user instanceof User
+                && $embed_settings->get('embed_consent_settings_lu')
+                && $user->hasField('field_user_embed_content_consent')
+                && !empty($user->get('field_user_embed_content_consent')->getValue()))
+              || ($user == NULL && !empty($embed_settings->get('embed_consent_settings_an')))
             )
           ) {
             // Replace URL with consent button.

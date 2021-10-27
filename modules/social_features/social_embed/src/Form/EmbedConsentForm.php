@@ -48,26 +48,19 @@ class EmbedConsentForm extends ConfigFormBase {
        This settings page allows you to configure this behavior. This should help you create a better experience for your users, keeping their privacy in mind.'),
     ];
 
-    $form['embed_consent_settings'] = [
+    $form['embed_consent_settings_lu'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enforce consent for all embedded content.'),
-      '#default_value' => $config->get('embed_consent_settings'),
+      '#title' => $this->t('Enforce consent for all embedded content for registered users.'),
+      '#default_value' => $config->get('embed_consent_settings_lu'),
       '#description' => $this->t('This setting will enforce users to give consent before showing embedded content.
       When enabled, users are shown a placeholder instead of embedded content. After the user consents to show this third party content, the embedded content will be shown.'),
     ];
 
-    $form['embed_consent_settings_anonymous'] = [
+    $form['embed_consent_settings_an'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enforce consent for all embedded content for anonymous users.'),
       '#description' => $this->t('This setting will enforce anonymous users to give consent after showing embedded content.'),
-      '#default_value' => $config->get('embed_consent_settings_anonymous'),
-      '#states' => [
-        'visible' => [
-          ':input[name="embed_consent_settings"]' => [
-            'checked' => TRUE,
-          ],
-        ],
-      ],
+      '#default_value' => $config->get('embed_consent_settings_an'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -79,11 +72,11 @@ class EmbedConsentForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Retrieve the configuration.
     $config = $this->configFactory->getEditable(static::SETTINGS);
-    $new_value_consent_settings = $form_state->getValue('embed_consent_settings');
-    $new_value_consent_settings_anonymous = $form_state->getValue('embed_consent_settings_anonymous');
-    if ((($config->get('embed_consent_settings') != $new_value_consent_settings)
-        || ($new_value_consent_settings_anonymous != $config->get('embed_consent_settings_anonymous'))
-      )) {
+    $new_value_consent_settings_lu = $form_state->getValue('embed_consent_settings_lu');
+    $new_value_consent_settings_an = $form_state->getValue('embed_consent_settings_an');
+    if (($config->get('embed_consent_settings_lu') != $new_value_consent_settings_lu)
+        || ($new_value_consent_settings_an != $config->get('embed_consent_settings_an'))
+      ) {
       // Let's invalidate our custom tags so that render cache of such content
       // can be rebuilt and the effect of changed settings can take place.
       // @see: SocialEmbedConvertUrlToEmbedFilter
@@ -93,8 +86,8 @@ class EmbedConsentForm extends ConfigFormBase {
         'social_embed:filter.url_embed',
       ]);
       // Set the submitted configuration setting.
-      $config->set('embed_consent_settings', $new_value_consent_settings)
-        ->set('embed_consent_settings_anonymous', ($new_value_consent_settings == 0) ? 0 : $new_value_consent_settings_anonymous)
+      $config->set('embed_consent_settings_lu', $new_value_consent_settings_lu)
+        ->set('embed_consent_settings_an', $new_value_consent_settings_an)
         ->save();
     }
 

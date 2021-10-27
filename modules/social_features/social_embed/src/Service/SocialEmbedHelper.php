@@ -169,7 +169,9 @@ class SocialEmbedHelper {
                 <svg class="badge__icon"><use xlink:href="#icon-visibility_off"></use></svg>
                   <p class="social-embed-placeholder-body">{% trans %} By clicking show content, you agree to load the embedded content from <b>"{{ provider }}"</b> and therefore its privacy policy. {% endtrans %}<p>
                   <div><a class="use-ajax btn btn-primary waves-effect waves-btn social-embed-placeholder-btn" href="/api/opensocial/social-embed/generate?url={{ url }}&uuid={{ uuid }}">{% trans %} Show content {% endtrans %}</a></div>
+                  {% if uid %}
                   <div><a class="social-embed-content-settings" href="/user/{{ uid }}/edit">{% trans %} View and edit embedded content settings {% endtrans %}</a></div>
+                  {% endif %}
                 </div>
               </div>',
       '#context' => [
