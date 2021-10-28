@@ -116,7 +116,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
       $dom = Html::load($text);
       /** @var \DOMXPath $xpath */
       $xpath = new \DOMXPath($dom);
-      /** @var \DOMNodeList $matching_nodes */
+      /** @var \DOMNode[] $matching_nodes */
       $matching_nodes = $xpath->query('//drupal-url[@data-embed-url]');
       foreach ($matching_nodes as $node) {
         /** @var \DOMElement $node */
