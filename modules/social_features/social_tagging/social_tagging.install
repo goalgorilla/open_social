@@ -121,3 +121,22 @@ function social_tagging_update_8004() {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
 }
+
+/**
+ * Create, if not set, default settings to enable tagging on content.
+ */
+function social_tagging_update_11001(): void {
+  // Get the editable social tagging configuration.
+  $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+
+  // Get the multiple types of nodes.
+  /** @var \Drupal\node\NodeTypeInterface[] $node_types */
+  $node_types = \Drupal::service('entity_type.manager')->getStorage('node_type')->loadMultiple();
+  foreach ($node_types as $node_type) {
+    $config_name = 'tag_node_type_' . $node_type->id();
+    // Foreach node type, check if there isn't a configuration in place.
+    if ($tag_settings->get($config_name) === NULL) {
+      $tag_settings->set($config_name, TRUE)->save();
+    }
+  }
+}
