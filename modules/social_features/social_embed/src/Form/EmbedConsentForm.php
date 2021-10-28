@@ -69,7 +69,7 @@ class EmbedConsentForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) :void {
     // Retrieve the configuration.
     $config = $this->configFactory->getEditable(static::SETTINGS);
     $new_value_consent_settings_lu = $form_state->getValue('embed_consent_settings_lu');

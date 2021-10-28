@@ -14,7 +14,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *
  * Perform actions related to the installation of social_embed.
  */
-function social_embed_install($is_syncing) {
+function social_embed_install(bool $is_syncing) {
   // Create the social_embed icon.
   _social_embed_create_media_button();
   // Grant the default permissions for this feature.
@@ -54,7 +54,7 @@ function social_embed_update_10301() {
 /**
  * Add permissions for site manager to access embed consent settings form.
  */
-function social_embed_update_11001() {
+function social_embed_update_11001() :string|NULL {
   user_role_grant_permissions('anonymous', ['generate social embed content']);
   user_role_grant_permissions('authenticated', ['generate social embed content']);
   user_role_grant_permissions('sitemanager', ['administer social embed settings']);
@@ -63,7 +63,7 @@ function social_embed_update_11001() {
 /**
  * Adds field_user_embed_content_consent field to user entity.
  */
-function social_embed_update_11002(&$sandbox) {
+function social_embed_update_11002() :string|NULL {
   $embedded_content_consent_storage = FieldStorageConfig::create(
     [
       'langcode' => 'en',
@@ -118,7 +118,7 @@ function social_embed_update_11002(&$sandbox) {
  *
  * This enables the user to toggle the option for embedded content settings.
  */
-function social_embed_update_11003() {
+function social_embed_update_11003() :string|NULL {
   // Add the new field group.
   $group_remote_content_settings = [
     'group_remote_content_settings' => [

@@ -98,7 +98,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
    *   (Optional) Prefix that should be used to manually choose which URLs
    *   should be converted.
    *
-   * @return string
+   * @return string|null
    *   Processed text.
    */
   public static function convertUrls($text, $url_prefix = '') {
@@ -161,7 +161,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       // markup, especially a '>'. Therefore, remove all comment contents
       // and add them back later.
       _filter_url_escape_comments([], TRUE);
-      $text = preg_replace_callback('`<!--(.*?)-->`s', '_filter_url_escape_comments', $text);
+      $text = preg_replace_callback('`<!--(.*?)-->`s', '_filter_url_escape_comments', $text) ?? $text;
 
       // Split at all tags; ensures that no tags or attributes are processed.
       $chunks = preg_split('/(<.+?>)/is', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
