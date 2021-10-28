@@ -98,7 +98,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
    *   (Optional) Prefix that should be used to manually choose which URLs
    *   should be converted.
    *
-   * @return string|null
+   * @return mixed
    *   Processed text.
    */
   public static function convertUrls($text, $url_prefix = '') {
