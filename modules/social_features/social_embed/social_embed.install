@@ -54,7 +54,7 @@ function social_embed_update_10301() {
 /**
  * Add permissions for site manager to access embed consent settings form.
  */
-function social_embed_update_11001() :string|NULL {
+function social_embed_update_11001() :void {
   user_role_grant_permissions('anonymous', ['generate social embed content']);
   user_role_grant_permissions('authenticated', ['generate social embed content']);
   user_role_grant_permissions('sitemanager', ['administer social embed settings']);
@@ -63,7 +63,7 @@ function social_embed_update_11001() :string|NULL {
 /**
  * Adds field_user_embed_content_consent field to user entity.
  */
-function social_embed_update_11002() :string|NULL {
+function social_embed_update_11002() :void {
   $embedded_content_consent_storage = FieldStorageConfig::create(
     [
       'langcode' => 'en',
@@ -118,7 +118,7 @@ function social_embed_update_11002() :string|NULL {
  *
  * This enables the user to toggle the option for embedded content settings.
  */
-function social_embed_update_11003() :string|NULL {
+function social_embed_update_11003() :void {
   // Add the new field group.
   $group_remote_content_settings = [
     'group_remote_content_settings' => [
@@ -153,13 +153,12 @@ function social_embed_update_11003() :string|NULL {
     ],
   ];
 
-  if ($user_config = \Drupal::configFactory()->getEditable('core.entity_form_display.user.user.default')) {
-    if (is_array($existing_field_groups = $user_config->get('third_party_settings.field_group'))) {
-      $user_config->set('third_party_settings.field_group', array_merge($existing_field_groups, $group_remote_content_settings));
-    }
-    if (is_array($existing_content = $user_config->get('content'))) {
-      $user_config->set('content', array_merge($existing_content, $field_user_embed_content_consent));
-    }
-    $user_config->save();
+  $user_config = \Drupal::configFactory()->getEditable('core.entity_form_display.user.user.default');
+  if (is_array($existing_field_groups = $user_config->get('third_party_settings.field_group'))) {
+    $user_config->set('third_party_settings.field_group', array_merge($existing_field_groups, $group_remote_content_settings));
   }
+  if (is_array($existing_content = $user_config->get('content'))) {
+    $user_config->set('content', array_merge($existing_content, $field_user_embed_content_consent));
+  }
+  $user_config->save();
 }
