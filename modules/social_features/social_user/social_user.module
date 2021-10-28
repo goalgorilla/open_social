@@ -752,7 +752,7 @@ function social_user_user_insert(UserInterface $user): void {
 /**
  * Implements hook_views_data_alter().
  */
-function social_user_views_data_alter(array &$data) {
+function social_user_views_data_alter(array &$data): void {
   if (isset($data['groups_field_data'])) {
     $filter = &$data['groups_field_data']['id']['filter'];
     $filter['id'] = 'in_operator';
