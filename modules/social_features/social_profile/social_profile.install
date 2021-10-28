@@ -475,7 +475,13 @@ function social_profile_update_8903() {
 function _social_profile_field_definitions_update() {
   // Create field storage for the 'Profile Name' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($list['profile'])) {
+    foreach ($list['profile'] as $post) {
+      \Drupal::entityDefinitionUpdateManager()->updateEntityType($post);
+    }
+  }
+
 }
 
 /**

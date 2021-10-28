@@ -71,7 +71,14 @@ function social_tagging_update_8002() {
 function _social_tagging_field_definitions_update() {
   // Create field storage for the 'Highlight' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+  // Update definitions and schema.
+  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($list['profile'])) {
+    foreach ($list['profile'] as $post) {
+      \Drupal::entityDefinitionUpdateManager()->updateEntityType($post);
+    }
+  }
+
 }
 
 /**
