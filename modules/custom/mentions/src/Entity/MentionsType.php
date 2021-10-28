@@ -29,12 +29,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "edit_form" = "/admin/structure/mentions/{mentions_type}/edit",
  *     "delete_form" = "/admin/structure/mentions/{mentions_type}/delete"
  *   },
- *
  *   config_export = {
  *     "id",
  *     "name"
  *   }
- *
  * )
  */
 class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
