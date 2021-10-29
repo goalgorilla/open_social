@@ -24,6 +24,8 @@ use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\social_group_invite\Plugin\Action\SocialGroupInviteResend;
 use Drupal\social_group_invite\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatterOverrider;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -320,19 +322,23 @@ function social_group_invite_preprocess_page_title(&$variables) {
     $variables['#cache']['tags'][] = 'group_content_list:group:' . $group->id();
     $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:group:' . $group->id();
   }
+
+  $user = \Drupal::routeMatch()->getParameter('user');
+
   // Add count of pending invites to the page title for a user.
-  if (\Drupal::routeMatch()->getParameter('view_id') === 'social_group_user_invitations' &&
-    !empty(\Drupal::routeMatch()->getParameter('user'))) {
+  if ($user !== NULL && \Drupal::routeMatch()->getParameter('view_id') === 'social_group_user_invitations') {
+    // @todo Manual upcasting needed until https://www.drupal.org/project/drupal/issues/2528166 remove if statement after.
+    if (is_numeric($user)) {
+      $user = User::load($user);
+    }
+    assert($user instanceof UserInterface, "The user parameter should be automatically upcast by Drupal, check the route configuration.");
     $loader = \Drupal::service('ginvite.invitation_loader');
     $count = count($loader->loadByUser());
     $translation = \Drupal::translation()->formatPlural($count, '1 group invite', '@count group invites');
     $variables['title'] = $translation;
 
-    $user = \Drupal::routeMatch()->getParameter('user');
-    if (is_string($user)) {
-      $variables['#cache']['tags'][] = 'group_content_list:entity:' . $user;
-      $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $user;
-    }
+    $variables['#cache']['tags'][] = 'group_content_list:entity:' . $user->id();
+    $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $user->id();
   }
 }
 

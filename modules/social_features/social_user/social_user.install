@@ -17,8 +17,18 @@ use Symfony\Component\Yaml\Yaml;
 function social_user_install() {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      // Anonymous users may view user information. This is required so that
+      // things like author teasers work properly. Access to specific profile or
+      // user fields is limited on a field level in the social_profile module.
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
     [
+      'access user profiles',
       'cancel account',
       'change own username',
     ]
@@ -26,20 +36,15 @@ function social_user_install() {
   user_role_grant_permissions(
     'verified',
     [
-      'access user profiles',
-    ]
-  );
-  user_role_grant_permissions(
-    'contentmanager',
-    [
-      'access user profiles',
+      // Only when a user is verified are they allowed to view who else is a
+      // member of the platform (e.g. through search or the all-people page).
+      'list user',
     ]
   );
   user_role_grant_permissions(
     'sitemanager',
     [
       'access user profiles',
-      'view users',
       'block users',
       'administer navigation settings',
       'administer social_user settings',
@@ -207,4 +212,33 @@ function social_user_update_11402() : void {
     ],
   ]);
   $form_mode->save();
+}
+
+/**
+ * Update access to user profiles.
+ */
+function social_user_update_12001() : void {
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      // Anonymous users may view user information. This is required so that
+      // things like author teasers work properly. Access to specific profile or
+      // user fields is limited on a field level in the social_profile module.
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      // Only when a user is verified are they allowed to view who else is a
+      // member of the platform (e.g. through search or the all-people page).
+      'list user',
+    ]
+  );
 }

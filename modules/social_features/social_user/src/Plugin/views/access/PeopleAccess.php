@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Route;
 use Drupal\views\Plugin\views\access\AccessPluginBase;
 
 /**
- * People page access plugin that provides access control based on some perms.
+ * People page access plugin that provides access control for admin overviews.
  *
  * @ingroup views_access_plugins
  *
@@ -30,17 +30,15 @@ class PeopleAccess extends AccessPluginBase {
    * {@inheritdoc}
    */
   public function access(AccountInterface $account) {
-    // Check if user has administer users or view user access.
-    $administerUsers = $account->hasPermission('administer users');
-    $viewUsers = $account->hasPermission('view users');
-    return $administerUsers | $viewUsers;
+    return $account->hasPermission("access administration pages")
+      && $account->hasPermission("list user");
   }
 
   /**
    * {@inheritdoc}
    */
   public function alterRouteDefinition(Route $route) {
-    $route->setRequirement('_custom_access', '\Drupal\social_user\Controller\SocialUserController::access');
+    $route->setRequirement('_permission', 'access administration pages,list user');
   }
 
 }
