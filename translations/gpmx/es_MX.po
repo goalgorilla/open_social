@@ -1500,7 +1500,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2021-10-29 08:38+0000\n"
-"PO-Revision-Date: 2021-08-04 15:17+0000\n"
+"PO-Revision-Date: 2021-10-29 16:17+0000\n"
 "Last-Translator: aborbon <aborbon@greenpeace.org>\n"
 "Language-Team: Spanish (Mexico) <https://translate.getopensocial.com/"
 "projects/gpmx/distribution/es_MX/>\n"
@@ -1575,7 +1575,7 @@ msgstr "#Involucrate"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:93
 msgid "%subject"
-msgstr ""
+msgstr "%subject"
 
 #: modules/social_features/social_comment/social_comment.module:232
 #: modules/social_features/social_post/post.page.inc:40
@@ -1589,8 +1589,8 @@ msgstr "%type_name: Crear nuevas entidades de publicación"
 #: modules/social_features/social_activity/social_activity.tokens.inc:130
 msgid "(+ @count other groups)"
 msgid_plural "(+ @count other groups)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(+ @count otro grupo)"
+msgstr[1] "(+ @count otros grupos)"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:29;199
 msgid "(1 spot left)"
@@ -1692,6 +1692,9 @@ msgid ""
 "True|My muted groups\r\n"
 "False|My unmuted groups"
 msgstr ""
+"- Cualquier -|- Cualquier -\n"
+"True|Mis grupos silenciados\n"
+"False|Mis grupos sin silenciar"
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:44
 msgid "- Default -"
@@ -1758,8 +1761,8 @@ msgstr[1] "@count elementos procesados correctamente:"
 #: modules/social_features/social_activity/templates/message-group-preview.html.twig:9
 msgid "1 member"
 msgid_plural "@count members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 miembro"
+msgstr[1] "@count miembros"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:298
 msgid "1 membership invite for group: @group_name"
@@ -2001,6 +2004,15 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> etiquetas agregadas que sigues a[social_taxonomy:indefinite_article] "
+"[social_taxonomy:content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a>.</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.update_node_following_tag.yml:0;0
 msgid ""
@@ -2008,6 +2020,9 @@ msgid ""
 "a> added tag(s) you follow to [social_taxonomy:indefinite_article] "
 "[social_taxonomy:content_type].</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> etiquetas agregadas que sigues a[social_taxonomy:indefinite_article] "
+"[social_taxonomy:content_type].</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0
 msgid ""
@@ -3951,7 +3966,7 @@ msgstr "Dirección administrativa"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php:218
 msgid "Administrative area"
-msgstr ""
+msgstr "Área administrativa"
 
 #: modules/social_features/social_core/config/install/user.role.administrator.yml:0
 #: modules/social_features/social_group/config/install/group.role.closed_group-a416e6833.yml:0
@@ -6189,7 +6204,7 @@ msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Daily.php:7
 msgid "Daily"
-msgstr "Diariamente"
+msgstr "Diario"
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserFromWrapper.php:9
 msgid "Data"
@@ -9927,7 +9942,7 @@ msgstr "Mis contenidos"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "My upcoming events"
-msgstr "Mis próximos eventos"
+msgstr "Eventos por asistir"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0;0
 msgid "My upcoming events block"
@@ -9971,7 +9986,7 @@ msgstr "Configuración de navegación"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/None.php:10
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #: modules/social_features/social_album/social_album.module:80
 msgid "New Album"
@@ -10015,6 +10030,10 @@ msgid ""
 "they are registered. With this setting disabled, new registered users get "
 "the \"authenticated\" role when they are registered."
 msgstr ""
+"Los nuevos usuarios registrados obtienen el rol de \"usuario verificado y "
+"autenticado\" cuando se registran. Con esta configuración deshabilitada, los "
+"nuevos usuarios registrados obtienen el rol \"autenticado\" cuando se "
+"registran."
 
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 msgid "Newest Members"
