@@ -20,7 +20,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
-use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\MenuLinkContentInterface;
@@ -328,18 +327,15 @@ function social_core_preprocess_field(array &$variables) {
  * Implements hook_preprocess_block().
  */
 function social_core_preprocess_block(&$variables) {
-  /** @var \Drupal\user\Entity\User|int $account */
   $account = \Drupal::routeMatch()->getParameter('user');
-  /** @var \Drupal\group\Entity\Group|int $group */
-  $group = \Drupal::routeMatch()->getParameter('group');
-
+  // @todo Manual upcasting needed until https://www.drupal.org/project/drupal/issues/2528166 remove if statement after.
   if (is_numeric($account)) {
     $account = User::load($account);
   }
+  assert($account === NULL || $account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
-  if (is_numeric($group)) {
-    $group = Group::load($group);
-  }
+  $group = \Drupal::routeMatch()->getParameter('group');
+  assert($group === NULL || $group instanceof GroupInterface, "The group parameter should be automatically upcasted by Drupal, check the route configuration.");
 
   if (!empty($variables['elements']['content']['#view'])) {
     $view = $variables['elements']['content']['#view'];

@@ -9,6 +9,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -63,8 +64,9 @@ class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    * Custom access logic to display the block only on current user Topic page.
    */
   protected function blockAccess(AccountInterface $account) {
-    $route_user_id = $this->routeMatch->getParameter('user');
-    if ($account->id() == $route_user_id && $account->hasPermission("create topic content")) {
+    $route_user = $this->routeMatch->getParameter('user');
+    assert($route_user instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
+    if ($account->id() === $route_user->id() && $account->hasPermission("create topic content")) {
       return AccessResult::allowed();
     }
     // By default, the block is not visible.

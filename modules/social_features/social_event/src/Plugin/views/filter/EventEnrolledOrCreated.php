@@ -4,6 +4,7 @@ namespace Drupal\social_event\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 
@@ -40,11 +41,10 @@ class EventEnrolledOrCreated extends FilterPluginBase {
    */
   public function query() {
     // Profile user.
-    $account_profile = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
-    if (!is_null($account_profile) && is_object($account_profile)) {
-      $account_profile = $account_profile->id();
-    }
+    $account_id = (string) $account->id();
 
     // Join the event tables.
     $configuration = [
@@ -91,13 +91,13 @@ class EventEnrolledOrCreated extends FilterPluginBase {
 
     // Check if the user is the author of the event.
     $event_creator = new Condition('AND');
-    $event_creator->condition('node_field_data.uid', $account_profile, '=');
+    $event_creator->condition('node_field_data.uid', $account_id, '=');
     $event_creator->condition('node_field_data.type', 'event', '=');
     $or_condition->condition($event_creator);
 
     // Or if the user enrolled to the event.
     $enrolled_to_event = new Condition('AND');
-    $enrolled_to_event->condition('event_enrollment__field_account.field_account_target_id', $account_profile, '=');
+    $enrolled_to_event->condition('event_enrollment__field_account.field_account_target_id', $account_id, '=');
     $enrolled_to_event->condition('event_enrollment__field_enrollment_status.field_enrollment_status_value', '1', '=');
     $or_condition->condition($enrolled_to_event);
 

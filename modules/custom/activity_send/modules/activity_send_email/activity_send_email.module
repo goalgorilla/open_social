@@ -10,6 +10,7 @@ use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestinati
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\user\UserInterface;
 
 /**
  * Email frequencies.
@@ -215,6 +216,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  */
 function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state) {
   $account = \Drupal::routeMatch()->getParameter('user');
+  assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
   $values = $form_state->getValue('email_notifications');
 
   $values = array_merge(

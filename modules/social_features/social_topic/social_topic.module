@@ -25,6 +25,7 @@ use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\taxonomy\TermInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
@@ -93,7 +94,9 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['status']['#options'][0] = t('Unpublished');
     $form['status']['#options'][1] = t('Published');
 
-    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
+    $account_uid = $account->id();
     $current_uid = \Drupal::currentUser()->id();
 
     if ($account_uid !== $current_uid) {
@@ -164,7 +167,9 @@ function social_topic_block_view_alter(array &$build, BlockPluginInterface $bloc
  */
 function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->id() == 'topics' && $view->getDisplay()->display['id'] == 'page_profile') {
-    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
+    $account_uid = $account->id();
     $current_uid = \Drupal::currentUser()->id();
     if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [

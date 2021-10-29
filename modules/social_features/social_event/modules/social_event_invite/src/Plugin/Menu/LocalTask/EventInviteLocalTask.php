@@ -7,6 +7,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,19 +74,15 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function getCacheTags() {
-    $tags = [];
     $user = $this->routeMatch->getParameter('user');
+    // @todo Manual upcasting needed until https://www.drupal.org/project/drupal/issues/2528166 remove if statement after.
+    if (is_numeric($user)) {
+      $user = User::load($user);
+    }
+    assert($user instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
     // Add cache tags for event invite.
-    if ($user instanceof UserInterface) {
-      $tags[] = 'event_content_list:entity:' . $user->id();
-    }
-
-    if (is_string($user)) {
-      $tags[] = 'event_content_list:entity:' . $user;
-    }
-
-    return Cache::mergeTags(parent::getCacheTags(), $tags);
+    return Cache::mergeTags(parent::getCacheTags(), ['event_content_list:entity:' . $user->id()]);
   }
 
 }

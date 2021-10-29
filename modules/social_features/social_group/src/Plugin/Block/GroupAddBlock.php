@@ -14,6 +14,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupType;
 use Drupal\social_group\SocialGroupHelperService;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -101,7 +103,12 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
       return AccessResult::forbidden();
     }
 
-    $route_user_id = $this->routeMatch->getParameter('user');
+    $route_user = $this->routeMatch->getParameter('user');
+    // @todo Manual upcasting needed until https://www.drupal.org/project/drupal/issues/2528166 remove if statement after.
+    if (is_numeric($route_user)) {
+      $route_user = User::load($route_user);
+    }
+    assert($route_user instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
     // Show this block only on current user Groups page.
     $can_create_groups = FALSE;
@@ -112,7 +119,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
         break;
       }
     }
-    if ($account->id() == $route_user_id && $can_create_groups) {
+    if ($account->id() == $route_user->id() && $can_create_groups) {
       return AccessResult::allowed();
     }
 

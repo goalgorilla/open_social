@@ -284,10 +284,10 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
     // So it's actually the first time the user logs in and we can do our
     // redirect.
     $user = \Drupal::routeMatch()->getParameter('user');
+    assert($user instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $storage->loadByUser($user, 'profile');
 
     if (!($profile instanceof ProfileInterface)) {

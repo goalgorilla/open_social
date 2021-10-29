@@ -4,6 +4,7 @@ namespace Drupal\social_post\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 
 /**
@@ -41,6 +42,7 @@ class PostAccountStream extends FilterPluginBase {
 
     // Profile user.
     $account_profile = \Drupal::routeMatch()->getParameter('user');
+    assert($account_profile instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
 
     // Visibility logic when visiting a post stream on account page:
     // - All the posts to community, public by the account user.
@@ -53,14 +55,14 @@ class PostAccountStream extends FilterPluginBase {
 
     // Or posted by the user to the community.
     $public_community_condition = new Condition('AND');
-    $public_community_condition->condition('post_field_data.user_id', $account_profile->id(), '=');
+    $public_community_condition->condition('post_field_data.user_id', (string) $account_profile->id(), '=');
     $public_community_condition->condition('post__field_visibility.field_visibility_value', ['1', '2'], 'IN');
     $or_condition->condition($public_community_condition);
 
     // Or posted to the user by the community.
     $recipient_condition = new Condition('AND');
     $recipient_condition->condition('post__field_visibility.field_visibility_value', '0', '=');
-    $recipient_condition->condition('post__field_recipient_user.field_recipient_user_target_id', $account_profile->id(), '=');
+    $recipient_condition->condition('post__field_recipient_user.field_recipient_user_target_id', (string) $account_profile->id(), '=');
     $or_condition->condition($recipient_condition);
 
     $this->query->addWhere('visibility', $or_condition);

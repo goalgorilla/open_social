@@ -30,6 +30,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
 use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\UserInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
@@ -136,7 +137,9 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     $form['status']['#options'][0] = t('Unpublished');
     $form['status']['#options'][1] = t('Published');
 
-    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
+    $account_uid = $account->id();
     $current_uid = \Drupal::currentUser()->id();
 
     if ($account_uid !== $current_uid) {
@@ -255,9 +258,10 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_tru
  */
 function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
-    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account->id() !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
         'value' => NodeInterface::PUBLISHED,
@@ -1083,7 +1087,9 @@ function social_event_preprocess_views_view(&$variables) {
   }
   // Add a custom cache tag to the user events overview page.
   if ($variables['view']->current_display === 'events_overview' && $variables['view']->id() === 'events') {
-    $account_id = \Drupal::routeMatch()->getParameter('user');
+    $account = \Drupal::routeMatch()->getParameter('user');
+    assert($account instanceof UserInterface, "The user parameter should be automatically upcasted by Drupal, check the route configuration.");
+    $account_id = $account->id();
     $variables['#cache']['tags'][] = 'event_content_list:user:' . $account_id;
   }
 }
