@@ -77,6 +77,8 @@ function social_profile_install() {
   // Add default profile image.
   _social_profile_add_default_profile_image();
 
+  _social_profile_add_field_visibility_to_user_settings_form();
+
   _social_profile_populate_nationalities_vocabulary('10.3.0');
 
   // Grant the default permissions for this feature.
@@ -245,6 +247,24 @@ function _social_profile_populate_nationalities_vocabulary(string $version) : vo
       'name' => $nationality,
     ])->save();
   }
+}
+
+/**
+ * Add the profile field visibility settings to the user settings page.
+ */
+function _social_profile_add_field_visibility_to_user_settings_form() : void {
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $user_display */
+  $user_display = EntityFormDisplay::load('user.user.default');
+  $user_display->setComponent('profile_profiles', [
+    'type' => 'profile_form',
+    'weight' => 90,
+    'title' => "Profile Visibility",
+    'description' => "Profile visibility description",
+    'settings' => [
+      'form_mode' => 'visibility',
+    ],
+  ]);
+  $user_display->save();
 }
 
 /**
