@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Provide views data that isn't tied to any other module.
+ */
+
+/**
  * Implements hook_views_data_alter().
  */
 function gvbo_views_data_alter(array &$data) {
