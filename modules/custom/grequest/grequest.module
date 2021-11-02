@@ -28,7 +28,7 @@ function grequest_group_content_insert(GroupContentInterface $group_content) {
     ];
     $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
 
-    /** @var $request GroupContentInterface */
+    /** @var GroupContentInterface $request */
     foreach ($requests as $request) {
       $request
         ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
