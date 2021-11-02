@@ -9,7 +9,7 @@ use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
 
 /**
- * Updates status of Pending membership requests when Group membership is created.
+ * Updates status of membership requests when membership is created.
  *
  * Implements hook_ENTITY_TYPE_insert().
  */
@@ -17,7 +17,8 @@ function grequest_group_content_insert(GroupContentInterface $group_content) {
   $type = $group_content->getContentPlugin()->getPluginId();
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
 
-  // If new membership is created, check related membership request exists. if so - mark request as accepted.
+  // If new membership is created, check related membership request exists.
+  // if so - mark request as accepted.
   if ($type == 'group_membership' && $membership_request_enabled) {
     $approver = \Drupal::currentUser();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
@@ -27,8 +28,8 @@ function grequest_group_content_insert(GroupContentInterface $group_content) {
     ];
     $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
 
+    /** @var $request GroupContentInterface */
     foreach ($requests as $request) {
-      /** @var $request GroupContentInterface */
       $request
         ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
         // Who created request will become an 'approver' for Membership request.

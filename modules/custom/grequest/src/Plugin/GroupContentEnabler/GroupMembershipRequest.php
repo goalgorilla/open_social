@@ -9,7 +9,6 @@ use Drupal\group\Plugin\GroupContentEnablerBase;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Url;
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -146,7 +145,6 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
     if (!\Drupal::isConfigSyncing()) {
       $group_content_type_id = $this->getContentTypeConfigId();
 
-
       // Add Status field.
       FieldConfig::create([
         'field_storage' => FieldStorageConfig::loadByName('group_content', 'grequest_status'),
@@ -167,7 +165,6 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
         ],
       ])->save();
 
-
       // Build the 'default' display ID for both the entity form and view mode.
       $default_display_id = "group_content.$group_content_type_id.default";
       // Build or retrieve the 'default' view mode.
@@ -179,7 +176,6 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
           'status' => TRUE,
         ]);
       }
-
 
       // Assign display settings for the 'default' view mode.
       $view_display
