@@ -17,7 +17,7 @@ trait GroupViewsBulkOperationsAccessTrait {
    *
    * @param \Drupal\views\ViewExecutable $view
    *   The view.
-   * @param $display_id
+   * @param string $display_id
    *   The display ID.
    *
    * @return bool
