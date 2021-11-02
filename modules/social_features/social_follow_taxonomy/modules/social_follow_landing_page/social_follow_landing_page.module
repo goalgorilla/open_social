@@ -54,8 +54,8 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
           if ($tag_service->allowSplit()) {
             /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $parent_field */
             $parent_field = $term->get('parent');
-            if (!$parent_field->isEmpty()) {
-              $parents = $parent_field->referencedEntities();
+            $parents = $parent_field->referencedEntities();
+            if (!empty($parents)) {
               /** @var \Drupal\taxonomy\TermInterface $parent */
               $parent = reset($parents);
               $category = $parent->getName();
