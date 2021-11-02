@@ -24,6 +24,9 @@ use Drupal\Core\Session\AccountInterface;
  *   pretty_path_key = "request",
  *   reference_label = @Translation("Username"),
  *   reference_description = @Translation("The name of the user you want to make a member"),
+ *   handlers = {
+ *     "permission_provider" = "Drupal\group\Plugin\GroupContentPermissionProvider",
+ *   },
  * )
  */
 class GroupMembershipRequest extends GroupContentEnablerBase {
@@ -69,7 +72,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
    * {@inheritdoc}
    */
   protected function getGroupContentPermissions() {
-    $permissions = parent::getGroupContentPermissions();
+    $permissions = parent::getPermissions();
 
     // Add extra permissions specific to membership group content entities.
     $permissions['request group membership'] = [
