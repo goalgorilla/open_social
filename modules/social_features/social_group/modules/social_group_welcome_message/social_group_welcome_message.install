@@ -6,11 +6,14 @@
  */
 
 /**
- * Remove the not used fieldgroup 'group_welcome_message' from group forms.
+ * Remove the fieldgroup 'group_welcome_message' from group entity form config.
  *
  * Config override that adds the 'group_welcome_message' fieldgroup was removed
+ * in https://www.drupal.org/project/social/issues/3224631
  * but for some reason this field group still exist in group form configuration.
- * As we add a new wrapper in form alter we should remove it from configuration.
+ *
+ * @see https://www.drupal.org/project/social/issues/3243539
+ * @see social_group_welcome_message_form_alter
  */
 function social_group_welcome_message_update_10101(): void {
   $social_group_types = [
