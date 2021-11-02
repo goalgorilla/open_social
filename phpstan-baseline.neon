@@ -86,21 +86,6 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/EventRequestActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupActivityContext.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getCommentedEntity\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupActivityContext.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:hasField\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupActivityContext.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php
@@ -192,16 +177,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
-			message: "#^Cannot call method getMaxAge\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
-			message: "#^Cannot call method getString\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity.page.inc
 
@@ -1746,11 +1721,6 @@ parameters:
 			path: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageSettings.php
 
 		-
-			message: "#^Function _download_count_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/download_count/download_count.install
-
-		-
 			message: "#^Function download_count_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/download_count/download_count.install
@@ -2276,9 +2246,339 @@ parameters:
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
-			message: "#^Function _group_core_comments_set_permissions\\(\\) has no return typehint specified\\.$#"
+			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface\\|null\\.$#"
+			count: 2
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Cannot call method id\\(\\) on Drupal\\\\user\\\\UserInterface\\|false\\.$#"
 			count: 1
-			path: modules/custom/group_core_comments/group_core_comments.install
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_entity_type_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_group_content_form_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_group_content_form_alter\\(\\) has parameter \\$form with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_group_content_form_alter\\(\\) has parameter \\$form_id with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_user_register_form_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_user_register_form_alter\\(\\) has parameter \\$form with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_form_user_register_form_alter\\(\\) has parameter \\$form_id with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_group_content_insert\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_mail\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_mail\\(\\) has parameter \\$key with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_mail\\(\\) has parameter \\$message with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_mail\\(\\) has parameter \\$params with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_token_info\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_tokens\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_tokens\\(\\) has parameter \\$tokens with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_tokens\\(\\) has parameter \\$type with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Function ginvite_user_insert\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/ginvite.module
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Controller\\\\InvitationOperations\\:\\:create\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Controller/InvitationOperations.php
+
+		-
+			message: "#^Parameter \\#1 \\$url of class Symfony\\\\Component\\\\HttpFoundation\\\\RedirectResponse constructor expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Controller/InvitationOperations.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\EventSubscriber\\\\GinviteSubscriber\\:\\:notifyAboutPendingInvitations\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/EventSubscriber/GinviteSubscriber.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:\\$groupInvitationLoader\\.$#"
+			count: 2
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:\\$groupMembershipLoader\\.$#"
+			count: 2
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:cancelForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:create\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:displayErrorMessage\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:submitForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:validateEmails\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:validateExistingMembers\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:validateForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:validateInviteDuplication\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchCreateInvite\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchCreateInvite\\(\\) has parameter \\$context with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchCreateInvite\\(\\) has parameter \\$values with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchFinished\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchFinished\\(\\) has parameter \\$operations with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchFinished\\(\\) has parameter \\$results with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:batchFinished\\(\\) has parameter \\$success with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:create\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitationConfirm\\:\\:submitForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Parameter \\#1 \\$url of class Symfony\\\\Component\\\\HttpFoundation\\\\RedirectResponse constructor expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
+			count: 2
+			path: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitation\\:\\:getUser\\(\\) should return Drupal\\\\user\\\\UserInterface but returns Drupal\\\\Core\\\\Entity\\\\EntityInterface\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/GroupInvitation.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/ginvite/src/GroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitationLoader\\:\\:groupContentStorage\\(\\) should return Drupal\\\\group\\\\Entity\\\\Storage\\\\GroupContentStorageInterface but returns Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/GroupInvitationLoader.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitationLoader\\:\\:loadByGroup\\(\\) has parameter \\$mail with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/GroupInvitationLoader.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitationLoader\\:\\:loadByGroup\\(\\) has parameter \\$status with no typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/GroupInvitationLoader.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Plugin\\\\GroupContentEnabler\\\\GroupInvitation\\:\\:postInstall\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Plugin/GroupContentEnabler/GroupInvitation.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Plugin\\\\GroupContentEnabler\\\\GroupInvitation\\:\\:submitConfigurationForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Plugin/GroupContentEnabler/GroupInvitation.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/ginvite/src/Plugin/GroupContentEnabler/GroupInvitation.php
+
+		-
+			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Plugin/Validation/Constraint/PreventDuplicatedConstraintValidator.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Plugin\\\\Validation\\\\Constraint\\\\PreventDuplicatedConstraintValidator\\:\\:create\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Plugin/Validation/Constraint/PreventDuplicatedConstraintValidator.php
+
+		-
+			message: "#^Method Drupal\\\\ginvite\\\\Plugin\\\\Validation\\\\Constraint\\\\PreventDuplicatedConstraintValidator\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/ginvite/src/Plugin/Validation/Constraint/PreventDuplicatedConstraintValidator.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByGroup\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/grequest/grequest.module
+
+		-
+			message: "#^Function grequest_group_content_insert\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/grequest.module
+
+		-
+			message: "#^Method Drupal\\\\grequest\\\\Controller\\\\GrequestController\\:\\:approveRequest\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Controller/GrequestController.php
+
+		-
+			message: "#^Method Drupal\\\\grequest\\\\Controller\\\\GrequestController\\:\\:create\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Controller/GrequestController.php
+
+		-
+			message: "#^Access to undefined constant Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipForm\\:\\:TYPE_ERROR\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipForm.php
+
+		-
+			message: "#^Method Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipForm\\:\\:submitForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipForm.php
+
+		-
+			message: "#^Property Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipForm\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipForm.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipForm.php
+
+		-
+			message: "#^Method Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:submitForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
+			message: "#^Property Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
+			message: "#^Property Drupal\\\\grequest\\\\Form\\\\GroupRequestMembershipRejectForm\\:\\:\\$groupContent \\(Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\|null\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php
+
+		-
+			message: "#^Method Drupal\\\\grequest\\\\Plugin\\\\GroupContentEnabler\\\\GroupMembershipRequest\\:\\:postInstall\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/grequest/src/Plugin/GroupContentEnabler/GroupMembershipRequest.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/grequest/src/Plugin/GroupContentEnabler/GroupMembershipRequest.php
 
 		-
 			message: "#^Function group_core_comments_install\\(\\) has no return typehint specified\\.$#"
@@ -2292,11 +2592,6 @@ parameters:
 
 		-
 			message: "#^Function group_core_comments_update_8001\\(\\) has parameter \\$sandbox with no typehint specified\\.$#"
-			count: 1
-			path: modules/custom/group_core_comments/group_core_comments.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _group_core_comments_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/group_core_comments/group_core_comments.install
 
@@ -2404,6 +2699,46 @@ parameters:
 			message: "#^Parameter \\#1 \\$entity of static method Drupal\\\\group\\\\Entity\\\\GroupContent\\:\\:loadByEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface, Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface given\\.$#"
 			count: 1
 			path: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php
+
+		-
+			message: "#^Function gvbo_views_data_alter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/gvbo/gvbo.views.inc
+
+		-
+			message: "#^Method Drupal\\\\gvbo\\\\Form\\\\GroupViewsBulkOperationsConfigureAction\\:\\:submitForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Form/GroupViewsBulkOperationsConfigureAction.php
+
+		-
+			message: "#^Method Drupal\\\\gvbo\\\\Plugin\\\\views\\\\field\\\\GroupViewsBulkOperationsBulkForm\\:\\:viewsForm\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Plugin/views/field/GroupViewsBulkOperationsBulkForm.php
+
+		-
+			message: "#^Method Drupal\\\\gvbo\\\\Plugin\\\\views\\\\field\\\\GroupViewsBulkOperationsBulkForm\\:\\:viewsFormSubmit\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Plugin/views/field/GroupViewsBulkOperationsBulkForm.php
+
+		-
+			message: "#^Cannot call method getPath\\(\\) on Symfony\\\\Component\\\\Routing\\\\Route\\|null\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
+
+		-
+			message: "#^Cannot call method setDefault\\(\\) on Symfony\\\\Component\\\\Routing\\\\Route\\|null\\.$#"
+			count: 2
+			path: modules/custom/gvbo/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
+
+		-
+			message: "#^Cannot call method setPath\\(\\) on Symfony\\\\Component\\\\Routing\\\\Route\\|null\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
+
+		-
+			message: "#^Method Drupal\\\\gvbo\\\\Routing\\\\GroupViewsBulkOperationsRouteSubscriber\\:\\:alterRoutes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/gvbo/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
 
 		-
 			message: "#^Function improved_theme_settings_install\\(\\) has no return typehint specified\\.$#"
@@ -3041,17 +3376,7 @@ parameters:
 			path: modules/custom/social_file_private/src/SocialFilePrivateTextEditorConfigOverride.php
 
 		-
-			message: "#^Function _social_font_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_font/social_font.install
-
-		-
 			message: "#^Function social_font_install\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_font/social_font.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_font_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/social_font/social_font.install
 
@@ -3136,11 +3461,6 @@ parameters:
 			path: modules/custom/social_font/src/Form/FontSettingsForm.php
 
 		-
-			message: "#^Function _social_gdpr_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_gdpr/social_gdpr.install
-
-		-
 			message: "#^Function social_gdpr_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_gdpr/social_gdpr.install
@@ -3152,11 +3472,6 @@ parameters:
 
 		-
 			message: "#^Function social_gdpr_update_8902\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_gdpr/social_gdpr.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_gdpr_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/social_gdpr/social_gdpr.install
 
@@ -3399,21 +3714,6 @@ parameters:
 			message: "#^Function social_content_translation_form_alter\\(\\) has parameter \\$form with no typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_language/modules/social_content_translation/social_content_translation.module
-
-		-
-			message: "#^Function _social_language_get_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_language/social_language.install
-
-		-
-			message: "#^Function _social_language_get_permissions\\(\\) has parameter \\$role with no typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_language/social_language.install
-
-		-
-			message: "#^Function _social_language_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_language/social_language.install
 
 		-
 			message: "#^Function social_language_install\\(\\) has no return typehint specified\\.$#"
@@ -3751,17 +4051,7 @@ parameters:
 			path: modules/custom/social_metatag/social_metatag.post_update.php
 
 		-
-			message: "#^Function _social_path_manager_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.install
-
-		-
 			message: "#^Function social_path_manager_install\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_path_manager_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.install
 
@@ -4021,11 +4311,6 @@ parameters:
 			path: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php
 
 		-
-			message: "#^Function _social_tour_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_tour/social_tour.install
-
-		-
 			message: "#^Function social_tour_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_tour/social_tour.install
@@ -4042,11 +4327,6 @@ parameters:
 
 		-
 			message: "#^Function social_tour_update_8001\\(\\) has parameter \\$sandbox with no typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_tour/social_tour.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_tour_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/social_tour/social_tour.install
 
@@ -4642,7 +4922,7 @@ parameters:
 
 		-
 			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_album/social_album.install
 
 		-
@@ -4652,11 +4932,6 @@ parameters:
 
 		-
 			message: "#^Function _social_album_set_group_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_album/social_album.install
-
-		-
-			message: "#^Function _social_album_set_permissions\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_album/social_album.install
 
@@ -5156,11 +5431,6 @@ parameters:
 			path: modules/social_features/social_album/src/SocialAlbumConfigOverride.php
 
 		-
-			message: "#^Function _social_book_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_book/social_book.install
-
-		-
 			message: "#^Function social_book_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_book/social_book.install
@@ -5223,11 +5493,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 2
-			path: modules/social_features/social_book/social_book.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_book_get_permissions expects string, int\\|string\\|null given\\.$#"
-			count: 1
 			path: modules/social_features/social_book/social_book.install
 
 		-
@@ -5311,11 +5576,6 @@ parameters:
 			path: modules/social_features/social_branding/tests/modules/social_branding_test/social_branding_test.module
 
 		-
-			message: "#^Function _social_comment_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.install
-
-		-
 			message: "#^Function social_comment_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.install
@@ -5356,22 +5616,7 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.install
 
 		-
-			message: "#^Parameter \\#1 \\$role of function _social_comment_get_permissions expects string, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.install
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.module
-
-		-
-			message: "#^Cannot call method getMaxAge\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.module
-
-		-
-			message: "#^Cannot call method getString\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -6211,11 +6456,6 @@ parameters:
 			path: modules/social_features/social_content_block/src/SocialContentBlockOverride.php
 
 		-
-			message: "#^Function _social_content_report_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_report/social_content_report.install
-
-		-
 			message: "#^Function social_content_report_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.install
@@ -6227,11 +6467,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_content_report/social_content_report.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_content_report_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.install
 
@@ -7566,11 +7801,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.install
 
 		-
-			message: "#^Function _social_event_an_enroll_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.install
-
-		-
 			message: "#^Function social_event_an_enroll_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.install
@@ -7612,11 +7842,6 @@ parameters:
 
 		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_event_an_enroll_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.install
 
@@ -8562,7 +8787,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.install
 
 		-
@@ -8707,21 +8932,6 @@ parameters:
 
 		-
 			message: "#^Function social_event_managers_menu_local_tasks_alter\\(\\) has parameter \\$route_name with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
-
-		-
-			message: "#^Function social_event_managers_module_implements_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
-
-		-
-			message: "#^Function social_event_managers_module_implements_alter\\(\\) has parameter \\$hook with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
-
-		-
-			message: "#^Function social_event_managers_module_implements_alter\\(\\) has parameter \\$implementations with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
 
@@ -9396,11 +9606,6 @@ parameters:
 			path: modules/social_features/social_event/social_event.install
 
 		-
-			message: "#^Function _social_event_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.install
-
-		-
 			message: "#^Function social_event_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.install
@@ -9637,11 +9842,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_event_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.install
 
@@ -10536,11 +10736,6 @@ parameters:
 			path: modules/social_features/social_event/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Cannot call method getValue\\(\\) on Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface\\|null\\.$#"
-			count: 3
-			path: modules/social_features/social_event/src/Service/SocialEventEnrollService.php
-
-		-
 			message: "#^Cannot call method id\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
 			count: 1
 			path: modules/social_features/social_event/tests/src/Kernel/GraphQL/QueryEventTest.php
@@ -10611,11 +10806,6 @@ parameters:
 			path: modules/social_features/social_featured_items/social_featured_items.module
 
 		-
-			message: "#^Function _social_follow_content_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_content/social_follow_content.install
-
-		-
 			message: "#^Function social_follow_content_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/social_follow_content.install
@@ -10637,11 +10827,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_content/social_follow_content.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_follow_content_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/social_follow_content.install
 
@@ -10722,7 +10907,7 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$entity\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
 
 		-
@@ -10946,22 +11131,12 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagOverrides.php
 
 		-
-			message: "#^Function _social_follow_taxonomy_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
-
-		-
 			message: "#^Function social_follow_taxonomy_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
 
 		-
 			message: "#^Function social_follow_taxonomy_update_8801\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_follow_taxonomy_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
 
@@ -11231,11 +11406,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
 
 		-
-			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
-
-		-
 			message: "#^Cannot call method clear\\(\\) on Drupal\\\\search_api\\\\Entity\\\\Index\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
@@ -11258,11 +11428,6 @@ parameters:
 		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 3
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
-
-		-
-			message: "#^Function _social_group_flexible_group_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
 
 		-
@@ -12556,16 +12721,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php
 
 		-
-			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.install
-
-		-
-			message: "#^Function _social_group_secret_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.install
-
-		-
 			message: "#^Function social_group_secret_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.install
@@ -13082,12 +13237,12 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
 			message: "#^Cannot call method fetchAllAssoc\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -13623,11 +13778,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string\\|null given\\.$#"
 			count: 3
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
-			count: 1
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -14331,21 +14481,6 @@ parameters:
 			path: modules/social_features/social_landing_page/social_landing_page.install
 
 		-
-			message: "#^Function _social_landing_page_get_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_landing_page/social_landing_page.install
-
-		-
-			message: "#^Function _social_landing_page_get_permissions\\(\\) has parameter \\$role with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_landing_page/social_landing_page.install
-
-		-
-			message: "#^Function _social_landing_page_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_landing_page/social_landing_page.install
-
-		-
 			message: "#^Function social_landing_page_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_landing_page/social_landing_page.install
@@ -14826,22 +14961,7 @@ parameters:
 			path: modules/social_features/social_like/src/SocialLikeConfigOverride.php
 
 		-
-			message: "#^Function _social_mentions_get_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/social_mentions.install
-
-		-
-			message: "#^Function _social_mentions_get_permissions\\(\\) has parameter \\$role with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/social_mentions.install
-
-		-
 			message: "#^Function _social_mentions_set_default_config\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/social_mentions.install
-
-		-
-			message: "#^Function _social_mentions_set_permissions\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.install
 
@@ -15196,21 +15316,6 @@ parameters:
 			path: modules/social_features/social_node/src/SocialNodeForm.php
 
 		-
-			message: "#^Function _social_page_get_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_page/social_page.install
-
-		-
-			message: "#^Function _social_page_get_permissions\\(\\) has parameter \\$role with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_page/social_page.install
-
-		-
-			message: "#^Function _social_page_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_page/social_page.install
-
-		-
 			message: "#^Function social_page_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_page/social_page.install
@@ -15536,17 +15641,7 @@ parameters:
 			path: modules/social_features/social_post/modules/social_post_album/src/SocialPostPhotoAlbumConfigOverride.php
 
 		-
-			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: modules/social_features/social_post/modules/social_post_photo/social_post_photo.install
-
-		-
 			message: "#^Cannot call method toArray\\(\\) on Drupal\\\\Core\\\\Entity\\\\Entity\\\\EntityViewDisplay\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_post/modules/social_post_photo/social_post_photo.install
-
-		-
-			message: "#^Function _social_post_photo_set_permissions\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/modules/social_post_photo/social_post_photo.install
 
@@ -15681,11 +15776,6 @@ parameters:
 			path: modules/social_features/social_post/social_post.install
 
 		-
-			message: "#^Function _social_post_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_post/social_post.install
-
-		-
 			message: "#^Function social_post_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.install
@@ -15717,11 +15807,6 @@ parameters:
 
 		-
 			message: "#^Function social_post_update_dependencies\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_post/social_post.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_post_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.install
 
@@ -16521,11 +16606,6 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.install
 
 		-
-			message: "#^Function _social_private_message_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/social_private_message.install
-
-		-
 			message: "#^Function _social_private_message_set_private_message_default_form_settings\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.install
@@ -16588,11 +16668,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 2
-			path: modules/social_features/social_private_message/social_private_message.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_private_message_get_permissions expects string, int\\|string\\|null given\\.$#"
-			count: 1
 			path: modules/social_features/social_private_message/social_private_message.install
 
 		-
@@ -16882,7 +16957,7 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|int\\|string\\|null\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
 
 		-
@@ -17191,11 +17266,6 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsOverride.php
 
 		-
-			message: "#^Function _social_profile_manager_notes_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.install
-
-		-
 			message: "#^Function social_profile_manager_notes_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.install
@@ -17251,17 +17321,7 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_manager_notes/src/SocialProfileManagerNotesConfigOverride.php
 
 		-
-			message: "#^Function _social_profile_organization_tag_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.install
-
-		-
 			message: "#^Function social_profile_organization_tag_install\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_profile_organization_tag_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.install
 
@@ -17586,11 +17646,6 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.install
 
 		-
-			message: "#^Function _social_profile_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.install
-
-		-
 			message: "#^Function social_profile_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
@@ -17737,11 +17792,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_profile_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
 
@@ -18296,11 +18346,6 @@ parameters:
 			path: modules/social_features/social_search/social_search.install
 
 		-
-			message: "#^Function _social_search_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_search/social_search.install
-
-		-
 			message: "#^Function social_search_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_search/social_search.install
@@ -18367,11 +18412,6 @@ parameters:
 
 		-
 			message: "#^Function social_search_update_dependencies\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_search/social_search.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_search_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_search/social_search.install
 
@@ -18612,11 +18652,6 @@ parameters:
 
 		-
 			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 2
-			path: modules/social_features/social_swiftmail/social_swiftmail.install
-
-		-
-			message: "#^Function _social_swiftmail_set_permissions\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_swiftmail/social_swiftmail.install
 
@@ -18699,11 +18734,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_swiftmail\\\\Plugin\\\\Mail\\\\SocialSwiftMailer\\:\\:massageMessageBody\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_swiftmail/src/Plugin/Mail/SocialSwiftMailer.php
-
-		-
-			message: "#^Function _social_tagging_assign_default_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.install
 
 		-
 			message: "#^Function _social_tagging_field_definitions_update\\(\\) has no return typehint specified\\.$#"
@@ -18976,11 +19006,6 @@ parameters:
 			path: modules/social_features/social_topic/social_topic.install
 
 		-
-			message: "#^Function _social_topic_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_topic/social_topic.install
-
-		-
 			message: "#^Function social_topic_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.install
@@ -19097,11 +19122,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_topic/social_topic.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_topic_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.install
 
@@ -19371,11 +19391,6 @@ parameters:
 			path: modules/social_features/social_topic/tests/src/Kernel/GraphQL/QueryTopicsTest.php
 
 		-
-			message: "#^Function _social_user_set_permissions\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.install
-
-		-
 			message: "#^Function social_user_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.install
@@ -19432,11 +19447,6 @@ parameters:
 
 		-
 			message: "#^Function social_user_update_8810\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.install
-
-		-
-			message: "#^Parameter \\#1 \\$role of function _social_user_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.install
 

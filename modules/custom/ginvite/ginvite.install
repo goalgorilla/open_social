@@ -8,7 +8,7 @@
 /**
  * Update group_invitations view to use the new cache group permissions context.
  */
-function ginvite_update_8001() {
+function ginvite_update_8001() :void {
   if (\Drupal::moduleHandler()->moduleExists('views')) {
     $view = \Drupal::configFactory()->getEditable('views.view.group_invitations');
     if (!$view->isNew()) {
