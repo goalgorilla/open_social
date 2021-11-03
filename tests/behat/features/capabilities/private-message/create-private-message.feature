@@ -1,16 +1,16 @@
 @api @private-message @DS-4372 @DS-5206 @stability-3 @create-private-message
   Feature: Create Private Message
     Benefit: Sending private messages to other users on the platform.
-    Role: LU
+    Role: As a Verified
     Goal/desire: Let users collaborate more and in private through the platform.
 
   # Send a message to another user.
   Scenario: Successfully send a private message to another user.
     Given I enable the module "social_private_message"
     Given users:
-      | name          | mail                  | status | created    |
-      | PM User One   | pm_user_1@example.com | 1      | 1861920000 |
-      | PM User Two   | pm_user_2@example.com | 1      | 1893456000 |
+      | name          | mail                  | status | created    | roles    |
+      | PM User One   | pm_user_1@example.com | 1      | 1861920000 | verified |
+      | PM User Two   | pm_user_2@example.com | 1      | 1893456000 | verified |
     When I am logged in as "PM User One"
     And I am on "/user/inbox"
     Then I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
@@ -69,15 +69,23 @@
       | Your message has been deleted. |
     And I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
 
+    # LU should not be able to create messages.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on "/user/inbox"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately
+
   # Create thread with multiple users.
   Scenario: Create thread with multiple users.
     Given I enable the module "social_private_message"
     Given users:
-      | name          | mail                  | status |
-      | PM User One   | pm_user_1@example.com | 1      |
-      | PM User Two   | pm_user_2@example.com | 1      |
-      | PM User Three | pm_user_3@example.com | 1      |
-      | PM User Four  | pm_user_4@example.com | 1      |
+      | name          | mail                  | status | roles    |
+      | PM User One   | pm_user_1@example.com | 1      | verified |
+      | PM User Two   | pm_user_2@example.com | 1      | verified |
+      | PM User Three | pm_user_3@example.com | 1      | verified |
+      | PM User Four  | pm_user_4@example.com | 1      | verified |
     Given I am logged in as "PM User Four"
     When I am on "/user/inbox"
     And I click "New message"

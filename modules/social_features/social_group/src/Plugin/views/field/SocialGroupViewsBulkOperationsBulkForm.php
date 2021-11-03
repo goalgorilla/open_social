@@ -5,6 +5,7 @@ namespace Drupal\social_group\Plugin\views\field;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 
 /**
@@ -26,32 +27,33 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       return $bulk_options;
     }
 
-    foreach ($bulk_options as $id => &$label) {
-      if (!empty($this->options['preconfiguration'][$id]['label_override'])) {
-        $real_label = $this->options['preconfiguration'][$id]['label_override'];
+    foreach ($this->options['selected_actions'] as $key => $selected_action_data) {
+      $definition = $this->actions[$selected_action_data['action_id']];
+      if (!empty($selected_action_data['preconfiguration']['label_override'])) {
+        $real_label = $selected_action_data['preconfiguration']['label_override'];
       }
       else {
-        $real_label = $this->actions[$id]['label'];
+        $real_label = $definition['label'];
       }
 
-      switch ($id) {
+      switch ($selected_action_data['action_id']) {
         case 'social_group_members_export_member_action':
         case 'social_group_delete_group_content_action':
-          $label = $this->t('<b>@action</b> selected members', [
+          $bulk_options[$key] = $this->t('<b>@action</b> selected members', [
             '@action' => $real_label,
           ]);
 
           break;
 
         case 'social_group_send_email_action':
-          $label = $this->t('<b>@action</b>', [
+          $bulk_options[$key] = $this->t('<b>@action</b>', [
             '@action' => $real_label,
           ]);
 
           break;
 
         case 'social_group_change_member_role_action':
-          $label = $this->t('<b>@action</b> of selected members', [
+          $bulk_options[$key] = $this->t('<b>@action</b> of selected members', [
             '@action' => $real_label,
           ]);
 
@@ -78,17 +80,20 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     $group = _social_group_get_current_group();
     $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     // Make sure the selection is saved for the current group.
-    if (!empty($tempstoreData['group_id']) && $tempstoreData['group_id'] !== $group->id()) {
-      // If not we clear it right away.
-      // Since we don't want to mess with cached date.
-      $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
-      // Reset initial values.
-      $this->updateTempstoreData();
-      // Initialize it again.
-      $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    if ($group instanceof GroupInterface) {
+      if (!empty($tempstoreData['group_id']) && $tempstoreData['group_id'] !== $group->id()) {
+        // If not we clear it right away.
+        // Since we don't want to mess with cached date.
+        $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+        // Reset initial values.
+        $this->updateTempstoreData();
+        // Initialize it again.
+        $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+      }
+      // Add the Group ID to the data.
+      $tempstoreData['group_id'] = $group->id();
     }
-    // Add the Group ID to the data.
-    $tempstoreData['group_id'] = $group->id();
+
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
@@ -149,7 +154,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     // Add the group to the display id, so the ajax callback that is run
     // will count and select across pages correctly.
-    if ($group) {
+    if ($group instanceof GroupInterface) {
       $wrapper['multipage']['#attributes']['data-group-id'] = $group->id();
       if (!empty($wrapper['multipage']['#attributes']['data-display-id'])) {
         $current_display = $wrapper['multipage']['#attributes']['data-display-id'];
@@ -165,7 +170,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     $items = [];
     foreach ($wrapper['action']['#options'] as $key => $value) {
-      if (!empty($key) && array_key_exists($key, $this->bulkOptions)) {
+      if ($key !== '' && array_key_exists($key, $this->bulkOptions)) {
         $items[] = [
           '#type' => 'submit',
           '#value' => $value,
@@ -178,6 +183,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     // Remove the Views select list and submit button.
     $form['actions']['#type'] = 'hidden';
     $form['header']['social_views_bulk_operations_bulk_form_group']['action']['#access'] = FALSE;
+    // Hide multipage list.
+    $form['header']['social_views_bulk_operations_bulk_form_group']['multipage']['list']['#access'] = FALSE;
   }
 
   /**
@@ -190,20 +197,20 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       // Grab all the actions that are available.
       foreach (Element::children($this->actions) as $action) {
         // If the option is not in our selected options, next.
-        if (empty($available_options[$action])) {
+        if (($action_key = array_search($action, array_column($this->options['selected_actions'], 'action_id'))) === FALSE) {
           continue;
         }
 
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $available_options[$action];
+        $label = $available_options[$action_key];
 
         // Match the Users action from our custom dropdown.
         // Find the action from the VBO selection.
         // And set that as the chosen action in the form_state.
         if (strip_tags($label->render()) === $user_input['op']) {
-          $user_input['action'] = $action;
+          $user_input['action'] = $action_key;
           $form_state->setUserInput($user_input);
-          $form_state->setValue('action', $action);
+          $form_state->setValue('action', $action_key);
           $form_state->setTriggeringElement($this->actions[$action]);
           break;
         }

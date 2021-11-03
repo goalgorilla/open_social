@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\social_user\SocialUserSearchContentBlockAlter;
 
@@ -318,6 +319,20 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 
   $form['timezone']['#title'] = '';
+
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  if ($form_object->getEntity()->isNew()) {
+    // Special handling for the inevitable "Verified user" role in case when
+    // "Verified immediately" setting is enabled.
+    $config = \Drupal::config('social_user.settings');
+    if ($config->get('verified_immediately')) {
+      $form['account']['roles']['verified'] = [
+        '#default_value' => TRUE,
+        '#disabled' => TRUE,
+      ];
+    }
+  }
 }
 
 /**
@@ -551,94 +566,6 @@ function social_user_social_user_account_header_account_links(array $context) {
 }
 
 /**
- * Implements hook_social_user_account_header_account_links_alter().
- *
- * Provides a glue layer between the new system and the deprecated hook
- * social_user_account_header_links to provide backwards compatibility.
- *
- * This should be removed once social_user_account_header_links is also removed.
- */
-function social_user_social_user_account_header_account_links_alter(array &$account_links, array $context) {
-  $divider = [
-    "#wrapper_attributes" => [
-      "class" => ["divider"],
-      "role" => "separator",
-    ],
-  ];
-
-  $header_links = \Drupal::moduleHandler()->invokeAll('social_user_account_header_links');
-  foreach ($header_links as $key => $item) {
-    $target = $item['after'];
-    // If the item we want to place this after doesn't exist or this item
-    // already exists then we skip it.
-    if (!isset($account_links[$target]) || isset($account_links[$key])) {
-      continue;
-    }
-
-    // We try to find a weight for our target.
-    $weight = isset($account_links[$target]['#weight']) ? $account_links[$target]['#weight'] : NULL;
-
-    // If our target has no weight we reverse the links array to find an item
-    // that does have weight or the end of the array. After which we move back
-    // through the array to give everything weights. This allows us to add our
-    // element with a weight and avoid complex re-insertion logic while
-    // preserving the order of existing items.
-    if (is_null($weight)) {
-      $order = array_keys($account_links);
-
-      // Pull $i out of the loop to preserve it.
-      $i = $order[$target];
-
-      for (; $i >= 0; --$i) {
-        if (isset($account_links[$order[$i]]['#weight'])) {
-          $weight = $account_links[$order[$i]]['#weight'];
-          // Increment $i so we don't overwrite the current element's weight.
-          $i++;
-          break;
-        }
-      }
-
-      // If we haven't found a weight we start at the top with 0.
-      if (is_null($weight)) {
-        $weight = 0;
-      }
-
-      // Move back up the stack assigning weights.
-      for (; $i <= $order[$target]; $i++) {
-        // Increment weight to ensure it's bigger than the previous value. We
-        // increment by a larger value to allow room for other insertions.
-        $weight += 10;
-        $account_links[$order[$i]]['#weight'] = $weight;
-      }
-    }
-
-    // If this item requests a divider before itself we add it here.
-    if (isset($item['divider']) && $item['divider'] === 'before') {
-      $account_links[$key . '_divider'] = $divider;
-      $account_links[$key . '_divider']['#weight'] = ++$weight;
-    }
-
-    // The old implementation of the hook only allowed to add a simple link
-    // so we create one here.
-    $account_links[$key] = [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => $item['title'],
-      ],
-      '#url' => $item['url'],
-      '#title' => $item['title'],
-      '#weight' => ++$weight,
-    ];
-
-    // If this item requests a divider after itself we add it here.
-    if (isset($item['divider']) && $item['divider'] === 'after') {
-      $account_links[$key . '_divider'] = $divider;
-      $account_links[$key . '_divider']['#weight'] = ++$weight;
-    }
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Exposes the signup/login help texts to the site administrator.
@@ -663,6 +590,14 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
     '#weight' => 20,
   ];
 
+  $form['registration_cancellation']['verified_immediately'] = [
+    '#type' => 'checkbox',
+    '#title' => new TranslatableMarkup('Registered users are verified immediately'),
+    '#description' => new TranslatableMarkup('New registered users get the "verified user & authenticated" role when they are registered. With this setting disabled, new registered users get the "authenticated" role when they are registered.'),
+    '#default_value' => $config->get('verified_immediately'),
+    '#weight' => -10,
+  ];
+
   $form['#submit'][] = 'social_user_form_user_admin_settings_submit';
 }
 
@@ -674,6 +609,7 @@ function social_user_form_user_admin_settings_submit($form, FormStateInterface $
     ->getEditable('social_user.settings');
   $config->set('signup_help', $form_state->getValue("signup_help"));
   $config->set('login_help', $form_state->getValue("login_help"));
+  $config->set('verified_immediately', $form_state->getValue("verified_immediately"));
   $config->save();
 }
 
@@ -799,5 +735,22 @@ function social_user_module_implements_alter(&$implementations, $hook) {
     $social_user = $implementations['social_user'];
     unset($implementations['social_user']);
     $implementations['social_user'] = $social_user;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_user_user_insert(UserInterface $user): void {
+  // If site setting "Registered users are verified immediately" is enabled:
+  // new registered users get the "verified user & authenticated" role when they
+  // are registered.
+  $config = \Drupal::config('social_user.settings');
+  $verified_immediately = $config->get('verified_immediately');
+  if ($verified_immediately) {
+    $user->addRole('verified');
+    $user->save();
   }
 }

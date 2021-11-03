@@ -13,7 +13,15 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  * Install the module.
  */
 function social_tagging_install() {
-  _social_tagging_assign_default_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'administer social_tagging',
+      'delete terms in social_tagging',
+      'edit terms in social_tagging',
+    ]
+  );
 
   // Update field definitions.
   _social_tagging_field_definitions_update();
@@ -28,20 +36,6 @@ function social_tagging_install() {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
-}
-
-/**
- * Assign the default permissions for this module.
- */
-function _social_tagging_assign_default_permissions() {
-  $permissions = [
-    'administer social_tagging',
-    'delete terms in social_tagging',
-    'edit terms in social_tagging',
-  ];
-
-  // SM should be able to change the permissions.
-  user_role_grant_permissions('sitemanager', $permissions);
 }
 
 /**

@@ -1,0 +1,34 @@
+views.view.inbox:
+  expected_config:
+    display:
+      default:
+        display_options:
+          relationships:
+            private_messages_target_id:
+              admin_label: 'Private Message'
+              entity_field: private_messages
+              entity_type: private_message_thread
+              field: private_messages_target_id
+              group_type: group
+              id: private_messages_target_id
+              plugin_id: standard
+              relationship: none
+              required: false
+              table: private_message_thread__private_messages
+            last_delete_time_target_id:
+              admin_label: 'Private Message Thread Delete Time'
+              entity_field: last_delete_time
+              entity_type: private_message_thread
+              field: last_delete_time_target_id
+              group_type: group
+              id: last_delete_time_target_id
+              plugin_id: standard
+              relationship: none
+              required: false
+              table: private_message_thread__last_delete_time
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            relationships: {  }

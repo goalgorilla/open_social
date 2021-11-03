@@ -85,7 +85,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected GroupMuteNotify $groupMuteNotify;
+  protected $groupMuteNotify;
 
   /**
    * {@inheritdoc}

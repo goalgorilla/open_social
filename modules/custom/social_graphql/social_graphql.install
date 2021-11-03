@@ -13,11 +13,6 @@ function social_graphql_install() {
   // We rely on normal access rules for authorization.
   user_role_grant_permissions('anonymous', ['execute open_social_graphql arbitrary graphql requests']);
   user_role_grant_permissions('authenticated', ['execute open_social_graphql arbitrary graphql requests']);
-
-  // GraphQL resolvers require the entity access API for proper access checks in
-  // queries, so we enable the setting when this module is installed.
-  $config = \Drupal::configFactory()->getEditable('social_core.settings');
-  $config->set('use_entity_access_api', 1)->save();
 }
 
 /**
@@ -36,6 +31,6 @@ function social_graphql_update_dependencies() {
  * Opt-in to the new entity access API.
  */
 function social_graphql_update_10101() {
-  $config = \Drupal::configFactory()->getEditable('social_core.settings');
-  $config->set('use_entity_access_api', 1)->save();
+  // Removed deprecated settings use_entity_access_api.
+  // @see https://www.drupal.org/project/social/issues/3215750
 }

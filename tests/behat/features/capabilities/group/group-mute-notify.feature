@@ -7,7 +7,7 @@ Feature: Mute/Unmute group notifications
   Background:
     Given users:
       | name     | pass | mail                 | status | roles       |
-      | dude_1st | 1234 | dude_1st@example.com | 1      |             |
+      | dude_1st | 1234 | dude_1st@example.com | 1      | verified    |
       | dude_2nd | 1234 | dude_1st@example.com | 1      | sitemanager |
     Given groups:
       | title                | description            | author       | type           | language |
@@ -96,7 +96,7 @@ Feature: Mute/Unmute group notifications
     # There should be notifications.
     When I am on "/notifications"
     Then I should see "dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group"
-      And I should have an email with subject "Notification from Open Social" and in the content:
+      And I should have an email with subject "New content has been added to a group you are in" and in the content:
         | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
 
   @email-spool
@@ -142,5 +142,5 @@ Feature: Mute/Unmute group notifications
     # There shouldn't be any notifications.
     When I am on "/notifications"
     Then I should not see "dude_2nd created a topic Topic for mute notify in the Ressinel's group 1st group"
-      And I should not have an email with subject "Notification from Open Social" and in the content:
+      And I should not have an email with subject "New content has been added to a group you are in" and in the content:
         | dude_2nd created a topic Topic for mute notify in the Ressinel's group 1st group |

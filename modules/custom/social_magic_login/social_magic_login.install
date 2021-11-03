@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_magic_login module.
+ */
+
+/**
+ * Preserve the functionality at the time the setting is introduced.
+ */
+function social_magic_login_update_11001() : void {
+  \Drupal::configFactory()->getEditable('social_magic_login.settings')
+    ->set('show_used_message', TRUE)
+    ->save();
+}
