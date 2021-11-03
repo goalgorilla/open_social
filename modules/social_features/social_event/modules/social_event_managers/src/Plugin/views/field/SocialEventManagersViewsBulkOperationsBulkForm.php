@@ -6,7 +6,6 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -277,12 +276,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
       // Grab all the actions that are available.
-      foreach (Element::children($this->actions) as $action) {
-        // If the option is not in our selected options, next.
-        if (($action_key = array_search($action, array_column($this->options['selected_actions'], 'action_id'))) === FALSE) {
-          continue;
-        }
-
+      foreach ($this->options['selected_actions'] as $action_key => $action) {
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
         $label = $available_options[$action_key];
 
