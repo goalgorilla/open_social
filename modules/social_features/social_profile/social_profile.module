@@ -536,13 +536,13 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
           '#markup' => t('Privacy settings'),
         ],
         'icon' => [
-          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#markup' => '<svg class="icon icon-expand_less"><use xlink:href="#icon-expand-less" /></svg>',
           '#allowed_tags' => ['svg', 'use'],
         ],
       ],
       '#tree' => TRUE,
       '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsed' => FALSE,
       '#attributes' => [
         'class' => [
           'form-collapse',
