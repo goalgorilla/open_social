@@ -152,6 +152,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
         // Always redirect if on root.
         if ($request_path == '/') {
+          /** @var string $frontpage_lu */
           $this->createRedirectResponse(['user.roles:anonymous'], $frontpage_lu);
           return;
         }
