@@ -6,8 +6,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
 use Drupal\Core\State\State;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
@@ -111,7 +111,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * This method is called whenever the request event is dispatched.
    *
-   * @param \Symfony\Component\EventDispatcher\Event $event
+   * @param \Symfony\Contracts\EventDispatcher\Event $event
    *   Triggering event.
    */
   public function checkForHomepageRedirect(Event $event) {

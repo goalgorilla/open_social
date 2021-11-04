@@ -2,7 +2,7 @@
 
 namespace Drupal\social_group\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventSubscriberInterface;
 use Drupal\address\Event\AddressEvents;
 
 /**

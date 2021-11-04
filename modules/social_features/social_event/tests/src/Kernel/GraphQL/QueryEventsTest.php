@@ -21,7 +21,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'social_event',
     'entity',
     // For the event author and viewer.

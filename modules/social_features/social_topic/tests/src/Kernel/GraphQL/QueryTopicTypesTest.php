@@ -15,7 +15,7 @@ class QueryTopicTypesTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'social_topic',
     'entity',
     // For the topic author and viewer.

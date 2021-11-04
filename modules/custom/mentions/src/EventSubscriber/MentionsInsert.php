@@ -4,7 +4,7 @@ namespace Drupal\mentions\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\EventDispatcher\EventSubscriberInterface;
 
 /**
  * MentionsInsert handles event 'mentions.insert'.

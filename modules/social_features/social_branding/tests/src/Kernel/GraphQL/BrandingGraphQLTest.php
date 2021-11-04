@@ -13,7 +13,7 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "social_branding",
     "social_branding_test",
   ];
