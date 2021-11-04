@@ -150,17 +150,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
           return;
         }
 
-        // Always redirect if on root.
-        if ($request_path == '/') {
-          /** @var string $frontpage_lu */
-          $this->createRedirectResponse(['user.roles:anonymous'], $frontpage_lu);
-          return;
-        }
-
         // Don't redirect site managers,content managers when they are on
         // an page so they can preview the page.
         $roles = ['sitemanager', 'contentmananger'];
-        if (($this->currentUser->id() == "1" || array_intersect($roles, $this->currentUser->getRoles())) && $request_path == $frontpage_an) {
+        if (($this->currentUser->id() == "1" || array_intersect($roles, $this->currentUser->getRoles())) && $request_path != '/' && $request_path == $frontpage_an) {
           $this->messenger->addWarning($this->t(
             "This page is redirected to @url_link, but we deferred the redirect to give you an opportunity to edit the content.",
             [
