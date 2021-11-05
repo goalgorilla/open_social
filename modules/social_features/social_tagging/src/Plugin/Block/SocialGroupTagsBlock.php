@@ -136,6 +136,8 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
       $contexts = Cache::mergeContexts($contexts, ['group']);
     }
 
+    $cache_tags[] = 'taxonomy_term_list:social_tagging';
+
     return $contexts;
   }
 
@@ -147,8 +149,14 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
 
     $group = $this->routeMatch->getParameter('group');
 
+    $content = social_tagging_process_tags($group);
+
+    if (empty($content)) {
+      return [];
+    }
+
     if ($group instanceof GroupInterface) {
-      $build['content']['#markup'] = social_tagging_process_tags($group);
+      $build['content'] = $content;
     }
 
     return $build;
