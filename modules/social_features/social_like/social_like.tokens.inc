@@ -11,6 +11,7 @@ use Drupal\node\NodeInterface;
 use Drupal\votingapi\Entity\Vote;
 use Drupal\Core\Render\Markup;
 use Drupal\node\Entity\Node;
+use Drupal\votingapi\VoteInterface;
 
 /**
  * Implements hook_token_info().
@@ -146,6 +147,9 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
           /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
           $email_token_services = \Drupal::service('social_activity.email_token_services');
           $vote = $email_token_services->getRelatedObject($message);
+          if (!($vote instanceof VoteInterface)) {
+            return;
+          }
 
           /** @var \Drupal\votingapi\Entity\Vote $vote */
           $storage = \Drupal::entityTypeManager()
