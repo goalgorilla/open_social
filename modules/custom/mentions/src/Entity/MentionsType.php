@@ -30,7 +30,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "delete_form" = "/admin/structure/mentions/{mentions_type}/delete"
  *   },
  *
- *   config_expport = {
+ *   config_export = {
  *     "id",
  *     "name"
  *   }
