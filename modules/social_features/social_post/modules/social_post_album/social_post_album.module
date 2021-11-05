@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
@@ -206,6 +207,23 @@ function social_post_album_comment_redirect($form, FormStateInterface $form_stat
       $post = $comment->getCommentedEntity();
 
       $form_state->setRedirect('entity.post.canonical', ['post' => $post->id()], ['fragment' => 'comment-' . $comment->id()]);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_post_album_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
+  if ($context['entity_type'] === 'post'
+    && $context['bundle'] === 'photo'
+    && $display->getMode() === 'default') {
+    // We want to change the image style for the post view page.
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.canonical') {
+      if ($component = (array) $display->getComponent('field_post_image')) {
+        $component['settings']['image_style'] = 'social_x_large';
+        $display->setComponent('field_post_image', $component);
+      }
     }
   }
 }
