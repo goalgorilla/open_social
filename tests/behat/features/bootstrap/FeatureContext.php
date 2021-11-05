@@ -3,6 +3,7 @@
 
 namespace Drupal\social\Behat;
 
+use Drupal\group\Entity\GroupContentType;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -933,7 +934,7 @@ class FeatureContext extends RawMinkContext implements Context
 
         if ($gid) {
           $group = Group::load($gid);
-          $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
+          $group_content_types = GroupContentType::loadByEntityTypeId('node');
           $group_content_types = array_keys($group_content_types);
 
           // Get all the node's related to the current group
