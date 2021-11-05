@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post;
 
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -37,11 +38,13 @@ class PostViewBuilder extends EntityViewBuilder {
    *   The language manager.
    * @param \Drupal\Core\Theme\Registry $theme_registry
    *   The theme registry.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
    *   The social group helper service.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, SocialGroupHelperService $social_group_helper_service) {
-    parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry);
+  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, EntityDisplayRepositoryInterface $entity_display_repository, SocialGroupHelperService $social_group_helper_service) {
+    parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry, $entity_display_repository);
 
     $this->socialGroupHelperService = $social_group_helper_service;
   }
@@ -55,6 +58,7 @@ class PostViewBuilder extends EntityViewBuilder {
       $container->get('entity.repository'),
       $container->get('language_manager'),
       $container->get('theme.registry'),
+      $container->get('entity_display.repository'),
       $container->get('social_group.helper_service')
     );
   }

@@ -69,8 +69,6 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image.
   _social_profile_add_default_profile_image();
-  // Update the field definitions.
-  _social_profile_field_definitions_update();
 
   // Create a profile for user 1.
   Profile::create([
@@ -467,15 +465,6 @@ function social_profile_update_8903() {
     ->getEditable('social_profile.settings')
     ->set('enable_profile_tagging', TRUE)
     ->save();
-}
-
-/**
- * Update the field definitions on install, or in an update hook.
- */
-function _social_profile_field_definitions_update() {
-  // Create field storage for the 'Profile Name' base field.
-  \Drupal::entityTypeManager()->clearCachedDefinitions();
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
 }
 
 /**
