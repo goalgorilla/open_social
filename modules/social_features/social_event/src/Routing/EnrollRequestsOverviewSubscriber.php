@@ -4,7 +4,7 @@ namespace Drupal\social_event\Routing;
 
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Symfony\Contracts\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

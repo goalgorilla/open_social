@@ -4,7 +4,7 @@ namespace Drupal\mentions\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Symfony\Contracts\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * MentionsUpdate handles event 'mentions.update'.

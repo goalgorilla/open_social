@@ -2,6 +2,8 @@
 
 namespace Drupal\social_profile\Plugin\views\field;
 
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -66,11 +68,13 @@ class ProfileEntitySortable extends RenderedEntity {
     array $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     LanguageManagerInterface $language_manager,
+    EntityRepositoryInterface $entity_repository,
+    EntityDisplayRepositoryInterface $entity_display_repository,
     ViewsHandlerManager $join_manager,
     ModuleHandlerInterface $module_handler,
     AccountInterface $current_user
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager,  $language_manager, $entity_repository, $entity_display_repository);
     $this->joinManager = $join_manager;
     $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
@@ -86,6 +90,8 @@ class ProfileEntitySortable extends RenderedEntity {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('language_manager'),
+      $container->get('entity.repository'),
+      $container->get('entity_display.repository'),
       $container->get('plugin.manager.views.join'),
       $container->get('module_handler'),
       $container->get('current_user')
