@@ -1,11 +1,12 @@
 <?php
 
-use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Session\AccountInterface;
 /**
  * @file
  * Hooks provided by the Activity Viewer module.
  */
+
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * @addtogroup hooks

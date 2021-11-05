@@ -55,6 +55,10 @@ class ProfileEntitySortable extends RenderedEntity {
    *   The entity manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
    *   The views plugin join manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -74,7 +78,7 @@ class ProfileEntitySortable extends RenderedEntity {
     ModuleHandlerInterface $module_handler,
     AccountInterface $current_user
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager,  $language_manager, $entity_repository, $entity_display_repository);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, $entity_repository, $entity_display_repository);
     $this->joinManager = $join_manager;
     $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
