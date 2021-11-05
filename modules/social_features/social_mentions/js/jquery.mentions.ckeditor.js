@@ -302,18 +302,29 @@
           })(this),
           appendTo: this.element.parent(),
           open: function(event, ui) {
-            var offset, position, top;
+            var offset, position, top, bodyHeight;
             position = $(editor.document.$.body).caret("position", {
               iframe: editor.window.$.frameElement
             });
             offset = $(editor.document.$.body).caret("offset", {
               iframe: editor.window.$.frameElement
             });
+            bodyHeight = $('.cke_contents').height();
             top = 5 + position.height + position.top + $(editor.ui.space("top").$).outerHeight(true) + offset.height;
-            element.data("ui-mentionsAutocomplete").menu.element.css({
-              left: 0,
-              top: top
-            });
+
+            function menshinBlockPosition(X, Y) {
+              element.data("ui-mentionsAutocomplete").menu.element.css({
+                left: X,
+                top: Y
+              });
+            }
+
+            if(top >= bodyHeight) {
+              menshinBlockPosition(0, bodyHeight + 45);
+            } else {
+              menshinBlockPosition(0, top);
+            }
+
             if (mentions.settings.autocomplete.open) {
               return mentions.settings.autocomplete.open.call(this, event, ui);
             }
