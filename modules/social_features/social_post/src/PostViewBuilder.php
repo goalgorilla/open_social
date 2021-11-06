@@ -29,7 +29,6 @@ class PostViewBuilder extends EntityViewBuilder {
       'build',
       'buildMultiple',
       'renderLinks',
-      'buildComponents',
     ];
   }
 
@@ -56,7 +55,7 @@ class PostViewBuilder extends EntityViewBuilder {
    * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
    *   The social group helper service.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, EntityDisplayRepositoryInterface $entity_display_repository, SocialGroupHelperService $social_group_helper_service) {
+  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry, EntityDisplayRepositoryInterface $entity_display_repository, SocialGroupHelperService $social_group_helper_service) {
     parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry, $entity_display_repository);
 
     $this->socialGroupHelperService = $social_group_helper_service;
@@ -191,7 +190,7 @@ class PostViewBuilder extends EntityViewBuilder {
   public static function renderLinks(string $post_entity_id, string $view_mode, string $langcode, bool $is_in_preview): array {
     $links = [
       '#theme' => 'links',
-      '#pre_render' => [Link::class, 'preRenderLink'],
+      '#pre_render' => [[Link::class, 'preRenderLinks']],
       '#attributes' => ['class' => ['links', 'inline']],
     ];
 
