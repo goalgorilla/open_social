@@ -32,7 +32,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *
  *   config_export = {
  *     "id",
- *     "name"
+ *     "name",
+ *     "description",
+ *     "mention_type",
+ *     "input",
+ *     "output",
  *   }
  *
  * )
