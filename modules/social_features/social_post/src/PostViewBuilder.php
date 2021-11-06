@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Theme\Registry;
 use Drupal\group\Entity\Group;
 use Drupal\message\Entity\MessageTemplate;
@@ -19,6 +20,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Render controller for posts.
  */
 class PostViewBuilder extends EntityViewBuilder {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return [
+      'build',
+      'buildMultiple',
+      'renderLinks',
+      'buildComponents',
+    ];
+  }
 
   /**
    * The social group helper service.
@@ -175,10 +188,10 @@ class PostViewBuilder extends EntityViewBuilder {
    * @return array
    *   A renderable array representing the post links.
    */
-  public static function renderLinks($post_entity_id, $view_mode, $langcode, $is_in_preview) {
+  public static function renderLinks(string $post_entity_id, string $view_mode, string $langcode, bool $is_in_preview): array {
     $links = [
       '#theme' => 'links',
-      '#pre_render' => ['drupal_pre_render_links'],
+      '#pre_render' => [Link::class, 'preRenderLink'],
       '#attributes' => ['class' => ['links', 'inline']],
     ];
 
@@ -207,7 +220,7 @@ class PostViewBuilder extends EntityViewBuilder {
    * @return array
    *   An array that can be processed by drupal_pre_render_links().
    */
-  protected static function buildLinks(Post $entity, $view_mode) {
+  protected static function buildLinks(Post $entity, string $view_mode): array {
     $links = [];
 
     if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {
