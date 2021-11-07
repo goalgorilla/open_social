@@ -17,41 +17,57 @@ class EntityConnection implements ConnectionInterface {
 
   /**
    * The number of nodes a client is allowed to fetch on this connection.
+   *
+   * @var string
    */
   protected const MAX_LIMIT = 100;
 
   /**
    * The query for this connection that knows how to fetch data.
+   *
+   * @var ConnectionQueryHelperInterface
    */
   protected ConnectionQueryHelperInterface $queryHelper;
 
   /**
    * Fetch the first N results.
+   *
+   * @var int
    */
   protected ?int $first = NULL;
 
   /**
    * Fetch the last N results.
+   *
+   * @var int
    */
   protected ?int $last = NULL;
 
   /**
    * The cursor that results were fetched after.
+   *
+   * @var string
    */
   protected ?string $after = NULL;
 
   /**
    * The cursor that results were fetched before.
+   *
+   * @var string
    */
   protected ?string $before = NULL;
 
   /**
    * Whether the sorting is requested in reversed order.
+   *
+   * @var bool
    */
   protected bool $reverse = FALSE;
 
   /**
    * The result-set of this connection.
+   *
+   * @var SyncPromise
    */
   protected ?SyncPromise $result;
 

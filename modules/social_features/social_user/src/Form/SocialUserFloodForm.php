@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialUserFloodForm.
+ * Social User Flood Form.
  *
  * @package Drupal\social_user\Form
  */

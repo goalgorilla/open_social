@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class QueueStorageEntitySettingsForm.
+ * Settings form class.
  *
  * @ingroup social_queue_storage
  */

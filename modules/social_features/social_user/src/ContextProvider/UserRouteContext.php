@@ -13,7 +13,7 @@ use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\user\UserInterface;
 
 /**
- * Class UserRouteContext.
+ * User Route Context.
  *
  * @package Drupal\social_user\ContextProvider
  */

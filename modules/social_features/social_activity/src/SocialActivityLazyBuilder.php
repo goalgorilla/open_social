@@ -7,7 +7,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\views\ViewExecutableFactory;
 
 /**
- * Class SocialActivityLazyBuilder.
+ * Social Activity Lazy Builder.
  *
  * @package Drupal\social_activity
  */

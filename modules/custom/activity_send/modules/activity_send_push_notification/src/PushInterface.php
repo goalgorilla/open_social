@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
- * Interface PushInterface.
+ * Push plugin interface.
  *
  * @package Drupal\activity_send_push_notification
  */

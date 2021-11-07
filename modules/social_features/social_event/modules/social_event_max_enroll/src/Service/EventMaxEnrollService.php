@@ -8,7 +8,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 
 /**
- * Class EventMaxEnrollService.
+ * Service class.
  *
  * @package Drupal\social_event_max_enroll\Service
  */

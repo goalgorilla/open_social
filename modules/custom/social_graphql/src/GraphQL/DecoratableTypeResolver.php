@@ -36,6 +36,8 @@ abstract class DecoratableTypeResolver {
 
   /**
    * The previous type resolver that was set in the chain.
+   *
+   * @var \Drupal\social_graphql\GraphQL\DecoratableTypeResolver
    */
   private ?DecoratableTypeResolver $decorated;
 

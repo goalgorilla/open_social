@@ -6,7 +6,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 
 /**
- * Class SocialGroupInviteServiceProvider.
+ * Social Group Invite Service Provider.
  *
  * @package Drupal\social_group_invite
  */

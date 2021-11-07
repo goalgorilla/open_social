@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class BulkGroupInvitationConfirm.
+ * Confirm form class.
  */
 class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInjectionInterface {
 
@@ -149,7 +149,10 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
         'invitee_mail' => $email,
         'entity_id' => 0,
       ];
-      $batch['operations'][] = ['\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite', [$values]];
+      $batch['operations'][] = [
+        '\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite',
+        [$values],
+      ];
     }
 
     batch_set($batch);

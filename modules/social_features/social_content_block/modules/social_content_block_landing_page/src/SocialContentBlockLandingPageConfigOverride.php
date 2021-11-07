@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialContentBlockLandingPageConfigOverride.
+ * Configuration override for landing page.
  *
  * @package Drupal\social_content_block_landing_page
  */

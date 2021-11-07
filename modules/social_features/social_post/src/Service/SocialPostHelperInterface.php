@@ -3,7 +3,7 @@
 namespace Drupal\social_post\Service;
 
 /**
- * Interface SocialPostHelperInterface.
+ * Social Post Helper Interface.
  *
  * @package Drupal\social_post\Service
  */

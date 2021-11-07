@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class SocialEventController.
+ * Social Event Controller.
  *
  * @package Drupal\social_event\Controller
  */

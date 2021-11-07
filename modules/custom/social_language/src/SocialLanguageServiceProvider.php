@@ -6,7 +6,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 
 /**
- * Class SocialLanguageServiceProvider.
+ * Alters renderer.
  *
  * @package Drupal\social_language
  */

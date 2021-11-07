@@ -8,7 +8,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\social_content_block\ContentBuilder;
 
 /**
- * Class SocialContentBlockLandingPageContentBuilder.
+ * Page content builder.
  *
  * @package Drupal\social_content_block_landing_page\Service
  */

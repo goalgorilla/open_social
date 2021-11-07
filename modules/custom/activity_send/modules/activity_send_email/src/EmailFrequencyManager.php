@@ -7,7 +7,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class EmailFrequencyManager.
+ * Plugin manager class for email frequency.
  */
 class EmailFrequencyManager extends DefaultPluginManager {
 

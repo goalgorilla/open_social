@@ -17,7 +17,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Class RedirectHomepageSubscriber.
+ * Redirect home page subscriber.
  */
 class RedirectHomepageSubscriber implements EventSubscriberInterface {
 

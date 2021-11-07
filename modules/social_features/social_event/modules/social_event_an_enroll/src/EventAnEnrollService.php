@@ -7,7 +7,7 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /**
- * Class EventAnEnrollService.
+ * Event An Enroll Service.
  */
 class EventAnEnrollService {
 

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class SearchContentForm.
+ * Search Content Form.
  *
  * @package Drupal\social_search\Form
  */

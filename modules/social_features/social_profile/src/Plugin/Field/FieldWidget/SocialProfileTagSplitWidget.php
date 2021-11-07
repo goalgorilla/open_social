@@ -9,7 +9,7 @@ use Drupal\social_profile\SocialProfileTagServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialProfileTagSplitWidget.
+ * Social Profile Tag Split Widget.
  *
  * @FieldWidget (
  *   id = "social_profile_tag_split",

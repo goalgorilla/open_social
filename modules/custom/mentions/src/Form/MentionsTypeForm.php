@@ -14,7 +14,7 @@ use Drupal\mentions\MentionsPluginManager;
 use Drupal\Core\Entity\ContentEntityType;
 
 /**
- * Class MentionsTypeForm.
+ * Mention entity type form.
  *
  * @package Drupal\mentiona\Form
  */

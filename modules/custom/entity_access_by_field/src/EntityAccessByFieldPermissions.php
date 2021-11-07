@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 
 /**
- * EntityAccessByFieldPermissions.
+ * Field permissions class.
  */
 class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
 

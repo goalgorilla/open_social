@@ -9,7 +9,7 @@ use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 
 /**
- * Class EventInviteEnrollActionForm.
+ * Event invite enroll action form.
  *
  * @package Drupal\social_event_invite\Form
  */

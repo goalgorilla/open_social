@@ -11,7 +11,7 @@ use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Class EntityAutocompleteController.
+ * Entity Autocomplete Controller.
  *
  * @package Drupal\social_core\Controller
  */

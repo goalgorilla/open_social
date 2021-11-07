@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class EntityVisibilityForm.
+ * Entity visibility form.
  *
  * @package Drupal\entity_access_by_field\Form
  */

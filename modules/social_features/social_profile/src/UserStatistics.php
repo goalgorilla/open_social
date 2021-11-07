@@ -5,7 +5,7 @@ namespace Drupal\social_profile;
 use Drupal\Core\Database\Connection;
 
 /**
- * Class UserStatistics.
+ * User Statistics class.
  *
  * @package Drupal\social_profile
  */

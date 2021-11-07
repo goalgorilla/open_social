@@ -10,7 +10,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class PushBase.
+ * PUsh notification base class.
  *
  * @package Drupal\activity_send_push_notification
  */

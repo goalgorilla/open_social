@@ -32,7 +32,12 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
       static $depth = 0;
       $depth++;
       if ($depth > 20) {
-        $this->loggerFactory->get('entity')->error('Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', ['@entity_type' => $entity->getEntityTypeId(), '@entity_id' => $entity->id()]);
+        $this->loggerFactory->get('entity')->error(
+          'Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', [
+            '@entity_type' => $entity->getEntityTypeId(),
+            '@entity_id' => $entity->id(),
+          ]
+        );
         return $elements;
       }
 

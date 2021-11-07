@@ -8,7 +8,7 @@ use Drupal\social_post\Entity\Post;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class DeleteGroup.
+ * Delete Group.
  *
  * @package Drupal\social_group\Controller
  */

@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class QueueStorageEntityTypeForm.
+ * Queue store entity type form.
  */
 class QueueStorageEntityTypeForm extends EntityForm {
 

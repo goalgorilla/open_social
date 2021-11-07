@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EventSettingsForm.
+ * Event Settings Form.
  *
  * @package Drupal\social_event\Form
  */

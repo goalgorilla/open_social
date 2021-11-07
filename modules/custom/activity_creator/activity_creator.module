@@ -181,7 +181,8 @@ function activity_creator_activity_insert(ActivityInterface $activity) {
       if (!empty($uids)) {
         // If we have users, we insert a status for each user for the activity.
         $connection = \Drupal::database();
-        $query = $connection->insert('activity_notification_status')->fields(['uid', 'aid']);
+        $query = $connection->insert('activity_notification_status')
+          ->fields(['uid', 'aid']);
         foreach ($uids as $uid) {
           $query->values([
             'uid' => $uid,

@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SiteWideJSForm.
+ * Site wide JS settings form.
  *
  * @package Drupal\sitewide_js\Form
  */

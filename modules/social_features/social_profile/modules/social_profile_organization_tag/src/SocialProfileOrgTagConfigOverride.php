@@ -7,7 +7,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialProfileOrgTagConfigOverride.
+ * Social Profile OrgTag Config Override.
  *
  * @package Drupal\social_profile_organization_tag
  */

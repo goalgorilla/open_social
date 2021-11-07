@@ -16,7 +16,7 @@ use Drupal\group\GroupMembershipLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class BulkGroupInvitation.
+ * Invitation form.
  */
 class BulkGroupInvitation extends FormBase implements ContainerInjectionInterface {
 
@@ -159,7 +159,10 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    *   The current state of the form.
    */
   public function cancelForm(array &$form, FormStateInterface $form_state): void {
-    $form_state->setRedirect('entity.group.canonical', ['group' => $this->group->id(), []]);
+    $form_state->setRedirect('entity.group.canonical', [
+      'group' => $this->group->id(),
+      [],
+    ]);
   }
 
   /**

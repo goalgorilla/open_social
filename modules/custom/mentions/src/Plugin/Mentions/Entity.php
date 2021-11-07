@@ -11,7 +11,7 @@ use Drupal\mentions\MentionsPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class Entity.
+ * Mention entity.
  *
  * @Mention(
  *  id = "entity",
@@ -22,11 +22,15 @@ class Entity implements MentionsPluginInterface {
 
   /**
    * The token service.
+   *
+   * @var \Drupal\Core\Utility\Token
    */
   private Token $tokenService;
 
   /**
    * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private EntityTypeManagerInterface $entityTypeManager;
 

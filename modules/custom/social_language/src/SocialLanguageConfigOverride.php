@@ -7,7 +7,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialLanguageConfigOverride.
+ * Configuration override for social_language.
  *
  * @package Drupal\social_language
  */

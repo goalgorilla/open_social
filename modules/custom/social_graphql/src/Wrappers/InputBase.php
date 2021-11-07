@@ -25,6 +25,8 @@ abstract class InputBase implements RelayMutationInputInterface {
 
   /**
    * A unique identifier for the client performing the mutation.
+   *
+   * @var string
    */
   protected ?string $clientMutationId = NULL;
 

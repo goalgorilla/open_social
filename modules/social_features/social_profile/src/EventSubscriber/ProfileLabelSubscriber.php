@@ -9,7 +9,7 @@ use Drupal\user\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class ProfileLabelSubscriber.
+ * Profile Label Subscriber.
  *
  * @package Drupal\social_profile\EventSubscriber
  */

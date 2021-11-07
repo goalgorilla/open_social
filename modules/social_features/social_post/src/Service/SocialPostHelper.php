@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /**
- * Class SocialPostHelper.
+ * Social Post Helper.
  *
  * @package Drupal\social_post\Service
  */

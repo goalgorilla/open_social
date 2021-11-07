@@ -6,7 +6,7 @@ use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class RouteSubscriber.
+ * Route subscriber class.
  *
  * @package Drupal\social_content_block\Routing
  */

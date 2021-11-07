@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
 
 /**
- * Class LayoutService.
+ * Layout Service class.
  *
  * @package Drupal\social_core\Service
  */

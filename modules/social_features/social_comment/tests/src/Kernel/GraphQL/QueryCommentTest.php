@@ -76,7 +76,10 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     // Set up a user that can create a published comment and view it.
     // The default publishing status for comments looks at the current user
     // rather than the comment author.
-    $user = $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $user = $this->setUpCurrentUser([], array_merge(
+      ['skip comment approval', 'access comments'],
+      $this->userPermissions()
+    ));
 
     // We expect our bodyHtml to come out processed. This includes a linebreak
     // that seems to be added by the renderer for funsies.
@@ -123,7 +126,9 @@ class QueryCommentTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($node)
         ->addCacheableDependency($user)
         ->addCacheableDependency($comment)
-        ->addCacheTags(['config:filter.format.plain_text', 'config:filter.settings'])
+        ->addCacheTags(['config:filter.format.plain_text',
+          'config:filter.settings',
+        ])
         // @todo It's unclear why this cache context is added.
         ->addCacheContexts(['languages:language_interface'])
     );
@@ -135,7 +140,10 @@ class QueryCommentTest extends SocialGraphQLTestBase {
   public function testRequiresAccessCommentsPermission(): void {
     // Create a published comment on a node.
     $node = $this->createNode();
-    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->setUpCurrentUser([], array_merge(
+      ['skip comment approval', 'access comments'],
+      $this->userPermissions(),
+    ));
     $comment = $this->createComment($node);
 
     // Create a user that is not allowed to view comments.

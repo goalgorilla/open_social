@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\address\Event\AddressEvents;
 
 /**
- * Class AddressFormatSubscriber.
+ * Address Format Subscriber.
  *
  * @package Drupal\social_group\EventSubscriber
  */

@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialTourSettings.
+ * Tour settings form.
  *
  * @package Drupal\social_tour\Form
  */

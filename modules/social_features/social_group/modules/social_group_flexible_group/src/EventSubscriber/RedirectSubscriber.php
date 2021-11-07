@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class RedirectSubscriber.
+ * Listens to the dynamic route events.
  *
  * @package Drupal\social_group_flexible_group\EventSubscriber
  */

@@ -9,7 +9,7 @@ use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 
 /**
- * Class EventAnEnrollActionForm.
+ * Event An Enroll Action Form.
  *
  * @package Drupal\social_event_an_enroll\Form
  */

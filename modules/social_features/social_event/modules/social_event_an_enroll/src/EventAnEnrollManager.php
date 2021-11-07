@@ -6,7 +6,7 @@ use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Class EventAnEnrollManager.
+ * Event An Enroll Manager.
  */
 class EventAnEnrollManager {
 

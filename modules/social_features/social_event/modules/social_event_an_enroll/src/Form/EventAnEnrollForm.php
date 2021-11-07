@@ -12,7 +12,7 @@ use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\social_event\Entity\EventEnrollment;
 
 /**
- * Class EventAnEnrollForm.
+ * Event An Enroll Form.
  *
  * @package Drupal\social_event_an_enroll\Form
  */

@@ -6,7 +6,7 @@ use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class RouteSubscriber.
+ * Listens to the dynamic route events.
  *
  * @package Drupal\social_group_invite\Routing
  */

@@ -14,16 +14,22 @@ abstract class ConnectionQueryHelperBase implements ConnectionQueryHelperInterfa
 
   /**
    * The key that is used for sorting.
+   *
+   * @var string
    */
   protected string $sortKey;
 
   /**
    * The Drupal entity type manager.
+   *
+   * @var EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The GraphQL entity buffer.
+   *
+   * @var EntityBuffer
    */
   protected EntityBuffer $graphqlEntityBuffer;
 

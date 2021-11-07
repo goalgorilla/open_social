@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class InviteService.
+ * Invite Service.
  */
 class InviteService {
 

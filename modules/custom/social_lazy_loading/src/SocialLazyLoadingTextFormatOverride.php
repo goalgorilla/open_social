@@ -8,7 +8,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialLazyLoadingTextFormatOverride.
+ * Configuration override for lazy loading.
  *
  * @package Drupal\social_lazy_loading
  */

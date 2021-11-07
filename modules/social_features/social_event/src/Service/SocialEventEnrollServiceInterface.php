@@ -5,7 +5,7 @@ namespace Drupal\social_event\Service;
 use Drupal\node\NodeInterface;
 
 /**
- * Interface SocialEventEnrollServiceInterface.
+ * Interface for Social Event Enroll Service.
  *
  * @package Drupal\social_event\Service
  */

@@ -6,7 +6,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\group\Entity\GroupInterface;
 
 /**
- * Class GroupStatistics.
+ * Group Statistics.
  *
  * @package Drupal\social_group
  */

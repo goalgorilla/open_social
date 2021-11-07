@@ -5,7 +5,7 @@ namespace Drupal\social_event_max_enroll\Service;
 use Drupal\node\NodeInterface;
 
 /**
- * Interface EventMaxEnrollServiceInterface.
+ * Max enroll service interface.
  *
  * @package Drupal\social_event_max_enroll\Service
  */

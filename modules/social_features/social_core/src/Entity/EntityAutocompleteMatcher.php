@@ -7,7 +7,7 @@ use Drupal\Component\Utility\Tags;
 use Drupal\Component\Utility\Html;
 
 /**
- * Class EntityAutocompleteMatcher.
+ * Entity Autocomplete Matcher.
  *
  * @package Drupal\social_core\Entity
  */

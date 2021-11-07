@@ -12,7 +12,7 @@ use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class GroupManagersController.
+ * Group Managers Controller.
  *
  * @package Drupal\social_group\Controller
  */

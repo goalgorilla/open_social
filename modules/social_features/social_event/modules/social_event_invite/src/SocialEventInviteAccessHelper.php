@@ -15,7 +15,7 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
- * Class SocialEventInviteAccessHelper.
+ * Event invite access helper class.
  *
  * @package Drupal\social_event_invite\Access
  */

@@ -16,7 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Entity\FilterFormat;
 
 /**
- * Class FilterMentions.
+ * Mention filter class.
  *
  * @package Drupal\mentions\Plugin\Filter
  *
@@ -35,26 +35,36 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
 
   /**
    * The entity type manager.
+   *
+   * @var EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityManager;
 
   /**
    * The renderer service.
+   *
+   * @var RendererInterface
    */
   protected RendererInterface $renderer;
 
   /**
    * The config factory.
+   *
+   * @var ConfigFactory
    */
   protected ConfigFactory $config;
 
   /**
    * The mentions plugin manager.
+   *
+   * @var MentionsPluginManager
    */
   protected MentionsPluginManager $mentionsManager;
 
   /**
    * The token service.
+   *
+   * @var Token
    */
   private Token $tokenService;
 
@@ -67,17 +77,23 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
 
   /**
    * The input settings per config.
+   *
+   * @var array
    */
   private array $inputSettings = [];
 
   /**
    * The output settings per config.
+   *
+   * @var array
    */
   private array $outputSettings = [];
 
 
   /**
    * The text format id used for mentions.
+   *
+   * @var string
    */
   private ?string $textFormat;
 

@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Class SocialGroupSecretSubscriber.
+ * Social Group Secret Subscriber.
  *
  * @package Drupal\social_group_secret\EventSubscriber
  */

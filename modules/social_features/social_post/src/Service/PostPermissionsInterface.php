@@ -3,7 +3,7 @@
 namespace Drupal\social_post\Service;
 
 /**
- * Interface PostPermissionsInterface.
+ * Post Permissions Interface.
  *
  * @package Drupal\social_post\Service
  */

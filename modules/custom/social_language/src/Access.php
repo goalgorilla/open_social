@@ -9,7 +9,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Class Access.
+ * Access check implementations.
  *
  * @package Drupal\social_language
  */

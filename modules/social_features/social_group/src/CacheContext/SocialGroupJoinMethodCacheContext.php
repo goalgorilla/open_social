@@ -7,7 +7,7 @@ use Drupal\Core\Cache\Context\CacheContextInterface;
 use Drupal\group\Entity\Group;
 
 /**
- * Class SocialGroupJoinMethodCacheContext.
+ * Social Group Join Method Cache Context.
  */
 class SocialGroupJoinMethodCacheContext implements CacheContextInterface {
 

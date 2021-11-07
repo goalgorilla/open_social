@@ -5,7 +5,7 @@ namespace Drupal\social_content_report;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Interface ContentReportServiceInterface.
+ * Service interface class.
  *
  * @package Drupal\social_content_report
  */

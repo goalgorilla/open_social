@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialEventTypeSettings.
+ * Event Type Settings.
  *
  * @package Drupal\social_event_type\Form
  */

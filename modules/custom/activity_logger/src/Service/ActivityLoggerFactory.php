@@ -11,7 +11,7 @@ use Drupal\message\Entity\Message;
 use Drupal\user\EntityOwnerInterface;
 
 /**
- * Class ActivityLoggerFactory.
+ * Activity logger factory class.
  *
  * @package Drupal\activity_logger\Service
  * Service that determines which actions need to be performed.

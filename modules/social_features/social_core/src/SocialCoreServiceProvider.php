@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Drupal\social_core\Service\LayoutService;
 
 /**
- * Class SocialCoreServiceProvider.
+ * Social Core Service Provider.
  *
  * @package Drupal\social_core
  */

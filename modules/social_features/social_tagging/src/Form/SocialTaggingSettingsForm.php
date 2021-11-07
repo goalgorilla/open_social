@@ -14,7 +14,7 @@ use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialTaggingSettingsForm.
+ * Taggins settings form.
  *
  * @package Drupal\social_tagging\Form
  */

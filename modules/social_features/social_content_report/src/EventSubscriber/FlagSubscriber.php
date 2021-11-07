@@ -14,7 +14,7 @@ use Drupal\social_content_report\ContentReportServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class FlagSubscriber.
+ * Flag subscriber class.
  */
 class FlagSubscriber implements EventSubscriberInterface {
 

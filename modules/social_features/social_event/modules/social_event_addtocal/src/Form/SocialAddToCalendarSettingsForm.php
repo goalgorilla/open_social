@@ -9,7 +9,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialAddToCalendarSettingsForm.
+ * Social AddToCalendar Settings Form.
  */
 class SocialAddToCalendarSettingsForm extends ConfigFormBase {
 

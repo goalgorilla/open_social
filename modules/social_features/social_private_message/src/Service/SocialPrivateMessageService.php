@@ -14,7 +14,7 @@ use Drupal\private_message\Service\PrivateMessageService;
 use Drupal\user\UserDataInterface;
 
 /**
- * Class SocialPrivateMessageService.
+ * Helper class for private messages.
  *
  * @package Drupal\social_private_message\Service
  */

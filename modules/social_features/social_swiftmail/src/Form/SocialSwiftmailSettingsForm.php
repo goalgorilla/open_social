@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialSwiftmailSettingsForm.
+ * Social Swiftmail Settings Form.
  *
  * @package Drupal\social_swiftmail\Form
  */

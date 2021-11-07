@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class FontSettingsForm.
+ * Font settings form.
  *
  * @package Drupal\social_font\Form
  *

@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SetGroupsForNodeService.
+ * Set Groups For Node Service.
  *
  * @package Drupal\social_group
  */

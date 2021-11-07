@@ -3,7 +3,7 @@
 namespace Drupal\social_content_block;
 
 /**
- * Interface ContentBuilderInterface.
+ * Content builder interface.
  *
  * @package Drupal\social_content_block
  */

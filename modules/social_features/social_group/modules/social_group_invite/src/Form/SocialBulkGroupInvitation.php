@@ -23,7 +23,7 @@ use Drupal\ginvite\Form\BulkGroupInvitation;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class SocialBulkGroupInvitation.
+ * Social Bulk Group Invitation.
  */
 class SocialBulkGroupInvitation extends BulkGroupInvitation {
 

@@ -20,6 +20,8 @@ class Payload implements RelayMutationPayloadInterface {
 
   /**
    * A unique identifier for the client performing the mutation.
+   *
+   * @var string
    */
   protected ?string $clientMutationId = NULL;
 

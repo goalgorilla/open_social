@@ -7,7 +7,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialGroupSelectorWidgetConfigOverride.
+ * Social Group Selector Widget Config Override.
  *
  * @package Drupal\social_group
  */

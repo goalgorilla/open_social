@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
- * Interface MentionsPluginInterface.
+ * Mention plugin interface.
  */
 interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
 

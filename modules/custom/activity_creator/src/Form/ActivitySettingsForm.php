@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class ActivitySettingsForm.
+ * Activity settings form.
  *
  * @package Drupal\activity_creator\Form
  *

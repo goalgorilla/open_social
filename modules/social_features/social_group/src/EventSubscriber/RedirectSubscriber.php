@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class RedirectSubscriber.
+ * Redirect Subscriber.
  *
  * @package Drupal\social_group\EventSubscriber
  */

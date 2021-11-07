@@ -13,7 +13,7 @@ use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class AutocompleteController.
+ * Autocomplete Controller.
  *
  * @todo Add parameters here to prevent referencing users without access to node.
  *

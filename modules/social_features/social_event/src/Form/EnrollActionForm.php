@@ -23,7 +23,7 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EnrollActionForm.
+ * Enroll Action Form.
  *
  * @package Drupal\social_event\Form
  */

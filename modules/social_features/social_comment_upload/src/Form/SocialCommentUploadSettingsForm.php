@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialCommentUploadSettingsForm.
+ * Social Comment Upload Settings Form.
  *
  * @package Drupal\social_comment_upload\Form
  */

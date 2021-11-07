@@ -8,7 +8,7 @@ use Drupal\social_user\VerifyableUserInterface;
 use Drupal\user\Entity\User;
 
 /**
- * Class Select2EntityAutocompleteMatcher.
+ * Select2Entity Autocomplete Matcher class.
  *
  * @package Drupal\social_core\Entity
  */

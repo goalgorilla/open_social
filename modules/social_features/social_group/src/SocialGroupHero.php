@@ -5,7 +5,7 @@ namespace Drupal\social_group;
 use Drupal\Core\Config\ConfigFactory;
 
 /**
- * Class SocialGroupHero.
+ * Social Group Hero.
  *
  * @package Drupal\social_group
  */

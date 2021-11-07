@@ -9,7 +9,7 @@ use Drupal\Core\Path\PathValidatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AlternativeFrontpageSettings.
+ * Alternative front page settings form.
  */
 class AlternativeFrontpageSettings extends ConfigFormBase {
 

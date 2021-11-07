@@ -8,7 +8,7 @@ use Drupal\social_group_request\Form\GroupRequestMembershipRejectForm;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class SocialGroupRequestRouteSubscriber.
+ * Listens to the dynamic route events.
  */
 class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
 

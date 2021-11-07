@@ -6,7 +6,7 @@ use Drupal\private_message\Mapper\PrivateMessageMapper as PrivateMessageMapperBa
 use Drupal\social_profile\SocialProfileTrait;
 
 /**
- * Class PrivateMessageMapper.
+ * Private message mapper class.
  *
  * @package Drupal\social_private_message\Mapper
  */

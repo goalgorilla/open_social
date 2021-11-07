@@ -6,7 +6,7 @@ use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class Route.
+ * Alters Routes.
  *
  * @package Drupal\social_group_flexible_group\Subscriber
  */

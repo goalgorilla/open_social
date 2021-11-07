@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 use Drupal\user\Form\UserPasswordForm;
 
 /**
- * Class SocialUserPasswordForm.
+ * Social User Password Form.
  *
  * @package Drupal\social_user\Form
  */

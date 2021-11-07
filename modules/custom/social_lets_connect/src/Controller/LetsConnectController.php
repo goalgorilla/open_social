@@ -6,7 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 
 /**
- * Class LetsConnectController.
+ * Controller class for social_lets_connect.
  */
 class LetsConnectController extends ControllerBase {
 

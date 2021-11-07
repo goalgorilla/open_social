@@ -9,7 +9,7 @@ use Drupal\social_user_export\Plugin\UserExportPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialUserExportSettingsForm.
+ * Social User Export Settings Form.
  *
  * @package Drupal\social_user_export\Form
  */

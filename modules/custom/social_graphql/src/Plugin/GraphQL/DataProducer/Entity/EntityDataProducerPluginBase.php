@@ -19,6 +19,8 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
 
   /**
    * The entity type manager service.
+   *
+   * @var EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 

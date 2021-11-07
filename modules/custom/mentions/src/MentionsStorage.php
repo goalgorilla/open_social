@@ -5,7 +5,7 @@ namespace Drupal\mentions;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 
 /**
- * Class MentionsStorage.
+ * Mention entity storage.
  */
 class MentionsStorage extends ConfigEntityStorage {
 

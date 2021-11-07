@@ -11,7 +11,7 @@ use Drupal\social_content_block\ContentBlockManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ContentBlockPluginWidgetBase.
+ * Content block plugin widget base class.
  *
  * @package Drupal\social_content_block\Plugin\Field\FieldWidget
  */

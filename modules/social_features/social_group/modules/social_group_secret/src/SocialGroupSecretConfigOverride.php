@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialGroupSecretConfigOverride.
+ * Social Group Secret ConfigOverride.
  *
  * @package Drupal\social_group_secret
  */

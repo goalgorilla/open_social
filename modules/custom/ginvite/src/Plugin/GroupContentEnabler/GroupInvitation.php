@@ -56,7 +56,10 @@ class GroupInvitation extends GroupContentEnablerBase {
     if ($group->hasPermission('invite users to group', $account)) {
       $operations['invite-user'] = [
         'title' => $this->t('Invite user'),
-        'url' => new Url('entity.group_content.add_form', ['group' => $group->id(), 'plugin_id' => 'group_invitation']),
+        'url' => new Url('entity.group_content.add_form', [
+          'group' => $group->id(),
+          'plugin_id' => 'group_invitation',
+        ]),
         'weight' => 0,
       ];
     }

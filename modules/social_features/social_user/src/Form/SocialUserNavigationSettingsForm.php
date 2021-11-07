@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialUserNavigationSettingsForm.
+ * Social User Navigation Settings Form.
  *
  * @package Drupal\social_user\Form
  */

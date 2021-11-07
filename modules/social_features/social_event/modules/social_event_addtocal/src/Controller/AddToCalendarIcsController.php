@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class AddToCalendarIcsController.
+ * AddToCalendar Ics Controller.
  */
 class AddToCalendarIcsController extends ControllerBase {
 

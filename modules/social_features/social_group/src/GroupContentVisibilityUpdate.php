@@ -12,7 +12,7 @@ use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 
 /**
- * Class GroupContentVisibilityUpdate.
+ * Group Content Visibility Update.
  *
  * @package Drupal\social_group
  */

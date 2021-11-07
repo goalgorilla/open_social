@@ -16,7 +16,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Class EventAnEnrollController.
+ * Event An Enroll Controller.
  *
  * @package Drupal\social_event_an_enroll\Controller
  */

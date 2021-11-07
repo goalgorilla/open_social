@@ -7,7 +7,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class SocialEventMaxEnrollServiceProvider.
+ * Alters AN enroll override class.
  *
  * @package Drupal\social_event_max_enroll
  */

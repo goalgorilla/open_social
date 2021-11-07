@@ -13,7 +13,7 @@ use Drupal\social_user\VerifyableUserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EventManagersController.
+ * Event Managers Controller.
  *
  * @package Drupal\social_event_managers\Controller
  */

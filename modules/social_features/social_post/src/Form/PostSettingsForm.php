@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class PostSettingsForm.
+ * Post Settings Form.
  *
  * @package Drupal\social_post\Form
  *

@@ -13,7 +13,7 @@ use Drupal\social_content_report\ContentReportServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class FlagAccessCheck.
+ * Access check class for flag.
  */
 class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
 

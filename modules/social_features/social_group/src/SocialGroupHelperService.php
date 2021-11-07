@@ -14,7 +14,7 @@ use Drupal\social_post\Entity\Post;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialGroupHelperService.
+ * Social Group Helper Service.
  *
  * @package Drupal\social_group
  */

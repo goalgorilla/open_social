@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Class PushManager.
+ * Plugin manager class for push.
  *
  * @package Drupal\activity_send_push_notification
  */

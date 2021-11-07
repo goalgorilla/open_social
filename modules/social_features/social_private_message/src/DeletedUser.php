@@ -3,7 +3,7 @@
 namespace Drupal\social_private_message;
 
 /**
- * Class DeletedUser.
+ * Deletes user.
  *
  * @package Drupal\social_private_message
  */

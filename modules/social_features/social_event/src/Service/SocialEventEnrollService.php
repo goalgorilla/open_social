@@ -7,7 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
- * Class SocialEventEnrollService.
+ * Social Event Enroll Service.
  *
  * @package Drupal\social_event\Service
  */

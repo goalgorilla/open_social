@@ -12,7 +12,7 @@ use Drupal\node\Entity\Node;
 use Drupal\user\RoleInterface;
 
 /**
- * Class FlexibleGroupContentVisibilityUpdate.
+ * Flexible Group Content Visibility Update.
  *
  * @package Drupal\social_group_flexible_group
  */

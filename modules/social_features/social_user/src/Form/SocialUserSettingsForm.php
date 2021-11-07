@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialUserSettingsForm.
+ * Social User Settings Form.
  *
  * @package Drupal\social_user\Form
  */

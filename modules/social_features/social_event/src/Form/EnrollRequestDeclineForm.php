@@ -13,7 +13,7 @@ use Drupal\social_event\EventEnrollmentStatusHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EnrollRequestDeclineForm.
+ * Enroll Request Decline Form.
  *
  * @package Drupal\social_event\Form
  */

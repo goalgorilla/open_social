@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class SearchHeroForm.
+ * Search Hero Form.
  *
  * @package Drupal\social_search\Form
  */

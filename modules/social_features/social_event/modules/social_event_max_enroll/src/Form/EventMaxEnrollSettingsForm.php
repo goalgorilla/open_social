@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class EventMaxEnrollSettingsForm.
+ * Max enroll settings form class.
  *
  * @package Drupal\social_event_max_enroll\Form
  */

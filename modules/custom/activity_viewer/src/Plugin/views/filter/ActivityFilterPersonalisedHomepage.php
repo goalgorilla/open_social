@@ -247,14 +247,20 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     if ($user->isAuthenticated()) {
       // Nodes community visibility.
       $community_access = $or->andConditionGroup()
-        ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
+        ->condition('nfcv.field_content_visibility_value',
+          ['community', 'public'],
+          'IN'
+        )
         ->isNull('gcfd.entity_id');
       $or->condition($community_access);
 
       // Node visibility by group.
       if (count($memberships) > 0) {
         $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
+        $access_by_group->condition('nfcv.field_content_visibility_value',
+          ['group', 'community', 'public'],
+          'IN',
+        );
         $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
         $access_by_group->condition('gcfd.gid', $memberships, 'IN');
         $or->condition($access_by_group);
@@ -314,7 +320,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       // Posts related to the group where the user is a member.
       if (count($memberships) > 0) {
         $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('pfv.field_visibility_value', ['0', '1', '2', '3'], 'IN');
+        $access_by_group->condition('pfv.field_visibility_value',
+          ['0', '1', '2', '3'],
+          'IN',
+        );
         $access_by_group->condition('pfrg.field_recipient_group_target_id', $memberships, 'IN');
         $or->condition($access_by_group);
       }

@@ -31,6 +31,8 @@ class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPl
 
   /**
    * The Drupal renderer service.
+   *
+   * @var RendererInterface
    */
   protected RendererInterface $renderer;
 

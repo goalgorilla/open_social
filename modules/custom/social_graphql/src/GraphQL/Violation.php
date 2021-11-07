@@ -13,6 +13,8 @@ class Violation implements ViolationInterface {
 
   /**
    * The machine readable ID for this violation.
+   *
+   * @var string
    */
   protected string $id;
 

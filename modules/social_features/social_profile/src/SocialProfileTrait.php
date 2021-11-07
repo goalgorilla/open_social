@@ -5,7 +5,7 @@ namespace Drupal\social_profile;
 use Drupal\Core\Database\Query\SelectInterface;
 
 /**
- * Trait SocialProfileTrait.
+ * Social Profile Trait.
  *
  * @package Drupal\social_profile
  */

@@ -71,7 +71,10 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    */
   public function testSupportsRelayPagination(): void {
     // Act as a user that can create and view published comments and contents.
-    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->setUpCurrentUser([], array_merge(
+      ['skip comment approval', 'access comments'],
+      $this->userPermissions()
+    ));
 
     // Create a node to comment on.
     $node = $this->createNode();
@@ -99,7 +102,10 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
   public function testUserRequiresAccessCommentsPermission(): void {
     // Create a published comment on a node.
     $node = $this->createNode();
-    $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
+    $this->setUpCurrentUser([], array_merge(
+      ['skip comment approval', 'access comments'],
+      $this->userPermissions()
+    ));
     $this->createComment($node);
 
     // Create a user that is not allowed to view comments.
