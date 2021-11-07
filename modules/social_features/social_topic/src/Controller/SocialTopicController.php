@@ -102,7 +102,7 @@ class SocialTopicController extends ControllerBase {
    *
    *   If access is allowed.
    */
-  public function myTopicAccess(AccountInterface $account): AccessResultNeutral {
+  public function myTopicAccess(AccountInterface $account): AccessResult {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
 

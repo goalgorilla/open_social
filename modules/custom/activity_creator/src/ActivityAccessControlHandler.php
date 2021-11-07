@@ -54,7 +54,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultNeutral {
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     /** @var \Drupal\activity_creator\ActivityInterface $entity */
     switch ($operation) {
       case 'view':
@@ -100,7 +100,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * Return access control from the related entity.
    */
-  protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account): AccessResultNeutral {
+  protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account): AccessResult {
     $related_object = $entity->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
       $ref_entity_type = $related_object['0']['target_type'];

@@ -163,7 +163,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   If access is allowed.
    */
-  public function myGroupAccess(AccountInterface $account): AccessResultNeutral {
+  public function myGroupAccess(AccountInterface $account): AccessResult {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
     // If we don't have a user in the request, assume it's my own profile.

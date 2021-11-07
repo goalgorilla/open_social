@@ -66,7 +66,7 @@ function social_install_tasks_alter(&$tasks, $install_state) {
  *
  *   All the requirements we need to meet.
  */
-function social_verify_custom_requirements(array &$install_state): array {
+function social_verify_custom_requirements(array &$install_state): ?array {
   // Copy pasted from install_verify_requirements().
   // @todo when composer hits remove this.
   // Check the installation requirements for Drupal and this profile.

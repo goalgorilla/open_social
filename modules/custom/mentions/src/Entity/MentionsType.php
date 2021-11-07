@@ -76,7 +76,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * Keys of array: prefix, entity_type, inputvalue, suffix.
    *
-   * @var string
+   * @var array
    */
   protected $input = [];
 
@@ -106,7 +106,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getInputSettings(): string {
+  public function getInputSettings(): array {
     return $this->input;
   }
 
