@@ -196,7 +196,7 @@ function _social_add_demo_batch($demo_type, $demo_description, &$context) {
   $context['message'] = t('Generated %num %demo_description.', [
     '%num' => $num_created,
     '%demo_description' => $demo_description,
-    ]);
+  ]);
 }
 
 /**

@@ -67,7 +67,7 @@ class EntityConnection implements ConnectionInterface {
   /**
    * The result-set of this connection.
    *
-   * @var SyncPromise
+   * @var \GraphQL\Executor\Promise\Adapter\SyncPromise
    */
   protected ?SyncPromise $result;
 

@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class EventEnrollmentSettingsForm.
+ * Event Enrollment Settings Form.
  *
  * @package Drupal\social_event\Form
  *

@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_creator;
 
-use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityAccessControlHandler;

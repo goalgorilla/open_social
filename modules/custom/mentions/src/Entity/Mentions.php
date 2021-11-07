@@ -10,7 +10,7 @@ use Drupal\mentions\MentionsInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Mentions entity.
+ * Entity class for Mentions entity.
  *
  * @ContentEntityType(
  *   id = "mentions",

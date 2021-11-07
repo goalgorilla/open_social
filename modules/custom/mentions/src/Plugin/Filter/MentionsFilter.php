@@ -36,35 +36,35 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * The entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityManager;
 
   /**
    * The renderer service.
    *
-   * @var RendererInterface
+   * @var \Drupal\Core\Render\RendererInterface
    */
   protected RendererInterface $renderer;
 
   /**
    * The config factory.
    *
-   * @var ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected ConfigFactory $config;
 
   /**
    * The mentions plugin manager.
    *
-   * @var MentionsPluginManager
+   * @var \Drupal\mentions\MentionsPluginManager
    */
   protected MentionsPluginManager $mentionsManager;
 
   /**
    * The token service.
    *
-   * @var Token
+   * @var \Drupal\Core\Utility\Token
    */
   private Token $tokenService;
 

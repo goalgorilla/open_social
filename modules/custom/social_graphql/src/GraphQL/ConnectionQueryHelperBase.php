@@ -22,14 +22,14 @@ abstract class ConnectionQueryHelperBase implements ConnectionQueryHelperInterfa
   /**
    * The Drupal entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The GraphQL entity buffer.
    *
-   * @var EntityBuffer
+   * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
    */
   protected EntityBuffer $graphqlEntityBuffer;
 

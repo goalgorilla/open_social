@@ -3,7 +3,6 @@
 namespace Drupal\social_group\Controller;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Access\AccessResultNeutral;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;

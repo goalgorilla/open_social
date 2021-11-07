@@ -2,7 +2,6 @@
 
 namespace Drupal\social_topic\Controller;
 
-use Drupal\Core\Access\AccessResultNeutral;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;

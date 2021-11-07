@@ -3,7 +3,6 @@
 namespace Drupal\social_event\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
