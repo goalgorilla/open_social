@@ -43,6 +43,7 @@ class EntityUrl extends DataProducerPluginBase {
    * @param null|array $options
    *   The options to provide to the URL generator.
    *
+   * @return \Drupal\Core\Url
    *   Url object.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException

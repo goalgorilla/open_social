@@ -122,6 +122,7 @@ function _social_path_manager_update_group_tab_aliases($id, $action) {
 /**
  * Get a full list of group types.
  *
+ * @retrun array
  *   List of group types.
  */
 function _social_path_manager_group_types(): array {
@@ -143,6 +144,7 @@ function _social_path_manager_group_types(): array {
 /**
  * Get a list of tabs used in groups.
  *
+ * @retrun array
  *   Array of group tabs.
  */
 function _social_path_manager_group_tabs(): array {
@@ -186,6 +188,7 @@ function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) 
  * @param string $route
  *   The route of the tab being updated.
  *
+ * @retrun string
  *   The url suffix of the tab.
  */
 function _social_path_manager_get_path_suffix(GroupInterface $group, $route): string {

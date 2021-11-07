@@ -19,6 +19,7 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
+   * @retrun array
    *   $json array.
    */
   public function getValue(): array {
@@ -46,6 +47,7 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
    * @param \Drupal\Core\Extension\Extension[] $projects
    *   An array of extensions.
    *
+   * @retrun array
    *   Returns an array of projects with safe values.
    */
   private function getExtensionsInfo(array $projects): array {

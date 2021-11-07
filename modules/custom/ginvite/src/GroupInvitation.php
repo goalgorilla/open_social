@@ -53,6 +53,7 @@ class GroupInvitation implements CacheableDependencyInterface {
   /**
    * Returns the group for the invitation.
    *
+   * @return \Drupal\group\Entity\GroupInterface
    *   The group entity where invite belongs.
    */
   public function getGroup(): GroupInterface {
@@ -62,6 +63,7 @@ class GroupInvitation implements CacheableDependencyInterface {
   /**
    * Returns the user for the invitation.
    *
+   * @return \Drupal\user\UserInterface
    *   The user entity referenced in invitation.
    */
   public function getUser(): EntityInterface {

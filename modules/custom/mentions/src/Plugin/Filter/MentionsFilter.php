@@ -139,6 +139,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Returns the settings.
    *
+   * @retrun array
    *   A list of settings.
    */
   public function getSettings(): array {
@@ -148,6 +149,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Checks if there are mentionTypes.
    *
+   * @retrun bool
    *   TRUE if there are mentionTypes, otherwise FALSE.
    */
   public function checkMentionTypes(): bool {
@@ -167,6 +169,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Checks if a textFormat filter should be applied.
    *
+   * @retrun bool
    *   TRUE if filter should applied, otherwise FALSE.
    */
   public function shouldApplyFilter(): bool {
@@ -192,6 +195,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @param string $text
    *   The text to find mentions in.
    *
+   * @retrun array
    *   A list of mentions.
    */
   public function getMentions($text): array {
@@ -253,6 +257,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @param string $text
    *   The text containing the possible mentions.
    *
+   * @retrun string
    *   The processed text.
    */
   public function filterMentions($text): string {

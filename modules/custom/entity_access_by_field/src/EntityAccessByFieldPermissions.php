@@ -55,6 +55,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   /**
    * Array with values which need to be ignored.
    *
+   * @retrun array
    *   An array containing a list of values to ignore.
    */
   public static function getIgnoredValues(): array {
@@ -134,6 +135,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   /**
    * Returns a realm for a field value in order to create access.
    *
+   * @retrun string
    *   The string with the realm created.
    */
   public function getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_value): string {
@@ -155,6 +157,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   /**
    * Get all fields of type entity_access_field.
    *
+   * @retrun array
    *   Returns all the fields with the entity type entity_acces_field.
    */
   public function getEntityAccessFields($entity, $bundle): array {

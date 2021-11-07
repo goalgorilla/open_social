@@ -17,6 +17,7 @@ class ActivitySettingsForm extends FormBase {
   /**
    * Returns a unique string identifying the form.
    *
+   * @retrun string
    *   The unique string identifying the form.
    */
   public function getFormId(): string {
@@ -43,6 +44,7 @@ class ActivitySettingsForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
+   * @retrun array
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {

@@ -44,6 +44,7 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
   /**
    * Gets the group content storage.
    *
+   * @return \Drupal\group\Entity\Storage\GroupContentStorageInterface
    *   The group_content storage class.
    */
   protected function groupContentStorage(): EntityStorageInterface {

@@ -106,6 +106,7 @@ class MentionsSettingsForm extends ConfigFormBase {
   /**
    * Get content entity types keyed by id.
    *
+   * @retrun array
    *   Returns array of content entity types.
    */
   protected function getContentEntityTypes(): array {

@@ -235,6 +235,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $memberships
    *   List of user memberships.
    *
+   * @retrun array
    *   List of node IDs.
    */
   protected function getAvailableNodeIds(AccountInterface $user, array $memberships): array {
@@ -291,6 +292,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $memberships
    *   List of user memberships.
    *
+   * @retrun array
    *   List of post IDs.
    */
   protected function getAvailablePostIds(AccountInterface $user, array $memberships): array {
@@ -352,6 +354,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $post_ids
    *   List of post IDs.
    *
+   * @retrun array
    *   List of comment IDs.
    */
   protected function getAvailableCommentIds(array $node_ids, array $post_ids): array {

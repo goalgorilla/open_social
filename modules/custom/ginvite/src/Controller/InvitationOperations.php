@@ -79,6 +79,7 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
+   * @retrun array
    *   The processed form for the given entity and operation.
    */
   public function accept(Request $request, GroupContentInterface $group_content): array {
@@ -111,6 +112,7 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
+   * @retrun \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response object that may be returned by the controller.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
@@ -139,6 +141,7 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
+   * @return \Drupal\Core\Access\AccessResult
    *   Access check result.
    */
   public function checkAccess(GroupContentInterface $group_content): CacheableDependencyInterface {
@@ -160,6 +163,7 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   Group entity.
    *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Rendered translatable title.
    */
   public function invitationTitle(GroupInterface $group): TranslatableMarkup {

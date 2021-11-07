@@ -15,6 +15,7 @@ class ActivitySendEmailController extends ControllerBase {
   /**
    * Redirect to user edit page.
    *
+   * @retrun \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the user account.
    */
   public function userEditPage(): RedirectResponse {

@@ -21,7 +21,7 @@ class SocialPostAlbumAjaxCommentsController extends AjaxCommentsController {
   /**
    * {@inheritdoc}
    */
-  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL): AjaxResponse {
+  public function socialAdd(Request $request, EntityInterface $entity, string $field_name, int $pid = NULL): AjaxResponse {
     $this->clearTempStore = FALSE;
 
     $response = parent::socialAdd($request, $entity, $field_name, $pid);

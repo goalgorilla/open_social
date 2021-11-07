@@ -147,6 +147,7 @@ class ActivityLoggerFactory {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
    *
+   * @retrun array
    *   Array of message types.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -259,6 +260,7 @@ class ActivityLoggerFactory {
    * @param string $uid
    *   The uid of the message.
    *
+   * @retrun bool
    *   Returns true if the message exists.
    */
   public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid): bool {

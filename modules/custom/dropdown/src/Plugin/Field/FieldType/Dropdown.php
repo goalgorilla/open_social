@@ -139,6 +139,7 @@ class Dropdown extends FieldItemBase {
    *   An array of values, where array keys are values and array values are
    *   labels.
    *
+   * @retrun string
    *   The string representation of the $values array:
    *    - Values are separated by a carriage return.
    *    - Each value is in the format "value|label" or "value".

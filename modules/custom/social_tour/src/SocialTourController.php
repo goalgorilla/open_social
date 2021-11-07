@@ -95,6 +95,7 @@ class SocialTourController extends ControllerBase {
   /**
    * Check if onboarding is enabled.
    *
+   * @retrun bool
    *   Returns either TRUE or FALSE.
    */
   public function onboardingEnabled(): bool {
@@ -185,6 +186,7 @@ class SocialTourController extends ControllerBase {
    * @param string $route_name
    *   A route name.
    *
+   * @retrun array
    *   The cache tags.
    */
   public function getCacheTags($route_name): array {

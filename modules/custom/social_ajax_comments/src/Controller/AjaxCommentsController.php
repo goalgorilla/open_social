@@ -43,6 +43,7 @@ class AjaxCommentsController extends ContribController {
    * @param int $cid
    *   The id of the comment being edited, or 0 if this is a new comment.
    *
+   * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    */
   public function socialCancel(Request $request, $cid): AjaxResponse {
@@ -102,15 +103,16 @@ class AjaxCommentsController extends ContribController {
    *   The entity this comment belongs to.
    * @param string $field_name
    *   The field_name to which the comment belongs.
-   * @param int $pid
+   * @param int|null $pid
    *   (optional) Some comments are replies to other comments. In those cases,
    *   $pid is the parent comment's comment ID. Defaults to NULL.
    *
+   * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    *
    * @see \Drupal\comment\Controller\CommentController::getReplyForm()
    */
-  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL): AjaxResponse {
+  public function socialAdd(Request $request, EntityInterface $entity, string $field_name, int $pid = NULL): AjaxResponse {
     $response = new AjaxResponse();
 
     // Store the selectors from the incoming request, if applicable.

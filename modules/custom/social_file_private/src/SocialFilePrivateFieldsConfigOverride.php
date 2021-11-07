@@ -24,6 +24,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * Note: this list is now fixed, but an error will be shown in the status
    * report when there are fields of type image, file using public uri_scheme.
    *
+   * @retrun array
    *   Returns an array containing config_names.
    */
   public function getFileImageFieldsToProtect(): array {

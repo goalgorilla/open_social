@@ -72,6 +72,7 @@ class GroupCoreCommentsController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   Group entity.
    *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Redirect response.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

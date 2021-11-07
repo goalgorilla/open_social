@@ -195,6 +195,7 @@ class FilterBlock extends ModeBlock {
    * @param array $complete_form
    *   The complete form structure.
    *
+   * @retrun array
    *   The processed element.
    */
   public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form): array {
@@ -287,6 +288,7 @@ class FilterBlock extends ModeBlock {
   /**
    * Get vocabulary options list.
    *
+   * @retrun array
    *   The vocabulary list.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -319,6 +321,7 @@ class FilterBlock extends ModeBlock {
    * @param string $vid
    *   The vocabulary id.
    *
+   * @retrun array
    *   The options term list.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

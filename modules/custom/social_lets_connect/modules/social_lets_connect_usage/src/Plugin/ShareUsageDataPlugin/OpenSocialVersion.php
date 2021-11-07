@@ -19,6 +19,7 @@ class OpenSocialVersion extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
+   * @retrun array
    *   $json array.
    */
   public function getValue(): array {

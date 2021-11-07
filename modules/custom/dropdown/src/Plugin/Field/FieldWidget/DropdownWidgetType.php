@@ -122,6 +122,7 @@ class DropdownWidgetType extends WidgetBase {
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The entity for which to return options.
    *
+   * @retrun array
    *   The array of options for the widget.
    */
   protected function getOptions(FieldableEntityInterface $entity): array {

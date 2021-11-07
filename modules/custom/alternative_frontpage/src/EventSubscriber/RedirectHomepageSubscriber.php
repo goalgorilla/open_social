@@ -191,9 +191,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    * @param string $url
    *   Url string.
    *
+   * @return \Drupal\Core\Cache\CacheableRedirectResponse
    *   Redirect response.
    */
-  public function createRedirectResponse(array $cacheContext, $url): CacheableRedirectResponse {
+  public function createRedirectResponse(array $cacheContext, string $url): CacheableRedirectResponse {
     $cache_contexts = new CacheableMetadata();
     $cache_contexts->setCacheContexts($cacheContext);
 

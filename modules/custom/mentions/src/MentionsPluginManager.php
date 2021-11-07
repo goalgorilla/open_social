@@ -23,6 +23,7 @@ class MentionsPluginManager extends DefaultPluginManager {
   /**
    * Get the names of plugins of type mentions_type.
    *
+   * @retrun array
    *   A list of plugin names.
    */
   public function getPluginNames(): array {

@@ -35,6 +35,7 @@ class EntityAccessHelper {
    *
    * @todo Add group to ignored values (when outsider role is working).
    *
+   * @retrun array
    *   An array containing a list of values to ignore.
    */
   public static function getIgnoredValues(): array {

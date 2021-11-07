@@ -49,6 +49,7 @@ class DemoContentManager extends DefaultPluginManager {
    * @param array $configurations
    *   Array with configuration for all plugins.
    *
+   * @retrun array
    *   Array with instances of the plugins.
    */
   public function createInstances(array $plugin_ids, array $configurations = []): array {

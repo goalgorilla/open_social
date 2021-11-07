@@ -103,6 +103,7 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   An array of data to create activity from.
    *
+   * @retrun array
    *   An array of created activities.
    */
   public function createActivities(array $data): array {
@@ -117,6 +118,7 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   An array of data to create activity from.
    *
+   * @retrun array
    *   An array of created activities.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
@@ -455,6 +457,7 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   Array of data.
    *
+   * @retrun int
    *   Value uid integer.
    */
   protected function getActor(array $data): int {
@@ -473,6 +476,7 @@ class ActivityFactory extends ControllerBase {
    * @param string $langcode
    *   The language code we try to get the translation for.
    *
+   * @retrun array
    *   Message text array.
    */
   public function getMessageText(Message $message, $langcode = ''): array {
@@ -518,6 +522,7 @@ class ActivityFactory extends ControllerBase {
    * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
+   * @return array
    *   The templated text, with the placeholders replaced with the actual value,
    *   if there are indeed arguments.
    */

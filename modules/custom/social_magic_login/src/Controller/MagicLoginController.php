@@ -82,6 +82,7 @@ class MagicLoginController extends ControllerBase {
    * @param string $destination
    *   The final destination the user needs to end up as an encoded string.
    *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   The redirect response.
    *
    * @see \Drupal\user\Controller\UserController::resetPassLogin

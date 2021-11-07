@@ -288,6 +288,7 @@ abstract class DemoSystem extends DemoContent {
    * @param string $image
    *   The image by uuid.
    *
+   * @retrun array
    *   Returns an array.
    */
   protected function fetchImage($image): ?EntityInterface {

@@ -127,6 +127,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    * @param string $path
    *   Path to check.
    *
+   * @retrun bool
    *   Returns true when path is allowed.
    */
   private function isAllowedPath($path): bool {

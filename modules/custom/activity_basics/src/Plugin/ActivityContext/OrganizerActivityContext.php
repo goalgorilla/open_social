@@ -113,6 +113,7 @@ class OrganizerActivityContext extends ActivityContextBase {
    * @param array $data
    *   The data.
    *
+   * @return array
    *   An associative array of recipients, containing the following key-value
    *   pairs:
    *   - target_type: The entity type ID.

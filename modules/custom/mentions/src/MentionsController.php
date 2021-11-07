@@ -22,6 +22,7 @@ class MentionsController extends ControllerBase {
    * @param \Drupal\mentions\MentionsInterface $mentions
    *   A mention entity.
    *
+   * @return \Symfony\Component\HttpFoundation\Response
    *   The mention listing set to the page on which the mention appears.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException

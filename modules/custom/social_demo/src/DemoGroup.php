@@ -165,6 +165,7 @@ abstract class DemoGroup extends DemoContent {
    * @param string $files
    *   The uuid for the file.
    *
+   * @retrun array
    *   Returns an array.
    */
   protected function prepareFiles($files): array {

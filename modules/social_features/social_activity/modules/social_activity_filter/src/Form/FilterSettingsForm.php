@@ -156,6 +156,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param array $vocabulary_list
    *   Array of vocabulary id's.
    *
+   * @retrun array
    *   Mapped array: vid => taxonomy_field.
    */
   public function getReferencedTaxonomyFields(array $vocabulary_list): array {
@@ -195,6 +196,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param string $views_id
    *   Views ID.
    *
+   * @retrun array
    *   Mapped array of views displays.
    */
   public function getDisplayBlocks($views_id): array {

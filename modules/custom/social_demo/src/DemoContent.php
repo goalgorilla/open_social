@@ -323,6 +323,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @param string $alt
    *   The image alt text.
    *
+   * @retrun array
    *   Returns an array for the image field.
    */
   protected function prepareImage($picture, $alt = ''): ?array {
@@ -347,6 +348,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @param array $item
    *   Array with items.
    *
+   * @retrun array
    *   Returns an array.
    */
   abstract protected function getEntry(array $item): array;

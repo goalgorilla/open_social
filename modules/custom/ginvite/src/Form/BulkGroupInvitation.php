@@ -209,6 +209,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
+   * @retrun array
    *   List of emails to invite .
    */
   private function getSubmittedEmails(FormStateInterface $form_state): array {

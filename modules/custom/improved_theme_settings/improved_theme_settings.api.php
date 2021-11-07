@@ -16,6 +16,7 @@
  * @param string $theme
  *   The name of the them that's being rendered.
  *
+ * @retrun string
  *   Returns a string that will be added as CSS.
  *
  * @ingroup improved_theme_settings

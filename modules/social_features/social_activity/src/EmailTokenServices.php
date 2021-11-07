@@ -88,6 +88,7 @@ class EmailTokenServices {
    * @param \Drupal\comment\Entity\Comment $comment
    *   The comment entity.
    *
+   * @retrun array
    *   The renderable array.
    */
   public function getCommentPreview(Comment $comment): array {
@@ -111,6 +112,7 @@ class EmailTokenServices {
    * @param \Drupal\node\Entity\Node $node
    *   The node entity.
    *
+   * @retrun array
    *   The renderable array.
    */
   public function getContentPreview(Node $node): array {
@@ -146,6 +148,7 @@ class EmailTokenServices {
    * @param \Drupal\social_post\Entity\Post $post
    *   The post entity.
    *
+   * @retrun array
    *   The renderable array.
    */
   public function getPostPreview(Post $post): array {
@@ -215,6 +218,7 @@ class EmailTokenServices {
    * @param \Drupal\group\Entity\Group $group
    *   The group entity.
    *
+   * @retrun array
    *   The renderable array.
    */
   public function getGroupPreview(Group $group): array {
@@ -235,6 +239,7 @@ class EmailTokenServices {
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $text
    *   The label of the button.
    *
+   * @retrun array
    *   The renderable array.
    */
   public function getCtaButton(Url $url, TranslatableMarkup $text): array {
