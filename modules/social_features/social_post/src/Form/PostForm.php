@@ -20,25 +20,31 @@ class PostForm extends ContentEntityForm {
 
   /**
    * The view mode.
+   *
+   * @var string
    */
-  private ?string $postViewDefault;
+  private string $postViewDefault;
 
   /**
    * The view mode for use on profiles.
+   *
+   * @var string
    */
-  private ?string $postViewProfile;
+  private string $postViewProfile;
 
   /**
    * The view mode for use in groups.
+   *
+   * @var string
    */
-  private ?string $postViewGroup;
+  private string $postViewGroup;
 
   /**
    * The Current User object.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Constructs a Form object.

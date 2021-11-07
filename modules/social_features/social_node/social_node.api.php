@@ -1,6 +1,12 @@
 <?php
 
+/**
+ * @file
+ * Social Node hooks & alters.
+ */
+
 use Drupal\node\NodeInterface;
+
 /**
  * @file
  * Hooks specific to the Social Node module.

@@ -54,26 +54,36 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
 
   /**
    * The config factory.
+   *
+   * @var SocialGroupSelectorWidgetphp
    */
   protected ConfigFactoryInterface $configFactory;
 
   /**
    * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandler
    */
   protected ModuleHandler $moduleHander;
 
   /**
    * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected AccountProxyInterface $currentUser;
 
   /**
    * The plugin manager.
+   *
+   * @var \Drupal\group\Entity\GroupContentEnablerManager
    */
   protected GroupContentEnablerManager $pluginManager;
 
   /**
-   * The user entity storage..
+   * The user entity storage.
+   *
+   * @var \Drupal\user\Entity\UserStorageInterface
    */
   protected UserStorageInterface $userManager;
 
@@ -287,7 +297,10 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $default_visibility = $form_state->getValue('default_visibility');
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
+      $ajax_response->addCommand(new InvokeCommand(
+        '#edit-field-content-visibility-' . $default_visibility,
+        'prop', ['checked', 'checked']
+      ));
     }
 
     foreach ($allowed_visibility_options as $visibility => $allowed) {
@@ -295,14 +308,19 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       if ($allowed === TRUE) {
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
         if (empty($default_visibility) || $visibility === $default_visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+          $ajax_response->addCommand(new InvokeCommand(
+            '#edit-field-content-visibility-' . $visibility,
+            'prop', ['checked', 'checked']
+          ));
         }
       }
       else {
         if ($selected_visibility && $selected_visibility === $visibility) {
           $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
         }
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility,
+          'prop', ['disabled', 'disabled']
+        ));
       }
 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));

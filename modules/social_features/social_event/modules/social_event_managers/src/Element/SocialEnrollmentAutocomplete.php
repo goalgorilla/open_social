@@ -70,7 +70,10 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
           'target_id' => $match,
         ];
 
-        $enrollments = $storage->loadByProperties(['field_event' => $nid, 'field_account' => $match]);
+        $enrollments = $storage->loadByProperties([
+          'field_event' => $nid,
+          'field_account' => $match,
+        ]);
 
         // If the social_event_invite module is enabled, we want to check if
         // an user is already invited, but not really enrolled yet.

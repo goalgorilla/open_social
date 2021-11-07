@@ -102,7 +102,10 @@ class SocialUserLoginForm extends UserLoginForm {
     }
 
     $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Log in')];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Log in'),
+    ];
 
     // Validates account and sets the form state uid that is used in the
     // submit function.
@@ -165,20 +168,26 @@ class SocialUserLoginForm extends UserLoginForm {
       // independent of the per-user limit to catch attempts from one IP to log
       // in to many different user accounts.  We have a reasonably high limit
       // since there may be only one IP for all users at an institution.
-      if (!$this->flood->isAllowed('user.failed_login_ip', $flood_config->get('ip_limit'), $flood_config->get('ip_window'))) {
+      if (!$this->userFloodControl->isAllowed('user.failed_login_ip', $flood_config->get('ip_limit'), $flood_config->get('ip_window'))) {
         $form_state->set('flood_control_triggered', 'ip');
         return;
       }
 
       // Try to retrieve the account with the mail address.
       $name = $form_state->getValue('name_or_mail');
-      $accounts = $this->userStorage->loadByProperties(['mail' => $form_state->getValue('name_or_mail'), 'status' => 1]);
+      $accounts = $this->userStorage->loadByProperties([
+        'mail' => $form_state->getValue('name_or_mail'),
+        'status' => 1,
+      ]);
       $account = reset($accounts);
       if ($account) {
         $name = $account->getAccountName();
       }
 
-      $accounts = $this->userStorage->loadByProperties(['name' => $name, 'status' => 1]);
+      $accounts = $this->userStorage->loadByProperties([
+        'name' => $name,
+        'status' => 1,
+      ]);
       $account = reset($accounts);
       if ($account) {
         if ($flood_config->get('uid_only')) {
@@ -196,7 +205,7 @@ class SocialUserLoginForm extends UserLoginForm {
 
         // Don't allow login if the limit for this user has been reached.
         // Default is to allow 5 failed attempts every 6 hours.
-        if (!$this->flood->isAllowed('user.failed_login_user', $flood_config->get('user_limit'), $flood_config->get('user_window'), $identifier)) {
+        if (!$this->userFloodControl->isAllowed('user.failed_login_user', $flood_config->get('user_limit'), $flood_config->get('user_window'), $identifier)) {
           $form_state->set('flood_control_triggered', 'user');
           return;
         }
@@ -220,15 +229,18 @@ class SocialUserLoginForm extends UserLoginForm {
       $this->setGeneralErrorMessage($form, $form_state);
 
       // Always register an IP-based failed login event.
-      $this->flood->register('user.failed_login_ip', $flood_config->get('ip_window'));
+      $this->userFloodControl->register('user.failed_login_ip', $flood_config->get('ip_window'));
       // Register a per-user failed login event.
       if ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
-        $this->flood->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
+        $this->userFloodControl->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
       }
       $flood_control_triggered = $form_state->get('flood_control_triggered');
       if (!$flood_control_triggered) {
         $name = $form_state->getValue('name_or_mail');
-        $accounts = $this->userStorage->loadByProperties(['mail' => $form_state->getValue('name_or_mail'), 'status' => 1]);
+        $accounts = $this->userStorage->loadByProperties([
+          'mail' => $form_state->getValue('name_or_mail'),
+          'status' => 1,
+        ]);
         $account = reset($accounts);
         if ($account) {
           $name = $account->getAccountName();
@@ -247,7 +259,7 @@ class SocialUserLoginForm extends UserLoginForm {
     elseif ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
       // Clear past failures for this user so as not to block a user who might
       // log in and out more than once in an hour.
-      $this->flood->clear('user.failed_login_user', $flood_control_user_identifier);
+      $this->userFloodControl->clear('user.failed_login_user', $flood_control_user_identifier);
     }
   }
 
@@ -263,7 +275,10 @@ class SocialUserLoginForm extends UserLoginForm {
           <li>Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. </li>
         </ul>
         <p>To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a></p>',
-      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => Url::fromRoute('user.pass')]));
+      [
+        '%name_or_email' => $form_state->getValue('name_or_mail'),
+        ':url' => Url::fromRoute('user.pass'),
+      ]));
   }
 
 }

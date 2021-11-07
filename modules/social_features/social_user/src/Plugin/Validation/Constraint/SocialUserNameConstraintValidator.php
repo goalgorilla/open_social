@@ -16,6 +16,8 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
 
   /**
    * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManagerInterface
    */
   protected TypedDataManagerInterface $typedDataManager;
 

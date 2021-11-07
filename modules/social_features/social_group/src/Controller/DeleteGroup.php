@@ -22,7 +22,10 @@ class DeleteGroup {
     // Load all nodes and delete them.
     $nodes = Node::loadMultiple($nids);
     foreach ($nodes as $node) {
-      $message = t('Delete @type "@title"', ['@type' => $node->getType(), '@title' => $node->getTitle()]);
+      $message = t('Delete @type "@title"', [
+        '@type' => $node->getType(),
+        '@title' => $node->getTitle(),
+      ]);
       $results[] = $node->delete();
     }
     // Load each post and delete it.

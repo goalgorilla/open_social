@@ -113,7 +113,10 @@ class PostViewBuilder extends EntityViewBuilder {
     $query->condition('e.field_activity_entity_target_id', $entity->id());
 
     $query->innerJoin('activity__field_activity_destinations', 'd', 'd.entity_id = t.entity_id');
-    $query->condition('field_activity_destinations_value', ['stream_group', 'stream_profile'], 'IN');
+    $query->condition('field_activity_destinations_value',
+      ['stream_group', 'stream_profile'],
+      'IN'
+    );
 
     $template_ids = $query->execute()->fetchAllKeyed(1, 0);
 

@@ -53,7 +53,10 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
 
           $label = !empty($selection_settings['hide_id']) ? $label : "$label ($entity_id)";
 
-          $matches[$entity_id] = ['id' => $entity_id, 'text' => Html::decodeEntities($label)];
+          $matches[$entity_id] = [
+            'id' => $entity_id,
+            'text' => Html::decodeEntities($label),
+          ];
         }
       }
 

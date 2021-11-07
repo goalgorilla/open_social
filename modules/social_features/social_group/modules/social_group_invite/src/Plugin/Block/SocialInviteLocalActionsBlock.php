@@ -138,7 +138,10 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
         '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
-            'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),
+            'url' => Url::fromRoute('entity.group_content.add_form', [
+              'plugin_id' => 'group_membership',
+              'group' => $group->id(),
+            ]),
           ],
           'invite_by_mail' => [
             'title' => $this->t('Invite users'),

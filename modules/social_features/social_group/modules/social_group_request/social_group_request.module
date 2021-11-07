@@ -148,7 +148,10 @@ function social_group_request_preprocess_group(&$variables) {
   if (\Drupal::hasService('ginvite.invitation_loader')) {
     /** @var \Drupal\ginvite\GroupInvitationLoader $loader */
     $loader = \Drupal::service('ginvite.invitation_loader');
-    $group_invites = count($loader->loadByProperties(['gid' => $group->id(), 'uid' => $account->id()]));
+    $group_invites = count($loader->loadByProperties([
+      'gid' => $group->id(),
+      'uid' => $account->id(),
+    ]));
     if (NULL !== $group_invites && $group_invites > 0) {
       return;
     }

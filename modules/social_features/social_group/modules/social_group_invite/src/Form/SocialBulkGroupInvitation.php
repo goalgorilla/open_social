@@ -386,7 +386,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           'invitee_mail' => $email,
           'entity_id' => 0,
         ];
-        $batch['operations'][] = ['\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite', [$values]];
+        $batch['operations'][] = [
+          '\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite',
+          [$values],
+        ];
       }
     }
 

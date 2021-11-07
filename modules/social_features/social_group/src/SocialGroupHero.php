@@ -19,6 +19,8 @@ class SocialGroupHero {
 
   /**
    * Whether the hero is shown in the small view mode.
+   *
+   * @var bool
    */
   protected bool $isSmall = FALSE;
 

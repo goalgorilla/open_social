@@ -168,7 +168,10 @@ function social_user_admin_people_overview_validate(&$form, FormStateInterface $
     'login',
   ];
   foreach ($filters as $filter) {
-    $form_state->setValue($filter . '_op', $form_state->getValue([$filter, $filter . '_op']));
+    $form_state->setValue($filter . '_op', $form_state->getValue([
+      $filter,
+      $filter . '_op',
+    ]));
   }
 }
 
@@ -476,7 +479,10 @@ function template_preprocess_unwrapped_container(array &$variables) {
  */
 function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block) {
   // Add pre render to search content block in the header.
-  $build['#pre_render'][] = [SocialUserSearchContentBlockAlter::class, 'preRender'];
+  $build['#pre_render'][] = [
+    SocialUserSearchContentBlockAlter::class,
+    'preRender',
+  ];
 }
 
 /**
@@ -530,7 +536,7 @@ function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata
  *
  * Adds the "View my profile" and "Edit profile" link to the user menu.
  */
-function social_user_social_user_account_header_account_links(array $context) {
+function social_user_social_user_account_header_account_links(array $context): array {
   // We require a user for these links.
   if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
     return [];

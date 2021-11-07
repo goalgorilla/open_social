@@ -16,6 +16,8 @@ class SocialUserNameConstraint extends Constraint {
 
   /**
    * The error message for this constraint.
+   *
+   * @var string
    */
   public string $usernameIsEmailMessage = 'The username can not be an email address.';
 
