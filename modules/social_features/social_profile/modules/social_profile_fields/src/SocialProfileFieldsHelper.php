@@ -43,10 +43,9 @@ class SocialProfileFieldsHelper {
    * @param string $profile_type_id
    *   The profile bundle.
    *
-   * @return array
    *   An array of fields.
    */
-  public function getProfileFields($profile_type_id) {
+  public function getProfileFields($profile_type_id): array {
     $fields = [];
 
     // Use storage to get only the profile fields of the current bundle type.
@@ -84,10 +83,9 @@ class SocialProfileFieldsHelper {
    * @param string $field_id
    *   The field id, e.g. profile_profile_field_profile_address.
    *
-   * @return array
    *   An array of plugins.
    */
-  public function getUserExportPluginIdForField($field_id) {
+  public function getUserExportPluginIdForField($field_id): array {
     $mapping = $this->mapProfileFieldsToUserExportPlugin();
     return array_keys($mapping, $field_id);
   }
@@ -95,10 +93,9 @@ class SocialProfileFieldsHelper {
   /**
    * Map profile fields to user export plugins.
    *
-   * @return array
    *   An array of fields and user export plugins.
    */
-  public function mapProfileFieldsToUserExportPlugin() {
+  public function mapProfileFieldsToUserExportPlugin(): array {
     $mapping = [
       'user_first_name' => 'profile_profile_field_profile_first_name',
       'user_last_name' => 'profile_profile_field_profile_last_name',

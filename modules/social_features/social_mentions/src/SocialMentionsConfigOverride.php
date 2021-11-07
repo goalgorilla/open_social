@@ -48,14 +48,14 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialMentionsConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

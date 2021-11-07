@@ -60,7 +60,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values): void {
     parent::preCreate($storage_controller, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
@@ -77,7 +77,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
+  public function setName($name): self {
     $this->set('name', $name);
     return $this;
   }
@@ -92,7 +92,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): self {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -114,7 +114,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -122,7 +122,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -130,14 +130,14 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): self {
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
@@ -145,7 +145,7 @@ class Font extends ContentEntityBase implements FontInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')

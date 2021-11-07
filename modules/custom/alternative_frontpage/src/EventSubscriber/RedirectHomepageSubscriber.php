@@ -102,7 +102,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     // 280 priority is higher than the dynamic and static page cache.
     $events[KernelEvents::REQUEST][] = ['checkForHomepageRedirect', '280'];
     return $events;
@@ -114,7 +114,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Contracts\EventDispatcher\Event $event
    *   Triggering event.
    */
-  public function checkForHomepageRedirect(Event $event) {
+  public function checkForHomepageRedirect(Event $event): void {
 
     // Make sure front page module is not run when using cli or doing install.
     if (PHP_SAPI === 'cli' || InstallerKernel::installationAttempted()) {
@@ -191,10 +191,9 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    * @param string $url
    *   Url string.
    *
-   * @return \Drupal\Core\Cache\CacheableRedirectResponse
    *   Redirect response.
    */
-  public function createRedirectResponse(array $cacheContext, $url) {
+  public function createRedirectResponse(array $cacheContext, $url): CacheableRedirectResponse {
     $cache_contexts = new CacheableMetadata();
     $cache_contexts->setCacheContexts($cacheContext);
 

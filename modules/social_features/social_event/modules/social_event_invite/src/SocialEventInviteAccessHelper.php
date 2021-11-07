@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite;
 
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -80,13 +81,12 @@ class SocialEventInviteAccessHelper {
   /**
    * Custom access check for the event invite features for event managers.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Returns the access result.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function eventFeatureAccess() {
+  public function eventFeatureAccess(): AccessResultForbidden {
     $config = $this->configFactory->get('social_event_invite.settings');
     $enabled_global = $config->get('invite_enroll');
 
@@ -146,10 +146,9 @@ class SocialEventInviteAccessHelper {
   /**
    * Custom access check for the user invite overview.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Returns the access result.
    */
-  public function userInviteAccess() {
+  public function userInviteAccess(): AccessResult {
     $config = $this->configFactory->get('social_event_invite.settings');
     $enabled_global = $config->get('invite_enroll');
 

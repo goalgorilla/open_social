@@ -57,7 +57,7 @@ class EntityAccessByField extends ContentAccess {
   /**
    * {@inheritdoc}
    */
-  public function addFieldValues(ItemInterface $item) {
+  public function addFieldValues(ItemInterface $item): void {
     static $anonymous_user;
 
     if (!isset($anonymous_user)) {

@@ -53,14 +53,14 @@ class SocialFollowLandingPageOverrides implements ConfigFactoryOverrideInterface
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialFollowLandingPageOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

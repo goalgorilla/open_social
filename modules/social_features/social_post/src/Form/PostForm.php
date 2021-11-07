@@ -69,7 +69,7 @@ class PostForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_post_entity_form';
   }
 
@@ -121,7 +121,7 @@ class PostForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state used to render this form.
    */
-  protected function configureViewMode(FormStateInterface $form_state) {
+  protected function configureViewMode(FormStateInterface $form_state): void {
     $view_mode = $this->postViewDefault;
     if ($this->entity->hasField('field_recipient_user') && !$this->entity->get('field_recipient_user')->isEmpty()) {
       $view_mode = $this->postViewProfile;
@@ -151,7 +151,7 @@ class PostForm extends ContentEntityForm {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
-  protected function configureVisibilityField(array &$form, FormStateInterface $form_state) {
+  protected function configureVisibilityField(array &$form, FormStateInterface $form_state): void {
     $form['#attached']['library'][] = 'social_post/visibility-settings';
 
     // Default is create/add mode.
@@ -263,7 +263,7 @@ class PostForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     // Init form modes.
     $this->setFormMode();
 
@@ -307,7 +307,7 @@ class PostForm extends ContentEntityForm {
    *
    * Retrieve the form display before it is overwritten in the parent.
    */
-  protected function setFormMode() {
+  protected function setFormMode(): void {
     if ($this->getBundleEntity() !== NULL) {
       $bundle = $this->getBundleEntity()->id();
 

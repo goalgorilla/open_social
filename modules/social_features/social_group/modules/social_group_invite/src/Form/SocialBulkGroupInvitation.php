@@ -171,14 +171,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_bulk_group_invitation';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
     $form['#attributes']['class'][] = 'form--default';
 
@@ -301,7 +301,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * both emails and existing users. Also we unset the people already invited,
    * or part of the group so we don't force users a step back to the buildform.
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Loop through all the entries.
     foreach ($form_state->getValue('users_fieldset')['user'] as $user) {
       $email = $this->extractEmailsFrom($user);
@@ -360,7 +360,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * @throws \Drupal\Core\TempStore\TempStoreException
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Override the Batch created in BulkGroupInvitation
     // this so we can create a better message, use a new redirect in the
     // finished argument but also update the correct emails etc.
@@ -411,17 +411,16 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
-   * @return array
    *   List of emails to invite .
    */
-  private function getSubmittedEmails(FormStateInterface $form_state) {
+  private function getSubmittedEmails(FormStateInterface $form_state): array {
     return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address')))));
   }
 
   /**
    * Batch finished callback overridden from BulkGroupInvitationConfirm.
    */
-  public static function batchFinished($success, $results, $operations) {
+  public static function batchFinished($success, $results, $operations): void {
     if ($success) {
       try {
         $tempstore = \Drupal::service('tempstore.private')->get('ginvite_bulk_invitation');

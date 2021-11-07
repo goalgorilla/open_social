@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Plugin\views\area;
 
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\area\AreaPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,7 +44,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
+  protected function defineOptions(): array {
     $options = parent::defineOptions();
 
     $options['block_id'] = ['default' => 'post_photo_block'];
@@ -54,7 +55,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::buildOptionsForm($form, $form_state);
 
     $options = [];
@@ -79,10 +80,9 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * Get sorted listed of supported block definitions.
    *
-   * @return array
    *   An associative array of supported block definitions.
    */
-  protected function getBlockDefinitions() {
+  protected function getBlockDefinitions(): array {
     $definitions = $this->blockManager->getSortedDefinitions();
     $block_definitions = [];
     foreach ($definitions as $plugin_id => $definition) {
@@ -132,7 +132,7 @@ class SocialPostPostForm extends AreaPluginBase {
   /**
    * {@inheritdoc}
    */
-  protected function getBlock() {
+  protected function getBlock(): ?BlockPluginInterface {
     if (empty($this->options['block_id'])) {
       return NULL;
     }

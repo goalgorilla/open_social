@@ -188,14 +188,14 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupInviteConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

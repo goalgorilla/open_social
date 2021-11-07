@@ -86,7 +86,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -106,7 +106,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query(): void {
     $account = $this->view->getUser();
     $skip_roles = [
       'administrator',
@@ -219,7 +219,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user';
@@ -235,10 +235,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $memberships
    *   List of user memberships.
    *
-   * @return array
    *   List of node IDs.
    */
-  protected function getAvailableNodeIds(AccountInterface $user, array $memberships) {
+  protected function getAvailableNodeIds(AccountInterface $user, array $memberships): array {
     $query = $this->connection->select('node_field_data', 'nfd');
     $query->fields('nfd', ['nid']);
     $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
@@ -292,10 +291,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $memberships
    *   List of user memberships.
    *
-   * @return array
    *   List of post IDs.
    */
-  protected function getAvailablePostIds(AccountInterface $user, array $memberships) {
+  protected function getAvailablePostIds(AccountInterface $user, array $memberships): array {
     $query = $this->connection->select('post_field_data', 'pfd');
     $query->fields('pfd', ['id']);
     $query->leftJoin('post__field_visibility', 'pfv', 'pfv.entity_id = pfd.id');
@@ -354,10 +352,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    * @param array $post_ids
    *   List of post IDs.
    *
-   * @return array
    *   List of comment IDs.
    */
-  protected function getAvailableCommentIds(array $node_ids, array $post_ids) {
+  protected function getAvailableCommentIds(array $node_ids, array $post_ids): array {
     $query = $this->connection->select('comment_field_data', 'cfd');
     $query->fields('cfd', ['cid']);
     $or = $query->orConditionGroup();

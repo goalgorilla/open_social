@@ -34,7 +34,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // Add Content access views filter to exclude
@@ -515,14 +515,14 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupFlexibleGroupConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

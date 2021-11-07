@@ -18,19 +18,19 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {}
+  public function adminSummary(): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
   /**
    * See _node_access_where_sql() for a non-views query based implementation.
    */
-  public function query() {
+  public function query(): void {
     $account = $this->view->getUser();
     $group_access = NULL;
     if (!$account->hasPermission('administer nodes') && !$account->hasPermission('bypass node access')) {
@@ -85,7 +85,7 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user.node_grants:view';

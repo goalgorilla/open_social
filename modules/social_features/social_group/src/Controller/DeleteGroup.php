@@ -17,7 +17,7 @@ class DeleteGroup {
   /**
    * Get the group and all of its content that needs to be deleted.
    */
-  public static function deleteGroupAndContent($nids, $posts, &$context) {
+  public static function deleteGroupAndContent($nids, $posts, &$context): void {
     $results = [];
     // Load all nodes and delete them.
     $nodes = Node::loadMultiple($nids);
@@ -41,7 +41,7 @@ class DeleteGroup {
   /**
    * Callback when the batch for group and content deletion is done.
    */
-  public static function deleteGroupAndContentFinishedCallback($success, $results, $operations) {
+  public static function deleteGroupAndContentFinishedCallback($success, $results, $operations): RedirectResponse {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {

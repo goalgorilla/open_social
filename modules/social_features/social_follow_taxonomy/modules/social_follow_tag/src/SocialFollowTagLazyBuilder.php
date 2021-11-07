@@ -109,7 +109,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
   /**
    * Returns tags for lazy builder.
    */
-  public function lazyBuild() {
+  public function lazyBuild(): array {
     $identifiers = [];
 
     // Get the tag category identifier that is used as a parameter in the URL.
@@ -181,10 +181,9 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    * @param string $entity_type
    *   Entity type for related content counter.
    *
-   * @return array
    *   Render array.
    */
-  public function popupLazyBuild($url, $term_id, $field, $entity_type) {
+  public function popupLazyBuild($url, $term_id, $field, $entity_type): array {
     /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
     return [
@@ -200,7 +199,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return [
       'lazyBuild',
       'popupLazyBuild',

@@ -327,10 +327,9 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
  * @param int $uid
  *   Identifier of a user.
  *
- * @return array
  *   Array with the names of fields that marked as hidden.
  */
-function social_profile_privacy_private_fields_list($uid) {
+function social_profile_privacy_private_fields_list($uid): array {
   $fields = &drupal_static(__FUNCTION__, []);
 
   if (isset($fields[$uid])) {

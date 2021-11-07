@@ -57,7 +57,7 @@ class GroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(GroupInterface $group, $new_type) {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, $new_type): void {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to Memberships to content.
     $entities = $group->getContentEntities();
@@ -111,7 +111,7 @@ class GroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, $new_type, array &$context) {
+  public function updateVisibility($entity, $new_type, array &$context): void {
     // Find the corresponding visibility for the new group_type.
     $default_visibility = SocialGroupHelperService::getDefaultGroupVisibility($new_type);
 
@@ -156,7 +156,7 @@ class GroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+  public static function updateVisibilityFinishedCallback($success, array $results, array $operations): void {
     $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.
@@ -187,7 +187,7 @@ class GroupContentVisibilityUpdate {
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(GroupInterface $group) {
+  public static function getPostsFromGroup(GroupInterface $group): array {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.

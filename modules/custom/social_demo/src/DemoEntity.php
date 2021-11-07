@@ -49,7 +49,7 @@ abstract class DemoEntity extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
     ];

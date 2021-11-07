@@ -21,7 +21,7 @@ class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInter
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     // Code has been moved to
     // _social_event_enrolments_export_alter_event_manage_enrollments_view().
@@ -31,14 +31,14 @@ class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInter
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialEventEnrolmentsExportOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

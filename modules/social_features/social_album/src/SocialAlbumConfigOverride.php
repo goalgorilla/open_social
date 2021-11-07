@@ -45,7 +45,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $config_names = [
@@ -173,14 +173,14 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialAlbumConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

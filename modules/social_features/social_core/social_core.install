@@ -186,10 +186,9 @@ function _social_core_set_permissions() {
  * @param string $role
  *   The role.
  *
- * @return array
  *   Returns an array containing the permissions.
  */
-function _social_core_get_permissions($role) {
+function _social_core_get_permissions($role): array {
   // Anonymous.
   $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access content',

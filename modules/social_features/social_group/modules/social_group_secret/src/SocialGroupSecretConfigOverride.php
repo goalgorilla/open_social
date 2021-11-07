@@ -34,7 +34,7 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $config_names = [
@@ -218,14 +218,14 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupSecretConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

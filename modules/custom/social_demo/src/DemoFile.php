@@ -88,7 +88,7 @@ abstract class DemoFile extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent(): array {
     $data = $this->fetchData();
 
     foreach ($data as $uuid => $item) {
@@ -139,7 +139,7 @@ abstract class DemoFile extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],

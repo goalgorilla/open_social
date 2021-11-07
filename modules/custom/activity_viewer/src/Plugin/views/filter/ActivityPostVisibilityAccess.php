@@ -55,7 +55,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -75,7 +75,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query(): void {
     $account = $this->view->getUser();
 
     $open_groups = [];

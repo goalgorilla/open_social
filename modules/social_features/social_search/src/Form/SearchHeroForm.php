@@ -59,14 +59,14 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'search_hero_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['search_input'] = [
       '#type' => 'textfield',
@@ -91,7 +91,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $current_route = $this->routeMatch->getRouteName();
     $route_parts = explode('.', $current_route);
     if (empty($form_state->getValue('search_input'))) {

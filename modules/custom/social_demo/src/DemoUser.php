@@ -76,7 +76,7 @@ abstract class DemoUser extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -155,7 +155,7 @@ abstract class DemoUser extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'name' => $item['name'],
@@ -177,10 +177,9 @@ abstract class DemoUser extends DemoContent {
    * @param array $values
    *   A list of UUIDs for terms.
    *
-   * @return array
    *   Returns an empty array or one filled with taxonomy terms.
    */
-  protected function prepareTerms(array $values) {
+  protected function prepareTerms(array $values): array {
     $terms = [];
 
     foreach ($values as $uuid) {
@@ -228,7 +227,7 @@ abstract class DemoUser extends DemoContent {
    * @param int|null $max
    *   How many items to generate.
    */
-  public function scrambleData(array $data, $max = NULL) {
+  public function scrambleData(array $data, $max = NULL): array {
     $new_data = [];
     for ($i = 0; $i < $max; $i++) {
       // Get a random item from the array.

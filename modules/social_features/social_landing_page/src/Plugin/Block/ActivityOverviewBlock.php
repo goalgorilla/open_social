@@ -52,7 +52,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     return [
       [
         '#type' => 'container',

@@ -108,7 +108,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   /**
    * Test that a anonymous user can only see public topics.
    */
-  public function testAnonymousUserCanViewOnlyPublicTopics() {
+  public function testAnonymousUserCanViewOnlyPublicTopics(): void {
     $public_topic = $this->createNode([
       'type' => 'topic',
       'field_content_visibility' => 'public',
@@ -162,7 +162,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   /**
    * Test that a anonymous user can not see unpublished topics.
    */
-  public function testAnonymousUserCanNotViewUnpublishedTopics() {
+  public function testAnonymousUserCanNotViewUnpublishedTopics(): void {
     $this->createNode([
       'type' => 'topic',
       'field_content_visibility' => 'public',
@@ -203,7 +203,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   /**
    * Test that a user without permission can not see any topics.
    */
-  public function testAnonymousUserCanNotViewTopicsWithoutPermission() {
+  public function testAnonymousUserCanNotViewTopicsWithoutPermission(): void {
     $this->createNode([
       'type' => 'topic',
       'field_content_visibility' => 'public',

@@ -72,14 +72,13 @@ class GroupCoreCommentsController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   Group entity.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Redirect response.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function quickJoinGroup(GroupInterface $group) {
+  public function quickJoinGroup(GroupInterface $group): RedirectResponse {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
 

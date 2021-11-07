@@ -304,10 +304,9 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
  * @param string $text
  *   The text to check for.
  *
- * @return string
  *   The processed text.
  */
-function _social_comment_get_summary($text) {
+function _social_comment_get_summary($text): string {
   $summary = html_entity_decode(strip_tags($text));
   $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
   $max_length = 280;

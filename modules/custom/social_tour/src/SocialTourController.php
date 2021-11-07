@@ -2,6 +2,7 @@
 
 namespace Drupal\social_tour;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -94,10 +95,9 @@ class SocialTourController extends ControllerBase {
   /**
    * Check if onboarding is enabled.
    *
-   * @return bool
    *   Returns either TRUE or FALSE.
    */
-  public function onboardingEnabled() {
+  public function onboardingEnabled(): bool {
     // Check if tour is enabled by SM setting.
     if (!$this->configFactory->get('social_tour_enabled')) {
       return FALSE;
@@ -122,7 +122,7 @@ class SocialTourController extends ControllerBase {
    * @param array $account
    *   Array containing the account.
    */
-  public function toggleOnboarding(array $account = NULL) {
+  public function toggleOnboarding(array $account = NULL): void {
 
     // No user given, then current user.
     $id = $this->currentUser->id();
@@ -142,7 +142,7 @@ class SocialTourController extends ControllerBase {
   /**
    * Enable onboarding for current_user by Ajax call.
    */
-  public function enableOnboarding() {
+  public function enableOnboarding(): JsonResponse {
     // Save the value in the user_data.
     $this->setData(FALSE);
     // Return 200.
@@ -152,7 +152,7 @@ class SocialTourController extends ControllerBase {
   /**
    * Disable onboarding for current_user by Ajax call.
    */
-  public function disableOnboarding() {
+  public function disableOnboarding(): RedirectResponse {
     // Save the value in the user_data.
     $this->setData();
 
@@ -175,7 +175,7 @@ class SocialTourController extends ControllerBase {
    * @param bool $disabled
    *   Type of bool, either TRUE or FALSE.
    */
-  private function setData($disabled = TRUE) {
+  private function setData($disabled = TRUE): void {
     $this->userData->set('social_tour', $this->currentUser->id(), 'onboarding_disabled', $disabled);
   }
 
@@ -185,10 +185,9 @@ class SocialTourController extends ControllerBase {
    * @param string $route_name
    *   A route name.
    *
-   * @return array
    *   The cache tags.
    */
-  public function getCacheTags($route_name) {
+  public function getCacheTags($route_name): array {
     $tours = $this->entityTypeManager->getStorage('tour')
       ->getQuery()
       ->condition('routes.*.route_name', $route_name)

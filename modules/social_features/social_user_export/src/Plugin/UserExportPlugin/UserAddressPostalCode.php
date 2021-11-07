@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,14 +20,14 @@ class UserAddressPostalCode extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Postal code');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     return $this->profileGetAddressFieldValue('field_profile_address', 'postal_code', $this->getProfile($entity));
   }
 

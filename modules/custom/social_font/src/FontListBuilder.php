@@ -17,7 +17,7 @@ class FontListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header = [];
     $header['id'] = $this->t('Font ID');
     $header['name'] = $this->t('Name');
@@ -27,7 +27,7 @@ class FontListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row = [];
     /** @var \Drupal\social_font\Entity\Font $entity */
     $row['id'] = $entity->id();

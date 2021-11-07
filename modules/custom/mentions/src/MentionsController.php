@@ -22,13 +22,12 @@ class MentionsController extends ControllerBase {
    * @param \Drupal\mentions\MentionsInterface $mentions
    *   A mention entity.
    *
-   * @return \Symfony\Component\HttpFoundation\Response
    *   The mention listing set to the page on which the mention appears.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    */
-  public function mentionPermalink(MentionsInterface $mentions) {
+  public function mentionPermalink(MentionsInterface $mentions): RedirectResponse {
     if ($entity = $mentions->getMentionedEntity()) {
       // Check access permissions for the entity.
       if (!$entity->access('view')) {

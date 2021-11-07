@@ -2,6 +2,7 @@
 
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 use Drupal\file\FileInterface;
@@ -23,7 +24,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Grab elements from the ImageFormatter and see if we can attach files?
     $elements = parent::viewElements($items, $langcode);
 
@@ -67,10 +68,9 @@ class FileAndImageTableFormatter extends ImageFormatter {
    * @param \Drupal\file\FileInterface $file
    *   A file entity. This function may resize the file affecting its size.
    *
-   * @return bool
    *   TRUE when it's an image and not a file
    */
-  private function isImage(FileInterface $file) {
+  private function isImage(FileInterface $file): bool {
     $image = $this->getImage($file);
 
     if ($image === NULL) {
@@ -86,10 +86,9 @@ class FileAndImageTableFormatter extends ImageFormatter {
    * @param \Drupal\file\FileInterface $file
    *   A file entity. This function may resize the file affecting its size.
    *
-   * @return \Drupal\Core\Image\ImageInterface
    *   An Image object.
    */
-  private function getImage(FileInterface $file) {
+  private function getImage(FileInterface $file): ImageInterface {
     // Make sure we deal with a file.
     $image_factory = \Drupal::service('image.factory');
 

@@ -32,10 +32,9 @@ class FileUrl extends DataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return string
    *   The file URL.
    */
-  public function resolve($uri, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve($uri, RefinableCacheableDependencyInterface $metadata): string {
     return file_create_url($uri);
   }
 

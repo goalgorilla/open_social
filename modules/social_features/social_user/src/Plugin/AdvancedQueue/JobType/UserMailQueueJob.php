@@ -98,7 +98,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function process(Job $job) {
+  public function process(Job $job): JobResult {
     try {
       // Get the Job data.
       $data = $job->getPayload();
@@ -164,7 +164,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    * @param string $display_name
    *   In case of anonymous users a display name will be given.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL): void {
     $subject = $mail_params->get('field_subject')->getValue();
     $message = $mail_params->get('field_message')->getValue();
     $reply_to = $mail_params->get('field_reply_to')->getValue();
@@ -198,10 +198,9 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    * @param array $data
    *   The content of the queue item.
    *
-   * @return bool
    *   True if the item contains all the necessary data.
    */
-  private static function validateQueueItem(array $data) {
+  private static function validateQueueItem(array $data): bool {
     // The queue data must contain the 'mail' key and it should either
     // contain 'users' or 'user_mail_addresses'.
     return isset($data['mail'])

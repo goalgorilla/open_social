@@ -63,7 +63,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
 
     // First make sure it's an actual entity.
     if ($entity = Node::load($data['entity_id'])) {

@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event_invite\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Link;
@@ -20,7 +22,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   /**
    * {@inheritdoc}
    */
-  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline): RedirectResponse {
     // Just some sanity checks.
     if (!empty($event_enrollment)) {
       // When the user accepted the invite,
@@ -75,7 +77,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
    *   The message.
    */
-  public function getMessage(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+  public function getMessage(EventEnrollmentInterface $event_enrollment, $accept_decline): ?TranslatableMarkup {
     $statusMessage = NULL;
     // Get the target event id.
     $target_event_id = $event_enrollment->get('field_event')->getValue();
@@ -103,7 +105,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResult {
     // Get the parameter from the request that has been done.
     $user_parameter = $this->requestStack->getCurrentRequest()->attributes->get('user');
     // Check if it's the same that is in the current session's account.

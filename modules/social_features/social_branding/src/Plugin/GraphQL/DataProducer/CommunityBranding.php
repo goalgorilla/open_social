@@ -64,7 +64,7 @@ class CommunityBranding extends DataProducerPluginBase implements ContainerFacto
    * @return \Drupal\Core\Config\ImmutableConfig|null
    *   The community branding configuration.
    */
-  public function resolve() : ?ImmutableConfig {
+  public function resolve() : ImmutableConfig {
     return $this->config->get('system.theme');
   }
 

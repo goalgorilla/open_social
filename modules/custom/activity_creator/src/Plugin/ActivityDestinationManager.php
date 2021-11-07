@@ -37,7 +37,7 @@ class ActivityDestinationManager extends DefaultPluginManager {
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList() {
+  public function getOptionsList(): array {
     $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
       $options[$plugin_id] = Html::escape($plugin_definition['label']);
@@ -56,7 +56,7 @@ class ActivityDestinationManager extends DefaultPluginManager {
    * @return string[]
    *   An array of the IDs of all available destination plugins.
    */
-  public function getListByProperties($condition = NULL, $value = NULL) {
+  public function getListByProperties($condition = NULL, $value = NULL): array {
     $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
       if (empty($condition) || (isset($plugin_definition[$condition]) && $plugin_definition[$condition] === $value)) {

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report\Access;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
@@ -66,10 +67,9 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    * @param int $entity_id
    *   The entity ID which is being reported.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Allowed if user may use the flag and hasn't reported it yet.
    */
-  public function access(AccountInterface $account, FlagInterface $flag, $entity_id) {
+  public function access(AccountInterface $account, FlagInterface $flag, $entity_id): CacheableDependencyInterface {
     if (in_array($flag->id(), $this->socialContentReport->getReportFlagTypes())) {
       // Make sure user is allowed to use the flag.
       if (!$account->hasPermission('flag ' . $flag->id())) {

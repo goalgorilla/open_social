@@ -48,7 +48,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     foreach ($names as $name) {
@@ -766,14 +766,14 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupRequestConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -53,10 +53,9 @@ class EventAnEnrollManager {
    * @param \Drupal\social_event\EventEnrollmentInterface $entity
    *   The event enrollment.
    *
-   * @return bool
    *   TRUE if it is guest.
    */
-  public function isGuest(EventEnrollmentInterface $entity) {
+  public function isGuest(EventEnrollmentInterface $entity): bool {
     return !$entity->field_account->target_id;
   }
 

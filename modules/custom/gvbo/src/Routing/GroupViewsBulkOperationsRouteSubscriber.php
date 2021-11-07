@@ -13,7 +13,7 @@ class GroupViewsBulkOperationsRouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     $route_names = [
       'views_bulk_operations.confirm',
       'views_bulk_operations.execute_configurable',

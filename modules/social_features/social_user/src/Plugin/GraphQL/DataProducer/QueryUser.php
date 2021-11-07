@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -136,13 +137,12 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    *
    * @todo https://www.drupal.org/project/social/issues/3191622
    * @todo https://www.drupal.org/project/social/issues/3191637
    */
-  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): ConnectionInterface {
     // This is a quick fix due to an incorrect entity access layer for users
     // do not copy this, but fix your access checks instead.
     if ($this->currentUser->isAnonymous()) {

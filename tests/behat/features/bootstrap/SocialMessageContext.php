@@ -21,7 +21,7 @@ class SocialMessageContext extends MessageContext {
    *
    * @Then I should see the success message( containing) :message in the :region( region)
    */
-  public function assertRegionSuccessMessage($message, $region) {
+  public function assertRegionSuccessMessage($message, $region): void {
     $this->_assertRegion(
       $message,
       'success_message_selector',
@@ -50,7 +50,7 @@ class SocialMessageContext extends MessageContext {
    * @throws \Behat\Mink\Exception\ExpectationException
    *   Thrown when the expected message is not present in the page.
    */
-  private function _assertRegion($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing, $region) {
+  private function _assertRegion($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing, $region): void {
     $session = $this->getSession();
     $regionObj = $session->getPage()->find('region', $region);
 

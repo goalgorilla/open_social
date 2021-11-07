@@ -248,7 +248,7 @@ function social_core_social_user_account_header_items_alter(array &$menu_links, 
  * @return \Drupal\Core\Field\FieldItemList|null
  *   Will return the FieldItemList or null if its not an image field.
  */
-function _social_core_find_image_field(FieldItemList $field) {
+function _social_core_find_image_field(FieldItemList $field): ?FieldItemList {
   if (strpos($field->getName(), 'image') !== FALSE) {
     return $field;
   }

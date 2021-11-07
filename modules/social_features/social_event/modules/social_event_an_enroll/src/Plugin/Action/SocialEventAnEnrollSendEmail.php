@@ -117,7 +117,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     $guests = [];
     foreach ($objects as $key => $entity) {
       if ($this->socialEventAnEnrollManager->isGuest($entity)) {

@@ -44,14 +44,14 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
    * @param \Drupal\social_profile\SocialProfileTagServiceInterface $social_profile_tag_service
    *   The social profile tag service.
    */
-  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service) {
+  protected function setSocialProfileTagService(SocialProfileTagServiceInterface $social_profile_tag_service): void {
     $this->profileTagService = $social_profile_tag_service;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     // Do not render field if no options or not active.
@@ -118,7 +118,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $profile_tag_service */
     $profile_tag_service = \Drupal::service('social_profile.tag_service');
     if ($profile_tag_service->allowSplit()) {

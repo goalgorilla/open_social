@@ -16,7 +16,7 @@ class SocialGroupSelectorWidgetConfigOverride implements ConfigFactoryOverrideIn
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     $config_names = [
       'core.entity_form_display.node.event.default',
@@ -47,14 +47,14 @@ class SocialGroupSelectorWidgetConfigOverride implements ConfigFactoryOverrideIn
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupSelectorWidgetConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

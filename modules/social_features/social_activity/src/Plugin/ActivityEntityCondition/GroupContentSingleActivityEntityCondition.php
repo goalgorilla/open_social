@@ -57,7 +57,7 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     if (in_array($entity->getEntityTypeId(), ['group_content', 'post'])) {
       // If node is added only to one group then condition is valid.
       if (!$this->crossPostingService->nodeExistsInMultipleGroups($entity)) {

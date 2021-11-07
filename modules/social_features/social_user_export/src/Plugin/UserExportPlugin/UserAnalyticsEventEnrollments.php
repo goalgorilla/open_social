@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,14 +20,14 @@ class UserAnalyticsEventEnrollments extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Event enrollments');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): int {
     $query = $this->database->select('event_enrollment', 'ee');
     $query->join('event_enrollment_field_data', 'eefd', 'eefd.id = ee.id');
     $query->condition('eefd.user_id', $entity->id());

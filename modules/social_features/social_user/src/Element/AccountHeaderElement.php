@@ -26,7 +26,7 @@ class AccountHeaderElement extends RenderElement {
   /**
    * {@inheritdoc}
    */
-  public function getInfo() {
+  public function getInfo(): array {
     $class = get_class($this);
 
     return [
@@ -57,10 +57,9 @@ class AccountHeaderElement extends RenderElement {
    * @param array $item
    *   The render array for this account header element as defined in getInfo.
    *
-   * @return array
    *   A render array for an element usable in item_list.
    */
-  public static function preRenderAccountHeaderElement(array $item) {
+  public static function preRenderAccountHeaderElement(array $item): array {
     // Retrieve the item children, if any, sorted by weight.
     $children = Element::children($item, TRUE);
 

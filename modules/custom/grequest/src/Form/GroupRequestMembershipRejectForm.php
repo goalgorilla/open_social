@@ -2,6 +2,7 @@
 
 namespace Drupal\grequest\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -31,28 +32,28 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'grequest_group_request_membership_reject';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Are you sure you want to Reject this request?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return Url::fromUserInput(\Drupal::destination()->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL): array {
     $this->group = $group;
     $this->groupContent = $group_content;
 
@@ -62,7 +63,7 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     $this->groupContent
       ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)

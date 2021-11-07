@@ -47,7 +47,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'alternative_frontpage.settings',
     ];
@@ -56,14 +56,14 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'alternative_frontpage_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('alternative_frontpage.settings');
     $site_config = $this->config('system.site');
     $form['frontpage_for_anonymous_users'] = [
@@ -88,7 +88,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     $frontpage_for_anonymous_user = $form_state->getValue('frontpage_for_anonymous_users');
     $frontpage_for_authenticated_user = $form_state->getValue('frontpage_for_authenticated_user');
 
@@ -127,10 +127,9 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    * @param string $path
    *   Path to check.
    *
-   * @return bool
    *   Returns true when path is allowed.
    */
-  private function isAllowedPath($path) {
+  private function isAllowedPath($path): bool {
     $unallowed_paths = [
       '/user/logout',
       '/ajax',
@@ -146,7 +145,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $this->config('alternative_frontpage.settings')

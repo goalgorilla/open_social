@@ -29,7 +29,7 @@ class UnwrappedContainer extends Container {
   /**
    * {@inheritdoc}
    */
-  public function getInfo() {
+  public function getInfo(): array {
     $info = parent::getInfo();
 
     $info['#theme_wrappers'] = ['unwrapped_container'];

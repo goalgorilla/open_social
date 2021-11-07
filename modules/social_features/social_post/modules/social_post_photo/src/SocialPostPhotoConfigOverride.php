@@ -17,12 +17,11 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $names
    *   A list of configuration names that are being loaded.
    *
-   * @return array
    *   An array keyed by configuration name of override data. Override data
    *   contains a nested array structure of overrides.
    * @codingStandardsIgnoreStart
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     // @codingStandardsIgnoreEnd
     $overrides = [];
     $config_factory = \Drupal::service('config.factory');
@@ -89,14 +88,14 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialPostPhotoConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

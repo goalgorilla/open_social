@@ -23,7 +23,7 @@ class SocialPrivateMessageThreadMemberFormatter extends PrivateMessageThreadMemb
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $access_profiles = $this->currentUser->hasPermission('access user profiles');
     $users = [];
 

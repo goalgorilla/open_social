@@ -53,10 +53,9 @@ class AddToCalendarIcsController extends ControllerBase {
   /**
    * Download generated ICS file.
    *
-   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
    *   Empty array.
    */
-  public function downloadIcs() {
+  public function downloadIcs(): BinaryFileResponse {
     // Event dates.
     $dates = $this->request->get('dates');
 

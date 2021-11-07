@@ -19,7 +19,7 @@ class Dropdown extends FormElement {
   /**
    * {@inheritdoc}
    */
-  public function getInfo() {
+  public function getInfo(): array {
     $class = get_class($this);
     return [
       '#label' => 'Default Label',

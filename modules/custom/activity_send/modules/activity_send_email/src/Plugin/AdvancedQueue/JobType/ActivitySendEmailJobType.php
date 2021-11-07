@@ -129,7 +129,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function process(Job $job) {
+  public function process(Job $job): JobResult {
     try {
       // Get the Job data.
       $data = $job->getPayload();
@@ -325,7 +325,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    * @param string|null $langcode
    *   Language code.
    */
-  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL) {
+  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL): void {
     // Split up by 50.
     $batches = array_chunk($user_ids_per_language, 50);
 

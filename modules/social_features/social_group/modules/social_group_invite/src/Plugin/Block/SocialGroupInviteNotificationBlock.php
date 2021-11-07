@@ -98,7 +98,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     // Only when group invite is installed.
     if (!$this->group->getGroupType()->hasContentPlugin('group_invitation')) {
       return [];
@@ -132,7 +132,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account, $return_as_object = FALSE) {
+  public function access(AccountInterface $account, $return_as_object = FALSE): AccessResult {
     $is_group_page = isset($this->group);
     $is_logged_in = $account->isAuthenticated();
 
@@ -142,7 +142,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL
     // so we don't see the message on every group.
@@ -156,7 +156,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     return Cache::mergeTags(parent::getCacheTags(), [
       'group_content_list:entity:' . $this->account->id(),
       'group_content_list:plugin:group_invitation:entity:' . $this->account->id(),

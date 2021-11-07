@@ -65,12 +65,10 @@ class SocialQuickJoinController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group you want to join.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Where to redirect to.
-   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function quickJoin(GroupInterface $group) {
+  public function quickJoin(GroupInterface $group): RedirectResponse {
 
     // No group, so go home.
     if (!$group instanceof GroupInterface) {

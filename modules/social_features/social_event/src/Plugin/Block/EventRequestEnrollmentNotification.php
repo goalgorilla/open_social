@@ -172,7 +172,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account, $return_as_object = FALSE) {
+  public function access(AccountInterface $account, $return_as_object = FALSE): AccessResult {
     $is_event_page = isset($this->event);
 
     // Show this block only on these specific routes.
@@ -201,7 +201,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL so we don't see the message on
     // every event.
@@ -215,7 +215,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     return Cache::mergeTags(parent::getCacheTags(), [
       'event_enrollment_list:' . $this->event->id(),
     ]);

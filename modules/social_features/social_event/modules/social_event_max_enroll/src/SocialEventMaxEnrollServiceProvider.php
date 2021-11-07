@@ -16,7 +16,7 @@ class SocialEventMaxEnrollServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     if ($container->hasDefinition('social_event_an_enroll.overrider')) {
       $container
         ->getDefinition('social_event_max_enroll.overrider')

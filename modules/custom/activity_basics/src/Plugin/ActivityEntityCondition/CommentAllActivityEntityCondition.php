@@ -18,7 +18,7 @@ class CommentAllActivityEntityCondition extends ActivityEntityConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     if ($entity->getEntityTypeId() === 'comment') {
       return TRUE;
     }

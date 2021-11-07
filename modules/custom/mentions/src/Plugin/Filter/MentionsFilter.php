@@ -139,20 +139,18 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Returns the settings.
    *
-   * @return array
    *   A list of settings.
    */
-  public function getSettings() {
+  public function getSettings(): array {
     return $this->settings;
   }
 
   /**
    * Checks if there are mentionTypes.
    *
-   * @return bool
    *   TRUE if there are mentionTypes, otherwise FALSE.
    */
-  public function checkMentionTypes() {
+  public function checkMentionTypes(): bool {
     $settings = $this->settings;
 
     if (isset($settings['mentions_filter'])) {
@@ -169,10 +167,9 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Checks if a textFormat filter should be applied.
    *
-   * @return bool
    *   TRUE if filter should applied, otherwise FALSE.
    */
-  public function shouldApplyFilter() {
+  public function shouldApplyFilter(): bool {
     if ($this->checkMentionTypes()) {
       return TRUE;
     }
@@ -195,10 +192,9 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @param string $text
    *   The text to find mentions in.
    *
-   * @return array
    *   A list of mentions.
    */
-  public function getMentions($text) {
+  public function getMentions($text): array {
     $mentions = [];
     $config_names = $this->mentionTypes;
 
@@ -257,10 +253,9 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @param string $text
    *   The text containing the possible mentions.
    *
-   * @return string
    *   The processed text.
    */
-  public function filterMentions($text) {
+  public function filterMentions($text): string {
     $mentions = $this->getMentions($text);
 
     foreach ($mentions as $match) {
@@ -287,7 +282,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function process($text, $langcode) {
+  public function process($text, $langcode): FilterProcessResult {
     if ($this->shouldApplyFilter()) {
       $text = $this->filterMentions($text);
 
@@ -300,7 +295,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): ?array {
     $configs = $this->config->listAll('mentions.mentions_type');
     $candidate_entitytypes = [];
 
@@ -326,7 +321,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function setTextFormat($text_format) {
+  public function setTextFormat($text_format): void {
     $this->textFormat = $text_format;
   }
 

@@ -18,7 +18,7 @@ class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterfac
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // Set private file system to files field.
@@ -40,14 +40,14 @@ class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterfac
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialDownloadCountConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

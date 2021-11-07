@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\social_comment\Kernel\GraphQL;
 
+use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Entity\EntityInterface;
@@ -95,7 +96,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
   /**
    * Test that the comments endpoint respects the access comments permission.
    */
-  public function testUserRequiresAccessCommentsPermission() {
+  public function testUserRequiresAccessCommentsPermission(): void {
     // Create a published comment on a node.
     $node = $this->createNode();
     $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
@@ -131,7 +132,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    * - Any published comment
    * - Their own unpublished comment.
    */
-  public function testUserCanViewOnlyOwnOrOtherPublishedComments() {
+  public function testUserCanViewOnlyOwnOrOtherPublishedComments(): void {
     $node = $this->createNode();
     // A user to create some other comments with.
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
@@ -189,10 +190,9 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    * @param mixed[] $values
    *   An optional array of values to pass to Comment::create.
    *
-   * @return \Drupal\comment\CommentInterface
    *   Created comment entity.
    */
-  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []) {
+  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []): CommentInterface {
     if ($user !== NULL) {
       $values += ['uid' => $user->id()];
     }

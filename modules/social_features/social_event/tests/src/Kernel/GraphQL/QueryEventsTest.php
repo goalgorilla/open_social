@@ -111,7 +111,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   /**
    * Test that a anonymous user can only see public events.
    */
-  public function testAnonymousUserCanViewOnlyPublicEvents() {
+  public function testAnonymousUserCanViewOnlyPublicEvents(): void {
     $public_event = $this->createNode([
       'type' => 'event',
       'field_content_visibility' => 'public',
@@ -165,7 +165,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   /**
    * Test that a anonymous user can not see unpublished events.
    */
-  public function testAnonymousUserCanNotViewUnpublishedEvents() {
+  public function testAnonymousUserCanNotViewUnpublishedEvents(): void {
     $this->createNode([
       'type' => 'event',
       'field_content_visibility' => 'public',
@@ -206,7 +206,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   /**
    * Test that a user without permission can not see any events.
    */
-  public function testAnonymousUserCanNotViewEventsWithoutPermission() {
+  public function testAnonymousUserCanNotViewEventsWithoutPermission(): void {
     $this->createNode([
       'type' => 'event',
       'field_content_visibility' => 'public',

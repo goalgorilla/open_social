@@ -33,7 +33,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions() {
+  protected function defineOptions(): array {
     $options = parent::defineOptions();
 
     $options['tags_filter'] = [
@@ -49,7 +49,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function blockSettings(array $settings) {
+  public function blockSettings(array $settings): array {
     $settings = parent::blockSettings($settings);
 
     $settings['vocabulary'] = 'none';
@@ -63,7 +63,7 @@ class FilterBlock extends ModeBlock {
    *
    * This output is returned as an array.
    */
-  public function optionsSummary(&$categories, &$options) {
+  public function optionsSummary(&$categories, &$options): void {
     parent::optionsSummary($categories, $options);
 
     if ($this->getOption('override_tags_filter')) {
@@ -74,7 +74,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::buildOptionsForm($form, $form_state);
 
     if ($form_state->get('section') !== 'allow') {
@@ -92,7 +92,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::submitOptionsForm($form, $form_state);
 
     if ($form_state->get('section') === 'allow') {
@@ -195,10 +195,9 @@ class FilterBlock extends ModeBlock {
    * @param array $complete_form
    *   The complete form structure.
    *
-   * @return array
    *   The processed element.
    */
-  public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form): array {
     // Get selected vocabulary value.
     $parents = $element["#parents"];
     $input = $form_state->getUserInput();
@@ -239,7 +238,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state) {
+  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state): void {
     parent::blockSubmit($block, $form, $form_state);
 
     if ($tags = $form_state->getValue(['override', 'tags'])) {
@@ -262,7 +261,7 @@ class FilterBlock extends ModeBlock {
   /**
    * {@inheritdoc}
    */
-  public function preBlockBuild(ViewsBlock $block) {
+  public function preBlockBuild(ViewsBlock $block): void {
     parent::preBlockBuild($block);
 
     // Prepare values to use it in the views filter.
@@ -288,13 +287,12 @@ class FilterBlock extends ModeBlock {
   /**
    * Get vocabulary options list.
    *
-   * @return array
    *   The vocabulary list.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getVocabularyOptionsList() {
+  public function getVocabularyOptionsList(): array {
     $config = $this->configFactory->getEditable('social_activity_filter.settings');
 
     $allowed_list = $config->get('vocabulary');
@@ -321,13 +319,12 @@ class FilterBlock extends ModeBlock {
    * @param string $vid
    *   The vocabulary id.
    *
-   * @return array
    *   The options term list.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getTermOptionslist($vid) {
+  public function getTermOptionslist($vid): array {
     $taxonomy_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     $taxonomy_terms = $taxonomy_storage->loadTree($vid);
     $term_list = [];

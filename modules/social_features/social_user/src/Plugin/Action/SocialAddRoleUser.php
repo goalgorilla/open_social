@@ -60,7 +60,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function execute($account = NULL) {
+  public function execute($account = NULL): void {
     $rid = $this->configuration['rid'];
     // Skip adding the role to the user if they already have it.
     if ($account !== FALSE && !$account->hasRole($rid)) {
@@ -75,7 +75,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $roles = $this->delegatableRoles->getAssignableRoles($this->currentUser);
     // Remove the authenticated role.
     unset($roles[RoleInterface::AUTHENTICATED_ID]);

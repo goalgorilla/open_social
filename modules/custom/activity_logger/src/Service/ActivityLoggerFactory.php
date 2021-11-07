@@ -77,7 +77,7 @@ class ActivityLoggerFactory {
    * @param string $action
    *   Action string. Defaults to 'create'.
    */
-  public function createMessages(EntityBase $entity, $action) {
+  public function createMessages(EntityBase $entity, $action): void {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
     // Loop through those message types and create messages.
@@ -147,14 +147,13 @@ class ActivityLoggerFactory {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
    *
-   * @return array
    *   Array of message types.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getMessageTypes($action, EntityBase $entity) {
+  public function getMessageTypes($action, EntityBase $entity): array {
     // Init.
     $messagetypes = [];
 
@@ -205,7 +204,7 @@ class ActivityLoggerFactory {
    * @param array $fields
    *   The data to insert in the field instances.
    */
-  protected function createFieldInstances($message_type, array $fields) {
+  protected function createFieldInstances($message_type, array $fields): void {
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = $this->entityTypeManager
@@ -260,10 +259,9 @@ class ActivityLoggerFactory {
    * @param string $uid
    *   The uid of the message.
    *
-   * @return int
    *   Returns true if the message exists.
    */
-  public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid) {
+  public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid): bool {
     $exists = FALSE;
 
     $query = $this->entityTypeManager->getStorage('message')->getQuery();

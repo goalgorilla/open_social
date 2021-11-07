@@ -12,7 +12,7 @@ class MentionsViewsData extends EntityViewsData {
   /**
    * Get the views data.
    */
-  public function getViewsData() {
+  public function getViewsData(): array {
     $data = parent::getViewsData();
     $data['mentions_field_data']['table']['base']['help'] = t('Mentions entry');
 

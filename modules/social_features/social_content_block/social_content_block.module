@@ -78,10 +78,9 @@ function social_content_block_block_content_view(array &$build, EntityInterface 
  * @param \Drupal\block_content\BlockContentInterface $block_entity
  *   The block content entity object.
  *
- * @return string
  *   The entity type.
  */
-function _social_content_block_get_content_type_for_block(BlockContentInterface $block_entity) {
+function _social_content_block_get_content_type_for_block(BlockContentInterface $block_entity): string {
   if ($block_entity->field_plugin_id->isEmpty()) {
     return '';
   }
@@ -156,10 +155,9 @@ function custom_content_block_form_submit($form, FormStateInterface $form_state)
  * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
  *   (optional) The entity object.
  *
- * @return array
  *   The options list.
  */
-function _social_content_block_allowed_values_callback(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL) {
+function _social_content_block_allowed_values_callback(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL): array {
   $values = [];
 
   if (

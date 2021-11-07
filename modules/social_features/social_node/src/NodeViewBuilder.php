@@ -13,7 +13,7 @@ class NodeViewBuilder extends NodeViewBuilderBase {
   /**
    * {@inheritdoc}
    */
-  protected static function buildLinks(NodeInterface $entity, $view_mode) {
+  protected static function buildLinks(NodeInterface $entity, $view_mode): array {
     $build = parent::buildLinks($entity, $view_mode);
 
     // Remove the language argument from all links. It was added in Issue

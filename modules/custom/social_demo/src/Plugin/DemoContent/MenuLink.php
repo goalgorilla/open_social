@@ -19,7 +19,7 @@ class MenuLink extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry(array $item) {
+  public function getEntry(array $item): array {
     $entry = parent::getEntry($item);
 
     return $entry + [

@@ -13,7 +13,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRoutes(RouteCollection $collection) {
+  public function alterRoutes(RouteCollection $collection): void {
     /** @var \Symfony\Component\Routing\Route $route */
     if ($route = $collection->get('comment.reply')) {
       $route->setDefaults([

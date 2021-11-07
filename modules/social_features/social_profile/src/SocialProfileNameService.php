@@ -108,7 +108,7 @@ class SocialProfileNameService {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getProfileName(ProfileInterface $profile = NULL) {
+  public function getProfileName(ProfileInterface $profile = NULL): string {
     // Do nothing if no profile.
     if ($profile == NULL) {
       return '';

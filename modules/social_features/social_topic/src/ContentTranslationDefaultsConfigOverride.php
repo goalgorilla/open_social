@@ -2,6 +2,7 @@
 
 namespace Drupal\social_topic;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -17,21 +18,21 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getModule() {
+  protected function getModule():string {
     return 'social_topic';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName() {
+  protected function getDisplayName(): TranslatableMarkup {
     return $this->t('Topics');
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getTranslationOverrides() {
+  protected function getTranslationOverrides():array {
     return [
       'language.content_settings.node.topic' => [
         'third_party_settings' => [

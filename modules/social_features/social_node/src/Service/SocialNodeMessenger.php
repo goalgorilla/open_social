@@ -50,7 +50,7 @@ class SocialNodeMessenger extends Messenger implements SocialNodeMessengerInterf
   /**
    * {@inheritdoc}
    */
-  public function addStatus($message, $repeat = FALSE) {
+  public function addStatus($message, $repeat = FALSE): self {
     $messages = $this->moduleHandler->invokeAll('social_node_message', [
       $this->node,
     ]);
@@ -65,7 +65,7 @@ class SocialNodeMessenger extends Messenger implements SocialNodeMessengerInterf
   /**
    * {@inheritdoc}
    */
-  public function setNode(NodeInterface $node) {
+  public function setNode(NodeInterface $node): void {
     $this->node = $node;
   }
 

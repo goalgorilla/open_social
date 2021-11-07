@@ -98,7 +98,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
   /**
    * {@inheritdoc}
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(EntityInterface $entity): string {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     if ($this->socialEventAnEnrollManager->isGuest($entity)) {
       return $this->socialEventAnEnrollManager->getGuestName($entity);

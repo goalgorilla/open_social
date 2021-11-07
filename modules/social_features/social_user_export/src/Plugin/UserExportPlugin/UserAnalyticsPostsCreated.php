@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,14 +20,14 @@ class UserAnalyticsPostsCreated extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Posts created');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): int {
     $query = $this->database->select('post', 'p');
     $query->join('post_field_data', 'pfd', 'pfd.id = p.id');
     $query->condition('pfd.user_id', $entity->id());

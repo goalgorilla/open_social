@@ -35,10 +35,9 @@ class GroupStatistics {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group entity.
    *
-   * @return int
    *   The number of members.
    */
-  public function getGroupMemberCount(GroupInterface $group) {
+  public function getGroupMemberCount(GroupInterface $group): int {
     return $this->count($group, 'group_membership');
   }
 
@@ -50,10 +49,9 @@ class GroupStatistics {
    * @param string $type
    *   Node type id.
    *
-   * @return int
    *   The number of nodes.
    */
-  public function getGroupNodeCount(GroupInterface $group, $type) {
+  public function getGroupNodeCount(GroupInterface $group, $type): int {
     return $this->count($group, 'group_node-' . $type);
   }
 
@@ -65,10 +63,9 @@ class GroupStatistics {
    * @param string $type
    *   Entity type in group.
    *
-   * @return int
    *   The number of entities.
    */
-  protected function count(GroupInterface $group, $type) {
+  protected function count(GroupInterface $group, $type): int {
     // Additional caching not required since views does this for us.
     $query = $this->database->select('group_content_field_data', 'gcfd');
     $query->addField('gcfd', 'gid');

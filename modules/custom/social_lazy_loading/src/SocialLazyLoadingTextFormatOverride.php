@@ -75,7 +75,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
+  protected function addFilterOverride($text_format, $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
 
     if ($convert_url) {
@@ -93,7 +93,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
@@ -107,7 +107,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialLazyLoadingTextFormatOverride';
   }
 

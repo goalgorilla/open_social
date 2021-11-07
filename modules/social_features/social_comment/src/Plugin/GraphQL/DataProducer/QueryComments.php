@@ -80,10 +80,9 @@ class QueryComments extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(?NodeInterface $parent, ?string $bundle, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection {
     if ($parent) {
       $nodes = $this->entityTypeManager->getStorage('node')->loadByProperties(['uuid' => $parent->uuid()]);
       $parent = reset($nodes);

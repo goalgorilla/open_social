@@ -63,7 +63,7 @@ class GinviteSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The RequestEvent to process.
    */
-  public function notifyAboutPendingInvitations(RequestEvent $event) {
+  public function notifyAboutPendingInvitations(RequestEvent $event): void {
     if ($this->groupInvitationLoader->loadByUser()) {
       $replace = ['@url' => Url::fromRoute('view.my_invitations.page_1', ['user' => $this->currentUser->id()])->toString()];
       $message = $this->t('You have pending group invitations. <a href="@url">Visit your profile</a> to see them.', $replace);
@@ -75,7 +75,7 @@ class GinviteSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['notifyAboutPendingInvitations'];
     return $events;
   }

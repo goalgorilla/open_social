@@ -25,7 +25,7 @@ class Immediately extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL): void {
     // If the user is blocked, we don't want to process this item further.
     if ($target->isBlocked()) {
       return;
@@ -67,7 +67,7 @@ class Immediately extends EmailFrequencyBase {
    * @param string $subject
    *   The email subject.
    */
-  protected function sendEmail(string $body_text, string $langcode, User $target, string $subject = '') {
+  protected function sendEmail(string $body_text, string $langcode, User $target, string $subject = ''): void {
     $params = [];
     // Translating frequency instance in the language of the user.
     // @codingStandardsIgnoreStart

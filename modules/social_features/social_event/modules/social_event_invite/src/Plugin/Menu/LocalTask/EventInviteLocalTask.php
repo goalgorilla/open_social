@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Plugin\Menu\LocalTask;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
@@ -56,7 +57,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL) {
+  public function getTitle(Request $request = NULL): TranslatableMarkup {
     /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
     $enrollments = \Drupal::service('social_event.status_helper');
 
@@ -72,7 +73,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $tags = [];
     $user = $this->routeMatch->getParameter('user');
 

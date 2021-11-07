@@ -22,7 +22,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    *
    * @dataProvider providerTestValidate
    */
-  public function testValidate($items, $expected_violation, $expected_definition_result = NULL, $name = NULL) {
+  public function testValidate($items, $expected_violation, $expected_definition_result = NULL, $name = NULL): void {
     // Mock our typed data interface.
     $manager = $this->createMock('Drupal\Core\TypedData\TypedDataManagerInterface');
     $definition = $this->createMock('Drupal\Core\TypedData\TypedDataInterface');
@@ -81,7 +81,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
   /**
    * Data provider for ::testValidate().
    */
-  public function providerTestValidate() {
+  public function providerTestValidate(): array {
     $cases = [];
 
     // Case 1: Validation context should not be touched if no items are passed.
@@ -191,10 +191,9 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    * @param int $number_of_items
    *   Number of items you want to build in the list.
    *
-   * @return array
    *   Mock constraintViolationItems with the count of $number_of_items.
    */
-  protected function buildViolationList($number_of_items) {
+  protected function buildViolationList($number_of_items): array {
     $violationList = [];
     for ($count = 0; $count < $number_of_items; $count++) {
       $violation = $this->createMock('Symfony\Component\Validator\ConstraintViolationInterface');

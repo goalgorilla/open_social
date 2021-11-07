@@ -17,7 +17,7 @@ class SocialBlockUser extends ActionBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($account = NULL) {
+  public function execute($account = NULL): void {
     // Skip blocking user if they are already blocked.
     if ($account !== FALSE && $account->isActive()) {
       // For efficiency manually save the original account before applying any

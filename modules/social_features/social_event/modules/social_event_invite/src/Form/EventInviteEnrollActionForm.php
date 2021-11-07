@@ -18,7 +18,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_invite_enroll_action_form';
   }
 
@@ -140,7 +140,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
     $operation = $form_state->getValue('operation');
     $current_user = $this->currentUser;

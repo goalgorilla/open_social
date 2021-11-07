@@ -20,7 +20,7 @@ class Book extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
@@ -80,7 +80,7 @@ class Book extends DemoNode {
    * @return array|null
    *   Array containing related files or NULL.
    */
-  protected function prepareAttachment(array $files) {
+  protected function prepareAttachment(array $files): ?array {
     $attachments = NULL;
 
     foreach ($files as $file) {

@@ -29,7 +29,7 @@ class Violation implements ViolationInterface {
   /**
    * {@inheritdoc}
    */
-  public function jsonSerialize() {
+  public function jsonSerialize(): string {
     return $this->id;
   }
 

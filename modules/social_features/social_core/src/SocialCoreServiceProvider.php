@@ -17,7 +17,7 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     // Overrides language_manager class to test domain language negotiation.
     $definition = $container->getDefinition('entity.autocomplete_matcher');
     $definition->setClass('Drupal\social_core\Entity\EntityAutocompleteMatcher');

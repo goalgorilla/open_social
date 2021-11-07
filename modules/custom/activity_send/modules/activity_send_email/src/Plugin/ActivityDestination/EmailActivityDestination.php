@@ -20,7 +20,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSendEmailMessageTemplates() {
+  public static function getSendEmailMessageTemplates(): array {
     return parent::getSendMessageTemplates('email');
   }
 
@@ -48,7 +48,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
   /**
    * {@inheritdoc}
    */
-  public static function setSendEmailUserSettings($account, $values) {
+  public static function setSendEmailUserSettings($account, $values): void {
     parent::setSendUserSettings('email', $account, $values);
   }
 
@@ -63,7 +63,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
    * @return string|null
    *   If we have message text we return the text, otherwise null.
    */
-  public static function getSendEmailOutputText(Message $message, $langcode = '') {
+  public static function getSendEmailOutputText(Message $message, $langcode = ''): ?string {
     $text = NULL;
     if (isset($message)) {
       $activity_factory = \Drupal::service('activity_creator.activity_factory');

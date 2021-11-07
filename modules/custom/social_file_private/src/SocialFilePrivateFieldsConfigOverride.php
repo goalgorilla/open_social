@@ -24,10 +24,9 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * Note: this list is now fixed, but an error will be shown in the status
    * report when there are fields of type image, file using public uri_scheme.
    *
-   * @return array
    *   Returns an array containing config_names.
    */
-  public function getFileImageFieldsToProtect() {
+  public function getFileImageFieldsToProtect(): array {
     // We want to override all the known file and image uploads.
     $config_names = [
       'field.storage.block_content.field_hero_image',
@@ -50,7 +49,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     if (PrivateStream::basePath()) {
       $config_names = $this->getFileImageFieldsToProtect();
@@ -70,14 +69,14 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialFilePrivateFieldsConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

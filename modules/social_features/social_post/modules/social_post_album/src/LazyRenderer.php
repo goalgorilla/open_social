@@ -39,10 +39,9 @@ class LazyRenderer implements TrustedCallbackInterface {
    * @param string $view_mode
    *   The view mode.
    *
-   * @return array
    *   The render array of post.
    */
-  public function getPost($entity_type, $post_id, $view_mode) {
+  public function getPost($entity_type, $post_id, $view_mode): array {
     $post = $this->entityTypeManager->getStorage($entity_type)->load($post_id);
     return $this->entityTypeManager->getViewBuilder($entity_type)->view($post, $view_mode);
   }
@@ -50,7 +49,7 @@ class LazyRenderer implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['getPost'];
   }
 

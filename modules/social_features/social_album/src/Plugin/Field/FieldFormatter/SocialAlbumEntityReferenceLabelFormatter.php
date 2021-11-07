@@ -24,7 +24,7 @@ class SocialAlbumEntityReferenceLabelFormatter extends EntityReferenceLabelForma
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = parent::viewElements($items, $langcode);
 
     foreach ($items as $delta => $item) {
@@ -59,7 +59,7 @@ class SocialAlbumEntityReferenceLabelFormatter extends EntityReferenceLabelForma
   /**
    * {@inheritdoc}
    */
-  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+  public static function isApplicable(FieldDefinitionInterface $field_definition): bool {
     $settings = $field_definition->getSettings();
 
     return $settings['target_type'] === 'node' &&

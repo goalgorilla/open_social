@@ -58,7 +58,7 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function outputCallback($mention, $settings) {
+  public function outputCallback($mention, $settings): array {
     $entity = $this->entityTypeManager->getStorage($mention['target']['entity_type'])
       ->load($mention['target']['entity_id']);
     $output = [];
@@ -93,28 +93,28 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function mentionPresaveCallback(EntityInterface $entity) {
+  public function mentionPresaveCallback(EntityInterface $entity): void {
 
   }
 
   /**
    * {@inheritdoc}
    */
-  public function patternCallback($settings, $regex) {
+  public function patternCallback($settings, $regex): void {
 
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsCallback(FormInterface $form, FormStateInterface $form_state, $type) {
+  public function settingsCallback(FormInterface $form, FormStateInterface $form_state, $type): void {
 
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsSubmitCallback(FormInterface $form, FormStateInterface $form_state, $type) {
+  public function settingsSubmitCallback(FormInterface $form, FormStateInterface $form_state, $type): void {
 
   }
 

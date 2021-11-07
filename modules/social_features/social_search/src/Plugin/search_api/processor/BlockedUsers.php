@@ -29,7 +29,7 @@ class BlockedUsers extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function supportsIndex(IndexInterface $index) {
+  public static function supportsIndex(IndexInterface $index): bool {
     $entity_types = ['profile'];
     foreach ($index->getDatasources() as $datasource) {
       if (in_array($datasource->getEntityTypeId(), $entity_types)) {
@@ -42,7 +42,7 @@ class BlockedUsers extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function alterIndexedItems(array &$items) {
+  public function alterIndexedItems(array &$items): void {
     foreach ($items as $item_id => $item) {
       $object = $item->getOriginalObject()->getValue();
       if ($object instanceof ProfileInterface) {
@@ -62,7 +62,7 @@ class BlockedUsers extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function preprocessSearchQuery(QueryInterface $query) {
+  public function preprocessSearchQuery(QueryInterface $query): void {
     if (!$query->getOption('search_api_bypass_access')) {
       // Add a condition to filter out users through the status field.
       $conditions = $query->createConditionGroup('AND');

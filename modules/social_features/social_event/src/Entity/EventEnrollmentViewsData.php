@@ -13,7 +13,7 @@ class EventEnrollmentViewsData extends EntityViewsData implements EntityViewsDat
   /**
    * {@inheritdoc}
    */
-  public function getViewsData() {
+  public function getViewsData(): array {
     $data = parent::getViewsData();
 
     $data['event_enrollment_field_data']['table']['base'] = [

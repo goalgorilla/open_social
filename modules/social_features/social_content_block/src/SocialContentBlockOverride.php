@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_block;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
@@ -48,7 +49,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     $config_name = 'field.field.paragraph.block.field_block_reference_secondary';
 
@@ -163,13 +164,12 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    * Use a static method instead of dependency injection to avoid circular
    * dependencies.
    *
-   * @return \Drupal\Core\Entity\EntityStorageInterface
    *   Keyed array of block_content.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected static function getBlockContent() {
+  protected static function getBlockContent(): EntityStorageInterface {
     return \Drupal::entityTypeManager()
       ->getStorage('block_content');
   }
@@ -177,14 +177,14 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialContentBlockOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -114,7 +114,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     if (!$this->group->getGroupType()->hasContentPlugin('group_membership_request')) {
       return [];
     }
@@ -173,7 +173,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account, $return_as_object = FALSE) {
+  public function access(AccountInterface $account, $return_as_object = FALSE): AccessResult {
     $is_group_page = isset($this->group);
     if ($this->group instanceof Group) {
       $is_group_manager = $this->group->hasPermission('administer members', $account);
@@ -186,7 +186,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL
     // so we don't see the message on every group.
@@ -201,7 +201,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     return Cache::mergeTags(parent::getCacheTags(), [
       'request-membership:' . $this->group->id(),
       'group:' . $this->group->id(),

@@ -13,7 +13,7 @@ class PostViewsData extends EntityViewsData implements EntityViewsDataInterface 
   /**
    * {@inheritdoc}
    */
-  public function getViewsData() {
+  public function getViewsData(): array {
     $data = parent::getViewsData();
 
     $data['post_field_data']['table']['base'] = [

@@ -16,7 +16,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_group_quickjoin.settings',
     ];
@@ -25,14 +25,14 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_quickjoin_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_group_quickjoin.settings');
 
     $form['help'] = [
@@ -82,7 +82,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     // Set the value for the general setting.
@@ -106,10 +106,9 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   /**
    * Function that returns all groups that outsider can become a member of.
    *
-   * @return array
    *   Joinable groups.
    */
-  protected function getGroups() {
+  protected function getGroups(): array {
     $types = [];
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {

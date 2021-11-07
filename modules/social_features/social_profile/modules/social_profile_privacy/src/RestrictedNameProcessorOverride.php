@@ -16,7 +16,7 @@ class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface 
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     // Set processor settings for social all and users.
     $config_names = [
@@ -52,14 +52,14 @@ class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialProfileProviacy';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

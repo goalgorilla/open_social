@@ -176,7 +176,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
   /**
    * {@inheritdoc}
    */
-  protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
@@ -201,7 +201,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     // If group context is active.
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {

@@ -2,6 +2,7 @@
 
 namespace Drupal\grequest\Plugin\GroupContentEnabler;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -71,7 +72,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function getGroupContentPermissions() {
+  protected function getGroupContentPermissions(): array {
     $permissions = parent::getPermissions();
 
     // Add extra permissions specific to membership group content entities.
@@ -94,14 +95,14 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function createAccess(GroupInterface $group, AccountInterface $account) {
+  public function createAccess(GroupInterface $group, AccountInterface $account): AccessResult {
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
@@ -109,7 +110,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
@@ -117,7 +118,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
@@ -125,7 +126,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function getEntityReferenceSettings() {
+  public function getEntityReferenceSettings(): array {
     $settings = parent::getEntityReferenceSettings();
     $settings['handler_settings']['include_anonymous'] = FALSE;
     return $settings;
@@ -134,7 +135,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     $configuration = parent::defaultConfiguration();
     $configuration['entity_cardinality'] = 1;
 
@@ -144,7 +145,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function postInstall() {
+  public function postInstall(): void {
     if (!\Drupal::isConfigSyncing()) {
       $group_content_type_id = $this->getContentTypeConfigId();
 
@@ -199,7 +200,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
 
     // Disable the entity cardinality field as the functionality of this module

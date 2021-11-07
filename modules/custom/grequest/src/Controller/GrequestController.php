@@ -55,7 +55,7 @@ class GrequestController extends ControllerBase {
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content): array {
 
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');

@@ -64,7 +64,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values): void {
     parent::preCreate($storage_controller, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
@@ -74,7 +74,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function preSave(EntityStorageInterface $storage) {
+  public function preSave(EntityStorageInterface $storage): void {
     $tags = [
       'event_content_list:user:' . $this->getAccount(),
       'event_enrollment_list:' . $this->getFieldValue('field_event', 'target_id'),
@@ -86,7 +86,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+  public static function preDelete(EntityStorageInterface $storage, array $entities): void {
     if (!empty($entities)) {
       $tags = [];
       foreach ($entities as $enrollment) {
@@ -109,7 +109,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
+  public function setName($name): self {
     $this->set('name', $name);
     return $this;
   }
@@ -124,7 +124,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): self {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -153,7 +153,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -161,7 +161,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -169,14 +169,14 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): self {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -184,7 +184,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Event enrollment entity.'))

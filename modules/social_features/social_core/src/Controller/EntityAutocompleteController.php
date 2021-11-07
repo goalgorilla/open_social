@@ -20,7 +20,7 @@ class EntityAutocompleteController extends EntityAutocompleteControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function handleAutocomplete(Request $request, $target_type, $selection_handler, $selection_settings_key) {
+  public function handleAutocomplete(Request $request, $target_type, $selection_handler, $selection_settings_key): JsonResponse {
     $matches = [];
     // Get the typed string from the URL, if it exists.
     if ($input = $request->query->get('q')) {

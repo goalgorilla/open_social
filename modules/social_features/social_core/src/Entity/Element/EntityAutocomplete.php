@@ -20,7 +20,7 @@ class EntityAutocomplete extends EntityAutocompleteBase {
   /**
    * {@inheritdoc}
    */
-  public static function getEntityLabels(array $entities, $hide_id = FALSE) {
+  public static function getEntityLabels(array $entities, $hide_id = FALSE): string {
     $entity_labels = [];
 
     foreach ($entities as $entity) {

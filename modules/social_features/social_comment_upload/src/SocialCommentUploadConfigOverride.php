@@ -36,7 +36,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
   /**
    * Returns config overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // We don't need to add any fields if uploads are disabled.
@@ -117,14 +117,14 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialCommentUploadConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -81,7 +81,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return parent::defaultConfiguration() + [
       'logo' => '',
       'text' => [
@@ -98,7 +98,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function blockForm($form, FormStateInterface $form_state) {
+  public function blockForm($form, FormStateInterface $form_state): array {
     $config = $this->configuration;
 
     $default_scheme = $this->configFactory->get('system.file')
@@ -144,7 +144,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state): void {
     $logo = '';
 
     if ($items = $form_state->getValue('logo')) {
@@ -163,7 +163,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [
       '#type' => 'container',
       '#attributes' => [
@@ -242,7 +242,7 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     return AccessResult::allowedIf(
       !empty($this->configuration['text']['value']) ||
       !empty($this->configuration['logo'])

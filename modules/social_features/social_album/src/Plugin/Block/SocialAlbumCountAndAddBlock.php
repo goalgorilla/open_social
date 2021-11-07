@@ -78,7 +78,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
 
     if (!($properties = $this->getProperties())) {
@@ -117,14 +117,14 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     return AccessResult::allowedIf($this->getProperties() !== NULL);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     if ($this->getProperties()) {
@@ -137,7 +137,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $tags = parent::getCacheTags();
 
     if ($properties = $this->getProperties()) {
@@ -155,7 +155,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    *   The renderable data if block is allowed for the current route otherwise
    *   NULL.
    */
-  protected function getProperties() {
+  protected function getProperties(): ?array {
     $items = [
       'entity.node.canonical' => [
         'type' => 'node',

@@ -21,7 +21,7 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
    *
    * @inheritDoc
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['checkAccessToEnrollRequestsOverview'];
     return $events;
   }
@@ -32,7 +32,7 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkAccessToEnrollRequestsOverview(RequestEvent $event) {
+  public function checkAccessToEnrollRequestsOverview(RequestEvent $event): void {
     $current_route = \Drupal::routeMatch()->getRouteName();
     // First, lets check if the route matches.
     if ($current_route === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {

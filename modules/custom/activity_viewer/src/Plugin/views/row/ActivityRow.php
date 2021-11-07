@@ -72,7 +72,7 @@ class ActivityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public function preRender($result) {
+  public function preRender($result): void {
 
     $view_mode = $this->options['view_mode'];
 

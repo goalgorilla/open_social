@@ -19,10 +19,9 @@ class OpenSocialVersion extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
-   * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     $version = 0;
     $profile = \Drupal::installProfile();
     if ($profile === 'social') {

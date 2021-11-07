@@ -13,7 +13,7 @@ class MentionsTypeDeleteForm extends EntityDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return new Url('entity.mentions_type.list');
   }
 

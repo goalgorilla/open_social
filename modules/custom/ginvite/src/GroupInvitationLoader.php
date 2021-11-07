@@ -2,6 +2,7 @@
 
 namespace Drupal\ginvite;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -43,10 +44,9 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
   /**
    * Gets the group content storage.
    *
-   * @return \Drupal\group\Entity\Storage\GroupContentStorageInterface
    *   The group_content storage class.
    */
-  protected function groupContentStorage() {
+  protected function groupContentStorage(): EntityStorageInterface {
     return $this->entityTypeManager->getStorage('group_content');
   }
 
@@ -59,7 +59,7 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
    * @return \Drupal\ginvite\GroupInvitation[]
    *   A list of GroupInvitation wrapper objects.
    */
-  protected function wrapGroupContentEntities(array $entities) {
+  protected function wrapGroupContentEntities(array $entities): array {
     $group_invitations = [];
     foreach ($entities as $group_content) {
       $group_invitations[] = new GroupInvitationWrapper($group_content);
@@ -80,7 +80,7 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadByGroup(GroupInterface $group, $roles = NULL, $mail = NULL, $status = GroupInvitation::INVITATION_PENDING) {
+  public function loadByGroup(GroupInterface $group, $roles = NULL, $mail = NULL, $status = GroupInvitation::INVITATION_PENDING): array {
     $filters = [
       'invitation_status' => $status,
     ];

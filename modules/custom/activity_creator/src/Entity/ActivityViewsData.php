@@ -13,7 +13,7 @@ class ActivityViewsData extends EntityViewsData implements EntityViewsDataInterf
   /**
    * {@inheritdoc}
    */
-  public function getViewsData() {
+  public function getViewsData(): array {
     $data = parent::getViewsData();
 
     $data['activity_field_data']['table']['base'] = [

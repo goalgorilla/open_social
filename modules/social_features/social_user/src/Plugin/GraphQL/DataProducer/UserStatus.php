@@ -31,10 +31,9 @@ class UserStatus extends DataProducerPluginBase implements DataProducerPluginCac
    * @param \Drupal\user\UserInterface $user
    *   The user to get the status from.
    *
-   * @return string
    *   The status of the user ("ACTIVE" or "BLOCKED").
    */
-  public function resolve(UserInterface $user) {
+  public function resolve(UserInterface $user): string {
     return $user->isActive() ? "ACTIVE" : "BLOCKED";
   }
 

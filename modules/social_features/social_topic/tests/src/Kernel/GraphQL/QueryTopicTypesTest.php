@@ -74,7 +74,7 @@ class QueryTopicTypesTest extends SocialGraphQLTestBase {
   /**
    * Test that a anonymous user can access topic types.
    */
-  public function testAnonymousUserCanAccessTopicTypes() {
+  public function testAnonymousUserCanAccessTopicTypes(): void {
     $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->create([
       'vid' => 'topic_types',
       'name' => $this->randomString(),

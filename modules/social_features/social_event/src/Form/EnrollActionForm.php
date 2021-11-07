@@ -88,7 +88,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_action_form';
   }
 
@@ -360,10 +360,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * @param \Drupal\node\Entity\Node $node
    *   The event.
    *
-   * @return bool
    *   TRUE if the evens is finished / completed.
    */
-  protected function eventHasBeenFinished(Node $node) {
+  protected function eventHasBeenFinished(Node $node): bool {
     // Use the start date when the end date is not set to determine if the
     // event is closed.
     /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
@@ -385,7 +384,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
@@ -499,10 +498,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * Returns an array of Group Objects.
    *
-   * @return array
    *   Array of group entities.
    */
-  public function getGroups($node) {
+  public function getGroups($node): array {
     $groupcontents = GroupContent::loadByEntity($node);
 
     $groups = [];

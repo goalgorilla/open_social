@@ -17,7 +17,7 @@ class SocialDate extends DateTimeDate {
   /**
    * {@inheritdoc}
    */
-  public function acceptExposedInput($input) {
+  public function acceptExposedInput($input): bool {
     if (empty($this->options['exposed'])) {
       return TRUE;
     }
@@ -71,7 +71,7 @@ class SocialDate extends DateTimeDate {
   /**
    * {@inheritdoc}
    */
-  public function operators() {
+  public function operators(): array {
     $operators = parent::operators();
 
     $operators['<']['title'] = $this->t('Before');
@@ -99,7 +99,7 @@ class SocialDate extends DateTimeDate {
   /**
    * {@inheritdoc}
    */
-  protected function valueForm(&$form, FormStateInterface $form_state) {
+  protected function valueForm(&$form, FormStateInterface $form_state): void {
     parent::valueForm($form, $form_state);
 
     // Key is form field name, value is title name.

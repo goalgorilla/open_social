@@ -12,7 +12,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -50,7 +50,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'name' => $item['name'],

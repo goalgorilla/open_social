@@ -160,10 +160,9 @@ function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
 /**
  * A shortcut function for the allow_upload_comments setting.
  *
- * @return bool
  *   Whether attachment uploading for comments is enabled.
  */
-function social_comment_upload_is_enabled() {
+function social_comment_upload_is_enabled(): bool {
   return \Drupal::config('social_comment_upload.settings')
     ->get('allow_upload_comments');
 }

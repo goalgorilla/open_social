@@ -103,10 +103,9 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   An array of data to create activity from.
    *
-   * @return array
    *   An array of created activities.
    */
-  public function createActivities(array $data) {
+  public function createActivities(array $data): array {
     $activities = $this->buildActivities($data);
 
     return $activities;
@@ -118,12 +117,10 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   An array of data to create activity from.
    *
-   * @return array
    *   An array of created activities.
-   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  protected function buildActivities(array $data) {
+  protected function buildActivities(array $data): array {
     $activities = [];
     $message = Message::load($data['mid']);
     // Initialize fields for new activity entity.
@@ -186,7 +183,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'message' field from data array.
    */
-  protected function getFieldMessage($data) {
+  protected function getFieldMessage($data): ?array {
     $value = NULL;
     if (isset($data['mid'])) {
       $value = [];
@@ -200,7 +197,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'output_text' field from data array.
    */
-  protected function getFieldOutputText(Message $message, $arguments = []) {
+  protected function getFieldOutputText(Message $message, $arguments = []): array {
     $value = NULL;
     if (isset($message)) {
 
@@ -230,7 +227,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'created' field from data array.
    */
-  protected function getCreated(Message $message) {
+  protected function getCreated(Message $message): int {
     $value = NULL;
     if (isset($message)) {
       $value = $message->getCreatedTime();
@@ -249,7 +246,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Build the aggregated activities based on a data array.
    */
-  protected function buildAggregatedActivites($data, $activity_fields) {
+  protected function buildAggregatedActivites($data, $activity_fields): array {
     $activities = [];
     $common_destinations = $this->activityDestinationManager->getListByProperties('isCommon', TRUE);
     $personal_destinations = $this->activityDestinationManager->getListByProperties('isCommon', FALSE);
@@ -303,7 +300,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related activities for activity aggregation.
    */
-  protected function getAggregationRelatedActivities($data) {
+  protected function getAggregationRelatedActivities($data): array {
     $activities = [];
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
@@ -420,7 +417,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'recipient_group' field from data array.
    */
-  protected function getFieldRecipientGroup($data) {
+  protected function getFieldRecipientGroup($data): ?array {
     $value = NULL;
     if (isset($data['recipient']['target_type']) && $data['recipient']['target_type'] === 'group') {
       // Should be in an array for the field.
@@ -457,10 +454,9 @@ class ActivityFactory extends ControllerBase {
    * @param array $data
    *   Array of data.
    *
-   * @return int
    *   Value uid integer.
    */
-  protected function getActor(array $data) {
+  protected function getActor(array $data): int {
     $value = 0;
     if (isset($data['actor'])) {
       $value = $data['actor'];
@@ -476,10 +472,9 @@ class ActivityFactory extends ControllerBase {
    * @param string $langcode
    *   The language code we try to get the translation for.
    *
-   * @return array
    *   Message text array.
    */
-  public function getMessageText(Message $message, $langcode = '') {
+  public function getMessageText(Message $message, $langcode = ''): array {
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
@@ -522,11 +517,10 @@ class ActivityFactory extends ControllerBase {
    * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
-   * @return array
    *   The templated text, with the placeholders replaced with the actual value,
    *   if there are indeed arguments.
    */
-  protected function processArguments(array $arguments, array $output, Message $message) {
+  protected function processArguments(array $arguments, array $output, Message $message): array {
     // Check if we have arguments saved along with the message.
     if (empty($arguments)) {
       return $output;
@@ -564,11 +558,10 @@ class ActivityFactory extends ControllerBase {
    * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
-   * @return array
    *   The output with placeholders replaced with the token value,
    *   if there are indeed tokens.
    */
-  protected function processTokens(array $output, $clear, Message $message) {
+  protected function processTokens(array $output, $clear, Message $message): array {
     $options = [
       'clear' => $clear,
     ];

@@ -75,7 +75,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'mentions.mentions_type',
     ];
@@ -84,14 +84,14 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'mentions_type_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $plugin_names = $this->mentionsManager->getPluginNames();
     $entity = $this->entity;
     $inputsettings = $entity->get('input');
@@ -246,7 +246,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  protected function actions(array $form, FormStateInterface $form_state) {
+  protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
     $actions['submit']['#value'] = $this->t('Save Mentions Type');
     return $actions;
@@ -255,7 +255,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
     $form_state->setRedirect('entity.mentions_type.list');
   }

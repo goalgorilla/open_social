@@ -14,14 +14,14 @@ class EventInviteSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'enroll_invite_email_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $social_event_config = $this->configFactory->getEditable('social_event_invite.settings');
 
     // Add an introduction text to explain what can be done here.
@@ -93,13 +93,13 @@ class EventInviteSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->configFactory->getEditable('social_event_invite.settings');
     $config->set('invite_enroll', $form_state->getValue('invite_enroll'));
     $config->set('invite_group_types', $form_state->getValue('invite_group_types'));
@@ -113,7 +113,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
   /**
    * Gets the configuration names that will be editable.
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): void {
     // @todo Implement getEditableConfigNames() method.
   }
 

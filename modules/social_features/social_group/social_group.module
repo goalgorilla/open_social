@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\profile\Entity\Profile;
 /**
  * @file
  * The Social group module.
@@ -95,10 +96,9 @@ function template_preprocess_group_settings_help(array &$variables) {
 /**
  * Check if a User is able to edit a Group's GroupType.
  *
- * @return bool
  *   TRUE if a user may edit a existings groups group type.
  */
-function social_group_group_type_permission_check() {
+function social_group_group_type_permission_check(): bool {
   $user = \Drupal::currentUser();
   // Get the Group object from the route.
   $group = _social_group_get_current_group();
@@ -117,10 +117,9 @@ function social_group_group_type_permission_check() {
 /**
  * Get group overview route.
  *
- * @return array
  *   An array with route name and parameters and group.
  */
-function _social_group_get_overview_route(GroupInterface $group) {
+function _social_group_get_overview_route(GroupInterface $group): array {
   $route = [
     'name' => 'view.groups.page_user_groups',
     'parameters' => ['user' => \Drupal::currentUser()->id()],
@@ -188,10 +187,9 @@ function _social_group_visibility_settings_submit(array $form, FormStateInterfac
 /**
  * Load group content label and group label.
  *
- * @return array
  *   array of group labels.
  */
-function _social_group_get_group_labels() {
+function _social_group_get_group_labels(): array {
 
   // Load the entity label from the group content being handled.
   $group_content = \Drupal::routeMatch()->getParameter('group_content')->label();
@@ -399,10 +397,9 @@ function social_group_preprocess_group__hero(array &$variables) {
  * @param \Drupal\group\Entity\GroupInterface $group
  *   the Group interface.
  *
- * @return array
  *   the actual tooltip render array.
  */
-function _social_group_render_group_settings_hero(GroupInterface $group) {
+function _social_group_render_group_settings_hero(GroupInterface $group): array {
   $description = '';
   // Optional after 10.0.x we can render the group visibility.
   if ($group_visibility_option = _social_group_get_group_visibility($group)) {
@@ -444,10 +441,9 @@ function _social_group_render_group_settings_hero(GroupInterface $group) {
  * @param \Drupal\group\Entity\GroupInterface $group
  *   the Group interface.
  *
- * @return array
  *   Returns join methods of a group.
  */
-function _social_group_get_join_methods(GroupInterface $group) {
+function _social_group_get_join_methods(GroupInterface $group): array {
   $group_type = $group->getGroupType();
   $group_type_id = $group_type->id();
   $join_methods = [];
@@ -493,10 +489,9 @@ function _social_group_get_join_methods(GroupInterface $group) {
  * @param string $field_name
  *   The field name of the visibility field for a group type.
  *
- * @return array
  *   Returns the visibility options of a group.
  */
-function _social_group_get_group_visibility(GroupInterface $group, $field_name = NULL) {
+function _social_group_get_group_visibility(GroupInterface $group, $field_name = NULL): array {
   $group_type = $group->getGroupType();
   $group_type_id = $group_type->id();
   $group_visibility = [];
@@ -558,10 +553,9 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
  * @param Drupal\group\Entity\GroupInterface $group
  *   the Group interface.
  *
- * @return array
  *   Returns allowed visibility of a group.
  */
-function _social_group_get_allowed_visibility(GroupInterface $group) {
+function _social_group_get_allowed_visibility(GroupInterface $group): array {
   $group_type = $group->getGroupType();
   $group_type_id = $group_type->id();
   $allowed_visibility = [];
@@ -602,10 +596,9 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 /**
  * Returns a description array for the field_flexible_group_visibility options.
  *
- * @return string
  *   The render array containing the description.
  */
-function social_group_group_visibility_description($key) {
+function social_group_group_visibility_description($key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -653,10 +646,9 @@ function social_group_group_visibility_description($key) {
  * @param string $key
  *   The join method key.
  *
- * @return string
  *   The render array containing the description.
  */
-function social_group_allowed_join_method_description($key) {
+function social_group_allowed_join_method_description($key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -1029,10 +1021,9 @@ function _social_group_unique_members($element, &$form_state, $complete_form) {
 /**
  * Function that gives information to a CM+ when they edit a Group Type.
  *
- * @return \Drupal\Core\Ajax\AjaxResponse
  *   An ajax command containing the informative text.
  */
-function _social_group_inform_group_type_selection() {
+function _social_group_inform_group_type_selection(): AjaxResponse {
   $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
   $ajax_response = new AjaxResponse();
@@ -1522,10 +1513,9 @@ function social_group_menu_local_actions_alter(&$local_actions) {
  * @param \Drupal\group\Entity\GroupContent $group_content
  *   Group content entity.
  *
- * @return \Drupal\profile\Entity\Profile
  *   Returns the Profile entity for the member.
  */
-function _social_group_get_member_profile(GroupContent $group_content) {
+function _social_group_get_member_profile(GroupContent $group_content): Profile {
   $user_profile = NULL;
   // Get User entity.
   $user_entity = $group_content->getEntity();
@@ -1549,7 +1539,7 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  * @return \Drupal\group\Entity\GroupInterface|null
  *   Returns the group object.
  */
-function _social_group_get_current_group($node = NULL) {
+function _social_group_get_current_group($node = NULL): ?GroupInterface {
   $cache = &drupal_static(__FUNCTION__, []);
 
   // For the same $node input, within the same request the return is always
@@ -1606,10 +1596,9 @@ function _social_group_get_current_group($node = NULL) {
  * @param \Drupal\group\Entity\GroupInterface $group
  *   The GroupInterface.
  *
- * @return array
  *   An array of cache tags related to groups.
  */
-function _social_group_cache_tags(GroupInterface $group) {
+function _social_group_cache_tags(GroupInterface $group): array {
   // Group views.
   $tags = [
     'group_list',
@@ -1775,10 +1764,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The user to check for.
  *
- * @return int
  *   The amount of group_types
  */
-function _social_group_get_current_group_types(AccountInterface $account) {
+function _social_group_get_current_group_types(AccountInterface $account): int {
   $group_types = 0;
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
@@ -1990,10 +1978,9 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
  * @param \Drupal\Core\Session\AccountInterface|null $account
  *   The account object that may have impact on the visibility options.
  *
- * @return array
  *   An array of visibility options for the given group type.
  */
-function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL, $group = NULL) {
+function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL, $group = NULL): array {
 
   // Get the logged in user.
   if ($account === NULL) {
@@ -2388,10 +2375,9 @@ function social_group_batch_alter(&$batch) {
  * @param array $batch
  *   The batch array.
  *
- * @return string
  *   Returns the batch action id.
  */
-function _social_group_get_action_id(array &$batch) {
+function _social_group_get_action_id(array &$batch): string {
   /** @var \Drupal\Core\Form\FormStateInterface $form_state */
   $form_state = &$batch['form_state'];
 
@@ -2599,10 +2585,9 @@ function social_group_preprocess_field(&$variables) {
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
  *
- * @return array
  *   The render array containing the tooltip.
  */
-function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description) {
+function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description): array {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $icon = Bootstrap::glyphicon('question-sign');
@@ -2698,10 +2683,9 @@ function social_group_preprocess_fieldset(&$variables) {
  * @param string $key
  *   The join method key.
  *
- * @return string
  *   The render array containing the description.
  */
-function social_group_allowed_visibility_description($key) {
+function social_group_allowed_visibility_description($key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.

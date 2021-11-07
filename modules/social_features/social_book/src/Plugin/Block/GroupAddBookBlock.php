@@ -2,6 +2,7 @@
 
 namespace Drupal\social_book\Plugin\Block;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -72,7 +73,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return ['label_display' => FALSE];
   }
 
@@ -81,7 +82,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account): CacheableDependencyInterface {
     if ($this->moduleHandler->moduleExists('social_group')) {
       $group = _social_group_get_current_group();
     }

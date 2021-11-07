@@ -120,10 +120,9 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  * @param bool $skip_trusted_roles
  *   Should we skip CM/SM with the manage everything enrollments.
  *
- * @return bool
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
+function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE): bool {
   $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
   if (!isset($social_event_manager_or_organizer)) {
@@ -517,10 +516,9 @@ function _social_event_format_date($event, $view_mode) {
  * @param string $timezone
  *   User's timezone.
  *
- * @return string
  *   User timezone.
  */
-function _social_event_user_timezone($timezone) {
+function _social_event_user_timezone($timezone): string {
   if ($timezone !== DateTimeItemInterface::STORAGE_TIMEZONE) {
     $zones = array_column(system_time_zones(NULL, TRUE), $timezone);
     $user_timezone = reset($zones);
@@ -805,7 +803,7 @@ function social_event_social_follow_content_types_alter(array &$types) {
  * @return \Drupal\Core\Entity\EntityInterface|null
  *   The event or NULL if nothing found.
  */
-function social_event_get_current_event() {
+function social_event_get_current_event(): ?EntityInterface {
   $event = &drupal_static(__FUNCTION__);
 
   if (!isset($event)) {
@@ -1048,13 +1046,12 @@ function social_event_preprocess_field(&$variables) {
  * @param \Drupal\node\NodeInterface $event
  *   Event entity.
  *
- * @return bool
  *   Enrolment status.
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_enrollment_status(NodeInterface $event) {
+function _social_event_get_enrollment_status(NodeInterface $event): bool {
   $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
     'field_account' => \Drupal::currentUser()->id(),
     'field_event' => $event->id(),
@@ -1105,10 +1102,9 @@ function _social_event_views_update($view_config, $display) {
 /**
  * Returns a description array for the field_enroll_method options.
  *
- * @return string
  *   The render array containing the description.
  */
-function social_event_enroll_method_description($key) {
+function social_event_enroll_method_description($key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -1154,10 +1150,9 @@ function social_event_enroll_method_description($key) {
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
  *
- * @return array
  *   The render array containing the tooltip.
  */
-function social_event_render_tooltip($field_name, $data_title, $description) {
+function social_event_render_tooltip($field_name, $data_title, $description): array {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $build['toggle'] = [

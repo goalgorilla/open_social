@@ -45,10 +45,9 @@ class SocialAlbumPostForm extends PostForm {
    * @param \Drupal\node\NodeInterface|null $node
    *   (optional) The node entity object. Defaults to NULL.
    *
-   * @return array
    *   The form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL): array {
     $this->node = $node;
 
     $form = parent::buildForm($form, $form_state);
@@ -81,7 +80,7 @@ class SocialAlbumPostForm extends PostForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     parent::save($form, $form_state);
 
     if ($this->node) {
@@ -94,7 +93,7 @@ class SocialAlbumPostForm extends PostForm {
   /**
    * {@inheritdoc}
    */
-  protected function configureVisibilityField(array &$form, FormStateInterface $form_state) {
+  protected function configureVisibilityField(array &$form, FormStateInterface $form_state): void {
     parent::configureVisibilityField($form, $form_state);
 
     if ($this->node) {

@@ -93,7 +93,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
   /**
    * Tests that the MediaBridge class works for Image fields.
    */
-  public function testImageField() {
+  public function testImageField(): void {
     // Create an instance of our data producer.
     /** @var \Drupal\social_graphql\Plugin\GraphQL\DataProducer\MediaBridge $data_producer */
     $data_producer = $this->dataProducerPluginManager->createInstance('media_bridge');

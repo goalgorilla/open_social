@@ -2,6 +2,7 @@
 
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\link\LinkItemInterface;
 use Drupal\link\Plugin\Field\FieldFormatter\LinkFormatter;
@@ -22,7 +23,7 @@ class LinkClassFormatter extends LinkFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return parent::defaultSettings() +
       ['class' => ''];
 
@@ -31,7 +32,7 @@ class LinkClassFormatter extends LinkFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $elements = parent::settingsForm($form, $form_state);
 
     $elements['class'] = [
@@ -46,7 +47,7 @@ class LinkClassFormatter extends LinkFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
 
     $summary = parent::settingsSummary();
 
@@ -62,7 +63,7 @@ class LinkClassFormatter extends LinkFormatter {
   /**
    * {@inheritdoc}
    */
-  protected function buildUrl(LinkItemInterface $item) {
+  protected function buildUrl(LinkItemInterface $item): Url {
     $url = parent::buildUrl($item);
 
     $settings = $this->getSettings();

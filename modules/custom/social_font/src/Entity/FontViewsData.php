@@ -12,7 +12,7 @@ class FontViewsData extends EntityViewsData {
   /**
    * {@inheritdoc}
    */
-  public function getViewsData() {
+  public function getViewsData(): array {
     $data = parent::getViewsData();
     // Additional information for Views integration, such as table joins, can be
     // put here.

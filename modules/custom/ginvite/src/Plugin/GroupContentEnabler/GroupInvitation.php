@@ -2,6 +2,8 @@
 
 namespace Drupal\ginvite\Plugin\GroupContentEnabler;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
@@ -65,7 +67,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function getGroupContentPermissions() {
+  public function getGroupContentPermissions(): array {
     $permissions["invite users to group"] = [
       'title' => "Invite users to group",
       'description' => 'Allows users with permissions to invite new users to group.',
@@ -89,14 +91,14 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function createAccess(GroupInterface $group, AccountInterface $account) {
+  public function createAccess(GroupInterface $group, AccountInterface $account): AccessResult {
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "invite users to group");
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     $group = $group_content->getGroup();
     return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "view group invitations");
   }
@@ -104,7 +106,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResultForbidden {
     // Close access to edit group invitations.
     // It will not be supported for now.
     return GroupAccessResult::forbidden();
@@ -113,7 +115,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account) {
+  protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     $group = $group_content->getGroup();
 
     // Allow members to delete their own group content.
@@ -127,7 +129,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     $body_message = 'Hi there!' . "\n\n";
     $body_message .= '[current-user:name] has invited you to become a member of the group [group:title] on [site:name].' . "\n";
     $body_message .= 'If you wish to accept the invitation, you need to create an account first.' . "\n\n";
@@ -157,7 +159,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function postInstall() {
+  public function postInstall(): void {
     if (!\Drupal::isConfigSyncing()) {
       $group_content_type_id = $this->getContentTypeConfigId();
 
@@ -255,7 +257,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
 
     // Disable the entity cardinality field as the functionality of this module
@@ -326,7 +328,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $this->configuration['invitation_subject'] = $form_state->getValue('invitation_subject');
     $this->configuration['invitation_body'] = $form_state->getValue('invitation_body');
     $this->configuration['existing_user_invitation_subject'] = $form_state->getValue('existing_user_invitation_subject');

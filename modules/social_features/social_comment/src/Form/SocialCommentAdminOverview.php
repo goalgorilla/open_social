@@ -101,7 +101,7 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'comment_admin_overview';
   }
 
@@ -115,10 +115,9 @@ class SocialCommentAdminOverview extends FormBase {
    * @param string $type
    *   The type of the overview form ('approval' or 'new').
    *
-   * @return array
    *   The form structure.
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $type = 'new') {
+  public function buildForm(array $form, FormStateInterface $form_state, $type = 'new'): array {
 
     // Build an 'Update options' form.
     $form['options'] = [
@@ -250,7 +249,7 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setValue('comments', array_diff($form_state->getValue('comments'), [0]));
     // We can't execute any 'Update options' if no comments were selected.
     if (count($form_state->getValue('comments')) == 0) {
@@ -261,7 +260,7 @@ class SocialCommentAdminOverview extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $operation = $form_state->getValue('operation');
     $cids = $form_state->getValue('comments');
     /** @var \Drupal\comment\CommentInterface[] $comments */

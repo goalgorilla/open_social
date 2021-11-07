@@ -45,7 +45,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static array $configSchemaCheckerExclusions = [
+  protected static $configSchemaCheckerExclusions = [
     // @todo when https://www.drupal.org/project/social/issues/3238713 is fixed.
     "core.entity_form_display.profile.profile.default",
     // We don't need views in the GraphQL API so no sense in enabling the views

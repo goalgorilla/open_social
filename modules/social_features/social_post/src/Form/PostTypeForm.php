@@ -45,7 +45,7 @@ class PostTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     $post_type = $this->entity;
     $status = $post_type->save();
 

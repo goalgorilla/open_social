@@ -122,7 +122,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     // This context is used to pass the block context to hooks.
     $context = $this->getContextValues();
 

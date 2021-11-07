@@ -90,7 +90,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $selected_plugin_id = $items->getEntity()->field_plugin_id->value;
     $selector = $this->contentBlockManager->getSelector('field_plugin_id', 'value', $element, TRUE);
@@ -175,7 +175,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     $value = $form_state->getValue([
       'field_plugin_field',
       0,

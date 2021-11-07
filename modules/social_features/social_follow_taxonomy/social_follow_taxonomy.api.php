@@ -13,7 +13,6 @@ use Drupal\taxonomy\TermInterface;
  * @addtogroup hooks
  * @{
  */
-
 /**
  * Provide a method to alter array of terms.
  *
@@ -22,10 +21,9 @@ use Drupal\taxonomy\TermInterface;
  * @param Drupal\Core\Entity\EntityInterface $entity
  *   Related entity.
  *
- * @return array
  *   Array of term ids.
  */
-function hook_social_follow_taxonomy_terms_list_alter(array &$term_ids, EntityInterface $entity) {
+function hook_social_follow_taxonomy_terms_list_alter(array &$term_ids, EntityInterface $entity): array {
   /** @var \Drupal\node\Entity\Node $entity */
   if ($entity instanceof NodeInterface) {
     if ($entity->hasField('field_terms') && !empty($entity->get('field_terms')->getValue())) {
@@ -48,10 +46,9 @@ function hook_social_follow_taxonomy_terms_list_alter(array &$term_ids, EntityIn
  * @param \Drupal\taxonomy\TermInterface $term
  *   Related taxonomy term.
  *
- * @return array
  *   Extended array of related entities.
  */
-function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInterface $term) {
+function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInterface $term): array {
   $items = \Drupal::entityTypeManager()
     ->getStorage('node')
     ->getQuery()

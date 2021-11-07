@@ -233,10 +233,9 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
 /**
  * Sort the email frequencies by weight.
  *
- * @return array
  *   A sorted array of frequency options by weight.
  */
-function sort_email_frequency_options() {
+function sort_email_frequency_options(): array {
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
 
@@ -313,7 +312,7 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
  * @return array[]
  *   Grouped default templates.
  */
-function _activity_send_email_default_template_items() {
+function _activity_send_email_default_template_items(): array {
   return [
     'message_to_me' => [
       'title' => t('Message to me'),

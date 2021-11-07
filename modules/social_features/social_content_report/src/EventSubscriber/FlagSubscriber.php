@@ -75,7 +75,7 @@ class FlagSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events[FlagEvents::ENTITY_FLAGGED][] = ['onFlag'];
     return $events;
@@ -90,7 +90,7 @@ class FlagSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function onFlag(FlaggingEvent $event) {
+  public function onFlag(FlaggingEvent $event): void {
     $flagging = $event->getFlagging();
 
     if (!in_array($flagging->getFlagId(), $this->socialContentReport->getReportFlagTypes())) {

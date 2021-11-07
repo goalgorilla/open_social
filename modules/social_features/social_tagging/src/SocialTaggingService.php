@@ -57,40 +57,36 @@ class SocialTaggingService {
   /**
    * Returns whether the feature is turned on or not.
    *
-   * @return bool
    *   Whether tagging is turned on or not.
    */
-  public function active() {
+  public function active(): bool {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('enable_content_tagging');
   }
 
   /**
    * Returns whether the feature is turned on for groups or not.
    *
-   * @return bool
    *   Whether tagging is turned on or not for groups.
    */
-  public function groupActive() {
+  public function groupActive(): bool {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
   }
 
   /**
    * Returns whether the feature is turned on for profiles or not.
    *
-   * @return bool
    *   Whether tagging is turned on or not for profiles.
    */
-  public function profileActive() {
+  public function profileActive(): bool {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_profile');
   }
 
   /**
    * Returns if there are any taxonomy items available.
    *
-   * @return bool
    *   If there are tags available.
    */
-  public function hasContent() {
+  public function hasContent(): bool {
 
     if (count($this->getCategories()) == 0) {
       return FALSE;
@@ -106,40 +102,36 @@ class SocialTaggingService {
   /**
    * Returns whether splitting of fields is allowed.
    *
-   * @return bool
    *   Whether category split on field level is turned on or not.
    */
-  public function allowSplit() {
+  public function allowSplit(): bool {
     return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('allow_category_split'));
   }
 
   /**
    * Returns the filter query condition.
    *
-   * @return string
    *   Returns OR or AND.
    */
-  public function queryCondition() {
+  public function queryCondition(): string {
     return (string) ($this->configFactory->get('social_tagging.settings')->get('use_and_condition') ? 'AND' : 'OR');
   }
 
   /**
    * Returns whether using a parent of categories is allowed.
    *
-   * @return bool
    *   Whether using categories parent is turned on or not..
    */
-  public function useCategoryParent() {
+  public function useCategoryParent(): bool {
     return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('use_category_parent'));
   }
 
   /**
    * Returns all the top level term items, that are considered categories.
    *
-   * @return array
    *   An array of top level category items.
    */
-  public function getCategories() {
+  public function getCategories(): array {
     // Define as array.
     $options = [];
 
@@ -171,10 +163,9 @@ class SocialTaggingService {
    * @param int $category
    *   The category you want to fetch the child items from.
    *
-   * @return array
    *   An array of child items.
    */
-  public function getChildren($category) {
+  public function getChildren($category): array {
     // Define as array.
     $options = [];
 
@@ -197,10 +188,9 @@ class SocialTaggingService {
   /**
    * Returns all the children of top level term items.
    *
-   * @return array
    *   An array of child items.
    */
-  public function getAllChildren() {
+  public function getAllChildren(): array {
     // Define as array.
     $options = [];
 
@@ -220,10 +210,9 @@ class SocialTaggingService {
    * @param string $entity_type
    *   The entity type these tags are for.
    *
-   * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $term_ids, $entity_type) {
+  public function buildHierarchy(array $term_ids, $entity_type): array {
     $tree = [];
     // Load all the terms together.
     if (!empty($terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadMultiple(array_column($term_ids, 'target_id')))) {
@@ -290,10 +279,9 @@ class SocialTaggingService {
    * @param array $terms
    *   Array of terms.
    *
-   * @return array
    *   Returns a list of terms options.
    */
-  private function prepareTermOptions(array $terms) {
+  private function prepareTermOptions(array $terms): array {
     $options = [];
     foreach ($terms as $category) {
       $options[$category->tid] = $category->name;

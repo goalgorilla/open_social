@@ -37,7 +37,7 @@ class ActivitySendManager extends DefaultPluginManager {
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList() {
+  public function getOptionsList(): array {
     $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
       $options[$plugin_id] = Html::escape($plugin_definition['label']);

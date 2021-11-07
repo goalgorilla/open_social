@@ -4,21 +4,17 @@
  * @file
  * Hooks provided by the social_content_report module.
  */
-
 /**
  * @addtogroup hooks
  * @{
  */
-
 /**
  * Provide a list of flag IDs which defined as report type.
  *
- * @return array
  *   The flag entity IDs.
- *
  * @see \Drupal\social_content_report\ContentReportService::getReportFlagTypes()
  */
-function hook_social_content_report_flags() {
+function hook_social_content_report_flags(): array {
   return [
     'report_comment',
     'report_node',

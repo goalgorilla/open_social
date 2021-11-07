@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_access_by_field;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
@@ -34,17 +35,16 @@ class EntityAccessHelper {
    *
    * @todo Add group to ignored values (when outsider role is working).
    *
-   * @return array
    *   An array containing a list of values to ignore.
    */
-  public static function getIgnoredValues() {
+  public static function getIgnoredValues(): array {
     return [];
   }
 
   /**
    * NodeAccessCheck for given operation, node and user account.
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
     if ($op === 'view') {
       // Check published status.
       if (isset($node->status) && (int) $node->status->value === NodeInterface::NOT_PUBLISHED) {
@@ -120,7 +120,7 @@ class EntityAccessHelper {
   /**
    * Gets the Entity access for the given node.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): CacheableDependencyInterface {
     $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
 
     $moduleHandler = \Drupal::service('module_handler');

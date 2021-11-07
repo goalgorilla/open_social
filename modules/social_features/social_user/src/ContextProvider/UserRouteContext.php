@@ -51,7 +51,7 @@ class UserRouteContext implements ContextProviderInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRuntimeContexts(array $unqualified_context_ids) {
+  public function getRuntimeContexts(array $unqualified_context_ids): array {
     // Create an optional context definition for group entities.
     $context_definition = EntityContextDefinition::fromEntityTypeId('user')
       ->setRequired(FALSE);
@@ -98,7 +98,7 @@ class UserRouteContext implements ContextProviderInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAvailableContexts() {
+  public function getAvailableContexts(): array {
     return [
       'social_user' => EntityContext::fromEntityTypeId('user', $this->t('Social User entity from URL')),
     ];

@@ -29,10 +29,9 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Helper function to get the content entity data.
  *
- * @return array
  *   Entity content data.
  */
-function _activity_logger_get_content_entities() {
+function _activity_logger_get_content_entities(): array {
   $entity_type_manager = \Drupal::service('entity_type.manager');
   $options = [];
   foreach ($entity_type_manager->getDefinitions() as $entity_id => $entity_type) {

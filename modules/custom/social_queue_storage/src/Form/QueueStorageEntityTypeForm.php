@@ -39,7 +39,7 @@ class QueueStorageEntityTypeForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     $queue_storage_entity_type = $this->entity;
     $status = $queue_storage_entity_type->save();
     switch ($status) {

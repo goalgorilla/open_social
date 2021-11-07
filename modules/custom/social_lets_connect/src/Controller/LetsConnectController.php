@@ -13,10 +13,9 @@ class LetsConnectController extends ControllerBase {
   /**
    * Main.
    *
-   * @return \Drupal\Core\Routing\TrustedRedirectResponse
    *   Return Redirect to getopensocial.com.
    */
-  public function main() {
+  public function main(): TrustedRedirectResponse {
     return new TrustedRedirectResponse('https://www.getopensocial.com');
   }
 

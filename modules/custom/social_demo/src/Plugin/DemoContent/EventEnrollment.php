@@ -19,7 +19,7 @@ class EventEnrollment extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry(array $item) {
+  public function getEntry(array $item): array {
     $uid = $this->loadByUuid('user', $item['uid'])->id();
     $entry = parent::getEntry($item);
 

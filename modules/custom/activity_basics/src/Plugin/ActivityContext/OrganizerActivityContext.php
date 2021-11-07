@@ -77,7 +77,7 @@ class OrganizerActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -113,13 +113,12 @@ class OrganizerActivityContext extends ActivityContextBase {
    * @param array $data
    *   The data.
    *
-   * @return array
    *   An associative array of recipients, containing the following key-value
    *   pairs:
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipientOrganizerFromEntity(array $related_entity, array $data) {
+  public function getRecipientOrganizerFromEntity(array $related_entity, array $data): array {
     $recipients = [];
 
     // Don't return recipients if user enrolls to own Event.

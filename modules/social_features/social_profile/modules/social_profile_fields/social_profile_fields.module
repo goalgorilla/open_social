@@ -292,10 +292,9 @@ function social_profile_fields_profile_view_alter(array &$build, EntityInterface
  * @param string $key
  *   The field name to check.
  *
- * @return bool
  *   If the field is enabled or disabled.
  */
-function _social_profile_fields_get_setting($key) {
+function _social_profile_fields_get_setting($key): bool {
   $config = \Drupal::config('social_profile_fields.settings');
   $setting_value = $config->get($key);
 

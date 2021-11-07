@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -63,7 +64,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values): void {
     parent::preCreate($storage_controller, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
@@ -80,7 +81,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): self {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -102,7 +103,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -110,7 +111,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -118,14 +119,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): self {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -133,7 +134,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Activity entity.'))
@@ -200,7 +201,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   Returns NULL or Entity object.
    */
-  public function getRelatedEntity() {
+  public function getRelatedEntity(): ?EntityInterface {
 
     $related_object = $this->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
@@ -278,7 +279,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDestinations() {
+  public function getDestinations(): array {
     $values = [];
     $field_activity_destinations = $this->field_activity_destinations;
     if (isset($field_activity_destinations)) {

@@ -23,10 +23,9 @@ class MentionsPluginManager extends DefaultPluginManager {
   /**
    * Get the names of plugins of type mentions_type.
    *
-   * @return array
    *   A list of plugin names.
    */
-  public function getPluginNames() {
+  public function getPluginNames(): array {
     $definitions = $this->getDefinitions();
     $plugin_names = [];
 

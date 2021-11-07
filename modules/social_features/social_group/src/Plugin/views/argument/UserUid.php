@@ -52,7 +52,7 @@ class UserUid extends ArgumentPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function query($group_by = FALSE) {
+  public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
     // Use the table definition to correctly add this user ID condition.

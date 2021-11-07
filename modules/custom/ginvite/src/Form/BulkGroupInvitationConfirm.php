@@ -91,28 +91,28 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'bulk_group_invitation_confirm';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return new Url('ginvite.invitation.bulk', ['group' => $this->tempstore['gid']]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Are you sure you want to send a invitation to all e-mails listed bellow?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): TranslatableMarkup {
 
     $email_list_markup = "";
     foreach ($this->tempstore['emails'] as $email) {
@@ -131,7 +131,7 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     $batch = [
       'title' => $this->t('Inviting Members'),
@@ -158,7 +158,7 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
   /**
    * Batch callback to create invitations.
    */
-  public static function batchCreateInvite($values, &$context) {
+  public static function batchCreateInvite($values, &$context): void {
     $invitation = GroupContent::create($values);
     $invitation->save();
   }
@@ -166,7 +166,7 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
   /**
    * Batch finished callback.
    */
-  public static function batchFinished($success, $results, $operations) {
+  public static function batchFinished($success, $results, $operations): void {
     if ($success) {
       try {
         $tempstore = \Drupal::service('tempstore.private')->get('ginvite_bulk_invitation');

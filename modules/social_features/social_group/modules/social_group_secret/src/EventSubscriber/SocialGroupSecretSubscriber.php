@@ -35,14 +35,14 @@ class SocialGroupSecretSubscriber extends HttpExceptionSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function getHandledFormats() {
+  protected function getHandledFormats(): array {
     return ['html'];
   }
 
   /**
    * {@inheritdoc}
    */
-  protected static function getPriority() {
+  protected static function getPriority(): int {
     // We need a higher priority than R4032Login so that it doesn't create a
     // response to login.
     return 100;
@@ -51,7 +51,7 @@ class SocialGroupSecretSubscriber extends HttpExceptionSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function on403(RequestEvent $event) {
+  public function on403(RequestEvent $event): void {
     $group = $this->routeMatch->getParameter('group');
 
     // Show 404 page instead of 403 page for secret groups.

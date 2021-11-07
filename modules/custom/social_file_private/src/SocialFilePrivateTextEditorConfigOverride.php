@@ -42,10 +42,9 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
    * Note: this list is now fixed, but an error will be shown in the status
    * report when there are text editors using public scheme.
    *
-   * @return array
    *   Returns an array containing config_names.
    */
-  public function getTextEditorsToProtect() {
+  public function getTextEditorsToProtect(): array {
     $config_names = [
       'editor.editor.basic_html',
       'editor.editor.full_html',
@@ -56,7 +55,7 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     if (PrivateStream::basePath()) {
       $config_names = $this->getTextEditorsToProtect();
@@ -77,14 +76,14 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialFilePrivateTextEditorConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

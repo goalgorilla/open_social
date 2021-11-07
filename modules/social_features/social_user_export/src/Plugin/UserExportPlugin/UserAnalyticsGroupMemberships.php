@@ -2,6 +2,8 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -67,7 +69,7 @@ class UserAnalyticsGroupMemberships extends UserExportPluginBase {
    * @return \Drupal\Core\Plugin\ContainerFactoryPluginInterface|\Drupal\social_user_export\Plugin\UserExportPluginBase
    *   Returns the UserExportPluginBase.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): ContainerFactoryPluginInterface {
     return new static(
       $configuration,
       $plugin_id,
@@ -82,14 +84,14 @@ class UserAnalyticsGroupMemberships extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Group memberships');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): int {
     return count($this->groupHelper->getAllGroupsForUser($entity->id()));
   }
 

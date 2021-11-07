@@ -17,7 +17,7 @@ class ContentReportActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     $recipients = [];
 
     $ids = $this->entityTypeManager->getStorage('user')->getQuery()
@@ -41,10 +41,9 @@ class ContentReportActivityContext extends ActivityContextBase {
   /**
    * Returns the role with the required permission.
    *
-   * @return array
    *   A list of Role IDs.
    */
-  protected function getRolesWithPermission() {
+  protected function getRolesWithPermission(): array {
     $roles_with_perm = [];
 
     /** @var \Drupal\user\RoleInterface[] $roles */

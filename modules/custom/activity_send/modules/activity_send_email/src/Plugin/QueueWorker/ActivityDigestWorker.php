@@ -103,7 +103,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     if (!empty($data['uid']) && !empty($data['frequency']) && !empty($data['activities'])) {
       $user_storage = $this->entityTypeManager->getStorage('user');
       $message_storage = $this->entityTypeManager->getStorage('message');

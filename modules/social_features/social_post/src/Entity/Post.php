@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Entity;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -68,7 +69,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values): void {
     parent::preCreate($storage_controller, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
@@ -85,7 +86,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): self {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -107,7 +108,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -115,7 +116,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -123,14 +124,14 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublished(): bool {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
+  public function setPublished($published): self {
     $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
@@ -138,14 +139,14 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getType() {
+  public function getType(): string {
     return $this->bundle();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setType($type) {
+  public function setType($type): self {
     $this->set('type', $type);
     return $this;
   }
@@ -153,7 +154,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDisplayName() {
+  public function getDisplayName(): TranslatableMarkup {
     if ($this->hasField('field_post_image') && !$this->get('field_post_image')->isEmpty()) {
       return t('photo');
     }
@@ -257,7 +258,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function setVisibility($visibility) {
+  public function setVisibility($visibility): self {
     $allowed_values = $this->getPostVisibilityAllowedValues();
     $visibility_label = $this->getDefaultVisibilityByLabel($visibility, TRUE);
 
@@ -286,7 +287,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $defaults = parent::getCacheContexts();
 
     // @todo Change this to custom cache context, may edit/delete post.
@@ -300,7 +301,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['id'] = BaseFieldDefinition::create('integer')

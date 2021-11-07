@@ -48,21 +48,21 @@ class ModuleConfigureForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_module_configure_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#title'] = $this->t('Install optional modules');
 
     $form['description'] = [
@@ -131,7 +131,7 @@ class ModuleConfigureForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($form_state->getValue('select_all')) {
       // Create a simple array with all the possible optional modules.
       $optional_modules = array_keys($this->optionalModuleManager->getOptionalModules());

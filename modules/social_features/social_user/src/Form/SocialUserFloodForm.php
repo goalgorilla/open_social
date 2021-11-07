@@ -15,7 +15,7 @@ class SocialUserFloodForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'user.flood',
     ];
@@ -24,14 +24,14 @@ class SocialUserFloodForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_flood_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     // Get config for this form.
     $config = $this->config('user.flood');
 
@@ -78,7 +78,7 @@ class SocialUserFloodForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('user.flood')
       ->set('ip_limit', $form_state->getValue('ip_limit'))
       ->set('ip_window', $form_state->getValue('ip_window'))

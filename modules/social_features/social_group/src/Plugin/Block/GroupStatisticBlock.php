@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -97,7 +98,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
     // Show statistic block only when new style is enabled.
     if (theme_get_setting('style') === 'sky') {
       return AccessResult::allowed();
@@ -109,7 +110,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $group = _social_group_get_current_group();
 
     if (!($group instanceof GroupInterface)) {
@@ -126,7 +127,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user';
     $cache_contexts[] = 'route.group';
@@ -137,7 +138,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function getCacheMaxAge() {
+  public function getCacheMaxAge(): int {
     return 0;
   }
 

@@ -82,7 +82,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_group.settings',
     ];
@@ -91,14 +91,14 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_group.settings');
 
     $form['permissions'] = [
@@ -198,7 +198,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     $content_types = Checkboxes::getCheckedCheckboxes($form_state->getValue([
       'cross_posting', 'content_types',
     ]));
@@ -215,7 +215,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $config = $this->config('social_group.settings');
@@ -248,10 +248,9 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * Function that gets the available crop types.
    *
-   * @return array
    *   The croptypes.
    */
-  protected function getCropTypes() {
+  protected function getCropTypes(): array {
     $croptypes = [
       'hero',
       'hero_small',
@@ -275,20 +274,18 @@ class SocialGroupSettings extends ConfigFormBase {
    * @param string $name
    *   The permission name.
    *
-   * @return bool
    *   TRUE if permission is granted.
    */
-  protected function hasPermission($name) {
+  protected function hasPermission($name): bool {
     return !empty($this->config('social_group.settings')->get($name));
   }
 
   /**
    * Returns node types list used as a group content.
    *
-   * @return array
    *   An array with options.
    */
-  private function getCrossPostingEntityTypesOptions() {
+  private function getCrossPostingEntityTypesOptions(): array {
     // The list of node types allowed for cross-posting in groups.
     // @todo maybe is better to create a list of entity bundles keyed by entity type.
     $content_types = ['topic', 'event'];
@@ -310,10 +307,9 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * Returns group types list options.
    *
-   * @return array
    *   An array with options.
    */
-  private function getGroupTypesOptions() {
+  private function getGroupTypesOptions(): array {
     $group_types = $this->entityTypeManager->getStorage('group_type')->loadMultiple();
     foreach ($group_types as $id => $group_type) {
       $options[$id] = $group_type->label();

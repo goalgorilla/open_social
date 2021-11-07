@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report\Plugin\views\field;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\LinkBase;
 use Drupal\views\ResultRow;
@@ -18,7 +19,7 @@ class LinkReportClose extends LinkBase {
   /**
    * {@inheritdoc}
    */
-  protected function getUrlInfo(ResultRow $row) {
+  protected function getUrlInfo(ResultRow $row): Url {
     /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this->getEntity($row);
 
@@ -30,7 +31,7 @@ class LinkReportClose extends LinkBase {
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultLabel() {
+  protected function getDefaultLabel(): TranslatableMarkup {
     return $this->t('Close');
   }
 

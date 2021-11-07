@@ -56,7 +56,7 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
    *
    * @todo Can one item have multiple destinations; if not: split.
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // Let the factory work.
     $this->activityFactory->createActivities($data);
   }

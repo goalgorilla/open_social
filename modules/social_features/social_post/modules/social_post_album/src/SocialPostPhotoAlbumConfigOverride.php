@@ -24,7 +24,7 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     foreach (self::TYPES as $config_name => $type) {
@@ -46,14 +46,14 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialPostPhotoAlbumConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -115,7 +115,7 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
    *   A promise that resolves to the loaded profile or null if the user does
    *   not have a published profile.
    */
-  public function resolve(AccountInterface $account, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(AccountInterface $account, RefinableCacheableDependencyInterface $metadata): ?Deferred {
     $storage = $this->entityTypeManager->getStorage('profile');
     $type = $storage->getEntityType();
     $query = $storage->getQuery()

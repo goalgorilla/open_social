@@ -98,7 +98,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // Validate if the queue data is complete before processing.
     if (self::validateQueueItem($data)) {
       // Get the email content that needs to be sent.
@@ -160,7 +160,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param string $display_name
    *   In case of anonymous users a display name will be given.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL): void {
     $context = [
       'subject' => $mail_params->get('field_subject')->value,
       'message' => $mail_params->get('field_message')->value,
@@ -182,10 +182,9 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param string $mail_id
    *   The email ID that is in the batch.
    *
-   * @return int
    *   The remaining number.
    */
-  protected function lastItem($mail_id) {
+  protected function lastItem($mail_id): bool {
     // Escape the condition values.
     $item_type = $this->connection->escapeLike('mail');
     $item_id = $this->connection->escapeLike($mail_id);
@@ -215,10 +214,9 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param array $data
    *   The content of the queue item.
    *
-   * @return bool
    *   True if the item contains all the necessary data.
    */
-  private static function validateQueueItem(array $data) {
+  private static function validateQueueItem(array $data): bool {
     // The queue data must contain the 'mail' key and it should either
     // contain 'users' or 'user_mail_addresses'.
     return isset($data['mail'])

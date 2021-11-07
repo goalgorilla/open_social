@@ -50,14 +50,14 @@ class SocialEventAnEnrollEnrolmentsExportOverrides implements ConfigFactoryOverr
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialEventAnEnrollEnrolmentsExportOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Plugin\Block;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -72,7 +73,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
       // If group allows Group Invites by content plugin and user has access.
@@ -90,7 +91,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user.group_permissions';
     $cache_contexts[] = 'route.group';
@@ -100,7 +101,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $cache_tags = parent::getCacheTags();
 
     // Add cache tags only for group page.

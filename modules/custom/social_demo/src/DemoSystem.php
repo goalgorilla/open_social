@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\block_content\Entity\BlockContent;
@@ -108,7 +109,7 @@ abstract class DemoSystem extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     // Fetch data from yml file.
     $data = $this->fetchData();
     if ($generate === TRUE) {
@@ -277,7 +278,7 @@ abstract class DemoSystem extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function getEntry(array $item) {
+  public function getEntry(array $item): array {
     // @todo Implement getEntry() method.
   }
 
@@ -287,10 +288,9 @@ abstract class DemoSystem extends DemoContent {
    * @param string $image
    *   The image by uuid.
    *
-   * @return array
    *   Returns an array.
    */
-  protected function fetchImage($image) {
+  protected function fetchImage($image): ?EntityInterface {
     $value = NULL;
     $files = $this->fileStorage->loadByProperties([
       'uuid' => $image,

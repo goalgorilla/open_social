@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Plugin\Menu\LocalTask;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
@@ -68,7 +69,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL) {
+  public function getTitle(Request $request = NULL): TranslatableMarkup {
     if ($this->invitationLoader->loadByUser()) {
       // We don't need plural because users will be redirected
       // if there is no invite.
@@ -81,7 +82,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $tags = [];
     $user = $this->routeMatch->getParameter('user');
 

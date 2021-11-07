@@ -20,10 +20,9 @@ class EntityTypeCount extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
-   * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     $value = [];
     $definitions = $this->entityTypeManager->getDefinitions();
 

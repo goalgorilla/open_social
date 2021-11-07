@@ -20,7 +20,7 @@ class Event extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = parent::getEntry($item);
 
     $entry['field_event_address'] = $item['field_event_address'];
@@ -54,7 +54,7 @@ class Event extends DemoNode {
   /**
    * Function to calculate the date.
    */
-  protected function createEventDate($date_string) {
+  protected function createEventDate($date_string): string {
     // Split from delimiter.
     $timestamp = explode('|', $date_string);
 
@@ -74,7 +74,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Array containing related files or NULL.
    */
-  protected function prepareAttachment(array $files) {
+  protected function prepareAttachment(array $files): ?array {
     $attachments = NULL;
 
     foreach ($files as $file) {
@@ -115,7 +115,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Returns an array or null.
    */
-  protected function prepareEventType($uuid) {
+  protected function prepareEventType($uuid): ?array {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
       'uuid' => $uuid,
@@ -141,7 +141,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Returns an array or null.
    */
-  protected function prepareEventManagers(array $managers) {
+  protected function prepareEventManagers(array $managers): ?array {
     $values = NULL;
 
     foreach ($managers as $uuid) {

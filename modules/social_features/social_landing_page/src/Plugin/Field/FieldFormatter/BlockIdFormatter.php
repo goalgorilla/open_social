@@ -89,7 +89,7 @@ class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     foreach ($items as $delta => $item) {
       /** @var \Drupal\block_field\BlockFieldItemInterface $item */

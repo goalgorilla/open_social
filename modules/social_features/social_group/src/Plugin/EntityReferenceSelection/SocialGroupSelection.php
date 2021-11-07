@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 
 /**
@@ -20,7 +21,7 @@ class SocialGroupSelection extends DefaultSelection {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS'): QueryInterface {
     $query = parent::buildEntityQuery($match, $match_operator);
 
     $configuration = $this->getConfiguration();

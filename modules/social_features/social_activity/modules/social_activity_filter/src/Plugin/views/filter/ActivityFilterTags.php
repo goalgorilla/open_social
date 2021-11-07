@@ -42,14 +42,14 @@ class ActivityFilterTags extends FilterPluginBase {
   /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
   /**
    * Filters out activity items by the taxonomy tags.
    */
-  public function query() {
+  public function query(): void {
     $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
     $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
 
@@ -162,7 +162,7 @@ class ActivityFilterTags extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user';

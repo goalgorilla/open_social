@@ -118,14 +118,14 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'bulk_group_invitation';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['email_address'] = [
       '#type' => 'textarea',
@@ -158,14 +158,14 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function cancelForm(array &$form, FormStateInterface $form_state) {
+  public function cancelForm(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('entity.group.canonical', ['group' => $this->group->id(), []]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     foreach ($form_state->getValues() as $key => $value) {
 
       switch ($key) {
@@ -183,7 +183,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Prepare params to store them in tempstore.
     $params['gid'] = $this->group->id();
@@ -209,10 +209,9 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
-   * @return array
    *   List of emails to invite .
    */
-  private function getSubmittedEmails(FormStateInterface $form_state) {
+  private function getSubmittedEmails(FormStateInterface $form_state): array {
     return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address')))));
   }
 
@@ -222,7 +221,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  private function validateEmails(FormStateInterface $form_state) {
+  private function validateEmails(FormStateInterface $form_state): void {
     $invalid_emails = [];
     foreach ($this->getSubmittedEmails($form_state) as $line => $email) {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -244,7 +243,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  private function validateExistingMembers(FormStateInterface $form_state) {
+  private function validateExistingMembers(FormStateInterface $form_state): void {
     $invalid_emails = [];
     foreach ($this->getSubmittedEmails($form_state) as $line => $email) {
       if ($user = user_load_by_mail($email)) {
@@ -269,7 +268,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  private function validateInviteDuplication(FormStateInterface $form_state) {
+  private function validateInviteDuplication(FormStateInterface $form_state): void {
     $invalid_emails = [];
     foreach ($this->getSubmittedEmails($form_state) as $line => $email) {
       if ($this->groupInvitationLoader->loadByGroup($this->group, NULL, $email)) {
@@ -298,7 +297,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  private function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) {
+  private function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state): void {
     if (($count = count($invalid_emails)) > 1) {
       $error_message = '<ul>';
       foreach ($invalid_emails as $line => $invalid_email) {

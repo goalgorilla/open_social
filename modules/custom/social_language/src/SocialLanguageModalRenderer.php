@@ -2,6 +2,7 @@
 
 namespace Drupal\social_language;
 
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Render\MainContent\ModalRenderer;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,7 +18,7 @@ class SocialLanguageModalRenderer extends ModalRenderer {
   /**
    * {@inheritdoc}
    */
-  public function renderResponse(array $main_content, Request $request, RouteMatchInterface $route_match) {
+  public function renderResponse(array $main_content, Request $request, RouteMatchInterface $route_match): Response {
     $sub_request = $request->request->all();
     $sub_request['dialogOptions']['closeText'] = $this->t('Close');
 

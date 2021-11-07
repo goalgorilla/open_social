@@ -31,7 +31,7 @@ class DemoContentManager extends DefaultPluginManager {
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = []) {
+  public function createInstance($plugin_id, array $configuration = []): DemoContentInterface {
     /** @var \Drupal\social_demo\DemoContentInterface $plugin */
     $plugin = parent::createInstance($plugin_id, $configuration);
     $definition = $plugin->getPluginDefinition();
@@ -49,10 +49,9 @@ class DemoContentManager extends DefaultPluginManager {
    * @param array $configurations
    *   Array with configuration for all plugins.
    *
-   * @return array
    *   Array with instances of the plugins.
    */
-  public function createInstances(array $plugin_ids, array $configurations = []) {
+  public function createInstances(array $plugin_ids, array $configurations = []): array {
     $instances = [];
 
     foreach ($plugin_ids as $plugin_id) {

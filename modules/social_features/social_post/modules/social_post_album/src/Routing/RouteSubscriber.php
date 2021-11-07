@@ -14,7 +14,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRoutes(RouteCollection $collection) {
+  public function alterRoutes(RouteCollection $collection): void {
     if (!($parent_route = $collection->get('social_ajax_comments.add'))) {
       return;
     }

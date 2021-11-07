@@ -2,6 +2,7 @@
 
 namespace Drupal\social_tagging\Plugin\Block;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -74,7 +75,7 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
    *
    * Logic to display the block in the sidebar.
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
     // If tagging is off, deny access always.
     if (!$this->tagService->active()) {
       return AccessResult::forbidden();
@@ -101,7 +102,7 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'url';
     return $cache_contexts;
@@ -110,7 +111,7 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $cache_tags = parent::getCacheTags();
     $node = $this->routeMatch->getParameter('node');
 

@@ -2,6 +2,8 @@
 
 namespace Drupal\group_core_comments;
 
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\comment\CommentAccessControlHandler;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -21,7 +23,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultInterface {
     /** @var \Drupal\comment\CommentInterface|\Drupal\user\EntityOwnerInterface $entity */
 
     $parent_access = parent::checkAccess($entity, $operation, $account);
@@ -70,7 +72,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
   /**
    * Checks if account was granted permission in group.
    */
-  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents) {
+  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents): CacheableDependencyInterface {
 
     // Only when you have permission to view the comments.
     foreach ($group_contents as $group_content) {

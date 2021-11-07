@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Connection;
 
+use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\GraphQL\ConnectionInterface;
@@ -34,7 +35,7 @@ class ConnectionPageInfo extends DataProducerPluginBase implements DataProducerP
    * @return mixed
    *   The page info for the connection.
    */
-  public function resolve(ConnectionInterface $connection) {
+  public function resolve(ConnectionInterface $connection): SyncPromise {
     return $connection->pageInfo();
   }
 

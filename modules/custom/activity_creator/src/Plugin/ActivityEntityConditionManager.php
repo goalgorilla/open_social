@@ -40,7 +40,7 @@ class ActivityEntityConditionManager extends DefaultPluginManager {
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList(array $entities = []) {
+  public function getOptionsList(array $entities = []): array {
     $options = [];
 
     if (!empty($entities)) {

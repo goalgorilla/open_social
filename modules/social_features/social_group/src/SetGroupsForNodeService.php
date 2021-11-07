@@ -49,7 +49,7 @@ class SetGroupsForNodeService {
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
+  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE): NodeInterface {
     $moved = FALSE;
 
     // If we don't have to add or remove groups, we don't need to move anything.
@@ -162,7 +162,7 @@ class SetGroupsForNodeService {
    * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
-  public static function addGroupContent(NodeInterface $node, Group $group) {
+  public static function addGroupContent(NodeInterface $node, Group $group): void {
     // @todo Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
     $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
@@ -176,7 +176,7 @@ class SetGroupsForNodeService {
    * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
-  public static function removeGroupContent(NodeInterface $node, Group $group) {
+  public static function removeGroupContent(NodeInterface $node, Group $group): void {
     // Try to load group content from entity.
     if ($group_contents = GroupContent::loadByEntity($node)) {
       /** @var @param \Drupal\group\Entity\GroupContent $group_content */

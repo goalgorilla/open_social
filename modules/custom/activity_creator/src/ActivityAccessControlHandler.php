@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator;
 
+use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -53,7 +54,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResultNeutral {
     /** @var \Drupal\activity_creator\ActivityInterface $entity */
     switch ($operation) {
       case 'view':
@@ -92,14 +93,14 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     return AccessResult::allowedIfHasPermission($account, 'add activity entities');
   }
 
   /**
    * Return access control from the related entity.
    */
-  protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account) {
+  protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account): AccessResultNeutral {
     $related_object = $entity->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
       $ref_entity_type = $related_object['0']['target_type'];
@@ -124,10 +125,9 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entity object.
    *
-   * @return bool
    *   Returns TRUE if entity is personal notification, FALSE if it isn't.
    */
-  protected function checkIfPersonalNotification(EntityInterface $entity) {
+  protected function checkIfPersonalNotification(EntityInterface $entity): bool {
     $recipient = $entity->getRecipient();
     $value = FALSE;
     if (!empty($recipient) && $recipient['0']['target_type'] === 'user') {

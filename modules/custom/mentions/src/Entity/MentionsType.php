@@ -92,21 +92,21 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
   /**
    * {@inheritdoc}
    */
-  public function id() {
+  public function id(): string {
     return $this->name;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function mentionType() {
+  public function mentionType(): string {
     return $this->mentionType;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getInputSettings() {
+  public function getInputSettings(): string {
     return $this->input;
   }
 

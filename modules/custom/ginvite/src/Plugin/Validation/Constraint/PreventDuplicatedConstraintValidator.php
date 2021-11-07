@@ -58,7 +58,7 @@ class PreventDuplicatedConstraintValidator extends ConstraintValidator implement
   /**
    * {@inheritdoc}
    */
-  public function validate($entity, Constraint $constraint) {
+  public function validate($entity, Constraint $constraint): void {
     // Validate only group_invitation bundle.
     if (!($entity instanceof GroupContentInterface) || $entity->getContentPlugin()->getPluginId() != 'group_invitation') {
       return;

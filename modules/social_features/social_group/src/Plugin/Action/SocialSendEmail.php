@@ -42,7 +42,7 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {
       $selected_count = $this->context['selected_count'];

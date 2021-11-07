@@ -132,7 +132,7 @@ class VoteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return $entity->getEntityTypeId() === 'vote';
   }
 

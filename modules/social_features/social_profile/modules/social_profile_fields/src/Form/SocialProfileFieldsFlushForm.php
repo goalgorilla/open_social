@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile_fields\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,7 +31,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected ConfigFactory $configFactory;
+  protected $configFactory;
 
 
   /**
@@ -70,35 +71,35 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_fields_flush_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getQuestion() {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Flush profile.');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
+  public function getCancelUrl(): Url {
     return new Url('social_profile_fields.settings');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText() {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Yes, continue');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $pids = \Drupal::entityQuery('profile')
       ->condition('type', 'profile')
       ->execute();
@@ -123,7 +124,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getDescription() {
+  public function getDescription(): TranslatableMarkup {
 
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);
@@ -134,10 +135,9 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * Function that return an array of field names.
    *
-   * @return array
    *   An array of field names.
    */
-  protected function getUnselectedFields() {
+  protected function getUnselectedFields(): array {
     $profile_fields = $this->fieldStorage->loadByProperties([
       'entity_type' => 'profile',
       'bundle' => 'profile',

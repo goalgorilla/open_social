@@ -110,10 +110,9 @@ function social_group_default_route_entity_base_field_info(EntityTypeInterface $
 /**
  * Fetch all available group types.
  *
- * @return array
  *   The group types.
  */
-function _social_group_default_route_group_types() {
+function _social_group_default_route_group_types(): array {
   $types = &drupal_static(__FUNCTION__);
 
   if (!isset($types)) {
@@ -133,10 +132,9 @@ function _social_group_default_route_group_types() {
 /**
  * Fetch all available group tabs.
  *
- * @return array
  *   The group tabs.
  */
-function _social_group_default_route_group_tabs() {
+function _social_group_default_route_group_tabs(): array {
   $tabs = &drupal_static(__FUNCTION__);
 
   if (!isset($tabs)) {

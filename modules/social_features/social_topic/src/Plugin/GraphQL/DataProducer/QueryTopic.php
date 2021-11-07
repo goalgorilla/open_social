@@ -67,10 +67,9 @@ class QueryTopic extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection {
     $query_helper = new TopicQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
     $metadata->addCacheableDependency($query_helper);
 

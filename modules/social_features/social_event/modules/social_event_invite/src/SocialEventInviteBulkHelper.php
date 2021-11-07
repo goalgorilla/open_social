@@ -30,7 +30,7 @@ class SocialEventInviteBulkHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsers(array $users, $nid, array &$context) {
+  public static function bulkInviteUsers(array $users, $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $uid => $target_id) {
@@ -101,7 +101,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteEmails(array $emails, $nid, array &$context) {
+  public static function bulkInviteEmails(array $emails, $nid, array &$context): void {
     $results = [];
 
     foreach ($emails as $email) {
@@ -157,7 +157,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsersEmails(array $users, $nid, array &$context) {
+  public static function bulkInviteUsersEmails(array $users, $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $user) {
@@ -256,7 +256,7 @@ class SocialEventInviteBulkHelper {
   /**
    * Callback when the batch for inviting emails for an event has finished.
    */
-  public static function bulkInviteUserEmailsFinished($success, $results, $operations) {
+  public static function bulkInviteUserEmailsFinished($success, $results, $operations): RedirectResponse {
     $nid = NULL;
 
     // We got the node event id in the results array so we will use that

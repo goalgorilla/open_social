@@ -407,10 +407,9 @@ function social_profile_preprocess_profile(array &$variables) {
  * @param string $property
  *   The property against we need to check the access.
  *
- * @return bool
  *   Return TRUE if current user is allowed to see the property else FALSE.
  */
-function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property) {
+function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property): bool {
   // Flag to set.
   $flag = FALSE;
   switch ($property) {
@@ -459,10 +458,9 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
  * @param \Drupal\user\Entity\User $account
  *   The user object.
  *
- * @return \Drupal\Core\Url
  *   The URL to contact the user.
  */
-function _social_profile_get_contact_url(User $account) {
+function _social_profile_get_contact_url(User $account): Url {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
     $current_user = \Drupal::currentUser();
     if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {

@@ -33,7 +33,7 @@ class AccountId extends DataProducerPluginBase {
    * @return mixed
    *   The user id.
    */
-  public function resolve(AccountInterface $account) {
+  public function resolve(AccountInterface $account): int {
     return $account->id();
   }
 

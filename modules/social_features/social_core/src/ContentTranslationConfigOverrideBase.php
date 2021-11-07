@@ -20,10 +20,9 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
    * classes without having to duplicate the logic of whether it should be
    * invoked.
    *
-   * @return array
    *   An array keyed by configuration name with the override as value.
    */
-  abstract protected function getTranslationOverrides();
+  abstract protected function getTranslationOverrides(): array;
 
   /**
    * Returns the module that provides the overrides.
@@ -31,10 +30,9 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
    * This is used as the social_contant_translation.settings configuration key
    * as well as in the cache suffix for the overrides.
    *
-   * @return string
    *   The module name providing the overrides.
    */
-  abstract protected function getModule();
+  abstract protected function getModule(): string;
 
   /**
    * Returns the display name for this set of configuration overrides.
@@ -51,7 +49,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // This setting can't be changed in an override because that would create
@@ -75,24 +73,23 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * Returns the configurations that are overridden in this class.
    *
-   * @return array
    *   An array of configuration names.
    */
-  protected function getOverriddenConfigurations() {
+  protected function getOverriddenConfigurations(): array {
     return array_keys($this->getTranslationOverrides());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return $this->getModule() . '.content_translation_defaults_config_override';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     $metadata = new CacheableMetadata();
     if (in_array($name, $this->getOverriddenConfigurations())) {
       $metadata->addCacheTags(['config:social_content_translation.settings']);

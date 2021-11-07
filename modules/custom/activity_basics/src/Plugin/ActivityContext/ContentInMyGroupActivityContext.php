@@ -80,7 +80,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -173,7 +173,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     switch ($entity->getEntityTypeId()) {
       case 'group_content':
         return TRUE;

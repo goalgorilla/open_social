@@ -78,7 +78,7 @@ class OwnerActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -109,13 +109,12 @@ class OwnerActivityContext extends ActivityContextBase {
    * @param array $data
    *   The data.
    *
-   * @return array
    *   An associative array of recipients, containing the following key-value
    *   pairs:
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipientOwnerFromEntity(array $related_entity, array $data) {
+  public function getRecipientOwnerFromEntity(array $related_entity, array $data): array {
     $recipients = [];
 
     $entity_storage = $this->entityTypeManager->getStorage($related_entity['target_type']);

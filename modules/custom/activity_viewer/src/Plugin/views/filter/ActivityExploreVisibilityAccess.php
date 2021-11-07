@@ -55,7 +55,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -71,7 +71,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
    * 3. OR the content is not a Node, we don't care about that here.
    * This translates to code as follows:
    */
-  public function query() {
+  public function query(): void {
     // Create defaults.
     $account = $this->view->getUser();
     $explore_wrapper = new Condition('AND');

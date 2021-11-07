@@ -40,7 +40,7 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function applies(RouteMatchInterface $route_match) {
+  public function applies(RouteMatchInterface $route_match): bool {
     $comments_routes = [
       'comment.reply',
       'entity.comment.edit_form',
@@ -52,7 +52,7 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function build(RouteMatchInterface $route_match) {
+  public function build(RouteMatchInterface $route_match): Breadcrumb {
     $breadcrumb = new Breadcrumb();
     $breadcrumb->addCacheContexts(['route']);
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));

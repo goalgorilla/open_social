@@ -47,7 +47,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
      */
-    public function before(BeforeScenarioScope $scope) {
+    public function before(BeforeScenarioScope $scope): void {
       // Start a session if not already done.
       // Needed since https://github.com/minkphp/Mink/pull/705
       // Otherwise resizeWindow will throw an error.
@@ -70,7 +70,7 @@ class FeatureContext extends RawMinkContext implements Context
    *
    * @param $event
    */
-    public function after($event) {
+    public function after($event): void {
       // Let's disable the tour module for all tests by default.
       \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
     }
@@ -84,10 +84,9 @@ class FeatureContext extends RawMinkContext implements Context
      * @throws Exception
      *   Throws an exception if the editor does not exist.
      *
-     * @return string
      *   A Javascript expression representing the WYSIWYG instance.
      */
-    protected function getWysiwygInstance($instanceId) {
+    protected function getWysiwygInstance($instanceId): string {
       $instance = "CKEDITOR.instances['$instanceId']";
       if (!$this->getSession()->evaluateScript("return !!$instance")) {
         throw new \Exception(sprintf('The editor "%s" was not found on the page %s', $instanceId, $this->getSession()->getCurrentUrl()));
@@ -98,7 +97,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
      */
-    public function iFillInTheWysiwygEditor($locator, $text) {
+    public function iFillInTheWysiwygEditor($locator, $text): void {
       $field = $this->getSession()->getPage()->findField($locator);
 
       if (null === $field) {
@@ -113,7 +112,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I click on the embed icon in the WYSIWYG editor$/
      */
-    public function clickEmbedIconInWysiwygEditor() {
+    public function clickEmbedIconInWysiwygEditor(): void {
 
       $cssSelector = 'a.cke_button__social_embed';
 
@@ -132,7 +131,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @Then /^The iframe in the body description should have the src "([^"]*)"$/
      */
-    public function iFrameInBodyDescriptionShouldHaveTheSrc($src) {
+    public function iFrameInBodyDescriptionShouldHaveTheSrc($src): void {
 
       $cssSelector = 'article .card__body .body-text iframe';
 
@@ -158,7 +157,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I click on the image icon in the WYSIWYG editor$/
      */
-    public function clickImageIconInWysiwygEditor() {
+    public function clickImageIconInWysiwygEditor(): void {
 
       $cssSelector = 'a.cke_button__drupalimage';
 
@@ -178,7 +177,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @Then /^The image path in the body description should be private$/
      */
-    public function imagePathInBodyDescriptionShouldBePrivate() {
+    public function imagePathInBodyDescriptionShouldBePrivate(): void {
 
       $cssSelector = 'article .card__body .body-text img';
 
@@ -201,7 +200,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I click admin link :text
      */
-    public function clickAdminLink($text) {
+    public function clickAdminLink($text): void {
 
       $page = $this->getSession()->getPage();
       $adminspan = $page->find('xpath', '//a//span[text()="'.$text.'"]');
@@ -217,7 +216,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I select post visibility :visibility
      */
-    public function iSelectPostVisibility($visibility) {
+    public function iSelectPostVisibility($visibility): void {
       // First make post visibility setting visible.
       $this->iClickPostVisibilityDropdown();
 
@@ -236,7 +235,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I select group :group
      */
-    public function iSelectGroup($group) {
+    public function iSelectGroup($group): void {
 
       if ($group === "- None -") {
         $option = '_none';
@@ -259,7 +258,7 @@ class FeatureContext extends RawMinkContext implements Context
   /**
    * @When I click the xth :position link with the text :locator
    */
-  public function iClickTheLinkWithText($position, $locator)
+  public function iClickTheLinkWithText($position, $locator): void
   {
     $session = $this->getSession();
     $links = $session->getPage()->findAll('named', array('link', $locator));
@@ -278,7 +277,7 @@ class FeatureContext extends RawMinkContext implements Context
   /**
    * @When I click the xth :position element with the css :css
    */
-  public function iClickTheElementWithTheCSS($position, $css)
+  public function iClickTheElementWithTheCSS($position, $css): void
   {
     $session = $this->getSession();
     $elements = $session->getPage()->findAll('css', $css);
@@ -299,7 +298,7 @@ class FeatureContext extends RawMinkContext implements Context
   /**
    * @When I click the xth :position element with the css :css in the :region( region)
    */
-  public function iClickTheRegionElementWithTheCSS($position, $css, $region)
+  public function iClickTheRegionElementWithTheCSS($position, $css, $region): void
   {
     $session = $this->getSession();
     $regionObj = $session->getPage()->find('region', $region);
@@ -323,7 +322,7 @@ class FeatureContext extends RawMinkContext implements Context
    *
    * @When /^I click the element with css selector "([^"]*)"$/
    */
-  public function iClickTheElementWithCSSSelector($cssSelector)
+  public function iClickTheElementWithCSSSelector($cssSelector): void
   {
     $session = $this->getSession();
     $element = $session->getPage()->find(
@@ -340,7 +339,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I click the post visibility dropdown/
      */
-    public function iClickPostVisibilityDropdown()
+    public function iClickPostVisibilityDropdown(): void
     {
       $locator = 'button#post-visibility';
       $session = $this->getSession();
@@ -357,7 +356,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When /^I click the group member dropdown/
      */
-    public function iClickGroupMemberDropdown()
+    public function iClickGroupMemberDropdown(): void
     {
       $locator = '.add-users-dropbutton .dropdown-toggle';
       $session = $this->getSession();
@@ -375,7 +374,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
-    public function clickRadioButton($label = '', $id = '') {
+    public function clickRadioButton($label = '', $id = ''): void {
       $session = $this->getSession();
 
       $session->executeScript(
@@ -409,7 +408,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @When /^(?:|I )show hidden buttons$/
      */
-    public function showHiddenButton()
+    public function showHiddenButton(): void
     {
       $session = $this->getSession();
 
@@ -429,7 +428,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @When /^(?:|I )show hidden checkboxes/
      */
-    public function showHiddenCheckbox()
+    public function showHiddenCheckbox(): void
     {
       $session = $this->getSession();
 
@@ -449,7 +448,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @When /^(?:|I )show hidden inputs/
      */
-    public function showHiddenInputs()
+    public function showHiddenInputs(): void
     {
       $session = $this->getSession();
 
@@ -471,7 +470,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @Given /^(?:|I )am on the profile of "(?P<username>[^"]+)"$/
      * @When /^(?:|I )go to the profile of "(?P<username>[^"]+)"$/
      */
-    public function openProfileOf($username)
+    public function openProfileOf($username): void
     {
       $account = user_load_by_name($username);
       if ($account->id() !== 0) {
@@ -521,7 +520,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @afterUserCreate
      */
-    public function alterUserParameters(EntityScope $event) {
+    public function alterUserParameters(EntityScope $event): void {
       $account = $event->getEntity();
       // Get profile of current user.
       if (!empty($account->uid)) {
@@ -550,7 +549,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given groups:
      */
-    public function createGroups(TableNode $groupsTable) {
+    public function createGroups(TableNode $groupsTable): void {
       foreach ($groupsTable->getHash() as $groupHash) {
         $groupFields = (object) $groupHash;
         try {
@@ -567,7 +566,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @AfterScenario
      */
-    public function cleanupGroups(AfterScenarioScope $scope) {
+    public function cleanupGroups(AfterScenarioScope $scope): void {
       if (!empty($this->groups)) {
         foreach ($this->groups as $group) {
           $group->delete();
@@ -578,10 +577,9 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * Create a group.
      *
-     * @return object
      *   The created group.
      */
-    public function groupCreate($group) {
+    public function groupCreate($group): Group {
 
       $account = user_load_by_name($group->author);
       if ($account->id() !== 0) {
@@ -611,7 +609,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @Given /^(?:|I )am on the stream of group "(?P<group_title>[^"]+)"$/
      * @When /^(?:|I )go to the stream of group "(?P<group_title>[^"]+)"$/
      */
-    public function openGroupStreamPage($group_title)
+    public function openGroupStreamPage($group_title): void
     {
       $group_id = $this->getGroupIdFromTitle($group_title);
       $page = '/group/' . $group_id . '/stream';
@@ -676,7 +674,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @Given /^(?:|I )open the "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
      * @When /^(?:|I )go the  "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
      */
-    public function openNodeWithTitle($type, $title)
+    public function openNodeWithTitle($type, $title): void
     {
       $query = \Drupal::entityQuery('node')
         ->condition('type', $type)
@@ -705,7 +703,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
      */
-    public function openRegisterPageDestinationGroup($mail, $group_title)
+    public function openRegisterPageDestinationGroup($mail, $group_title): void
     {
       $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
       $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
@@ -719,7 +717,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited node "(?P<node_title>[^"]+)"$/
      */
-    public function openRegisterPageDestinationNode($mail, $node_title)
+    public function openRegisterPageDestinationNode($mail, $node_title): void
     {
       $nodes = \Drupal::entityTypeManager()->getStorage('node')
         ->loadByProperties(['title' => $node_title]);
@@ -747,7 +745,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @see cleanUsers()
      */
-    public function intendUserName($name) {
+    public function intendUserName($name): void {
       $this->intended_user_names[] = $name;
     }
 
@@ -756,7 +754,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @AfterScenario
      */
-    public function cleanupQueue(AfterScenarioScope $scope)
+    public function cleanupQueue(AfterScenarioScope $scope): void
     {
       $workerManager = \Drupal::service('plugin.manager.queue_worker');
       /** @var Drupal\Core\Queue\QueueFactory; $queue */
@@ -780,7 +778,7 @@ class FeatureContext extends RawMinkContext implements Context
    *
    * @AfterScenario
    */
-  public function cleanupUser(AfterScenarioScope $scope)
+  public function cleanupUser(AfterScenarioScope $scope): void
   {
     if (!empty($this->intended_user_names)) {
       foreach ($this->intended_user_names as $name) {
@@ -795,7 +793,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Then /User "(?P<username>[^"]+)" should have uploaded "(?P<private>[^"]+)" private files and "(?P<public>[^"]+)" public files$/
      */
-    public function checkFilesPrivateForUser($username, $private, $public)
+    public function checkFilesPrivateForUser($username, $private, $public): void
     {
 
       $query = \Drupal::entityQuery('user')
@@ -833,7 +831,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Then /I open and check the access of the files uploaded by "(?P<username>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
      */
-    public function openAndCheckFilesPrivateForUser($username, $access)
+    public function openAndCheckFilesPrivateForUser($username, $access): void
     {
       $allowed_access = array(
         '0' => 'denied',
@@ -879,7 +877,7 @@ class FeatureContext extends RawMinkContext implements Context
      *  0 = NO access
      *  1 = YES access
      */
-    public function openFileAndExpectAccess($fid, $expected_access) {
+    public function openFileAndExpectAccess($fid, $expected_access): void {
       /** @var \Drupal\file\Entity\File $file */
       $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
       $url = $file->url();
@@ -899,7 +897,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given /^(?:|I )logout$/
      */
-    public function iLogOut()
+    public function iLogOut(): void
     {
       $page = '/user/logout';
       $this->visitPath($page);
@@ -910,7 +908,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Then /I open and check the access of content in group "(?P<groupname>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
      */
-    public function openAndCheckGroupContentAccess($groupname, $access)
+    public function openAndCheckGroupContentAccess($groupname, $access): void
     {
       $allowed_access = array(
         '0' => 'denied',
@@ -981,7 +979,7 @@ class FeatureContext extends RawMinkContext implements Context
      *  0 = NO access
      *  1 = YES access
      */
-    public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
+    public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access): void {
       $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
       /** @var \Drupal\Core\Url $url */
       $url = $entity->toUrl();
@@ -1000,7 +998,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I close the open tip
      */
-    public function iCloseTheOpenTip()
+    public function iCloseTheOpenTip(): void
     {
       $locator = 'a.joyride-close-tip';
       $session = $this->getSession();
@@ -1019,7 +1017,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given I turn off translations import
      */
-    public function turnOffTranslationsImport()
+    public function turnOffTranslationsImport(): void
     {
       // Let's disable translation.path for now.
       \Drupal::configFactory()->getEditable('locale.settings')->set('translation.import_enabled', FALSE)->save();
@@ -1030,7 +1028,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @Given /I translate "(?P<source>[^"]+)" to "(?P<translation>[^"]+)" for "(?P<langcode>[^"]+)"$/
      */
-    public function iTranslate($source, $translation, $langcode)
+    public function iTranslate($source, $translation, $langcode): void
     {
       $this->addTranslation($source, $translation, $langcode);
     }
@@ -1075,7 +1073,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @param bool $next
      *   (optional) TRUE if it is not first value.
      */
-    public function fillAutocompleteField($field, $text, $item, $next = FALSE) {
+    public function fillAutocompleteField($field, $text, $item, $next = FALSE): void {
       $element = $this->getSession()->getPage()->findField($field);
 
       if (null === $element) {
@@ -1129,21 +1127,21 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @Given I fill in :field with :text and select :item
      */
-    public function iFillInWithAndSelect($field, $text, $item) {
+    public function iFillInWithAndSelect($field, $text, $item): void {
       $this->fillAutocompleteField($field, $text, $item);
     }
 
     /**
      * @Given I fill next in :field with :text and select :item
      */
-    public function iFillNextInWithAndSelect($field, $text, $item) {
+    public function iFillNextInWithAndSelect($field, $text, $item): void {
       $this->fillAutocompleteField($field, $text, $item, TRUE);
     }
 
     /**
      * @When /^I click "([^"]*)" on the row containing "([^"]*)"$/
      */
-    public function iClickOnOnTheRowContaining($link_name, $row_text) {
+    public function iClickOnOnTheRowContaining($link_name, $row_text): void {
       /** @var $row \Behat\Mink\Element\NodeElement */
       $row = $this->getSession()->getPage()->find('css', sprintf('table tr:contains("%s")', $row_text));
       if (!$row) {
@@ -1158,7 +1156,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @AfterScenario @data-policy-create
      */
-    public function deleteUserConsentEntities() {
+    public function deleteUserConsentEntities(): void {
       $consents = \Drupal::entityTypeManager()
         ->getStorage('user_consent')
         ->loadMultiple();

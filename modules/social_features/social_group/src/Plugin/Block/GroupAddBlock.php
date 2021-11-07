@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Cache\Cache;
@@ -96,7 +97,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account): CacheableDependencyInterface {
     if (!$this->getUrl()->access($account)) {
       return AccessResult::forbidden();
     }
@@ -123,7 +124,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
     // @todo Add caching when closed groups will be added.
     $url = $this->getUrl();
@@ -149,7 +150,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     // Vary caching of this block per user.
     return Cache::mergeContexts(parent::getCacheContexts(), ['user']);
   }
@@ -157,17 +158,16 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     return Cache::mergeTags(parent::getCacheTags(), ['social_group_add_block:uid:' . $this->currentUser->id()]);
   }
 
   /**
    * Returns the URL of the button.
    *
-   * @return \Drupal\Core\Url
    *   The URL object.
    */
-  protected function getUrl() {
+  protected function getUrl(): Url {
     return $this->socialGroupHelper->getGroupsToAddUrl($this->currentUser) ?? Url::fromRoute('entity.group.add_page');
   }
 

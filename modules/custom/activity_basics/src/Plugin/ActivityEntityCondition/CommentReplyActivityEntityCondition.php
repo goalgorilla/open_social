@@ -18,7 +18,7 @@ class CommentReplyActivityEntityCondition extends ActivityEntityConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     if ($entity->getEntityTypeId() === 'comment') {
       if (!empty($entity->getParentComment())) {
         return TRUE;

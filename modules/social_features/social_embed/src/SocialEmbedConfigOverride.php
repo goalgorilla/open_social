@@ -93,7 +93,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
+  protected function addFilterOverride($text_format, $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
@@ -136,7 +136,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addEditorOverride($text_format, array &$overrides) {
+  protected function addEditorOverride($text_format, array &$overrides): void {
     $config_name = 'editor.editor.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
@@ -182,7 +182,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
@@ -196,7 +196,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialEmbedConfigOverride';
   }
 

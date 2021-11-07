@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,7 +20,7 @@ class UserOrganization extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Organization');
   }
 
@@ -29,10 +30,9 @@ class UserOrganization extends UserExportPluginBase {
    * @param \Drupal\user\UserInterface $entity
    *   The User entity to get the value from.
    *
-   * @return string
    *   The value.
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     return $this->profileGetFieldValue('field_profile_organization', $this->getProfile($entity));
   }
 

@@ -15,7 +15,7 @@ class SocialGroupInviteServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     // If ginvite is enabled, remove it's service which
     // sends a drupal set message on every page.
     if ($container->hasDefinition('ginvite_event_subscriber')) {

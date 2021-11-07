@@ -75,7 +75,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_swiftmail.settings',
     ];
@@ -84,14 +84,14 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_swiftmail_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_swiftmail.settings');
 
     $form['notification'] = [
@@ -191,7 +191,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     // Save config.
@@ -228,7 +228,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    * @return array[]
    *   Row.
    */
-  private function buildRow($template, array $notification_options, array $template_frequencies) {
+  private function buildRow($template, array $notification_options, array $template_frequencies): array {
     $email_message_templates = $this->emailActivityDestination->getSendEmailMessageTemplates();
     $row = [
       [

@@ -29,10 +29,9 @@ class DeletedUser {
   /**
    * Get user ID.
    *
-   * @return int
    *   The user ID.
    */
-  public function id() {
+  public function id(): int {
     return $this->id;
   }
 

@@ -11,17 +11,15 @@ use Drupal\social_branding\PreferredPlatformFeature;
  * @addtogroup hooks
  * @{
  */
-
 /**
  * Define social branding preferred features.
  *
- * @return array
  *   An array of PreferredPlatformFeature objects.
  *
  * @see hook_social_branding_preferred_features_alter()
  * @ingroup social_branding_api
  */
-function hook_social_branding_preferred_features() {
+function hook_social_branding_preferred_features(): array {
   return [
     new PreferredPlatformFeature('first_feature', 1),
     new PreferredPlatformFeature('second_feature', 2),

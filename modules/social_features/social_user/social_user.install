@@ -165,10 +165,9 @@ function social_user_update_8008() {
  * @param string $role
  *   The role to get the permissions for.
  *
- * @return array
  *   A list of permissions.
  */
-function _social_user_get_permissions($role) {
+function _social_user_get_permissions($role): array {
   // Anonymous.
   $permissions[RoleInterface::ANONYMOUS_ID] = [];
 

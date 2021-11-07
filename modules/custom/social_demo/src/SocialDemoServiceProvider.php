@@ -15,7 +15,7 @@ class SocialDemoServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     // Overrides language_manager class to test domain language negotiation.
     $definition = $container->getDefinition('messenger');
     $definition->setClass('Drupal\social_demo\Messenger');

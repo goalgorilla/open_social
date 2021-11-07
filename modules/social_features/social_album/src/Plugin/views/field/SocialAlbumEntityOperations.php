@@ -19,7 +19,7 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
+  public function render(ResultRow $values): array {
     foreach (get_object_vars($values) as $key => $value) {
       if (preg_match('/_delta$/', $key)) {
         break;
@@ -50,10 +50,9 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
    * @param int $file_id
    *   The file entity ID.
    *
-   * @return array
    *   A renderable array representing the post links.
    */
-  public static function renderLinks($node_id, $post_id, $file_id) {
+  public static function renderLinks($node_id, $post_id, $file_id): array {
     $entity = \Drupal::entityTypeManager()->getStorage('post')->load($post_id);
 
     $links = call_user_func(
@@ -85,7 +84,7 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['renderLinks'];
   }
 

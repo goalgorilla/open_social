@@ -29,7 +29,7 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     // We can only overwrite the default behaviour if the user is allowed to
@@ -98,7 +98,7 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     // Only pre-process the validation if this is a categorized checkbox
     // element.
     if (isset($element['#checkbox_categories'])) {
@@ -137,10 +137,9 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
    * @param array $selected
    *   The currently selected options.
    *
-   * @return array
    *   A tree structure with labels and selection status as leaf values.
    */
-  protected function getGroupedOptions(array $options, array $selected) {
+  protected function getGroupedOptions(array $options, array $selected): array {
     $grouped_options = [];
 
     foreach ($options as $tid => $label) {
@@ -182,7 +181,7 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
    * @return array[]
    *   A flattened array of children.
    */
-  private function getTaxonomyChildren(array $parent, $hyphens = 0) {
+  private function getTaxonomyChildren(array $parent, $hyphens = 0): array {
     $children = [];
     $selected = [];
 

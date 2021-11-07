@@ -32,16 +32,15 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
   }
 
   /**
    * Returns a set of route objects.
    *
-   * @return \Symfony\Component\Routing\RouteCollection
    *   A route collection.
    */
-  public function routes() {
+  public function routes(): RouteCollection {
     $collection = new RouteCollection();
 
     if ($this->moduleHandler->moduleExists('views_bulk_operations')) {

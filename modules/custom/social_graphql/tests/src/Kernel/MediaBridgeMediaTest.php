@@ -53,7 +53,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
   /**
    * Tests that the MediaBridge class works for Media entities.
    */
-  public function testMediaSource() {
+  public function testMediaSource(): void {
     // Create an image media type.
     $image_media_type = $this->createMediaType('image');
     $title = $this->randomString();

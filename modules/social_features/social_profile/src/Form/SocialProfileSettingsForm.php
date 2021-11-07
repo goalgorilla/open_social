@@ -61,21 +61,21 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_admin_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_profile.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_profile.settings');
 
     $form['privacy'] = [
@@ -159,7 +159,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Save config.
     $config = $this->config('social_profile.settings');
     $config->set('social_profile_show_email', $form_state->getValue('social_profile_show_email'));

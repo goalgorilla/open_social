@@ -19,12 +19,10 @@ class ReportController extends ControllerBase {
    * @param \Drupal\flag\FlaggingInterface $flagging
    *   The Flagging object to close.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A simple response.
-   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function close(FlaggingInterface $flagging) {
+  public function close(FlaggingInterface $flagging): RedirectResponse {
 
     if ($flagging->hasField('field_status')) {
       // Disable the status field.

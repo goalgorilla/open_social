@@ -14,14 +14,14 @@ class SocialGroupViewsBulkOperationsConfigureAction extends GroupViewsBulkOperat
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'group_manage_members', $display_id = 'page_group_manage_members') {
+  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'group_manage_members', $display_id = 'page_group_manage_members'): array {
     return parent::buildForm($form, $form_state, 'group_manage_members', 'page_group_manage_members');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
     $form_data = $form_state->get('views_bulk_operations');

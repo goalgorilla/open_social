@@ -2,6 +2,7 @@
 
 namespace Drupal\social_node;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
@@ -75,7 +76,7 @@ class SocialNodeForm extends NodeForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     /** @var \Drupal\node\NodeInterface $node */
     $node = clone $this->entity;
 
@@ -87,10 +88,9 @@ class SocialNodeForm extends NodeForm {
   /**
    * Gets the messenger.
    *
-   * @return \Drupal\social_node\Service\SocialNodeMessengerInterface
    *   The messenger.
    */
-  public function messenger() {
+  public function messenger(): MessengerInterface {
     if (!isset($this->messenger)) {
       $this->messenger = \Drupal::service('social_node.messenger');
     }

@@ -13,20 +13,17 @@ use Drupal\Core\Url;
  * @addtogroup hooks
  * @{
  */
-
 /**
  * Allows a module to provide links for the create content menu item.
  *
  * @param array $context
  *   The context that was provided to the block rendering these links.
  *
- * @return array
  *   Items in this array will be used as list items in a dropdown list. All
  *   returned items will be sorted using Element::children.
- *
  * @see \template_preprocess_item_list()
  */
-function hook_social_user_account_header_create_links(array $context) {
+function hook_social_user_account_header_create_links(array $context): array {
   // Add a link to create a new page.
   return [
     'add_page' => [
@@ -64,13 +61,11 @@ function hook_social_user_account_header_create_links_alter(array &$links, array
  * @param array $context
  *   The context that was provided to the block rendering these links.
  *
- * @return array
  *   Items in this array will be used as list items in a dropdown list. All
  *   returned items will be sorted using Element::children.
- *
  * @see \template_preprocess_item_list()
  */
-function hook_social_user_account_header_account_links(array $context) {
+function hook_social_user_account_header_account_links(array $context): array {
   // Provides a vertical divider and a logout link for the user.
   return [
     'divider_logout' => [
@@ -113,13 +108,11 @@ function hook_social_user_account_header_account_links_alter(array &$links, arra
  * @param array $context
  *   The context that was provided to the block rendering these links.
  *
- * @return array
  *   An associative array of items that should be added in the account header
  *   block. The key of the items should be a unique item name.
- *
  * @see \Drupal\social_user\Element\AccountHeaderElement
  */
-function hook_social_user_account_header_items(array $context) {
+function hook_social_user_account_header_items(array $context): array {
   // Uses an AccountHeaderElement to easily render a private message shortcut.
   $num_account_messages = 5;
   return [

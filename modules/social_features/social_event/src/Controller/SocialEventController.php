@@ -2,6 +2,9 @@
 
 namespace Drupal\social_event\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
@@ -45,10 +48,9 @@ class SocialEventController extends ControllerBase {
   /**
    * Redirects users to their events page.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns a redirect to the events of the currently logged in user.
    */
-  public function redirectMyEvents() {
+  public function redirectMyEvents(): RedirectResponse {
     return $this->redirect('view.events.events_overview', [
       'user' => $this->currentUser()->id(),
     ]);
@@ -60,10 +62,9 @@ class SocialEventController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   If access is allowed.
    */
-  public function myEventAccess(AccountInterface $account) {
+  public function myEventAccess(AccountInterface $account): AccessResultNeutral {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
     // If we don't have a user in the request, assume it's my own profile.
@@ -91,10 +92,9 @@ class SocialEventController extends ControllerBase {
   /**
    * Function to get the decline request title.
    *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The decline title markup.
    */
-  public function getTitleDeclineRequest() {
+  public function getTitleDeclineRequest(): TranslatableMarkup {
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->requestStack->getCurrentRequest()->get('node');
 

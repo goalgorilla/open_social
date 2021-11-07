@@ -73,10 +73,9 @@ class EventEnrollmentStatusHelper {
    * @param int $invite_status
    *   The event status to filter on.
    *
-   * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function userEnrollments($user, $event, $invite_status = NULL) {
+  public function userEnrollments($user, $event, $invite_status = NULL): array {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
@@ -121,10 +120,9 @@ class EventEnrollmentStatusHelper {
    * @param int $invite_status
    *   The event status to filter on.
    *
-   * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function eventEnrollments($event, $invite_status = NULL) {
+  public function eventEnrollments($event, $invite_status = NULL): array {
     $nid = $this->routeMatch->getRawParameter('node');
 
     if ($event) {
@@ -149,7 +147,7 @@ class EventEnrollmentStatusHelper {
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
    *   Returns all the enrollments for a user.
    */
-  public function getAllUserEventEnrollments($user) {
+  public function getAllUserEventEnrollments($user): array {
     $conditions = $this->userEnrollments($user, NULL);
 
     unset($conditions['field_event']);
@@ -171,7 +169,7 @@ class EventEnrollmentStatusHelper {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns a specific event enrollment for a user.
    */
-  public function getEventEnrollments($user, $event, $ignore_all_status = FALSE) {
+  public function getEventEnrollments($user, $event, $ignore_all_status = FALSE): array {
     $conditions = $this->userEnrollments($user, $event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field
@@ -195,7 +193,7 @@ class EventEnrollmentStatusHelper {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns all enrollments for an event.
    */
-  public function getAllEventEnrollments($event, $ignore_all_status = FALSE) {
+  public function getAllEventEnrollments($event, $ignore_all_status = FALSE): array {
     $conditions = $this->eventEnrollments($event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field

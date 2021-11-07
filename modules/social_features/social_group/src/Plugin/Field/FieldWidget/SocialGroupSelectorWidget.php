@@ -210,7 +210,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     $element['#suffix'] = '<div id="group-selection-result"></div>';
@@ -278,10 +278,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state to process.
    *
-   * @return \Drupal\Core\Ajax\AjaxResponse
    *   Response changing values of the visibility field and set status message.
    */
-  public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
+  public static function validateGroupSelection(array $form, FormStateInterface $form_state): AjaxResponse {
 
     $ajax_response = new AjaxResponse();
     $entity = $form_state->getFormObject()->getEntity();
@@ -350,13 +349,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity.
    *
-   * @return array
    *   A list of visibility options.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private static function getVisibilityOptionsforMultipleGroups(array $gids, EntityInterface $entity) {
+  private static function getVisibilityOptionsforMultipleGroups(array $gids, EntityInterface $entity): array {
     $groups = \Drupal::entityTypeManager()
       ->getStorage('group')
       ->loadMultiple($gids);
@@ -395,10 +393,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check for.
    *
-   * @return array
    *   An list of options for the field containing groups with create access.
    */
-  private function removeGroupsWithoutCreateAccess(array $options, User $account, EntityInterface $entity) {
+  private function removeGroupsWithoutCreateAccess(array $options, User $account, EntityInterface $entity): array {
 
     foreach ($options as $option_category_key => $groups_in_category) {
       if (is_array($groups_in_category)) {
@@ -432,10 +429,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The node bundle to check for.
    *
-   * @return int
    *   Either TRUE or FALSE.
    */
-  private function checkGroupContentCreateAccess($gid, User $account, EntityInterface $entity) {
+  private function checkGroupContentCreateAccess($gid, User $account, EntityInterface $entity): bool {
     $group = Group::load($gid);
 
     if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {

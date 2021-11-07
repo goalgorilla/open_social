@@ -78,7 +78,7 @@ class MentionActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     $recipients = [];
     $mentions = [];
 
@@ -143,7 +143,7 @@ class MentionActivityContext extends ActivityContextBase {
   /**
    * Check for valid entity.
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     if ($entity->getEntityTypeId() === 'mentions') {
       return TRUE;
     }
@@ -173,7 +173,7 @@ class MentionActivityContext extends ActivityContextBase {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   The mentions.
    */
-  public function getMentionsFromRelatedEntity(EntityInterface $entity) {
+  public function getMentionsFromRelatedEntity(EntityInterface $entity): array {
     if ($entity->getEntityTypeId() === 'comment') {
       if ($entity->hasParentComment()) {
         $entity = $entity->getParentComment();

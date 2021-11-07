@@ -17,7 +17,7 @@ abstract class DemoNode extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -103,7 +103,7 @@ abstract class DemoNode extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],
@@ -195,7 +195,7 @@ abstract class DemoNode extends DemoContent {
    * @param int|null $max
    *   How many items to generate.
    */
-  public function scrambleData(array $data, $max = NULL) {
+  public function scrambleData(array $data, $max = NULL): array {
     $new_data = [];
     for ($i = 0; $i < $max; $i++) {
       // Get a random item from the array.

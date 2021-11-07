@@ -20,7 +20,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions() {
+  public function getBulkOptions(): array {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'group_manage_members') {
@@ -67,7 +67,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsForm(array &$form, FormStateInterface $form_state) {
+  public function viewsForm(array &$form, FormStateInterface $form_state): void {
     $this->view->setExposedInput(['status' => TRUE]);
 
     parent::viewsForm($form, $form_state);
@@ -190,7 +190,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsFormValidate(&$form, FormStateInterface $form_state) {
+  public function viewsFormValidate(&$form, FormStateInterface $form_state): void {
     if ($this->view->id() === 'group_manage_members') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
@@ -223,7 +223,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state): void {
     parent::viewsFormSubmit($form, $form_state);
 
     if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'group_manage_members') {

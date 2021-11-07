@@ -95,7 +95,7 @@ class GroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
   /**
    * {@inheritdoc}
    */
-  public function viewsForm(array &$form, FormStateInterface $form_state) {
+  public function viewsForm(array &$form, FormStateInterface $form_state): void {
     parent::viewsForm($form, $form_state);
 
     $wrapper = &$form['header'][$this->options['id']];
@@ -114,7 +114,7 @@ class GroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
   /**
    * {@inheritdoc}
    */
-  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state): void {
     parent::viewsFormSubmit($form, $form_state);
 
     $redirect = $form_state->getRedirect();

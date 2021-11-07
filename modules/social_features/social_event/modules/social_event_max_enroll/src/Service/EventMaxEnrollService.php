@@ -85,7 +85,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isEnabled(NodeInterface $node) {
+  public function isEnabled(NodeInterface $node): bool {
     // Check if we're working with an event.
     if ($this->socialEventEnroll->isEnabled($node)) {
       $config = $this->configFactory->get('social_event_max_enroll.settings');

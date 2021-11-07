@@ -88,7 +88,7 @@ class FieldDownloadCount extends GenericFileFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $element = [];
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();

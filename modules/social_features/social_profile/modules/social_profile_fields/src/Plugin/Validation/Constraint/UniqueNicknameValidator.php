@@ -42,7 +42,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate($items, Constraint $constraint): void {
     foreach ($items as $item) {
       // Next check if the value is unique.
       if (!$this->isUnique($item->value)) {
@@ -57,11 +57,10 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    * @param string $value
    *   The provided nickname.
    *
-   * @return bool
    *   Returns TRUE if the name is not taken. Returns FALSE if the name is
    *   taken.
    */
-  private function isUnique($value) {
+  private function isUnique($value): bool {
     // Get all profiles with the provided nickname.
     $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
 

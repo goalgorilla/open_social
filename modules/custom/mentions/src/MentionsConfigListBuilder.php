@@ -13,14 +13,14 @@ class MentionsConfigListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'mentions_config_listbuilder_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header['id'] = $this->t('Machine name');
     return $header + parent::buildHeader();
   }
@@ -28,7 +28,7 @@ class MentionsConfigListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row['id'] = $entity->id();
     return $row + parent::buildRow($entity);
   }
@@ -36,7 +36,7 @@ class MentionsConfigListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
+  public function getDefaultOperations(EntityInterface $entity): array {
     $operations = parent::getDefaultOperations($entity);
 
     if ($entity->hasLinkTemplate('edit_form')) {

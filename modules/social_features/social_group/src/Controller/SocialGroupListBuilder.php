@@ -82,7 +82,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header = [
       'name' => [
         'data' => $this->t('Name'),
@@ -116,7 +116,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     /** @var \Drupal\group\Entity\GroupInterface $entity */
     // EntityListBuilder sets the table rows using the #rows property, so we
     // need to add the render array using the 'data' key.
@@ -149,7 +149,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function render(): array {
     $build = parent::render();
     $build['table']['#empty'] = $this->t('There are no groups yet.');
     return $build;
@@ -158,7 +158,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultOperations(EntityInterface $entity) {
+  protected function getDefaultOperations(EntityInterface $entity): array {
     $operations = parent::getDefaultOperations($entity);
 
     // Add the current path or destination as a redirect to the operation links.

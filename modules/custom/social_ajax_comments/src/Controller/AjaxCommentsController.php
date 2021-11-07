@@ -43,10 +43,9 @@ class AjaxCommentsController extends ContribController {
    * @param int $cid
    *   The id of the comment being edited, or 0 if this is a new comment.
    *
-   * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    */
-  public function socialCancel(Request $request, $cid) {
+  public function socialCancel(Request $request, $cid): AjaxResponse {
     // This is based on AjaxCommentsController::cancel.
     // the only change is we have some more wrappers we need to remove,
     // we can't tell this to ajax_comments because we render it in our template
@@ -107,12 +106,10 @@ class AjaxCommentsController extends ContribController {
    *   (optional) Some comments are replies to other comments. In those cases,
    *   $pid is the parent comment's comment ID. Defaults to NULL.
    *
-   * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
-   *
    * @see \Drupal\comment\Controller\CommentController::getReplyForm()
    */
-  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
+  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL): AjaxResponse {
     $response = new AjaxResponse();
 
     // Store the selectors from the incoming request, if applicable.
@@ -242,7 +239,7 @@ class AjaxCommentsController extends ContribController {
   /**
    * {@inheritdoc}
    */
-  protected function renderCommentField(EntityInterface $entity, $field_name) {
+  protected function renderCommentField(EntityInterface $entity, $field_name): array {
     $comment_display = parent::renderCommentField($entity, $field_name);
 
     $parameters = &$comment_display[0]['comments']['pager']['#route_parameters'];

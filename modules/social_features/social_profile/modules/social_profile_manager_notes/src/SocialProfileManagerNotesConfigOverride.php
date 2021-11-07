@@ -36,7 +36,7 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
   /**
    * Returns config overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $config_names = [
@@ -75,14 +75,14 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialProfileManagerNotesConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

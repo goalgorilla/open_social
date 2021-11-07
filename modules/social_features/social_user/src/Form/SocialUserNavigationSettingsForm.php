@@ -44,21 +44,21 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_navigation_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_user.navigation.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_user.navigation.settings');
@@ -96,7 +96,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_user.navigation.settings');

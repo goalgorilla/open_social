@@ -19,10 +19,9 @@ class SystemData extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
-   * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     $info = [
       'php' => [
         'version' => [

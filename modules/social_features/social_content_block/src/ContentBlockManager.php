@@ -49,7 +49,7 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
     string $column = NULL,
     array $element = NULL,
     bool $is_field = FALSE
-  ) {
+  ): array {
     if ($element !== NULL) {
       $parents = ['#field_parents'];
 
@@ -77,7 +77,7 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
     string $column = NULL,
     array $element = NULL,
     bool $is_field = FALSE
-  ) {
+  ): string {
     $parents = $this->getParents($field_name, $column, $element, $is_field);
 
     return sprintf(

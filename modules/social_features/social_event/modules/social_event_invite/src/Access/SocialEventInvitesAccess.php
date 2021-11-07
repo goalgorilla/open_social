@@ -34,12 +34,10 @@ class SocialEventInvitesAccess {
   /**
    * Custom access check on the invite features on events.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Returns the result of the access helper.
-   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::eventFeatureAccess()
    */
-  public function eventFeatureAccess() {
+  public function eventFeatureAccess(): AccessResult {
     try {
       return $this->accessHelper->eventFeatureAccess();
     }
@@ -54,12 +52,10 @@ class SocialEventInvitesAccess {
   /**
    * Custom access check for the user invite overview.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Returns the result of the access helper.
-   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::userInviteAccess()
    */
-  public function userInviteAccess() {
+  public function userInviteAccess(): AccessResult {
     return $this->accessHelper->userInviteAccess();
   }
 

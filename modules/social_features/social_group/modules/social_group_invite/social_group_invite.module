@@ -231,7 +231,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
  * @return string|null
  *   The field value or NULL if there isn't any.
  */
-function _social_group_get_group_invite_value(GroupContent $entity, $field_name) {
+function _social_group_get_group_invite_value(GroupContent $entity, $field_name): ?string {
   $field_value = NULL;
   if ($entity->hasField($field_name)) {
     try {
@@ -251,10 +251,9 @@ function _social_group_get_group_invite_value(GroupContent $entity, $field_name)
 /**
  * Check if current group it's group_type has invites enabled.
  *
- * @return bool
  *   TRUE if it's enabled.
  */
-function _social_group_invite_current_type_enabled_invites() {
+function _social_group_invite_current_type_enabled_invites(): bool {
   $enabled = FALSE;
   $group = _social_group_get_current_group();
   // Check if group type has content plugin enabled.

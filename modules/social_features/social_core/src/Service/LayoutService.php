@@ -20,10 +20,9 @@ class LayoutService {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check.
    *
-   * @return bool
    *   TRUE if the entity can have a layout otherwise FALSE.
    */
-  public function isTrueLayoutCompatibleEntity(EntityInterface $entity) {
+  public function isTrueLayoutCompatibleEntity(EntityInterface $entity): bool {
     if (!\Drupal::moduleHandler()->moduleExists('layout_builder')) {
       return FALSE;
     }

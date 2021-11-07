@@ -36,10 +36,9 @@ class UserStatistics {
    * @param string $type
    *   Node type id.
    *
-   * @return int
    *   The number of nodes.
    */
-  public function nodeCount($user_id, $type) {
+  public function nodeCount($user_id, $type): int {
     return $this->count($user_id, $type);
   }
 
@@ -51,10 +50,9 @@ class UserStatistics {
    * @param string $type
    *   Entity type.
    *
-   * @return int
    *   The number of entities.
    */
-  protected function count($user_id, $type) {
+  protected function count($user_id, $type): int {
     $query = $this->database->select('node_field_data', 'nfd');
     $query->addField('nfd', 'nid');
     $query->condition('nfd.uid', $user_id);

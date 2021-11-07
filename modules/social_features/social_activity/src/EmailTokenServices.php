@@ -2,6 +2,7 @@
 
 namespace Drupal\social_activity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityTypeManager;
@@ -72,7 +73,7 @@ class EmailTokenServices {
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   An entity object. NULL if no matching entity is found.
    */
-  public function getRelatedObject(Message $message) {
+  public function getRelatedObject(Message $message): ?EntityInterface {
     $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
     $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
@@ -87,10 +88,9 @@ class EmailTokenServices {
    * @param \Drupal\comment\Entity\Comment $comment
    *   The comment entity.
    *
-   * @return array
    *   The renderable array.
    */
-  public function getCommentPreview(Comment $comment) {
+  public function getCommentPreview(Comment $comment): array {
     $preview_info = [];
 
     if ($comment->hasField('field_comment_body') && !$comment->get('field_comment_body')->isEmpty()) {
@@ -111,10 +111,9 @@ class EmailTokenServices {
    * @param \Drupal\node\Entity\Node $node
    *   The node entity.
    *
-   * @return array
    *   The renderable array.
    */
-  public function getContentPreview(Node $node) {
+  public function getContentPreview(Node $node): array {
     $preview_info = [];
 
     // Prepare the link to node.
@@ -147,10 +146,9 @@ class EmailTokenServices {
    * @param \Drupal\social_post\Entity\Post $post
    *   The post entity.
    *
-   * @return array
    *   The renderable array.
    */
-  public function getPostPreview(Post $post) {
+  public function getPostPreview(Post $post): array {
     $preview_info = [];
 
     // Get the summary of the comment.
@@ -173,13 +171,12 @@ class EmailTokenServices {
    * @param \Drupal\user\Entity\User $user
    *   The user entity.
    *
-   * @return array
    *   The renderable array.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getUserPreview(User $user) {
+  public function getUserPreview(User $user): array {
     $preview_info = [];
 
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
@@ -218,10 +215,9 @@ class EmailTokenServices {
    * @param \Drupal\group\Entity\Group $group
    *   The group entity.
    *
-   * @return array
    *   The renderable array.
    */
-  public function getGroupPreview(Group $group) {
+  public function getGroupPreview(Group $group): array {
     // Add the group preview.
     return [
       '#theme' => 'message_group_preview',
@@ -239,10 +235,9 @@ class EmailTokenServices {
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $text
    *   The label of the button.
    *
-   * @return array
    *   The renderable array.
    */
-  public function getCtaButton(Url $url, TranslatableMarkup $text) {
+  public function getCtaButton(Url $url, TranslatableMarkup $text): array {
     return [
       '#theme' => 'message_cta_button',
       '#link' => $url,

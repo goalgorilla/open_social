@@ -33,7 +33,7 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isEnabled(NodeInterface $node) {
+  public function isEnabled(NodeInterface $node): bool {
     if (
       $this->eventSettings->get('disable_event_enroll') ||
       $node->bundle() !== 'event' ||

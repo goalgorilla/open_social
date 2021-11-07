@@ -2,6 +2,7 @@
 
 namespace Drupal\social_book;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
@@ -17,14 +18,14 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getModule() {
+  protected function getModule(): string {
     return 'social_book';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName() {
+  protected function getDisplayName(): TranslatableMarkup {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
     return $this->t('Book Pages');
@@ -33,7 +34,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getTranslationOverrides() {
+  protected function getTranslationOverrides(): array {
     return [
       'language.content_settings.node.book' => [
         'third_party_settings' => [

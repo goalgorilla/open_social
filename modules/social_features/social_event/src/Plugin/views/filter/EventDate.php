@@ -35,7 +35,7 @@ class EventDate extends InOperator {
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL): void {
     parent::init($view, $display, $options);
     $this->definition['options callback'] = [$this, 'generateOptions'];
   }
@@ -43,7 +43,7 @@ class EventDate extends InOperator {
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
     $value = (int) current($this->value);
 
     if (empty($value)) {
@@ -83,10 +83,9 @@ class EventDate extends InOperator {
   /**
    * Retrieves the allowed values for the date filter.
    *
-   * @return array
    *   An array of allowed values in the form key => label.
    */
-  public function generateOptions() {
+  public function generateOptions(): array {
     return [
       self::UPCOMING_EVENTS => $this->t('Ongoing and upcoming events'),
       self::PAST_EVENTS => $this->t('Past events'),

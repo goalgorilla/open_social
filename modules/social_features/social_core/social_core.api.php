@@ -39,38 +39,32 @@ function hook_social_node_title_prefix_articles_alter(array &$node_types) {
 /**
  * Provides route for node page where should be displayed simple title.
  *
- * @return string
  *   The route name.
- *
  * @see \Drupal\social_core\Plugin\Block\SocialPageTitleBlock::build()
  */
-function hook_social_core_node_default_title_route() {
+function hook_social_core_node_default_title_route(): string {
   return 'entity.node.edit_form';
 }
 
 /**
  * @} End of "addtogroup hooks".
  */
-
 /**
  * Hooks to alter the visibility of blocks by denying access.
  *
  * @denyaccesstoblock hooks
  * @{
  */
-
 /**
  * Provide a method to alter array of blocks to hide.
  *
  * This way we can also make sure that if another modules alter the same
  * block that it will merge the array in one.
  *
- * @return array
  *   Blocks in this array will be hidden from the associated paths.
- *
  * @ingroup social_core_block_api
  */
-function hook_social_core_block_visibility_path() {
+function hook_social_core_block_visibility_path(): array {
   $blocks = [
     'block_plugin_id_1' => [
       'path_1',

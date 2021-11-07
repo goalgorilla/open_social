@@ -15,7 +15,7 @@ class SocialLanguageServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     $definition = $container->getDefinition('main_content_renderer.modal');
     $definition->setClass('Drupal\social_language\SocialLanguageModalRenderer');
   }

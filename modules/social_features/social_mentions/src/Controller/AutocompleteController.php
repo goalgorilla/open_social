@@ -77,10 +77,9 @@ class AutocompleteController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request.
    *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Returns a JsonResponse.
    */
-  public function suggestions(Request $request) {
+  public function suggestions(Request $request): JsonResponse {
     $name = $request->get('term');
     $config = $this->configFactory->get('mentions.settings');
     $suggestion_format = $config->get('suggestions_format');

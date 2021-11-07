@@ -44,21 +44,21 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_comment_upload_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_comment_upload.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_comment_upload.settings');
@@ -77,7 +77,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_comment_upload.settings');

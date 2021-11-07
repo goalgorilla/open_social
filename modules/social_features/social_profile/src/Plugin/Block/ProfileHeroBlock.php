@@ -81,7 +81,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $account = $this->getContextValue('user');
     $storage = $this->entityTypeManager->getStorage('profile');
     $profile = $storage->loadByUser($account, 'profile');
@@ -99,7 +99,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
   }
 

@@ -18,7 +18,7 @@ class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * Returns config overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // Override post photo default.
@@ -47,14 +47,14 @@ class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialLikeConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

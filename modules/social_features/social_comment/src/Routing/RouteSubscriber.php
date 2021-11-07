@@ -31,7 +31,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function alterRoutes(RouteCollection $collection) {
+  public function alterRoutes(RouteCollection $collection): void {
     // Redirect comment/comment page to entity if applicable.
     $config = $this->configFactory->get('social_comment.comment_settings');
     $redirect_comment_to_entity = $config->get('redirect_comment_to_entity');

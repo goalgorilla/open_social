@@ -20,26 +20,26 @@ class PostGroupStream extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {
+  public function adminSummary(): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  protected function operatorForm(&$form, FormStateInterface $form_state): void {
   }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
   /**
    * Query for the activity stream on the group pages.
    */
-  public function query() {
+  public function query(): void {
 
     // Get the group.
     $group = \Drupal::routeMatch()->getParameter('group');
@@ -60,7 +60,7 @@ class PostGroupStream extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

@@ -2,6 +2,9 @@
 
 namespace Drupal\social_group\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Access\AccessResultNeutral;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
@@ -78,10 +81,9 @@ class SocialGroupController extends ControllerBase {
    * @param object $group
    *   The group ID.
    *
-   * @return string
    *   The page title.
    */
-  public function groupMembersTitle($group) {
+  public function groupMembersTitle($group): TranslatableMarkup {
     // If it's not a group then it's a gid.
     if (!$group instanceof Group) {
       $group = Group::load($group);
@@ -95,10 +97,9 @@ class SocialGroupController extends ControllerBase {
    * @param object $group
    *   The group ID.
    *
-   * @return string
    *   The page title.
    */
-  public function groupStreamTitle($group) {
+  public function groupStreamTitle($group): string {
     $group_label = $group->label();
     return $group_label;
   }
@@ -106,10 +107,9 @@ class SocialGroupController extends ControllerBase {
   /**
    * Callback function of the stream page of a group.
    *
-   * @return array
    *   A renderable array.
    */
-  public function groupStream() {
+  public function groupStream(): array {
     return [
       '#markup' => '',
     ];
@@ -118,10 +118,9 @@ class SocialGroupController extends ControllerBase {
   /**
    * The title callback for the entity.group_content.add_form.
    *
-   * @return string
    *   The page title.
    */
-  public function groupAddMemberTitle() {
+  public function groupAddMemberTitle(): TranslatableMarkup {
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
     $group = \Drupal::routeMatch()->getParameter('group');
     if ($group_content instanceof GroupContent &&
@@ -141,10 +140,9 @@ class SocialGroupController extends ControllerBase {
   /**
    * The title callback for the entity.group_content.delete-form.
    *
-   * @return string
    *   The page title.
    */
-  public function groupRemoveContentTitle($group) {
+  public function groupRemoveContentTitle($group): TranslatableMarkup {
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
     if ($group_content instanceof GroupContent &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
@@ -163,10 +161,9 @@ class SocialGroupController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   If access is allowed.
    */
-  public function myGroupAccess(AccountInterface $account) {
+  public function myGroupAccess(AccountInterface $account): AccessResultNeutral {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
     // If we don't have a user in the request, assume it's my own profile.
@@ -198,10 +195,9 @@ class SocialGroupController extends ControllerBase {
   /**
    * Redirects users to their groups page.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns a redirect to the groups of the currently logged in user.
    */
-  public function redirectMyGroups() {
+  public function redirectMyGroups(): RedirectResponse {
     return $this->redirect('view.groups.page_user_groups', [
       'user' => $this->currentUser()->id(),
     ]);
@@ -210,10 +206,9 @@ class SocialGroupController extends ControllerBase {
   /**
    * OtherGroupPage.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the group account.
    */
-  public function otherGroupPage($group) {
+  public function otherGroupPage($group): RedirectResponse {
     return $this->redirect('entity.group.canonical', ['group' => $group]);
   }
 
@@ -225,10 +220,9 @@ class SocialGroupController extends ControllerBase {
    * @param string $plugin_id
    *   The group content enabler to create content with.
    *
-   * @return string
    *   The page title.
    */
-  public function createFormTitle(GroupInterface $group, $plugin_id) {
+  public function createFormTitle(GroupInterface $group, $plugin_id): TranslatableMarkup {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
     $group_content_type = GroupContentType::load($plugin->getContentTypeConfigId());

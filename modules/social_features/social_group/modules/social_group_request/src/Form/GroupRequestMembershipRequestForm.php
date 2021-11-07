@@ -91,14 +91,14 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_request_membership_request';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL): array {
     $this->group = $group;
 
     $form['description'] = [
@@ -124,7 +124,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): FormStateInterface {
     $content_type_config_id = $this->group
       ->getGroupType()
       ->getContentPlugin('group_membership_request')

@@ -27,10 +27,9 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account to check access for.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
+  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     $permission = $route->getRequirement('_flexible_group_join_permission');
     $group_permission = $route->getRequirement('_group_permission');
 
@@ -112,10 +111,9 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The parametrized route.
    *
-   * @return bool
    *   FALSE if its not allowed.
    */
-  private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match) {
+  private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match): bool {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
 

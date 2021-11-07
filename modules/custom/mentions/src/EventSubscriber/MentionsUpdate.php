@@ -41,7 +41,7 @@ class MentionsUpdate implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events['mentions.update'][] = ['onMentionsUpdate', 0];
     return $events;
@@ -50,7 +50,7 @@ class MentionsUpdate implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public function onMentionsUpdate($event) {
+  public function onMentionsUpdate($event): void {
     $config = $this->configFactory->get('mentions.settings');
     $config_mentions_events = $config->get('mentions_events');
     $action_id = $config_mentions_events['update'];

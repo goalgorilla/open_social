@@ -66,7 +66,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function hasContent() {
+  public function hasContent(): bool {
     if (count($this->getCategories()) == 0) {
       return FALSE;
     }
@@ -77,14 +77,14 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function allowSplit() {
+  public function allowSplit(): bool {
     return $this->isActive() && $this->profileConfig->get('allow_category_split');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCategories() {
+  public function getCategories(): array {
     // Define as array.
     $options = [];
 
@@ -115,7 +115,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getChildrens($category) {
+  public function getChildrens($category): array {
     // Define as array.
     $options = [];
 
@@ -147,7 +147,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function tagLabelToMachineName($label) {
+  public function tagLabelToMachineName($label): string {
     return strtolower(str_replace(' ', '', $label));
   }
 
@@ -216,10 +216,9 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
    * @param array $terms
    *   Array of terms.
    *
-   * @return array
    *   Returns a list of terms options.
    */
-  private function prepareTermOptions(array $terms) {
+  private function prepareTermOptions(array $terms): array {
     $options = [];
     foreach ($terms as $category) {
       $options[$category->tid] = $category->name;

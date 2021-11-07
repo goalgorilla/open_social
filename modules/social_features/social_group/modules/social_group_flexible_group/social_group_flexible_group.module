@@ -507,10 +507,9 @@ function social_group_flexible_group_form_social_group_add_alter(&$form, FormSta
  * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
- * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_can_join_directly(GroupInterface $group) {
+function social_group_flexible_group_can_join_directly(GroupInterface $group): bool {
   $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
   if (!in_array('direct', array_column($join_methods, 'value'), FALSE)) {
@@ -526,10 +525,9 @@ function social_group_flexible_group_can_join_directly(GroupInterface $group) {
  * @param \Drupal\group\Entity\Group $group
  *   The group we are checking.
  *
- * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_can_be_added(Group $group) {
+function social_group_flexible_group_can_be_added(Group $group): bool {
   $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
   if (!in_array('added', array_column($join_methods, 'value'), FALSE)) {
@@ -545,10 +543,9 @@ function social_group_flexible_group_can_be_added(Group $group) {
  * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
- * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_public_enabled(GroupInterface $group) {
+function social_group_flexible_group_public_enabled(GroupInterface $group): bool {
   $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
 
   if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
@@ -564,10 +561,9 @@ function social_group_flexible_group_public_enabled(GroupInterface $group) {
  * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
- * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_community_enabled(GroupInterface $group) {
+function social_group_flexible_group_community_enabled(GroupInterface $group): bool {
   $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
 
   if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {
@@ -583,10 +579,9 @@ function social_group_flexible_group_community_enabled(GroupInterface $group) {
  * @param \Drupal\group\Entity\Group $group
  *   The group we are checking.
  *
- * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_members_enabled(Group $group) {
+function social_group_flexible_group_members_enabled(Group $group): bool {
   $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
 
   if (!in_array('group', array_column($visibility_options, 'value'), FALSE)) {

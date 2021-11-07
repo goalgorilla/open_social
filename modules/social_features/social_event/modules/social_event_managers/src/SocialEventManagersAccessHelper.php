@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_managers;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
@@ -14,7 +15,7 @@ class SocialEventManagersAccessHelper {
   /**
    * NodeAccessCheck for given operation, node and user account.
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
     if ($op === 'update') {
 
       // Only for events.
@@ -45,7 +46,7 @@ class SocialEventManagersAccessHelper {
   /**
    * Gets the Entity access for the given node.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): CacheableDependencyInterface {
     $access = self::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {

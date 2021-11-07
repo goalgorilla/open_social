@@ -25,7 +25,7 @@ class SocialLazyCommentDefaultFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Elements from core comment formatter.
     $elements = parent::viewElements($items, $langcode);
 

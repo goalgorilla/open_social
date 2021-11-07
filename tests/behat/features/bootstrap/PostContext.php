@@ -16,7 +16,7 @@ class PostContext extends RawDrupalContext implements Context {
   /**
    * @AfterScenario @database&&@post
    */
-  public function cleanupPost(AfterScenarioScope $scope) {
+  public function cleanupPost(AfterScenarioScope $scope): void {
     $query = \Drupal::entityQuery('post')
       ->condition('field_post', array(
         'This is a public post.',

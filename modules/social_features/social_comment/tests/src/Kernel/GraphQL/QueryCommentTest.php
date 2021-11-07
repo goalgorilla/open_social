@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\social_comment\Kernel\GraphQL;
 
+use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Entity\EntityInterface;
@@ -131,7 +132,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
   /**
    * Test that it respects the access comments permission.
    */
-  public function testRequiresAccessCommentsPermission() {
+  public function testRequiresAccessCommentsPermission(): void {
     // Create a published comment on a node.
     $node = $this->createNode();
     $this->setUpCurrentUser([], array_merge(['skip comment approval', 'access comments'], $this->userPermissions()));
@@ -161,7 +162,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
    * This mirrors the functionality of the distribution at the time of writing
    * the test.
    */
-  public function testUserCanNotViewOwnUnpublishedComment() {
+  public function testUserCanNotViewOwnUnpublishedComment(): void {
     // Create an unpublished comment on a node.
     $node = $this->createNode();
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
@@ -185,7 +186,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
   /**
    * Test that a user can not view another person's unpublished comment.
    */
-  public function testUserCanNotViewOtherUnpublishedComment() {
+  public function testUserCanNotViewOtherUnpublishedComment(): void {
     // Create an unpublished comment on a node.
     $node = $this->createNode();
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
@@ -219,10 +220,9 @@ class QueryCommentTest extends SocialGraphQLTestBase {
    * @param mixed[] $values
    *   An optional array of values to pass to Comment::create.
    *
-   * @return \Drupal\comment\CommentInterface
    *   Created comment entity.
    */
-  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []) {
+  private function createComment(EntityInterface $entity, ?AccountInterface $user = NULL, array $values = []): CommentInterface {
     if ($user !== NULL) {
       $values += ['uid' => $user->id()];
     }

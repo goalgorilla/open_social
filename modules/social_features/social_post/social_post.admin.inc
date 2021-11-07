@@ -73,12 +73,10 @@ function social_post_mass_update(array $posts, array $updates, $langcode = NULL,
  *   (optional) The language updates should be applied to. If none is specified
  *   all available languages are processed.
  *
- * @return \Drupal\social_post\Entity\PostInterface
  *   An updated post object.
- *
  * @see social_post_mass_update()
  */
-function _social_post_mass_update_helper(PostInterface $post, array $updates, $langcode = NULL) {
+function _social_post_mass_update_helper(PostInterface $post, array $updates, $langcode = NULL): PostInterface {
   $langcodes = isset($langcode) ? [$langcode] : array_keys($post->getTranslationLanguages());
   // For efficiency manually save the original post before applying any changes.
   $post->original = clone $post;

@@ -54,10 +54,9 @@ class EventAnEnrollService {
    * @param int $nid
    *   The node ID.
    *
-   * @return int
    *   The number of anonymous event enrollments.
    */
-  public function enrollmentCount($nid) {
+  public function enrollmentCount($nid): int {
     $query = $this->database
       ->select('event_enrollment__field_account', 'eefa');
     $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
@@ -78,10 +77,9 @@ class EventAnEnrollService {
    * @param int $nid
    *   The node ID.
    *
-   * @return bool
    *   TRUE if token exists, FALSE otherwise.
    */
-  public function tokenExists($token, $nid) {
+  public function tokenExists($token, $nid): bool {
     $query = $this->database
       ->select('event_enrollment__field_token', 'eeft');
     $query->join('event_enrollment__field_event', 'eefe', 'eeft.entity_id = eefe.entity_id');
@@ -99,10 +97,9 @@ class EventAnEnrollService {
   /**
    * Checks if a visitor is enrolled.
    *
-   * @return bool
    *   Returns TRUE if the visitor is enrolled to this event, otherwise FALSE.
    */
-  public function isEnrolled() {
+  public function isEnrolled(): bool {
     // Make sure the current user is anonymous.
     if (!$this->currentUser->isAnonymous()) {
       return FALSE;

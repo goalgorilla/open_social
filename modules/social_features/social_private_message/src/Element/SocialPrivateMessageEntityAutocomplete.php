@@ -18,7 +18,7 @@ class SocialPrivateMessageEntityAutocomplete extends EntityAutocomplete {
   /**
    * Form element validation handler for entity_autocomplete elements.
    */
-  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form): void {
     parent::validateEntityAutocomplete($element, $form_state, $complete_form);
 
     $value = $form_state->getValue('members');

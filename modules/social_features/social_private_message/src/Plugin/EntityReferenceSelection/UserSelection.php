@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_profile\Plugin\EntityReferenceSelection\UserSelection as UserSelectionBase;
 use Drupal\user\RoleInterface;
 
@@ -21,7 +22,7 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []): QueryInterface {
     /** @var \Drupal\user\RoleStorageInterface $r_storage */
     $role_storage = $this->entityTypeManager->getStorage('user_role');
 

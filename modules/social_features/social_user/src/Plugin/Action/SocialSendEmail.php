@@ -135,7 +135,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function setContext(array &$context) {
+  public function setContext(array &$context): void {
     parent::setContext($context);
     // @todo make the batch size configurable.
     $context['batch_size'] = Settings::get('social_mail_batch_size', 25);
@@ -144,7 +144,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo make the chunk size configurable or dependable on the batch size.
@@ -188,7 +188,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param array $data
    *   The queue data.
    */
-  public function createQueueItem($name, array $data) {
+  public function createQueueItem($name, array $data): void {
     // Put the $data in the queue item.
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get($name);
@@ -205,14 +205,14 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The email address, or NULL if the account is anonymous or the user does
    *   not have an email address.
    */
-  public function getEmail(UserInterface $account) {
+  public function getEmail(UserInterface $account): ?string {
     return $account->getEmail();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state) {
+  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): void {
   }
 
   /**
@@ -226,10 +226,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    *
-   * @return array
    *   The configuration form.
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['reply'] = [
       '#type' => 'email',
       '#title' => $this->t('Reply-to'),
@@ -295,7 +294,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
     // Clean form values.
     $form_state->cleanValues();
@@ -320,7 +319,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool {
     // @todo Check for proper access here.
     return TRUE;
   }

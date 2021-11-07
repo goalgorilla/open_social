@@ -2,6 +2,9 @@
 
 namespace Drupal\social_group_request\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
@@ -87,21 +90,21 @@ class GroupRequestController extends ControllerBase {
   /**
    * Return the title for approve request confirmation page.
    */
-  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
     return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
-  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
     return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Builds the form to create new membership on membership request approve.
    */
-  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content) {
+  public function approveRequest(GroupInterface $group, GroupContentInterface $group_content): array {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
 
@@ -120,7 +123,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to request membership.
    */
-  public function requestMembership(GroupInterface $group) {
+  public function requestMembership(GroupInterface $group): AjaxResponse {
     $response = new AjaxResponse();
 
     $contentTypeConfigId = $group
@@ -150,7 +153,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to request membership for anonymous.
    */
-  public function anonymousRequestMembership(GroupInterface $group) {
+  public function anonymousRequestMembership(GroupInterface $group): AjaxResponse {
     $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
 
     $response = new AjaxResponse();
@@ -165,7 +168,7 @@ class GroupRequestController extends ControllerBase {
   /**
    * Callback to cancel the request of membership.
    */
-  public function cancelRequest(GroupInterface $group) {
+  public function cancelRequest(GroupInterface $group): RedirectResponse {
     $content_type_config_id = $group
       ->getGroupType()
       ->getContentPlugin('group_membership_request')
@@ -195,10 +198,9 @@ class GroupRequestController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function routeAccess(AccountInterface $account) {
+  public function routeAccess(AccountInterface $account): AccessResultAllowed {
     // @todo refactor this when Group entity query access lands.
     $has_administer_users = $account->hasPermission('administer members');
     if ($has_administer_users) {

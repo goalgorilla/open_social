@@ -17,14 +17,14 @@ class SocialUserPasswordForm extends UserPasswordForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_password_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
 
     $form['forgot'] = [
@@ -53,14 +53,14 @@ class SocialUserPasswordForm extends UserPasswordForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
     // No validation necessary to protect the privacy of users.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = trim($form_state->getValue('name'));
     // Try to load by email.
     $users = $this->userStorage->loadByProperties(['mail' => $name]);

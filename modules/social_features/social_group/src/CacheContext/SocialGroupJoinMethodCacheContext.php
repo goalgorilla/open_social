@@ -14,7 +14,7 @@ class SocialGroupJoinMethodCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getLabel() {
+  public static function getLabel(): void {
     \Drupal::messenger()->addMessage('Cache context for the join methods');
   }
 
@@ -34,7 +34,7 @@ class SocialGroupJoinMethodCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata() {
+  public function getCacheableMetadata(): CacheableMetadata {
     return new CacheableMetadata();
   }
 

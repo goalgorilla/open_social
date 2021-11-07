@@ -20,10 +20,9 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    * @param array $names
    *   The names of the configs for which overrides are being loaded.
    *
-   * @return bool
    *   Whether we override those configs.
    */
-  private function shouldApplyOverrides(array $names) {
+  private function shouldApplyOverrides(array $names): bool {
     $config_names = [
       'views.view.search_content',
       'views.view.search_groups',
@@ -342,14 +341,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialTaggingOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     // If this override doesn't apply to the given config then we return an
     // empty cacheable metadata object that can be cached forever.
     if (!$this->shouldApplyOverrides([$name])) {

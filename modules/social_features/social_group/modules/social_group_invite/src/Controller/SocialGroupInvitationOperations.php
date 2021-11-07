@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Controller;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
@@ -22,10 +23,9 @@ class SocialGroupInvitationOperations extends InvitationOperations {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response object.
    */
-  public function accepted(Request $request, GroupContentInterface $group_content) {
+  public function accepted(Request $request, GroupContentInterface $group_content): RedirectResponse {
     $group = $group_content->getGroup();
     $contentTypeConfigId = $group_content->getGroup()
       ->getGroupType()
@@ -59,7 +59,7 @@ class SocialGroupInvitationOperations extends InvitationOperations {
   /**
    * {@inheritdoc}
    */
-  public function checkAccess(GroupContentInterface $group_content) {
+  public function checkAccess(GroupContentInterface $group_content): CacheableDependencyInterface {
     $invited = $group_content->get('entity_id')->getString();
 
     // Only allow user accept/decline own invitations.

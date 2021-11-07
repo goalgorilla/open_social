@@ -393,10 +393,9 @@ function social_user_form_views_form_user_admin_people_page_1_alter(&$form, Form
  * @param string $name_or_mail
  *   Username or email address.
  *
- * @return bool
  *   TRUE if blocked FALSE if not blocked
  */
-function social_user_is_blocked($name_or_mail) {
+function social_user_is_blocked($name_or_mail): bool {
   $is_blocked_name = (bool) \Drupal::entityQuery('user')
     ->condition('name', $name_or_mail)
     ->condition('status', 0)
@@ -656,10 +655,9 @@ function social_user_form_system_site_information_settings_submit($form, FormSta
  * target can't be found then the fieldset is appended to the end. If the
  * fieldset has already been added then nothing happens.
  *
- * @return string
  *   The key of the fieldset that was added.
  */
-function social_user_ensure_help_text_fieldset(&$form) {
+function social_user_ensure_help_text_fieldset(&$form): string {
   $key = 'user_help_texts';
 
   if (in_array($key, array_keys($form))) {

@@ -2,6 +2,8 @@
 
 namespace Drupal\social_core\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -59,7 +61,7 @@ class SocialCoreController extends ControllerBase {
   /**
    * Custom function for returning markup on the access denied page.
    */
-  public function accessDenied() {
+  public function accessDenied(): array {
     // Get the front page URL.
     $frontpage = $this->config('system.site')->get('page.front');
 
@@ -73,7 +75,7 @@ class SocialCoreController extends ControllerBase {
   /**
    * Empty page for the homepage.
    */
-  public function stream() {
+  public function stream(): array {
     $element = [
       '#markup' => '',
     ];
@@ -90,7 +92,7 @@ class SocialCoreController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    */
-  public function updateSelection($view_id, $display_id, Request $request) {
+  public function updateSelection($view_id, $display_id, Request $request): AjaxResponse {
     $view_data = $this->getTempstoreData($view_id, $display_id);
     if (empty($view_data)) {
       throw new NotFoundHttpException();
@@ -177,10 +179,9 @@ class SocialCoreController extends ControllerBase {
   /**
    * Redirects a user to the group or events invite page, or home if empty.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns a redirect to the events of the currently logged in user.
    */
-  public function myInvitesUserPage() {
+  public function myInvitesUserPage(): RedirectResponse {
     /** @var \Drupal\social_core\InviteService $core_invites */
     $core_invites = \Drupal::service('social_core.invite');
     // Only when there are actual Invite plugins enabled.
@@ -203,10 +204,9 @@ class SocialCoreController extends ControllerBase {
    * @param \Drupal\node\NodeTypeInterface $node_type
    *   The current node.
    *
-   * @return string
    *   The page title.
    */
-  public function addPageTitle(NodeTypeInterface $node_type) {
+  public function addPageTitle(NodeTypeInterface $node_type): TranslatableMarkup {
     // The node_types that have a different article than a.
     $node_types = [
       'event' => 'an',

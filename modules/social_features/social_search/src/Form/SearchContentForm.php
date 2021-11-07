@@ -47,14 +47,14 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'search_content_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form['search_input_content'] = [
       '#type' => 'textfield',
@@ -78,7 +78,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $search_all_view = 'search_all';
     if (empty($form_state->getValue('search_input_content'))) {
       // Redirect to the search content page with empty search values.

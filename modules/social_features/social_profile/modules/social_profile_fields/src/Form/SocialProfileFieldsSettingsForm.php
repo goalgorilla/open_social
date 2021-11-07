@@ -116,21 +116,21 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_profile_fields_admin_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_profile_fields.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_profile_fields.settings');
 
     // Add an introduction text to explain what can be done here.
@@ -242,7 +242,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Save config.
     $config = $this->config('social_profile_fields.settings');
 
@@ -303,7 +303,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   /**
    * Redirects to confirmation form for the flush action.
    */
-  public function submitFlush(array &$form, FormStateInterface $form_state) {
+  public function submitFlush(array &$form, FormStateInterface $form_state): void {
     $form_state->setRedirect('social_profile_fields.flush');
   }
 

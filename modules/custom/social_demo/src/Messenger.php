@@ -18,7 +18,7 @@ class Messenger extends MessengerBase {
   /**
    * {@inheritdoc}
    */
-  public function addMessage($message, $type = MessengerBase::TYPE_STATUS, $repeat = FALSE) {
+  public function addMessage($message, $type = MessengerBase::TYPE_STATUS, $repeat = FALSE): self {
     // Skip all status messages while the demo content module is enabled.
     // This avoids follow and enrollment messages that are not needed for the
     // admin. The demo content module provides its own way of showing progress

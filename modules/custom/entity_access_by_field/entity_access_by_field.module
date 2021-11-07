@@ -236,10 +236,9 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity object to prepare correct value.
  *
- * @return string
  *   Default value of the field.
  */
-function _entity_access_by_field_get_default_visibility(EntityInterface $entity) {
+function _entity_access_by_field_get_default_visibility(EntityInterface $entity): string {
   $default_visibility = &drupal_static(__FUNCTION__ . '_' . $entity->getEntityTypeId());
 
   if ($default_visibility) {

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -82,7 +83,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute($entity = NULL): TranslatableMarkup {
     $role = $this->configuration['role'];
     $is_member = $this->configuration['is_member'];
     $update = TRUE;
@@ -134,7 +135,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['#title'] = $this->formatPlural($this->context['selected_count'], 'Change the role of selected member', 'Change the role of @count selected members');
 
     $id = $this->routeMatch->getRawParameter('group');
@@ -182,7 +183,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);
 
     $this->configuration['is_member'] = $this->configuration['role'] === $form_state->get('member_role');

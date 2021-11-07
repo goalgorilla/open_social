@@ -2,6 +2,7 @@
 
 namespace Drupal\group_core_comments\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
@@ -269,7 +270,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
   /**
    * Checks if account was granted permission in group.
    */
-  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents, &$output) {
+  protected function getPermissionInGroups($perm, AccountInterface $account, $group_contents, &$output): CacheableDependencyInterface {
     foreach ($group_contents as $group_content) {
       $group = $group_content->getGroup();
 

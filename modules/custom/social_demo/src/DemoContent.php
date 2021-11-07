@@ -151,7 +151,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
-  public function getProfile() {
+  public function getProfile(): string {
     return isset($this->profile) ? $this->profile : '';
   }
 
@@ -180,7 +180,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
-  public function count() {
+  public function count(): int {
     return count($this->content);
   }
 
@@ -251,7 +251,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @return mixed
    *   If nothing needs to be replaced, just return the same content.
    */
-  protected function checkMentionOrLinkByUuid($content) {
+  protected function checkMentionOrLinkByUuid($content): ?string {
     // Check if there's a mention in the given content.
     if (strpos($content, '[~') !== FALSE || strpos($content, '[link=') !== FALSE) {
       // Put the content in a logical var.
@@ -323,10 +323,9 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @param string $alt
    *   The image alt text.
    *
-   * @return array
    *   Returns an array for the image field.
    */
-  protected function prepareImage($picture, $alt = '') {
+  protected function prepareImage($picture, $alt = ''): ?array {
     $value = NULL;
     $files = $this->loadByUuid('file', $picture);
 
@@ -348,10 +347,9 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @param array $item
    *   Array with items.
    *
-   * @return array
    *   Returns an array.
    */
-  abstract protected function getEntry(array $item);
+  abstract protected function getEntry(array $item): array;
 
   /**
    * Scramble it.
@@ -361,7 +359,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @param int|null $max
    *   How many items to generate.
    */
-  public function scrambleData(array $data, $max = NULL) {
+  public function scrambleData(array $data, $max = NULL): array {
     $new_data = [];
     for ($i = 0; $i < $max; $i++) {
       // Get a random item from the array.

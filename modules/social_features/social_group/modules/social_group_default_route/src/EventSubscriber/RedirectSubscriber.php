@@ -52,7 +52,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['groupLandingPage'];
     return $events;
   }
@@ -63,7 +63,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function groupLandingPage(RequestEvent $event) {
+  public function groupLandingPage(RequestEvent $event): void {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();

@@ -17,7 +17,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
 
     // Set custom permissions for account email & site information & menu items
     // translation pages.
@@ -75,7 +75,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     // Come after content_translation.
     $events[RoutingEvents::ALTER] = ['onAlterRoutes', -220];
     return $events;

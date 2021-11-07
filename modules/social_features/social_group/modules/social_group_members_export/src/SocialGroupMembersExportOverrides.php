@@ -20,7 +20,7 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     // Code has been moved to
     // _social_group_members_export_alter_group_manage_members_view().
@@ -30,14 +30,14 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialGroupMembersExportOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

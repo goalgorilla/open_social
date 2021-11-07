@@ -22,7 +22,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
   /**
    * Form element validation handler for entity_autocomplete elements.
    */
-  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form, $select2 = FALSE) {
+  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form, $select2 = FALSE): void {
     $duplicated_values = $value = [];
 
     // Load the current Event enrollments so we can check duplicates.

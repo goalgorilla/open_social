@@ -20,7 +20,7 @@ class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     // Code has been moved to
     // _social_user_export_alter_user_admin_people_view().
@@ -30,14 +30,14 @@ class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialUserExportOverrides';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

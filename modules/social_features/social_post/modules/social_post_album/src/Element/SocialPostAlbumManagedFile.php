@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post_album\Element;
 
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Element\ManagedFile;
@@ -22,7 +23,7 @@ class SocialPostAlbumManagedFile extends ManagedFile {
   /**
    * {@inheritdoc}
    */
-  public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
+  public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request): AjaxResponse {
     $response = parent::uploadAjaxCallback($form, $form_state, $request);
     $parents = explode('/', $request->query->get('element_parents'));
 

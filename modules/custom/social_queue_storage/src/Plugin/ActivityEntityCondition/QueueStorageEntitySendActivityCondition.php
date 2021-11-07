@@ -18,7 +18,7 @@ class QueueStorageEntitySendActivityCondition extends ActivityEntityConditionBas
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     if ($entity->getEntityTypeId() === 'queue_storage_entity') {
       return $entity->isFinished();

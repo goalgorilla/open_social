@@ -2,6 +2,8 @@
 
 namespace Drupal\ginvite;
 
+use Drupal\group\Entity\GroupInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\group\Entity\GroupContentInterface;
 
@@ -42,30 +44,27 @@ class GroupInvitation implements CacheableDependencyInterface {
   /**
    * Returns the fieldable GroupContent entity for the invitation.
    *
-   * @return \Drupal\group\Entity\GroupContentInterface
    *   The group content entity.
    */
-  public function getGroupContent() {
+  public function getGroupContent(): GroupContentInterface {
     return $this->groupContent;
   }
 
   /**
    * Returns the group for the invitation.
    *
-   * @return \Drupal\group\Entity\GroupInterface
    *   The group entity where invite belongs.
    */
-  public function getGroup() {
+  public function getGroup(): GroupInterface {
     return $this->groupContent->getGroup();
   }
 
   /**
    * Returns the user for the invitation.
    *
-   * @return \Drupal\user\UserInterface
    *   The user entity referenced in invitation.
    */
-  public function getUser() {
+  public function getUser(): EntityInterface {
     return $this->groupContent->getEntity();
   }
 
@@ -75,7 +74,7 @@ class GroupInvitation implements CacheableDependencyInterface {
    * @return \Drupal\group\Entity\GroupRoleInterface[]
    *   An array of group roles, keyed by their ID.
    */
-  public function getRoles() {
+  public function getRoles(): array {
     /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $group_role_storage */
     $group_role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
     return $group_role_storage->loadByUserAndGroup($this->getUser(), $this->getGroup());
@@ -84,21 +83,21 @@ class GroupInvitation implements CacheableDependencyInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     return $this->getGroupContent()->getCacheContexts();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     return $this->getGroupContent()->getCacheTags();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheMaxAge() {
+  public function getCacheMaxAge(): int {
     return $this->getGroupContent()->getCacheMaxAge();
   }
 

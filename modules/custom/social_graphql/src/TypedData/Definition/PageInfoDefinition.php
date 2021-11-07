@@ -13,7 +13,7 @@ class PageInfoDefinition extends ComplexDataDefinitionBase {
   /**
    * {@inheritdoc}
    */
-  public function getPropertyDefinitions() {
+  public function getPropertyDefinitions(): array {
     if (!isset($this->propertyDefinitions)) {
       $info = &$this->propertyDefinitions;
 

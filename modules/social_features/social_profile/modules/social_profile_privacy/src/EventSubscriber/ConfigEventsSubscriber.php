@@ -60,7 +60,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     return [
       ConfigEvents::SAVE => 'configSave',
     ];
@@ -76,7 +76,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\search_api\SearchApiException
    */
-  public function configSave(ConfigCrudEvent $event) {
+  public function configSave(ConfigCrudEvent $event): void {
     // A list of configuration changes that trigger an index update.
     $triggers = [
       'social_profile_privacy.settings' => 'limit_search_and_mention',

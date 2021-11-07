@@ -52,7 +52,7 @@ class InvitedToGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     return $entity->getEntityTypeId() === 'group_content';
   }

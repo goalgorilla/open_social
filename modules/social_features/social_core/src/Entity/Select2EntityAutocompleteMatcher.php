@@ -17,7 +17,7 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
   /**
    * {@inheritdoc}
    */
-  public function getMatches($target_type, $selection_handler, array $selection_settings, $string = '', array $selected = []) {
+  public function getMatches($target_type, $selection_handler, array $selection_settings, $string = '', array $selected = []): array {
     $matches = [];
 
     $options = $selection_settings + [

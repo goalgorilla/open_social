@@ -2,6 +2,8 @@
 
 namespace Drupal\social_topic\Controller;
 
+use Drupal\Core\Access\AccessResultNeutral;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -67,10 +69,9 @@ class SocialTopicController extends ControllerBase {
   /**
    * The _title_callback for the latest topics view.
    *
-   * @return string
    *   The page title.
    */
-  public function latestTopicsPageTitle() {
+  public function latestTopicsPageTitle(): string {
     $title = $this->t('All topics');
 
     // @todo This might change depending on the view exposed filter settings.
@@ -99,10 +100,9 @@ class SocialTopicController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   If access is allowed.
    */
-  public function myTopicAccess(AccountInterface $account) {
+  public function myTopicAccess(AccountInterface $account): AccessResultNeutral {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
 
@@ -131,10 +131,9 @@ class SocialTopicController extends ControllerBase {
   /**
    * Redirects users to their topics page.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns a redirect to the topics of the currently logged in user.
    */
-  public function redirectMyTopics() {
+  public function redirectMyTopics(): RedirectResponse {
     return $this->redirect('view.topics.page_profile', [
       'user' => $this->currentUser()->id(),
     ]);

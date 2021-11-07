@@ -21,12 +21,10 @@ class ImagePopupController extends ControllerBase {
    * @param string $first_fid
    *   The first file ID.
    *
-   * @return array
    *   Return render array.
-   *
    * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
-  public function render(PostInterface $post, $first_fid) {
+  public function render(PostInterface $post, $first_fid): array {
     $items = [FALSE => [], TRUE => []];
     $found = FALSE;
 

@@ -60,14 +60,14 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function usesGroupBy() {
+  public function usesGroupBy(): bool {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
     // Do nothing -- to override the parent query.
   }
 
@@ -117,10 +117,9 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    * @param int $account_id
    *   The account id.
    *
-   * @return array
    *   Return the fetched values.
    */
-  private function checkEmailAndAccount($enrollment_id, $account_id) {
+  private function checkEmailAndAccount($enrollment_id, $account_id): array {
     $email = NULL;
     $account = NULL;
 

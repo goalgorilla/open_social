@@ -34,7 +34,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
 
     // Get 100 Recipients at a time.
     $limit = 0;

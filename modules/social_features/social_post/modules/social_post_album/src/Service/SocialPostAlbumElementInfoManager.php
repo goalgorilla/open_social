@@ -12,7 +12,7 @@ class SocialPostAlbumElementInfoManager extends ElementInfoManager {
   /**
    * {@inheritdoc}
    */
-  public function getInfo($type) {
+  public function getInfo($type): array {
     if ($type === 'managed_file') {
       $type = 'social_post_album_managed_file';
     }

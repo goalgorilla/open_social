@@ -114,7 +114,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): void {
 
     // Check if headers exists.
     if (empty($this->context['sandbox']['results']['headers'])) {
@@ -186,7 +186,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function execute($object = NULL) {
+  public function execute($object = NULL): void {
     $this->executeMultiple([$object]);
   }
 
@@ -202,7 +202,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     return $form;
   }
 
@@ -248,10 +248,9 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    * @param int $entity_id
    *   The position of an entity in the entities list.
    *
-   * @return array
    *   An array of export plugin's configuration.
    */
-  public function getPluginConfiguration($plugin_id, $entity_id) {
+  public function getPluginConfiguration($plugin_id, $entity_id): array {
     return [];
   }
 

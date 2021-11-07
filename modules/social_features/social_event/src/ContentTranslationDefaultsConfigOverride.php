@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -17,14 +18,14 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getModule() {
+  protected function getModule(): string {
     return 'social_event';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName() {
+  protected function getDisplayName(): TranslatableMarkup {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
     return $this->t('Events');
@@ -33,7 +34,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getTranslationOverrides() {
+  protected function getTranslationOverrides(): array {
     return [
       'language.content_settings.node.event' => [
         'third_party_settings' => [

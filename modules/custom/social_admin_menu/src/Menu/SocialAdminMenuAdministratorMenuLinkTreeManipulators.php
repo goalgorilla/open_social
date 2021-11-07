@@ -74,7 +74,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    * @return \Drupal\Core\Menu\MenuLinkTreeElement[]
    *   The manipulated menu link tree.
    */
-  public function checkAccess(array $tree) {
+  public function checkAccess(array $tree): array {
 
     if ($this->account->id() != 1) {
       $account_roles = $this->account->getRoles();
@@ -135,12 +135,10 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    * toolbar_prerender_toolbar_administration_tray() function,
    * which uses setMaxDepth(4) instead of setTopLevelOnly()
    *
-   * @return array
    *   The updated renderable array.
-   *
    * @see admin_toolbar_prerender_toolbar_administration_tray()
    */
-  public function renderForm() {
+  public function renderForm(): array {
     $parameters = new MenuTreeParameters();
     $parameters->setRoot('system.admin')
       ->excludeRoot()
@@ -172,7 +170,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['renderForm'];
   }
 

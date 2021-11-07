@@ -47,7 +47,7 @@ class SocialProfilePrivacyHelper implements SocialProfilePrivacyHelperInterface 
   /**
    * {@inheritdoc}
    */
-  public function getFieldOptions(AccountInterface $account = NULL) {
+  public function getFieldOptions(AccountInterface $account = NULL): array {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = $this->entityTypeManager->getStorage('entity_form_display')
       ->load('profile.profile.default');

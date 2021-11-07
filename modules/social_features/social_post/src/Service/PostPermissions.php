@@ -39,7 +39,7 @@ class PostPermissions implements PostPermissionsInterface {
   /**
    * {@inheritdoc}
    */
-  public function permissions() {
+  public function permissions(): array {
     $permissions = [];
 
     /** @var \Drupal\social_post\Entity\PostTypeInterface $type */

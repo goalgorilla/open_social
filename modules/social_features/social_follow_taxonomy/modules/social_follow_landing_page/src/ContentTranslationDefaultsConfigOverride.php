@@ -34,7 +34,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     // If the module "social_content_translation" is enabled let make
@@ -70,14 +70,14 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'social_follow_landing_page.content_translation_defaults_config_override';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

@@ -76,7 +76,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['redirectSearchWithPrefilledExposedFilters'];
     return $events;
   }
@@ -87,7 +87,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function redirectSearchWithPrefilledExposedFilters(RequestEvent $event) {
+  public function redirectSearchWithPrefilledExposedFilters(RequestEvent $event): void {
     $routeMatch = [
       'view.search_users.page_no_value',
       'view.search_users.page',

@@ -2,6 +2,8 @@
 
 namespace Drupal\social_album\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -96,10 +98,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\node\NodeInterface $node
    *   The node object.
    *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The title to page of the post.
    */
-  public function title(NodeInterface $node) {
+  public function title(NodeInterface $node): TranslatableMarkup {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
   }
 
@@ -113,10 +114,9 @@ class SocialAlbumController extends ControllerBase {
    * @param int $fid
    *   The file entity ID.
    *
-   * @return array
    *   The renderable array.
    */
-  public function viewImage(NodeInterface $node, PostInterface $post, $fid) {
+  public function viewImage(NodeInterface $node, PostInterface $post, $fid): array {
     $query = $this->database->select('post__field_post_image', 'i')
       ->fields('i', ['field_post_image_target_id']);
 
@@ -166,10 +166,9 @@ class SocialAlbumController extends ControllerBase {
    * @param int $fid
    *   The file entity ID.
    *
-   * @return array
    *   The renderable array.
    */
-  public function deleteImage(NodeInterface $node, PostInterface $post, $fid) {
+  public function deleteImage(NodeInterface $node, PostInterface $post, $fid): array {
     return [
       'form' => $this->entityFormBuilder()->getForm($post, 'delete_image', ['fid' => $fid]),
       'view' => $this->entityTypeManager()->getViewBuilder('post')->view($post, 'featured'),
@@ -182,10 +181,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
    *
-   * @return array
    *   The renderable array.
    */
-  public function add(GroupInterface $group) {
+  public function add(GroupInterface $group): array {
     $node = $this->entityTypeManager()->getStorage('node')->create([
       'type' => 'album',
       'groups' => $group,
@@ -200,10 +198,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\node\NodeInterface $node
    *   The node object.
    *
-   * @return bool
    *   TRUE if it's an album node.
    */
-  protected function checkAlbumAccess(NodeInterface $node) {
+  protected function checkAlbumAccess(NodeInterface $node): bool {
     return $node->bundle() === 'album';
   }
 
@@ -213,10 +210,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\node\NodeInterface $node
    *   The node entity object.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkAddImageAccess(NodeInterface $node) {
+  public function checkAddImageAccess(NodeInterface $node): AccessResult {
     if ($this->checkAlbumAccess($node)) {
       $account = $this->currentUser();
 
@@ -254,10 +250,9 @@ class SocialAlbumController extends ControllerBase {
    * @param string $operation
    *   (optional) The operation to be performed. Defaults to view.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid, $operation = 'view') {
+  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid, $operation = 'view'): CacheableDependencyInterface {
     if (
       $this->checkAlbumAccess($node) &&
       $post->access($operation) &&
@@ -286,10 +281,9 @@ class SocialAlbumController extends ControllerBase {
    * @param int $fid
    *   The file entity ID.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid) {
+  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid): AccessResultInterface {
     $access = $this->checkViewImageAccess($node, $post, $fid, 'delete');
 
     if ($access->isAllowed()) {
@@ -302,10 +296,9 @@ class SocialAlbumController extends ControllerBase {
   /**
    * Checks access to the user albums page.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkUserAlbumsAccess() {
+  public function checkUserAlbumsAccess(): AccessResult {
     $status = $this->config('social_album.settings')->get('status');
     return AccessResult::allowedIf(!empty($status));
   }
@@ -316,10 +309,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  protected function checkGroupAccess(GroupInterface $group) {
+  protected function checkGroupAccess(GroupInterface $group): AccessResult {
     $is_allow = $group->getGroupType()->hasContentPlugin('group_node:album');
     return AccessResult::allowedIf($is_allow);
   }
@@ -330,10 +322,9 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group object.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkGroupAlbumsAccess(GroupInterface $group) {
+  public function checkGroupAlbumsAccess(GroupInterface $group): AccessResultInterface {
     $access = $this->checkUserAlbumsAccess();
     return $access->isForbidden() ? $access : $this->checkGroupAccess($group);
   }

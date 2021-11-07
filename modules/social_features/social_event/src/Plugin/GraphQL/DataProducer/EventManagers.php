@@ -74,10 +74,9 @@ class EventManagers extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(NodeInterface $event, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(NodeInterface $event, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection {
     $query_helper = new EventManagersQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $event);
     $metadata->addCacheableDependency($query_helper);
 

@@ -42,7 +42,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function updateLastThreadCheckTime(EntityBase $entity) {
+  public function updateLastThreadCheckTime(EntityBase $entity): void {
     $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), $this->time->getRequestTime());
   }
 
@@ -52,17 +52,16 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function deleteUserDataThreadInfo(EntityBase $entity) {
+  public function deleteUserDataThreadInfo(EntityBase $entity): void {
     $this->userData->delete('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id());
   }
 
   /**
    * Update the unread thread count.
    *
-   * @return int
    *   The number of unread threads.
    */
-  public function updateUnreadCount() {
+  public function updateUnreadCount(): int {
     $unread = 0;
 
     // Get the user.
@@ -109,10 +108,9 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param array $threads
    *   List of thread IDs to che check for.
    *
-   * @return array
    *   A list of timestamps linked to the thread IDs.
    */
-  public function getLastMessagesFromOtherUsers($uid, array $threads) {
+  public function getLastMessagesFromOtherUsers($uid, array $threads): array {
     return $this->database->query(
       'SELECT MAX(pm.created), pmt.entity_id ' .
       'FROM {private_message_thread__private_messages} pmt ' .
@@ -134,10 +132,9 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * @param int $thread_id
    *   The thread id.
    *
-   * @return int
    *   The timestamp or 0 if nothing was found.
    */
-  public function getLastMessageFromOtherUser($uid, $thread_id) {
+  public function getLastMessageFromOtherUser($uid, $thread_id): int {
     $timestamp = $this->database->query(
       'SELECT MAX(pm.created) ' .
       'FROM {private_message_thread__private_messages} pmt ' .

@@ -105,7 +105,7 @@ class ProfileEntitySortable extends RenderedEntity {
   /**
    * {@inheritdoc}
    */
-  public function clickSort($order) {
+  public function clickSort($order): void {
     if (isset($this->field_alias)) {
       // If we want to sort on the profile name, add the correct alias.
       if ($this->table === 'profile' && $this->field === 'profile_entity_sortable') {

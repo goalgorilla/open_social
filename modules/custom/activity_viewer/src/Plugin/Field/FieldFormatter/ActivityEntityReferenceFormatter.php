@@ -23,7 +23,7 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $view_mode = $this->getSetting('view_mode');
     $elements = [];
 
@@ -60,7 +60,7 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $options = $this->entityDisplayRepository->getAllViewModes();
     $only_view_modes = [];
     foreach ($options as $entity) {

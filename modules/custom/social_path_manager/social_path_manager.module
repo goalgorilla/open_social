@@ -122,10 +122,9 @@ function _social_path_manager_update_group_tab_aliases($id, $action) {
 /**
  * Get a full list of group types.
  *
- * @return array
  *   List of group types.
  */
-function _social_path_manager_group_types() {
+function _social_path_manager_group_types(): array {
   $types = &drupal_static(__FUNCTION__);
   if (!isset($types)) {
     $types = [];
@@ -144,10 +143,9 @@ function _social_path_manager_group_types() {
 /**
  * Get a list of tabs used in groups.
  *
- * @return array
  *   Array of group tabs.
  */
-function _social_path_manager_group_tabs() {
+function _social_path_manager_group_tabs(): array {
   $tabs = &drupal_static(__FUNCTION__);
   if (!isset($tabs)) {
     /** @var \Drupal\Core\Menu\LocalTaskManager $taskManager */
@@ -188,10 +186,9 @@ function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) 
  * @param string $route
  *   The route of the tab being updated.
  *
- * @return string
  *   The url suffix of the tab.
  */
-function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
+function _social_path_manager_get_path_suffix(GroupInterface $group, $route): string {
   $url = Url::fromRoute($route, ['group' => $group->id()]);
 
   // Get the last part of the url.

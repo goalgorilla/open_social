@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\social_comment\Kernel;
 
+use Drupal\user\Entity\User;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
@@ -73,7 +74,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    *
    * Until https://www.drupal.org/project/drupal/issues/3039955 is fixed.
    */
-  protected function setUpCurrentUser(array $values = [], array $permissions = [], $admin = FALSE) {
+  protected function setUpCurrentUser(array $values = [], array $permissions = [], $admin = FALSE): User {
     self::assertFalse($admin, "The current setUpCurrentUser workaround doesn't support admin users.");
     $user = $this->createUser($values, $permissions);
     $this->setCurrentUser($user);
@@ -166,7 +167,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   /**
    * Test that a user can view everyone's published comments.
    */
-  public function testUserCanViewOnlyPublishedComment() {
+  public function testUserCanViewOnlyPublishedComment(): void {
     $this->setUpCurrentUser([], ['access comments']);
     $this->createComment($this->node, ['status' => CommentInterface::PUBLISHED]);
 

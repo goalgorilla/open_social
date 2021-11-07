@@ -17,7 +17,7 @@ class EventEnrollmentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header = [];
     $header['id'] = $this->t('Event enrollment ID');
     $header['name'] = $this->t('Name');
@@ -27,7 +27,7 @@ class EventEnrollmentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row = [];
     /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
     $row['id'] = $entity->id();

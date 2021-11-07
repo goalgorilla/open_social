@@ -211,7 +211,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
   /**
    * Test that it respects the access topics permission.
    */
-  public function testRequiresAccessTopicsPermission() {
+  public function testRequiresAccessTopicsPermission(): void {
     $topic = $this->createNode([
       'type' => 'topic',
       'field_content_visibility' => 'public',

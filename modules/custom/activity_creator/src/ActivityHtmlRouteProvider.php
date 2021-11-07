@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator;
 
+use Symfony\Component\Routing\RouteCollection;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
@@ -17,7 +18,7 @@ class ActivityHtmlRouteProvider extends AdminHtmlRouteProvider {
   /**
    * {@inheritdoc}
    */
-  public function getRoutes(EntityTypeInterface $entity_type) {
+  public function getRoutes(EntityTypeInterface $entity_type): RouteCollection {
     $collection = parent::getRoutes($entity_type);
 
     $entity_type_id = $entity_type->id();

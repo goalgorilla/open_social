@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -70,7 +71,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute($entity = NULL): TranslatableMarkup {
     // Load the Group.
     $group = Group::load($this->configuration['groups']);
 
@@ -115,7 +116,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form['#title'] = $this->formatPlural($this->context['selected_count'], 'Add selected member to a group', 'Add @count selected members to a group');
 
     $groups = Group::loadMultiple(social_group_get_all_groups());

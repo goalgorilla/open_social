@@ -56,7 +56,7 @@ class SearchHeroBlock extends BlockBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
 
     $form = $this->formBuilder->getForm('Drupal\social_search\Form\SearchHeroForm');

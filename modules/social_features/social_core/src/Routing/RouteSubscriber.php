@@ -15,7 +15,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
     if ($route = $collection->get('system.entity_autocomplete')) {
       $route->setDefault('_controller', '\Drupal\social_core\Controller\EntityAutocompleteController::handleAutocomplete');
     }

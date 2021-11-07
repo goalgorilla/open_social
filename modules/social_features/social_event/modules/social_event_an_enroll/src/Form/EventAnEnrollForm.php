@@ -21,14 +21,14 @@ class EventAnEnrollForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_an_enroll_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $nid = $this->routeMatch->getRawParameter('node');
 
     // Load node object.
@@ -112,7 +112,7 @@ class EventAnEnrollForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
 

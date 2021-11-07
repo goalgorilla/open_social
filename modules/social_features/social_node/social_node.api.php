@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * @file
  * Social Node hooks & alters.
@@ -28,7 +29,7 @@ use Drupal\node\NodeInterface;
  *
  * @see \Drupal\social_node\Service\SocialNodeMessenger::addStatus()
  */
-function hook_social_node_message(NodeInterface $node) {
+function hook_social_node_message(NodeInterface $node): ?TranslatableMarkup {
   $t_args = [
     '@type' => node_get_type_label($node),
     '%title' => $node->toLink()->toString(),

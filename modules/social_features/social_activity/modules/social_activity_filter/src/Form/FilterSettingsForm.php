@@ -64,21 +64,21 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_activity_filter_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_activity_filter.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
@@ -126,7 +126,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
@@ -156,10 +156,9 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param array $vocabulary_list
    *   Array of vocabulary id's.
    *
-   * @return array
    *   Mapped array: vid => taxonomy_field.
    */
-  public function getReferencedTaxonomyFields(array $vocabulary_list) {
+  public function getReferencedTaxonomyFields(array $vocabulary_list): array {
 
     $content_types = $this->entityTypeManager->getStorage('node_type')
       ->loadMultiple();
@@ -196,10 +195,9 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param string $views_id
    *   Views ID.
    *
-   * @return array
    *   Mapped array of views displays.
    */
-  public function getDisplayBlocks($views_id) {
+  public function getDisplayBlocks($views_id): array {
     $view = $this->entityTypeManager->getStorage('view')->load($views_id);
 
     $blocks = [];
@@ -221,7 +219,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param bool $enabled
    *   Flag to update/cleanup values.
    */
-  public function updateDisplayBlock($views_id, $display_id, $enabled = FALSE) {
+  public function updateDisplayBlock($views_id, $display_id, $enabled = FALSE): void {
     $config = $this->configFactory->getEditable("views.view.{$views_id}");
     $override_tags_filter = "display.{$display_id}.display_options.override_tags_filter";
     $activity_filter_tags = "display.{$display_id}.display_options.filters.activity_filter_tags";

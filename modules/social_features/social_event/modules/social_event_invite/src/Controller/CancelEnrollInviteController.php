@@ -65,12 +65,10 @@ class CancelEnrollInviteController extends ControllerBase {
    * @param \Drupal\social_event\EventEnrollmentInterface $event_enrollment
    *   The entity event_enrollment.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return to the original destination from the current request.
-   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment) {
+  public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment): RedirectResponse {
     // Just some sanity checks.
     if ($node instanceof Node && !empty($event_enrollment)) {
       // When the event owner/organizer cancelled the invite, simply remove the
@@ -91,10 +89,9 @@ class CancelEnrollInviteController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResult {
     $hasPermissionIsOwnerOrOrganizer = social_event_manager_or_organizer();
     return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
   }

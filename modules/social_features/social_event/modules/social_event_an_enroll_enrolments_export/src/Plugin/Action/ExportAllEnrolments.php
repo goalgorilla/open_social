@@ -107,7 +107,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): void {
     $this->entities = $entities;
 
     parent::executeMultiple($entities);
@@ -135,7 +135,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function getPluginConfiguration($plugin_id, $entity_id) {
+  public function getPluginConfiguration($plugin_id, $entity_id): array {
     $configuration = parent::getPluginConfiguration($plugin_id, $entity_id);
     $plugin_definition = &$this->pluginDefinitions[$plugin_id];
 

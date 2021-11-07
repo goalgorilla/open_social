@@ -14,7 +14,7 @@ class DemoContentParser extends Yaml implements DemoContentParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPath($file, $module, $profile) {
+  public function getPath($file, $module, $profile): string {
     if ($profile != '' && strpos($profile, DIRECTORY_SEPARATOR) === FALSE) {
       $profile .= DIRECTORY_SEPARATOR;
     }

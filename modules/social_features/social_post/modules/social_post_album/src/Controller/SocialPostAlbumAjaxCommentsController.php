@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post_album\Controller;
 
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_ajax_comments\Controller\AjaxCommentsController;
@@ -20,7 +21,7 @@ class SocialPostAlbumAjaxCommentsController extends AjaxCommentsController {
   /**
    * {@inheritdoc}
    */
-  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
+  public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL): AjaxResponse {
     $this->clearTempStore = FALSE;
 
     $response = parent::socialAdd($request, $entity, $field_name, $pid);

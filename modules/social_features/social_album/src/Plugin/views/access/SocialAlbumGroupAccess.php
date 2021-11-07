@@ -21,7 +21,7 @@ class SocialAlbumGroupAccess extends GroupPermission {
   /**
    * {@inheritdoc}
    */
-  public function alterRouteDefinition(Route $route) {
+  public function alterRouteDefinition(Route $route): void {
     parent::alterRouteDefinition($route);
 
     $route->setRequirement(

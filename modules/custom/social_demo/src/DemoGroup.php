@@ -14,7 +14,7 @@ abstract class DemoGroup extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -91,7 +91,7 @@ abstract class DemoGroup extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],
@@ -165,10 +165,9 @@ abstract class DemoGroup extends DemoContent {
    * @param string $files
    *   The uuid for the file.
    *
-   * @return array
    *   Returns an array.
    */
-  protected function prepareFiles($files) {
+  protected function prepareFiles($files): array {
     $values = [];
 
     foreach ($files as $file_uuid) {

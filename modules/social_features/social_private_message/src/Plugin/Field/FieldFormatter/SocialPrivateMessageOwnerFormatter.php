@@ -22,7 +22,7 @@ class SocialPrivateMessageOwnerFormatter extends EntityReferenceLabelFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = parent::viewElements($items, $langcode);
 
     if (empty($elements) && !$items->isEmpty()) {

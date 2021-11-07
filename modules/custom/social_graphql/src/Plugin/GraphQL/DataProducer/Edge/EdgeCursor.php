@@ -34,7 +34,7 @@ class EdgeCursor extends DataProducerPluginBase implements DataProducerPluginCac
    * @return mixed
    *   The cursor for this edge.
    */
-  public function resolve(EdgeInterface $edge) {
+  public function resolve(EdgeInterface $edge): string {
     return $edge->getCursor();
   }
 

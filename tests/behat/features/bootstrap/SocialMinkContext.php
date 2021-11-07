@@ -25,7 +25,7 @@ class SocialMinkContext extends MinkContext {
    *
    * Makes the step case insensitive.
    */
-  public function assertRegionHeading($heading, $region) {
+  public function assertRegionHeading($heading, $region): void {
     $regionObj = $this->getRegion($region);
 
     foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
@@ -45,7 +45,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @override MinkContext::assertCheckBox()
    */
-  public function assertCheckBox($checkbox) {
+  public function assertCheckBox($checkbox): void {
     $this->getSession()->executeScript("
       var inputs = document.getElementsByTagName('input');
       for (var i = 0; i < inputs.length; i++) {
@@ -62,14 +62,14 @@ class SocialMinkContext extends MinkContext {
   /**
    * @Given /^I make a screenshot$/
    */
-  public function iMakeAScreenshot() {
+  public function iMakeAScreenshot(): void {
     $this->iMakeAScreenshotWithFileName('screenshot');
   }
 
   /**
    * @Given /^I make a screenshot with the name "([^"]*)"$/
    */
-  public function iMakeAScreenshotWithFileName($filename) {
+  public function iMakeAScreenshotWithFileName($filename): void {
     $screenshot = $this->getSession()->getDriver()->getScreenshot();
     $dir = '/var/www/travis_artifacts';
     if (is_writeable($dir)) {
@@ -81,7 +81,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @When /^(?:|I )fill in select2 input "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" and select "(?P<entry>(?:[^"]|\\")*)"$/
    */
-  public function iFillInSelectInputWithAndSelect($field, $value, $entry) {
+  public function iFillInSelectInputWithAndSelect($field, $value, $entry): void {
     $page = $this->getSession()->getPage();
 
     $inputField = $page->find('css', $field);
@@ -118,7 +118,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @When /^I clear group field$/
    */
-  public function iClearGroupSelect2Input() {
+  public function iClearGroupSelect2Input(): void {
     $page = $this->getSession()->getPage();
 
     $inputField = $page->find('css', '.field--name-groups .select2');
@@ -140,7 +140,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @AfterStep
    */
-  public function takeScreenShotAfterFailedStep(AfterStepScope $scope)
+  public function takeScreenShotAfterFailedStep(AfterStepScope $scope): void
   {
     if (99 === $scope->getTestResult()->getResultCode()) {
       $driver = $this->getSession()->getDriver();
@@ -168,7 +168,7 @@ class SocialMinkContext extends MinkContext {
    *
    * @When /^(?:|I )attach the file "(?P<path>[^"]*)" to hidden field "(?P<field>(?:[^"]|\\")*)"$/
    */
-  public function attachFileToHiddenField($field, $path) {
+  public function attachFileToHiddenField($field, $path): void {
     $field = $this->fixStepArgument($field);
     $id = $this->getSession()->getPage()->findField($field)->getAttribute('id');
 
@@ -181,7 +181,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @Then I should see checked the box :checkbox
    */
-  public function iShouldSeeCheckedTheBox($checkbox) {
+  public function iShouldSeeCheckedTheBox($checkbox): void {
     $checkbox = $this->fixStepArgument($checkbox);
 
     if (!$this->getSession()->getPage()->hasCheckedField($checkbox)) {
@@ -199,7 +199,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @Then I should see unchecked the box :checkbox
    */
-  public function iShouldSeeUncheckedTheBox($checkbox) {
+  public function iShouldSeeUncheckedTheBox($checkbox): void {
     $checkbox = $this->fixStepArgument($checkbox);
 
     if (!$this->getSession()->getPage()->hasUncheckedField($checkbox)) {
@@ -220,7 +220,7 @@ class SocialMinkContext extends MinkContext {
    *
    * @When /^(?:|I )set alias as "(?P<value>(?:[^"]|\\")*)"$/
    */
-  public function iSetAlias($value) {
+  public function iSetAlias($value): void {
     // Uncheck "Generate automatic URL alias" if social_path_manager is enabled.
     if (\Drupal::service('module_handler')->moduleExists('social_path_manager')) {
       $option = $this->fixStepArgument('Generate automatic URL alias');

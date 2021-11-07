@@ -15,7 +15,7 @@ class SocialPrivateMessageServiceProvider extends ServiceProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function alter(ContainerBuilder $container) {
+  public function alter(ContainerBuilder $container): void {
     $definition = $container->getDefinition('private_message.notifier');
     $definition->setClass('Drupal\social_private_message\Service\SocialPrivateMessageNotifier');
 

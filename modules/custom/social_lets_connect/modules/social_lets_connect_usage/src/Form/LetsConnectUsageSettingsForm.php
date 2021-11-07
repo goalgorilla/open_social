@@ -13,21 +13,21 @@ class LetsConnectUsageSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_lets_connect_usage_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_lets_connect_usage.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['why'] = [
       '#type' => 'item',
       '#markup' => $this->t('Open Social would like to collect non-personal data to improve the product and your experience. We will never collect any personal data. You can choose which data you want to share with the Open Social team below (or none at all). The usage data is sent every 24 hours to the team.'),
@@ -62,7 +62,7 @@ class LetsConnectUsageSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Filter out unchecked items.
     $usage_data = $form_state->getValue('usage_data');
     foreach ($usage_data as $data => $value) {

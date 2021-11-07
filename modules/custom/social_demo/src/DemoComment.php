@@ -12,7 +12,7 @@ abstract class DemoComment extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -119,7 +119,7 @@ abstract class DemoComment extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = [
       'uuid' => $item['uuid'],
       'field_comment_body' => [

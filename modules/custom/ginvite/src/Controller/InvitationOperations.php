@@ -2,6 +2,8 @@
 
 namespace Drupal\ginvite\Controller;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -77,10 +79,9 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
-   * @return array
    *   The processed form for the given entity and operation.
    */
-  public function accept(Request $request, GroupContentInterface $group_content) {
+  public function accept(Request $request, GroupContentInterface $group_content): array {
     $group = $group_content->getGroup();
     $contentTypeConfigId = $group_content->getGroup()
       ->getGroupType()
@@ -110,12 +111,10 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response object that may be returned by the controller.
-   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function decline(Request $request, GroupContentInterface $group_content) {
+  public function decline(Request $request, GroupContentInterface $group_content): RedirectResponse {
     $group_content->set('invitation_status', GroupInvitation::INVITATION_REJECTED)->save();
     $this->messenger->addMessage($this->t('You have declined the group invitation.'));
 
@@ -139,10 +138,9 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Access check result.
    */
-  public function checkAccess(GroupContentInterface $group_content) {
+  public function checkAccess(GroupContentInterface $group_content): CacheableDependencyInterface {
     $invited = $group_content->get('entity_id')->getString();
     $group = $group_content->getGroup();
     $membership = $this->membershipLoader->load($group, $this->currentUser());
@@ -161,10 +159,9 @@ class InvitationOperations extends ControllerBase {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   Group entity.
    *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Rendered translatable title.
    */
-  public function invitationTitle(GroupInterface $group) {
+  public function invitationTitle(GroupInterface $group): TranslatableMarkup {
     $title = $this->t('Invite members');
 
     if (NULL !== $group->label()) {

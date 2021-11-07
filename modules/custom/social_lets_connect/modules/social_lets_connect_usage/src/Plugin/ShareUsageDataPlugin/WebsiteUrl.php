@@ -19,10 +19,9 @@ class WebsiteUrl extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
-   * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     global $base_url;
     return [
       'url' => $base_url,

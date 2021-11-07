@@ -24,7 +24,7 @@ class PostViewBuilder extends EntityViewBuilder {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return [
       'build',
       'buildMultiple',
@@ -78,7 +78,7 @@ class PostViewBuilder extends EntityViewBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildComponents(array &$build, array $entities, array $displays, $view_mode) {
+  public function buildComponents(array &$build, array $entities, array $displays, $view_mode): void {
     if (empty($entities)) {
       return;
     }

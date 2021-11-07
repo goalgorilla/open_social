@@ -18,7 +18,7 @@ class MentionCommentActivityEntityCondition extends ActivityEntityConditionBase 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     if ($entity->getEntityTypeId() === 'mentions') {
       if (isset($entity->entity_type) && $entity->entity_type->value == 'comment') {
         return TRUE;

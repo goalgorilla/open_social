@@ -43,7 +43,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['viewsLazyBuild'];
   }
 
@@ -66,7 +66,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags) {
+  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags): ?array {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);

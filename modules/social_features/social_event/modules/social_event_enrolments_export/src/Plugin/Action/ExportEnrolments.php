@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_enrolments_export\Plugin\Action;
 
+use Drupal\user\UserInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -23,7 +24,7 @@ class ExportEnrolments extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): void {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     foreach ($entities as &$entity) {
       $entity = $this->getAccount($entity);
@@ -65,10 +66,9 @@ class ExportEnrolments extends ExportUser {
    * @param \Drupal\social_event\EventEnrollmentInterface $entity
    *   The event enrollment.
    *
-   * @return \Drupal\user\UserInterface
    *   The user.
    */
-  public function getAccount(EventEnrollmentInterface $entity) {
+  public function getAccount(EventEnrollmentInterface $entity): UserInterface {
     $accounts = $entity->field_account->referencedEntities();
     return reset($accounts);
   }

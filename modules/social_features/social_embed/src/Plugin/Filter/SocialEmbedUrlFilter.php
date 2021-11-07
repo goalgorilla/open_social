@@ -24,14 +24,14 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function process($text, $langcode) {
+  public function process($text, $langcode): FilterProcessResult {
     // Check for whitelisted URL.
     if ($this->whiteList($text)) {
       return parent::process($text, $langcode);
@@ -46,10 +46,9 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
    * @param string $text
    *   The item to check for.
    *
-   * @return bool
    *   Return if the item is on the whitelist or not.
    */
-  public function whiteList($text) {
+  public function whiteList($text): bool {
     // Fetch allowed patterns.
     $patterns = $this->getPatterns();
 
@@ -68,10 +67,9 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
   /**
    * A list of whitelisted patterns.
    *
-   * @return array
    *   The list of patterns.
    */
-  private function getPatterns() {
+  private function getPatterns(): array {
     return [
       'facebook.com\/(.*)\/videos\/(.*)',
       'facebook.com\/(.*)\/photos\/(.*)',

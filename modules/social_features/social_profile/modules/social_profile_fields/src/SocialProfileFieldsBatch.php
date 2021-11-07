@@ -25,7 +25,7 @@ class SocialProfileFieldsBatch {
    * @param array $context
    *   The context of the flush.
    */
-  public static function performFlush(array $pids, array $fields, array &$context) {
+  public static function performFlush(array $pids, array $fields, array &$context): void {
     $message = 'Flushing profile data...';
 
     $results = [];
@@ -68,7 +68,7 @@ class SocialProfileFieldsBatch {
    * @param string $operations
    *   The operation performed.
    */
-  public static function performFlushFinishedCallback($success, array $results, $operations) {
+  public static function performFlushFinishedCallback($success, array $results, $operations): void {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {

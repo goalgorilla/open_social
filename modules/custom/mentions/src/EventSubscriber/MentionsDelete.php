@@ -41,7 +41,7 @@ class MentionsDelete implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events = [];
     $events['mentions.delete'][] = ['onMentionsDelete', 0];
     return $events;
@@ -50,7 +50,7 @@ class MentionsDelete implements EventSubscriberInterface {
   /**
    * Event handler.
    */
-  public function onMentionsDelete($event) {
+  public function onMentionsDelete($event): void {
     $config = $this->configFactory->get('mentions.settings');
     $config_mentions_events = $config->get('mentions_events');
     $action_id = $config_mentions_events['delete'];

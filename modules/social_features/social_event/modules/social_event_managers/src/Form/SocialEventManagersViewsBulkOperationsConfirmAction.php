@@ -13,7 +13,7 @@ class SocialEventManagersViewsBulkOperationsConfirmAction extends ConfirmAction 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'event_manage_enrollments', $display_id = 'page_manage_enrollments') {
+  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'event_manage_enrollments', $display_id = 'page_manage_enrollments'): array {
     $form = parent::buildForm($form, $form_state, $view_id, $display_id);
     $form_data = $this->getFormData($view_id, $display_id);
 

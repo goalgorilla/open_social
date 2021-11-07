@@ -126,10 +126,9 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(EntityInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(EntityInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): EntityConnection {
     $query_helper = new CommentAttachmentsQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->database, $parent);
     $metadata->addCacheableDependency($query_helper);
 

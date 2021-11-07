@@ -56,7 +56,7 @@ class SearchContentBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
 
     $form = $this->formBuilder->getForm('Drupal\social_search\Form\SearchContentForm');

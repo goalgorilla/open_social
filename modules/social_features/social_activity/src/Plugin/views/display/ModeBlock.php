@@ -146,7 +146,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state) {
+  public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state): void {
     parent::blockSubmit($block, $form, $form_state);
 
     if ($value = $form_state->getValue(['override', 'type'])) {
@@ -158,7 +158,7 @@ class ModeBlock extends Block {
   /**
    * {@inheritdoc}
    */
-  public function preBlockBuild(ViewsBlock $block) {
+  public function preBlockBuild(ViewsBlock $block): void {
     parent::preBlockBuild($block);
 
     // Prepare values to use it in the views filter.

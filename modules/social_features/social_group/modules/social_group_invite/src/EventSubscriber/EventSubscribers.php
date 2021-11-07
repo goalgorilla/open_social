@@ -55,7 +55,7 @@ class EventSubscribers implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['customRedirect'];
     $events[ConfigEvents::SAVE][] = ['checkForInvite'];
     return $events;
@@ -69,7 +69,7 @@ class EventSubscribers implements EventSubscriberInterface {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function checkForInvite(ConfigCrudEvent $event) {
+  public function checkForInvite(ConfigCrudEvent $event): void {
     $saved_config = $event->getConfig()->getRawData();
     // When group_invitation is enabled, add some default config.
     if (!empty($saved_config['group_type']) &&
@@ -89,7 +89,7 @@ class EventSubscribers implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function customRedirect(RequestEvent $event) {
+  public function customRedirect(RequestEvent $event): void {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 

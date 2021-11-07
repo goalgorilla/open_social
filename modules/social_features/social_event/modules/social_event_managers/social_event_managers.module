@@ -462,10 +462,9 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
  * @param array $batch
  *   The batch array.
  *
- * @return string
  *   Returns the batch action id.
  */
-function _social_event_managers_get_action_id(array &$batch) {
+function _social_event_managers_get_action_id(array &$batch): string {
   /** @var \Drupal\Core\Form\FormStateInterface $form_state */
   $form_state = &$batch['form_state'];
 

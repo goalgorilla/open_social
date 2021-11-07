@@ -56,14 +56,14 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_request_membership_request_anonymous';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL): array {
     $this->group = $group;
 
     $form['description'] = [
@@ -115,6 +115,6 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
+  public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
 }

@@ -18,14 +18,14 @@ class EventAnEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'event_an_enroll_action_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL): array {
     $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
 
@@ -112,7 +112,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = $this->currentUser->id();
 
     $token = $this->getRequest()->query->get('token');

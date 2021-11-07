@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,14 +20,14 @@ class UserRegistration extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader() {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Registration date');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     return $this->format($entity);
   }
 
@@ -36,11 +37,10 @@ class UserRegistration extends UserExportPluginBase {
    * @param mixed $entity
    *   The entity object.
    *
-   * @return string
    *   A translated date string in the requested format. Since the format may
    *   contain user input, this value should be escaped when output.
    */
-  public function format($entity) {
+  public function format($entity): string {
     return $this->dateFormatter->format($entity->getCreatedTime(), 'short');
   }
 

@@ -19,7 +19,7 @@ class ActivityGroupArgument extends ArgumentPluginBase {
    *
    * The argument sent may be found at $this->argument.
    */
-  public function query($group_by = FALSE) {
+  public function query($group_by = FALSE): void {
     $this->ensureMyTable();
 
     // \Drupal\views\Plugin\views\query\QueryPluginBase.
@@ -39,7 +39,7 @@ class ActivityGroupArgument extends ArgumentPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $cache_contexts = parent::getCacheContexts();
 
     // Since the Stream is different per url.

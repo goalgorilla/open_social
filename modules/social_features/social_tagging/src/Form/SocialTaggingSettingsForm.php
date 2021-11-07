@@ -81,21 +81,21 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_tagging_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['social_tagging.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
 
     // Get the configuration file.
     $config = $this->config('social_tagging.settings');
@@ -184,7 +184,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Get the configuration file.
     $config = $this->config('social_tagging.settings');
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();

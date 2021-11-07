@@ -17,7 +17,7 @@ class EmailContext implements Context {
    *
    * @BeforeScenario @email-spool
    */
-  public function enableEmailSpool() {
+  public function enableEmailSpool(): void {
     // Update Drupal configuration.
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'spool');
@@ -33,7 +33,7 @@ class EmailContext implements Context {
    *
    * @AfterScenario @email-spool
    */
-  public function disableEmailSpool() {
+  public function disableEmailSpool(): void {
     // Update Drupal configuration.
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'native');
@@ -46,11 +46,10 @@ class EmailContext implements Context {
   /**
    * Get a list of spooled emails.
    *
-   * @return Finder|null
    *   Returns a Finder if the directory exists.
    * @throws Exception
    */
-  public function getSpooledEmails() {
+  public function getSpooledEmails(): ?Finder {
     $finder = new Finder();
     $spoolDir = $this->getSpoolDir();
 
@@ -73,20 +72,18 @@ class EmailContext implements Context {
    * @param string $file
    *   Path to the file.
    *
-   * @return string
    *   An unserialized email.
    */
-  public function getEmailContent($file) {
+  public function getEmailContent($file): string {
     return unserialize(file_get_contents($file));
   }
 
   /**
    * Get the path where the spooled emails are stored.
    *
-   * @return string
    *   The path where the spooled emails are stored.
    */
-  protected function getSpoolDir() {
+  protected function getSpoolDir(): string {
     $path = drupal_get_path('profile', 'social') . '/tests/behat/features/swiftmailer-spool';
     if (!file_exists($path)) {
       mkdir($path, 0777, true);
@@ -98,7 +95,7 @@ class EmailContext implements Context {
   /**
    * Purge the messages in the spool.
    */
-  protected function purgeSpool() {
+  protected function purgeSpool(): void {
     $filesystem = new Filesystem();
     $finder = $this->getSpooledEmails();
 
@@ -118,11 +115,10 @@ class EmailContext implements Context {
    * @param array $body
    *   Text that should be in the email.
    *
-   * @return bool
    *   Email was found or not.
    * @throws Exception
    */
-  protected function findSubjectAndBody($subject, $body) {
+  protected function findSubjectAndBody($subject, $body): bool {
     $finder = $this->getSpooledEmails();
 
     $found_email = FALSE;
@@ -167,7 +163,7 @@ class EmailContext implements Context {
    *
    * @Then I run the :arg1 digest cron
    */
-  public function iRunTheDigestCron($frequency) {
+  public function iRunTheDigestCron($frequency): void {
     // Update the timings in the digest table.
     $query =  \Drupal::database()->update('user_activity_digest');
     $query->fields(['timestamp' => 1]);
@@ -194,7 +190,7 @@ class EmailContext implements Context {
    *
    * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
    */
-  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
+  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body): void {
     $found_email = $this->findSubjectAndBody($subject, [$body]);
 
     if (!$found_email) {
@@ -207,7 +203,7 @@ class EmailContext implements Context {
    *
    * @Then I should have an email with subject :arg1 and in the content:
    */
-  public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+  public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table): void {
     $body = [];
     $hash = $table->getHash();
     foreach ($hash as $row) {
@@ -226,7 +222,7 @@ class EmailContext implements Context {
    *
    * @Then /^(?:|I )should not have an email with subject "([^"]*)" and "([^"]*)" in the body$/
    */
-  public function iShouldNotHaveAnEmailWithTitleAndBody($subject, $body) {
+  public function iShouldNotHaveAnEmailWithTitleAndBody($subject, $body): void {
     $found_email = $this->findSubjectAndBody($subject, [$body]);
 
     if ($found_email) {
@@ -239,7 +235,7 @@ class EmailContext implements Context {
    *
    * @Then I should not have an email with subject :arg1 and in the content:
    */
-  public function iShouldNotHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+  public function iShouldNotHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table): void {
     $body = [];
     $hash = $table->getHash();
     foreach ($hash as $row) {

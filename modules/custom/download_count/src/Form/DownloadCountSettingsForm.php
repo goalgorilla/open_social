@@ -13,21 +13,21 @@ class DownloadCountSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'download_count_admin_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['download_count.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('download_count.settings');
     $form['excluded file extensions'] = [
       '#type' => 'details',
@@ -68,7 +68,7 @@ class DownloadCountSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->config('download_count.settings');
     $config->set('download_count_flood_window', $form_state->getValue('download_count_flood_window'))
       ->set('download_count_flood_limit', $form_state->getValue('download_count_flood_limit'))

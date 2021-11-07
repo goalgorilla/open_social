@@ -16,7 +16,7 @@ class QueueStorageEntityListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header['id'] = $this->t('ID');
     $header['name'] = $this->t('Type');
     $header['owner'] = $this->t('Owner');
@@ -27,7 +27,7 @@ class QueueStorageEntityListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
     $row['id'] = $entity->id();
     $row['name'] = $entity->bundle();

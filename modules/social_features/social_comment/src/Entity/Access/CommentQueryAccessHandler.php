@@ -18,7 +18,7 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConditions($operation, AccountInterface $account) {
+  public function buildConditions($operation, AccountInterface $account): ConditionGroup {
     $entity_type_id = $this->entityType->id();
     $has_owner = $this->entityType->entityClassImplements(EntityOwnerInterface::class);
     $has_published = $this->entityType->entityClassImplements(EntityPublishedInterface::class);
@@ -79,7 +79,7 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityOwnerConditions($operation, AccountInterface $account) {
+  protected function buildEntityOwnerConditions($operation, AccountInterface $account): ?ConditionGroup {
     $conditions = new ConditionGroup('OR');
     $conditions->addCacheContexts(['user.permissions']);
     if ($account->hasPermission("access comments")) {

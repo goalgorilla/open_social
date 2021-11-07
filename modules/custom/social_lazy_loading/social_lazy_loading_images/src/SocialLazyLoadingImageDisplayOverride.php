@@ -16,7 +16,7 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
   /**
    * {@inheritdoc}
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
 
     $config_fields = [
@@ -76,7 +76,7 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 
@@ -90,7 +90,7 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialLazyLoadingImageDisplayOverride';
   }
 

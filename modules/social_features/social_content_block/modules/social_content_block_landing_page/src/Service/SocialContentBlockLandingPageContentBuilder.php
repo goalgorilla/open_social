@@ -89,7 +89,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['build'];
   }
 

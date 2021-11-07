@@ -64,10 +64,9 @@ function social_album_install() {
  * @param array $paths
  *   List of blocks which should be updated and paths which should be added.
  *
- * @return string
  *   List of block paths with new paths.
  */
-function _social_album_install_blocks($pages, array $paths) {
+function _social_album_install_blocks($pages, array $paths): string {
   return $pages . "\r\n" . implode("\r\n", $paths);
 }
 

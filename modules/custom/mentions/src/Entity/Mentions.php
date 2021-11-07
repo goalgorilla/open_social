@@ -2,6 +2,7 @@
 
 namespace Drupal\mentions\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -38,7 +39,7 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields['mid'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Mention ID'))
       ->setDescription(t('The primary identifier for a mention.'))
@@ -109,7 +110,7 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('auid', $uid);
     return $this;
   }
@@ -117,7 +118,7 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('auid', $account->id());
     return $this;
   }
@@ -125,7 +126,7 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMentionedEntity() {
+  public function getMentionedEntity(): ?EntityInterface {
     $entity_type = $this->getMentionedEntityTypeId();
     $entity_id = $this->getMentionedEntityId();
 

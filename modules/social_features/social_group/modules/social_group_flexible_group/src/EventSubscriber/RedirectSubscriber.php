@@ -54,7 +54,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['checkForRedirection'];
     return $events;
   }
@@ -65,7 +65,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkForRedirection(RequestEvent $event) {
+  public function checkForRedirection(RequestEvent $event): void {
     // Check if there is a group object on the current route.
     if (!($group = _social_group_get_current_group())) {
       return;
@@ -119,7 +119,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group.
    */
-  protected function doRedirect(RequestEvent $event, GroupInterface $group) {
+  protected function doRedirect(RequestEvent $event, GroupInterface $group): void {
     $url = Url::fromRoute('view.group_information.page_group_about', [
       'group' => $group->id(),
     ]);

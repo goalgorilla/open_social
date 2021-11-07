@@ -43,7 +43,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  protected function getOptions(FieldableEntityInterface $entity) {
+  protected function getOptions(FieldableEntityInterface $entity): array {
     $options = parent::getOptions($entity);
     $option = $options['_none'];
 
@@ -64,7 +64,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $description = $element['#description'];
 
@@ -93,7 +93,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     $field = $element['#parents'][0];
     $has_images = $form_state->hasValue(['field_post_image', 0, 'fids', 0]);
 

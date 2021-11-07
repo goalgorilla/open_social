@@ -28,7 +28,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @BeforeScenario
    */
-  public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope) {
+  public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope): void {
     // Start a session if not already done.
     // Needed since https://github.com/minkphp/Mink/pull/705
     // Otherwise executeScript or setCookie will throw an error.
@@ -59,7 +59,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @beforeUserCreate
    */
-  public function beforeUserCreateObject(EntityScope $scope) {
+  public function beforeUserCreateObject(EntityScope $scope): void {
     $user = $scope->getEntity();
     // If we add a user, using the Given users:
     // we can allow it not to have en email. However we use some
@@ -72,7 +72,7 @@ class SocialDrupalContext extends DrupalContext {
   /**
    * @beforeScenario @api
    */
-  public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
+  public function bootstrapWithAdminUser(BeforeScenarioScope $scope): void {
     $admin_user = User::load('1');
     $current_user = \Drupal::getContainer()->get('current_user');
     $current_user->setAccount($admin_user);
@@ -88,7 +88,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @Given I am viewing my :type( content):
    */
-  public function assertViewingMyNode($type, TableNode $fields) {
+  public function assertViewingMyNode($type, TableNode $fields): void {
 
     $user_manager = $this->getUserManager();
     $user = $user_manager->getCurrentUser();
@@ -118,7 +118,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * To support relative dates.
    */
-  public function assertViewingNode($type, TableNode $fields) {
+  public function assertViewingNode($type, TableNode $fields): void {
     $node = (object) array(
       'type' => $type,
     );
@@ -140,7 +140,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * To support relative dates.
    */
-  public function createNodes($type, TableNode $nodesTable) {
+  public function createNodes($type, TableNode $nodesTable): void {
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
@@ -159,7 +159,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @Given :count topics with title :title by :username
    */
-  public function createTopics($count, $title, $username) {
+  public function createTopics($count, $title, $username): void {
     /** @var \Drupal\user\UserInterface[] $accounts */
     $accounts = \Drupal::entityTypeManager()->getStorage('user')
       ->loadByProperties(['name' => $username]);
@@ -186,7 +186,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @Given :count comments with text :text for :topic
    */
-  public function createComments($count, $text, $topic) {
+  public function createComments($count, $text, $topic): void {
     /** @var \Drupal\node\NodeInterface[] $nodes */
     $nodes = \Drupal::entityTypeManager()->getStorage('node')
       ->loadByProperties(['title' => $topic]);
@@ -218,7 +218,7 @@ class SocialDrupalContext extends DrupalContext {
   /**
    * @Given Search indexes are up to date
    */
-  public function updateSearchIndexes() {
+  public function updateSearchIndexes(): void {
     /** @var \Drupal\search_api\Entity\SearchApiConfigEntityStorage $index_storage */
     $index_storage = \Drupal::service("entity_type.manager")->getStorage('search_api_index');
 
@@ -238,14 +238,14 @@ class SocialDrupalContext extends DrupalContext {
   /**
    * @When I empty the queue
    */
-  public function iEmptyTheQueue() {
+  public function iEmptyTheQueue(): void {
     $this->processQueue(TRUE);
   }
 
   /**
    * @When I wait for the queue to be empty
    */
-  public function iWaitForTheQueueToBeEmpty() {
+  public function iWaitForTheQueueToBeEmpty(): void {
     $this->processQueue();
   }
 
@@ -254,7 +254,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @param $item_name
    */
-  public function iCheckIFQueueItemsProcessed($item_name = "") {
+  public function iCheckIFQueueItemsProcessed($item_name = ""): void {
     $query = \Drupal::database()->select('queue', 'q');
     $query->addField('q', 'item_id');
     $query->condition('q.name', $item_name);
@@ -271,7 +271,7 @@ class SocialDrupalContext extends DrupalContext {
    * @param bool $just_delete
    *   If set to TRUE, it doesn't process the items, but simply deletes them.
    */
-  protected function processQueue($just_delete = FALSE) {
+  protected function processQueue($just_delete = FALSE): void {
     $workerManager = \Drupal::service('plugin.manager.queue_worker');
     /** @var Drupal\Core\Queue\QueueFactory; $queue */
     $queue = \Drupal::service('queue');
@@ -310,7 +310,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @param $tour_id
    */
-  public function iResetTour($tour_id)
+  public function iResetTour($tour_id): void
   {
     $query = \Drupal::database()->delete('users_data');
     $query->condition('module', 'social_tour');
@@ -323,7 +323,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
    */
-  public function iWaitForSeconds($seconds, $condition = 'false') {
+  public function iWaitForSeconds($seconds, $condition = 'false'): void {
     $milliseconds = (int) ($seconds * 1000);
     $this->getSession()->wait($milliseconds, $condition);
   }
@@ -333,7 +333,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )enable the module "([^"]*)"/
    */
-  public function iEnableTheModule($module_name) {
+  public function iEnableTheModule($module_name): void {
     $modules = [$module_name];
     \Drupal::service('module_installer')->install($modules);
   }
@@ -343,7 +343,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )disable the module "([^"]*)"/
    */
-  public function iDisableTheModule($module_name) {
+  public function iDisableTheModule($module_name): void {
     $modules = [$module_name];
     \Drupal::service('module_installer')->uninstall($modules);
   }
@@ -353,7 +353,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When I enable the tour setting
    */
-  public function iEnableTheTourSetting() {
+  public function iEnableTheTourSetting(): void {
     \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
   }
 
@@ -362,7 +362,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )enable the nickname field on profiles/
    */
-  public function iEnableNicknameField() {
+  public function iEnableNicknameField(): void {
     if (!\Drupal::service('module_handler')->moduleExists("social_profile_fields")) {
       throw new \Exception("Could not enable nickname field for profile because the Social Profile Fields module is disabled.");
     }
@@ -375,7 +375,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )(un)?restrict real name usage/
    */
-  public function iRestrictRealNameUsage($restrict = TRUE) {
+  public function iRestrictRealNameUsage($restrict = TRUE): void {
     if (!\Drupal::service('module_handler')->moduleExists("social_profile_privacy")) {
       throw new \Exception("Could not restrict real name usage because the Social Profile Privacy module is disabled.");
     }
@@ -398,7 +398,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )search (all|users|groups|content) for "([^"]*)"/
    */
-  public function iSearchIndexForTerm($index, $term) {
+  public function iSearchIndexForTerm($index, $term): void {
     $this->getSession()->visit($this->locatePath('/search/' . $index . '/' . urlencode($term)));
   }
 
@@ -409,7 +409,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )fill in the custom fields for this "([^"]*)"$/
    */
-  public function iFillInCustomFieldsForThis($type) {
+  public function iFillInCustomFieldsForThis($type): void {
     // This method is intentionally left blank. Projects extending Open Social
     // are encouraged to overwrite this method and call the methods that are
     // needed to fill in custom required fields for the used type.
@@ -418,7 +418,7 @@ class SocialDrupalContext extends DrupalContext {
   /**
    * @Given I am logged in as :name with the :permissions permission(s)
    */
-  public function assertLoggedInWithPermissionsByName($name, $permissions) {
+  public function assertLoggedInWithPermissionsByName($name, $permissions): void {
     // Create a temporary role with given permissions.
     $permissions = array_map('trim', explode(',', $permissions));
     $role = $this->getDriver()->roleCreate($permissions);
@@ -442,7 +442,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When I enable that the registered users to be verified immediately
    */
-  public function iEnableVerifiedImmediately() {
+  public function iEnableVerifiedImmediately(): void {
     \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', TRUE)->save();
   }
 
@@ -451,7 +451,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When I disable that the registered users to be verified immediately
    */
-  public function iDisableVerifiedImmediately() {
+  public function iDisableVerifiedImmediately(): void {
     \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', FALSE)->save();
   }
 

@@ -19,7 +19,7 @@ class Topic extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry(array $item) {
+  protected function getEntry(array $item): array {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
@@ -50,7 +50,7 @@ class Topic extends DemoNode {
    * @return array|null
    *   Array containing related files or NULL.
    */
-  protected function prepareAttachment(array $files) {
+  protected function prepareAttachment(array $files): ?array {
     $attachments = NULL;
 
     foreach ($files as $file) {
@@ -91,7 +91,7 @@ class Topic extends DemoNode {
    * @return array|null
    *   Array containing related terms.
    */
-  protected function prepareTopicType($name) {
+  protected function prepareTopicType($name): ?array {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
       'name' => $name,

@@ -135,7 +135,7 @@ class SocialGroupHelperService {
    * @return string|null
    *   The default visibility.
    */
-  public static function getDefaultGroupVisibility($type) {
+  public static function getDefaultGroupVisibility($type): ?string {
     $visibility = &drupal_static(__FUNCTION__ . $type);
 
     if (empty($visibility)) {
@@ -166,10 +166,9 @@ class SocialGroupHelperService {
   /**
    * Returns the statically cached group members form the current group.
    *
-   * @return array
    *   All group members as array with value user->id().
    */
-  public static function getCurrentGroupMembers() {
+  public static function getCurrentGroupMembers(): array {
     $cache = &drupal_static(__FUNCTION__, []);
 
     if (!empty($cache)) {
@@ -193,10 +192,9 @@ class SocialGroupHelperService {
    * @param int $uid
    *   The UID for which we fetch the groups it is member of.
    *
-   * @return array
    *   List of group IDs the user is member of.
    */
-  public function getAllGroupsForUser($uid) {
+  public function getAllGroupsForUser($uid): array {
     $groups = &drupal_static(__FUNCTION__);
 
     // Get the memberships for the user if they aren't known yet.
@@ -272,10 +270,9 @@ class SocialGroupHelperService {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account.
    *
-   * @return \Drupal\Core\Url
    *   URL of the group add page.
    */
-  public function getGroupsToAddUrl(AccountInterface $account) {
+  public function getGroupsToAddUrl(AccountInterface $account): ?Url {
     $url = NULL;
     $user_can_create_groups = [];
     // Get all available group types.

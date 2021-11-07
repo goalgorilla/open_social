@@ -86,14 +86,14 @@ abstract class PushBase extends PluginBase implements PushInterface {
   /**
    * {@inheritdoc}
    */
-  public function access() {
+  public function access(): bool {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm() {
+  public function buildForm(): array {
     return [];
   }
 

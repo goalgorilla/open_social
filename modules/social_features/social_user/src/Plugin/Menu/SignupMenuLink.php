@@ -67,7 +67,7 @@ class SignupMenuLink extends MenuLinkDefault {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     return ['user.roles:authenticated'];
   }
 

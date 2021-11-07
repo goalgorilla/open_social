@@ -52,7 +52,7 @@ class EntityAccessTest extends UnitTestCase {
   /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Neutral Access.
    */
-  public function testNeutralAccess() {
+  public function testNeutralAccess(): void {
 
     $node = $this->prophesize(NodeInterface::class);
 
@@ -77,7 +77,7 @@ class EntityAccessTest extends UnitTestCase {
   /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Forbidden Access.
    */
-  public function testForbiddenAccess() {
+  public function testForbiddenAccess(): void {
 
     $node = $this->prophesize(NodeInterface::class);
 
@@ -120,7 +120,7 @@ class EntityAccessTest extends UnitTestCase {
   /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Allowed Access.
    */
-  public function testAllowedAccess() {
+  public function testAllowedAccess(): void {
 
     $node = $this->prophesize(NodeInterface::class);
 
@@ -166,7 +166,7 @@ class EntityAccessTest extends UnitTestCase {
   /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Author Access Allowed.
    */
-  public function testAuthorAccessAllowed() {
+  public function testAuthorAccessAllowed(): void {
 
     $node = $this->prophesize(NodeInterface::class);
 

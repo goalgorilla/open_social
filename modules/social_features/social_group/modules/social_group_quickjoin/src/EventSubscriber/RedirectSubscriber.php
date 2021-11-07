@@ -62,7 +62,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @return mixed
    *   Returns request events.
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::REQUEST][] = ['groupQuickJoin'];
     return $events;
   }
@@ -73,7 +73,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function groupQuickJoin(RequestEvent $event) {
+  public function groupQuickJoin(RequestEvent $event): void {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();

@@ -15,7 +15,7 @@ class PostListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header = [];
     $header['id'] = $this->t('Post ID');
     $header['post'] = $this->t('Post');
@@ -29,7 +29,7 @@ class PostListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row = [];
     /** @var \Drupal\social_post\Entity\Post $entity */
     $row['id'] = $entity->id();

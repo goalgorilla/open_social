@@ -130,7 +130,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     // Take the raw parameter. We'll load it ourselves.
     $nid = $this->routeMatch->getRawParameter('node');
     $node = FALSE;

@@ -77,7 +77,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     try {
       return $this->accessHelper->eventFeatureAccess();
     }
@@ -92,7 +92,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build = [];
 
     // Get current node so we can build correct links.

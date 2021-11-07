@@ -93,21 +93,21 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'grequest_group_request_membership_reject';
   }
 
   /**
    * {@inheritdoc}
    */
-  private function getCancelUrl() {
+  private function getCancelUrl(): Url {
     return Url::fromUserInput($this->redirectDestination->get());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, GroupInterface $group = NULL, GroupContentInterface $group_content = NULL): array {
     $this->group = $group;
     $this->groupContent = $group_content;
 
@@ -153,7 +153,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->groupContent
       ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
       // Who created request will become an 'approver' for Membership request.

@@ -45,7 +45,7 @@ class SocialPostHelper implements SocialPostHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildCurrentUserImage() {
+  public function buildCurrentUserImage(): ?array {
     $storage = $this->entityTypeManager->getStorage('profile');
 
     if (!empty($storage)) {

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Controller;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -49,7 +50,7 @@ class SocialUserController extends ControllerBase {
    * @return RedirectResponse
    *   Return Redirect to the user account.
    */
-  public function otherUserPage(UserInterface $user) {
+  public function otherUserPage(UserInterface $user): \Symfony\Component\HttpFoundation\RedirectResponse {
     return $this->redirect('entity.user.canonical', ['user' => $user->id()]);
   }
 
@@ -71,10 +72,9 @@ class SocialUserController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return \Drupal\Core\Access\AccessResult
    *   Check standard and custom permissions.
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account): AccessResult {
     return AccessResult::allowedIfHasPermissions($account, [
       'administer users',
       'view users',
@@ -89,10 +89,9 @@ class SocialUserController extends ControllerBase {
    * @param \Drupal\Core\Routing\RouteMatch $routeMatch
    *   The matched route.
    *
-   * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch) {
+  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): CacheableDependencyInterface {
     /** @var \Drupal\user\UserInterface $user */
     $user = $routeMatch->getParameter('user');
     if (isset($user)) {

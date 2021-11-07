@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Access\AccessResultAllowed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -66,7 +68,7 @@ class EnrollRequestDialogController extends ControllerBase {
    * @return string[]
    *   An array of jQuery UI elements to pass on to our dialog form.
    */
-  protected static function getDataDialogOptions() {
+  protected static function getDataDialogOptions(): array {
     return [
       'dialogClass' => 'form--default social_event-popup',
       'closeOnEscape' => TRUE,
@@ -77,7 +79,7 @@ class EnrollRequestDialogController extends ControllerBase {
   /**
    * Enroll dialog callback.
    */
-  public function enrollDialog() {
+  public function enrollDialog(): AjaxResponse {
     $response = new AjaxResponse();
 
     // Get the modal form using the form builder.
@@ -104,17 +106,16 @@ class EnrollRequestDialogController extends ControllerBase {
    * @param \Drupal\node\NodeInterface $node
    *   Node.
    *
-   * @return string
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node) {
+  public function enrollTitle(NodeInterface $node): TranslatableMarkup {
     return $this->t('Request enrollment in @label Event', ['@label' => $node->label()]);
   }
 
   /**
    * Determines if user has access to enroll form.
    */
-  public function enrollAccess(NodeInterface $node) {
+  public function enrollAccess(NodeInterface $node): AccessResultAllowed {
     return AccessResult::allowed();
   }
 

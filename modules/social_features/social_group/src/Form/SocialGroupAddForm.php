@@ -53,10 +53,9 @@ class SocialGroupAddForm extends FormBase {
   /**
    * Returns a unique string identifying the form.
    *
-   * @return string
    *   The unique string identifying the form.
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_group_add';
   }
 
@@ -68,7 +67,7 @@ class SocialGroupAddForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($group_type = $form_state->getValue('group_type')) {
       $url = Url::fromUserInput('/group/add/' . $group_type);
 
@@ -84,10 +83,9 @@ class SocialGroupAddForm extends FormBase {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
-   * @return array
    *   Form definition array.
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['class'][] = 'form--default';
     $form['group_settings'] = [
       '#type' => 'fieldset',

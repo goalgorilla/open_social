@@ -24,7 +24,7 @@ class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
+  public function execute($entity = NULL): void {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     $entity->delete();
   }

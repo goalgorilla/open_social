@@ -18,7 +18,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
@@ -161,14 +161,14 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialEventTypeConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

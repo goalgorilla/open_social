@@ -61,7 +61,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values): void {
     parent::preCreate($storage_controller, $values);
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
@@ -71,14 +71,14 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function getType() {
+  public function getType(): string {
     return $this->bundle();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setType($type) {
+  public function setType($type): void {
     $this->set('type', $this->bundle());
   }
 
@@ -92,7 +92,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
+  public function setName($name): self {
     $this->set('name', $name);
     return $this;
   }
@@ -107,7 +107,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp) {
+  public function setCreatedTime($timestamp): self {
     $this->set('created', $timestamp);
     return $this;
   }
@@ -129,7 +129,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public function setOwnerId($uid): self {
     $this->set('user_id', $uid);
     return $this;
   }
@@ -137,7 +137,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(UserInterface $account): self {
     $this->set('user_id', $account->id());
     return $this;
   }
@@ -145,14 +145,14 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function isFinished() {
+  public function isFinished(): bool {
     return (bool) $this->get('finished')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setFinished($status) {
+  public function setFinished($status): self {
     $this->set('finished', $status);
     return $this;
   }
@@ -160,7 +160,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')

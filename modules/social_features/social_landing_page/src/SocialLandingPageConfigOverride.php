@@ -18,7 +18,7 @@ class SocialLandingPageConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * Load overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides($names): array {
     $overrides = [];
     // Set hero title block for book content type.
     $config_names = [
@@ -36,14 +36,14 @@ class SocialLandingPageConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheSuffix() {
+  public function getCacheSuffix(): string {
     return 'SocialLandingPageConfigOverride';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata($name) {
+  public function getCacheableMetadata($name): CacheableMetadata {
     return new CacheableMetadata();
   }
 

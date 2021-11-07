@@ -18,14 +18,14 @@ class EnrollRequestModalForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'request_enrollment_modal_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $options = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, $options = NULL): array {
     $node = \Drupal::routeMatch()->getParameter('node');
     $nid = $node->id();
 
@@ -79,7 +79,7 @@ class EnrollRequestModalForm extends FormBase {
   /**
    * AJAX callback handler that displays any errors or a success message.
    */
-  public function submitModalFormAjax(array $form, FormStateInterface $form_state) {
+  public function submitModalFormAjax(array $form, FormStateInterface $form_state): AjaxResponse {
     $response = new AjaxResponse();
 
     if ($form_state->getErrors()) {
@@ -124,21 +124,20 @@ class EnrollRequestModalForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {}
+  public function validateForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {}
+  public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
    * Gets the configuration names that will be editable.
    *
-   * @return array
    *   An array of configuration object names that are editable if called in
    *   conjunction with the trait's config() method.
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return ['config.request_enrollment_modal_form'];
   }
 
@@ -148,7 +147,7 @@ class EnrollRequestModalForm extends FormBase {
    * @return string[]
    *   An array of jQuery UI elements to pass on to our dialog form.
    */
-  protected static function getDataDialogOptions() {
+  protected static function getDataDialogOptions(): array {
     return [
       'dialogClass' => 'form--default social_event-popup',
       'closeOnEscape' => TRUE,

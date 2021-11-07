@@ -101,7 +101,7 @@ class GroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
       /** @var \Drupal\comment\CommentInterface $comment */

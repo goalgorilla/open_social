@@ -32,7 +32,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'num_comments' => 2,
       'always_show_all_comments' => FALSE,
@@ -42,7 +42,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = [];
     $output = [];
 
@@ -171,7 +171,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
     $element = [];
     $element['num_comments'] = [
       '#type' => 'number',
@@ -192,7 +192,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
     return [];
   }
 
@@ -201,7 +201,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    *
    * @see Drupal\comment\CommentStorage::loadThead()
    */
-  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
+  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0): array {
     // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
     $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');

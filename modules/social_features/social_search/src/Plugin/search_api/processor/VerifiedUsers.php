@@ -26,7 +26,7 @@ class VerifiedUsers extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public static function supportsIndex(IndexInterface $index) {
+  public static function supportsIndex(IndexInterface $index): bool {
     $entity_types = ['profile'];
     foreach ($index->getDatasources() as $datasource) {
       if (in_array($datasource->getEntityTypeId(), $entity_types)) {

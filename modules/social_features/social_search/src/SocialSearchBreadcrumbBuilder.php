@@ -17,7 +17,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function applies(RouteMatchInterface $route_match) {
+  public function applies(RouteMatchInterface $route_match): bool {
     $search_routes = [
       'view.search_all.page',
       'view.search_all.page_no_value',
@@ -34,7 +34,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function build(RouteMatchInterface $route_match) {
+  public function build(RouteMatchInterface $route_match): Breadcrumb {
     $breadcrumb = new Breadcrumb();
 
     switch ($route_match->getRouteName()) {

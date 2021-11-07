@@ -136,7 +136,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
+  public function processItem($data): void {
     // First make sure it's an actual Activity entity.
     $activity_storage = $this->entityTypeManager->getStorage('activity');
 
@@ -257,7 +257,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function sendToFrequencyManager(array $parameters) {
+  private function sendToFrequencyManager(array $parameters): void {
     if (empty($parameters['target_recipients'])) {
       return;
     }
@@ -331,7 +331,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    * @param string|null $langcode
    *   Language code.
    */
-  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL) {
+  private function prepareBatch(array $data, array $user_ids_per_language, $langcode = NULL): void {
     // Split up by 50.
     $batches = array_chunk($user_ids_per_language, 50);
 

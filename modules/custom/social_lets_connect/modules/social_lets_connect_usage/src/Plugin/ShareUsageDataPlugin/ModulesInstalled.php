@@ -19,10 +19,9 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
   /**
    * Get the value.
    *
-   * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     $value = [];
     $modules = \Drupal::service('extension.list.module')->reset()->getList();
     $modules = $this->getExtensionsInfo($modules);
@@ -47,10 +46,9 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
    * @param \Drupal\Core\Extension\Extension[] $projects
    *   An array of extensions.
    *
-   * @return array
    *   Returns an array of projects with safe values.
    */
-  private function getExtensionsInfo(array $projects) {
+  private function getExtensionsInfo(array $projects): array {
     $value = [];
     uasort($projects, 'system_sort_modules_by_info_name');
     /** @var \Drupal\Core\Extension\Extension $project */

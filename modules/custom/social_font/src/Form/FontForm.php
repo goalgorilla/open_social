@@ -15,7 +15,7 @@ class FontForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     /** @var \Drupal\social_font\Entity\Font $entity */
     $form = parent::buildForm($form, $form_state);
 
@@ -25,7 +25,7 @@ class FontForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): void {
     $entity = &$this->entity;
 
     $status = parent::save($form, $form_state);

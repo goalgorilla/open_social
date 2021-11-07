@@ -24,12 +24,10 @@ class SocialSwiftmailTextFormat {
    * @param array $complete_form
    *   The complete form structure.
    *
-   * @return array
    *   The processed element.
-   *
    * @see social_swiftmail_element_info_alter()
    */
-  public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function process(array &$element, FormStateInterface $form_state, array &$complete_form): array {
     if (!$form_state->has('views_bulk_operations')) {
       $format = &$element['format'];
 

@@ -276,12 +276,10 @@ function social_landing_page_preprocess_field(&$variables) {
  * @param \Drupal\node\NodeInterface $node
  *   The landing page.
  *
- * @return array
  *   Render array of the image with a link.
- *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(NodeInterface $node) {
+function _social_landing_page_get_hero_image(NodeInterface $node): array {
   // Must be a valid node.
   if (
     $node->getType() !== 'landing_page' ||

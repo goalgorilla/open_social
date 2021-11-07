@@ -59,7 +59,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(GroupInterface $group, array $changed_visibility, array $new_options) {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, array $changed_visibility, array $new_options): void {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
@@ -113,7 +113,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, array $new_options, array &$context) {
+  public function updateVisibility($entity, array $new_options, array &$context): void {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function updateVisibilityFinishedCallback().
@@ -149,7 +149,7 @@ class FlexibleGroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+  public static function updateVisibilityFinishedCallback($success, array $results, array $operations): void {
     $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.
@@ -180,7 +180,7 @@ class FlexibleGroupContentVisibilityUpdate {
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(GroupInterface $group) {
+  public static function getPostsFromGroup(GroupInterface $group): array {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.
@@ -208,10 +208,9 @@ class FlexibleGroupContentVisibilityUpdate {
    * @param array $new_options
    *   The new options to choose from.
    *
-   * @return string
    *   The new visibility.
    */
-  public static function calculateVisibility($current_visibility, array $new_options) {
+  public static function calculateVisibility($current_visibility, array $new_options): string {
     // If there is only one option just return that one.
     if (count($new_options) === 1) {
       return reset($new_options)['value'];

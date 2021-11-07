@@ -29,7 +29,7 @@ class AlbumImageFormatter extends ImageFormatter {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
     // Grab all elements from the parent view.
     $elements = parent::viewElements($items, $langcode);
     if (!$items->isEmpty()) {

@@ -41,7 +41,7 @@ class MentionsInsert implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events['mentions.insert'][] = ['onMentionsInsert', 0];
     return $events;
   }
@@ -49,7 +49,7 @@ class MentionsInsert implements EventSubscriberInterface {
   /**
    * Event Handler.
    */
-  public function onMentionsInsert($event) {
+  public function onMentionsInsert($event): void {
     $config = $this->configFactory->get('mentions.settings');
     $config_mentions_events = $config->get('mentions_events');
     $action_id = $config_mentions_events['insert'];
