@@ -112,6 +112,7 @@ class InvitationOperations extends ControllerBase {
    *   Invitation entity.
    *
    *   A redirect response object that may be returned by the controller.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function decline(Request $request, GroupContentInterface $group_content): RedirectResponse {

@@ -13,6 +13,7 @@ use Drupal\Core\Url;
  * @addtogroup hooks
  * @{
  */
+
 /**
  * Allows a module to provide links for the create content menu item.
  *
@@ -21,6 +22,7 @@ use Drupal\Core\Url;
  *
  *   Items in this array will be used as list items in a dropdown list. All
  *   returned items will be sorted using Element::children.
+ *
  * @see \template_preprocess_item_list()
  */
 function hook_social_user_account_header_create_links(array $context): array {
@@ -63,6 +65,7 @@ function hook_social_user_account_header_create_links_alter(array &$links, array
  *
  *   Items in this array will be used as list items in a dropdown list. All
  *   returned items will be sorted using Element::children.
+ *
  * @see \template_preprocess_item_list()
  */
 function hook_social_user_account_header_account_links(array $context): array {
@@ -110,6 +113,7 @@ function hook_social_user_account_header_account_links_alter(array &$links, arra
  *
  *   An associative array of items that should be added in the account header
  *   block. The key of the items should be a unique item name.
+ *
  * @see \Drupal\social_user\Element\AccountHeaderElement
  */
 function hook_social_user_account_header_items(array $context): array {

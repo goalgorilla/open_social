@@ -68,6 +68,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *   Approve the enrollment request, TRUE(1) or FALSE(0).
    *
    *   Return to the original destination from the current request.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve): RedirectResponse {

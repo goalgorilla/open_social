@@ -136,6 +136,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    * which uses setMaxDepth(4) instead of setTopLevelOnly()
    *
    *   The updated renderable array.
+   *
    * @see admin_toolbar_prerender_toolbar_administration_tray()
    */
   public function renderForm(): array {

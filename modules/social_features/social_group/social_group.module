@@ -1,6 +1,5 @@
 <?php
 
-use Drupal\profile\Entity\Profile;
 /**
  * @file
  * The Social group module.
@@ -26,6 +25,7 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\profile\Entity\Profile;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
@@ -187,7 +187,7 @@ function _social_group_visibility_settings_submit(array $form, FormStateInterfac
 /**
  * Load group content label and group label.
  *
- *   array of group labels.
+ *   Array of group labels.
  */
 function _social_group_get_group_labels(): array {
 
@@ -1764,7 +1764,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The user to check for.
  *
- *   The amount of group_types
+ *   The amount of group_types.
  */
 function _social_group_get_current_group_types(AccountInterface $account): int {
   $group_types = 0;

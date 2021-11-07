@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class SocialQuickJoinController.
+ * Controller for social_group_quickjoin mdoule.
  *
  * @package Drupal\social_group_quickjoin\Controller
  */
@@ -66,6 +66,7 @@ class SocialQuickJoinController extends ControllerBase {
    *   The group you want to join.
    *
    *   Where to redirect to.
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function quickJoin(GroupInterface $group): RedirectResponse {

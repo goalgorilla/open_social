@@ -66,6 +66,7 @@ class CancelEnrollInviteController extends ControllerBase {
    *   The entity event_enrollment.
    *
    *   Return to the original destination from the current request.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment): RedirectResponse {

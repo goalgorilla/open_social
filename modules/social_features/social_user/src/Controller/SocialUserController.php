@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
@@ -12,7 +13,7 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialUserController.
+ * Controller class for social_user module.
  *
  * @package Drupal\social_user\Controller
  */
@@ -47,10 +48,10 @@ class SocialUserController extends ControllerBase {
   /**
    * OtherUserPage.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the user account.
    */
-  public function otherUserPage(UserInterface $user): \Symfony\Component\HttpFoundation\RedirectResponse {
+  public function otherUserPage(UserInterface $user): RedirectResponse {
     return $this->redirect('entity.user.canonical', ['user' => $user->id()]);
   }
 

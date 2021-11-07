@@ -1,6 +1,5 @@
 <?php
 
-use Drupal\node\Entity\Node;
 /**
  * @file
  * Builds placeholder replacement tokens for Social Event module.
@@ -10,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**

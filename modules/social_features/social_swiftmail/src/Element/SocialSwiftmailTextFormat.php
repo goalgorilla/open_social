@@ -5,7 +5,7 @@ namespace Drupal\social_swiftmail\Element;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialSwiftmailTextFormat.
+ * Provides process function for Main HTML.
  *
  * @package Drupal\social_swiftmail\Element
  */
@@ -25,6 +25,7 @@ class SocialSwiftmailTextFormat {
    *   The complete form structure.
    *
    *   The processed element.
+   *
    * @see social_swiftmail_element_info_alter()
    */
   public static function process(array &$element, FormStateInterface $form_state, array &$complete_form): array {

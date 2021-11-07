@@ -107,6 +107,7 @@ class AjaxCommentsController extends ContribController {
    *   $pid is the parent comment's comment ID. Defaults to NULL.
    *
    *   The Ajax response.
+   *
    * @see \Drupal\comment\Controller\CommentController::getReplyForm()
    */
   public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL): AjaxResponse {

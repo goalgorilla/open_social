@@ -11,6 +11,7 @@ use Drupal\social_branding\PreferredPlatformFeature;
  * @addtogroup hooks
  * @{
  */
+
 /**
  * Define social branding preferred features.
  *

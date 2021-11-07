@@ -7,7 +7,7 @@ use Drupal\flag\FlaggingInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class ReportController.
+ * Controller for social_content_report.
  *
  * @package Drupal\social_content_report\Controller
  */
@@ -20,6 +20,7 @@ class ReportController extends ControllerBase {
    *   The Flagging object to close.
    *
    *   A simple response.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function close(FlaggingInterface $flagging): RedirectResponse {

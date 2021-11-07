@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Class MagicLoginController.
+ * Controller for magic login.
  */
 class MagicLoginController extends ControllerBase {
 
@@ -83,6 +83,7 @@ class MagicLoginController extends ControllerBase {
    *   The final destination the user needs to end up as an encoded string.
    *
    *   The redirect response.
+   *
    * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
   public function login($uid, $timestamp, $hash, $destination): RedirectResponse {
@@ -148,7 +149,10 @@ class MagicLoginController extends ControllerBase {
         $message_set_password = $this->t('Before you can log in and set your password, you need to agree to the data policy.');
       }
       $this->messenger()->addStatus($message_set_password);
-      $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+      $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', [
+        '%name' => $user->getDisplayName(),
+        '%timestamp' => $timestamp,
+      ]);
 
       // This mirrors the UserController::resetPassLogin redirect which
       // allows a user to set a password without the current password check.
@@ -167,7 +171,10 @@ class MagicLoginController extends ControllerBase {
       );
     }
 
-    $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+    $this->logger->notice('User %name used one-time login link at time %timestamp.', [
+      '%name' => $user->getDisplayName(),
+      '%timestamp' => $timestamp,
+    ]);
     $config = $this->config->get('social_magic_login.settings');
 
     if ($config->get('show_used_message') === TRUE) {

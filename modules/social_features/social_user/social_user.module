@@ -393,7 +393,7 @@ function social_user_form_views_form_user_admin_people_page_1_alter(&$form, Form
  * @param string $name_or_mail
  *   Username or email address.
  *
- *   TRUE if blocked FALSE if not blocked
+ *   TRUE if blocked FALSE if not blocked.
  */
 function social_user_is_blocked($name_or_mail): bool {
   $is_blocked_name = (bool) \Drupal::entityQuery('user')

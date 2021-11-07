@@ -40,6 +40,7 @@ function hook_social_node_title_prefix_articles_alter(array &$node_types) {
  * Provides route for node page where should be displayed simple title.
  *
  *   The route name.
+ *
  * @see \Drupal\social_core\Plugin\Block\SocialPageTitleBlock::build()
  */
 function hook_social_core_node_default_title_route(): string {
@@ -55,6 +56,7 @@ function hook_social_core_node_default_title_route(): string {
  * @denyaccesstoblock hooks
  * @{
  */
+
 /**
  * Provide a method to alter array of blocks to hide.
  *
@@ -62,6 +64,7 @@ function hook_social_core_node_default_title_route(): string {
  * block that it will merge the array in one.
  *
  *   Blocks in this array will be hidden from the associated paths.
+ *
  * @ingroup social_core_block_api
  */
 function hook_social_core_block_visibility_path(): array {

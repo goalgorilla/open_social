@@ -29,9 +29,9 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  * )
  *
  * @internal
- * @deprecated remove when upgrading graphql module to a version that
+ * @todo remove when upgrading graphql module to a version that
  * includes the options dataproducer setting.
- * @see https://github.com/drupal-graphql/graphql/pull/1220
+ * @link https://github.com/drupal-graphql/graphql/pull/1220 @endlink
  */
 class EntityUrl extends DataProducerPluginBase {
 
@@ -44,6 +44,7 @@ class EntityUrl extends DataProducerPluginBase {
    *   The options to provide to the URL generator.
    *
    *   Url object.
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function resolve(EntityInterface $entity, ?array $options): Url {

@@ -64,6 +64,7 @@ class SocialCommentController extends CommentController {
    *   A comment entity.
    *
    *   Redirect to where.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function commentUnpublish(CommentInterface $comment): RedirectResponse {

@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 /**
  * @file
  * Social Node hooks & alters.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\NodeInterface;
 
 /**

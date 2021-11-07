@@ -74,6 +74,7 @@ function social_post_mass_update(array $posts, array $updates, $langcode = NULL,
  *   all available languages are processed.
  *
  *   An updated post object.
+ *
  * @see social_post_mass_update()
  */
 function _social_post_mass_update_helper(PostInterface $post, array $updates, $langcode = NULL): PostInterface {

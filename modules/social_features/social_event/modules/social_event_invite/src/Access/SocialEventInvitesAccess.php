@@ -8,7 +8,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 
 /**
- * Class SocialEventInvitesAccess.
+ * Provides access controllers checks.
  *
  * @package Drupal\social_event_invite\Access
  */
@@ -35,6 +35,7 @@ class SocialEventInvitesAccess {
    * Custom access check on the invite features on events.
    *
    *   Returns the result of the access helper.
+   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::eventFeatureAccess()
    */
   public function eventFeatureAccess(): AccessResult {
@@ -53,6 +54,7 @@ class SocialEventInvitesAccess {
    * Custom access check for the user invite overview.
    *
    *   Returns the result of the access helper.
+   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::userInviteAccess()
    */
   public function userInviteAccess(): AccessResult {

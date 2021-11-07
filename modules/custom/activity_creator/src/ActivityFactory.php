@@ -118,6 +118,7 @@ class ActivityFactory extends ControllerBase {
    *   An array of data to create activity from.
    *
    *   An array of created activities.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function buildActivities(array $data): array {

@@ -68,7 +68,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
    * @param \Drupal\file\FileInterface $file
    *   A file entity. This function may resize the file affecting its size.
    *
-   *   TRUE when it's an image and not a file
+   *   TRUE when it's an image and not a file.
    */
   private function isImage(FileInterface $file): bool {
     $image = $this->getImage($file);

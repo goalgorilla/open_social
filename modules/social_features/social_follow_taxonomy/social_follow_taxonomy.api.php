@@ -13,6 +13,7 @@ use Drupal\taxonomy\TermInterface;
  * @addtogroup hooks
  * @{
  */
+
 /**
  * Provide a method to alter array of terms.
  *
