@@ -20,19 +20,19 @@ class UserAnalyticsEventEnrollments extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Event enrollments');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('event_enrollment', 'ee');
     $query->join('event_enrollment_field_data', 'eefd', 'eefd.id = ee.id');
     $query->condition('eefd.user_id', $entity->id());
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

@@ -166,7 +166,7 @@ class InvitationOperations extends ControllerBase {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Rendered translatable title.
    */
-  public function invitationTitle(GroupInterface $group): TranslatableMarkup {
+  public function invitationTitle(GroupInterface $group): string {
     $title = $this->t('Invite members');
 
     if (NULL !== $group->label()) {

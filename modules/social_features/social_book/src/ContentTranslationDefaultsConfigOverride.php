@@ -25,7 +25,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName(): TranslatableMarkup {
+  protected function getDisplayName(): string {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
     return $this->t('Book Pages');

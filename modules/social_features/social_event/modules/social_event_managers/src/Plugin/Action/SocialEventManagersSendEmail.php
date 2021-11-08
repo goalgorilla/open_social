@@ -72,7 +72,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $objects) {
+  public function executeMultiple(array $objects): array {
     $users = [];
     // Process the event enrollment chunks. These need to be converted to users.
     /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
@@ -93,7 +93,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): AccessResult {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     if ($object instanceof EventEnrollmentInterface) {
@@ -115,14 +115,14 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state) {
+  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): array {
     return $form;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {
       $selected_count = $this->context['selected_count'];

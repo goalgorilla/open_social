@@ -93,7 +93,7 @@ class SocialEventController extends ControllerBase {
    *
    *   The decline title markup.
    */
-  public function getTitleDeclineRequest(): TranslatableMarkup {
+  public function getTitleDeclineRequest(): string {
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->requestStack->getCurrentRequest()->get('node');
 

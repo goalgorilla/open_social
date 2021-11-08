@@ -22,7 +22,7 @@ class ExportMember extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities): void {
+  public function executeMultiple(array $entities) {
     /** @var \Drupal\group\Entity\GroupContentInterface $entity */
     foreach ($entities as &$entity) {
       $entity = $entity->getEntity();

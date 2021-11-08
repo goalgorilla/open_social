@@ -20,19 +20,19 @@ class UserAnalyticsPostsCreated extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Posts created');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('post', 'p');
     $query->join('post_field_data', 'pfd', 'pfd.id = p.id');
     $query->condition('pfd.user_id', $entity->id());
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

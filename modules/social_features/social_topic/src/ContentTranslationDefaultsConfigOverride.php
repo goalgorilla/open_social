@@ -25,7 +25,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName(): TranslatableMarkup {
+  protected function getDisplayName(): string {
     return $this->t('Topics');
   }
 

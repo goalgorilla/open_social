@@ -114,7 +114,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities): void {
+  public function executeMultiple(array $entities) {
 
     // Check if headers exists.
     if (empty($this->context['sandbox']['results']['headers'])) {

@@ -58,7 +58,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): TranslatableMarkup {
+  public function getDescription(): string {
     return $this->t('Deleting this image will also delete it from the post it belongs to.');
   }
 

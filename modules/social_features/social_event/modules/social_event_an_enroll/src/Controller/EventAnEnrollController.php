@@ -142,7 +142,7 @@ class EventAnEnrollController extends ControllerBase {
    *
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node): TranslatableMarkup {
+  public function enrollTitle(NodeInterface $node): string {
     return $this->t('Enroll in @label Event', ['@label' => $node->label()]);
   }
 

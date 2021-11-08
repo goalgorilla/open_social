@@ -20,14 +20,14 @@ class UserEmail extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Email');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): ?string {
+  public function getValue(UserInterface $entity): string {
     return $entity->getEmail();
   }
 

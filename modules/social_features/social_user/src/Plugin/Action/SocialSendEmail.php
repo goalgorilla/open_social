@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -212,7 +213,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): void {
+  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): array {
+    return [];
   }
 
   /**
@@ -319,7 +321,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): ?AccessResult {
     // @todo Check for proper access here.
     return TRUE;
   }

@@ -20,21 +20,21 @@ class UserAnalyticsEventsCreated extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Events created');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('node', 'n');
     $query->join('node_field_data', 'nfd', 'nfd.nid = n.nid');
     $query
       ->condition('nfd.uid', $entity->id())
       ->condition('nfd.type', 'event');
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

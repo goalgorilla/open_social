@@ -108,7 +108,7 @@ class EnrollRequestDialogController extends ControllerBase {
    *
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node): TranslatableMarkup {
+  public function enrollTitle(NodeInterface $node): string {
     return $this->t('Request enrollment in @label Event', ['@label' => $node->label()]);
   }
 

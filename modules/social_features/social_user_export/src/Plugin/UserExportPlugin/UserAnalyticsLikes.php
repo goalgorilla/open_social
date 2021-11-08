@@ -20,18 +20,18 @@ class UserAnalyticsLikes extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Number of Likes');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('votingapi_vote', 'v');
     $query->condition('v.user_id', $entity->id());
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

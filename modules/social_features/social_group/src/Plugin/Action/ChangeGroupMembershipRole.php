@@ -83,7 +83,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): TranslatableMarkup {
+  public function execute($entity = NULL): string {
     $role = $this->configuration['role'];
     $is_member = $this->configuration['is_member'];
     $update = TRUE;

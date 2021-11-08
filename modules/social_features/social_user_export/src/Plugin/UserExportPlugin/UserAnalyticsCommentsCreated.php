@@ -20,19 +20,19 @@ class UserAnalyticsCommentsCreated extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Comments created');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('comment', 'c');
     $query->join('comment_field_data', 'cfd', 'cfd.cid = c.cid');
     $query->condition('cfd.uid', $entity->id());
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

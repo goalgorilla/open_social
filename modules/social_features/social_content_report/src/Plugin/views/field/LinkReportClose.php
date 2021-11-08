@@ -31,7 +31,7 @@ class LinkReportClose extends LinkBase {
   /**
    * {@inheritdoc}
    */
-  protected function getDefaultLabel(): TranslatableMarkup {
+  protected function getDefaultLabel(): string {
     return $this->t('Close');
   }
 

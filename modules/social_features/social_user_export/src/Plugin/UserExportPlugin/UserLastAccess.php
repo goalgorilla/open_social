@@ -20,14 +20,14 @@ class UserLastAccess extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Last access');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     if ($last_access_time = $entity->getLastAccessedTime()) {
       $last_access = $this->dateFormatter->format($last_access_time, 'short');
     }

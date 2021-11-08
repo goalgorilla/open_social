@@ -69,7 +69,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL): TranslatableMarkup {
+  public function getTitle(Request $request = NULL): string {
     if ($this->invitationLoader->loadByUser()) {
       // We don't need plural because users will be redirected
       // if there is no invite.

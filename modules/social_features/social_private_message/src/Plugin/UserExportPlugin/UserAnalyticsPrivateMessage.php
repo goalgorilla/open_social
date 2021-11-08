@@ -21,14 +21,14 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Number of Private messages');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     $value = '';
 
     try {

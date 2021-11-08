@@ -84,15 +84,15 @@ class UserAnalyticsGroupMemberships extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Group memberships');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
-    return count($this->groupHelper->getAllGroupsForUser($entity->id()));
+  public function getValue(UserInterface $entity): string {
+    return (string) count($this->groupHelper->getAllGroupsForUser($entity->id()));
   }
 
 }

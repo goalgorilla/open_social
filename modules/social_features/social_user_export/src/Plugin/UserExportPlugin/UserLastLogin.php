@@ -20,14 +20,14 @@ class UserLastLogin extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Last login');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     if ($last_login_time = $entity->getLastLoginTime()) {
       $last_login = $this->dateFormatter->format($last_login_time, 'short');
     }

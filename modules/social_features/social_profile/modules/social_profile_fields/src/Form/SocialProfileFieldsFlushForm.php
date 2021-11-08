@@ -92,7 +92,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): TranslatableMarkup {
+  public function getConfirmText(): string {
     return $this->t('Yes, continue');
   }
 
@@ -124,7 +124,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): TranslatableMarkup {
+  public function getDescription(): string {
 
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);

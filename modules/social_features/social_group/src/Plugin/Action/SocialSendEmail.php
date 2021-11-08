@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -22,7 +23,7 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
-  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): bool {
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE): ?AccessResult {
     if ($object instanceof GroupContentInterface) {
       /** @var \Drupal\group\Entity\GroupContentInterface $object */
       return $object->access('view', $account, $return_as_object);

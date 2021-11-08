@@ -71,7 +71,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): TranslatableMarkup {
+  public function execute($entity = NULL): string {
     // Load the Group.
     $group = Group::load($this->configuration['groups']);
 

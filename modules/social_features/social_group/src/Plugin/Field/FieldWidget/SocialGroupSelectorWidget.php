@@ -50,12 +50,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @todo Should be removed after merging patch in the core:
    * https://www.drupal.org/files/issues/2923353-5.patch
    */
-  protected $options;
+  protected array $options;
 
   /**
    * The config factory.
    *
-   * @var SocialGroupSelectorWidgetphp
+   * @var ConfigFactoryInterface
    */
   protected ConfigFactoryInterface $configFactory;
 
@@ -76,14 +76,14 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The plugin manager.
    *
-   * @var \Drupal\group\Entity\GroupContentEnablerManager
+   * @var \Drupal\group\Plugin\GroupContentEnablerManager
    */
   protected GroupContentEnablerManager $pluginManager;
 
   /**
    * The user entity storage.
    *
-   * @var \Drupal\user\Entity\UserStorageInterface
+   * @var \Drupal\user\UserStorageInterface
    */
   protected UserStorageInterface $userManager;
 

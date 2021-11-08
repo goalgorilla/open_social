@@ -57,7 +57,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL): TranslatableMarkup {
+  public function getTitle(Request $request = NULL): string {
     /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
     $enrollments = \Drupal::service('social_event.status_helper');
 

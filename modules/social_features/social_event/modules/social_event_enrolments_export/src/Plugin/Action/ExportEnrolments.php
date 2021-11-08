@@ -24,7 +24,7 @@ class ExportEnrolments extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities): void {
+  public function executeMultiple(array $entities) {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     foreach ($entities as &$entity) {
       $entity = $this->getAccount($entity);

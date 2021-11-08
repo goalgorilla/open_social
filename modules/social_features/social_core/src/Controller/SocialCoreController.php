@@ -206,7 +206,7 @@ class SocialCoreController extends ControllerBase {
    *
    *   The page title.
    */
-  public function addPageTitle(NodeTypeInterface $node_type): TranslatableMarkup {
+  public function addPageTitle(NodeTypeInterface $node_type): string {
     // The node_types that have a different article than a.
     $node_types = [
       'event' => 'an',

@@ -20,14 +20,14 @@ class UserStatus extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): TranslatableMarkup {
+  public function getValue(UserInterface $entity): string {
     return $entity->isActive() ? $this->t('Active') : $this->t('Blocked');
   }
 

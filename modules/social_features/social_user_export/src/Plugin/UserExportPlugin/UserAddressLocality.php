@@ -20,7 +20,7 @@ class UserAddressLocality extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Address locality');
   }
 

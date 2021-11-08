@@ -111,7 +111,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
    * @return string
    *   The value.
    */
-  public function getValue(UserInterface $entity) {
+  public function getValue(UserInterface $entity): string {
     return '';
   }
 

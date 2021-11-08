@@ -23,7 +23,7 @@ class ManageEnrollmentAccess extends AccessPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function summaryTitle(): TranslatableMarkup {
+  public function summaryTitle(): string {
     return $this->t('Unrestricted');
   }
 

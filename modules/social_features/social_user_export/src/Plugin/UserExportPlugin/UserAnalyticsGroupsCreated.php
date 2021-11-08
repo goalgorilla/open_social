@@ -20,19 +20,19 @@ class UserAnalyticsGroupsCreated extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Groups created');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getValue(UserInterface $entity): int {
+  public function getValue(UserInterface $entity): string {
     $query = $this->database->select('groups', 'g');
     $query->join('groups_field_data', 'gfd', 'gfd.id = g.id');
     $query->condition('gfd.uid', $entity->id());
 
-    return (int) $query
+    return (string) $query
       ->countQuery()
       ->execute()
       ->fetchField();

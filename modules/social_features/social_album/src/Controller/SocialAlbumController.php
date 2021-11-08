@@ -100,7 +100,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The title to page of the post.
    */
-  public function title(NodeInterface $node): TranslatableMarkup {
+  public function title(NodeInterface $node): string {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
   }
 

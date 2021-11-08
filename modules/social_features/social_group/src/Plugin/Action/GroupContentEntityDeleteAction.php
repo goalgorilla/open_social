@@ -20,7 +20,7 @@ class GroupContentEntityDeleteAction extends EntityDeleteAction {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): TranslatableMarkup {
+  public function execute($entity = NULL): string {
     parent::execute($entity);
     return $this->t('Remove members from a group');
   }

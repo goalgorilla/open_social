@@ -20,7 +20,7 @@ class UserAddressLine2 extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): TranslatableMarkup {
+  public function getHeader(): string {
     return $this->t('Address line 2');
   }
 

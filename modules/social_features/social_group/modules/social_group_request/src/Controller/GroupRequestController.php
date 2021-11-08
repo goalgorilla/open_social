@@ -90,14 +90,14 @@ class GroupRequestController extends ControllerBase {
   /**
    * Return the title for approve request confirmation page.
    */
-  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
+  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content): string {
     return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
-  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
+  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content): string {
     return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
