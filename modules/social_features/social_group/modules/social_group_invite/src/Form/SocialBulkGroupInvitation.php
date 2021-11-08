@@ -315,19 +315,29 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         // Check if the email is already part of the platform.
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);
-          // User is already part of the group, unset it from the list.
-          if (!empty($membership)) {
+          // User is already part of the group, unset it from the list and
+          // show an error.
+          if (!empty($membership) && !$this->validateExistingMembers([$account], $form_state)) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+            return;
           }
         }
         else {
           /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
           $group_content_storage = $this->entityTypeManager->getStorage('group_content');
-          // If the invitation has already been send, unset it from the list.
+          // If the invitation has already been send, unset it from the list
+          // and show an error.
           // For some reason groupInvitationLoader service doesn't work
           // properly.
           if (!empty($group_content_storage->loadByGroup($this->group, 'group_invitation', ['invitee_mail' => $email]))) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+
+            $message_singular = "User with @error_message e-mail has already been invited.";
+            $message_plural = "Users with: @error_message e-mails were already invited.";
+
+            $this->displayErrorMessage([$email], $message_singular, $message_plural, $form_state);
+
+            return;
           }
         }
       }
@@ -337,11 +347,13 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);
-          // User is already part of the group, unset it from the list.
-          if (!empty($membership)) {
+          // User is already part of the group, unset it from the list
+          // and show an error.
+          if (!empty($membership) && !$this->validateExistingMembers([$account], $form_state)) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+            return;
           }
-          else {
+          elseif (!empty($membership)) {
             // Change the uservalue to email because the bulk invite for
             // groups can only handle emails.
             $form_state->setValue(['users_fieldset', 'user', $user], $account->getEmail());
@@ -350,6 +362,39 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
     }
 
+  }
+
+  /**
+   * Validate if emails belong to existing group member,display an error if so.
+   *
+   * @param array $users
+   *   Array of user entities to validate.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return bool
+   *   Returns TRUE if the user is not part of the group.
+   */
+  private function validateExistingMembers(array $users, FormStateInterface $form_state) {
+    $invalid_emails = [];
+
+    foreach ($users as $user) {
+      $membership = $this->groupMembershipLoader->load($this->group, $user);
+      if (!empty($membership)) {
+        $invalid_emails[] = $user->getEmail();
+      }
+    }
+
+    if (!empty($invalid_emails)) {
+      $message_singular = "User with @error_message e-mail already a member of this group.";
+      $message_plural = "Users with: @error_message e-mails already members of this group.";
+
+      $this->displayErrorMessage($invalid_emails, $message_singular, $message_plural, $form_state);
+
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
