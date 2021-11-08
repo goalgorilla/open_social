@@ -410,7 +410,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) {
+  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) : void {
     $count = count($invalid_emails);
 
     if ($count > 1) {
