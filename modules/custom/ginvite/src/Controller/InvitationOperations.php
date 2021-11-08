@@ -3,7 +3,6 @@
 namespace Drupal\ginvite\Controller;
 
 use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;

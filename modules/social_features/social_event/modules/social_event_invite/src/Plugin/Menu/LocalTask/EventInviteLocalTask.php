@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_invite\Plugin\Menu\LocalTask;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Menu\LocalTaskDefault;

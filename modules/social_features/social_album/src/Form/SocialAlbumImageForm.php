@@ -2,7 +2,6 @@
 
 namespace Drupal\social_album\Form;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_post\Form\PostDeleteForm;
 

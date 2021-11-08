@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;

@@ -3,7 +3,6 @@
 namespace Drupal\social_event_an_enroll\Controller;
 
 use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;

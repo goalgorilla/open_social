@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\views\access;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\Routing\Route;
 use Drupal\views\Plugin\views\access\AccessPluginBase;

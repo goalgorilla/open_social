@@ -9,8 +9,8 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\private_message\Service\PrivateMessageService;
+use Drupal\social_private_message\Mapper\PrivateMessageMapper;
 use Drupal\user\UserDataInterface;
 
 /**
@@ -30,7 +30,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
   /**
    * {@inheritdoc}
    */
-  public function __construct(PrivateMessageMapperInterface $mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, CacheTagsInvalidatorInterface $cacheTagsInvalidator, EntityTypeManagerInterface $entityTypeManager, TimeInterface $time, Connection $database) {
+  public function __construct(PrivateMessageMapper $mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, CacheTagsInvalidatorInterface $cacheTagsInvalidator, EntityTypeManagerInterface $entityTypeManager, TimeInterface $time, Connection $database) {
     parent::__construct($mapper, $currentUser, $configFactory, $userData, $cacheTagsInvalidator, $entityTypeManager, $time);
 
     $this->database = $database;

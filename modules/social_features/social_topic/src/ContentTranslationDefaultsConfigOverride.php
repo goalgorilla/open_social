@@ -2,7 +2,6 @@
 
 namespace Drupal\social_topic;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 

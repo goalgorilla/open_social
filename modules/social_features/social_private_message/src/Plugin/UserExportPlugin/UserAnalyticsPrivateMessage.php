@@ -2,7 +2,6 @@
 
 namespace Drupal\social_private_message\Plugin\UserExportPlugin;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\ContentEntityStorageInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;

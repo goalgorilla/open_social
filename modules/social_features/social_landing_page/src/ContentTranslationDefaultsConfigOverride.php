@@ -2,7 +2,6 @@
 
 namespace Drupal\social_landing_page;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**

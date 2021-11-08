@@ -55,7 +55,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The config factory.
    *
-   * @var ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected ConfigFactoryInterface $configFactory;
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event\Controller;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResultAllowed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Access\AccessResult;

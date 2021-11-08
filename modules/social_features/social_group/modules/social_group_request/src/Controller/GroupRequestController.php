@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_request\Controller;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResult;

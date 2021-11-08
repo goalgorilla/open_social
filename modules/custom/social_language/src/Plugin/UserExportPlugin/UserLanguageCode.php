@@ -2,7 +2,6 @@
 
 namespace Drupal\social_language\Plugin\UserExportPlugin;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 

@@ -3,7 +3,6 @@
 namespace Drupal\social_core\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;

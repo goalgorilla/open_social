@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_flexible_group;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_album\Controller;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;

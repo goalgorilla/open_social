@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\views_bulk_operations\Plugin\Action\EntityDeleteAction;
 
 /**
