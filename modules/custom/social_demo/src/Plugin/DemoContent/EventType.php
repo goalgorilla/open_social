@@ -19,10 +19,10 @@ class EventType extends DemoTaxonomyTerm {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     // Check if event types are enabled.
     if (!\Drupal::moduleHandler()->moduleExists('social_event_type')) {
-      return;
+      return [];
     }
 
     return parent::createContent($generate, $max);
@@ -31,11 +31,11 @@ class EventType extends DemoTaxonomyTerm {
   /**
    * {@inheritdoc}
    */
-  public function count() {
+  public function count(): int {
     // Check if event types are enabled.
     if (!\Drupal::moduleHandler()->moduleExists('social_event_type')) {
       $this->loggerChannelFactory->get('social_demo')->warning('The social event type module is not enabled.');
-      return FALSE;
+      return 0;
     }
 
     return parent::count();
