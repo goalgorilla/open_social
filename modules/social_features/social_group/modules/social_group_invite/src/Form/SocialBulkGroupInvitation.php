@@ -21,6 +21,7 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\ginvite\Form\BulkGroupInvitation;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Class SocialBulkGroupInvitation.
@@ -395,6 +396,35 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Prepares form error message if there is invalid emails.
+   *
+   * @param array $invalid_emails
+   *   List of invalid emails.
+   * @param string $message_singular
+   *   Error message for one invalid email.
+   * @param string $message_plural
+   *   Error message for multiple invalid emails.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) {
+    $count = count($invalid_emails);
+
+    if ($count > 1) {
+      $error_message = '<ul>';
+      foreach ($invalid_emails as $line => $invalid_email) {
+        $error_message .= "<li>{$invalid_email} on line {$line}</li>";
+      }
+      $error_message .= '</ul>';
+      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => new FormattableMarkup($error_message, [])]));
+    }
+    elseif ($count == 1) {
+      $error_message = reset($invalid_emails);
+      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => $error_message]));
+    }
   }
 
   /**
