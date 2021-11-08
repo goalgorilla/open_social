@@ -23,6 +23,8 @@ function alternative_frontpage_install(): void {
 
   user_role_grant_permissions('administrator', $permissions);
   user_role_grant_permissions('sitemanager', $permissions);
+
+  alternative_frontpage_change_role_weight();
 }
 
 /**
@@ -76,4 +78,33 @@ function alternative_frontpage_update_8001(): void {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+}
+
+/**
+ * Update contentmanager and sitemanager roles weight.
+ */
+function alternative_frontpage_update_11101(): void {
+  alternative_frontpage_change_role_weight();
+}
+
+/**
+ * Change contentmanager and sitemanager roles weight.
+ *
+ * We want to change the weight for these roles, since if the user has
+ * multiple roles, e.g. sitemanager and any custom role, then we decided to
+ * use the role with the highest weight to get an alternative front page for
+ * this role, and it's logical that sitemanager and content manager should be
+ * more powerful, then any custom role.
+ */
+function alternative_frontpage_change_role_weight(): void {
+  /** @var \Drupal\user\RoleStorageInterface $roles_storage */
+  $roles_storage = \Drupal::entityTypeManager()->getStorage('user_role');
+
+  /** @var \Drupal\user\Entity\Role $content_manager_role */
+  $content_manager_role = $roles_storage->load('contentmanager');
+  $content_manager_role->setWeight(100)->save();
+
+  /** @var \Drupal\user\Entity\Role $site_manager_role */
+  $site_manager_role = $roles_storage->load('sitemanager');
+  $site_manager_role->setWeight(110)->save();
 }

@@ -4,20 +4,20 @@ namespace Drupal\alternative_frontpage\EventSubscriber;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableRedirectResponse;
-use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\State\State;
+use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Drupal\user\UserData;
-use Drupal\Core\Session\AccountProxy;
-use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Installer\InstallerKernel;
 
 /**
- * Class RedirectHomepageSubscriber.
+ * The RedirectHomepageSubscriber class.
  */
 class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
@@ -102,9 +102,9 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     // 280 priority is higher than the dynamic and static page cache.
-    $events[KernelEvents::REQUEST][] = ['checkForHomepageRedirect'];
+    $events[KernelEvents::REQUEST][] = ['checkForHomepageRedirect', '280'];
     return $events;
   }
 
@@ -113,6 +113,9 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *
    * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
    *   The event to process.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function checkForHomepageRedirect(GetResponseEvent $event): void {
     // Make sure front page module is not run when using cli or doing install.
@@ -144,14 +147,14 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $current_user_roles = $this->currentUser->getRoles(FALSE);
 
     $current_user_data = $this->getAlternativePageDataForCurrentUser($current_user_roles);
-    $user_role = $current_user_data['role'];
-    $user_page = $current_user_data['page'];
+    $user_role = $current_user_data['role'] ?? '';
+    $user_page = $current_user_data['page'] ?? '';
 
     $active_language = $this->languageManager->getCurrentLanguage()->getId();
     $default_language = $this->languageManager->getDefaultLanguage()->getId();
 
     // Do nothing if the current user does not have a custom front page.
-    if (!$user_page) {
+    if (empty($user_page)) {
       return;
     }
 
@@ -163,7 +166,9 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
     // We only proceed if the user requests the home page.
     if ($request_path === $site_settings_frontpage || $request_path === '/' || $request_path === '/' . $active_language) {
-      if ($user_page === $site_settings_frontpage && $this->pathMatcher->isFrontPage()) {
+      // The home page for the user is the same as in the site configuration,
+      // and we are not redirecting, otherwise there will be an endless loop.
+      if ($user_page === $site_settings_frontpage) {
         return;
       }
 
@@ -171,39 +176,12 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
       // The custom user page is different from the home page from
       // the site settings.
-      if ($user_page !== $site_settings_frontpage) {
-        if ($active_language !== $default_language) {
-          $redirect_path = '/' . $active_language . $user_page;
-        }
-
-        $cache_contexts = new CacheableMetadata();
-        $cache_contexts->setCacheContexts(['user.roles:' . $user_role]);
-      }
-      // This means that the user has several roles and, accordingly, the
-      // front pages are set for these several roles, in this case we check
-      // the role weight and use a role with a higher weight.
-      else {
-        $current_user_role_weight = [];
-
-        foreach ($current_user_roles as $current_user_role) {
-          /** @var \Drupal\user\RoleInterface $role */
-          $role = $this->entityTypeManager->getStorage('user_role')->load($current_user_role);
-          $current_user_role_weight[$current_user_role] = $role->getWeight();
-        }
-
-        $role_id_with_higher_weight = (string) array_search(max($current_user_role_weight), $current_user_role_weight, TRUE);
-        $user_front_pages = $this->getAlternativePagesForUserRoles([$role_id_with_higher_weight]);
-
-        $user_page = (string) reset($user_front_pages);
-
-        if ($active_language !== $default_language) {
-          $redirect_path = '/' . $active_language . $user_page;
-        }
-
-        $cache_contexts = new CacheableMetadata();
-        $cache_contexts->setCacheContexts(['user.roles:' . $role_id_with_higher_weight]);
+      if ($active_language !== $default_language) {
+        $redirect_path = '/' . $active_language . $user_page;
       }
 
+      $cache_contexts = new CacheableMetadata();
+      $cache_contexts->setCacheContexts(['user.roles:' . $user_role]);
       $response = new CacheableRedirectResponse($redirect_path);
       $response->addCacheableDependency($cache_contexts);
       $event->setResponse($response);
@@ -212,19 +190,38 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
   /**
    * Get the alternative configs based on provided role.
+   *
+   * @param string $role
+   *   The role machine name.
+   *
+   * @return string
+   *   The entity ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getConfigIds($role) {
-    $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()
+  public function getConfigIds(string $role): string {
+    $entity = $this->entityTypeManager->getStorage('alternative_frontpage')
+      ->getQuery()
       ->condition('roles_target_id', $role)
       ->execute();
 
-    return key($entity);
+    return (string) key((array) $entity);
   }
 
   /**
    * Get the correct Url Path for the landing page.
+   *
+   * @param string $role
+   *   The role machine name.
+   *
+   * @return string|null
+   *   The config entity URL path.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getConfigUrlPath(string $role) {
+  public function getConfigUrlPath(string $role): ?string {
     $active_language = $this->languageManager->getCurrentLanguage()->getId();
 
     // Get the frontpage for logged in users.
@@ -248,26 +245,18 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Gets all custom front pages for list of roles.
+   * Get redirected home page URL for current user roles.
    *
-   * @param string[] $current_user_roles
-   *   The array of user roles.
+   * @param array $current_user_roles
+   *   The current user roles.
    *
-   * @return string[]
-   *   The array of relative URLs.
+   * @return null|string[]
+   *   The array of role and page URL.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function getAlternativePagesForUserRoles(array $current_user_roles): array {
-    foreach ($current_user_roles as $role) {
-      if (!empty($page = $this->getConfigUrlPath($role))) {
-        $pages[$role] = $page;
-      }
-    }
-
-    return $pages ?? [];
-  }
-
-
-  private function getAlternativePageDataForCurrentUser(array $current_user_roles) {
+  private function getAlternativePageDataForCurrentUser(array $current_user_roles): ?array {
     $user_front_pages = $this->getAlternativePagesForUserRoles($current_user_roles);
 
     if (empty($user_front_pages)) {
@@ -277,7 +266,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     // This means that there is only one page configured for all current
     // user roles, and we can redirect them to this front page.
     if (count($user_front_pages) === 1) {
-      return ['role' => array_key_first($user_front_pages), 'page' => reset($user_front_pages)];
+      return [
+        'role' => (string) array_key_first($user_front_pages),
+        'page' => (string) reset($user_front_pages),
+      ];
     }
 
     // This means that the user has several roles and, accordingly, the
@@ -294,7 +286,29 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $role_id_with_higher_weight = (string) array_search(max($current_user_role_weight), $current_user_role_weight, TRUE);
     $user_front_pages = $this->getAlternativePagesForUserRoles([$role_id_with_higher_weight]);
 
-    return ['role' => array_key_first($user_front_pages), 'page' => reset($user_front_pages)];
+    return [
+      'role' => (string) array_key_first($user_front_pages),
+      'page' => (string) reset($user_front_pages),
+    ];
+  }
+
+  /**
+   * Gets all custom front pages for list of roles.
+   *
+   * @param string[] $current_user_roles
+   *   The array of user roles.
+   *
+   * @return string[]
+   *   The array of relative URLs.
+   */
+  private function getAlternativePagesForUserRoles(array $current_user_roles): array {
+    foreach ($current_user_roles as $role) {
+      if (!empty($page = $this->getConfigUrlPath($role))) {
+        $pages[$role] = $page;
+      }
+    }
+
+    return $pages ?? [];
   }
 
 }

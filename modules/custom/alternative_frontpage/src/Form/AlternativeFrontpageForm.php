@@ -4,6 +4,7 @@ namespace Drupal\alternative_frontpage\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\user\Entity\Role;
 
@@ -27,6 +28,13 @@ class AlternativeFrontpageForm extends EntityForm {
   protected $pathValidator;
 
   /**
+   * The config factory to perform operations on the configs.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
@@ -34,6 +42,7 @@ class AlternativeFrontpageForm extends EntityForm {
     $instance->typedConfigManager = $container->get('config.typed');
     $instance->entityTypeManager = $container->get('entity_type.manager');
     $instance->pathValidator = $container->get('path.validator');
+    $instance->configFactory = $container->get('config.factory');
 
     return $instance;
   }
@@ -43,6 +52,7 @@ class AlternativeFrontpageForm extends EntityForm {
    */
   public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
+    /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $settings */
     $settings = $this->entity;
 
     $ignored_roles = ['administrator'];
@@ -125,6 +135,7 @@ class AlternativeFrontpageForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $settings */
     $settings = $this->entity;
     $status = $settings->save();
 
@@ -134,7 +145,17 @@ class AlternativeFrontpageForm extends EntityForm {
       ]));
     }
 
+    // In case if we change the front page for the anonymous user we wanna
+    // also change the system front page path in site configuration.
+    if ($settings->roles_target_id === RoleInterface::ANONYMOUS_ID) {
+      $this->configFactory->getEditable('system.site')
+        ->set('page.front', $settings->path)
+        ->save();
+    }
+
     $form_state->setRedirect('entity.alternative_frontpage.collection');
+
+    return parent::save($form, $form_state);
   }
 
   /**

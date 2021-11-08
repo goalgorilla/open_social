@@ -13,7 +13,7 @@ class AlternativeFrontpageListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header['label'] = $this->t('Label');
     $header['path'] = $this->t('Path');
     $header['roles_target_id'] = $this->t('Role');
@@ -23,7 +23,8 @@ class AlternativeFrontpageListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
+    /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $entity */
     $row['label'] = $entity->label();
     $row['path'] = $entity->path;
     $row['roles_target_id'] = $entity->roles_target_id;
