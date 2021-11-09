@@ -9,6 +9,7 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\url_embed\UrlEmbed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -109,13 +110,18 @@ class EmbedController extends ControllerBase {
     // genuine request.
     $floodIdentifier = $request->getClientIP() . $hashedValue;
 
+    // The maximum number of times each user can do this event per time window.
+    $retries = Settings::get('social_embed_retries', 50);
+    // Number of seconds in the time window for embed.
+    $timeWindow = Settings::get('social_embed_time_window', 3600);
+
     // Only proceed if this is not a malicous request.
-    if (!$this->flood->isAllowed('social_embed.generateembed_flood_event', 50, 3600, $floodIdentifier)) {
+    if (!$this->flood->isAllowed('social_embed.generateembed_flood_event', $retries, $timeWindow, $floodIdentifier)) {
       throw new AccessDeniedHttpException();
     }
     else {
       // Register the flood event in system.
-      $this->flood->register('social_embed.generateembed_flood_event', 3600, $floodIdentifier);
+      $this->flood->register('social_embed.generateembed_flood_event', $timeWindow, $floodIdentifier);
       // Use uuid to set the selector to the specific div we need to replace.
       $selector = "#social-embed-iframe-$uuid";
       // If the content is embeddable then return the iFrame.
