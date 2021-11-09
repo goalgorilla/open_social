@@ -31,21 +31,21 @@ class EmailTokenServices {
    *
    * @var \Drupal\Core\Entity\EntityTypeManager
    */
-  protected EntityTypeManager $entityTypeManager;
+  protected $entityTypeManager;
 
   /**
    * Date Formatter services.
    *
    * @var \Drupal\Core\Datetime\DateFormatter
    */
-  protected DateFormatter $dateFormatter;
+  protected $dateFormatter;
 
   /**
    * GroupStatistics services.
    *
    * @var \Drupal\social_group\GroupStatistics
    */
-  protected GroupStatistics $groupStatistics;
+  protected $groupStatistics;
 
   /**
    * Constructs a EmailTokenServices object.
