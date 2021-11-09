@@ -65,7 +65,7 @@ class SocialGroupHelperService {
    *   disabling this can have serious performance implications. Setting this to
    *   FALSE will update the cache for subsequent calls.
    *
-   * @return int|NULL
+   * @return int|null
    *   The group that this entity belongs to or NULL if the entity doesn't
    *   belong to any group.
    */
