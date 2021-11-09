@@ -634,8 +634,14 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       }
     }
 
-    if ($base_field) {
-      $query->groupBy($base_field);
+    $fields = $query->getFields();
+
+    foreach ($fields as $key => $field) {
+      $query->groupBy($key);
+    }
+
+    if (in_array($sort_by, ['created', 'changed'])) {
+      $query->groupBy($sorting_field);
     }
 
     $query->orderBy($sorting_field, $direction);

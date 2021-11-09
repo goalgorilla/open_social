@@ -1499,8 +1499,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2021-11-02 00:19+0000\n"
-"PO-Revision-Date: 2021-10-16 22:03+0000\n"
+"POT-Creation-Date: 2021-11-05 00:14+0000\n"
+"PO-Revision-Date: 2021-11-08 22:03+0000\n"
 "Last-Translator: Tomma Wagner <tommawagner.greenpeace@gmx.de>\n"
 "Language-Team: German <https://translate.getopensocial.com/projects/gpde/"
 "distribution/de/>\n"
@@ -1845,7 +1845,7 @@ msgid ""
 "\"}'>{{ field_post_image }}</a>"
 msgstr ""
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:125
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:129
 msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
@@ -1854,7 +1854,7 @@ msgstr[0] ""
 msgstr[1] ""
 "<b><em class=\"placeholder\">@count</em> Mitglieder</b> sind ausgewählt"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:219
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:218
 msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> enrollees</b> are selected"
@@ -1863,19 +1863,19 @@ msgstr[0] ""
 msgstr[1] ""
 "<b><em class=\"placeholder\">@count</em> Teilnehmer:innen</b> sind ausgewählt"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:48
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:49
 msgid "<b>@action</b>"
 msgstr ""
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:55
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:56
 msgid "<b>@action</b> of selected members"
 msgstr "<b>@action</b> der ausgewählten Mitglieder"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:127
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:126
 msgid "<b>@action</b> selected enrollees"
 msgstr "<b>@action</b> ausgewählte Teilnehmende"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:41
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:42
 msgid "<b>@action</b> selected members"
 msgstr "<b>@action</b> ausgewählte Mitglieder"
 
@@ -2391,6 +2391,14 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> hat eine/n [social_group:content_type] in der Gruppe <a href=\""
+"[message:gurl]\">[message:gtitle]</a> erstellt "
+"[message:count_groups_per_node] </p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0;0
 msgid ""
@@ -2473,6 +2481,13 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> möchte deiner Gruppe &nbsp;<a href=\"[message:gurl]\""
+">[message:gtitle]</a>beitreten</p> \n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0
 msgid ""
@@ -2516,9 +2531,9 @@ msgid ""
 "</a> has requested enrollment to the event [social_event:"
 "event_iam_organizing] you are organizing</p>\r\n"
 msgstr ""
-"<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]"
-"</a> möchte an der folgenden Veranstaltung teilnehmen [social_event:"
-"event_iam_organizing] welche du organisierst</p>\n"
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> möchte an der Veranstaltung "
+"[social_event:event_iam_organizing] teilnehmen welche du organisierst</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml:0
 msgid ""
@@ -2530,6 +2545,13 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> möchte an der Veranstaltung "
+"[social_event:event_iam_organizing] teilnehmen welche du organisierst</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0;0
 msgid ""
@@ -2537,6 +2559,8 @@ msgid ""
 "requested membership to the <a href=\"gurl]\">[message:gtitle]</a> group</p>"
 "\r\n"
 msgstr ""
+"<p><a href=\"absolute]\">[message:recipient-user:display-name]</a> möchte "
+"deiner Gruppe <a href=\"gurl]\">[message:gtitle]</a> beitreten</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
@@ -3364,8 +3388,8 @@ msgstr ""
 msgid "Action that is triggered when a entity is updated"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:248
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:164
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:247
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:168
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Actions"
@@ -4088,7 +4112,7 @@ msgstr "Alle meine bevorstehenden Veranstaltungen"
 msgid "All notifications"
 msgstr "Alle Benachrichtigungen"
 
-#: modules/social_features/social_topic/social_topic.module:116
+#: modules/social_features/social_topic/social_topic.module:120
 msgid "All statuses"
 msgstr "Jeder Status"
 
@@ -4117,7 +4141,7 @@ msgstr ""
 msgid "All topics"
 msgstr "Alle Inhalte"
 
-#: modules/social_features/social_topic/social_topic.module:85;127
+#: modules/social_features/social_topic/social_topic.module:86;131
 msgid "All types"
 msgstr "Alle Typen"
 
@@ -5181,7 +5205,7 @@ msgstr ""
 msgid "Class(es) on button = \"@classes\""
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:241
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:240
 msgid "Clear all selected enrollees"
 msgstr "Auswahl für ausgewählte Teilnehmer:innen aufheben"
 
@@ -5189,7 +5213,7 @@ msgstr "Auswahl für ausgewählte Teilnehmer:innen aufheben"
 msgid "Clear all selected members"
 msgstr "Auswahl für ausgewählte Mitglieder aufheben"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:147
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:151
 msgid "Clear selection on all pages"
 msgstr "Auswahl auf allen Seiten aufheben"
 
@@ -5765,7 +5789,7 @@ msgstr "Neue Kampagnenseite erstellen"
 msgid "Create New Page"
 msgstr "Neue Seite erstellen"
 
-#: modules/social_features/social_topic/social_topic.module:201
+#: modules/social_features/social_topic/social_topic.module:208
 msgid "Create New Topic"
 msgstr "Neuen Inhalt erstellen"
 
@@ -6480,13 +6504,29 @@ msgid "Determines whether content tagging is enabled for users."
 msgstr ""
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
+msgid "Determines whether the book node type has tagging enabled."
+msgstr ""
+
+#: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
+msgid "Determines whether the event node type has tagging enabled."
+msgstr ""
+
+#: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the landing page node type has tagging enabled."
+msgstr ""
+
+#: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
+msgid "Determines whether the page node type has tagging enabled."
 msgstr ""
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid ""
 "Determines whether the top level taxonomy items are considered categories "
 "for tagging."
+msgstr ""
+
+#: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
+msgid "Determines whether the topic node type has tagging enabled."
 msgstr ""
 
 #: modules/custom/download_count/download_count.module:64
@@ -9525,7 +9565,7 @@ msgstr "Mitglied seit"
 msgid "Members"
 msgstr "Mitglieder"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:142
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:146
 msgid "Members excluded on other pages:"
 msgstr ""
 
@@ -9766,7 +9806,7 @@ msgstr "Meine Gruppen"
 msgid "My profile"
 msgstr "Mein Profil"
 
-#: modules/social_features/social_topic/social_topic.module:226
+#: modules/social_features/social_topic/social_topic.module:233
 msgid "My topics"
 msgstr "Meine Inhalte"
 
@@ -9846,7 +9886,7 @@ msgstr "Neue Kampagnenseite"
 msgid "New Page"
 msgstr "Neue Seite"
 
-#: modules/social_features/social_topic/social_topic.module:203
+#: modules/social_features/social_topic/social_topic.module:210
 msgid "New Topic"
 msgstr "Neuer Inhalt"
 
@@ -11522,7 +11562,7 @@ msgstr "Ausgewählte Kommentare veröffentlichen"
 #: modules/social_features/social_comment/social_comment.module:132
 #: modules/social_features/social_event/social_event.module:69
 #: modules/social_features/social_post/src/Entity/Post.php:343
-#: modules/social_features/social_topic/social_topic.module:88;118
+#: modules/social_features/social_topic/social_topic.module:89;122
 #: config/install/views.view.content.yml:0;0
 msgid "Published"
 msgstr "Veröffentlicht"
@@ -12334,7 +12374,7 @@ msgstr ""
 msgid "See all organisers"
 msgstr "Alle Organisator:innen anschauen"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:236
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:235
 msgid "See excluded enrollees on other pages"
 msgstr ""
 
@@ -12343,11 +12383,11 @@ msgstr ""
 msgid "See related content"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:236
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:235
 msgid "See selected enrollees on other pages"
 msgstr "Alle ausgewählten Teilnehmer:innen auf anderen Seiten anschauen"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:142
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:146
 msgid "See selected members on other pages"
 msgstr "Alle ausgewählten Mitglieder auf anderen Seiten anschauen"
 
@@ -12355,8 +12395,8 @@ msgstr "Alle ausgewählten Mitglieder auf anderen Seiten anschauen"
 msgid "See the event"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:204
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:112
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:203
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:116
 msgid "Select / unselect all @count members across all the pages"
 msgstr "Alle @count Mitglieder auf allen Seiten auswählen / Auswahl aufheben"
 
@@ -15304,7 +15344,7 @@ msgid "Unpublish the selected comments"
 msgstr "Veröffentlichung der ausgewählten Kommentare zurücknehmen"
 
 #: modules/social_features/social_event/social_event.module:68
-#: modules/social_features/social_topic/social_topic.module:87;117
+#: modules/social_features/social_topic/social_topic.module:88;121
 #: config/install/views.view.content.yml:0;0
 msgid "Unpublished"
 msgstr "Unveröffentlicht"
@@ -15776,7 +15816,7 @@ msgstr "Meine Gruppen anzeigen"
 msgid "View my profile"
 msgstr "Mein Profil anzeigen"
 
-#: modules/social_features/social_topic/social_topic.module:224
+#: modules/social_features/social_topic/social_topic.module:231
 msgid "View my topics"
 msgstr "Meine Inhalte anzeigen"
 
@@ -16768,11 +16808,10 @@ msgstr ""
 #: modules/social_features/social_group/config/install/group.content_type.public_group-group_node-event.yml:0
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.content_type.flexible_group-group_node-event.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.content_type.secret_group-group_node-event.yml:0
-#, fuzzy
 msgid "event"
 msgid_plural "events"
 msgstr[0] "Veranstaltung"
-msgstr[1] "Veranstaltung"
+msgstr[1] "Veranstaltungen"
 
 #: social.profile:127
 msgid "event enrollments"
@@ -16903,7 +16942,7 @@ msgstr ""
 msgid "in @event"
 msgstr "in @event"
 
-#: modules/social_features/social_topic/social_topic.module:56
+#: modules/social_features/social_topic/social_topic.module:57
 msgid "in @topic"
 msgstr "in @Inhalt"
 
@@ -17125,7 +17164,6 @@ msgstr "Textformate"
 #: modules/social_features/social_group/config/install/group.content_type.public_group-group_node-topic.yml:0
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.content_type.flexible_group-group_node-topic.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.content_type.secret_group-group_node-topic.yml:0
-#, fuzzy
 msgid "topic"
 msgid_plural "topics"
 msgstr[0] "Inhalt"
