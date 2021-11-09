@@ -47,7 +47,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): OptionalModuleManager {
     return new static(
       $container->get('extension.list.module'),
       $container->getParameter('install_profile')
@@ -174,7 +174,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
    * @throws \Drupal\social\Exception\SocialFeatureDataException
    *   An exception that indicates what's wrong with the data.
    *
-   * @return true
+   * @return bool
    *   Returns TRUE when the data is valid.
    */
   protected function validateSocialFeatureData(string $module_name, array $info) : bool {

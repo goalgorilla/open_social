@@ -12,7 +12,7 @@ abstract class DemoEntity extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent($generate = FALSE, $max = NULL) {
+  public function createContent($generate = FALSE, $max = NULL): array {
     $data = $this->fetchData();
     if ($generate === TRUE) {
       $data = $this->scrambleData($data, $max);
@@ -44,6 +44,7 @@ abstract class DemoEntity extends DemoContent {
         $this->content[$entity->id()] = $entity;
       }
     }
+    return $this->content;
   }
 
   /**

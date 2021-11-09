@@ -16,21 +16,18 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
   /**
    * Returns the file name.
    *
-   * @return string
+   * @return string|null
    *   The source filename where are data.
    */
-  public function getSource(): string;
+  public function getSource(): ?string;
 
   /**
    * Sets the used profile.
    *
    * @param string $profile
    *   The profile.
-   *
-   * @return string
-   *   Void.
    */
-  public function setProfile($profile): string;
+  public function setProfile($profile): void;
 
   /**
    * Returns the profile.
@@ -43,16 +40,13 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
   /**
    * Returns the module name.
    *
-   * @return string
+   * @return string|null
    *   The module name where is placed file with data.
    */
-  public function getModule(): string;
+  public function getModule(): ?string;
 
   /**
    * Creates content.
-   *
-   * @return array
-   *   An array with list of created entities.
    */
   public function createContent(): array;
 

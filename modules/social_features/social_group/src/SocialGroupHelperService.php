@@ -65,11 +65,11 @@ class SocialGroupHelperService {
    *   disabling this can have serious performance implications. Setting this to
    *   FALSE will update the cache for subsequent calls.
    *
-   * @return \Drupal\group\Entity\GroupInterface|null
+   * @return int|NULL
    *   The group that this entity belongs to or NULL if the entity doesn't
    *   belong to any group.
    */
-  public function getGroupFromEntity(array $entity, $read_cache = TRUE): ?GroupInterface {
+  public function getGroupFromEntity(array $entity, $read_cache = TRUE): ?int {
     $gid = NULL;
 
     // Comments can have groups based on what the comment is posted on so the

@@ -128,22 +128,22 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSource() {
+  public function getSource(): ?string {
     $definition = $this->getPluginDefinition();
-    return isset($definition['source']) ? $definition['source'] : NULL;
+    return $definition['source'] ?? NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setProfile($profile) {
+  public function setProfile($profile): void {
     $this->profile = $profile;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getModule() {
+  public function getModule(): ?string {
     $definition = $this->getPluginDefinition();
     return isset($definition['provider']) ? $definition['provider'] : NULL;
   }
@@ -158,7 +158,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
-  public function removeContent() {
+  public function removeContent(): void {
     $data = $this->fetchData();
 
     foreach ($data as $uuid => $item) {
@@ -187,7 +187,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
-  public function setEntityStorage(EntityStorageInterface $entity_storage) {
+  public function setEntityStorage(EntityStorageInterface $entity_storage): void {
     $this->entityStorage = $entity_storage;
   }
 
