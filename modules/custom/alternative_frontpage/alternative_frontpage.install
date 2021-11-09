@@ -5,8 +5,6 @@
  * Installation code for the alternative_frontpage module.
  */
 
-use Drupal\user\Entity\Role;
-
 /**
  * Implements hook_install().
  *
@@ -30,7 +28,7 @@ function alternative_frontpage_install(): void {
 /**
  * Convert the old frontpage settings to the new config entity.
  */
-function alternative_frontpage_update_8001(): void {
+function alternative_frontpage_update_11101(): void {
   // Get the settings for authenticated users.
   $alternative_frontpage = \Drupal::configFactory()->get('alternative_frontpage.settings');
   $authenticated = $alternative_frontpage->get('frontpage_for_authenticated_user');
@@ -63,27 +61,20 @@ function alternative_frontpage_update_8001(): void {
     $storage->save();
   }
 
-  // Give the new permission to sitemanagers.
-  $roles = Role::loadMultiple();
-
+  // Give the new permissions to sitemanager.
   $permissions = [
     'add alternative frontpage settings',
     'delete alternative frontpage settings',
     'edit alternative frontpage settings',
   ];
 
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
+  user_role_grant_permissions('sitemanager', $permissions);
 }
 
 /**
  * Update contentmanager and sitemanager roles weight.
  */
-function alternative_frontpage_update_11101(): void {
+function alternative_frontpage_update_11102(): void {
   alternative_frontpage_change_role_weight();
 }
 
