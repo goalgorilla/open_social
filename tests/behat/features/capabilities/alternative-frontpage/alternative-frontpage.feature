@@ -1,4 +1,4 @@
-@api @alternative-frontpage @stability @perfect @critical @DS-4638 @stability-4 @test
+@api @alternative-frontpage @stability @perfect @critical @DS-4638 @stability-4
 Feature: Set alternative frontpage
   Benefit: In order to improve the Look and Feel for LU
   Role: AN
@@ -16,11 +16,12 @@ Feature: Set alternative frontpage
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
     # Configure the settings
     Given I am logged in as "behatsitemanager"
-    When I am on "admin/config/alternative_frontpage"
+    When I am on "/admin/config/alternative_frontpage"
     And I click "Add Frontpage Setting"
+    When I fill in "Label" with "Anonymous users"
+    # We have to wait a bit, as the javascript does not have time to generate the machine name of the field.
+    And I wait for "2" seconds
     And I fill in the following:
-      | Label                 | Anonymous users |
-      | Machine-readable name | anonymous_users |
       | Frontpage path        | /user/logout    |
     And I click radio button "Anonymous user"
     And I press "Save"
@@ -35,9 +36,10 @@ Feature: Set alternative frontpage
     When I fill in "Frontpage path" with "/frontpage-an"
     And I press "Save"
     And I click "Add Frontpage Setting"
+    When I fill in "Label" with "Logged users"
+    # We have to wait a bit, as the javascript does not have time to generate the machine name of the field.
+    And I wait for "2" seconds
     And I fill in the following:
-      | Label                 | Logged users  |
-      | Machine-readable name | logged_users  |
       | Frontpage path        | /frontpage-lu |
     And I click radio button "Authenticated user"
     And I press "Save"
