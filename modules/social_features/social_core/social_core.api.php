@@ -18,7 +18,7 @@
  *
  * @ingroup social_core_api
  */
-function hook_social_filter_format_default_alter(&$filter_format) {
+function hook_social_filter_format_default_alter(&$filter_format): void {
   $filter_format = 'full_html';
 }
 
@@ -30,7 +30,7 @@ function hook_social_filter_format_default_alter(&$filter_format) {
  *
  * @ingroup social_core_api
  */
-function hook_social_node_title_prefix_articles_alter(array &$node_types) {
+function hook_social_node_title_prefix_articles_alter(array &$node_types): void {
   // The default is set to a.
   // See SocialCoreController::addPageTitle for example.
   $node_types['discussions'] = 'an';
@@ -101,7 +101,7 @@ function hook_social_core_block_visibility_path(): array {
  *
  * @ingroup social_core_api
  */
-function hook_social_content_type_alter(array &$page_to_exclude) {
+function hook_social_content_type_alter(array &$page_to_exclude): void {
   $page_to_exclude[] = 'article';
 }
 
@@ -114,7 +114,7 @@ function hook_social_content_type_alter(array &$page_to_exclude) {
  * @see social_core_form_node_form_alter()
  * @ingroup social_core_api
  */
-function hook_social_core_compatible_content_forms(array &$compatible_content_type_forms) {
+function hook_social_core_compatible_content_forms(array &$compatible_content_type_forms): void {
   $compatible_content_type_forms[] = 'node_landing_page_form';
 }
 

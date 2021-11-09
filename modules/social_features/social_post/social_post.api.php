@@ -27,7 +27,7 @@ use Drupal\social_post\Entity\PostInterface;
  *
  * @ingroup social_post_api
  */
-function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
+function hook_social_post_visibility_info_alter($visibility, &$icon, &$title): void {
   switch ($visibility) {
     case '5':
       $icon = 'community';
@@ -57,7 +57,7 @@ function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
  * @see \Drupal\social_post\PostViewBuilder::renderLinks()
  * @see \Drupal\social_post\PostViewBuilder::buildLinks()
  */
-function hook_post_links_alter(array &$links, PostInterface $entity, array &$context) {
+function hook_post_links_alter(array &$links, PostInterface $entity, array &$context): void {
   $links['mymodule'] = [
     '#theme' => 'links__post__mymodule',
     '#attributes' => ['class' => ['links', 'inline']],
@@ -80,7 +80,7 @@ function hook_post_links_alter(array &$links, PostInterface $entity, array &$con
  *
  * @see \Drupal\social_post\Form\PostForm::save()
  */
-function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
+function hook_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state): void {
   $post = $form_state->getFormObject()->getEntity();
 
   if (mb_strlen($post->field_post->value) > 1000) {

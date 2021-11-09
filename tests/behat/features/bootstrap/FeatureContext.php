@@ -487,7 +487,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @Then :textBefore should precede :textAfter for the query :cssQuery
      */
-    public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery) {
+    public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery): void {
       $elements = $this->getSession()->getPage()->findAll('css', $cssQuery);
 
       $items = array_map(

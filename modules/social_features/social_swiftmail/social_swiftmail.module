@@ -14,7 +14,7 @@ use Drupal\Core\Link;
 /**
  * Preprocess swift template.
  */
-function social_swiftmail_preprocess_swiftmailer(array &$variables) {
+function social_swiftmail_preprocess_swiftmailer(array &$variables): void {
   // Load default theme (not active).
   $theme_id = \Drupal::config('system.theme')->get('default');
 
@@ -126,7 +126,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
 /**
  * Implements hook_mail_alter().
  */
-function social_swiftmail_mail_alter(&$message) {
+function social_swiftmail_mail_alter(&$message): void {
   // Get the site settings.
   $site_settings = \Drupal::config('system.site');
 
@@ -165,7 +165,7 @@ function social_swiftmail_get_logo($theme_id) {
 /**
  * Implements hook_element_info_alter().
  */
-function social_swiftmail_element_info_alter(array &$info) {
+function social_swiftmail_element_info_alter(array &$info): void {
   if (isset($info['text_format'])) {
     if (!isset($info['text_format']['#process'])) {
       $info['text_format']['#process'] = [];

@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_form_BASE_FORM_ID_alter() for group_content_form.
  */
-function ginvite_form_group_content_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function ginvite_form_group_content_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   /** @var \Drupal\Core\Entity\ContentEntityFormInterface $formObject */
   $formObject = $form_state->getFormObject();
   /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
@@ -37,7 +37,7 @@ function ginvite_form_group_content_form_alter(&$form, FormStateInterface $form_
  *
  * Implements hook_ENTITY_TYPE_insert().
  */
-function ginvite_group_content_insert(GroupContentInterface $group_content) {
+function ginvite_group_content_insert(GroupContentInterface $group_content): void {
   $type = $group_content->getContentPlugin()->getPluginId();
   $messenger = \Drupal::messenger();
 
@@ -109,7 +109,7 @@ function ginvite_group_content_insert(GroupContentInterface $group_content) {
  *
  * @see ginvite_group_content_insert()
  */
-function ginvite_mail($key, &$message, $params) {
+function ginvite_mail($key, &$message, $params): void {
   if ($key == 'invite') {
 
     $token_service = \Drupal::token();
@@ -148,7 +148,7 @@ function ginvite_mail($key, &$message, $params) {
  *
  * Implements hook_ENTITY_TYPE_insert().
  */
-function ginvite_user_insert(UserInterface $user) {
+function ginvite_user_insert(UserInterface $user): void {
   $properties = [
     'invitee_mail' => $user->getEmail(),
     'invitation_status' => GroupInvitation::INVITATION_PENDING,
@@ -168,7 +168,7 @@ function ginvite_user_insert(UserInterface $user) {
  *
  * Implements hook_entity_type_alter().
  */
-function ginvite_entity_type_alter(array &$entity_types) {
+function ginvite_entity_type_alter(array &$entity_types): void {
   $group_content = $entity_types['group_content'];
   $group_content->addConstraint('PreventDuplicated', []);
 }
@@ -226,7 +226,7 @@ function ginvite_tokens($type, $tokens, array $data, array $options, BubbleableM
  *
  * Implements hook_form_FORM_ID_alter().
  */
-function ginvite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function ginvite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   if (isset($_GET["invitee_mail"])) {
     $invitee_mail = $_GET["invitee_mail"];
     $invitee_mail = base64_decode(str_replace(['-', '_'], ['+', '/'], $invitee_mail));

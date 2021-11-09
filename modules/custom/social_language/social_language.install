@@ -12,7 +12,7 @@ use Drupal\Core\Serialization\Yaml;
  *
  * Perform actions related to the installation of social_language.
  */
-function social_language_install() {
+function social_language_install(): void {
   // Make sure the module has more weight then "Content Translation" module.
   module_set_weight('social_language', 11);
 
@@ -43,7 +43,7 @@ function social_language_install() {
 /**
  * Enable topic type and profile tag taxonomy translation.
  */
-function social_language_update_8001() {
+function social_language_update_8001(): void {
   // Install the configuration added as part of this update.
   $profile_tag_yml = <<<YAML
 langcode: en
@@ -103,7 +103,7 @@ YAML;
 /**
  * Allow "Content Manager" role to manage translations.
  */
-function social_language_update_10301() {
+function social_language_update_10301(): void {
   $permissions = [
     'create content translations',
     'delete content translations',
@@ -115,7 +115,7 @@ function social_language_update_10301() {
 /**
  * Change the weight for the module "Social Language".
  */
-function social_language_update_10302() {
+function social_language_update_10302(): void {
   // Make sure the module has more weight then "Content Translation" module.
   module_set_weight('social_language', 11);
 }

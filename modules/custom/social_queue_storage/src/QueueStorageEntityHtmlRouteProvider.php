@@ -39,7 +39,7 @@ class QueueStorageEntityHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
+  protected function getSettingsFormRoute(EntityTypeInterface $entity_type): ?Route {
     if (!$entity_type->getBundleEntityType()) {
       $route = new Route("/admin/structure/{$entity_type->id()}/settings");
       $route
@@ -52,6 +52,7 @@ class QueueStorageEntityHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+    return NULL;
   }
 
 }

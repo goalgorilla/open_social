@@ -12,11 +12,11 @@ interface ActivityDestinationInterface extends PluginInspectionInterface {
   /**
    * Returns a view mode for the entity.
    */
-  public function getViewMode($original_view_mode, $entity);
+  public function getViewMode($original_view_mode, $entity): string;
 
   /**
    * True or false if the activity destination is set.
    */
-  public function isActiveInView($view);
+  public function isActiveInView($view): bool;
 
 }

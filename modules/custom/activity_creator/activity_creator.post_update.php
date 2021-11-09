@@ -73,7 +73,7 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
 /**
  * Remove orphaned activities notification status.
  */
-function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox) {
+function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox): void {
   $database = \Drupal::database();
 
   // On the first run, we gather all of our initial
@@ -149,7 +149,7 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
 /**
  * Remove activities notification status if it's related entity not exist.
  */
-function activity_creator_post_update_8803_remove_activities_with_no_related_entities(&$sandbox) {
+function activity_creator_post_update_8803_remove_activities_with_no_related_entities(&$sandbox): void {
   $database = \Drupal::database();
 
   if (!isset($sandbox['activities_id'])) {

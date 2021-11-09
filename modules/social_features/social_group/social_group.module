@@ -69,7 +69,7 @@ function social_group_theme() {
 /**
  * Implements hook_entity_type_alter().
  */
-function social_group_entity_type_alter(array &$entity_types) {
+function social_group_entity_type_alter(array &$entity_types): void {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (isset($entity_types['group'])) {
     $entity_types['group']
@@ -90,7 +90,7 @@ function social_group_entity_type_alter(array &$entity_types) {
  *   - join_method: The join methods.
  *   - allowed_visibility: The allowed visibilities.
  */
-function template_preprocess_group_settings_help(array &$variables) {
+function template_preprocess_group_settings_help(array &$variables): void {
 }
 
 /**
@@ -136,7 +136,7 @@ function _social_group_get_overview_route(GroupInterface $group): array {
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
+function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state): void {
   // Set redirect to the group about page.
   $route_parameters = $form_state->getRedirect()->getRouteParameters();
   if (!empty($route_parameters['group'])) {
@@ -150,7 +150,7 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_form_entity_access_by_field_visibility_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_form_entity_access_by_field_visibility_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Add option to disable public group creation.
   $form['#submit'][] = '_social_group_visibility_settings_submit';
 }
@@ -163,7 +163,7 @@ function social_group_form_entity_access_by_field_visibility_form_alter(&$form, 
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_visibility_settings_submit(array $form, FormStateInterface $form_state) {
+function _social_group_visibility_settings_submit(array $form, FormStateInterface $form_state): void {
 
   /** @var \Drupal\user\Entity\Role $role */
   $role = Role::load('authenticated');
@@ -215,7 +215,7 @@ function _social_group_get_group_labels(): array {
  *   - profile: The profile object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_group_preprocess_group(array &$variables) {
+function social_group_preprocess_group(array &$variables): void {
   /** @var \Drupal\social_group\GroupStatistics $group_statistics */
   $group_statistics = \Drupal::service('social_group.group_statistics');
   /** @var \Drupal\group\Entity\GroupInterface $group */
@@ -371,7 +371,7 @@ function social_group_preprocess_group(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_preprocess_group__hero(array &$variables) {
+function social_group_preprocess_group__hero(array &$variables): void {
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
   $account = \Drupal::currentUser();
@@ -693,7 +693,7 @@ function social_group_allowed_join_method_description($key): string {
 /**
  * Implements hook_entity_view_alter().
  */
-function social_group_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+function social_group_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
   // For group entities.
   if ($entity instanceof Group) {
     // Add cache contexts for some view modes.
@@ -717,7 +717,7 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
 /**
  * Implements hook_form_alter().
  */
-function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -987,7 +987,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state object.
  */
-function _social_group_cross_posting_group_type_validate(array $element, FormStateInterface $form_state) {
+function _social_group_cross_posting_group_type_validate(array $element, FormStateInterface $form_state): void {
   // Cross posting is disabled globally.
   $group_settings = \Drupal::config('social_group.settings');
   if (!$group_settings->get('cross_posting.status')) {
@@ -1013,7 +1013,7 @@ function _social_group_cross_posting_group_type_validate(array $element, FormSta
 /**
  * Function to validate entries against group members.
  */
-function _social_group_unique_members($element, &$form_state, $complete_form) {
+function _social_group_unique_members($element, &$form_state, $complete_form): void {
   // Call the autocomplete function to make sure enrollees are unique.
   SocialGroupEntityAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
 }
@@ -1037,7 +1037,7 @@ function _social_group_inform_group_type_selection(): AjaxResponse {
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
+function _social_group_type_edit_submit($form, FormStateInterface $form_state): void {
   // Check if the group_type changed.
   // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
@@ -1068,7 +1068,7 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
 /**
  * Form submit for removing members from a group so we can clear caches.
  */
-function _social_membership_delete_form_submit($form, FormStateInterface $form_state) {
+function _social_membership_delete_form_submit($form, FormStateInterface $form_state): void {
   $group = _social_group_get_current_group();
 
   if (is_object($group)) {
@@ -1083,7 +1083,7 @@ function _social_membership_delete_form_submit($form, FormStateInterface $form_s
 /**
  * Form submit for group join / leave form.
  */
-function _social_group_action_form_submit($form, FormStateInterface $form_state) {
+function _social_group_action_form_submit($form, FormStateInterface $form_state): void {
   $group = _social_group_get_current_group();
 
   if (is_object($group)) {
@@ -1150,7 +1150,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
  * Also check if the user has already a membership.
  * If so, update it with the new role.
  */
-function _social_group_grant_admin_role($uid, $gid) {
+function _social_group_grant_admin_role($uid, $gid): void {
   $account = User::load($uid);
   $group = Group::load($gid);
 
@@ -1187,7 +1187,7 @@ function _social_group_grant_admin_role($uid, $gid) {
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  *   The group content.
  */
-function social_group_group_content_insert(GroupContentInterface $group_content) {
+function social_group_group_content_insert(GroupContentInterface $group_content): void {
   if ($group_content->getEntity()->getEntityTypeId() == 'user') {
     if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
@@ -1203,7 +1203,7 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_membership_edit_form_submit(array $form, FormStateInterface $form_state) {
+function _social_group_membership_edit_form_submit(array $form, FormStateInterface $form_state): void {
   $group = _social_group_get_current_group();
 
   if (is_object($group)) {
@@ -1223,7 +1223,7 @@ function _social_group_membership_edit_form_submit(array $form, FormStateInterfa
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_cancel_join_leave_form(array $form, FormStateInterface $form_state) {
+function _social_group_cancel_join_leave_form(array $form, FormStateInterface $form_state): void {
   // Get form that was submitted.
   $group = _social_group_get_current_group();
 
@@ -1244,7 +1244,7 @@ function _social_group_cancel_join_leave_form(array $form, FormStateInterface $f
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_node_form_cross_posting_validate(array $form, FormStateInterface $form_state) {
+function _social_group_node_form_cross_posting_validate(array $form, FormStateInterface $form_state): void {
   if (empty($form_state->getValue('groups'))) {
     return;
   }
@@ -1279,7 +1279,7 @@ function _social_group_node_form_cross_posting_validate(array $form, FormStateIn
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_node_form_submit(array $form, FormStateInterface $form_state) {
+function _social_group_node_form_submit(array $form, FormStateInterface $form_state): void {
   $nid = $form_state->getValue('nid');
   // Set redirect.
   $form_state->setRedirect(
@@ -1293,7 +1293,7 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
  *
  * Implements hook_field_widget_form_alter().
  */
-function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context): void {
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
@@ -1400,7 +1400,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
  *
  * Alter "Group Members" views. Replace user IDs with profile teasers.
  */
-function social_group_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+function social_group_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache): void {
   if ($view->id() == 'group_members') {
     if (!empty($output['#rows'][0]['#rows'])) {
       foreach ($output['#rows'][0]['#rows'] as $key => $row) {
@@ -1428,7 +1428,7 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_group_menu_local_tasks_alter(&$data, $route_name) {
+function social_group_menu_local_tasks_alter(&$data, $route_name): void {
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
@@ -1485,7 +1485,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_local_tasks_alter().
  */
-function social_group_local_tasks_alter(&$local_tasks) {
+function social_group_local_tasks_alter(&$local_tasks): void {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
 
@@ -1496,7 +1496,7 @@ function social_group_local_tasks_alter(&$local_tasks) {
 /**
  * Implements hook_menu_local_actions_alter().
  */
-function social_group_menu_local_actions_alter(&$local_actions) {
+function social_group_menu_local_actions_alter(&$local_actions): void {
   // Remove "Add Relationship" button.
   if (isset($local_actions['group_content.add_page'])) {
     unset($local_actions['group_content.add_page']);
@@ -1626,14 +1626,14 @@ function _social_group_cache_tags(GroupInterface $group): array {
  *
  * Add Group cache context for system "Tabs" block.
  */
-function social_group_block_view_local_tasks_block_alter(array &$build, BlockPluginInterface $block) {
+function social_group_block_view_local_tasks_block_alter(array &$build, BlockPluginInterface $block): void {
   $build['#cache']['contexts'][] = 'user.group_permissions';
 }
 
 /**
  * Implements hook_block_build_alter().
  */
-function social_group_block_build_alter(array &$build, BlockPluginInterface $block) {
+function social_group_block_build_alter(array &$build, BlockPluginInterface $block): void {
   if (!empty($block->getPluginId()) &&
     ($block->getPluginId() === 'views_exposed_filter_block:newest_groups-page_all_groups' ||
     $block->getPluginId() === 'views_exposed_filter_block:search_groups-page')) {
@@ -1647,7 +1647,7 @@ function social_group_block_build_alter(array &$build, BlockPluginInterface $blo
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_preprocess_profile(&$variables) {
+function social_group_preprocess_profile(&$variables): void {
   $group = _social_group_get_current_group();
 
   if ($group instanceof Group && $variables['elements']['#view_mode'] == 'teaser') {
@@ -1673,7 +1673,7 @@ function social_group_preprocess_profile(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_group_preprocess_views_view(&$variables) {
+function social_group_preprocess_views_view(&$variables): void {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
@@ -1780,7 +1780,7 @@ function _social_group_get_current_group_types(AccountInterface $account): int {
 /**
  * Delete the group and all of its content.
  */
-function _social_group_delete_group() {
+function _social_group_delete_group(): void {
   // Get the group.
   if ($group = _social_group_get_current_group()) {
     $group_content_types = GroupContentType::loadByEntityTypeId('node');
@@ -1849,7 +1849,7 @@ function social_group_get_all_groups() {
 /**
  * Implements hook_entity_base_field_info_alter().
  */
-function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type): void {
   if ($entity_type->id() === 'node' && isset($fields['groups'])) {
     /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
     $fields['groups']
@@ -1871,7 +1871,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
  *
  * Make sure the correct group is saved when group is selected on node form.
  */
-function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
+function social_group_form_node_form_alter(&$form, FormStateInterface $form_state): void {
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     if (isset($form['groups'])) {
       // Check if we are adding a translation or it's the default being editted.
@@ -1928,7 +1928,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
+function social_group_save_group_from_node(array $form, FormStateInterface $form_state): void {
   // Check if we are adding a translation or it's the default being editted.
   /** @var \Drupal\Core\Entity\EntityForm $form_object */
   $form_object = $form_state->getFormObject();
@@ -2063,7 +2063,7 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
 /**
  * Implements hook_views_query_alter().
  */
-function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
   // User Groups view.
   if ($view->id() == 'groups' && $view->getDisplay()->display['id'] == 'page_user_groups') {
     // Change Join type if we want to see muted groups.
@@ -2142,7 +2142,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 /**
  * Implements hook_user_cancel_methods_alter().
  */
-function social_group_user_cancel_methods_alter(&$methods) {
+function social_group_user_cancel_methods_alter(&$methods): void {
   $methods['user_cancel_reassign']['title'] .= ' ' . t('Reassign your groups to the super administrator.');
 }
 
@@ -2301,7 +2301,7 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 /**
  * Implements hook_entity_operation_alter().
  */
-function social_group_entity_operation_alter(array &$operations, EntityInterface $entity) {
+function social_group_entity_operation_alter(array &$operations, EntityInterface $entity): void {
   if ($entity->getEntityTypeId() === 'group_content') {
     $titles = [
       'edit' => t('Edit'),
@@ -2320,7 +2320,7 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
 /**
  * Implements hook_default_route_group_tabs_alter().
  */
-function social_group_social_group_default_route_tabs_alter(&$tabs) {
+function social_group_social_group_default_route_tabs_alter(&$tabs): void {
   // Unset some tabs created by group.
   unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
 }
@@ -2328,7 +2328,7 @@ function social_group_social_group_default_route_tabs_alter(&$tabs) {
 /**
  * Implements hook_social_path_manager_group_tabs_alter().
  */
-function social_group_social_path_manager_group_tabs_alter(array &$tabs) {
+function social_group_social_path_manager_group_tabs_alter(array &$tabs): void {
   // Unset some tabs created by group.
   unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
 
@@ -2339,7 +2339,7 @@ function social_group_social_path_manager_group_tabs_alter(array &$tabs) {
 /**
  * Implements hook_batch_alter().
  */
-function social_group_batch_alter(&$batch) {
+function social_group_batch_alter(&$batch): void {
   if (!isset($batch['source_url'])) {
     return;
   }
@@ -2421,7 +2421,7 @@ function _social_group_get_action_id(array &$batch): string {
  * @param array $operations
  *   Performed operations array.
  */
-function _social_group_action_batch_finish($success, array $results, array $operations) {
+function _social_group_action_batch_finish($success, array $results, array $operations): void {
   // When we do a bulk action on all the items in a view, across multiple pages,
   // the saveList function needs to be called. So after pre-populating the list
   // the actual action is performed on the entities.
@@ -2541,7 +2541,7 @@ function social_group_social_group_action_social_group_send_email_action_finish(
 /**
  * Implements hook_preprocess_field().
  */
-function social_group_preprocess_field(&$variables) {
+function social_group_preprocess_field(&$variables): void {
   $formatter = $variables['element']['#formatter'];
   if (in_array($formatter, ['address_plain', 'address_default'])) {
     $entity = $variables['element']['#object'];
@@ -2660,7 +2660,7 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
 /**
  * Implements template_preprocess_form_element().
  */
-function social_group_preprocess_fieldset(&$variables) {
+function social_group_preprocess_fieldset(&$variables): void {
   // Make sure our flexible group visibility field renders a tooltip, since
   // this field is rendered as fieldset with legend and radios as children
   // we need to do it in this preprocess.
@@ -2736,7 +2736,7 @@ function social_group_allowed_visibility_description($key): string {
 /**
  * Implements hook_entity_display_build_alter().
  */
-function social_group_entity_display_build_alter(array &$build, array $context) {
+function social_group_entity_display_build_alter(array &$build, array $context): void {
   // For our nodes, renderd as small_teaser
   // since thee Group 1.0 update it renders all group details.
   // As our group types are optional and not a dependency
@@ -2765,7 +2765,7 @@ function social_group_entity_display_build_alter(array &$build, array $context) 
 /**
  * Implements hook_preprocess_page().
  */
-function social_group_preprocess_page(array &$variables) {
+function social_group_preprocess_page(array &$variables): void {
   /** @var \Drupal\Core\Routing\AdminContext $admin_context */
   $admin_context = \Drupal::service('router.admin_context');
   // Don't add the modal for admin pages.

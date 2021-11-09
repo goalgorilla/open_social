@@ -142,7 +142,7 @@ abstract class DemoGroup extends DemoContent {
    * @param \Drupal\group\Entity\GroupInterface $entity
    *   The GroupInterface entity.
    */
-  protected function addMembers(array $members, array $managers, GroupInterface $entity) {
+  protected function addMembers(array $members, array $managers, GroupInterface $entity): void {
     foreach ($members as $account_uuid) {
       $account = $this->userStorage->loadByProperties([
         'uuid' => $account_uuid,

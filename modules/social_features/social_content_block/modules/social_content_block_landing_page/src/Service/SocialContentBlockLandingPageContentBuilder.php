@@ -57,7 +57,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
   /**
    * {@inheritdoc}
    */
-  public function getEntities($block_id) {
+  public function getEntities($block_id): array {
     $elements = parent::getEntities($block_id);
 
     foreach (Element::children($elements) as $delta) {

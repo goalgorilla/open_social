@@ -12,7 +12,7 @@ abstract class ActivityEntityConditionBase extends PluginBase implements Activit
   /**
    * {@inheritdoc}
    */
-  public function isValidEntityCondition($entity) {
+  public function isValidEntityCondition($entity): bool {
     return TRUE;
   }
 

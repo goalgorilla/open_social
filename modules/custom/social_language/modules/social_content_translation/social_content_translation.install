@@ -11,14 +11,14 @@ use Drupal\language\Entity\ContentLanguageSettings;
 /**
  * Implements hook_install().
  */
-function social_content_translation_install() {
+function social_content_translation_install(): void {
   social_content_translation_install_language_settings_for_entities();
 }
 
 /**
  * Implements hook_uninstall().
  */
-function social_content_translation_uninstall() {
+function social_content_translation_uninstall(): void {
   \Drupal::configFactory()->getEditable('social_content_translation.settings')->delete();
 }
 
@@ -30,7 +30,7 @@ function social_content_translation_uninstall() {
  *  for modules if it have "language.content_settings*" configuration in
  *  "config/optional" folder.
  */
-function social_content_translation_install_language_settings_for_entities() {
+function social_content_translation_install_language_settings_for_entities(): void {
   $config_storage = \Drupal::service('config.storage');
 
   // Get enabled modules.
@@ -66,7 +66,7 @@ function social_content_translation_install_language_settings_for_entities() {
 /**
  * Add support translations for entities.
  */
-function social_content_translation_update_8001() {
+function social_content_translation_update_8001(): void {
   $module_names = [
     'social_group_flexible_group',
   ];
@@ -82,7 +82,7 @@ function social_content_translation_update_8001() {
 /**
  * Add translations compatibility for Topics.
  */
-function social_content_translation_update_10301() {
+function social_content_translation_update_10301(): void {
   $module_names = [
     'social_topic',
   ];

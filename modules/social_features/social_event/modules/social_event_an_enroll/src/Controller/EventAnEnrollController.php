@@ -154,7 +154,7 @@ class EventAnEnrollController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResult
    *   Check standard and custom permissions.
    */
-  public function enrollManageAccess(AccountInterface $account) {
+  public function enrollManageAccess(AccountInterface $account): AccessResult {
     if (AccessResult::allowedIfHasPermission($account, 'manage all enrollments')->isAllowed()) {
       return AccessResult::allowed();
     }

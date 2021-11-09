@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_event_type.
  */
-function social_event_type_install() {
+function social_event_type_install(): void {
   // Fetch sitemananger role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
@@ -33,7 +33,7 @@ function social_event_type_install() {
  *
  * Perform actions related to the de-installation of social_event_type.
  */
-function social_event_type_uninstall() {
+function social_event_type_uninstall(): void {
   // Fetch sitemananger role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
@@ -55,7 +55,7 @@ function social_event_type_uninstall() {
 /**
  * Update label for field_event_type field.
  */
-function social_event_type_update_8901() {
+function social_event_type_update_8901(): void {
   // Load the existing configuration.
   $config_name = 'field.field.node.event.field_event_type';
   $config = \Drupal::configFactory()->getEditable($config_name);
@@ -76,7 +76,7 @@ function social_event_type_update_8901() {
 /**
  * Create new field & field storage configuration for new event type icon field.
  */
-function social_event_type_update_8902(&$sandbox) {
+function social_event_type_update_8902(&$sandbox): void {
   $config_file = drupal_get_path('module', 'social_event_type') . '/config/static/social_event_type_update_8902.yml';
 
   if (is_file($config_file)) {

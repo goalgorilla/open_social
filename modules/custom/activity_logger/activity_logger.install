@@ -8,7 +8,7 @@
 /**
  * Implements hook_update_dependencies().
  */
-function activity_logger_update_dependencies() {
+function activity_logger_update_dependencies(): array {
   // Make sure we run our update after the email consistency
   // improvements ran.
   $dependencies['activity_logger'][10301] = [
@@ -21,7 +21,7 @@ function activity_logger_update_dependencies() {
 /**
  * Update message templates with new Subject schema.
  */
-function activity_logger_update_10301() {
+function activity_logger_update_10301(): void {
   // Lets declare the defaults already, even if it is a schema
   // update it's a config schema, so we can just set it
   // without having to do a post_update hook or anything.

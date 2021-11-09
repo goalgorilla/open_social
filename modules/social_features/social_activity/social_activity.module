@@ -15,7 +15,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_views_plugins_display_alter().
  */
-function social_activity_views_plugins_display_alter(array &$plugins) {
+function social_activity_views_plugins_display_alter(array &$plugins): void {
   $plugins['block']['class'] = 'Drupal\social_activity\Plugin\views\display\ModeBlock';
 }
 
@@ -157,7 +157,7 @@ function social_activity_social_user_account_header_account_links(array $context
  *
  * Adds an indicator to the user account menu on mobile.
  */
-function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context) {
+function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context): void {
   // We require a logged in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return;
@@ -255,7 +255,7 @@ function social_activity_social_account_notifications_counter(AccountInterface $
 /**
  * Implements hook_views_post_build().
  */
-function social_activity_views_post_build(ViewExecutable $view) {
+function social_activity_views_post_build(ViewExecutable $view): void {
   $override_displays = [
     'block_stream_explore',
     'block_stream_homepage',
@@ -277,7 +277,7 @@ function social_activity_views_post_build(ViewExecutable $view) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_activity_preprocess_block(&$variables) {
+function social_activity_preprocess_block(&$variables): void {
   $route_match = \Drupal::routeMatch();
   $allowed_routes = [
     'entity.node.canonical',

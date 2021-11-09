@@ -18,7 +18,7 @@ use Drupal\social_landing_page\Plugin\Validation\Constraint\SocialAnLinkAccess;
 /**
  * Implements hook_form_alter().
  */
-function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
   if (in_array($form_id, [
     'node_landing_page_edit_form',
     'node_landing_page_form',
@@ -32,7 +32,7 @@ function social_landing_page_form_alter(array &$form, FormStateInterface $form_s
  *
  * Remove Landing Page option from Search Content filter.
  */
-function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   if ($form['#id'] === 'views-exposed-form-search-content-page') {
     if (isset($form['type']['#options']['landing_page'])) {
       unset($form['type']['#options']['landing_page']);
@@ -49,7 +49,7 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
  * html markup provided by paragraph. We only do this for
  * 'Override title' field.
  */
-function social_landing_page_field_widget_block_field_default_form_alter(&$element, &$form_state, $context) {
+function social_landing_page_field_widget_block_field_default_form_alter(&$element, &$form_state, $context): void {
   // Make sure we are inside a paragraph.
   $form = $context['form'];
   $entity_type = $form['#entity_type'];
@@ -168,7 +168,7 @@ function social_landing_page_theme() {
 /**
  * Implements hook_preprocess_page().
  */
-function social_landing_page_preprocess_page(&$variables) {
+function social_landing_page_preprocess_page(&$variables): void {
   // Here we remove class for landing page.
   if (
     isset($variables['node']) &&
@@ -191,7 +191,7 @@ function social_landing_page_preprocess_page(&$variables) {
 /**
  * Prepares variables for the paragraph.
  */
-function social_landing_page_preprocess_paragraph(&$variables) {
+function social_landing_page_preprocess_paragraph(&$variables): void {
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
   $bundle = $entity->bundle();
@@ -222,7 +222,7 @@ function social_landing_page_preprocess_paragraph(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_landing_page_preprocess_node(&$variables) {
+function social_landing_page_preprocess_node(&$variables): void {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
   if ($node->getType() === 'landing_page') {
@@ -256,7 +256,7 @@ function social_landing_page_preprocess_node(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_landing_page_preprocess_field(&$variables) {
+function social_landing_page_preprocess_field(&$variables): void {
   if ($variables['field_name'] === 'field_button_link_an' || $variables['field_name'] === 'field_button_link_lu') {
     $entity = $variables['element']['#object'];
     $button_style = $entity->field_button_style->value;
@@ -383,7 +383,7 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
 /**
  * Implements hook_social_core_compatible_content_forms_alter().
  */
-function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms): void {
   $compatible_content_type_forms[] = 'node_landing_page_form';
   $compatible_content_type_forms[] = 'node_landing_page_edit_form';
 }

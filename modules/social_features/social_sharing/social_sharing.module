@@ -81,7 +81,7 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
 /**
  * Implements hook_preprocess().
  */
-function social_sharing_preprocess_block_shariff(&$variables, $hook) {
+function social_sharing_preprocess_block_shariff(&$variables, $hook): void {
   /** @var \Drupal\Core\Template\Attribute $data_attributes */
   $data_attributes = $variables['data_attributes'];
   // Make an array representation so we can add data attributes.

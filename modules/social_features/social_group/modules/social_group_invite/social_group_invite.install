@@ -13,7 +13,7 @@ use Drupal\group\Entity\GroupType;
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function social_group_invite_install() {
+function social_group_invite_install(): void {
   // Assign permissions by default to all group types
   // that have group_invitation enabled.
   foreach (GroupType::loadMultiple() as $group_type) {
@@ -26,7 +26,7 @@ function social_group_invite_install() {
 /**
  * Set helper text of invite mail on the preview page for Groups.
  */
-function social_group_invite_update_8001() {
+function social_group_invite_update_8001(): void {
   $config = \Drupal::configFactory()->getEditable('social_group_invite.settings');
   $config->set('invite_helper', "<p>The message above is edited by the community managers. Please contact them for questions and ideas</p>");
   $config->save();
@@ -35,7 +35,7 @@ function social_group_invite_update_8001() {
 /**
  * Update invite message in the message template.
  */
-function social_group_invite_update_8002() {
+function social_group_invite_update_8002(): void {
   $config = \Drupal::configFactory()->getEditable('message.template.invited_to_join_group');
 
   $new_text = [
@@ -60,7 +60,7 @@ function social_group_invite_update_8002() {
 /**
  * Update invite message in group types.
  */
-function social_group_invite_update_8005() {
+function social_group_invite_update_8005(): void {
   $configs = [
     'group.content_type.closed_group-group_invitation',
     'group.content_type.flexible_group-group_invitation',
@@ -84,7 +84,7 @@ function social_group_invite_update_8005() {
 /**
  * Update group invite views().
  */
-function social_group_invite_update_8006() {
+function social_group_invite_update_8006(): void {
   $config_path = drupal_get_path('module', 'social_group_invite') . '/config/optional';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */

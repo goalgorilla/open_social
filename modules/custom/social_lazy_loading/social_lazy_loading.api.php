@@ -21,7 +21,7 @@
  *
  * @see \Drupal\social_lazy_loading\SocialLazyLoadingTextFormatOverride::loadOverrides()
  */
-function hook_social_lazy_loading_formats_alter(array &$formats) {
+function hook_social_lazy_loading_formats_alter(array &$formats): void {
   $formats['basic_html'] = FALSE;
 }
 

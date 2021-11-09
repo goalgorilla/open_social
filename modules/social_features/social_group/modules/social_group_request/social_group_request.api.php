@@ -18,6 +18,6 @@
  *
  * @ingroup social_group_api
  */
-function hook_social_group_request_alter(array &$group_types) {
+function hook_social_group_request_alter(array &$group_types): void {
   $group_types[] = 'flexible_group';
 }

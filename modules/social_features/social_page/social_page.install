@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_page.
  */
-function social_page_install() {
+function social_page_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -84,7 +84,7 @@ function social_page_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_page_update_dependencies() {
+function social_page_update_dependencies(): array {
   // New config changes should run after the update helper module is enabled.
   $dependencies['social_page'][8801] = [
     'social_core' => 8805,
@@ -129,14 +129,14 @@ function social_page_update_8002() {
 /**
  * Empty, moved to social_page_update_8907().
  */
-function social_page_update_8903() {
+function social_page_update_8903(): void {
   // Code has been moved to social_page_update_8907().
 }
 
 /**
  * Add image file extensions to be added as attachments.
  */
-function social_page_update_8904() {
+function social_page_update_8904(): void {
   $config_file = drupal_get_path('module', 'social_page') . '/config/static/field.field.node.page.field_files_8904.yml';
 
   if (is_file($config_file)) {
@@ -167,7 +167,7 @@ function social_page_update_8905() {
 /**
  * Remove group_topic_description fieldgroup from topic content type.
  */
-function social_page_update_8906() {
+function social_page_update_8906(): void {
   // There can be possibility that someone might have added fields in
   // fieldgroup we are removing. So, we want to skip removal if there are any
   // children present in fieldgroup.
@@ -180,7 +180,7 @@ function social_page_update_8906() {
 /**
  * Show thumbnail on File fields when attachment is an image.
  */
-function social_page_update_8907() {
+function social_page_update_8907(): void {
   $config_file = drupal_get_path('module', 'social_page') . '/config/static/core.entity_view_display.node.page.default_8907.yml';
 
   if (is_file($config_file)) {
@@ -197,7 +197,7 @@ function social_page_update_8907() {
 /**
  * Add small_teaser view mode for page.
  */
-function social_page_update_8908() {
+function social_page_update_8908(): void {
   $config_path = drupal_get_path('module', 'social_page') . '/config/static';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageInterface $config_storage */
@@ -225,7 +225,7 @@ function social_page_update_10201() {
 /**
  * Allow CM+ translate "Basic Page" node type.
  */
-function social_page_update_10301() {
+function social_page_update_10301(): void {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate page node']);
   }
@@ -234,7 +234,7 @@ function social_page_update_10301() {
 /**
  * Remove layout_builder settings from small_teaser view mode for page.
  */
-function social_page_update_10302() {
+function social_page_update_10302(): void {
   $config = \Drupal::configFactory()->getEditable('core.entity_view_display.node.page.small_teaser');
   $config->set('third_party_settings', [])->save();
 }

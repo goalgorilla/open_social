@@ -126,7 +126,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEntities($block_id) {
+  public function getEntities($block_id): array {
     /** @var \Drupal\block_content\BlockContentInterface $block_content */
     $block_content = $this->entityTypeManager->getStorage('block_content')
       ->load($block_id);
@@ -308,7 +308,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    * @return array
    *   The containing element, with the Custom Block form inserted.
    */
-  public static function processBlockForm(array $element, FormStateInterface $form_state) {
+  public static function processBlockForm(array $element, FormStateInterface $form_state): array {
     /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
     $content_block_manager = \Drupal::service('plugin.manager.content_block');
 

@@ -41,7 +41,7 @@ class DropdownFieldFormatter extends FormatterBase {
    * @return string
    *   The textual output generated.
    */
-  protected function viewValue(FieldItemInterface $item) {
+  protected function viewValue(FieldItemInterface $item): string {
 
     // The text value has no text format assigned to it, so the user input
     // should equal the output, including newlines.

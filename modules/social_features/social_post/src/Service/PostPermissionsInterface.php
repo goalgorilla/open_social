@@ -15,6 +15,6 @@ interface PostPermissionsInterface {
    * @return array
    *   The post type permissions.
    */
-  public function permissions();
+  public function permissions(): array;
 
 }

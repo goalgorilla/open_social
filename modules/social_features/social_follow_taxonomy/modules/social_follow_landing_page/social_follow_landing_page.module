@@ -31,7 +31,7 @@ function social_follow_landing_page_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_follow_landing_page_preprocess_paragraph(&$variables) {
+function social_follow_landing_page_preprocess_paragraph(&$variables): void {
   $terms = [];
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
@@ -97,7 +97,7 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context): void {
   $subform = FALSE;
   if (isset($element['subform']['field_tag'])) {
     $subform = &$element['subform'];
@@ -260,7 +260,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
 /**
  * Validate function that overrides the tagging field with new values.
  */
-function _social_follow_landing_page_entity_validate($element, FormStateInterface $form_state) {
+function _social_follow_landing_page_entity_validate($element, FormStateInterface $form_state): void {
   $parents = $element['#parents'];
   if (!empty($parents[0]) && !empty($form_state->getValue($parents[0]))) {
     $parent_value = $form_state->getValue($parents[0]);

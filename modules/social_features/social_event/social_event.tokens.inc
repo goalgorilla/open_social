@@ -93,7 +93,7 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
 /**
  * Implements hook_tokens_alter().
  */
-function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];

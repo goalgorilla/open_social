@@ -44,7 +44,7 @@ class Edge implements EdgeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getNode() {
+  public function getNode(): ?object {
     return $this->node;
   }
 

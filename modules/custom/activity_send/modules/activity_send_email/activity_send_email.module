@@ -24,7 +24,7 @@ const FREQUENCY_WEEKLY = 'weekly';
  *
  * This cronjob handles creating digest queue items to process.
  */
-function activity_send_email_cron() {
+function activity_send_email_cron(): void {
   // Get plugins and their intervals.
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
@@ -114,7 +114,7 @@ function activity_send_email_theme() {
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
-function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state): void {
   /** @var \Drupal\social_user\Entity\User $account */
   $account = $form_state->getFormObject()->getEntity();
 
@@ -213,7 +213,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state) {
+function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state): void {
   $account = \Drupal::routeMatch()->getParameter('user');
   $values = $form_state->getValue('email_notifications');
 
@@ -265,7 +265,7 @@ function sort_email_frequency_options(): array {
 /**
  * Implements hook_mail().
  */
-function activity_send_email_mail($key, &$message, $params) {
+function activity_send_email_mail($key, &$message, $params): void {
   $options = [
     'langcode' => $message['langcode'],
   ];
@@ -293,7 +293,7 @@ function activity_send_email_mail($key, &$message, $params) {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_send_email_activity_insert(ActivityInterface $activity) {
+function activity_send_email_activity_insert(ActivityInterface $activity): void {
   if (!in_array('email', $activity->getDestinations())) {
     return;
   }

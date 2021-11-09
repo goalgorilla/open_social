@@ -21,7 +21,7 @@
  *
  * @see \Drupal\social_embed\SocialEmbedConfigOverrideBase::loadOverrides()
  */
-function hook_social_embed_formats_alter(array &$formats) {
+function hook_social_embed_formats_alter(array &$formats): void {
   $formats['basic_html'] = FALSE;
 }
 

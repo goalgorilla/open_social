@@ -12,7 +12,7 @@ use Drupal\Core\Database\Database;
  *
  * Removes keys from the State API.
  */
-function activity_send_email_uninstall() {
+function activity_send_email_uninstall(): void {
   // Get plugins and their intervals.
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
@@ -68,7 +68,7 @@ function activity_send_email_schema() {
 /**
  * Add new database tables to store digest activities and digest timings in.
  */
-function activity_send_email_update_8001() {
+function activity_send_email_update_8001(): void {
   // Get the full spec for the new table.
   $spec['user_activity_digest'] = [
     'fields' => [

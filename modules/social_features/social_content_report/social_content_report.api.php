@@ -33,7 +33,7 @@ function hook_social_content_report_flags(): array {
  *
  * @see \Drupal\social_content_report\ContentReportService::getReportFlagTypes()
  */
-function hook_social_content_report_flags_alter(array &$entity_ids) {
+function hook_social_content_report_flags_alter(array &$entity_ids): void {
   $id = array_search('report_comment', $entity_ids);
 
   if ($id !== FALSE) {

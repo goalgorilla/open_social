@@ -16,7 +16,7 @@
  * @param array $types
  *   An array of content types.
  */
-function hook_social_follow_content_types_alter(array &$types) {
+function hook_social_follow_content_types_alter(array &$types): void {
   $types[] = 'topic';
 }
 

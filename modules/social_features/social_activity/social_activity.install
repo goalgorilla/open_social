@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Social activity install function.
  */
-function social_activity_install() {
+function social_activity_install(): void {
   // Add menu items.
   _social_activity_create_menu_links();
 }
@@ -23,7 +23,7 @@ function social_activity_install() {
 /**
  * Function to create some menu items.
  */
-function _social_activity_create_menu_links() {
+function _social_activity_create_menu_links(): void {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
   /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
@@ -48,7 +48,7 @@ function _social_activity_create_menu_links() {
 /**
  * Update all existing Message Templates to work with newest Message version.
  */
-function social_activity_update_8002() {
+function social_activity_update_8002(): void {
   $templates = MessageTemplate::loadMultiple();
 
   if (!empty($templates)) {
@@ -92,7 +92,7 @@ function social_activity_update_8002() {
  *
  * Related configs to work with latest version of DER.
  */
-function social_activity_update_8003() {
+function social_activity_update_8003(): void {
   $config = \Drupal::service('config.factory')
     ->getEditable('core.entity_view_display.activity.activity.default');
 
@@ -154,7 +154,7 @@ function social_activity_get_der_settings(): array {
 /**
  * Update activity stream block descriptions.
  */
-function social_activity_update_8801() {
+function social_activity_update_8801(): void {
   $config_factory = \Drupal::configFactory();
   // Load the activity stream.
   $view = $config_factory->getEditable('views.view.activity_stream');
@@ -177,7 +177,7 @@ function social_activity_update_8801() {
 /**
  * Create "Featured" view mode/display for activity.
  */
-function social_activity_update_8802() {
+function social_activity_update_8802(): void {
   // Create a new activity featured entity view mode.
   EntityViewMode::create([
     'targetEntityType' => 'activity',
@@ -203,7 +203,7 @@ function social_activity_update_8802() {
 /**
  * Create "Featured" view mode/display for post.
  */
-function social_activity_update_8803() {
+function social_activity_update_8803(): void {
   // The body of hook_update has been moved to into social_post module.
 }
 
@@ -266,7 +266,7 @@ function social_activity_update_8807() {
 /**
  * Resolve missing filter on Activity Stream view.
  */
-function social_activity_update_10301() {
+function social_activity_update_10301(): void {
   // Set the key for the filter to remove from all displays.
   $filter_to_remove = 'activity_filter_nodes_from_my_groups_filter';
 
@@ -336,7 +336,7 @@ function social_activity_update_10302() {
  *
  * Added new 'preview' and 'cta_button' tokens to these templates.
  */
-function social_activity_update_10303() {
+function social_activity_update_10303(): void {
   // Prepare the path.
   $path = drupal_get_path('module', 'social_activity') . '/config/static/';
 

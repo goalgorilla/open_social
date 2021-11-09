@@ -78,7 +78,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 
@@ -205,10 +205,10 @@ class Post extends ContentEntityBase implements PostInterface {
    * @param bool $reverse
    *   For setting or getting data.
    *
-   * @return string
+   * @return string|null
    *   Visibility label.
    */
-  public function getDefaultVisibilityByLabel($label, $reverse = FALSE) {
+  public function getDefaultVisibilityByLabel(string $label, bool $reverse = FALSE): ?string {
     $default_visibilities = [
       [
         'id' => 'community',
@@ -238,6 +238,7 @@ class Post extends ContentEntityBase implements PostInterface {
         }
       }
     }
+    return NULL;
   }
 
   /**
@@ -246,7 +247,7 @@ class Post extends ContentEntityBase implements PostInterface {
    * @return array
    *   Field allowed values.
    */
-  private function getPostVisibilityAllowedValues() {
+  private function getPostVisibilityAllowedValues(): array {
     // Post visibility field storage.
     $post_storage = 'field.storage.post.field_visibility';
     $config = \Drupal::configFactory()->getEditable($post_storage);

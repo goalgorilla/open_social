@@ -25,7 +25,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_profile.
  */
-function social_profile_install() {
+function social_profile_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
@@ -80,7 +80,7 @@ function social_profile_install() {
 /**
  * Function to set default profile image if not set already.
  */
-function _social_profile_add_default_profile_image() {
+function _social_profile_add_default_profile_image(): void {
   // Add default image.
   $config_factory = \Drupal::configFactory();
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
@@ -108,7 +108,7 @@ function _social_profile_add_default_profile_image() {
 /**
  * Function to create some menu items.
  */
-function _social_profile_create_menu_links() {
+function _social_profile_create_menu_links(): void {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
   /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
@@ -133,7 +133,7 @@ function _social_profile_create_menu_links() {
 /**
  * Implements hook_uninstall().
  */
-function social_profile_uninstall() {
+function social_profile_uninstall(): void {
   \Drupal::service('config.factory')
     ->getEditable('social_profile.settings')
     ->delete();
@@ -142,7 +142,7 @@ function social_profile_uninstall() {
 /**
  * Set default profile image.
  */
-function social_profile_update_8002(&$sandbox) {
+function social_profile_update_8002(&$sandbox): void {
   // Only run when there is not a file added to the file managed table.
   // Confirmed that it's not there on our current platforms. (But is locally).
   $query = \Drupal::database()->select('file_managed', 'fm');
@@ -161,7 +161,7 @@ function social_profile_update_8002(&$sandbox) {
 /**
  * Add social_profile.settings config. Update permissions for SM role.
  */
-function social_profile_update_8003(&$sandbox) {
+function social_profile_update_8003(&$sandbox): void {
   $config = \Drupal::configFactory()->getEditable('social_profile.settings');
   $config->set('social_profile_show_email', 1);
   $config->save();
@@ -184,7 +184,7 @@ function social_profile_update_8003(&$sandbox) {
 /**
  * Add edit own and edit any profile permissions after update to Profile beta1.
  */
-function social_profile_update_8004(&$sandbox) {
+function social_profile_update_8004(&$sandbox): void {
   $roles = Role::loadMultiple();
   $lu_permissions = [
     'update own profile profile',
@@ -207,7 +207,7 @@ function social_profile_update_8004(&$sandbox) {
 /**
  * Update the context_mapping for profile_hero_block blocks.
  */
-function social_profile_update_8005() {
+function social_profile_update_8005(): void {
   $blocks = Block::loadMultiple();
 
   /** @var \Drupal\block\BlockInterface $block */
@@ -227,7 +227,7 @@ function social_profile_update_8005() {
 /**
  * Create a profile for users that have none.
  */
-function social_profile_update_8006(&$sandbox) {
+function social_profile_update_8006(&$sandbox): void {
   if (!isset($sandbox['progress'])) {
     // This must be the first run. Initialize the sandbox.
     $sandbox['progress'] = 0;
@@ -281,7 +281,7 @@ function social_profile_update_8006(&$sandbox) {
 /**
  * Grant the 'view profile' permission.
  */
-function social_profile_update_8007(&$sandbox) {
+function social_profile_update_8007(&$sandbox): void {
   $roles = [
     'authenticated',
     'contentmanager',
@@ -312,7 +312,7 @@ function social_profile_update_8008() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_profile_update_dependencies() {
+function social_profile_update_dependencies(): array {
   // Run the config update after the update_helper module is enabled.
   $dependencies['social_profile'][8808] = [
     'social_core' => 8805,
@@ -330,7 +330,7 @@ function social_profile_update_dependencies() {
 /**
  * Create medium_teaser profile view mode.
  */
-function social_profile_update_8009() {
+function social_profile_update_8009(): void {
   // Create a new profile entity view mode.
   EntityViewMode::create([
     'targetEntityType' => 'profile',
@@ -388,7 +388,7 @@ function social_profile_update_8801() {
 /**
  * Update social_profile.settings config & permissions for authenticated role.
  */
-function social_profile_update_8802(&$sandbox) {
+function social_profile_update_8802(&$sandbox): void {
   $config = \Drupal::configFactory()->getEditable('social_profile.settings');
   $config->set('social_profile_show_language', TRUE);
   $config->save();
@@ -425,7 +425,7 @@ function social_profile_update_8803() {
  *
  * Load in a config file from an specific update hook that will never change.
  */
-function social_profile_update_8901() {
+function social_profile_update_8901(): void {
   $config_files = [
     'block.block.exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.exposedformnewest_userspage_newest_users_8901.yml',
     'block.block.socialblue_exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
@@ -460,7 +460,7 @@ function social_profile_update_8902() {
 /**
  * Sets default profile settings.
  */
-function social_profile_update_8903() {
+function social_profile_update_8903(): void {
   \Drupal::configFactory()
     ->getEditable('social_profile.settings')
     ->set('enable_profile_tagging', TRUE)
@@ -470,7 +470,7 @@ function social_profile_update_8903() {
 /**
  * Install Profile name field to profile entity type.
  */
-function social_profile_update_8904() {
+function social_profile_update_8904(): void {
   $field_storage_definition = BaseFieldDefinition::create('string')
     ->setLabel(t('Profile name'))
     ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -483,7 +483,7 @@ function social_profile_update_8904() {
 /**
  * Update field definitions.
  */
-function social_profile_update_8905() {
+function social_profile_update_8905(): void {
   _social_profile_field_definitions_update();
 }
 

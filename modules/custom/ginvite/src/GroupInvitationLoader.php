@@ -100,7 +100,7 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadByUser(AccountInterface $account = NULL, $roles = NULL, $status = GroupInvitation::INVITATION_PENDING) {
+  public function loadByUser(AccountInterface $account = NULL, $roles = NULL, $status = GroupInvitation::INVITATION_PENDING): array {
     if (!isset($account)) {
       $account = $this->currentUser;
     }
@@ -142,7 +142,7 @@ class GroupInvitationLoader implements GroupInvitationLoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadByProperties(array $values) {
+  public function loadByProperties(array $values): array {
     // Load all group content types for the invitation content enabler plugin.
     $group_content_types = $this->entityTypeManager
       ->getStorage('group_content_type')

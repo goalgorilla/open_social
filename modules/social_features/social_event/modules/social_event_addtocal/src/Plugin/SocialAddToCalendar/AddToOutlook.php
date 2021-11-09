@@ -23,7 +23,7 @@ class AddToOutlook extends SocialAddToCalendarBase {
   /**
    * {@inheritdoc}
    */
-  public function generateUrl(NodeInterface $node) {
+  public function generateUrl(NodeInterface $node): Url {
     $settings = $this->generateSettings($node);
     $options = [
       'query' => [

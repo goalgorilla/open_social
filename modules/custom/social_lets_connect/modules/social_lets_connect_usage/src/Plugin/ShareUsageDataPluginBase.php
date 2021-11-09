@@ -82,14 +82,14 @@ abstract class ShareUsageDataPluginBase extends PluginBase implements ShareUsage
    * @return array
    *   $json array.
    */
-  public function getValue() {
+  public function getValue(): array {
     return [];
   }
 
   /**
    * Check if this plugin should be enabled.
    */
-  public function enabled() {
+  public function enabled(): bool {
     $config = $this->config->get('social_lets_connect_usage.settings');
     $usage_data_settings = $config->get('usage_data');
 

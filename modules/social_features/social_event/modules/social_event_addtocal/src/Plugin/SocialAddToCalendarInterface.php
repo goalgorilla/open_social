@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_addtocal\Plugin;
 
+use Drupal\Core\Url;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\node\NodeInterface;
 
@@ -13,10 +14,10 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
   /**
    * Returns plugin name for label.
    *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   * @return string
    *   Plugin name.
    */
-  public function getName();
+  public function getName(): string;
 
   /**
    * Returns the 'Add to calendar' link.
@@ -27,7 +28,7 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    * @return \Drupal\Core\Url
    *   Url object.
    */
-  public function generateUrl(NodeInterface $node);
+  public function generateUrl(NodeInterface $node): Url;
 
   /**
    * Returns array of event settings for url options.
@@ -38,7 +39,7 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    * @return array
    *   Array of settings.
    */
-  public function generateSettings(NodeInterface $node);
+  public function generateSettings(NodeInterface $node): array;
 
   /**
    * Returns array of event dates for calendar.
@@ -49,7 +50,7 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    * @return array
    *   Array of dates values.
    */
-  public function getEventDates(NodeInterface $node);
+  public function getEventDates(NodeInterface $node): array;
 
   /**
    * Returns the event description for calendar.
@@ -60,7 +61,7 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    * @return string
    *   Event description.
    */
-  public function getEventDescription(NodeInterface $node);
+  public function getEventDescription(NodeInterface $node): string;
 
   /**
    * Returns the event location for calendar.
@@ -71,6 +72,6 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
    * @return string
    *   Event location.
    */
-  public function getEventLocation(NodeInterface $node);
+  public function getEventLocation(NodeInterface $node): string;
 
 }

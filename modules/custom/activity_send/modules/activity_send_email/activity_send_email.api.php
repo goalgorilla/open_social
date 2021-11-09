@@ -21,7 +21,7 @@
  *
  * @see activity_send_email_form_user_form_alter()
  */
-function hook_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function hook_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   // If a create_private_message template is enabled then we add it in the
   // "Message to Me" section.
   if (isset($email_message_templates['create_private_message'])) {

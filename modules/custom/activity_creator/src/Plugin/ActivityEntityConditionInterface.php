@@ -11,7 +11,10 @@ interface ActivityEntityConditionInterface extends PluginInspectionInterface {
 
   /**
    * Checks if this is a valid entity condition for the action.
+   *
+   * @return bool
+   *   Validity of entity condition.
    */
-  public function isValidEntityCondition($entity);
+  public function isValidEntityCondition($entity): bool;
 
 }

@@ -18,7 +18,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_topic.
  */
-function social_topic_install() {
+function social_topic_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -126,7 +126,7 @@ function social_topic_install() {
 /**
  * Function to create some menu items.
  */
-function _social_topic_create_menu_links() {
+function _social_topic_create_menu_links(): void {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
   /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
@@ -151,7 +151,7 @@ function _social_topic_create_menu_links() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_topic_update_dependencies() {
+function social_topic_update_dependencies(): array {
   // New config changes should run after the features removal/revert.
   $dependencies['social_topic'][8801] = [
     'social_core' => 8805,
@@ -168,14 +168,14 @@ function social_topic_update_dependencies() {
 /**
  * Install download_count module.
  */
-function social_topic_update_8001() {
+function social_topic_update_8001(): void {
 
 }
 
 /**
  * Set my topics permissions.
  */
-function social_topic_update_8002() {
+function social_topic_update_8002(): void {
   // Make it so that everyone who has the 'access user profiles' permission,
   // now also get these two new permissions.
   $permissions = [
@@ -194,7 +194,7 @@ function social_topic_update_8002() {
 /**
  * Set social_topic settings.
  */
-function social_topic_update_8003() {
+function social_topic_update_8003(): void {
   // Give SM the administer social_topic settings permission.
   user_role_grant_permissions('sitemanager', ['administer social_topic settings']);
 
@@ -221,7 +221,7 @@ function social_topic_update_8801() {
 /**
  * Update like setting in small teaser style.
  */
-function social_topic_update_8901() {
+function social_topic_update_8901(): void {
   $config_file = drupal_get_path('module', 'social_topic') . '/config/static/core.entity_view_display.node.topic.small_teaser_8901.yml';
 
   if (is_file($config_file)) {
@@ -238,14 +238,14 @@ function social_topic_update_8901() {
 /**
  * Empty, moved to social_topic_update_8909().
  */
-function social_topic_update_8902() {
+function social_topic_update_8902(): void {
   // Code has been moved to social_page_update_8909().
 }
 
 /**
  * Add image file extensions to be added as attachments.
  */
-function social_topic_update_8903() {
+function social_topic_update_8903(): void {
   $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.topic.field_files_8903.yml';
 
   if (is_file($config_file)) {
@@ -290,7 +290,7 @@ function social_topic_update_8905() {
 /**
  * Remove group_topic_description fieldgroup from topic content type.
  */
-function social_topic_update_8906() {
+function social_topic_update_8906(): void {
   // There can be possibility that someone might have added fields in
   // fieldgroup we are removing. So, we want to skip removal if there are any
   // children present in fieldgroup.
@@ -303,7 +303,7 @@ function social_topic_update_8906() {
 /**
  * Create new field & field storage configuration for new topic type icon field.
  */
-function social_topic_update_8907(&$sandbox) {
+function social_topic_update_8907(&$sandbox): void {
   $config_file = drupal_get_path('module', 'social_topic') . '/config/static/social_topic_update_8907.yml';
 
   if (is_file($config_file)) {
@@ -359,7 +359,7 @@ function social_topic_update_8907(&$sandbox) {
 /**
  * Add icons to default topic types.
  */
-function social_topic_update_8908() {
+function social_topic_update_8908(): void {
   // Default topic types.
   $topic_types = [
     [
@@ -403,7 +403,7 @@ function _social_topic_get_term_id_by_name($term_name) {
 /**
  * Show thumbnail on File fields when attachment is an image.
  */
-function social_topic_update_8909() {
+function social_topic_update_8909(): void {
   $config_file = drupal_get_path('module', 'social_topic') . '/config/static/core.entity_view_display.node.topic.default_8909.yml';
 
   if (is_file($config_file)) {
@@ -448,7 +448,7 @@ function social_topic_update_10301() {
 /**
  * Allow CM+ translate "Topic" node type.
  */
-function social_topic_update_10302() {
+function social_topic_update_10302(): void {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate topic node']);
   }

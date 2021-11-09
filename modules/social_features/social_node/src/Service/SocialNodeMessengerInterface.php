@@ -18,6 +18,6 @@ interface SocialNodeMessengerInterface extends MessengerInterface {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    */
-  public function setNode(NodeInterface $node);
+  public function setNode(NodeInterface $node): void;
 
 }

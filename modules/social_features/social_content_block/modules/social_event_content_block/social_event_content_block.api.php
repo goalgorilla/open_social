@@ -14,7 +14,7 @@
  * @param string $value
  *   The value that the user chose in the date filter value.
  */
-function hook_social_event_content_block_date_range_alter(array &$range, $value) {
+function hook_social_event_content_block_date_range_alter(array &$range, $value): void {
   // We only care about the 'example' choice, other choices are handled by other
   // modules.
   if ($value === 'example') {

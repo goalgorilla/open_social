@@ -128,7 +128,7 @@ abstract class DemoNode extends DemoContent {
    * @param string $uuid
    *   UUID of a group.
    */
-  public function createGroupContent(NodeInterface $entity, $uuid) {
+  public function createGroupContent(NodeInterface $entity, $uuid): void {
     // Load the group.
     $groups = $this->groupStorage->loadByProperties([
       'uuid' => $uuid,
@@ -156,7 +156,7 @@ abstract class DemoNode extends DemoContent {
    * @param array $uuids
    *   The array containing uuids.
    */
-  public function createFollow(EntityBase $entity, array $uuids) {
+  public function createFollow(EntityBase $entity, array $uuids): void {
 
     foreach ($uuids as $uuid) {
       // Load the user(s) by the given uuid(s).

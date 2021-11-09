@@ -17,7 +17,7 @@ use Drupal\node\NodeInterface;
 /**
  * Implements hook_modules_installed().
  */
-function social_follow_content_modules_installed($modules) {
+function social_follow_content_modules_installed($modules): void {
   // Check if the topic, flag or this module is being installed in which case
   // the follow content field needs to be hidden for topic small teaser view
   // modes. All these modules are checked because the order is not guaranteed
@@ -42,21 +42,21 @@ function social_follow_content_modules_installed($modules) {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_follow_content_event_enrollment_insert(EntityInterface $entity) {
+function social_follow_content_event_enrollment_insert(EntityInterface $entity): void {
   social_follow_content_event_enrollment_follow($entity);
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function social_follow_content_event_enrollment_update(EntityInterface $entity) {
+function social_follow_content_event_enrollment_update(EntityInterface $entity): void {
   social_follow_content_event_enrollment_follow($entity);
 }
 
 /**
  * Automatically follow content when user enrolls the event.
  */
-function social_follow_content_event_enrollment_follow(EntityInterface $entity) {
+function social_follow_content_event_enrollment_follow(EntityInterface $entity): void {
   if ($entity->field_enrollment_status->value) {
     // Check if user already follow this content.
     // Only logged in users can follow content.
@@ -118,7 +118,7 @@ function social_follow_content_social_user_account_header_account_links(array $c
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_follow_content_comment_insert(EntityInterface $entity) {
+function social_follow_content_comment_insert(EntityInterface $entity): void {
   /** @var \Drupal\comment\CommentInterface $entity */
   $entity = $entity->getCommentedEntity();
 

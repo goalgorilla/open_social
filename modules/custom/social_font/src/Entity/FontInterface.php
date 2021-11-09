@@ -19,7 +19,7 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return string
    *   Name of the Font.
    */
-  public function getName();
+  public function getName(): string;
 
   /**
    * Sets the Font name.
@@ -30,7 +30,7 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return \Drupal\social_font\Entity\FontInterface
    *   The called Font entity.
    */
-  public function setName($name);
+  public function setName($name): FontInterface;
 
   /**
    * Gets the Font creation timestamp.
@@ -38,7 +38,7 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return int
    *   Creation timestamp of the Font.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Font creation timestamp.
@@ -49,7 +49,7 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return \Drupal\social_font\Entity\FontInterface
    *   The called Font entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime($timestamp): FontInterface;
 
   /**
    * Returns the Font published status indicator.
@@ -59,7 +59,7 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return bool
    *   TRUE if the Font is published.
    */
-  public function isPublished();
+  public function isPublished(): bool;
 
   /**
    * Sets the published status of a Font.
@@ -70,6 +70,6 @@ interface FontInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return \Drupal\social_font\Entity\FontInterface
    *   The called Font entity.
    */
-  public function setPublished($published);
+  public function setPublished($published): FontInterface;
 
 }

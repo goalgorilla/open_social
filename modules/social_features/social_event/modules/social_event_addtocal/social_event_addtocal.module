@@ -29,7 +29,7 @@ function social_event_addtocal_entity_extra_field_info() {
  *
  * Uses for node entity type.
  */
-function social_event_addtocal_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, $view_mode) {
+function social_event_addtocal_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, $view_mode): void {
   if ($node->bundle() !== 'event') {
     return;
   }

@@ -35,7 +35,7 @@ class PayloadViolations extends DataProducerPluginBase implements DataProducerPl
    * @return null|\Drupal\social_graphql\GraphQL\ViolationInterface[]
    *   The violations for this payload or null if there are none.
    */
-  public function resolve(PayloadInterface $payload) {
+  public function resolve(PayloadInterface $payload): ?array {
     // Explicitly turn empty arrays into NULL so that clients can perform an
     // is_null check to figure out if there are errors.
     $violations = $payload->getViolations();

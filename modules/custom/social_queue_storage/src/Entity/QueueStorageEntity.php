@@ -85,7 +85,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): string {
     return $this->get('name')->value;
   }
 
@@ -100,7 +100,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 

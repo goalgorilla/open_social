@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_follow_tag.
  */
-function social_follow_tag_install() {
+function social_follow_tag_install(): void {
   // Set a higher weight to overlap templates.
   module_set_weight('social_follow_tag', 10);
   // Clear cache so that overlapped templates are used after module enabling.
@@ -23,7 +23,7 @@ function social_follow_tag_install() {
 /**
  * Revert configs.
  */
-function social_follow_tag_update_8801() {
+function social_follow_tag_update_8801(): void {
   $config_files = [
     'message.template.update_node_following_tag',
   ];
@@ -46,7 +46,7 @@ function social_follow_tag_update_8801() {
 /**
  * Update followtag block.
  */
-function social_follow_tag_update_8802() {
+function social_follow_tag_update_8802(): void {
   $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/optional';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
@@ -57,7 +57,7 @@ function social_follow_tag_update_8802() {
 /**
  * Use enforced social_follow_tag module for configuration.
  */
-function social_follow_tag_update_8803() {
+function social_follow_tag_update_8803(): void {
   $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/install';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
@@ -77,7 +77,7 @@ function social_follow_tag_update_8803() {
 /**
  * Update template in existing messages.
  */
-function social_follow_tag_update_8804(&$sandbox) {
+function social_follow_tag_update_8804(&$sandbox): void {
   $message_storage = \Drupal::entityTypeManager()->getStorage('message');
   if (!isset($sandbox['total'])) {
     // Get all message IDs than should be updated.
@@ -114,7 +114,7 @@ function social_follow_tag_update_8804(&$sandbox) {
 /**
  * Delete unnecessary message template.
  */
-function social_follow_tag_update_8805() {
+function social_follow_tag_update_8805(): void {
   \Drupal::entityTypeManager()
     ->getStorage('message_template')
     ->load('create_node_following_tag_stream')
@@ -124,7 +124,7 @@ function social_follow_tag_update_8805() {
 /**
  * Update message template for follow tag.
  */
-function social_follow_tag_update_8806() {
+function social_follow_tag_update_8806(): void {
   /** @var \Drupal\message\MessageTemplateInterface $message_template */
   $message_template = \Drupal::entityTypeManager()
     ->getStorage('message_template')
@@ -148,7 +148,7 @@ function social_follow_tag_update_8806() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_follow_tag_update_10301() {
+function social_follow_tag_update_10301(): void {
   $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.update_node_following_tag_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -165,7 +165,7 @@ function social_follow_tag_update_10301() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_follow_tag_update_10302() {
+function social_follow_tag_update_10302(): void {
   $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.create_node_following_tag_stream_10302.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

@@ -17,7 +17,7 @@ use Drupal\file\Entity\File;
 /**
  * Implements hook_mail().
  */
-function social_event_an_enroll_mail($key, &$message, $params) {
+function social_event_an_enroll_mail($key, &$message, $params): void {
   $config = \Drupal::config('social_event_an_enroll.settings');
   $token = \Drupal::token();
 
@@ -70,7 +70,7 @@ function social_event_an_enroll_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_event_an_enroll_preprocess_views_view_field(&$variables) {
+function social_event_an_enroll_preprocess_views_view_field(&$variables): void {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
@@ -95,7 +95,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
 /**
  * Override variables for the social page hero data.
  */
-function social_event_an_enroll_preprocess_node(array &$variables) {
+function social_event_an_enroll_preprocess_node(array &$variables): void {
   $account = \Drupal::currentUser();
   if ($account->isAnonymous() && !empty($variables['event_enrollment'])) {
 
@@ -130,7 +130,7 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
  *
  * Alter "Event enrollments" views. Add number of anonymous enrollments.
  */
-function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache): void {
   if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
     if (isset($output['#rows'])) {
       if (!empty($view->args[0])) {
@@ -172,7 +172,7 @@ function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output
  *
  * Check and display "Anonymous Enrollments" tab only for events.
  */
-function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
+function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name): void {
   $can_show_an_enrollments_link = FALSE;
   $routes_to_check = [
     'view.event_enrollments.view_enrollments',
@@ -216,7 +216,7 @@ function social_event_an_enroll_is_enabled(Node $node) {
  *
  * Check and display "Allow anonymous enrollments" checkbox for public events.
  */
-function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   $event_forms = [
     'node_event_form',
     'node_event_edit_form',
@@ -248,7 +248,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
  *
  * Display warning if visibility was changed for already enabled AN enroll.
  */
-function social_event_an_enroll_node_update(Node $node) {
+function social_event_an_enroll_node_update(Node $node): void {
   if ($node->getType() === 'event') {
     $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
     $new_visibility = $node->get('field_content_visibility')->getString();
@@ -265,7 +265,7 @@ function social_event_an_enroll_node_update(Node $node) {
  *
  * Set the correct value for AN enroll when enroll method is set to request.
  */
-function social_event_an_enroll_node_presave(EntityInterface $entity) {
+function social_event_an_enroll_node_presave(EntityInterface $entity): void {
   // If the enroll method is request then anonymous must be off.
   if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '2') {
     $entity->set('field_event_an_enroll', '0');

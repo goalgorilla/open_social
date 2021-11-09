@@ -54,7 +54,7 @@ function _activity_logger_get_content_entities(): array {
 /**
  * Implements hook_form_FORM_ID_alter() for message_template_form().
  */
-function activity_logger_form_message_template_form_alter(&$form, FormStateInterface $form_state) {
+function activity_logger_form_message_template_form_alter(&$form, FormStateInterface $form_state): void {
   /** @var \Drupal\message\MessageTemplateInterface $message_template */
   $message_template = $form_state->getFormObject()->getEntity();
 
@@ -185,7 +185,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
  *
  * @see activity_logger_form_message_template_form_alter()
  */
-function activity_logger_form_message_template_form_builder($entity_type, MessageTemplateInterface $message_template, &$form, FormStateInterface $form_state) {
+function activity_logger_form_message_template_form_builder($entity_type, MessageTemplateInterface $message_template, &$form, FormStateInterface $form_state): void {
   $message_template->setThirdPartySetting('activity_logger', 'activity_bundle_entities', $form_state->getValue('activity_bundle_entities'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_action', $form_state->getValue('activity_action'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));

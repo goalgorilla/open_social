@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of social_language.
  */
-function social_lazy_loading_install() {
+function social_lazy_loading_install(): void {
   // Enable the submodule, it's standalone so don't depend on it.
   install_lazy_loading_images();
 }
@@ -18,7 +18,7 @@ function social_lazy_loading_install() {
 /**
  * Function that enables the lazy loading images module.
  */
-function install_lazy_loading_images() {
+function install_lazy_loading_images(): void {
   $module = [
     'social_lazy_loading_images',
   ];
@@ -29,6 +29,6 @@ function install_lazy_loading_images() {
 /**
  * Install social_lazy_loading_images module.
  */
-function social_lazy_loading_update_8601() {
+function social_lazy_loading_update_8601(): void {
   install_lazy_loading_images();
 }

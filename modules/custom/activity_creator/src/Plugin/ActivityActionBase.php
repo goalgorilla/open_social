@@ -13,7 +13,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function create($entity) {
+  public function create($entity): void {
     if ($this->isValidEntity($entity)) {
       $this->createMessage($entity);
     }
@@ -22,7 +22,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function createMessage($entity) {
+  public function createMessage($entity): void {
     // Use the queue logger.
     $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
     // Create messages for all other types of content.
@@ -32,7 +32,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity($entity): bool {
     // Turn off this feature for all non-content entities.
     if (!$entity instanceof ContentEntityInterface) {
       return FALSE;

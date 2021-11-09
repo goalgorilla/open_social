@@ -17,7 +17,7 @@ trait SocialProfileTrait {
    * @return bool
    *   Whether or not the nickname needs to be added.
    */
-  private function addNickname() {
+  private function addNickname(): bool {
     return \Drupal::moduleHandler()->moduleExists('social_profile_fields');
   }
 
@@ -30,7 +30,7 @@ trait SocialProfileTrait {
    * @return bool
    *   TRUE if a user can use the full name for the search.
    */
-  private function useFullName() {
+  private function useFullName(): bool {
     return !\Drupal::config('social_profile_privacy.settings')->get('limit_search_and_mention') || \Drupal::currentUser()->hasPermission('social profile privacy always show full name');
   }
 
@@ -48,7 +48,7 @@ trait SocialProfileTrait {
    *   An array of account IDs for accounts whose account names begin with the
    *   given string.
    */
-  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL): array {
     $query = $this->startQuery();
     $name = '%' . ltrim($query->escapeLike($name)) . '%';
 
@@ -113,7 +113,7 @@ trait SocialProfileTrait {
    * @return \Drupal\Core\Database\Query\SelectInterface
    *   Returns the query object.
    */
-  private function startQuery() {
+  private function startQuery(): SelectInterface {
     $connection = \Drupal::database();
 
     $query = $connection->select('users', 'u')->fields('u', ['uid']);
@@ -154,7 +154,7 @@ trait SocialProfileTrait {
    * @return \Drupal\Core\Database\Query\SelectInterface
    *   The select query.
    */
-  private function sortQuery(SelectInterface $query, $name, $suggestion_format) {
+  private function sortQuery(SelectInterface $query, $name, $suggestion_format): SelectInterface {
     if ($suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME && $this->useFullName()) {
       // Delete percent symbol on the beginning of the phrase for search from
       // the start of field values.
@@ -187,7 +187,7 @@ trait SocialProfileTrait {
    *   An array of account IDs for accounts whose account names begin with the
    *   given string.
    */
-  private function endQuery(SelectInterface $query, $count) {
+  private function endQuery(SelectInterface $query, $count): array {
     $result = $query
       ->range(0, $count)
       ->execute()

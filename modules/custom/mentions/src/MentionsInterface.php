@@ -16,6 +16,6 @@ interface MentionsInterface extends ContentEntityInterface, EntityOwnerInterface
    * @return int
    *   Creation timestamp of the Mentions.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
 }

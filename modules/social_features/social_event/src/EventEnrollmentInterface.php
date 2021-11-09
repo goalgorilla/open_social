@@ -69,7 +69,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return string
    *   Name of the Event enrollment.
    */
-  public function getName();
+  public function getName(): string;
 
   /**
    * Sets the Event enrollment name.
@@ -80,7 +80,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return \Drupal\social_event\EventEnrollmentInterface
    *   The called Event enrollment entity.
    */
-  public function setName($name);
+  public function setName($name): EventEnrollmentInterface;
 
   /**
    * Gets the Event enrollment creation timestamp.
@@ -88,7 +88,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return int
    *   Creation timestamp of the Event enrollment.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Event enrollment creation timestamp.
@@ -99,7 +99,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return \Drupal\social_event\EventEnrollmentInterface
    *   The called Event enrollment entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime($timestamp): EventEnrollmentInterface;
 
   /**
    * Returns the Event enrollment published status indicator.
@@ -109,7 +109,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return bool
    *   TRUE if the Event enrollment is published.
    */
-  public function isPublished();
+  public function isPublished(): bool;
 
   /**
    * Sets the published status of a Event enrollment.
@@ -120,6 +120,6 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * @return \Drupal\social_event\EventEnrollmentInterface
    *   The called Event enrollment entity.
    */
-  public function setPublished($published);
+  public function setPublished($published): EventEnrollmentInterface;
 
 }

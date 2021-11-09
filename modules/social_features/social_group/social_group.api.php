@@ -21,7 +21,7 @@ use Drupal\node\NodeInterface;
  *
  * @ingroup social_group_api
  */
-function hook_social_group_types_alter(array &$social_group_types) {
+function hook_social_group_types_alter(array &$social_group_types): void {
   $social_group_types[] = 'challenge';
 }
 
@@ -33,7 +33,7 @@ function hook_social_group_types_alter(array &$social_group_types) {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_hide_types_alter(array &$hidden_types) {
+function hook_social_group_hide_types_alter(array &$hidden_types): void {
   $hidden_types[] = 'challenge';
 }
 
@@ -47,7 +47,7 @@ function hook_social_group_hide_types_alter(array &$hidden_types) {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_default_visibility_alter(&$visibility, $group_type_id) {
+function hook_social_group_default_visibility_alter(&$visibility, $group_type_id): void {
   switch ($group_type_id) {
     case 'custom_public_group':
       $visibility = 'public';
@@ -78,7 +78,7 @@ function hook_social_group_default_visibility_alter(&$visibility, $group_type_id
  *
  * @ingroup social_group_api
  */
-function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id) {
+function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id): void {
   if ($group_type_id === 'custom_public_group') {
     $visibilities['community'] = TRUE;
   }
@@ -94,7 +94,7 @@ function hook_social_group_allowed_visibilities_alter(array &$visibilities, $gro
  *
  * @ingroup social_group_api
  */
-function hook_social_group_overview_route_alter(array &$route, GroupInterface $group) {
+function hook_social_group_overview_route_alter(array &$route, GroupInterface $group): void {
   if ($group->bundle() === 'challenge') {
     $route = [
       'name' => 'view.challenges_user.page',
@@ -111,7 +111,7 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
  *
  * @ingroup social_group_api
  */
-function hook_social_group_move(NodeInterface $node) {
+function hook_social_group_move(NodeInterface $node): void {
   \Drupal::messenger()->addStatus(t('@title is moved.', [
     '@title' => $node->getTitle(),
   ]));
@@ -125,7 +125,7 @@ function hook_social_group_move(NodeInterface $node) {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_content_visibility_description_alter($key, &$description) {
+function hook_social_group_content_visibility_description_alter($key, &$description): void {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -151,7 +151,7 @@ function hook_social_group_content_visibility_description_alter($key, &$descript
  *
  * @ingroup social_group_api
  */
-function hook_social_group_group_visibility_description_alter($key, &$description) {
+function hook_social_group_group_visibility_description_alter($key, &$description): void {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -177,7 +177,7 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
  *
  * @ingroup social_group_api
  */
-function hook_social_group_allowed_join_method_description_alter($key, &$description) {
+function hook_social_group_allowed_join_method_description_alter($key, &$description): void {
   switch ($key) {
     case 'join_method_extra':
       $description = '<strong>' . t('QR Code')->render() . '</strong>';
@@ -201,7 +201,7 @@ function hook_social_group_allowed_join_method_description_alter($key, &$descrip
  *
  * @ingroup social_group_api
  */
-function hook_social_group_settings_alter(&$social_group_types) {
+function hook_social_group_settings_alter(&$social_group_types): void {
   $social_group_types[] = 'flexible_group';
 }
 
@@ -213,7 +213,7 @@ function hook_social_group_settings_alter(&$social_group_types) {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_cross_posting_alter(array &$content_types) {
+function hook_social_group_cross_posting_alter(array &$content_types): void {
   $content_types[] = 'topic';
 }
 

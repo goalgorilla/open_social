@@ -18,7 +18,7 @@ interface PushInterface extends ContainerFactoryPluginInterface {
    * @return bool
    *   TRUE if it should be shown.
    */
-  public function access();
+  public function access(): bool;
 
   /**
    * Build form elements.
@@ -26,7 +26,7 @@ interface PushInterface extends ContainerFactoryPluginInterface {
    * @return array
    *   The form elements.
    */
-  public function buildForm();
+  public function buildForm(): array;
 
   /**
    * Save plugin settings.
@@ -34,6 +34,6 @@ interface PushInterface extends ContainerFactoryPluginInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public function submitForm(FormStateInterface $form_state);
+  public function submitForm(FormStateInterface $form_state): void;
 
 }

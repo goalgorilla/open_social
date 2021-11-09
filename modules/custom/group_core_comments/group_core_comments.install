@@ -12,7 +12,7 @@ use Drupal\user\Entity\Role;
  *
  * Perform actions related to the installation of group_core_comments.
  */
-function group_core_comments_install() {
+function group_core_comments_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'sitemanager',
@@ -25,7 +25,7 @@ function group_core_comments_install() {
 /**
  * Enable 'delete all comments' permission for site manager users.
  */
-function group_core_comments_update_8001(&$sandbox) {
+function group_core_comments_update_8001(&$sandbox): void {
   $roles = Role::loadMultiple();
 
   $permissions = [

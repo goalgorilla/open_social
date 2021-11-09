@@ -19,7 +19,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return string
    *   The source filename where are data.
    */
-  public function getSource();
+  public function getSource(): string;
 
   /**
    * Sets the used profile.
@@ -30,7 +30,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return string
    *   Void.
    */
-  public function setProfile($profile);
+  public function setProfile($profile): string;
 
   /**
    * Returns the profile.
@@ -38,7 +38,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return string
    *   The used demo content profile.
    */
-  public function getProfile();
+  public function getProfile(): string;
 
   /**
    * Returns the module name.
@@ -46,7 +46,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return string
    *   The module name where is placed file with data.
    */
-  public function getModule();
+  public function getModule(): string;
 
   /**
    * Creates content.
@@ -54,12 +54,12 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return array
    *   An array with list of created entities.
    */
-  public function createContent();
+  public function createContent(): array;
 
   /**
    * Removes content.
    */
-  public function removeContent();
+  public function removeContent(): void;
 
   /**
    * Returns quantity of created items.
@@ -67,7 +67,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return int
    *   Returns quantity of created items.
    */
-  public function count();
+  public function count(): int;
 
   /**
    * Set entity storage.
@@ -75,7 +75,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
    *   The EntityStorageInterface entity_storage.
    */
-  public function setEntityStorage(EntityStorageInterface $entity_storage);
+  public function setEntityStorage(EntityStorageInterface $entity_storage): void;
 
   /**
    * Scramble it.
@@ -88,6 +88,6 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * @return array
    *   An array with list of data.
    */
-  public function scrambleData(array $data, $max = NULL);
+  public function scrambleData(array $data, $max = NULL): array;
 
 }

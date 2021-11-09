@@ -27,7 +27,7 @@ function download_count_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function download_count_file_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function download_count_file_access(EntityInterface $entity, $operation, AccountInterface $account): void {
   if ($operation === 'download') {
     $flood = \Drupal::flood();
     $config = \Drupal::config('download_count.settings');

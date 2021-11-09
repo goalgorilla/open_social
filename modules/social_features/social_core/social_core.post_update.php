@@ -8,7 +8,7 @@
 /**
  * Enable the queue storage entity module.
  */
-function social_core_post_update_8701_enable_queue_storage() {
+function social_core_post_update_8701_enable_queue_storage(): void {
   \Drupal::service('module_installer')->install([
     'social_queue_storage',
   ]);
@@ -17,7 +17,7 @@ function social_core_post_update_8701_enable_queue_storage() {
 /**
  * Enable the select2 module.
  */
-function social_core_post_update_8702_enable_select2() {
+function social_core_post_update_8702_enable_select2(): void {
   \Drupal::service('module_installer')->install([
     'select2',
   ]);

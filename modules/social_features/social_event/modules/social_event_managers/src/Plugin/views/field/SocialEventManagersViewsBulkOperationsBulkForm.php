@@ -338,7 +338,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * @return string
    *   The label text.
    */
-  public function getEntityLabel(EntityInterface $entity) {
+  public function getEntityLabel(EntityInterface $entity): string {
     $profiles = $this->entityTypeManager->getStorage('profile')
       ->loadByProperties([
         'uid' => $entity->field_account->target_id,
@@ -397,7 +397,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * @return array
    *   Returns array of bulk options.
    */
-  protected function bulkOptionAccess(array $bulkOptions) {
+  protected function bulkOptionAccess(array $bulkOptions): array {
     /** @var \Drupal\node\NodeInterface $event */
     $event = social_event_get_current_event();
     $isEventOrganizer = social_event_manager_or_organizer($event);

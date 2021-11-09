@@ -82,7 +82,7 @@ function download_count_schema() {
 /**
  * Implements hook_uninstall().
  */
-function download_count_uninstall() {
+function download_count_uninstall(): void {
   \Drupal::service('config.factory')
     ->getEditable('download_count.settings')
     ->delete();
@@ -94,7 +94,7 @@ function download_count_uninstall() {
  *
  * Perform actions related to the installation of download_count.
  */
-function download_count_install() {
+function download_count_install(): void {
   // Grant the default permissions for this module.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -113,7 +113,7 @@ function download_count_install() {
 /**
  * Increase download count flood window from 2 to 5 seconds.
  */
-function download_count_update_8001(&$sandbox) {
+function download_count_update_8001(&$sandbox): void {
   $config = \Drupal::service('config.factory')
     ->getEditable('download_count.settings');
   $config->set('download_count_flood_window', 5);

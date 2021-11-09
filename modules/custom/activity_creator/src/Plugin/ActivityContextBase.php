@@ -84,14 +84,14 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return TRUE;
   }
 
@@ -107,7 +107,7 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipientsFromPost(array $referenced_entity) {
+  public function getRecipientsFromPost(array $referenced_entity): array {
     $recipients = [];
 
     $post = $this->entityTypeManager->getStorage('post')

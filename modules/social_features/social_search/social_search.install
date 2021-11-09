@@ -13,7 +13,7 @@ use Drupal\user\RoleInterface;
 /**
  * Implements hook_update_dependencies().
  */
-function social_search_update_dependencies() {
+function social_search_update_dependencies(): array {
   // Necessary because we delete a view with geolocation filter.
   // Needs to be done before system_update_8200 and social_group_update_8005.
   $dependencies['social_group'][8005] = [
@@ -27,7 +27,7 @@ function social_search_update_dependencies() {
  *
  * Perform actions related to the installation of social_search.
  */
-function social_search_install() {
+function social_search_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -66,7 +66,7 @@ function social_search_install() {
 /**
  * Trigger a search_api re-index.
  */
-function social_search_update_8601() {
+function social_search_update_8601(): void {
   $index = Index::load('social_content');
   if ($index->status()) {
     $index->clear();
@@ -77,7 +77,7 @@ function social_search_update_8601() {
 /**
  * Install Better Exposed Filter module.
  */
-function social_search_update_8701() {
+function social_search_update_8701(): void {
   $modules = [
     'better_exposed_filters',
   ];
@@ -101,7 +101,7 @@ function social_search_update_8901() {
 /**
  * Update search users with expertise and interests.
  */
-function social_search_update_8902() {
+function social_search_update_8902(): void {
   try {
     $index = Index::load('social_users');
     if ($index !== NULL && $index->status()) {
@@ -118,7 +118,7 @@ function social_search_update_8902() {
 /**
  * Change weight of search index processors().
  */
-function social_search_update_8903() {
+function social_search_update_8903(): void {
   // Config factory.
   $config_factory = Drupal::configFactory();
 
@@ -155,7 +155,7 @@ function social_search_update_8904() {
 /**
  * Update Search index.
  */
-function social_search_update_8905() {
+function social_search_update_8905(): void {
   try {
     $indexes = [
       'social_all',
@@ -193,7 +193,7 @@ function social_search_update_10001() {
 /**
  * Update search users with new 'created' field.
  */
-function social_search_update_10002() {
+function social_search_update_10002(): void {
   try {
     $social_user_update_indexes = Settings::get('social_user_update_indexes', TRUE);
     $index = Index::load('social_users');

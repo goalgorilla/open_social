@@ -50,7 +50,7 @@ function hook_social_user_account_header_create_links(array $context): array {
  *
  * @see \hook_social_user_account_header_create_links()
  */
-function hook_social_user_account_header_create_links_alter(array &$links, array $context) {
+function hook_social_user_account_header_create_links_alter(array &$links, array $context): void {
   // Move the "Create New Page" link to the top if it's defined.
   if (isset($links['add_page'])) {
     $links['add_page']['#weight'] = -100;
@@ -100,7 +100,7 @@ function hook_social_user_account_header_account_links(array $context): array {
  *
  * @see \hook_social_user_account_header_account_links()
  */
-function hook_social_user_account_header_account_links_alter(array &$links, array $context) {
+function hook_social_user_account_header_account_links_alter(array &$links, array $context): void {
   // Remove the logout divider.
   unset($links['divider_logout']);
 }
@@ -143,7 +143,7 @@ function hook_social_user_account_header_items(array $context): array {
  *
  * @see hook_social_user_account_header_items()
  */
-function hook_social_user_account_header_items_alter(array &$items, array $context) {
+function hook_social_user_account_header_items_alter(array &$items, array $context): void {
   // Alter the icon of the private message shortcut.
   if (isset($items['messages'])) {
     $items['messages']['#icon'] = 'icon-envelope';
@@ -201,7 +201,7 @@ function hook_social_user_name_display_suggestions(AccountInterface $account) : 
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The account to modify display name suggestions for.
  */
-function hook_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
+function hook_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account): void {
   // Logged in users are not allowed to view users' full name.
   if (\Drupal::currentUser()->isAuthenticated()) {
     unset($suggestions['full_name']);

@@ -21,7 +21,7 @@ use Drupal\social_post\Entity\Post;
  *   - elements: An associative array containing the user information and any
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_post(array &$variables) {
+function template_preprocess_post(array &$variables): void {
   // Fetch Post Entity Object.
   $post = $variables['elements']['#post'];
 

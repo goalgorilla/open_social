@@ -13,7 +13,7 @@ use Drupal\group\Entity\GroupType;
 /**
  * Implements hook_form_alter().
  */
-function social_group_default_route_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_group_default_route_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
 
   $forms = [];
   foreach (_social_group_default_route_group_types() as $type) {

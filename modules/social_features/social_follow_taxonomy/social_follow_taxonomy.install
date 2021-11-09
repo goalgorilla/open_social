@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of social_follow_taxonomy.
  */
-function social_follow_taxonomy_install() {
+function social_follow_taxonomy_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -38,7 +38,7 @@ function social_follow_taxonomy_install() {
 /**
  * Enable Social Follow Tag module if Social Tagging module installed.
  */
-function social_follow_taxonomy_update_8801() {
+function social_follow_taxonomy_update_8801(): void {
   if (
     \Drupal::moduleHandler()->moduleExists('social_tagging') &&
     !\Drupal::moduleHandler()->moduleExists('social_follow_tag')

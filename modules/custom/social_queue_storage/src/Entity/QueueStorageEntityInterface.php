@@ -19,7 +19,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return string
    *   The queue storage type name.
    */
-  public function getType();
+  public function getType(): string;
 
   /**
    * Sets the queue storage type.
@@ -37,7 +37,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return string
    *   Name of the Queue storage entity.
    */
-  public function getName();
+  public function getName(): string;
 
   /**
    * Sets the Queue storage entity name.
@@ -48,7 +48,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface
    *   The called Queue storage entity entity.
    */
-  public function setName($name);
+  public function setName($name): QueueStorageEntityInterface;
 
   /**
    * Gets the Queue storage entity creation timestamp.
@@ -56,7 +56,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return int
    *   Creation timestamp of the Queue storage entity.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Queue storage entity creation timestamp.
@@ -67,7 +67,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface
    *   The called Queue storage entity entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime($timestamp): QueueStorageEntityInterface;
 
   /**
    * Get the status of the entity.
@@ -75,7 +75,7 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return bool
    *   Status of the entity.
    */
-  public function isFinished();
+  public function isFinished(): bool;
 
   /**
    * Sets the Queue storage entity status.
@@ -86,6 +86,6 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    * @return \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface
    *   The called Queue storage entity entity.
    */
-  public function setFinished($status);
+  public function setFinished($status): QueueStorageEntityInterface;
 
 }

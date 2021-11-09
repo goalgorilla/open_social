@@ -17,7 +17,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_book.
  */
-function social_book_install() {
+function social_book_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -77,7 +77,7 @@ function social_book_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_book_update_dependencies() {
+function social_book_update_dependencies(): array {
   // Run the config update after the final features removal ran.
   $dependencies['social_book'][8801] = [
     'social_core' => 8802,
@@ -95,7 +95,7 @@ function social_book_update_dependencies() {
 /**
  * Enable book page creation permissions for CM and SM.
  */
-function social_book_update_8001() {
+function social_book_update_8001(): void {
   $roles = Role::loadMultiple();
 
   $permissions = [
@@ -126,7 +126,7 @@ function social_book_update_8001() {
  * The feature removal script did not succeed for social_book.
  * Import the configs in an update hook.
  */
-function social_book_update_8801() {
+function social_book_update_8801(): void {
   $config_files = [
     'core.base_field_override.node.book.promote',
     'core.entity_form_display.node.book.default',
@@ -170,7 +170,7 @@ function social_book_update_8802() {
 /**
  * Update search all with book pages.
  */
-function social_book_update_8803() {
+function social_book_update_8803(): void {
   // If the search module is enabled trigger updating of the indexes affected
   // by the book update in config override.
   try {
@@ -203,7 +203,7 @@ function social_book_update_8804() {
 /**
  * Update Books to the new Config Form Open Social style.
  */
-function social_book_update_8901() {
+function social_book_update_8901(): void {
   $config_file = drupal_get_path('module', 'social_book') . '/config/static/social_book_static_update_8901.yml';
 
   if (is_file($config_file)) {
@@ -220,7 +220,7 @@ function social_book_update_8901() {
 /**
  * Update labels and settings for node book body field.
  */
-function social_book_update_8902() {
+function social_book_update_8902(): void {
   // Load the existing configuration.
   $config_name = 'field.field.node.book.body';
   $config = \Drupal::configFactory()->getEditable($config_name);
@@ -242,7 +242,7 @@ function social_book_update_8902() {
 /**
  * Add small_teaser view mode for book.
  */
-function social_book_update_8903() {
+function social_book_update_8903(): void {
   $config_path = drupal_get_path('module', 'social_book') . '/config/static';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageInterface $config_storage */
@@ -270,7 +270,7 @@ function social_book_update_10201() {
 /**
  * Allow CM+ translate "Book Page" node type.
  */
-function social_book_update_10301() {
+function social_book_update_10301(): void {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate book node']);
   }

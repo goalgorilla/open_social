@@ -16,7 +16,7 @@ use Drupal\social_content_block\ContentBuilder;
 /**
  * Implements hook_preprocess_block().
  */
-function social_content_block_preprocess_block(&$variables) {
+function social_content_block_preprocess_block(&$variables): void {
   if (isset($variables['content']['#block_content']) && $variables['content']['#block_content']->bundle() === 'custom_content_list') {
     if ($variables['base_plugin_id'] === 'block_content') {
       $variables['card'] = TRUE;
@@ -56,7 +56,7 @@ function social_content_block_entity_extra_field_info() {
 /**
  * Implements hook_ENTITY_TYPE_view().
  */
-function social_content_block_block_content_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function social_content_block_block_content_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode): void {
   if ($entity->bundle() === 'custom_content_list' && $display->getComponent('entities')) {
     $build['social_content_block'] = [
       '#lazy_builder' => [
@@ -99,7 +99,7 @@ function _social_content_block_get_content_type_for_block(BlockContentInterface 
 /**
  * Implements hook_form_alter().
  */
-function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   switch ($form_id) {
     case 'block_content_custom_content_list_form':
     case 'block_content_custom_content_list_edit_form':
@@ -130,7 +130,7 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
-function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Add submit handler to clear cache.
   foreach (array_keys($form['actions']) as $action) {
     if ($action !== 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
@@ -142,7 +142,7 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
 /**
  * Custom submit handler.
  */
-function custom_content_block_form_submit($form, FormStateInterface $form_state) {
+function custom_content_block_form_submit($form, FormStateInterface $form_state): void {
   // Clear plugin cache.
   \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
 }

@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess().
  */
-function social_lazy_loading_preprocess_node(&$variables) {
+function social_lazy_loading_preprocess_node(&$variables): void {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
   if ($node->getType() === 'landing_page') {

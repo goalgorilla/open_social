@@ -28,7 +28,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_page_attachments().
  */
-function social_core_page_attachments(array &$attachments) {
+function social_core_page_attachments(array &$attachments): void {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_core/accessibility';
 
@@ -59,7 +59,7 @@ function social_core_theme() {
 /**
  * Implements hook_modules_installed().
  */
-function social_core_modules_installed($modules) {
+function social_core_modules_installed($modules): void {
   // If either social_group_flexible_group or social_landing_page gets enabled
   // and the other is already enabled, we should import the the configuration
   // for the optional view mode by enabling social_flexible_group_featured.
@@ -84,7 +84,7 @@ function social_core_modules_installed($modules) {
 /**
  * Implements hook_entity_form_display_alter().
  */
-function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
   $field_groups = $form_display->getThirdPartySettings('field_group');
 
   if (!isset($field_groups['group_settings'])) {
@@ -116,7 +116,7 @@ function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_core_preprocess_node(&$variables) {
+function social_core_preprocess_node(&$variables): void {
   /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   // Add common variable for teaser images.
@@ -219,7 +219,7 @@ function social_core_social_user_account_header_account_links(array $context) {
  *
  * Adds an indicator to the user account menu.
  */
-function social_core_social_user_account_header_items_alter(array &$menu_links, array $context) {
+function social_core_social_user_account_header_items_alter(array &$menu_links, array $context): void {
   // We require a logged in user for this indicator.
   if (empty($context['user']) || !$context['user']->isAuthenticated()) {
     return;
@@ -260,7 +260,7 @@ function _social_core_find_image_field(FieldItemList $field): ?FieldItemList {
  *
  * For Site information Site details form.
  */
-function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Hide site slogan field and make it disabled as well whenever the user
   // is able to fill out the textfield.
   if (!empty($form['site_information']['site_slogan'])) {
@@ -272,7 +272,7 @@ function social_core_form_system_site_information_settings_alter(&$form, FormSta
 /**
  * Implements hook_node_links_alter().
  */
-function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context): void {
   // Remove the comment links.
   unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
@@ -305,7 +305,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
  *   - element: An associative array containing render arrays for the list of
  *     comments, and the comment form. Array keys: comments, comment_form.
  */
-function social_core_preprocess_field(array &$variables) {
+function social_core_preprocess_field(array &$variables): void {
   $element = $variables['element'];
   if ($element['#formatter'] == 'comment_node') {
     // Create separate variables for the more_link.
@@ -316,7 +316,7 @@ function social_core_preprocess_field(array &$variables) {
 /**
  * Implements hook_preprocess_block().
  */
-function social_core_preprocess_block(&$variables) {
+function social_core_preprocess_block(&$variables): void {
   /** @var \Drupal\user\Entity\User $account */
   $account = \Drupal::routeMatch()->getParameter('user');
   /** @var \Drupal\group\Entity\Group $group */
@@ -454,7 +454,7 @@ function social_core_preprocess_block(&$variables) {
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_core_menu_local_tasks_alter(&$data, $route_name) {
+function social_core_menu_local_tasks_alter(&$data, $route_name): void {
 
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
@@ -489,7 +489,7 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_form_taxonomy_vocabulary_form_alter().
  */
-function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Fetch current user.
   $account = \Drupal::currentUser();
 
@@ -503,7 +503,7 @@ function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterf
 /**
  * Implements hook_form_taxonomy_vocabulary_confirm_delete_alter().
  */
-function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormStateInterface $form_state, $form_id): void {
 
   // Fetch current user.
   $account = \Drupal::currentUser();
@@ -519,7 +519,7 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormS
 /**
  * Implements hook_preprocess().
  */
-function social_core_preprocess_breadcrumb(&$variables) {
+function social_core_preprocess_breadcrumb(&$variables): void {
   // Get the user.
   $user = \Drupal::currentUser();
   // Add cache tag for the user.
@@ -529,7 +529,7 @@ function social_core_preprocess_breadcrumb(&$variables) {
 /**
  * Implements hook_element_info_alter().
  */
-function social_core_element_info_alter(array &$info) {
+function social_core_element_info_alter(array &$info): void {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_core_filter_process_format';
   }
@@ -665,7 +665,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
 /**
  * Implements hook_field_widget_form_alter().
  */
-function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context): void {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() == 'path') {
@@ -718,7 +718,7 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state.
  */
-function social_core_path_validate(array &$element, FormStateInterface $form_state) {
+function social_core_path_validate(array &$element, FormStateInterface $form_state): void {
   $alias = trim($element['alias']['#value'], " \\/");
   $parsed_url = parse_url($alias);
 
@@ -742,7 +742,7 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Array of node types, which have the new group_settings fieldset,
   // these nodes can use the new content style, and have $form['advanced']
   // removed.
@@ -980,7 +980,7 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_core_path_widget_submit(array $form, FormStateInterface $form_state) {
+function _social_core_path_widget_submit(array $form, FormStateInterface $form_state): void {
   // Path uses the pathauto checkbox to decide whether or not to save
   // the automatically generated alias, or use a custom one.
   // since we hide the element, and the default is checked,
@@ -1014,7 +1014,7 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_core_node_cancel(array &$form, FormStateInterface $form_state) {
+function _social_core_node_cancel(array &$form, FormStateInterface $form_state): void {
   // By default the front page will be used,
   // especially for adding a node.
   $form_state->setRedirect('<front>');
@@ -1035,14 +1035,14 @@ function _social_core_node_cancel(array &$form, FormStateInterface $form_state) 
 /**
  * Implements hook_theme_registry_alter().
  */
-function social_core_theme_registry_alter(&$theme_registry) {
+function social_core_theme_registry_alter(&$theme_registry): void {
   $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
 }
 
 /**
  * Function to set default email logo if not set already for OS.
  */
-function _social_core_set_default_email_logo_for_socialblue() {
+function _social_core_set_default_email_logo_for_socialblue(): void {
   // Only when socialblue is default we continue.
   if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
     $logo = theme_get_setting('logo.url', 'socialblue');
@@ -1082,7 +1082,7 @@ function _social_core_set_default_email_logo_for_socialblue() {
 /**
  * Used to set the favicon of GIN to open socials logo.
  */
-function _social_core_set_favicon() {
+function _social_core_set_favicon(): void {
   $config = \Drupal::configFactory()->getEditable('gin.settings');
   if (!empty($config->getRawData())) {
     $gin_config = $config->getRawData();
@@ -1098,7 +1098,7 @@ function _social_core_set_favicon() {
 /**
  * Implements hook_preprocess_HOOK() for status_messages.
  */
-function social_core_preprocess_status_messages(&$variables) {
+function social_core_preprocess_status_messages(&$variables): void {
   // We want to remove stratus messages coming form image_widget_crop module.
   // These notifications are technical in nature and add no value for the user.
   // @see: \Drupal\image_widget_crop\ImageWidgetCropManager::saveCrop().

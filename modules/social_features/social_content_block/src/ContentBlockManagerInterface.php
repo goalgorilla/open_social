@@ -47,7 +47,7 @@ interface ContentBlockManagerInterface extends ContextAwarePluginManagerInterfac
     string $column = NULL,
     array $element = NULL,
     bool $is_field = FALSE
-  );
+  ): array;
 
   /**
    * Build the States API selector.
@@ -69,6 +69,6 @@ interface ContentBlockManagerInterface extends ContextAwarePluginManagerInterfac
     string $column = NULL,
     array $element = NULL,
     bool $is_field = FALSE
-  );
+  ): string;
 
 }

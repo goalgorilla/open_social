@@ -15,7 +15,7 @@ use Drupal\Core\Config\FileStorage;
 /**
  * Implements hook_install().
  */
-function social_group_flexible_group_install() {
+function social_group_flexible_group_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -47,7 +47,7 @@ function social_group_flexible_group_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_group_flexible_group_update_dependencies() {
+function social_group_flexible_group_update_dependencies(): array {
   // New config changes should run after the features removal/revert.
   $dependencies['social_group_flexible_group'][8801] = [
     'social_core' => 8805,
@@ -73,7 +73,7 @@ function social_group_flexible_group_update_8801() {
 /**
  * Trigger a search_api re-index.
  */
-function social_group_flexible_group_update_8802() {
+function social_group_flexible_group_update_8802(): void {
   $index = Index::load('social_groups');
   if ($index->status()) {
     $index->save();
@@ -85,7 +85,7 @@ function social_group_flexible_group_update_8802() {
 /**
  * Add new field group visibility field to flexible groups.
  */
-function social_group_flexible_group_update_8901(&$sandbox) {
+function social_group_flexible_group_update_8901(&$sandbox): void {
   $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8901.yml';
 
   if (is_file($config_file)) {
@@ -190,7 +190,7 @@ function social_group_flexible_group_update_8905() {
 /**
  * Update label for field_group_image field.
  */
-function social_group_flexible_group_update_8906() {
+function social_group_flexible_group_update_8906(): void {
   // Load the existing configuration.
   $config_name = 'field.field.group.flexible_group.field_group_image';
   $config = \Drupal::configFactory()->getEditable($config_name);
@@ -211,7 +211,7 @@ function social_group_flexible_group_update_8906() {
 /**
  * Create new vocabulary called 'Group types'.
  */
-function social_group_flexible_group_update_8907() {
+function social_group_flexible_group_update_8907(): void {
   $vid = 'group_type';
   $vocabularies = Vocabulary::loadMultiple();
   if (!isset($vocabularies[$vid])) {
@@ -227,7 +227,7 @@ function social_group_flexible_group_update_8907() {
 /**
  * Create new field & field storage configuration for new group type field.
  */
-function social_group_flexible_group_update_8908(&$sandbox) {
+function social_group_flexible_group_update_8908(&$sandbox): void {
   $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8908.yml';
 
   if (is_file($config_file)) {
@@ -290,7 +290,7 @@ function social_group_flexible_group_update_8909() {
 /**
  * Create new field & field storage configuration for new group type icon field.
  */
-function social_group_flexible_group_update_8910(&$sandbox) {
+function social_group_flexible_group_update_8910(&$sandbox): void {
   $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8910.yml';
 
   if (is_file($config_file)) {
@@ -346,7 +346,7 @@ function social_group_flexible_group_update_8910(&$sandbox) {
 /**
  * Make group creators as a group managers by default.
  */
-function social_group_flexible_group_update_8911() {
+function social_group_flexible_group_update_8911(): void {
   $config_factory = \Drupal::configFactory();
   $group_type = 'flexible_group';
 
@@ -380,7 +380,7 @@ function social_group_flexible_group_update_8912() {
 /**
  * Allow CM+ translate "Flexible Group" group type.
  */
-function social_group_flexible_update_10301() {
+function social_group_flexible_update_10301(): void {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate flexible_group group']);
   }
@@ -403,7 +403,7 @@ function social_group_flexible_update_10302() {
 /**
  * Install display view modes for group contents for Flexible group type.
  */
-function social_group_flexible_group_update_10303(&$sandbox) {
+function social_group_flexible_group_update_10303(&$sandbox): void {
   // Install new configs.
   $config_files = [
     'core.entity_view_display.group_content.flexible_group-group_node-event.activity' => 'core.entity_view_display.group_content.flexible_group-group_node-event.activity_10303',

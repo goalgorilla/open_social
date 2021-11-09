@@ -10,7 +10,7 @@ use Drupal\profile\Entity\ProfileInterface;
 /**
  * Add values to the new profile field "Profile name" for all existing users.
  */
-function social_profile_post_update_10101_profile_names_update(&$sandbox) {
+function social_profile_post_update_10101_profile_names_update(&$sandbox): void {
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
 

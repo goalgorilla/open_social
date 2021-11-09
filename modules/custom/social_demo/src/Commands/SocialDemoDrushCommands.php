@@ -71,7 +71,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    *
    * @bootstrap root
    */
-  public function addDemoContent(array $content_types, array $options = ['profile' => '']) {
+  public function addDemoContent(array $content_types, array $options = ['profile' => '']): void {
     $content_types = StringUtils::csvToArray($content_types);
     $this->currentUser->setAccount(User::load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
@@ -104,7 +104,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    * @usage social-demo:remove user topic --profile=EEA
    *   Removes demo content for users and topics from the EEA profile.
    */
-  public function removeDemoContent(array $content_types, array $options = ['profile' => '']) {
+  public function removeDemoContent(array $content_types, array $options = ['profile' => '']): void {
     $content_types = StringUtils::csvToArray($content_types);
     $this->currentUser->setAccount(User::load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
@@ -133,7 +133,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    * @usage drush social-demo:generate user:100 topic:2000 event:500 group:100
    *   Generates 100 demo users and 2000 topics.
    */
-  public function generateBulkDemoContent(array $input_args) {
+  public function generateBulkDemoContent(array $input_args): void {
     $input_args = StringUtils::csvToArray($input_args);
     $this->currentUser->setAccount(User::load(1));
 

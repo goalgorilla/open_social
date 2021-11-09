@@ -8,7 +8,7 @@
 /**
  * Implements hook_entity_type_alter().
  */
-function group_core_comments_entity_type_alter(array &$entity_types) {
+function group_core_comments_entity_type_alter(array &$entity_types): void {
   if (isset($entity_types['comment'])) {
     $class = 'Drupal\group_core_comments\GroupCommentAccessControlHandler';
     $entity_types['comment']->setAccessClass($class);

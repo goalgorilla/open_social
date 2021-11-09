@@ -20,7 +20,7 @@
  *
  * @ingroup social_path_manager_api
  */
-function hook_social_path_manager_group_types_alter(array &$types) {
+function hook_social_path_manager_group_types_alter(array &$types): void {
   $types[] = 'challenge';
 }
 
@@ -32,7 +32,7 @@ function hook_social_path_manager_group_types_alter(array &$types) {
  *
  * @ingroup social_path_manager_api
  */
-function hook_social_path_manager_group_tabs_alter(array &$tabs) {
+function hook_social_path_manager_group_tabs_alter(array &$tabs): void {
   $tabs['social_group.about'] = 'about';
 }
 

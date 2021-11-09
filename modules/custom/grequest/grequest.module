@@ -13,7 +13,7 @@ use Drupal\group\Entity\GroupContentInterface;
  *
  * Implements hook_ENTITY_TYPE_insert().
  */
-function grequest_group_content_insert(GroupContentInterface $group_content) {
+function grequest_group_content_insert(GroupContentInterface $group_content): void {
   $type = $group_content->getContentPlugin()->getPluginId();
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
 

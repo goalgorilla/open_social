@@ -10,8 +10,8 @@ use Symfony\Component\Routing\Route;
 /**
  * Provides routes for Font entities.
  *
- * @see Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
- * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
+ * @see \Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
+ * @see \Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class FontHtmlRouteProvider extends AdminHtmlRouteProvider {
 
@@ -43,7 +43,7 @@ class FontHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getCollectionRoute(EntityTypeInterface $entity_type) {
+  protected function getCollectionRoute(EntityTypeInterface $entity_type): ?Route {
     if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
       $entity_type_id = $entity_type->id();
       $route = new Route($entity_type->getLinkTemplate('collection'));
@@ -57,6 +57,7 @@ class FontHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+    return NULL;
   }
 
   /**
@@ -68,7 +69,7 @@ class FontHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
+  protected function getSettingsFormRoute(EntityTypeInterface $entity_type): ?Route {
     if (!$entity_type->getBundleEntityType()) {
       $route = new Route("/admin/structure/{$entity_type->id()}/settings");
       $route
@@ -81,6 +82,7 @@ class FontHtmlRouteProvider extends AdminHtmlRouteProvider {
 
       return $route;
     }
+    return NULL;
   }
 
 }

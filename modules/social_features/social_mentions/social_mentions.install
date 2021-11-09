@@ -12,7 +12,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_mentions.
  */
-function social_mentions_install() {
+function social_mentions_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -39,7 +39,7 @@ function social_mentions_install() {
 /**
  * Set suggestion amount to the default of 8.
  */
-function social_mentions_update_8001() {
+function social_mentions_update_8001(): void {
   $config = \Drupal::configFactory()->getEditable('mentions.settings');
 
   $config->set('suggestions_amount', 8);
@@ -50,7 +50,7 @@ function social_mentions_update_8001() {
 /**
  * Set default settings.
  */
-function _social_mentions_set_default_config() {
+function _social_mentions_set_default_config(): void {
   $config = \Drupal::configFactory()->getEditable('mentions.settings');
 
   $allowed_entity_types = ['post', 'comment'];
@@ -73,7 +73,7 @@ function _social_mentions_set_default_config() {
  *
  * Added new 'preview' and 'cta_button' tokens to these templates.
  */
-function social_mentions_update_10301() {
+function social_mentions_update_10301(): void {
   // Prepare the path.
   $path = drupal_get_path('module', 'social_mentions') . '/config/static/';
 

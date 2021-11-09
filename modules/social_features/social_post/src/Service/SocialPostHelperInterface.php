@@ -15,6 +15,6 @@ interface SocialPostHelperInterface {
    * @return array|null
    *   The renderable data.
    */
-  public function buildCurrentUserImage();
+  public function buildCurrentUserImage(): ?array;
 
 }

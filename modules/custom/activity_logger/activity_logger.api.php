@@ -18,7 +18,7 @@
  *
  * @ingroup activity_logger_api
  */
-function hook_activity_allowed_duplicates_alter(array &$allowed_duplicates) {
+function hook_activity_allowed_duplicates_alter(array &$allowed_duplicates): void {
   $allowed_duplicates[] = 'update_challenge_phase_authors';
 }
 

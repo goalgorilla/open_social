@@ -3,7 +3,6 @@
 namespace Drupal\social_user\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -61,10 +60,11 @@ class SocialUserController extends ControllerBase {
    * @return string
    *   The first and/or last name with the AccountName as a fallback.
    */
-  public function setUserStreamTitle(UserInterface $user = NULL) {
+  public function setUserStreamTitle(UserInterface $user = NULL): string {
     if ($user instanceof UserInterface) {
       return $user->getDisplayName();
     }
+    return '';
   }
 
   /**
@@ -73,6 +73,7 @@ class SocialUserController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
+   * @return \Drupal\Core\Access\AccessResult
    *   Check standard and custom permissions.
    */
   public function access(AccountInterface $account): AccessResult {
@@ -90,9 +91,10 @@ class SocialUserController extends ControllerBase {
    * @param \Drupal\Core\Routing\RouteMatch $routeMatch
    *   The matched route.
    *
+   * @return \Drupal\Core\Access\AccessResult
    *   The access result.
    */
-  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): CacheableDependencyInterface {
+  public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch): AccessResult {
     /** @var \Drupal\user\UserInterface $user */
     $user = $routeMatch->getParameter('user');
     if (isset($user)) {

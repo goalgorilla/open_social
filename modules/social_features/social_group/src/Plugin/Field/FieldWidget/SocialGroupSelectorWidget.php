@@ -129,7 +129,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @return array
    *   The array of options for the widget.
    */
-  protected function getOptions(FieldableEntityInterface $entity) {
+  protected function getOptions(FieldableEntityInterface $entity): array {
     // Must be a node.
     if ($entity->getEntityTypeId() !== 'node') {
       // We only handle nodes. When using this widget on other content types,

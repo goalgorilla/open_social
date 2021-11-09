@@ -15,7 +15,7 @@ use Drupal\node\NodeInterface;
  *
  * Alter the weight of the actions, so the upload is last.
  */
-function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // If we don't have a file upload field there's nothing to change.
   if (!isset($form['field_comment_files'])) {
     return;
@@ -52,7 +52,7 @@ function social_comment_upload_form_comment_comment_form_after_build($form, Form
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_comment_upload_preprocess_comment(&$variables) {
+function social_comment_upload_preprocess_comment(&$variables): void {
   // Alter comments in activity when social_comment_upload is enabled.
   if (social_comment_upload_is_enabled()) {
     $count_arr = [];
@@ -98,7 +98,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
+function social_comment_upload_preprocess_file_widget_multiple(&$variables): void {
   if (social_comment_upload_is_enabled()) {
     $element = $variables['element'];
 
@@ -123,7 +123,7 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
 /**
  * Implements hook_comment_delete().
  */
-function social_comment_upload_comment_delete(EntityInterface $entity) {
+function social_comment_upload_comment_delete(EntityInterface $entity): void {
   // If this comment has any files, delete those as well.
   _social_comment_upload_delete_comment_files($entity);
 }
@@ -139,7 +139,7 @@ function social_comment_upload_comment_delete(EntityInterface $entity) {
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
+function _social_comment_upload_delete_comment_files(EntityInterface $entity): void {
   // If this comment doesn't have any attached files we abort early.
   if (!$entity->hasField('field_comment_files') || $entity->get('field_comment_files')->isEmpty()) {
     return;

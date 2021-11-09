@@ -16,7 +16,7 @@
  *
  * @see \Drupal\social_user_export\UserExportPluginManager
  */
-function hook_social_user_export_plugin_info_alter(array &$plugins) {
+function hook_social_user_export_plugin_info_alter(array &$plugins): void {
   if ($plugins['account_name']) {
     unset($plugins['account_name']);
   }

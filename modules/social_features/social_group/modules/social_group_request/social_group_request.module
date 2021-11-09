@@ -24,7 +24,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_ENTITY_TYPE_insert() for group_content_type.
  */
-function social_group_request_group_content_type_insert(GroupContentTypeInterface $group_content_type) {
+function social_group_request_group_content_type_insert(GroupContentTypeInterface $group_content_type): void {
   if ($group_content_type->getContentPluginId() === 'group_membership_request') {
     // Add Message field.
     FieldConfig::create([
@@ -67,7 +67,7 @@ function social_group_request_entity_base_field_info(EntityTypeInterface $entity
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_group_request_group_content_insert(GroupContentInterface $group_content) {
+function social_group_request_group_content_insert(GroupContentInterface $group_content): void {
   $type = $group_content->getContentPlugin()->getPluginId();
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
 
@@ -101,7 +101,7 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
 /**
  * Implements hook_module_implements_alter().
  */
-function social_group_request_module_implements_alter(&$implementations, $hook) {
+function social_group_request_module_implements_alter(&$implementations, $hook): void {
   if ($hook == 'group_content_insert') {
     // Remove the grequest implementation, we have a fallback in our hook.
     if (isset($implementations['grequest'])) {
@@ -113,7 +113,7 @@ function social_group_request_module_implements_alter(&$implementations, $hook) 
 /**
  * Implements hook_theme_registry_alter().
  */
-function social_group_request_theme_registry_alter(&$theme_registry) {
+function social_group_request_theme_registry_alter(&$theme_registry): void {
   // Unfortunately the preprocess functions aren't ordered by module weight.
   // Changing module weight doesn't work, also with dependency set to
   // social_group this should be dealt with but isn't.
@@ -129,7 +129,7 @@ function social_group_request_theme_registry_alter(&$theme_registry) {
 /**
  * Implements hook_preprocess_group().
  */
-function social_group_request_preprocess_group(&$variables) {
+function social_group_request_preprocess_group(&$variables): void {
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
   $group_type = $group->getGroupType();
@@ -225,7 +225,7 @@ function social_group_request_preprocess_group(&$variables) {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   if (isset($email_message_templates['request_to_join_a_group'])) {
     $items['what_manage']['templates'][] = 'request_to_join_a_group';
   }
@@ -238,7 +238,7 @@ function social_group_request_activity_send_email_notifications_alter(array &$it
 /**
  * Implements hook_form_alter().
  */
-function social_group_request_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_group_request_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -297,7 +297,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 /**
  * Implements hook_preprocess_activity().
  */
-function social_group_request_preprocess_activity(array &$variables) {
+function social_group_request_preprocess_activity(array &$variables): void {
   /** @var \Drupal\activity_creator\ActivityInterface $activity */
   $activity = $variables['elements']['#activity'];
 
@@ -334,7 +334,7 @@ function social_group_request_preprocess_activity(array &$variables) {
 /**
  * Implements hook_preprocess_page_title().
  */
-function social_group_request_preprocess_page_title(&$variables) {
+function social_group_request_preprocess_page_title(&$variables): void {
   if (\Drupal::routeMatch()->getRouteName() !== 'view.group_pending_members.membership_requests') {
     return;
   }
@@ -383,7 +383,7 @@ function social_group_request_allowed_join_method_values(FieldStorageConfig $def
 /**
  * Implements hook_views_pre_view().
  */
-function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args): void {
   if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
     $options = [
       'id' => 'area_text_custom',

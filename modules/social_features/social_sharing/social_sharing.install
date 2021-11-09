@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityStorageException;
 /**
  * Install social_sharing.
  */
-function social_sharing_install() {
+function social_sharing_install(): void {
   // Default shariff settings.
   _social_sharing_shariff_settings();
 }
@@ -19,7 +19,7 @@ function social_sharing_install() {
 /**
  * Remove the old Addtoany bocks.
  */
-function social_sharing_update_8001() {
+function social_sharing_update_8001(): void {
   // Enable shariff.
   \Drupal::service('module_installer')->install(['shariff']);
 
@@ -45,7 +45,7 @@ function social_sharing_update_8001() {
 /**
  * Remove the old Addtoany bocks.
  */
-function _social_sharing_shariff_settings() {
+function _social_sharing_shariff_settings(): void {
   // Get the current array of enabled services.
   $services = \Drupal::configFactory()->getEditable('shariff.settings')->get('shariff_services');
   // Add 'add this'.

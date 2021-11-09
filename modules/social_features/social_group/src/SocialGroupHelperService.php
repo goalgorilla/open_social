@@ -69,7 +69,7 @@ class SocialGroupHelperService {
    *   The group that this entity belongs to or NULL if the entity doesn't
    *   belong to any group.
    */
-  public function getGroupFromEntity(array $entity, $read_cache = TRUE) {
+  public function getGroupFromEntity(array $entity, $read_cache = TRUE): ?GroupInterface {
     $gid = NULL;
 
     // Comments can have groups based on what the comment is posted on so the

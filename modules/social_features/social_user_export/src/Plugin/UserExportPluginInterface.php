@@ -28,7 +28,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   The value.
    */
-  public function getValue(UserInterface $entity);
+  public function getValue(UserInterface $entity): string;
 
   /**
    * Get the Profile entity.
@@ -39,7 +39,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return \Drupal\profile\Entity\ProfileInterface|null
    *   Returns the Profile or NULL if profile does not exist.
    */
-  public function getProfile(UserInterface $entity);
+  public function getProfile(UserInterface $entity): ?ProfileInterface;
 
   /**
    * Returns the value of a field for a given profile.
@@ -52,7 +52,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns value of the field.
    */
-  public function profileGetFieldValue($field_name, ProfileInterface $user_profile = NULL);
+  public function profileGetFieldValue($field_name, ProfileInterface $user_profile = NULL): string;
 
   /**
    * Returns the value for the address field and element within address.
@@ -67,7 +67,7 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns the value of the address element for the profile.
    */
-  public function profileGetAddressFieldValue($field_name, $address_element, ProfileInterface $user_profile = NULL);
+  public function profileGetAddressFieldValue($field_name, $address_element, ProfileInterface $user_profile = NULL): string;
 
   /**
    * Returns the values of a taxonomy reference field.
@@ -80,6 +80,6 @@ interface UserExportPluginInterface extends PluginInspectionInterface {
    * @return string
    *   Returns comma separated string of taxonomy terms of the field.
    */
-  public function profileGetTaxonomyFieldValue($field_name, ProfileInterface $user_profile = NULL);
+  public function profileGetTaxonomyFieldValue($field_name, ProfileInterface $user_profile = NULL): string;
 
 }

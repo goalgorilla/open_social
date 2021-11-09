@@ -12,7 +12,7 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_form_alter().
  */
-function social_content_translation_form_alter(&$form, FormStateInterface $form_state) {
+function social_content_translation_form_alter(&$form, FormStateInterface $form_state): void {
   // We need to set correct default value for "langcode" as users can
   // create content in different then default language.
   if (method_exists($form_state->getFormObject(), 'getEntity')) {

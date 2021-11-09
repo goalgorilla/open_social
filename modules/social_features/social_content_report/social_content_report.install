@@ -12,7 +12,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Implements hook_install().
  */
-function social_content_report_install() {
+function social_content_report_install(): void {
   // The terms to create with their weight.
   $terms = [
     'Abuse' => 0,
@@ -88,7 +88,7 @@ function social_content_report_install() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_content_report_update_10301() {
+function social_content_report_update_10301(): void {
   $config_file = drupal_get_path('module', 'social_content_report') . '/config/static/message.template.content_reported_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

@@ -13,7 +13,7 @@ use Drupal\user\RoleInterface;
  *
  * Perform actions related to the installation of entity_access_by_field.
  */
-function entity_access_by_field_install() {
+function entity_access_by_field_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'contentmanager',
@@ -32,7 +32,7 @@ function entity_access_by_field_install() {
 /**
  * Set permissions.
  */
-function entity_access_by_field_update_8001(&$sandbox) {
+function entity_access_by_field_update_8001(&$sandbox): void {
   // Set some default permissions.
   _entity_access_by_field_set_permissions();
 }
@@ -40,7 +40,7 @@ function entity_access_by_field_update_8001(&$sandbox) {
 /**
  * Set community visibility by default.
  */
-function entity_access_by_field_update_8002() {
+function entity_access_by_field_update_8002(): void {
   \Drupal::configFactory()
     ->getEditable('entity_access_by_field.settings')
     ->set('default_visibility', 'community')
@@ -50,7 +50,7 @@ function entity_access_by_field_update_8002() {
 /**
  * Remove default value from fields type of "entity_access_field".
  */
-function entity_access_by_field_update_8003() {
+function entity_access_by_field_update_8003(): void {
   $field_map = \Drupal::service('entity_field.manager')->getFieldMapByFieldType('entity_access_field');
   $config_factory = \Drupal::configFactory();
 
@@ -69,7 +69,7 @@ function entity_access_by_field_update_8003() {
 /**
  * Function to set permissions.
  */
-function _entity_access_by_field_set_permissions() {
+function _entity_access_by_field_set_permissions(): void {
   $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */

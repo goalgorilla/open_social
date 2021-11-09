@@ -36,7 +36,7 @@ function hook_social_branding_preferred_features(): array {
  * @see hook_social_branding_preferred_features()
  * @ingroup social_branding_api
  */
-function hook_social_branding_preferred_features_alter(array &$preferred_features) {
+function hook_social_branding_preferred_features_alter(array &$preferred_features): void {
   foreach ($preferred_features as $preferred_feature) {
     if ($preferred_feature->getName() === 'first_feature') {
       $preferred_feature->setWeight(3);

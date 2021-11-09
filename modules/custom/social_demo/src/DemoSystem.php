@@ -343,7 +343,7 @@ abstract class DemoSystem extends DemoContent {
    * @param array $data
    *   The data.
    */
-  private function replaceAnBlock(BlockContent $block, array $data) {
+  private function replaceAnBlock(BlockContent $block, array $data): void {
 
     $block->field_text_block = [
       'value' => $data['textblock'],

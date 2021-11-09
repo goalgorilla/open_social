@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite;
 
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -116,7 +117,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return bool
    *   TRUE if invited data is valid.
    */
-  public function validateInviteData($invitee_mail, $destination) {
+  public function validateInviteData($invitee_mail, $destination): bool {
 
     if (empty($invitee_mail) || empty($destination)) {
       return FALSE;
@@ -172,7 +173,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return string
    *   The path represented by alias, or the alias if no path was found.
    */
-  private function getPathByAlias($alias) {
+  private function getPathByAlias($alias): string {
     $query = $this->database->select('path_alias', 'base_table');
     $query->condition('base_table.status', '1');
     $query->fields('base_table', ['path']);
@@ -210,7 +211,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return \Drupal\Core\Config\StorableConfigBase|null
    *   The configuration object for the provided name and collection.
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

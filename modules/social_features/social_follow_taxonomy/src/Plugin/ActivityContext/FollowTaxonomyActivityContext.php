@@ -105,7 +105,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, $last_uid, $limit): array {
     // It could happen that a notification has been queued but the account has
     // since been deleted and message author is anonymous.
     if (!empty($data['actor']) && (int) $data['actor'] === 0) {
@@ -201,7 +201,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     if (!$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
@@ -229,7 +229,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    * @return string[]
    *   List of filed names.
    */
-  public function getListOfTagsFields() {
+  public function getListOfTagsFields(): array {
     $fields_to_check = [
       'social_tagging',
     ];
@@ -248,7 +248,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    * @return bool
    *   Returns TRUE if have access.
    */
-  protected function haveAccessToNode(UserInterface $recipient, $nid) {
+  protected function haveAccessToNode(UserInterface $recipient, $nid): bool {
     $query = $this->connection->select('node_field_data', 'nfd');
     $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
     $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');

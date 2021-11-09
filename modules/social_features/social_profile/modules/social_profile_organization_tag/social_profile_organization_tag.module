@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
 /**
  * Implements hook_page_attachments().
  */
-function social_profile_organization_tag_page_attachments(array &$attachments) {
+function social_profile_organization_tag_page_attachments(array &$attachments): void {
   // Unconditionally attach library to the page.
   $attachments['#attached']['library'][] = 'social_profile_organization_tag/social_profile_tag';
 }
@@ -23,7 +23,7 @@ function social_profile_organization_tag_page_attachments(array &$attachments) {
 /**
  * Implements hook_form_alter().
  */
-function social_profile_organization_tag_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_profile_organization_tag_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
   $profile_forms = [
     'profile_profile_add_form',
     'profile_profile_edit_form',
@@ -42,14 +42,14 @@ function social_profile_organization_tag_form_alter(array &$form, FormStateInter
 /**
  * Implements hook_preprocess_profile().
  */
-function social_profile_organization_tag_preprocess_profile(&$variables) {
+function social_profile_organization_tag_preprocess_profile(&$variables): void {
   $variables['profile_name_extra'] = social_profile_organization_tag_fetch($variables['profile']);
 }
 
 /**
  * Implements hook_preprocess_username().
  */
-function social_profile_organization_tag_preprocess_username(&$variables) {
+function social_profile_organization_tag_preprocess_username(&$variables): void {
   $account = $variables['account'];
 
   if ($account instanceof User) {
@@ -65,7 +65,7 @@ function social_profile_organization_tag_preprocess_username(&$variables) {
 /**
  * Implements hook_tokens_alter().
  */
-function social_profile_organization_tag_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_profile_organization_tag_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if (isset($replacements['[message:author:display-name]'])) {
     $account = &$context['data']['user'];
     if ($account instanceof UserInterface) {

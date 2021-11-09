@@ -18,7 +18,7 @@
  *
  * @ingroup social_profile_fields_api
  */
-function hook_profile_field_export_mapping_alter(array &$mapping) {
+function hook_profile_field_export_mapping_alter(array &$mapping): void {
   // Replace the default plugin with our own.
   $mapping['custom_user_first_name'] = $mapping['user_first_name'];
 

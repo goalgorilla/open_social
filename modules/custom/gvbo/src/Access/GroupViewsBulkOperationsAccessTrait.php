@@ -23,7 +23,7 @@ trait GroupViewsBulkOperationsAccessTrait {
    * @return bool
    *   TRUE if group permission is used.
    */
-  public function useGroupPermission(ViewExecutable $view, $display_id) {
+  public function useGroupPermission(ViewExecutable $view, $display_id): bool {
     $display_handlers = new DisplayPluginCollection($view, Views::pluginManager('display'));
 
     if ($display_handlers->has($display_id)) {

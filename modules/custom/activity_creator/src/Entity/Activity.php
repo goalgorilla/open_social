@@ -74,7 +74,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 

@@ -105,7 +105,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    * @return \GraphQL\Deferred|null
    *   The resolved value for a File Item.
    */
-  public function resolve($value, $field) {
+  public function resolve($value, $field): ?Deferred {
     // To make consuming fields easier we convert field item lists to field
     // items.
     if ($value instanceof FieldItemListInterface) {

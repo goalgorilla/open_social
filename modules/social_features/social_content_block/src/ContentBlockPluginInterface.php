@@ -19,7 +19,7 @@ interface ContentBlockPluginInterface {
    * @param array $fields
    *   The fields.
    */
-  public function query(SelectInterface $query, array $fields);
+  public function query(SelectInterface $query, array $fields): void;
 
   /**
    * The sort options that are supported for this content block type.

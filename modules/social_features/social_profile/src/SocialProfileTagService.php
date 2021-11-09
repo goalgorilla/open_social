@@ -59,7 +59,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isActive() {
+  public function isActive(): bool {
     return $this->profileConfig->get('enable_profile_tagging');
   }
 
@@ -140,7 +140,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function useCategoryParent() {
+  public function useCategoryParent(): bool {
     return $this->profileConfig->get('use_category_parent');
   }
 
@@ -154,7 +154,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildHierarchy(array $term_ids) {
+  public function buildHierarchy(array $term_ids): array {
     $tree = [];
     $terms = $this->taxonomyStorage->loadMultiple(array_column($term_ids, 'target_id'));
     if (empty($terms)) {
@@ -195,7 +195,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getTermOptionNames(array $term_ids) {
+  public function getTermOptionNames(array $term_ids): array {
     $options = [];
     if (empty($term_ids)) {
       return $options;

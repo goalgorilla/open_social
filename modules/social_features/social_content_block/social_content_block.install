@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Implements hook_modules_installed().
  */
-function social_content_block_modules_installed() {
+function social_content_block_modules_installed(): void {
   // When the set of installed modules change, reload the sorting optios.
   _social_content_block_update_sorting_options();
 }
@@ -22,7 +22,7 @@ function social_content_block_modules_installed() {
 /**
  * Update the allowed values in the sorting options field based on plugins.
  */
-function _social_content_block_update_sorting_options() {
+function _social_content_block_update_sorting_options(): void {
   /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
   $content_block_manager = \Drupal::service('plugin.manager.content_block');
 
@@ -56,7 +56,7 @@ function _social_content_block_update_sorting_options() {
 /**
  * Add fields for plugin ID and plugin fields to the block content form.
  */
-function social_content_block_update_8001(&$sandbox) {
+function social_content_block_update_8001(&$sandbox): void {
   if (!isset($sandbox['total'])) {
     $sandbox['configs'] = [
       'field.storage.block_content.field_plugin_id' => [
@@ -311,7 +311,7 @@ function social_content_block_update_8001(&$sandbox) {
 /**
  * Fill in fields for plugin ID and plugin fields in existing blocks.
  */
-function social_content_block_update_8002(&$sandbox) {
+function social_content_block_update_8002(&$sandbox): void {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('block_content')
       ->condition('type', 'custom_content_list')
@@ -386,7 +386,7 @@ function social_content_block_update_8003() {
 /**
  * Add an extra allowed values to the sorting field.
  */
-function social_content_block_update_8004() {
+function social_content_block_update_8004(): void {
   // Update hook removed and replaced by 8006.
 }
 
@@ -407,14 +407,14 @@ function social_content_block_update_8005() {
 /**
  * Add event date as sorting option for events.
  */
-function social_content_block_update_8006() {
+function social_content_block_update_8006(): void {
   _social_content_block_update_sorting_options();
 }
 
 /**
  * Change allowed value label.
  */
-function social_content_block_update_8801(&$sandbox) {
+function social_content_block_update_8801(&$sandbox): void {
   // Get content block sorting field.
   $field_purchasers = FieldStorageConfig::loadByName('block_content', 'field_sorting');
   // Get allowed values.
@@ -474,7 +474,7 @@ function social_content_block_update_10301() {
 /**
  * Set limit by days number.
  */
-function social_content_block_update_10302(&$sandbox) {
+function social_content_block_update_10302(&$sandbox): void {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('block_content')
       ->accessCheck(FALSE)

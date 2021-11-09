@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  */
-function social_graphql_install() {
+function social_graphql_install(): void {
   // Ensure users can use GraphQL powered applications with our default server.
   // We rely on normal access rules for authorization.
   user_role_grant_permissions('anonymous', ['execute open_social_graphql arbitrary graphql requests']);
@@ -18,7 +18,7 @@ function social_graphql_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_graphql_update_dependencies() {
+function social_graphql_update_dependencies(): array {
   // Run the update hook only after an update hook in social_core.
   $dependencies['social_graphql'][8901] = [
     'social_core' => 10103,
@@ -30,7 +30,7 @@ function social_graphql_update_dependencies() {
 /**
  * Opt-in to the new entity access API.
  */
-function social_graphql_update_10101() {
+function social_graphql_update_10101(): void {
   // Removed deprecated settings use_entity_access_api.
   // @see https://www.drupal.org/project/social/issues/3215750
 }

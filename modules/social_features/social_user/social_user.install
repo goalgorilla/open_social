@@ -13,7 +13,7 @@ use Drupal\user\RoleInterface;
  *
  * Perform actions related to the installation of social_user.
  */
-function social_user_install() {
+function social_user_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
@@ -54,7 +54,7 @@ function social_user_install() {
 /**
  * Fix 2 wrongly saved view displays.
  */
-function social_user_update_8001(&$sandbox) {
+function social_user_update_8001(&$sandbox): void {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_default */
   $conf_default = \Drupal::getContainer()->get('config.factory')->getEditable('core.entity_view_display.user.user.default');
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_full */
@@ -74,7 +74,7 @@ function social_user_update_8001(&$sandbox) {
 /**
  * Set default value for displaying navigation icons.
  */
-function social_user_update_8002() {
+function social_user_update_8002(): void {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
   $config->set('display_social_private_message_icon', TRUE)->save();
@@ -84,7 +84,7 @@ function social_user_update_8002() {
 /**
  * Add permissions to view and block users for site manager role.
  */
-function social_user_update_8003() {
+function social_user_update_8003(): void {
   $permissions = _social_user_get_permissions('sitemanager');
   user_role_grant_permissions('sitemanager', $permissions);
 }
@@ -92,7 +92,7 @@ function social_user_update_8003() {
 /**
  * Migrate navigation settings into the correct format.
  */
-function social_user_update_8004() {
+function social_user_update_8004(): void {
   $old_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
   $new_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
   // Store the values.
@@ -104,7 +104,7 @@ function social_user_update_8004() {
 /**
  * Add permissions to administer the navigation settings.
  */
-function social_user_update_8005() {
+function social_user_update_8005(): void {
   $rid = 'sitemanager';
   // Revoke permissions for the role.
   $role = Role::load($rid);
@@ -117,7 +117,7 @@ function social_user_update_8005() {
 /**
  * Create the default configuration for the social_user help texts.
  */
-function social_user_update_8006() {
+function social_user_update_8006(): void {
   $config = [
     "langcode" => "en",
     "signup_help" => "A welcome message with further instructions will be sent to your email address after you successfully enter your email address and a username.",
@@ -133,7 +133,7 @@ function social_user_update_8006() {
 /**
  * Install views_bulk_operations module.
  */
-function social_user_update_8007() {
+function social_user_update_8007(): void {
 
   $modules = [
     'views_bulk_operations',
@@ -146,7 +146,7 @@ function social_user_update_8007() {
 /**
  * Create the default configuration for the social_user default landing page.
  */
-function social_user_update_8008() {
+function social_user_update_8008(): void {
   // Create the default configuration for the social_user default landing page.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
   $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
@@ -207,7 +207,7 @@ function _social_user_get_permissions($role): array {
 /**
  * Update permissions for the sitemanager role.
  */
-function social_user_update_8809() {
+function social_user_update_8809(): void {
   // Grant the sitemanagers new permissions.
   user_role_grant_permissions('sitemanager', [
     'assign contentmanager role',
@@ -220,7 +220,7 @@ function social_user_update_8809() {
 /**
  * Update permissions for the sitemanager role.
  */
-function social_user_update_8810() {
+function social_user_update_8810(): void {
   // Grant the sitemanagers new permissions.
   user_role_grant_permissions('sitemanager', [
     'view blocked user',

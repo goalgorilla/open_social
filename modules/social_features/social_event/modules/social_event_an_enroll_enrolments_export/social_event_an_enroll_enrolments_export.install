@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  */
-function social_event_an_enroll_enrolments_export_install() {
+function social_event_an_enroll_enrolments_export_install(): void {
   // Set the enroll export pluginsExportUser access based on their counterpart
   // access.
   _enrolments_export_plugin_access();
@@ -20,7 +20,7 @@ function social_event_an_enroll_enrolments_export_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_event_an_enroll_enrolments_export_uninstall() {
+function social_event_an_enroll_enrolments_export_uninstall(): void {
   // Set the export plugins access based on their enroll counterpart access.
   _enrolments_export_plugin_access(TRUE);
 }
@@ -28,7 +28,7 @@ function social_event_an_enroll_enrolments_export_uninstall() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_event_an_enroll_enrolments_export_update_dependencies() {
+function social_event_an_enroll_enrolments_export_update_dependencies(): array {
   // Run the export plugins update hook only after the default export plugin
   // hook is executed.
   $dependencies['social_event_an_enroll_enrolments_export'][8001] = [
@@ -48,7 +48,7 @@ function social_event_an_enroll_enrolments_export_update_dependencies() {
 /**
  * Set the enroll export plugins access based on their counterpart access.
  */
-function social_event_an_enroll_enrolments_export_update_8001() {
+function social_event_an_enroll_enrolments_export_update_8001(): void {
   _enrolments_export_plugin_access();
 }
 
@@ -58,7 +58,7 @@ function social_event_an_enroll_enrolments_export_update_8001() {
  * @param bool $reverse
  *   Flip the keys and value of the mapping plugins.
  */
-function _enrolments_export_plugin_access($reverse = FALSE) {
+function _enrolments_export_plugin_access($reverse = FALSE): void {
   // Get the plugin mapping.
   $mapping = _enrolments_export_plugin_mapping($reverse);
 

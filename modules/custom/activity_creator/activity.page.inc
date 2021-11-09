@@ -27,7 +27,7 @@ use Drupal\Core\Link;
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function template_preprocess_activity(array &$variables) {
+function template_preprocess_activity(array &$variables): void {
   // Fetch Activity Entity Object.
   /** @var \Drupal\activity_creator\Entity\Activity $activity */
   $activity = $variables['elements']['#activity'];

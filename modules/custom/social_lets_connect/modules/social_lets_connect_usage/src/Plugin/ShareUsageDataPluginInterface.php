@@ -15,11 +15,14 @@ interface ShareUsageDataPluginInterface extends PluginInspectionInterface {
    * @return array
    *   $json array.
    */
-  public function getValue();
+  public function getValue(): array;
 
   /**
    * Check if this plugin should be enabled.
+   *
+   * @return bool
+   *   Status of plugin.
    */
-  public function enabled();
+  public function enabled(): bool;
 
 }

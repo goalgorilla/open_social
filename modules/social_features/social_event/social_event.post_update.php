@@ -8,7 +8,7 @@
 /**
  * Empty post update hook.
  */
-function social_event_post_update_update_events(&$sandbox) {
+function social_event_post_update_update_events(&$sandbox): void {
   // Moved to social_event_post_update_10301_enable_event_enrollment().
 }
 

@@ -206,7 +206,7 @@ abstract class DemoUser extends DemoContent {
    * @param array $item
    *   The profile field item.
    */
-  protected function fillProfile(ProfileInterface $profile, array $item) {
+  protected function fillProfile(ProfileInterface $profile, array $item): void {
     $profile->field_profile_image = $item['image'];
     $profile->field_profile_first_name = $item['first_name'];
     $profile->field_profile_last_name = $item['last_name'];

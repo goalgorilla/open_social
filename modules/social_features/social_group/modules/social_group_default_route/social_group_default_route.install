@@ -8,7 +8,7 @@
 /**
  * Implements hook_install().
  */
-function social_group_default_route_install() {
+function social_group_default_route_install(): void {
   $extension_config = \Drupal::configFactory()->getEditable('core.extension');
   $group_weight = $extension_config->get('module.social_group');
   // One more plz.

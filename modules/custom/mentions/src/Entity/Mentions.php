@@ -89,7 +89,7 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCreatedTime() {
+  public function getCreatedTime(): int {
     return $this->get('created')->value;
   }
 

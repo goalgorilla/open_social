@@ -61,7 +61,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getEnrollmentsNumber(NodeInterface $node) {
+  public function getEnrollmentsNumber(NodeInterface $node): int {
     return $this->storage->getQuery()
       ->condition('field_event', $node->id())
       ->condition('field_enrollment_status', 1)
@@ -72,7 +72,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getEnrollmentsLeft(NodeInterface $node) {
+  public function getEnrollmentsLeft(NodeInterface $node): int {
     // Get max enrollment number.
     $max = $node->get('field_event_max_enroll_num')->value;
     // Take into account AN enrollments.

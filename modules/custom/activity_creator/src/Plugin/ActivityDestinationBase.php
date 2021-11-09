@@ -12,14 +12,14 @@ abstract class ActivityDestinationBase extends PluginBase implements ActivityDes
   /**
    * {@inheritdoc}
    */
-  public function getViewMode($original_view_mode, $entity) {
+  public function getViewMode($original_view_mode, $entity): string {
     return $original_view_mode;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isActiveInView($view) {
+  public function isActiveInView($view): bool {
     if (isset($view->filter['field_activity_destinations_value']->value[$this->pluginId])) {
       if ($view->filter['field_activity_destinations_value']->value[$this->pluginId] === $this->pluginId) {
         return TRUE;

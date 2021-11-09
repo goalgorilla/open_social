@@ -8,7 +8,7 @@
 /**
  * Implements hook_toolbar_alter().
  */
-function social_admin_menu_toolbar_alter(&$items) {
+function social_admin_menu_toolbar_alter(&$items): void {
   $items['administration']['tray']['toolbar_administration'] = [
     '#lazy_builder' => [
       'social_admin_menu.administrator_menu_tree_manipulators:renderForm',

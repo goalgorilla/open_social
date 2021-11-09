@@ -67,7 +67,7 @@ function social_core_requirements($phase) {
  *
  * Perform actions related to the installation of social_core.
  */
-function social_core_install() {
+function social_core_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -149,7 +149,7 @@ function social_core_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_core_update_dependencies() {
+function social_core_update_dependencies(): array {
   // Update field schema only after Profile module bug fixed.
   $dependencies['social_core'][8020] = [
     'profile' => 8001,
@@ -161,7 +161,7 @@ function social_core_update_dependencies() {
 /**
  * Re-set permissions.
  */
-function social_core_update_8001() {
+function social_core_update_8001(): void {
   // Set some default permissions.
   _social_core_set_permissions();
 }
@@ -169,7 +169,7 @@ function social_core_update_8001() {
 /**
  * Function to set permissions.
  */
-function _social_core_set_permissions() {
+function _social_core_set_permissions(): void {
   $roles = \Drupal::entityQuery('user_role')
     ->condition('id', 'administrator', '<>')
     ->execute();
@@ -243,7 +243,7 @@ function _social_core_get_permissions($role): array {
 /**
  * Custom function to create the homepage block for AN users.
  */
-function _social_core_create_an_homepage_block() {
+function _social_core_create_an_homepage_block(): void {
   // @todo use a better image from the theme.
   // Block image.
   $path = drupal_get_path('module', 'social_core');
@@ -316,7 +316,7 @@ function _social_core_create_an_homepage_block() {
 /**
  * Function to create some menu items.
  */
-function _social_core_create_menu_links() {
+function _social_core_create_menu_links(): void {
   // Home.
   MenuLinkContent::create([
     'title' => t('Home'),
@@ -341,7 +341,7 @@ function _social_core_create_menu_links() {
 /**
  * Enable full_html format for contentmanager and sitemanager roles.
  */
-function social_core_update_8002() {
+function social_core_update_8002(): void {
   $roles = \Drupal::entityQuery('user_role')
     ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
     ->execute();
@@ -358,7 +358,7 @@ function social_core_update_8002() {
 /**
  * Install image_widget_crop module.
  */
-function social_core_update_8003() {
+function social_core_update_8003(): void {
 
   $modules = [
     'image_widget_crop',
@@ -370,7 +370,7 @@ function social_core_update_8003() {
 /**
  * Add permission to view admin theme for contentmanager and sitemanager roles.
  */
-function social_core_update_8004() {
+function social_core_update_8004(): void {
   $roles = \Drupal::entityQuery('user_role')
     ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
     ->execute();
@@ -387,7 +387,7 @@ function social_core_update_8004() {
 /**
  * Crop images for groups, profiles and nodes.
  */
-function social_core_update_8005(&$sandbox) {
+function social_core_update_8005(&$sandbox): void {
   if (!isset($sandbox['progress'])) {
     $sandbox['progress'] = 0;
     $sandbox['items'] = [];
@@ -532,7 +532,7 @@ function social_core_update_8005(&$sandbox) {
 /**
  * Install social_follow_content module.
  */
-function social_core_update_8006(&$sandbox) {
+function social_core_update_8006(&$sandbox): void {
   $modules = [
     'social_follow_content',
   ];
@@ -542,7 +542,7 @@ function social_core_update_8006(&$sandbox) {
 /**
  * Set higher jpeg quality instead of default 75%.
  */
-function social_core_update_8007() {
+function social_core_update_8007(): void {
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
 
   $config->set('jpeg_quality', 90)->save();
@@ -551,7 +551,7 @@ function social_core_update_8007() {
 /**
  * Install social_mentions module.
  */
-function social_core_update_8008() {
+function social_core_update_8008(): void {
   $modules = [
     'social_mentions',
   ];
@@ -561,7 +561,7 @@ function social_core_update_8008() {
 /**
  * Enable socialblue theme and make default if socialbase is current default.
  */
-function social_core_update_8009() {
+function social_core_update_8009(): void {
 
   $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
 
@@ -589,7 +589,7 @@ function social_core_update_8009() {
 /**
  * Install social_font module.
  */
-function social_core_update_8010() {
+function social_core_update_8010(): void {
   $modules = [
     'social_font',
   ];
@@ -599,7 +599,7 @@ function social_core_update_8010() {
 /**
  * Install color & improved theme settings module.
  */
-function social_core_update_8011() {
+function social_core_update_8011(): void {
   $modules = [
     'color',
     'improved_theme_settings',
@@ -610,7 +610,7 @@ function social_core_update_8011() {
 /**
  * Install social_like module.
  */
-function social_core_update_8012() {
+function social_core_update_8012(): void {
   $modules = [
     'social_like',
   ];
@@ -620,7 +620,7 @@ function social_core_update_8012() {
 /**
  * Change socialbase and socialblue theme settings config.
  */
-function social_core_update_8013() {
+function social_core_update_8013(): void {
   $config_factory = \Drupal::service('config.factory');
   $config = $config_factory->getEditable('socialbase.settings');
   $config->set('button_colorize', 0);
@@ -636,7 +636,7 @@ function social_core_update_8013() {
 /**
  * Update topics path.
  */
-function social_core_update_8014(&$sandbox) {
+function social_core_update_8014(&$sandbox): void {
   $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties(['link__uri' => 'internal:/newest-topics']);
 
@@ -649,7 +649,7 @@ function social_core_update_8014(&$sandbox) {
 /**
  * Update members path.
  */
-function social_core_update_8015(&$sandbox) {
+function social_core_update_8015(&$sandbox): void {
   $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
     ->loadByProperties(['link__uri' => 'internal:/newest-members']);
 
@@ -662,7 +662,7 @@ function social_core_update_8015(&$sandbox) {
 /**
  * Install social_tour module.
  */
-function social_core_update_8018(&$sandbox) {
+function social_core_update_8018(&$sandbox): void {
   $modules = [
     'social_tour',
   ];
@@ -672,7 +672,7 @@ function social_core_update_8018(&$sandbox) {
 /**
  * Install the social_file_private module.
  */
-function social_core_update_8019() {
+function social_core_update_8019(): void {
   $file_private_path_base_path = PrivateStream::basePath();
 
   if ($file_private_path_base_path !== NULL) {
@@ -690,7 +690,7 @@ function social_core_update_8019() {
 /**
  * Fix an schema issue caused by Flag module.
  */
-function social_core_update_8020() {
+function social_core_update_8020(): void {
   $bundle_schema = [
     'description' => 'The Flag ID.',
     'type' => 'varchar_ascii',
@@ -730,7 +730,7 @@ function social_core_update_8020() {
 /**
  * Update social_post existing content.
  */
-function social_core_update_8021(&$sandbox) {
+function social_core_update_8021(&$sandbox): void {
   $database = \Drupal::database();
   $table_post = 'post';
   $table_data = 'post_field_data';
@@ -819,7 +819,7 @@ function social_core_update_8021(&$sandbox) {
 /**
  * Install social_post_photo module.
  */
-function social_core_update_8022() {
+function social_core_update_8022(): void {
   $modules = [
     'social_post_photo',
   ];
@@ -829,7 +829,7 @@ function social_core_update_8022() {
 /**
  * Update the context_mapping for account_header_block blocks.
  */
-function social_core_update_8023() {
+function social_core_update_8023(): void {
 
   $blocks = Block::loadMultiple();
 
@@ -849,7 +849,7 @@ function social_core_update_8023() {
 /**
  * Install image_effects module.
  */
-function social_core_update_8024() {
+function social_core_update_8024(): void {
   $modules = [
     'image_effects',
   ];
@@ -859,7 +859,7 @@ function social_core_update_8024() {
 /**
  * Install social_swiftmail module.
  */
-function social_core_update_8025() {
+function social_core_update_8025(): void {
   $modules = [
     'social_swiftmail',
   ];
@@ -869,7 +869,7 @@ function social_core_update_8025() {
 /**
  * Automatically try to set a new crop for the anonymous hero image.
  */
-function social_core_update_8026() {
+function social_core_update_8026(): void {
   // Load the anonymous hero block.
   $block_storage = \Drupal::entityTypeManager()->getStorage('block_content');
   $block = $block_storage->loadByProperties(['uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4']);
@@ -919,7 +919,7 @@ function social_core_update_8026() {
 /**
  * Re-save settings for r4032login to enable redirect to destination.
  */
-function social_core_update_8027() {
+function social_core_update_8027(): void {
   if (\Drupal::moduleHandler()->moduleExists('r4032login')) {
     $config = \Drupal::configFactory()->getEditable('r4032login.settings');
     if (!$config->get('redirect_to_destination')) {
@@ -935,7 +935,7 @@ function social_core_update_8027() {
 /**
  * Turn off comment user verification setting.
  */
-function social_core_update_8028() {
+function social_core_update_8028(): void {
   // Change setting for socialbase.
   $socialbase_settings = \Drupal::configFactory()->getEditable('socialbase.settings');
   $socialbase_settings->set('features.comment_user_verification', FALSE)->save();
@@ -948,7 +948,7 @@ function social_core_update_8028() {
 /**
  * Install exif_orientation module.
  */
-function social_core_update_8301() {
+function social_core_update_8301(): void {
   $modules = [
     'exif_orientation',
   ];
@@ -959,7 +959,7 @@ function social_core_update_8301() {
 /**
  * Install social_lets_connect_usage module.
  */
-function social_core_update_8501() {
+function social_core_update_8501(): void {
   // Let's enable the sharing usage data module.
   $modules = [
     'social_lets_connect_usage',
@@ -976,42 +976,42 @@ function social_core_update_8501() {
 /**
  * Enable social_node module.
  */
-function social_core_update_8801() {
+function social_core_update_8801(): void {
   \Drupal::service('module_installer')->install(['social_node']);
 }
 
 /**
  * Perform features revert for the last time.
  */
-function social_core_update_8802() {
+function social_core_update_8802(): void {
   // This update has been removed in 9.0.
 }
 
 /**
  * Set the view mode for nodes to use when shown in activities.
  */
-function social_core_update_8803() {
+function social_core_update_8803(): void {
   activity_creator_set_entity_view_mode('node', 'activity');
 }
 
 /**
  * Allow site managers to use contextual links.
  */
-function social_core_update_8804() {
+function social_core_update_8804(): void {
   user_role_grant_permissions('sitemanager', ['access contextual links']);
 }
 
 /**
  * Install update helper for config update usage.
  */
-function social_core_update_8805() {
+function social_core_update_8805(): void {
   \Drupal::service('module_installer')->install(['update_helper']);
 }
 
 /**
  * Add new basic block config items.
  */
-function social_core_update_8806(&$sandbox) {
+function social_core_update_8806(&$sandbox): void {
   if (!isset($sandbox['total'])) {
     // Declare all the config render arrays,
     // keyed by the config name.
@@ -1201,7 +1201,7 @@ function social_core_update_8809() {
 /**
  * Install the role delegation module.
  */
-function social_core_update_8810() {
+function social_core_update_8810(): void {
   \Drupal::service('module_installer')->install(['role_delegation']);
 }
 
@@ -1222,7 +1222,7 @@ function social_core_update_8811() {
 /**
  * Install the Gin theme(as admin) and Install Gin Toolbar.
  */
-function social_core_update_8812(&$sandbox) {
+function social_core_update_8812(&$sandbox): void {
   // Install Gin Admin Theme.
   \Drupal::service('theme_installer')->install(['gin']);
   // Set Gin Admin Theme as admin theme.
@@ -1250,7 +1250,7 @@ function social_core_update_8813() {
 /**
  * Add the administration theme to authenticated users for batch operations.
  */
-function social_core_update_8901() {
+function social_core_update_8901(): void {
   $roles = \Drupal::entityQuery('user_role')
     ->condition('id', ['authenticated'], 'IN')
     ->execute();
@@ -1267,7 +1267,7 @@ function social_core_update_8901() {
 /**
  * Update GIN theme settings based on SocialBlue primary secondary.
  */
-function social_core_update_8902() {
+function social_core_update_8902(): void {
   // Only when GIN is the admin theme and SocialBlue is the active theme.
   if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin' &&
     \Drupal::theme()->getActiveTheme()->getName() === 'socialblue') {
@@ -1307,14 +1307,14 @@ function social_core_update_8902() {
 /**
  * Install the redirect module to prevent index.php from being accessed.
  */
-function social_core_update_8903() {
+function social_core_update_8903(): void {
   \Drupal::service('module_installer')->install(['redirect']);
 }
 
 /**
  * Update Social Blue theme with new accent text color.
  */
-function social_core_update_8904() {
+function social_core_update_8904(): void {
   $config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
   if (!empty($config->getRawData())) {
     $socialblue_colors = $config->getRawData();
@@ -1327,7 +1327,7 @@ function social_core_update_8904() {
 /**
  * Sets the Content Entity Forms to Open Social style.
  */
-function social_core_update_8905() {
+function social_core_update_8905(): void {
   // Only when socialblue is default we set this.
   if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
     try {
@@ -1344,14 +1344,14 @@ function social_core_update_8905() {
 /**
  * Sets the Default E-mail logo to the rebranded version, if possible.
  */
-function social_core_update_8906() {
+function social_core_update_8906(): void {
   _social_core_set_default_email_logo_for_socialblue();
 }
 
 /**
  * Adds social_post_album.
  */
-function social_core_update_8907() {
+function social_core_update_8907(): void {
   $modules = [
     'social_post_album',
   ];
@@ -1361,7 +1361,7 @@ function social_core_update_8907() {
 /**
  * Add a new image thumbnail 'social_file_thumbnail' files field.
  */
-function social_core_update_8908() {
+function social_core_update_8908(): void {
   $config_file = drupal_get_path('module', 'social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
 
   if (is_file($config_file)) {
@@ -1378,7 +1378,7 @@ function social_core_update_8908() {
 /**
  * Install ultimate cron module.
  */
-function social_core_update_10101() {
+function social_core_update_10101(): void {
   $modules = [
     'ultimate_cron',
     'social_advanced_queue',
@@ -1389,14 +1389,14 @@ function social_core_update_10101() {
 /**
  * Empty update hook.
  */
-function social_core_update_10102() {
+function social_core_update_10102(): void {
   // Removed as it was an incorrect update hook use 10103 instead.
 }
 
 /**
  * Add a OS favicon on the admin pages.
  */
-function social_core_update_10103() {
+function social_core_update_10103(): void {
   $config = \Drupal::configFactory()->getEditable('gin.settings');
   if (!empty($config->getRawData())) {
     $gin_config = $config->getRawData();
@@ -1412,7 +1412,7 @@ function social_core_update_10103() {
 /**
  * Set default settings to use entity access API as FALSE.
  */
-function social_core_update_10104() {
+function social_core_update_10104(): void {
   // Removed hook due to de deprecation of use_entity_access_api.
   // @see https://www.drupal.org/project/social/issues/3215750
 }
@@ -1420,7 +1420,7 @@ function social_core_update_10104() {
 /**
  * Add default classic_toolbar of the Gin theme.
  */
-function social_core_update_10105() {
+function social_core_update_10105(): void {
   $config = \Drupal::configFactory()->getEditable('gin.settings');
   if (!empty($config->getRawData())) {
     $gin_config = $config->getRawData();

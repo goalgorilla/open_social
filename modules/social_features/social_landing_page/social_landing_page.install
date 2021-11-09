@@ -17,7 +17,7 @@ use Drupal\user\RoleInterface;
  *
  * Perform actions related to the installation of social_landing_page.
  */
-function social_landing_page_install() {
+function social_landing_page_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -88,7 +88,7 @@ function social_landing_page_install() {
 /**
  * Enable the Social Featured Items module.
  */
-function social_landing_page_update_8801() {
+function social_landing_page_update_8801(): void {
   $module = 'social_featured_items';
   // We don't actually install the module because this would cause issues with
   // configuration already existing. The configuration has been moved from this
@@ -153,7 +153,7 @@ function social_landing_page_update_8801() {
 /**
  * Import new block type for featured items.
  */
-function social_landing_page_update_8802() {
+function social_landing_page_update_8802(): void {
   // This creates some new configuration that can be used by the dashboard
   // module. This is done in this module because we also enable the
   // social_featured_items module. If that module is enabled through another
@@ -333,7 +333,7 @@ function _social_landing_page_featured_items_config(): array {
 /**
  * Update fields for featured items.
  */
-function social_landing_page_update_8803() {
+function social_landing_page_update_8803(): void {
   // Delete our last attempt in reverse order.
   $configs = array_reverse(_social_landing_page_featured_items_config());
 
@@ -389,7 +389,7 @@ function social_landing_page_update_8804() {
 /**
  * Enable the Social Featured Content module.
  */
-function social_landing_page_update_8805() {
+function social_landing_page_update_8805(): void {
   $module = 'social_featured_content';
   // We don't actually install the module because this would cause issues with
   // configuration already existing. The configuration has been moved from this
@@ -454,7 +454,7 @@ function social_landing_page_update_8805() {
 /**
  * Import new block type for featured content.
  */
-function social_landing_page_update_8806() {
+function social_landing_page_update_8806(): void {
   // This creates some new configuration that can be used by the dashboard
   // module. This is done in this module because we also enable the
   // social_follow_content module. If that module is enabled through another
@@ -645,7 +645,7 @@ function social_landing_page_update_8807() {
 /**
  * Enable helper modules if flexible group and / or social_book are enabled.
  */
-function social_landing_page_update_8808() {
+function social_landing_page_update_8808(): void {
   // If we have flexible groups enabled, we want to enable the helper module
   // social_flexible_group_featured which provides a featured view mode to be
   // used on landing pages.
@@ -663,7 +663,7 @@ function social_landing_page_update_8808() {
 /**
  * Allow using any URLs in link fields by CM+.
  */
-function social_landing_page_update_8809() {
+function social_landing_page_update_8809(): void {
   foreach (['contentmanager', 'sitemanager'] as $role) {
     user_role_grant_permissions($role, ['link to any page']);
   }
@@ -672,7 +672,7 @@ function social_landing_page_update_8809() {
 /**
  * Enable helper modules if secret group is enabled.
  */
-function social_landing_page_update_8810() {
+function social_landing_page_update_8810(): void {
   // If we have secret groups enabled, we want to enable the helper module
   // social_secret_group_featured which provides a featured view mode to be
   // used on landing pages.
@@ -712,7 +712,7 @@ function social_landing_page_update_10201() {
 /**
  * Allow CM+ translate "Landing Page" node type.
  */
-function social_landing_page_update_10301() {
+function social_landing_page_update_10301(): void {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate landing_page node']);
   }
@@ -735,7 +735,7 @@ function social_landing_page_update_10302() {
 /**
  * Moved to OS 11.0.0.
  */
-function social_landing_page_update_10303() {
+function social_landing_page_update_10303(): void {
   // Removed in OS 10.3.1 and moved to OS 11.0.0.
   // @see https://www.drupal.org/project/social/issues/3243511
 }
@@ -743,7 +743,7 @@ function social_landing_page_update_10303() {
 /**
  * Revoke permission.
  */
-function social_landing_page_update_10304() {
+function social_landing_page_update_10304(): void {
   foreach (['contentmanager', 'sitemanager'] as $role) {
     user_role_revoke_permissions($role, ['link to any page']);
   }

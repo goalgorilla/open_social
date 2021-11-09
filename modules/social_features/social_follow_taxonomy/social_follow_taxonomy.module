@@ -54,7 +54,7 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
 /**
  * Implements hook_page_attachments().
  */
-function social_follow_taxonomy_page_attachments(array &$page) {
+function social_follow_taxonomy_page_attachments(array &$page): void {
   $page['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
 }
 
@@ -64,7 +64,7 @@ function social_follow_taxonomy_page_attachments(array &$page) {
  * Add new activity stream message template for nodes with a term followed by
  * the user to make it possible to override the default template.
  */
-function social_follow_taxonomy_theme_suggestions_activity_alter(array &$suggestions, array $variables) {
+function social_follow_taxonomy_theme_suggestions_activity_alter(array &$suggestions, array $variables): void {
   $activity = $variables['elements']['#activity'];
   // Get a message entity from the activity.
   $message = Message::load($activity->field_activity_message->target_id);
@@ -309,7 +309,7 @@ function social_follow_taxonomy_terms_list(EntityInterface $entity): array {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates): void {
   if (isset($email_message_templates['create_node_following_tag'])) {
     $items['what_follow']['templates'][] = 'create_node_following_tag';
   }
@@ -321,14 +321,14 @@ function social_follow_tag_activity_send_email_notifications_alter(array &$items
 /**
  * Implements hook_entity_presave().
  */
-function social_follow_taxonomy_entity_presave(EntityInterface $entity) {
+function social_follow_taxonomy_entity_presave(EntityInterface $entity): void {
   _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
 /**
  * Implements hook_entity_delete().
  */
-function social_follow_taxonomy_entity_delete(EntityInterface $entity) {
+function social_follow_taxonomy_entity_delete(EntityInterface $entity): void {
   _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
@@ -338,7 +338,7 @@ function social_follow_taxonomy_entity_delete(EntityInterface $entity) {
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity.
  */
-function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $entity) {
+function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $entity): void {
   if (
     !$entity instanceof ContentEntityInterface ||
     !$entity->hasField('social_tagging')

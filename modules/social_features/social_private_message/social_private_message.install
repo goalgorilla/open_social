@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Implements hook_uninstall().
  */
-function social_private_message_install() {
+function social_private_message_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -67,7 +67,7 @@ function social_private_message_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_private_message_update_dependencies() {
+function social_private_message_update_dependencies(): array {
   // Run the activities view mode update after the final features removal ran.
   $dependencies['social_private_message'][8801] = [
     'social_core' => 8802,
@@ -79,7 +79,7 @@ function social_private_message_update_dependencies() {
 /**
  * Sets the widget for selecting Private Message thread members.
  */
-function _social_private_message_set_private_message_default_form_settings() {
+function _social_private_message_set_private_message_default_form_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $pm_form_display */
   $pm_form_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_form_display')
@@ -97,7 +97,7 @@ function _social_private_message_set_private_message_default_form_settings() {
 /**
  * Set the Open Social specific settings for the private message default view.
  */
-function _social_private_message_set_private_message_default_view_settings() {
+function _social_private_message_set_private_message_default_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
@@ -124,7 +124,7 @@ function _social_private_message_set_private_message_default_view_settings() {
 /**
  * Set the Open Social specific settings for the private message inbox view.
  */
-function _social_private_message_set_private_message_inbox_view_settings() {
+function _social_private_message_set_private_message_inbox_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
@@ -152,7 +152,7 @@ function _social_private_message_set_private_message_inbox_view_settings() {
 /**
  * Set the OS specific settings for the private message thread default view.
  */
-function _social_private_message_set_private_message_thread_default_view_settings() {
+function _social_private_message_set_private_message_thread_default_view_settings(): void {
   /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $pm_view_display */
   $pm_view_display = \Drupal::service('entity_type.manager')
     ->getStorage('entity_view_display')
@@ -188,14 +188,14 @@ function _social_private_message_set_private_message_thread_default_view_setting
 /**
  * Set module weight.
  */
-function social_private_message_update_8001() {
+function social_private_message_update_8001(): void {
   module_set_weight('social_private_message', 1);
 }
 
 /**
  * Remove inbox blocks.
  */
-function social_private_message_update_8002() {
+function social_private_message_update_8002(): void {
   $plugin = 'social_private_message_inbox_block';
 
   $storage = \Drupal::entityTypeManager()->getStorage('block');
@@ -213,7 +213,7 @@ function social_private_message_update_8002() {
  * The feature removal script did not succeed for social_private_message.
  * Import the configs in an update hook.
  */
-function social_private_message_update_8801() {
+function social_private_message_update_8801(): void {
   $config_files = [
     'core.entity_form_display.private_message_thread.private_message_thread.default',
     'core.entity_view_display.private_message.private_message.default',
@@ -227,7 +227,7 @@ function social_private_message_update_8801() {
 /**
  * Revert remaining social_private_message configs not included in 8801.
  */
-function social_private_message_update_8802() {
+function social_private_message_update_8802(): void {
   $config_files = [
     'core.entity_view_display.private_message.private_message.inbox',
     'core.entity_view_display.profile.profile.compact_private_message',
@@ -245,7 +245,7 @@ function social_private_message_update_8802() {
  * @param array $config_files
  *   Array of configuration file names.
  */
-function _social_private_message_features_removal_config_revert_helper(array $config_files) {
+function _social_private_message_features_removal_config_revert_helper(array $config_files): void {
   foreach ($config_files as $config_file) {
     $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
 
@@ -264,7 +264,7 @@ function _social_private_message_features_removal_config_revert_helper(array $co
 /**
  * Update permissions for private messages.
  */
-function social_private_message_update_8803() {
+function social_private_message_update_8803(): void {
   $roles_storage = Drupal::entityTypeManager()->getStorage('user_role');
   $roles = $roles_storage->loadMultiple();
   if (!empty($roles)) {
@@ -290,7 +290,7 @@ function social_private_message_update_8803() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_private_message_update_10301() {
+function social_private_message_update_10301(): void {
   $config_file = drupal_get_path('module', 'social_private_message') . '/config/static/message.template.create_private_message_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

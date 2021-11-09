@@ -51,7 +51,7 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
 /**
  * Implements hook_entity_form_display_alter().
  */
-function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
   if ($context['entity_type'] !== 'profile' || $context['form_mode'] !== 'edit') {
     return;
   }
@@ -73,7 +73,7 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
 /**
  * Implements hook_entity_view_display_alter().
  */
-function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
   if (
     $context['entity_type'] === 'profile' &&
     $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
@@ -94,7 +94,7 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
 /**
  * Implements hook_form_alter().
  */
-function social_profile_fields_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_profile_fields_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   $form_object = $form_state->getFormObject();
 
   if (
@@ -109,7 +109,7 @@ function social_profile_fields_form_alter(&$form, FormStateInterface $form_state
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_fields_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state) {
+function social_profile_fields_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state): void {
   /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
   $form_object = $form_state->getFormObject();
   /** @var \Drupal\profile\Entity\ProfileInterface $form_entity */
@@ -191,7 +191,7 @@ function social_profile_fields_social_user_name_display_suggestions(AccountInter
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_fields_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
+function social_profile_fields_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account): void {
   social_profile_fields_censor_full_name_suggestion($suggestions, $account);
 }
 
@@ -203,7 +203,7 @@ function social_profile_fields_social_user_name_display_suggestions_alter(array 
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_fields_censor_full_name_suggestion(array &$suggestions, AccountInterface $account) {
+function social_profile_fields_censor_full_name_suggestion(array &$suggestions, AccountInterface $account): void {
   // If there's no full name for us to censor then we're done.
   if (empty($suggestions['full_name'])) {
     return;
@@ -267,7 +267,7 @@ function social_profile_fields_censor_full_name_suggestion(array &$suggestions, 
 /**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
-function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display): void {
   // Check if profile image is unset.
   if (!_social_profile_fields_get_setting('profile_profile_field_profile_image') && isset($display->get('content')['field_profile_image'])) {
     // Load default data.
@@ -312,7 +312,7 @@ function _social_profile_fields_get_setting($key): bool {
  *
  * @see \Drupal\social_user_export\UserExportPluginManager
  */
-function social_profile_fields_social_user_export_plugin_info_alter(array &$plugins) {
+function social_profile_fields_social_user_export_plugin_info_alter(array &$plugins): void {
   /** @var \Drupal\profile\Entity\ProfileType $profile_type */
   foreach (ProfileType::loadMultiple() as $profile_type) {
     $type = $profile_type->id();
@@ -349,7 +349,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
 /**
  * Implements hook_entity_bundle_field_info_alter().
  */
-function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle): void {
   if ($bundle === 'profile' && $entity_type->id() === 'profile') {
     $config = \Drupal::config('social_profile_fields.settings');
 
@@ -424,7 +424,7 @@ function social_profile_fields_theme() {
 /**
  * Implements hook_preprocess_field().
  */
-function social_profile_fields_preprocess_field(&$variables) {
+function social_profile_fields_preprocess_field(&$variables): void {
   $formatter = $variables['element']['#formatter'];
   if (in_array($formatter, ['address_plain', 'address_default'])) {
     $entity = $variables['element']['#object'];

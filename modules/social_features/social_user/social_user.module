@@ -25,7 +25,7 @@ use Drupal\social_user\SocialUserSearchContentBlockAlter;
 /**
  * Implements hook_entity_type_alter().
  */
-function social_user_entity_type_alter(array &$entity_types) {
+function social_user_entity_type_alter(array &$entity_types): void {
   if (isset($entity_types['user'])) {
     $entity_types['user']->setClass(User::class);
   }
@@ -36,7 +36,7 @@ function social_user_entity_type_alter(array &$entity_types) {
  *
  * @see hook_action_info_alter()
  */
-function social_user_action_info_alter(&$definitions) {
+function social_user_action_info_alter(&$definitions): void {
   // Swaps stadard block user action with our implementation.
   // If another module has already swapped out those classes,
   // though, we'll be polite and do nothing.
@@ -61,7 +61,7 @@ function social_user_action_info_alter(&$definitions) {
  *
  * @see \Drupal\user\UserLoginForm
  */
-function social_user_form_user_login_form_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_user_login_form_alter(&$form, FormStateInterface $form_state): void {
   // Ensure fields have weights so other forms can add items.
   if (isset($form['account'])) {
     if (isset($form['account']['name_or_mail'])) {
@@ -76,7 +76,7 @@ function social_user_form_user_login_form_alter(&$form, FormStateInterface $form
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   $view = $form_state->get('view');
 
   // Make the filters on the admin people overview more user friendly.
@@ -162,7 +162,7 @@ function _social_user_get_groups() {
 /**
  * Validate function for the admin people overview exposed filters.
  */
-function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state) {
+function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state): void {
   $filters = [
     'created',
     'login',
@@ -180,7 +180,7 @@ function social_user_admin_people_overview_validate(&$form, FormStateInterface $
  *
  * @see \Drupal\user\RegisterForm
  */
-function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state): void {
   // By default notify the user of the new account.
   if (isset($form['account']['notify']) && $form['account']['notify']['#access'] === TRUE) {
     $form['account']['notify']['#default_value'] = 1;
@@ -241,7 +241,7 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 /**
  * Validate function for the user register form.
  */
-function social_user_register_validate(&$form, FormStateInterface $form_state) {
+function social_user_register_validate(&$form, FormStateInterface $form_state): void {
   // Fetch input.
   $input = $form_state->getValues();
   // Check if user data with the input can be found.
@@ -273,7 +273,7 @@ function social_user_register_validate(&$form, FormStateInterface $form_state) {
  *
  * @see \Drupal\user\AccountForm
  */
-function social_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_user_form_alter(&$form, FormStateInterface $form_state): void {
   // Add forcing of changing password, message to user
   // if they logged in via a one-time login link.
   // See AccountForm.php this is where user_pass_reset gets set. Only when user
@@ -341,7 +341,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
 /**
  * Submit function for resetting password form.
  */
-function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
+function _social_user_pass_reset_submit($form, FormStateInterface $form_state): void {
   $storage = $form_state->getValues();
   $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
 
@@ -372,7 +372,7 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_user_form_views_form_user_admin_people_page_1_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_views_form_user_admin_people_page_1_alter(&$form, FormStateInterface $form_state): void {
   if (!empty($form['header']['user_bulk_form']['action']['#options'])) {
     $actions = $form['header']['user_bulk_form']['action']['#options'];
     $block_action = ['user_block_user_action' => $actions['user_block_user_action']];
@@ -415,7 +415,7 @@ function social_user_is_blocked($name_or_mail): bool {
 /**
  * Implements hook_entity_base_field_info_alter().
  */
-function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type): void {
   // Add the custom Social username constraint.
   if ($entity_type->id() == 'user' && isset($fields['name'])) {
     $fields['name']->addConstraint('SocialUserName');
@@ -425,14 +425,14 @@ function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface 
 /**
  * Implements hook_user_cancel_methods_alter().
  */
-function social_user_user_cancel_methods_alter(&$methods) {
+function social_user_user_cancel_methods_alter(&$methods): void {
   $methods['user_cancel_reassign']['title'] = t('Delete your account and anonymize all other content.');
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // Fetch the current user.
   $account = \Drupal::currentUser();
   // Check if the user has permissions.
@@ -465,7 +465,7 @@ function social_user_theme() {
  *
  * @see \template_preprocess_container()
  */
-function template_preprocess_unwrapped_container(array &$variables) {
+function template_preprocess_unwrapped_container(array &$variables): void {
   // The UnwrappedContaienr element exists to provide a different template from
   // the container which is used by the AccountHeaderElement which is why we the
   // original container implementation works fine for us. The div is then simply
@@ -476,7 +476,7 @@ function template_preprocess_unwrapped_container(array &$variables) {
 /**
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
  */
-function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block) {
+function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block): void {
   // Add pre render to search content block in the header.
   $build['#pre_render'][] = [
     SocialUserSearchContentBlockAlter::class,
@@ -487,7 +487,7 @@ function social_user_block_view_search_content_block_alter(array &$build, BlockP
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function social_user_menu_local_tasks_alter(&$data, $route_name) {
+function social_user_menu_local_tasks_alter(&$data, $route_name): void {
   // Change the default 'View' tab title.
   if (isset($data['tabs'][0]['entity.user.canonical'])) {
     unset($data['tabs'][0]['entity.user.canonical']);
@@ -515,7 +515,7 @@ function social_user_menu_local_tasks_alter(&$data, $route_name) {
  * URL tokens are not filled in by the other token replacements.
  * In cases like this the account is cancelled, but the message remains behind.
  */
-function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata) {
+function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata): void {
   // Change the display name to that of the Anonymous user when the display name
   // token was not replaced.
   if ((isset($context['tokens']['display-name']) && empty($replacements[$context['tokens']['display-name']])) &&
@@ -575,7 +575,7 @@ function social_user_social_user_account_header_account_links(array $context): a
  *
  * Exposes the signup/login help texts to the site administrator.
  */
-function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $form_state): void {
   $config = \Drupal::config('social_user.settings');
 
   $fieldset = social_user_ensure_help_text_fieldset($form);
@@ -609,7 +609,7 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
 /**
  * Stores the help texts for the social_user module.
  */
-function social_user_form_user_admin_settings_submit($form, FormStateInterface $form_state) {
+function social_user_form_user_admin_settings_submit($form, FormStateInterface $form_state): void {
   $config = \Drupal::configFactory()
     ->getEditable('social_user.settings');
   $config->set('signup_help', $form_state->getValue("signup_help"));
@@ -623,7 +623,7 @@ function social_user_form_user_admin_settings_submit($form, FormStateInterface $
  *
  * Alter Basic site settings form.
  */
-function social_user_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state) {
+function social_user_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state): void {
   $config = \Drupal::config('system.site');
 
   $form['site_information']['show_mail_in_messages'] = [
@@ -640,7 +640,7 @@ function social_user_form_system_site_information_settings_alter(&$form, FormSta
 /**
  * Stores Show email address in help messages variable.
  */
-function social_user_form_system_site_information_settings_submit($form, FormStateInterface $form_state) {
+function social_user_form_system_site_information_settings_submit($form, FormStateInterface $form_state): void {
   $config = \Drupal::configFactory()
     ->getEditable('system.site');
   $config->set('show_mail_in_messages', $form_state->getValue("show_mail_in_messages"));
@@ -692,7 +692,7 @@ function social_user_ensure_help_text_fieldset(&$form): string {
  * Gathers the suggestions for a user display name from other module and
  * displays the one with the lowest weight (highest priority).
  */
-function social_user_user_format_name_alter(&$name, AccountInterface $account) {
+function social_user_user_format_name_alter(&$name, AccountInterface $account): void {
   // We always add the username as fallback suggestion.
   $suggestions = [
     'username' => [
@@ -724,7 +724,7 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
 /**
  * Implements hook_views_pre_render().
  */
-function social_user_views_pre_render(ViewExecutable $view) {
+function social_user_views_pre_render(ViewExecutable $view): void {
   if (isset($view) && ($view->storage->id() == 'user_admin_people')) {
     $view->element['#attached']['library'][] = 'social_user/admin.people';
   }
@@ -733,7 +733,7 @@ function social_user_views_pre_render(ViewExecutable $view) {
 /**
  * Implements hook_module_implements_alter().
  */
-function social_user_module_implements_alter(&$implementations, $hook) {
+function social_user_module_implements_alter(&$implementations, $hook): void {
   if (isset($implementations['social_user']) &&
     ($hook === 'form_user_form_alter' || $hook === 'form_alter')) {
     $social_user = $implementations['social_user'];

@@ -133,7 +133,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
 /**
  * Implements hook_tokens_alter().
  */
-function social_like_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_like_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];

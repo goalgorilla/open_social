@@ -19,7 +19,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return string
    *   The post type name.
    */
-  public function getType();
+  public function getType(): string;
 
   /**
    * Sets the post type.
@@ -37,7 +37,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return int
    *   Creation timestamp of the Post.
    */
-  public function getCreatedTime();
+  public function getCreatedTime(): int;
 
   /**
    * Sets the Post creation timestamp.
@@ -48,7 +48,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return \Drupal\social_post\Entity\PostInterface
    *   The called Post entity.
    */
-  public function setCreatedTime($timestamp);
+  public function setCreatedTime($timestamp): PostInterface;
 
   /**
    * Returns the Post published status indicator.
@@ -58,7 +58,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return bool
    *   TRUE if the Post is published.
    */
-  public function isPublished();
+  public function isPublished(): bool;
 
   /**
    * Sets the published status of a Post.
@@ -69,6 +69,6 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @return \Drupal\social_post\Entity\PostInterface
    *   The called Post entity.
    */
-  public function setPublished($published);
+  public function setPublished($published): PostInterface;
 
 }

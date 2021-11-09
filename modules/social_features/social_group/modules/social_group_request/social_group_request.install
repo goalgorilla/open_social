@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Implements hook_install().
  */
-function social_group_request_install() {
+function social_group_request_install(): void {
   // Set some default permissions.
   _social_group_request_set_permissions();
 
@@ -21,7 +21,7 @@ function social_group_request_install() {
 /**
  * Assign group request permission for closed and flexible group types.
  */
-function _social_group_request_set_permissions() {
+function _social_group_request_set_permissions(): void {
 
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
     $group_type = GroupType::load('flexible_group');
@@ -40,7 +40,7 @@ function _social_group_request_set_permissions() {
  *
  * Added new 'preview' and 'cta_button' tokens to these templates.
  */
-function social_group_request_update_10301() {
+function social_group_request_update_10301(): void {
   // Prepare the path.
   $path = drupal_get_path('module', 'social_group_request') . '/config/static/';
 

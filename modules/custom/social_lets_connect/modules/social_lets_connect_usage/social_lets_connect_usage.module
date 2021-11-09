@@ -10,7 +10,7 @@ use Drupal\Component\Utility\Crypt;
 /**
  * Cron for sharing usage data.
  */
-function social_lets_connect_usage_cron() {
+function social_lets_connect_usage_cron(): void {
 
   $current_time = time();
   $last_send = \Drupal::state()

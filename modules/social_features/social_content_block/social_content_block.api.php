@@ -18,7 +18,7 @@ use Drupal\block_content\BlockContentInterface;
  *
  * @ingroup social_content_block_api
  */
-function hook_social_content_block_query_alter(Select $query, BlockContentInterface $block_content) {
+function hook_social_content_block_query_alter(Select $query, BlockContentInterface $block_content): void {
   // Get topic type tags.
   $topic_types_list = $block_content->get('field_topic_type')->getValue();
   $topic_types = array_map(function ($topic_type) {
@@ -41,7 +41,7 @@ function hook_social_content_block_query_alter(Select $query, BlockContentInterf
  * @see \Drupal\social_content_block\Annotation\ContentBlock
  * @see \Drupal\social_content_block\ContentBlockManager
  */
-function hook_social_content_block_info_alter(array &$info) {
+function hook_social_content_block_info_alter(array &$info): void {
   if (isset($info['event_content_block'])) {
     $info['event_content_block']['fields'][] = 'field_content_tags';
   }

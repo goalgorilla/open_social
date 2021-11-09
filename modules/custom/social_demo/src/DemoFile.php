@@ -159,7 +159,7 @@ abstract class DemoFile extends DemoContent {
    * @param \Drupal\file\FileInterface $entity
    *   The FileInterface entity.
    */
-  protected function applyCrops(array $item, FileInterface $entity) {
+  protected function applyCrops(array $item, FileInterface $entity): void {
     // Add coordinates for cropping images.
     foreach ($item['crops'] as $crop_name => $data) {
       $crop_type = $this->entityTypeManager

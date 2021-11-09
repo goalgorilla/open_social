@@ -12,7 +12,7 @@ use Drupal\Core\Render\Markup;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id): void {
 
   if (isset($form['logo']['default_logo'])) {
     $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
@@ -46,7 +46,7 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, FormSt
 /**
  * Implements hook_page_attachments().
  */
-function improved_theme_settings_page_attachments(array &$page) {
+function improved_theme_settings_page_attachments(array &$page): void {
 
   // Check for the current active theme.
   $active_theme = \Drupal::theme()->getActiveTheme()->getName();

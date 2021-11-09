@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_profile\SocialProfileTrait;
 use Drupal\user\Plugin\EntityReferenceSelection\UserSelection as UserSelectionBase;
 
@@ -61,7 +62,7 @@ class UserSelection extends UserSelectionBase {
    *   The EntityQuery object with the basic conditions and sorting applied to
    *   it.
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []): QueryInterface {
     // If an earlier request already had the ids don't query them again.
     if (empty($ids)) {
       $config_factory = \Drupal::service('config.factory');

@@ -15,7 +15,7 @@ interface SocialProfileTagServiceInterface {
    * @return bool
    *   Whether tagging is turned on or not.
    */
-  public function isActive();
+  public function isActive(): bool;
 
   /**
    * Returns if there are any taxonomy items available.
@@ -23,7 +23,7 @@ interface SocialProfileTagServiceInterface {
    * @return bool
    *   If there are tags available.
    */
-  public function hasContent();
+  public function hasContent(): bool;
 
   /**
    * Returns whether splitting of fields is allowed.
@@ -31,7 +31,7 @@ interface SocialProfileTagServiceInterface {
    * @return bool
    *   Whether category split on field level is turned on or not.
    */
-  public function allowSplit();
+  public function allowSplit(): bool;
 
   /**
    * Returns all the top level term items, that are considered categories.
@@ -39,7 +39,7 @@ interface SocialProfileTagServiceInterface {
    * @return array
    *   An array of top level category items.
    */
-  public function getCategories();
+  public function getCategories(): array;
 
   /**
    * Returns the children of top level term items.
@@ -50,7 +50,7 @@ interface SocialProfileTagServiceInterface {
    * @return array
    *   An array of child items.
    */
-  public function getChildrens($category);
+  public function getChildrens($category): array;
 
   /**
    * Returns whether using a parent of categories is allowed.
@@ -58,7 +58,7 @@ interface SocialProfileTagServiceInterface {
    * @return bool
    *   Whether using categories parent is turned on or not..
    */
-  public function useCategoryParent();
+  public function useCategoryParent(): bool;
 
   /**
    * Returns converted tag name to machine readable.
@@ -69,7 +69,7 @@ interface SocialProfileTagServiceInterface {
    * @return string
    *   Tag machine name.
    */
-  public function tagLabelToMachineName($label);
+  public function tagLabelToMachineName($label): string;
 
   /**
    * Returns a multilevel tree.
@@ -80,7 +80,7 @@ interface SocialProfileTagServiceInterface {
    * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $term_ids);
+  public function buildHierarchy(array $term_ids): array;
 
   /**
    * Returns list of term names as option list.
@@ -91,6 +91,6 @@ interface SocialProfileTagServiceInterface {
    * @return array
    *   Options.
    */
-  public function getTermOptionNames(array $term_ids);
+  public function getTermOptionNames(array $term_ids): array;
 
 }

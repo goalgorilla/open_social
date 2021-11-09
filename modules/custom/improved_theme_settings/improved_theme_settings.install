@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of improved_theme_settings.
  */
-function improved_theme_settings_install() {
+function improved_theme_settings_install(): void {
   // Set weight.
   module_set_weight('improved_theme_settings', 50);
 }
@@ -18,7 +18,7 @@ function improved_theme_settings_install() {
 /**
  * Migrate old theme settings to the new settings.
  */
-function improved_theme_settings_update_8001() {
+function improved_theme_settings_update_8001(): void {
   // Get the current default theme.
   $theme = \Drupal::configFactory()->get('system.theme')->get('default');
   // Get the color values.

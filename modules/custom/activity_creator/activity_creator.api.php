@@ -20,7 +20,7 @@
  *
  * @ingroup activity_creator_api
  */
-function hook_activity_creator_related_entity_object_alter(array $related_object, array &$data) {
+function hook_activity_creator_related_entity_object_alter(array $related_object, array &$data): void {
 
 }
 

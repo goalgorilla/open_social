@@ -45,7 +45,7 @@ function mentions_theme() {
 /**
  * Implements hook_entity_insert().
  */
-function mentions_entity_insert(EntityInterface $entity) {
+function mentions_entity_insert(EntityInterface $entity): void {
   if (PHP_SAPI !== 'cli') {
     mentions_insert_or_update($entity, FALSE);
   }
@@ -54,7 +54,7 @@ function mentions_entity_insert(EntityInterface $entity) {
 /**
  * Implements hook_entity_update().
  */
-function mentions_entity_update(EntityInterface $entity) {
+function mentions_entity_update(EntityInterface $entity): void {
   if (PHP_SAPI !== 'cli') {
     mentions_insert_or_update($entity, TRUE);
   }
@@ -63,7 +63,7 @@ function mentions_entity_update(EntityInterface $entity) {
 /**
  * Handling mentions crud operations.
  */
-function mentions_insert_or_update(EntityInterface $entity, $update) {
+function mentions_insert_or_update(EntityInterface $entity, $update): void {
   $config = \Drupal::config('mentions.settings');
   $supported_entities = $config->get('supported_entity_types');
   if (empty($supported_entities) || !in_array($entity->getEntityTypeId(), $supported_entities)) {
@@ -100,7 +100,7 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
 /**
  * Implements hook_entity_delete().
  */
-function mentions_entity_delete(EntityInterface $entity) {
+function mentions_entity_delete(EntityInterface $entity): void {
   $mention_ids = \Drupal::entityQuery('mentions')
     ->condition('entity_id', $entity->id())
     ->condition('entity_type', $entity->getEntityTypeId())
@@ -117,7 +117,7 @@ function mentions_entity_delete(EntityInterface $entity) {
 /**
  * Insert mentions into DB.
  */
-function mentions_crud_update($type, $mentions, $id, $author) {
+function mentions_crud_update($type, $mentions, $id, $author): void {
   $mentions_storage = \Drupal::entityTypeManager()->getStorage('mentions');
 
   // Build old array of mentions.

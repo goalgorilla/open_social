@@ -12,7 +12,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 /**
  * Install the module.
  */
-function social_tagging_install() {
+function social_tagging_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'sitemanager',
@@ -41,7 +41,7 @@ function social_tagging_install() {
 /**
  * Exclude landing pages from tagging.
  */
-function social_tagging_update_8001() {
+function social_tagging_update_8001(): void {
   // Set allow to true, since that's the case by default.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
   $config->set('tag_node_type_landing_page', FALSE)->save();
@@ -50,7 +50,7 @@ function social_tagging_update_8001() {
 /**
  * Toggle group index.
  */
-function social_tagging_update_8002() {
+function social_tagging_update_8002(): void {
   // Update field definitions.
   _social_tagging_field_definitions_update();
   // Toggle the index groups.
@@ -68,7 +68,7 @@ function social_tagging_update_8002() {
 /**
  * Update the field definitions on install, or in an update hook.
  */
-function _social_tagging_field_definitions_update() {
+function _social_tagging_field_definitions_update(): void {
   // Create field storage for the 'Highlight' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
   \Drupal::service('entity.definition_update_manager')->applyUpdates();
@@ -77,7 +77,7 @@ function _social_tagging_field_definitions_update() {
 /**
  * Install Tagging base field to profile entity type.
  */
-function social_tagging_update_8003() {
+function social_tagging_update_8003(): void {
   $field_storage_definition = BaseFieldDefinition::create('entity_reference')
     ->setLabel(t('Tagging'))
     ->setDescription(t('Tagging field.'))
@@ -107,7 +107,7 @@ function social_tagging_update_8003() {
 /**
  * Toggle user index.
  */
-function social_tagging_update_8004() {
+function social_tagging_update_8004(): void {
   // Update field definitions.
   _social_tagging_field_definitions_update();
   // Toggle the index users.

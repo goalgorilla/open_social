@@ -11,7 +11,7 @@ use Drupal\group\Entity\GroupType;
 /**
  * Implements hook_install().
  */
-function social_event_invite_install() {
+function social_event_invite_install(): void {
   // Set default settings for the group types invite feature is enabled for.
   $group_types = [];
   /** @var \Drupal\group\Entity\GroupType $group_type */
@@ -33,7 +33,7 @@ function social_event_invite_install() {
 /**
  * Implements hook_uninstall().
  */
-function social_event_invite_uninstall() {
+function social_event_invite_uninstall(): void {
   $moduleHandler = \Drupal::service('module_handler');
   // Delete the email field if social_event_an_enroll is not enabled.
   // @todo is there a way to get field dependencies instead of manual?
@@ -62,7 +62,7 @@ function social_event_invite_update_8001() {
 /**
  * Use display name instead of username for the event invite email.
  */
-function social_event_invite_update_8002() {
+function social_event_invite_update_8002(): void {
   // Get the config.
   $config = \Drupal::configFactory()->getEditable('social_event_invite.settings');
 
@@ -102,7 +102,7 @@ function social_event_invite_update_8004() {
 /**
  * Update invite message in the message template.
  */
-function social_event_invite_update_8005() {
+function social_event_invite_update_8005(): void {
   $config = \Drupal::configFactory()->getEditable('message.template.invite_event_enrollment');
 
   $new_text = [

@@ -55,7 +55,7 @@ function activity_send_schema() {
 /**
  * Add a new database column to user_activity_send, migrate the old settings.
  */
-function activity_send_update_8001() {
+function activity_send_update_8001(): void {
   // Get the full table spec (needed for $schema->addIndex()).
   $spec = [
     'fields' => [
@@ -122,7 +122,7 @@ function activity_send_update_8001() {
 /**
  * Reduce delay time for immediate email notification to 90 seconds.
  */
-function activity_send_update_8002() {
+function activity_send_update_8002(): void {
   $config = \Drupal::configFactory()->getEditable('activity_send.settings');
 
   if ($config->get('activity_send_offline_window') == 900) {

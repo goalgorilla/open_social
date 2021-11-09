@@ -47,7 +47,7 @@ function activity_creator_schema() {
 /**
  * Implements hook_update_dependencies().
  */
-function activity_creator_update_dependencies() {
+function activity_creator_update_dependencies(): array {
   // New config changes should run after the Update Helper module is enabled.
   $dependencies['activity_creator'][8801] = [
     'social_core' => 8805,
@@ -59,7 +59,7 @@ function activity_creator_update_dependencies() {
 /**
  * Create new database table {activity_notification_status}.
  */
-function activity_creator_update_8001() {
+function activity_creator_update_8001(): void {
   $spec['activity_notification_status'] = [
     'fields' => [
       'uid' => [
@@ -102,7 +102,7 @@ function activity_creator_update_8001() {
  * current activities with status as read to seen, so that we don't have any
  * dangling data in tables.
  */
-function activity_creator_update_8002() {
+function activity_creator_update_8002(): void {
   try {
     $connection = Database::getConnection();
     // Get all the activities with status READ.
@@ -144,6 +144,6 @@ function activity_creator_update_8801() {
  * @see activity_creator_post_update_8802_remove_orphaned_activities()
  * @see activity_creator_post_update_8803_remove_activities_with_no_related_entities()
  */
-function activity_creator_update_8802(&$sandbox) {
+function activity_creator_update_8802(&$sandbox): void {
   // Removed in https://www.drupal.org/project/social/issues/3171563.
 }

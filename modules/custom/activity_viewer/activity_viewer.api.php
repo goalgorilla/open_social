@@ -21,7 +21,7 @@ use Drupal\Core\Session\AccountInterface;
  * @param \Drupal\Core\Session\AccountInterface $user
  *   Current user.
  */
-function hook_activity_viewer_available_nodes_query_alter(SelectInterface $query, AccountInterface $user) {
+function hook_activity_viewer_available_nodes_query_alter(SelectInterface $query, AccountInterface $user): void {
 
 }
 
@@ -33,7 +33,7 @@ function hook_activity_viewer_available_nodes_query_alter(SelectInterface $query
  * @param \Drupal\Core\Session\AccountInterface $user
  *   Current user.
  */
-function hook_activity_viewer_available_posts_query_alter(SelectInterface $query, AccountInterface $user) {
+function hook_activity_viewer_available_posts_query_alter(SelectInterface $query, AccountInterface $user): void {
 
 }
 

@@ -14,7 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_like.
  */
-function social_like_install() {
+function social_like_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::ANONYMOUS_ID,
@@ -64,7 +64,7 @@ function social_like_install() {
 /**
  * Re-set permissions for viewing the like widget.
  */
-function social_like_update_8001() {
+function social_like_update_8001(): void {
   // Set some default permissions.
   _social_like_set_permissions();
 }
@@ -72,7 +72,7 @@ function social_like_update_8001() {
 /**
  * Re-set permissions for viewing the like widget.
  */
-function social_like_update_8002() {
+function social_like_update_8002(): void {
   // Revoke permission for AN like widget.
   user_role_revoke_permissions('anonymous', ['view like widget']);
 }
@@ -80,7 +80,7 @@ function social_like_update_8002() {
 /**
  * Disable bootstrap modal.
  */
-function social_like_update_8003() {
+function social_like_update_8003(): void {
   // Bootstrap modal breaks jquery.dialog, so turn it off.
   $settings = \Drupal::configFactory()->getEditable('socialbase.settings');
   $settings->set('modal_enabled', 0)->save();
@@ -89,7 +89,7 @@ function social_like_update_8003() {
 /**
  * Install views_infinite_scroll module.
  */
-function social_like_update_8004() {
+function social_like_update_8004(): void {
   $modules = ['views_infinite_scroll'];
   \Drupal::service('module_installer')->install($modules);
 }
@@ -97,7 +97,7 @@ function social_like_update_8004() {
 /**
  * Enable deleting likes from a database when a user is deleted.
  */
-function social_like_update_8005() {
+function social_like_update_8005(): void {
   \Drupal::configFactory()->getEditable('votingapi.settings')
     ->set('delete_everywhere', TRUE)
     ->save();
@@ -106,7 +106,7 @@ function social_like_update_8005() {
 /**
  * Function to set permissions.
  */
-function _social_like_set_permissions() {
+function _social_like_set_permissions(): void {
   $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
@@ -123,7 +123,7 @@ function _social_like_set_permissions() {
 /**
  * Set default config.
  */
-function _social_like_set_defaults() {
+function _social_like_set_defaults(): void {
   // Add like and dislike settings.
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   $container = \Drupal::getContainer()->get('config.factory');
@@ -185,7 +185,7 @@ function _social_like_get_permissions($role) {
 /**
  * Disable the setting "Hide vote widget instead of disabling it".
  */
-function social_like_update_10301() {
+function social_like_update_10301(): void {
   \Drupal::configFactory()->getEditable('like_and_dislike.settings')
     ->set('hide_vote_widget', FALSE)
     ->save();
@@ -196,7 +196,7 @@ function social_like_update_10301() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_like_update_10302() {
+function social_like_update_10302(): void {
   $config_file = drupal_get_path('module', 'social_like') . '/config/static/message.template.create_like_node_or_post_10302.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

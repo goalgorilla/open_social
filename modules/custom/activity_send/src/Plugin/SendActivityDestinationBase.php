@@ -23,7 +23,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendMessageTemplates(string $destination) {
+  public static function getSendMessageTemplates(string $destination): array {
     $email_message_templates = [];
     /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
     $message_templates = \Drupal::entityTypeManager()
@@ -117,7 +117,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    *
    * @throws \Exception
    */
-  public static function setSendUserSettings(string $destination, User $account, array $values) {
+  public static function setSendUserSettings(string $destination, User $account, array $values): void {
     if (is_object($account) && !empty($values)) {
       foreach ($values as $message_template => $frequency) {
         $query = \Drupal::database()->merge('user_activity_send');
@@ -149,7 +149,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendTargetUser(Activity $activity) {
+  public static function getSendTargetUser(Activity $activity): ?User {
     // Get target account.
     if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user->target_id)) {
       $target_id = $activity->field_activity_recipient_user->target_id;
@@ -174,7 +174,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getSendTargetUsers(Activity $activity) {
+  public static function getSendTargetUsers(Activity $activity): array {
     $targets = [];
     if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user)) {
       $targets = \Drupal::entityTypeManager()
@@ -193,7 +193,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @return bool
    *   Status of user.
    */
-  public static function isUserOffline(User $account) {
+  public static function isUserOffline(User $account): bool {
     $query = \Drupal::database()->select('sessions', 's');
     $query->addField('s', 'timestamp');
     $query->condition('s.uid', $account->id());

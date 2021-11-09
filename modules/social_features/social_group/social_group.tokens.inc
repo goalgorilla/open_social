@@ -151,7 +151,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
 /**
  * Implements hook_tokens_alter().
  */
-function social_group_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_group_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
     // Alter the [message:cta_button] and [message:preview] token, and
     // replace it with the rendered content with new text and link.

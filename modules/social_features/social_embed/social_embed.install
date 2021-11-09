@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of social_embed.
  */
-function social_embed_install() {
+function social_embed_install(): void {
   // Create the social_embed icon.
   social_embed_create_media_button();
 }
@@ -18,7 +18,7 @@ function social_embed_install() {
 /**
  * Create the social_embed icon.
  */
-function social_embed_update_8001() {
+function social_embed_update_8001(): void {
   // Create the social_embed icon.
   social_embed_create_media_button();
 }
@@ -26,6 +26,6 @@ function social_embed_update_8001() {
 /**
  * Enable 'administer url_embed' permission for sitemanagers.
  */
-function social_embed_update_10301() {
+function social_embed_update_10301(): void {
   user_role_grant_permissions('sitemanager', ['administer url_embed']);
 }

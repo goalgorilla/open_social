@@ -15,6 +15,6 @@ interface EdgeInterface {
   /**
    * Return the node for this edge.
    */
-  public function getNode();
+  public function getNode(): ?object;
 
 }

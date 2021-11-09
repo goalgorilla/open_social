@@ -100,7 +100,7 @@ abstract class PushBase extends PluginBase implements PushInterface {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(FormStateInterface $form_state) {
+  public function submitForm(FormStateInterface $form_state): void {
   }
 
   /**

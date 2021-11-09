@@ -70,7 +70,7 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
 /**
  * Implements hook_tokens_alter().
  */
-function social_content_report_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+function social_content_report_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata): void {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];

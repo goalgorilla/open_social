@@ -19,7 +19,7 @@ use Drupal\Core\Config\FileStorage;
 /**
  * Implements hook_update_dependencies().
  */
-function social_group_update_dependencies() {
+function social_group_update_dependencies(): array {
   // Necessary because in system_update_8200 all the configuration files are
   // updated and we delete some modules.
   $dependencies['system'][8200] = [
@@ -65,7 +65,7 @@ function social_group_update_dependencies() {
  *
  * Perform actions related to the installation of social_group.
  */
-function social_group_install() {
+function social_group_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'verified',
@@ -149,7 +149,7 @@ function social_group_install() {
 /**
  * Function to set permissions.
  */
-function _social_group_set_permissions() {
+function _social_group_set_permissions(): void {
   $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
@@ -225,7 +225,7 @@ function _social_group_get_permissions($role): array {
 /**
  * Function to create some menu items.
  */
-function _social_group_create_menu_links() {
+function _social_group_create_menu_links(): void {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
   /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
@@ -265,7 +265,7 @@ function _social_group_alter_admin_people_view(): void {
 /**
  * Install geolocation, geocoder and grolesync module.
  */
-function social_group_update_8001() {
+function social_group_update_8001(): void {
 
   $modules = [
     'geolocation',
@@ -279,7 +279,7 @@ function social_group_update_8001() {
 /**
  * Make sure the group nodes view is disabled.
  */
-function social_group_update_8002() {
+function social_group_update_8002(): void {
   $view = \Drupal::service('entity_type.manager')->getStorage('view')->load('group_nodes');
   if (!is_null($view)) {
     $view->setStatus(FALSE);
@@ -290,7 +290,7 @@ function social_group_update_8002() {
 /**
  * Converts group description field type from plain text to formatted text.
  */
-function social_group_update_8004(&$sandbox) {
+function social_group_update_8004(&$sandbox): void {
 
   $entity = 'group';
   $bundle = 'open_group';
@@ -364,7 +364,7 @@ function social_group_update_8004(&$sandbox) {
 /**
  * Uninstall geocoder and geolocation modules. Remove group geolocation field.
  */
-function social_group_update_8005() {
+function social_group_update_8005(): void {
   $modules = [
     'geolocation',
     'geocoder',
@@ -399,7 +399,7 @@ function social_group_update_8005() {
 /**
  * Add 'closed_group' group type and enable the permission for Authenticated.
  */
-function social_group_update_8006() {
+function social_group_update_8006(): void {
   $permissions = _social_group_get_permissions('authenticated');
   user_role_grant_permissions('authenticated', $permissions);
 }
@@ -407,7 +407,7 @@ function social_group_update_8006() {
 /**
  * Uninstall grolesync module (for now, more info: drupal.org/node/2850417).
  */
-function social_group_update_8007() {
+function social_group_update_8007(): void {
   $modules = ['grolesync'];
   \Drupal::service('module_installer')->uninstall($modules);
 }
@@ -415,14 +415,14 @@ function social_group_update_8007() {
 /**
  * Update the permissions for social_group.
  */
-function social_group_update_8008() {
+function social_group_update_8008(): void {
   _social_group_set_permissions();
 }
 
 /**
  * Set the default group configuration and permission for sitemanager.
  */
-function social_group_update_8009() {
+function social_group_update_8009(): void {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
   $config->set('allow_group_selection_in_node', FALSE);
   $config->save();
@@ -445,7 +445,7 @@ function social_group_update_8009() {
 /**
  * Add permissions for public groups.
  */
-function social_group_update_8010() {
+function social_group_update_8010(): void {
   /** @var \Drupal\user\Entity\Role $role */
   foreach (Role::loadMultiple() as $role) {
     if ($role->id() === 'anonymous') {
@@ -462,21 +462,21 @@ function social_group_update_8010() {
 /**
  * Rebuild node access.
  */
-function social_group_update_8011() {
+function social_group_update_8011(): void {
   node_access_rebuild(TRUE);
 }
 
 /**
  * Set module weight.
  */
-function social_group_update_8012() {
+function social_group_update_8012(): void {
   module_set_weight('social_group', 2);
 }
 
 /**
  * Set my groups permissions.
  */
-function social_group_update_8013() {
+function social_group_update_8013(): void {
   // Make it so that everyone who has the 'access user profiles' permission,
   // now also get these two new permissions.
   $permissions = [
@@ -495,7 +495,7 @@ function social_group_update_8013() {
 /**
  * Grant permission to access group overview to contentmanager and sitemanager.
  */
-function social_group_update_8014() {
+function social_group_update_8014(): void {
   user_role_grant_permissions('contentmanager', ['access group overview']);
   user_role_grant_permissions('sitemanager', ['access group overview']);
 }
@@ -507,7 +507,7 @@ function social_group_update_8014() {
  * visibility public, to community.
  * See: https://www.drupal.org/project/social/issues/2992332#comment-12790905.
  */
-function social_group_update_8301(&$sandbox) {
+function social_group_update_8301(&$sandbox): void {
   if (!isset($sandbox['progress'])) {
     $sandbox['progress'] = 0;
     $sandbox['items'] = [];
@@ -552,7 +552,7 @@ function social_group_update_8301(&$sandbox) {
  * visibility public, to community.
  * See: https://www.drupal.org/project/social/issues/2992332#comment-12790905.
  */
-function social_group_update_8302(&$sandbox) {
+function social_group_update_8302(&$sandbox): void {
   if (!isset($sandbox['progress'])) {
     $sandbox['progress'] = 0;
     $sandbox['items'] = [];
@@ -592,7 +592,7 @@ function social_group_update_8302(&$sandbox) {
 /**
  * Grant permission to edit group types to contentmanager and sitemanager.
  */
-function social_group_update_8303() {
+function social_group_update_8303(): void {
   user_role_grant_permissions('contentmanager', ['edit group types']);
   user_role_grant_permissions('sitemanager', ['edit group types']);
 }
@@ -600,7 +600,7 @@ function social_group_update_8303() {
 /**
  * Install gvbo module.
  */
-function social_group_update_8501() {
+function social_group_update_8501(): void {
   $modules = ['gvbo', 'social_group_gvbo'];
   \Drupal::service('module_installer')->install($modules);
 }
@@ -608,7 +608,7 @@ function social_group_update_8501() {
 /**
  * Set some extra configuration.
  */
-function social_group_update_8502() {
+function social_group_update_8502(): void {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
   $config->set('allow_hero_selection', FALSE);
   $config->set('default_hero', 'hero');
@@ -635,7 +635,7 @@ function social_group_update_8801() {
  * Load in a config file from an specific update hook that will never change.
  * Update helper did not update all fields correctly.
  */
-function social_group_update_8802() {
+function social_group_update_8802(): void {
   $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
 
   if (is_file($config_file)) {
@@ -652,7 +652,7 @@ function social_group_update_8802() {
 /**
  * Install Group Invite & Request modules by default.
  */
-function social_group_update_8901() {
+function social_group_update_8901(): void {
   $modules = ['social_group_invite', 'social_group_request'];
   \Drupal::service('module_installer')->install($modules);
 }
@@ -660,7 +660,7 @@ function social_group_update_8901() {
 /**
  * Update group's event views.
  */
-function social_group_update_8902() {
+function social_group_update_8902(): void {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -674,7 +674,7 @@ function social_group_update_8902() {
 /**
  * Allow creating groups by default.
  */
-function social_group_update_8903() {
+function social_group_update_8903(): void {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
 
   if (($setting = $config->get('address_visibility_settings')) !== NULL) {
@@ -691,7 +691,7 @@ function social_group_update_8903() {
 /**
  * Make sure flexible group, group type is not required by default.
  */
-function social_group_update_8904() {
+function social_group_update_8904(): void {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
   $config->set('social_group_type_required', FALSE)->save();
 }
@@ -713,7 +713,7 @@ function social_group_update_8905() {
 /**
  * Make group creators as a group managers by default.
  */
-function social_group_update_8906() {
+function social_group_update_8906(): void {
   $config_factory = \Drupal::configFactory();
 
   $group_types = [
@@ -796,7 +796,7 @@ function social_group_update_10302() {
 /**
  * Import flag "Mute Group Notifications" configurations.
  */
-function social_group_update_10303() {
+function social_group_update_10303(): void {
   $configs = [
     'flag.flag.mute_group_notifications' => 'flag.flag.mute_group_notifications_10303',
   ];
@@ -813,7 +813,7 @@ function social_group_update_10303() {
 /**
  * Update the permissions for social_group.
  */
-function social_group_update_10304() {
+function social_group_update_10304(): void {
   $permissions = [
     'flag mute_group_notifications',
     'unflag mute_group_notifications',
@@ -848,7 +848,7 @@ function social_group_update_10305() {
 /**
  * Import exposed block filter configurations of User Groups view.
  */
-function social_group_update_10306() {
+function social_group_update_10306(): void {
   $configs = [
     'block.block.exposed_form_groups_page_user_groups' => 'block.block.exposed_form_groups_page_user_groups_10306',
   ];
@@ -879,7 +879,7 @@ function social_group_update_10307() {
 /**
  * Set the default group configuration for cross-posting settings.
  */
-function social_group_update_10308() {
+function social_group_update_10308(): void {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
   $config->set('cross_posting.status', FALSE);
   $config->set('cross_posting.content_types', []);

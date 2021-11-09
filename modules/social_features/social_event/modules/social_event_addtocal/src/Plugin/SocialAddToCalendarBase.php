@@ -16,21 +16,21 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getName() {
+  public function getName(): string {
     return $this->pluginDefinition['label'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function generateUrl(NodeInterface $node) {
+  public function generateUrl(NodeInterface $node): Url {
     return Url::fromRoute('<front>');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function generateSettings(NodeInterface $node) {
+  public function generateSettings(NodeInterface $node): array {
     return [
       'title' => $node->getTitle(),
       'dates' => $this->getEventDates($node),
@@ -44,7 +44,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventDates(NodeInterface $node) {
+  public function getEventDates(NodeInterface $node): array {
     // Set default values.
     $all_day = FALSE;
     $start_date = new \DateTime($node->field_event_date->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
@@ -87,7 +87,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventDescription(NodeInterface $node) {
+  public function getEventDescription(NodeInterface $node): string {
     // Get event description.
     $description = $node->body->value;
 
@@ -109,7 +109,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
   /**
    * {@inheritdoc}
    */
-  public function getEventLocation(NodeInterface $node) {
+  public function getEventLocation(NodeInterface $node): string {
     // Get event address values.
     if ($node->get('field_event_address')->isEmpty()) {
       return '';

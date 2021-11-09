@@ -69,7 +69,7 @@ function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInte
  *
  * @ingroup social_follow_taxonomy_api
  */
-function hook_social_follow_taxonomy_fields_alter(array &$fields_to_check) {
+function hook_social_follow_taxonomy_fields_alter(array &$fields_to_check): void {
   $fields_to_check[] = 'social_tagging';
 }
 

@@ -8,7 +8,7 @@
 /**
  * Install the module.
  */
-function social_comment_upload_install() {
+function social_comment_upload_install(): void {
   // Sitemanagers should be able to change the settings.
   user_role_grant_permissions(
     'sitemanager',
@@ -19,7 +19,7 @@ function social_comment_upload_install() {
 /**
  * Set default values for social comment upload access.
  */
-function social_comment_upload_update_8001() {
+function social_comment_upload_update_8001(): void {
   // This update we introduce some settings for which we set the default values
   // and permissions.
   // By default attachment uploading is allowed.

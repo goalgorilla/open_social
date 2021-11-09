@@ -119,7 +119,7 @@ class SocialGroupAddForm extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getGroupTypeElement($container = FALSE) {
+  public function getGroupTypeElement($container = FALSE): array {
     $user = \Drupal::currentUser();
     $element = [
       '#type' => 'radios',

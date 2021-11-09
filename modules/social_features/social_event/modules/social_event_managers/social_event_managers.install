@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Perform actions related to the installation of social_event_managers.
  */
-function social_event_managers_install() {
+function social_event_managers_install(): void {
   // Fetch site manager role.
   $role = Role::load('sitemanager');
   // Set permission for site manager.
@@ -56,14 +56,14 @@ function social_event_managers_update_dependencies(): array {
 /**
  * Perform actions related to the installation of social_event_managers.
  */
-function social_event_managers_update_8001() {
+function social_event_managers_update_8001(): void {
   social_event_managers_install();
 }
 
 /**
  * Add manage enrollments permission to SM and CM.
  */
-function social_event_managers_update_8003() {
+function social_event_managers_update_8003(): void {
   $roles = [
     'sitemanager',
     'contentmanager',
@@ -86,7 +86,7 @@ function social_event_managers_update_8003() {
  * Load in a config file from an specific update hook that will never change.
  * Update helper did not update all fields correctly.
  */
-function social_event_managers_update_8004() {
+function social_event_managers_update_8004(): void {
   $config_file = drupal_get_path('module', 'social_event_managers') . '/config/update/social_event_managers_update_8004.yml';
 
   if (is_file($config_file)) {
@@ -103,7 +103,7 @@ function social_event_managers_update_8004() {
 /**
  * Update labels for event organiser field.
  */
-function social_event_managers_update_8005() {
+function social_event_managers_update_8005(): void {
   // Load the existing configuration.
   $config_name = 'field.field.node.event.field_event_managers';
   $config = \Drupal::configFactory()->getEditable($config_name);
@@ -154,7 +154,7 @@ function social_event_managers_update_10301() {
  *
  * Added new 'preview' and 'cta_button' tokens.
  */
-function social_event_managers_update_10302() {
+function social_event_managers_update_10302(): void {
   $config_file = drupal_get_path('module', 'social_event_managers') . '/config/static/message.template.member_added_by_event_organiser_10302.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

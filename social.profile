@@ -38,7 +38,7 @@ function social_install_tasks(&$install_state) {
  * install profile from the info file. And no actually hook_requirements in
  * there.
  */
-function social_install_tasks_alter(&$tasks, $install_state) {
+function social_install_tasks_alter(&$tasks, $install_state): void {
   // Override the core install_verify_requirements task function.
   $tasks['install_verify_requirements']['function'] = 'social_verify_custom_requirements';
 
@@ -64,6 +64,7 @@ function social_install_tasks_alter(&$tasks, $install_state) {
  * @param array $install_state
  *   The current install state.
  *
+ * @return array
  *   All the requirements we need to meet.
  */
 function social_verify_custom_requirements(array &$install_state): ?array {
@@ -98,6 +99,7 @@ function social_verify_custom_requirements(array &$install_state): ?array {
  * @param array $install_state
  *   The install state.
  *
+ * @return array
  *   Batch settings.
  */
 function social_install_demo_content(array &$install_state): array {
@@ -153,7 +155,7 @@ function social_install_demo_content(array &$install_state): array {
  *
  * Performs batch installation of modules.
  */
-function _social_install_module_batch($module, $module_name, &$context) {
+function _social_install_module_batch($module, $module_name, &$context): void {
   set_time_limit(0);
   \Drupal::service('module_installer')->install($module);
   $context['results'][] = $module;
@@ -165,7 +167,7 @@ function _social_install_module_batch($module, $module_name, &$context) {
  *
  * Performs batch uninstallation of modules.
  */
-function _social_uninstall_module_batch($module, $module_name, &$context) {
+function _social_uninstall_module_batch($module, $module_name, &$context): void {
   set_time_limit(0);
   \Drupal::service('module_installer')->uninstall($module);
   $context['results'][] = $module;
@@ -177,7 +179,7 @@ function _social_uninstall_module_batch($module, $module_name, &$context) {
  *
  * Performs batch demo content generation.
  */
-function _social_add_demo_batch($demo_type, $demo_description, &$context) {
+function _social_add_demo_batch($demo_type, $demo_description, &$context): void {
   set_time_limit(0);
 
   $num_created = 0;
@@ -204,7 +206,7 @@ function _social_add_demo_batch($demo_type, $demo_description, &$context) {
  *
  * Performs a Search API re-indexing now the demo content is present.
  */
-function _social_index_demo_content(&$context) {
+function _social_index_demo_content(&$context): void {
   $indexes = Index::loadMultiple();
   /** @var \Drupal\search_api\Entity\Index $index */
   foreach ($indexes as $index) {
