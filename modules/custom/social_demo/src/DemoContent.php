@@ -3,15 +3,20 @@
 namespace Drupal\social_demo;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
+use Drupal\file\FileStorageInterface;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
+use Drupal\taxonomy\TermStorageInterface;
 use Drupal\user\Entity\User;
+use Drupal\user\UserStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class DemoContent.
+ * Abstract class for creating demo content.
  *
  * @package Drupal\social_demo
  */
@@ -36,7 +41,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    *
    * @var \Drupal\social_demo\DemoContentParserInterface
    */
-  protected $parser;
+  protected DemoContentParserInterface $parser;
 
   /**
    * Profile.
@@ -46,11 +51,79 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   protected $profile = '';
 
   /**
-   * Contains the entity storage.
+   * The file storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\file\FileStorageInterface
    */
-  protected $entityStorage;
+  protected FileStorageInterface $fileStorage;
+
+  /**
+   * The user storage.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected UserStorageInterface $userStorage;
+
+  /**
+   * The entity storage.
+   *
+   * @var \Drupal\Core\entity\EntityStorageInterface
+   */
+  protected EntityStorageInterface $groupStorage;
+
+  /**
+   * The taxonomy term storage.
+   *
+   * @var \Drupal\taxonomy\TermStorageInterface
+   */
+  protected TermStorageInterface $termStorage;
+
+  /**
+   * Logger service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
+   */
+  protected LoggerChannelFactoryInterface $loggerChannelFactory;
+
+  /**
+   * DemoComment constructor.
+   */
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    DemoContentParserInterface $parser,
+    UserStorageInterface $user_storage,
+    EntityStorageInterface $group_storage,
+    FileStorageInterface $file_storage,
+    TermStorageInterface $term_storage,
+    LoggerChannelFactoryInterface $logger_channel_factory
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->parser = $parser;
+    $this->userStorage = $user_storage;
+    $this->groupStorage = $group_storage;
+    $this->fileStorage = $file_storage;
+    $this->termStorage = $term_storage;
+    $this->loggerChannelFactory = $logger_channel_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('social_demo.yaml_parser'),
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('entity_type.manager')->getStorage('taxonomy_term'),
+      $container->get('logger.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}

@@ -543,3 +543,17 @@ function social_content_block_update_10302(&$sandbox) {
   $sandbox['processed'] += count($entity_ids);
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
 }
+
+/**
+ * Change widget of sorting field.
+ */
+function social_content_block_update_10303(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

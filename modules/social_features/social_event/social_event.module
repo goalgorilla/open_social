@@ -356,14 +356,6 @@ function social_event_views_data_alter(array &$data) {
       'id' => 'event_enrolled_or_created',
     ],
   ];
-  $data['node']['event_passed_upcoming_sort'] = [
-    'title' => t('Event sorting (passed and upcoming)'),
-    'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
-    'sort' => [
-      'field' => 'field_event_date_value',
-      'id' => 'event_passed_upcoming_sort',
-    ],
-  ];
   $data['node__field_event_date']['event_date'] = [
     'title' => t('Event date'),
     'group' => t('Social'),
@@ -624,14 +616,6 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
 function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Form alters for the event add and edit forms.
   if ($form_id === 'node_event_edit_form' || $form_id === 'node_event_form') {
-    // Hide the default checkbox in favor of new enrollment options.
-    $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
-    $form['field_event_enroll']['#states'] = [
-      'unchecked' => [
-        ':input[name="field_enroll_method"]' => ['value' => '3'],
-      ],
-    ];
-
     // Alter visibility of enrollment methods.
     social_event_field_visibility($form, 'field_event_enroll', ['field_event_enroll_outside_group']);
 
@@ -1250,7 +1234,7 @@ function social_event_preprocess_fieldset(&$variables) {
 function social_event_field_group_form_process_build_alter(array &$element, FormStateInterface $form_state, &$complete_form) {
   if ($field_group = &$element['group_enrollment_methods']) {
     $field_group['#states']['visible'] = [
-      ':input[name="field_event_enable_enrollment[value]"]' => ['checked' => TRUE],
+      ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
     ];
     $field_group['#title'] = '';
   }

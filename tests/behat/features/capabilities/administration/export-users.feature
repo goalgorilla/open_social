@@ -13,7 +13,7 @@ Feature: Export users
     And I check the box "edit-views-bulk-operations-bulk-form-2"
     And I select "Export the selected users to CSV" from "Action"
     And I press the "Apply to selected items" button
-    Then I should see the text "Selected 3 entities"
+    Then I should see the text "Items selected:"
 
     When I press the "Apply" button
     Then I should see the text "Are you sure you wish to perform"

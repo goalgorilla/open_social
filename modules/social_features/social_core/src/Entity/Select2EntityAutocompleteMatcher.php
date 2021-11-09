@@ -4,6 +4,8 @@ namespace Drupal\social_core\Entity;
 
 use Drupal\select2\EntityAutocompleteMatcher as EntityAutocompleteMatcherBase;
 use Drupal\Component\Utility\Html;
+use Drupal\social_user\VerifyableUserInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Class Select2EntityAutocompleteMatcher.
@@ -15,7 +17,7 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
   /**
    * {@inheritdoc}
    */
-  public function getMatches($target_type, $selection_handler, array $selection_settings, $string = '') {
+  public function getMatches($target_type, $selection_handler, array $selection_settings, $string = '', array $selected = []) {
     $matches = [];
 
     $options = $selection_settings + [
@@ -38,6 +40,15 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           // '#selection_settings' => [ 'skip_entity' => ['7', '8', '9'] ].
           if (!empty($selection_settings['skip_entity']) && in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
             continue;
+          }
+
+          // Ensure that we are able to select Verified+ users only.
+          if ($target_type === 'user' && $selection_handler === 'social') {
+            /** @var \Drupal\user\UserInterface|NULL $account */
+            $account = User::load($entity_id);
+            if ($account instanceof VerifyableUserInterface && !$account->isVerified()) {
+              continue;
+            }
           }
 
           $label = !empty($selection_settings['hide_id']) ? $label : "$label ($entity_id)";

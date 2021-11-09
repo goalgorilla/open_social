@@ -27,7 +27,7 @@ class SocialPrivateMessageThreadMemberFormatter extends PrivateMessageThreadMemb
     $access_profiles = $this->currentUser->hasPermission('access user profiles');
     $users = [];
 
-    $view_builder = $this->entityManager->getViewBuilder('user');
+    $view_builder = $this->entityTypeManager->getViewBuilder('user');
 
     foreach ($items as $delta => $item) {
       /** @var \Drupal\user\UserInterface $user */

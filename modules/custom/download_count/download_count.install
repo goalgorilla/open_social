@@ -5,7 +5,7 @@
  * Installation code for the download_count module.
  */
 
-use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_schema().
@@ -95,28 +95,19 @@ function download_count_uninstall() {
  * Perform actions related to the installation of download_count.
  */
 function download_count_install() {
-  // Set some default permissions.
-  _download_count_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _download_count_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = [
+  // Grant the default permissions for this module.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
       'view download counts',
-    ];
-
-    user_role_grant_permissions($role->id(), $permissions);
-  }
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view download counts',
+    ]
+  );
 }
 
 /**

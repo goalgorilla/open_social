@@ -44,8 +44,10 @@ function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
 
   /** @var \Drupal\node\NodeInterface $event */
   foreach ($node_storage->loadMultiple($ids) as $event) {
-    $event->set('field_event_enable_enrollment', '1');
-    $event->save();
+    if ($event->hasField('field_event_enable_enrollment')) {
+      $event->set('field_event_enable_enrollment', '1');
+      $event->save();
+    }
     $sandbox['current']++;
   }
 

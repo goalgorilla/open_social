@@ -1,23 +1,23 @@
 @api @notifications @stability @DS-4323 @notification-emails
 Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to receive email notifications and configure their frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
     Given I set the configuration item "system.site" with key "name" to "Open Social"
     And users:
-      | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
-      | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
-      | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
+      | name    | mail                   | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  | verified |
+      | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  | verified |
     And I am logged in as "user1"
     And I am on the homepage
     And the cache has been cleared
     And I fill in "Say something to the Community" with "Hello [~user2]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should have an email with subject "Notification from Open Social" and in the content:
+    Then I should have an email with subject "You have been mentioned" and in the content:
       | content                                           |
       | Hi Cathy Willis                                   |
       | Christopher Conway mentioned you in a post        |
@@ -33,8 +33,7 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    And I click "Email notifications"
-    And I wait for "2" seconds
+    And I should see "Email notifications"
     And I click "Message to me"
     And I wait for "2" seconds
     And I select "none" from "A person mentioned me in a post"
@@ -45,7 +44,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're not going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
   @email-spool
   Scenario: User is able to set a daily mail for activities if he so desires
@@ -58,8 +57,7 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    And I click "Email notifications"
-    And I wait for "2" seconds
+    And I should see "Email notifications"
     And I click "Message to me"
     And I wait for "2" seconds
     And I select "daily" from "A person mentioned me in a post"
@@ -96,8 +94,7 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    And I click "Email notifications"
-    And I wait for "2" seconds
+    And I should see "Email notifications"
     And I click "Message to me"
     And I wait for "2" seconds
     And I select "weekly" from "A person mentioned me in a post"
@@ -125,7 +122,7 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: See if the queue item is processed or stuck after cron run.
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I run cron
     And I wait for the queue to be empty
     And I am on "user"
@@ -158,7 +155,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're not going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
     Given I set the configuration item "social_swiftmail.settings" with key "do_not_send_emails_new_users" to 0
     And I am logged in as "user2"
@@ -166,7 +163,7 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "You're going to be notified of this [~user1]!"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
   @email-spool
   Scenario: User should not receive notification as default
@@ -184,9 +181,9 @@ Feature: Receive email notifications and choose frequency
     Given I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    And I click "Email notifications"
-    And I wait for "2" seconds
+    And I should see "Email notifications"
     And I click "Message to me"
+    And I wait for "2" seconds
     And I should see "Never" in the "select[name='email_notifications[message_to_me][create_mention_post]'] option[selected='selected']" element
 
     Given I am logged in as "user2"
@@ -195,7 +192,7 @@ Feature: Receive email notifications and choose frequency
     And I press "Post"
     And I press "Post"
     And I wait for the queue to be empty
-    Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+    Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
 #   Enable mention notifications
     Given I am logged in as an "sitemanager"

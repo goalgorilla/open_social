@@ -19,8 +19,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class Entity implements MentionsPluginInterface {
-  private $tokenService;
-  private $entityTypeManager;
+
+  /**
+   * The token service.
+   */
+  private Token $tokenService;
+
+  /**
+   * The entity type manager service.
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Entity constructor.

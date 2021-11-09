@@ -7,8 +7,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\data_policy\Entity\DataPolicy;
 
 /**
  * Implements hook_help().
@@ -50,19 +50,22 @@ function social_gdpr_form_user_register_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * Implements hook_social_user_account_header_links().
+ * Implements hook_social_user_account_header_account_links().
  */
-function social_gdpr_social_user_account_header_links() {
-  $items = [];
-
+function social_gdpr_social_user_account_header_account_links(array $context): array {
   if (\Drupal::service('data_policy.manager')->needConsent()) {
-    $items['data_policy_agreement'] = [
-      'title' => t('Data policy agreement'),
-      'url' => Url::fromRoute('data_policy.data_policy.agreement'),
-      'after' => 'edit_profile',
-      'divider' => 'before',
+    return [
+      'data_policy_agreement' => [
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup("Data policy agreement"),
+        ],
+        '#url' => Url::fromRoute('data_policy.data_policy.agreement'),
+        '#title' => new TranslatableMarkup("Data policy agreement"),
+        '#weight' => 1500,
+      ],
     ];
   }
 
-  return $items;
+  return [];
 }

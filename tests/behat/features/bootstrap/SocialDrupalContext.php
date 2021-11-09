@@ -323,7 +323,7 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
    */
-  public function iWaitForSeconds($seconds, $condition = "") {
+  public function iWaitForSeconds($seconds, $condition = 'false') {
     $milliseconds = (int) ($seconds * 1000);
     $this->getSession()->wait($milliseconds, $condition);
   }
@@ -435,6 +435,24 @@ class SocialDrupalContext extends DrupalContext {
 
     // Login.
     $this->login($user);
+  }
+
+  /**
+   * I enable that the registered users to be verified immediately.
+   *
+   * @When I enable that the registered users to be verified immediately
+   */
+  public function iEnableVerifiedImmediately() {
+    \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', TRUE)->save();
+  }
+
+  /**
+   * I disable that the registered users to be verified immediately.
+   *
+   * @When I disable that the registered users to be verified immediately
+   */
+  public function iDisableVerifiedImmediately() {
+    \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', FALSE)->save();
   }
 
 }

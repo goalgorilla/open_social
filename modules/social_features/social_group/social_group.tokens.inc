@@ -5,7 +5,10 @@
  * Builds placeholder replacement tokens for Social Group module.
  */
 
+use Drupal\group\Entity\Group;
+use Drupal\user\UserInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Markup;
 
@@ -60,9 +63,9 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
         case 'created_entity_link_html':
 
           // Get the related entity.
-          if (isset($message->field_message_related_object)) {
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
+          if (!empty($message->get('field_message_related_object'))) {
+            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
               ->getStorage($target_type)
               ->load($target_id);
@@ -143,4 +146,69 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_group_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    // Alter the [message:cta_button] and [message:preview] token, and
+    // replace it with the rendered content with new text and link.
+    if (isset($context['tokens']['cta_button'])|| isset($context['tokens']['preview'])) {
+      /** @var Drupal\message\Entity\Message $message */
+      $message = $context['data']['message'];
+
+      if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
+
+        /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
+        $email_token_services = \Drupal::service('social_activity.email_token_services');
+
+        if (!empty($group_content = $email_token_services->getRelatedObject($message)) && $group_content->getEntityTypeId() == 'group_content') {
+          /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+          // Get the group entity.
+          /** @var Drupal\group\Entity\Group $group */
+          $group = $group_content->getGroup();
+          if ($group instanceof Group) {
+            if ($group_content->getContentPlugin()->getPluginId() === 'group_membership') {
+              $message_template_id = $message->getTemplate()->id();
+              $link = $group_content->getGroup()->toUrl();
+              switch ($message_template_id) {
+                case 'approve_request_join_group':
+                  if (isset($context['tokens']['cta_button'])) {
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group'));
+                    $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                      ->renderPlain($cta_button);
+                  }
+                  // Replace the preview token.
+                  if (isset($context['tokens']['preview'])) {
+                    $preview_info = $email_token_services->getGroupPreview($group);
+                    $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                  }
+                  break;
+
+                case 'join_to_group':
+                  if (isset($context['tokens']['cta_button'])) {
+                    $link = Url::fromRoute('view.group_members.page_group_members', ['group' => $group_content->getGroup()->id()]);
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members'));
+                    $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                      ->renderPlain($cta_button);
+                  }
+                  // Replace the preview token.
+                  if (isset($context['tokens']['preview'])) {
+                    /** @var \Drupal\user\Entity\User $user */
+                    $user = $group_content->getEntity();
+                    if ($user instanceof UserInterface) {
+                      $preview_info = $email_token_services->getUserPreview($user);
+                      $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
+                    }
+                  }
+                  break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

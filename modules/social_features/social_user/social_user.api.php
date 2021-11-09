@@ -154,41 +154,6 @@ function hook_social_user_account_header_items_alter(array &$items, array $conte
 }
 
 /**
- * Provide a method to create additional items from the user menu.
- *
- * @return array
- *   An associative array of items from profile section of user menu. The keys
- *   of array elements are keys of menu items.
- *   Each array elements should have the following records:
- *   - title: The text of menu item.
- *   - url: Url object for a URL that has a Drupal route.
- *   - after: Existing element after which will be added new item.
- *   - divider: (optional) "before" for set divider over item and "after" for
- *     set divider under item.
- *
- * @ingroup social_user_api
- *
- * @deprecated
- *   This method is replaced by hook_social_user_account_header_account_links
- *   for greater flexibility.
- *
- * @see hook_social_user_account_header_account_links()
- * @see \Drupal\social_user\Plugin\Block\AccountHeaderBlock
- */
-function hook_social_user_account_header_links() {
-  return [
-    'logout' => [
-      'title' => t('Delete account'),
-      'url' => Url::fromRoute('entity.user.cancel_form', [
-        'user' => \Drupal::currentUser(),
-      ]),
-      'after' => 'edit_profile',
-      'divider' => 'after',
-    ],
-  ];
-}
-
-/**
  * Add suggestions for finding a suitable display name for the user.
  *
  * @param \Drupal\Core\Session\AccountInterface $account
@@ -211,7 +176,7 @@ function hook_social_user_name_display_suggestions(AccountInterface $account) : 
 
   switch ($account->id()) {
     case 1:
-      // Show our admin user the respect she deserves.
+      // Show our admin user the respect they deserve.
       $suggestions['respect_admin'] = [
         'weight' => -1000,
         'name' => 'Jane Almighty',

@@ -10,6 +10,7 @@ use Drupal\field\FieldConfigInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -18,8 +19,81 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_topic.
  */
 function social_topic_install() {
-  // Set some default permissions.
-  _social_topic_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.topic.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view node.topic.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'create topic content',
+      'delete own topic content',
+      'edit own topic content',
+      'override topic published option',
+      'view node.topic.field_content_visibility:community content',
+      'view topics on my profile',
+      'view topics on other profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create topic content',
+      'delete own topic content',
+      'edit own topic content',
+      'override topic published option',
+      'view node.topic.field_content_visibility:community content',
+      'view topics on my profile',
+      'view topics on other profiles',
+      'translate topic node',
+      'delete any topic content',
+      'edit any topic content',
+      'revert topic revisions',
+      'delete topic revisions',
+      'view topic revisions',
+      'override topic revision log entry',
+      'override topic authored by option',
+      'override topic authored on option',
+      'override topic promote to front page option',
+      'override topic revision option',
+      'override topic sticky option',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create topic content',
+      'delete own topic content',
+      'edit own topic content',
+      'override topic published option',
+      'view node.topic.field_content_visibility:community content',
+      'view topics on my profile',
+      'view topics on other profiles',
+      'translate topic node',
+      'delete any topic content',
+      'edit any topic content',
+      'revert topic revisions',
+      'delete topic revisions',
+      'view topic revisions',
+      'override topic revision log entry',
+      'override topic authored by option',
+      'override topic authored on option',
+      'override topic promote to front page option',
+      'override topic revision option',
+      'override topic sticky option',
+      'administer visibility settings',
+      'administer social_topic settings',
+    ]
+  );
   // Add some links.
   _social_topic_create_menu_links();
 
@@ -47,77 +121,6 @@ function social_topic_install() {
     ]);
     $term->save();
   }
-}
-
-/**
- * Function to set permissions.
- */
-function _social_topic_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_topic_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_topic_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [
-    'view node.topic.field_content_visibility:public content',
-  ];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'create topic content',
-    'delete own topic content',
-    'edit own topic content',
-    'override topic published option',
-    'view node.topic.field_content_visibility:community content',
-    'view topics on my profile',
-    'view topics on other profiles',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'translate topic node',
-    'delete any topic content',
-    'edit any topic content',
-    'revert topic revisions',
-    'delete topic revisions',
-    'view topic revisions',
-    'override topic revision log entry',
-    'override topic authored by option',
-    'override topic authored on option',
-    'override topic promote to front page option',
-    'override topic revision option',
-    'override topic sticky option',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'administer visibility settings',
-    'administer social_topic settings',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

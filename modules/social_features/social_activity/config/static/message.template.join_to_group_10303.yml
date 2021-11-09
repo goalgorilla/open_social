@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      group_content-closed_group-group_membership: group_content-closed_group-group_membership
+      group_content-open_group-group_membership: group_content-open_group-group_membership
+      group_content-public_group-group_membership: group_content-public_group-group_membership
+    activity_action: create_entitiy_action
+    activity_context: group_content_in_my_group_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: join_to_group
+label: 'Join to group'
+description: 'A person joins a group I am managing'
+text:
+  -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

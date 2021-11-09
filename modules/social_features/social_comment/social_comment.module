@@ -25,13 +25,7 @@ function social_comment_entity_type_alter(array &$entity_types) {
   if (isset($entity_types['comment'])) {
     $entity_types['comment']->setClass(Comment::class);
     $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
-
-    // When the platform has opted in to using the entity_access api we set our
-    // custom handler. This ensures we don't break existing projects who may
-    // already have their own query_access handlers.
-    if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
-      $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
-    }
+    $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
   }
 }
 
@@ -228,6 +222,7 @@ function social_comment_preprocess_comment(&$variables) {
   $comment = $variables['elements']['#comment'];
 
   // Display comment created date in format 'time ago'.
+  /** @var \Drupal\Core\Datetime\FormattedDateDiff $created_time_ago */
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), [
       'granularity' => 1,
@@ -237,7 +232,7 @@ function social_comment_preprocess_comment(&$variables) {
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
 
   $variables['submitted'] = Link::fromTextAndUrl($date, $comment->toUrl());
-  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
+  $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $account = $comment->getOwner();
   if ($account) {
