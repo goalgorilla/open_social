@@ -10,7 +10,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
-use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_install().
@@ -18,69 +18,71 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_landing_page.
  */
 function social_landing_page_install() {
-
-  // Set some default permissions.
-  _social_landing_page_set_permissions();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_landing_page_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_landing_page_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- */
-function _social_landing_page_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [
-    'view node.landing_page.field_content_visibility:public content',
-  ];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'view node.landing_page.field_content_visibility:community content',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'create landing_page content',
-    'delete any landing_page content',
-    'delete own landing_page content',
-    'edit any landing_page content',
-    'edit own landing_page content',
-    'translate landing_page node',
-    'view landing_page revisions',
-    'delete landing_page revisions',
-    'revert landing_page revisions',
-    'override landing_page revision log entry',
-    'override landing_page authored by option',
-    'override landing_page published option',
-    'override landing_page authored on option',
-    'override landing_page promote to front landing_page option',
-    'override landing_page revision option',
-    'override landing_page sticky option',
-    'view node.landing_page.field_content_visibility:group content',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.landing_page.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'view node.landing_page.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'view node.landing_page.field_content_visibility:community content',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'view node.landing_page.field_content_visibility:community content',
+      'create landing_page content',
+      'delete any landing_page content',
+      'delete own landing_page content',
+      'edit any landing_page content',
+      'edit own landing_page content',
+      'translate landing_page node',
+      'view landing_page revisions',
+      'delete landing_page revisions',
+      'revert landing_page revisions',
+      'override landing_page revision log entry',
+      'override landing_page authored by option',
+      'override landing_page published option',
+      'override landing_page authored on option',
+      'override landing_page promote to front landing_page option',
+      'override landing_page revision option',
+      'override landing_page sticky option',
+      'view node.landing_page.field_content_visibility:group content',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'view node.landing_page.field_content_visibility:community content',
+      'create landing_page content',
+      'delete any landing_page content',
+      'delete own landing_page content',
+      'edit any landing_page content',
+      'edit own landing_page content',
+      'translate landing_page node',
+      'view landing_page revisions',
+      'delete landing_page revisions',
+      'revert landing_page revisions',
+      'override landing_page revision log entry',
+      'override landing_page authored by option',
+      'override landing_page published option',
+      'override landing_page authored on option',
+      'override landing_page promote to front landing_page option',
+      'override landing_page revision option',
+      'override landing_page sticky option',
+      'view node.landing_page.field_content_visibility:group content',
+    ]
+  );
 }
 
 /**
@@ -746,4 +748,18 @@ function social_landing_page_update_10304() {
   foreach (['contentmanager', 'sitemanager'] as $role) {
     user_role_revoke_permissions($role, ['link to any page']);
   }
+}
+
+/**
+ * Update configuration for the types of the block_field field.
+ */
+function social_landing_page_update_11001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

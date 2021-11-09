@@ -5,7 +5,6 @@
  * Install, update functions for the social_event_an_enroll module.
  */
 
-use Drupal\user\Entity\Role;
 use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldConfig;
 
@@ -16,8 +15,23 @@ use Drupal\field\Entity\FieldConfig;
  */
 function social_event_an_enroll_install() {
   module_set_weight('social_event_an_enroll', 10);
-  _social_event_an_enroll_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'manage all enrollments',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'manage all enrollments',
+    ]
+  );
   _social_event_an_enroll_fix_blocks();
+
+  // Add changes to event_manage_enrollments view.
+  _social_event_an_enroll_alter_event_manage_enrollments_view();
 }
 
 /**
@@ -36,47 +50,17 @@ function social_event_an_enroll_uninstall() {
 }
 
 /**
- * Function to set permissions.
+ * Implements hook_update_dependencies().
  */
-function _social_event_an_enroll_set_permissions() {
-  $roles = Role::loadMultiple();
+function social_event_an_enroll_update_dependencies(): array {
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_event_an_enroll'][11001] = [
+    'views_bulk_operations' => 8034,
+    'social_event_managers' => 11001,
+  ];
 
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_event_an_enroll_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_event_an_enroll_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'manage all enrollments',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  return isset($permissions[$role]) ? $permissions[$role] : [];
+  return $dependencies;
 }
 
 /**
@@ -99,6 +83,34 @@ function _social_event_an_enroll_fix_blocks() {
       $block->save();
     }
   }
+}
+
+/**
+ * Add a custom action to 'views.view.event_manage_enrollments'.
+ *
+ * Action ID: 'social_event_an_enroll_send_email_action'.
+ */
+function _social_event_an_enroll_alter_event_manage_enrollments_view(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
+
+  $preconfiguration = [];
+  if (!empty($selected_actions)) {
+    // Get the action_key of social_event_managers_send_email_action.
+    $action_key = array_search('social_event_managers_send_email_action', array_column($selected_actions, 'action_id'));
+    // Get the preconfiguration of social_event_managers_send_email_action.
+    $preconfiguration = $selected_actions[$action_key]['preconfiguration'];
+    // Remove regular 'social_event_managers_send_email_action' action.
+    unset($selected_actions[$action_key]);
+  }
+
+  $selected_actions[] = [
+    'action_id' => 'social_event_an_enroll_send_email_action',
+    'preconfiguration' => $preconfiguration,
+  ];
+
+  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions', $selected_actions);
+  $config->save();
 }
 
 /**
@@ -170,4 +182,32 @@ function social_event_an_enroll_update_10301() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add a custom action to 'views.view.event_manage_enrollments'.
+ *
+ * Action ID: 'social_event_an_enroll_send_email_action'.
+ */
+function social_event_an_enroll_update_11001(array &$sandbox): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.event_manage_enrollments');
+  $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions');
+
+  $preconfiguration = [];
+  if (!empty($selected_actions)) {
+    // Get the action_key of social_event_managers_send_email_action.
+    $action_key = array_search('social_event_managers_send_email_action', array_column($selected_actions, 'action_id'));
+    // Get the preconfiguration of social_event_managers_send_email_action.
+    $preconfiguration = $selected_actions[$action_key]['preconfiguration'];
+    // Remove regular 'social_event_managers_send_email_action' action.
+    unset($selected_actions[$action_key]);
+  }
+
+  $selected_actions[] = [
+    'action_id' => 'social_event_an_enroll_send_email_action',
+    'preconfiguration' => $preconfiguration,
+  ];
+
+  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions', $selected_actions);
+  $config->save();
 }

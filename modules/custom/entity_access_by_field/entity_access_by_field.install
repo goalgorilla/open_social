@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_install().
@@ -13,8 +14,19 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of entity_access_by_field.
  */
 function entity_access_by_field_install() {
-  // Set some default permissions.
-  _entity_access_by_field_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'override disabled public visibility',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'override disabled public visibility',
+    ]
+  );
 }
 
 /**
@@ -82,13 +94,16 @@ function _entity_access_by_field_set_permissions() {
  */
 function _entity_access_by_field_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'override disabled public visibility',
   ]);
 

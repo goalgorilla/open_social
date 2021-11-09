@@ -12,6 +12,7 @@ use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\FileStorage;
 
@@ -38,6 +39,24 @@ function social_group_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group'][11001] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group'][11002] = [
+    'views_bulk_operations' => 8034,
+  ];
+
+  // New config changes should run after the VBO module changes
+  // the structure of views.
+  $dependencies['social_group'][10202] = [
+    'views_bulk_operations' => 8034,
+  ];
+
   return $dependencies;
 }
 
@@ -47,8 +66,63 @@ function social_group_update_dependencies() {
  * Perform actions related to the installation of social_group.
  */
 function social_group_install() {
-  // Set some default permissions.
-  _social_group_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'create open_group group',
+      'create closed_group group',
+      'view group stream page',
+      'view groups on my profile',
+      'view groups on other profiles',
+      'create public_group group',
+      'flag mute_group_notifications',
+      'unflag mute_group_notifications',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create open_group group',
+      'create closed_group group',
+      'view group stream page',
+      'view groups on my profile',
+      'view groups on other profiles',
+      'create public_group group',
+      'bypass create group access',
+      'manage all groups',
+      'view node.book.field_content_visibility:group content',
+      'view node.event.field_content_visibility:group content',
+      'view node.topic.field_content_visibility:group content',
+      'view node.page.field_content_visibility:group content',
+      'access group overview',
+      'edit group types',
+      'flag mute_group_notifications',
+      'unflag mute_group_notifications',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create open_group group',
+      'create closed_group group',
+      'view group stream page',
+      'view groups on my profile',
+      'view groups on other profiles',
+      'create public_group group',
+      'bypass create group access',
+      'manage all groups',
+      'view node.book.field_content_visibility:group content',
+      'view node.event.field_content_visibility:group content',
+      'view node.topic.field_content_visibility:group content',
+      'view node.page.field_content_visibility:group content',
+      'access group overview',
+      'edit group types',
+      'set social group settings',
+      'flag mute_group_notifications',
+      'unflag mute_group_notifications',
+    ]
+  );
   // Add menu items.
   _social_group_create_menu_links();
 
@@ -100,12 +174,15 @@ function _social_group_set_permissions() {
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
+  $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access group search',
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], []);
+
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
     'create open_group group',
     'create closed_group group',
     'view group stream page',
@@ -119,11 +196,11 @@ function _social_group_get_permissions($role) {
   $config = \Drupal::config('entity_access_by_field.settings');
   $disable_public_visibility = $config->get('disable_public_visibility');
   if ($disable_public_visibility === 0) {
-    $permissions['authenticated'][] = 'create public_group group';
+    $permissions['verified'][] = 'create public_group group';
   }
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+  $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'bypass create group access',
     'manage all groups',
     'view node.book.field_content_visibility:group content',
@@ -169,6 +246,21 @@ function _social_group_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
+}
+
+/**
+ * Update the user admin view with our custom action.
+ *
+ * Action ID: 'social_group_add_members_to_group_action'.
+ */
+function _social_group_alter_admin_people_view(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_group_add_members_to_group_action',
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
 }
 
 /**
@@ -835,4 +927,36 @@ function social_group_update_11001(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update 'views.view.group_manage_members' after VBO module updates.
+ */
+function social_group_update_11002(array &$sandbox): void {
+  $config_file = drupal_get_path('module', 'social_group') . '/config/static/views.view.group_manage_members_11002.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse((string) file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.group_manage_members');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add 'social_group_add_members_to_group_action'.
+ *
+ * Update 'views.view.user_admin_people' after VBO module updates.
+ */
+function social_group_update_11003(array &$sandbox): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  $selected_actions[] = [
+    'action_id' => 'social_group_add_members_to_group_action',
+  ];
+  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+  $config->save();
 }

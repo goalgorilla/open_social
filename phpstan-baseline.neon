@@ -661,11 +661,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
 
 		-
-			message: "#^Method Drupal\\\\activity_creator\\\\ActivityNotifications\\:\\:markEntityAsRead\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityNotifications.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
@@ -3201,11 +3196,6 @@ parameters:
 			path: modules/custom/social_gdpr/social_gdpr.module
 
 		-
-			message: "#^Function social_gdpr_social_user_account_header_links\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_gdpr/social_gdpr.module
-
-		-
 			message: "#^Function social_graphql_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/social_graphql.install
@@ -3526,21 +3516,6 @@ parameters:
 			path: modules/custom/social_language/social_language.module
 
 		-
-			message: "#^Cannot access property \\$links on array\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
-			message: "#^Parameter \\#1 \\$type of method Drupal\\\\Core\\\\Language\\\\LanguageManagerInterface\\:\\:getLanguageSwitchLinks\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
 			message: "#^Cannot call method getName\\(\\) on Drupal\\\\Core\\\\Language\\\\LanguageInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/social_language/src/Plugin/UserExportPlugin/UserLanguage.php
@@ -3559,16 +3534,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/social_language/src/SocialLanguageConfigOverride.php
-
-		-
-			message: "#^Parameter \\#2 \\$str of function explode expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/SocialLanguageMetadataBubblingUrlGenerator.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/custom/social_language/src/SocialLanguageMetadataBubblingUrlGenerator.php
 
 		-
 			message: "#^Method Drupal\\\\social_language\\\\SocialLanguageServiceProvider\\:\\:alter\\(\\) has no return typehint specified\\.$#"
@@ -10546,16 +10511,6 @@ parameters:
 			path: modules/social_features/social_event/src/Plugin/views/sort/EventDate.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addOrderBy\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Plugin/views/sort/EventPassedDesc.php
-
-		-
-			message: "#^Method Drupal\\\\social_event\\\\Plugin\\\\views\\\\sort\\\\EventPassedDesc\\:\\:query\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Plugin/views/sort/EventPassedDesc.php
-
-		-
 			message: "#^Method Drupal\\\\social_event\\\\Routing\\\\EnrollRequestsOverviewSubscriber\\:\\:checkAccessToEnrollRequestsOverview\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Routing/EnrollRequestsOverviewSubscriber.php
@@ -10772,21 +10727,6 @@ parameters:
 
 		-
 			message: "#^Function _social_follow_landing_page_entity_validate\\(\\) has parameter \\$element with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has parameter \\$context with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has parameter \\$element with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
 
@@ -16642,7 +16582,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
@@ -16762,6 +16702,11 @@ parameters:
 
 		-
 			message: "#^Function social_private_message_private_message_thread_insert\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
+			message: "#^Function social_private_message_private_message_view_alter\\(\\) has parameter \\$viewMode with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
@@ -16901,11 +16846,6 @@ parameters:
 			path: modules/social_features/social_private_message/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\PrivateMessageMailer\\:\\:send\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/PrivateMessageMailer.php
-
-		-
 			message: "#^Cannot call method fetchAllKeyed\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|int\\|string\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
@@ -16917,16 +16857,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:deleteUserDataThreadInfo\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has parameter \\$uid with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
 
@@ -19702,11 +19632,6 @@ parameters:
 
 		-
 			message: "#^Function social_user_social_user_account_header_account_links\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
-			message: "#^Function social_user_social_user_account_header_account_links_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.module
 

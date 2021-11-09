@@ -1,15 +1,15 @@
 @api @like @stability @DS-2971 @stability-3 @like-post-stream @javascript
 Feature: Like post stream
   Benefit: In order to like a post in the stream
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to like a post in the stream
 
-  @LU
+  @verified
   Scenario: Like a post in the stream
     Given users:
-      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
-      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
-      | user_2   | mail_2@example.com | 1      | Isaac                    | Newton                  |
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                | verified |
+      | user_2   | mail_2@example.com | 1      | Isaac                    | Newton                  | verified |
 
     Given I am logged in as "user_1"
     And I am on the profile of "user_2"
@@ -31,8 +31,8 @@ Feature: Like post stream
   @AN @like-post-stream-anonymous
   Scenario: As an anonymous user I want to see the amount of likes of public content
     Given users:
-      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
-      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                | verified |
     Given I set the configuration item "system.site" with key "page.front" to "/stream"
     Given I am logged in as "user_1"
     And I am on "/stream"
