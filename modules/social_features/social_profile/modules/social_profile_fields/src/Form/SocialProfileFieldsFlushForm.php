@@ -27,14 +27,6 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   protected ProfileStorage $profileStorage;
 
   /**
-   * Configstorage.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected ConfigFactory $configFactory;
-
-
-  /**
    * Fiekdconfigstorage.
    *
    * @var \Drupal\field\FieldConfigStorage
@@ -46,14 +38,11 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    *
    * @param \Drupal\profile\ProfileStorage $profiel_storage
    *   The profile storage.
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   *   The config.
    * @param \Drupal\field\FieldConfigStorage $field_storage
    *   The field storage.
    */
-  public function __construct(ProfileStorage $profiel_storage, ConfigFactory $config_factory, FieldConfigStorage $field_storage) {
+  public function __construct(ProfileStorage $profiel_storage, FieldConfigStorage $field_storage) {
     $this->profileStorage = $profiel_storage;
-    $this->configFactory = $config_factory;
     $this->fieldStorage = $field_storage;
   }
 
@@ -63,7 +52,6 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager')->getStorage('profile'),
-      $container->get('config.factory'),
       $container->get('entity_type.manager')->getStorage('field_config')
     );
   }

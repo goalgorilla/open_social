@@ -2,6 +2,7 @@
 
 namespace Drupal\social_follow_landing_page;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
@@ -19,7 +20,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected ModuleHandler $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs the service with DI.

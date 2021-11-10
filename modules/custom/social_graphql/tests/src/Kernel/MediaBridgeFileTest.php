@@ -7,6 +7,8 @@ use Drupal\entity_test\Entity\EntityTest;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
+use Drupal\graphql\Plugin\DataProducerPluginManager;
+use Drupal\media\Plugin\media\Source\Image;
 use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\user\Entity\Role;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -37,14 +39,14 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
    *
    * @var \Drupal\graphql\Plugin\DataProducerPluginManager
    */
-  protected ?object $dataProducerPluginManager = NULL;
+  protected DataProducerPluginManager $dataProducerPluginManager;
 
   /**
    * The image under test.
    *
    * @var \Drupal\media\Plugin\media\Source\Image
    */
-  protected File $image;
+  protected Image $image;
 
   /**
    * {@inheritdoc}

@@ -34,14 +34,14 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * Protected var alternativeFrontpageSettings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
   protected ImmutableConfig $alternativeFrontpageSettings;
 
   /**
    * Protected var siteSettings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
   protected ImmutableConfig $siteSettings;
 
@@ -67,7 +67,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected State $state;
 
   /**
-   * Drupal\Core\Messenger\MessengerInterface definition.
+   * The messenger services.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
