@@ -71,7 +71,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
           // Get the related entity.
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
