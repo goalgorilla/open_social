@@ -36,7 +36,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   /**
    * The route match.
    *
-   * @var \Drupal\social_tagging\SocialTaggingService
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected RequestStack $requestStack;
 

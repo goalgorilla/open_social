@@ -54,14 +54,14 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
   /**
    * Protected var alternativeFrontpageSettings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
   protected ImmutableConfig $alternativeFrontpageSettings;
 
   /**
    * Protected var siteSettings.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
   protected ImmutableConfig $siteSettings;
 

@@ -28,8 +28,6 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   /**
    * SearchHeroForm constructor.
    *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *   The route match.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
    */

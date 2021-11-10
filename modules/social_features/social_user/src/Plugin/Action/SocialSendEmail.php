@@ -40,7 +40,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * The user storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $storage;
 

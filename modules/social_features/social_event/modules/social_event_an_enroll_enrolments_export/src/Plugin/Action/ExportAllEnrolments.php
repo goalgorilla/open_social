@@ -107,7 +107,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities): void {
+  public function executeMultiple(array $entities) {
     $this->entities = $entities;
 
     parent::executeMultiple($entities);

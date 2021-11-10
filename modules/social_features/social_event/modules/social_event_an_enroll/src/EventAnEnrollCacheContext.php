@@ -45,7 +45,7 @@ class EventAnEnrollCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata(): self {
+  public function getCacheableMetadata() {
     return (new CacheableMetadata())->addCacheTags(['routes']);
   }
 

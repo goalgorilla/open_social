@@ -19,32 +19,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class SearchContentForm extends FormBase implements ContainerInjectionInterface {
 
   /**
-   * The request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected RequestStack $requestStack;
-
-  /**
-   * SearchHeroForm constructor.
-   *
-   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *   The request stack.
-   */
-  public function __construct(RequestStack $requestStack) {
-    $this->requestStack = $requestStack;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('request_stack')
-    );
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getFormId(): string {

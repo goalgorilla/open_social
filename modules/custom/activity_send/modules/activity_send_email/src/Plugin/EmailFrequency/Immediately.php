@@ -71,7 +71,7 @@ class Immediately extends EmailFrequencyBase {
     $params = [];
     // Translating frequency instance in the language of the user.
     // @codingStandardsIgnoreStart
-    $frequency_translated = t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
+    $frequency_translated = t($this->getName(), [], ['langcode' => $langcode]);
     // @codingStandardsIgnoreEnd
 
     // Construct the render array.

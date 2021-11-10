@@ -17,7 +17,7 @@ function social_event_post_update_update_events(&$sandbox): void {
 /**
  * Set event enrollment option to enabled by default for existing events.
  */
-function social_event_post_update_10301_enable_event_enrollment(&$sandbox): TranslatableMarkup {
+function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
   /** @var \Drupal\node\NodeStorageInterface $node_storage */
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
 

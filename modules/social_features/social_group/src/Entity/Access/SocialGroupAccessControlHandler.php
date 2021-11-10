@@ -51,7 +51,7 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     if (
       !$account->hasPermission('bypass group access') &&
       !$account->hasPermission('bypass create group access') &&

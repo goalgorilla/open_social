@@ -24,23 +24,13 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   protected ?GroupInterface $group = NULL;
 
   /**
-   * Request stack.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
-   */
-  protected RequestStack $requestStack;
-
-  /**
    * GroupRequestMembershipRejectForm constructor.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
    */
-  public function __construct(TranslationInterface $string_translation, RequestStack $request_stack) {
+  public function __construct(TranslationInterface $string_translation) {
     $this->setStringTranslation($string_translation);
-    $this->requestStack = $request_stack;
   }
 
   /**
@@ -48,8 +38,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('string_translation'),
-      $container->get('request_stack')
+      $container->get('string_translation')
     );
   }
 

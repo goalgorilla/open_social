@@ -64,7 +64,6 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-
     $this->groupContent
       ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
       // Who created request will become an 'approver' for Membership request.

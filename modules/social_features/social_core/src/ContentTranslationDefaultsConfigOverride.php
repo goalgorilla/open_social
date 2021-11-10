@@ -17,7 +17,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   /**
    * The module handler.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandler
    */
   protected ModuleHandler $moduleHandler;
 
