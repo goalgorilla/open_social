@@ -5,8 +5,6 @@
  * Post update functions for the Social event module.
  */
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-
 /**
  * Empty post update hook.
  */

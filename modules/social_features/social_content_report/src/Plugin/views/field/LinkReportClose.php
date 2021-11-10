@@ -2,7 +2,6 @@
 
 namespace Drupal\social_content_report\Plugin\views\field;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\LinkBase;
 use Drupal\views\ResultRow;

@@ -3,7 +3,6 @@
 namespace Drupal\social_profile_fields\Form;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
