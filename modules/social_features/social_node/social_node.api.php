@@ -1,10 +1,11 @@
 <?php
 
-use Drupal\node\NodeInterface;
 /**
  * @file
  * Hooks specific to the Social Node module.
  */
+
+use Drupal\node\NodeInterface;
 
 /**
  * @addtogroup hooks
