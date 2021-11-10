@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
@@ -29,7 +28,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
    *
    *   The access result.
    */
-  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account): CacheableDependencyInterface {
+  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     $permission = $route->getRequirement('_flexible_group_content_visibility');
 
     // Don't interfere if no permission was specified.

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Controller;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -59,7 +58,7 @@ class GroupManagersController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    *   Thrown if the storage handler couldn't be loaded.
    */
-  public function access(AccountInterface $account, RouteMatch $route_match): CacheableDependencyInterface {
+  public function access(AccountInterface $account, RouteMatch $route_match): AccessResult {
     // CM+ are allowed!
     if ($account->hasPermission('administer members')) {
       return AccessResult::allowed();

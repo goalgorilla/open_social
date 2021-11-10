@@ -19,35 +19,35 @@ class EntityAccessTest extends UnitTestCase {
    *
    * @var string
    */
-  protected $fieldType;
+  protected ?string $fieldType = NULL;
 
   /**
    * The visibility value.
    *
    * @var string
    */
-  protected $fieldValue;
+  protected ?string $fieldValue = NULL;
 
   /**
    * The field id.
    *
    * @var string
    */
-  protected $fieldId = 'node.article.field_content_visibility';
+  protected string $fieldId = 'node.article.field_content_visibility';
 
   /**
    * The account id.
    *
    * @var int
    */
-  protected $accountId = 5;
+  protected int $accountId = 5;
 
   /**
    * The account id.
    *
    * @var int
    */
-  protected $nodeOwnerId;
+  protected ?int $nodeOwnerId = NULL;
 
   /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Neutral Access.

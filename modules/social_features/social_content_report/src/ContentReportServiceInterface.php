@@ -36,6 +36,6 @@ interface ContentReportServiceInterface {
    *   A renderable array to be used in a #links array or FALSE if the user has
    *   no access.
    */
-  public function getModalLink(EntityInterface $entity, $flag_id, $is_button = FALSE): ?array;
+  public function getModalLink(EntityInterface $entity, string $flag_id, bool $is_button = FALSE): ?array;
 
 }

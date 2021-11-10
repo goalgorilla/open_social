@@ -17,7 +17,7 @@ class SignupMenuLink extends MenuLinkDefault {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Constructs a new SignupMenuLink.

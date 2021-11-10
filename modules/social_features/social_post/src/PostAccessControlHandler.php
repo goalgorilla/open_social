@@ -24,7 +24,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}

@@ -33,35 +33,35 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The email frequency manager.
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $emailFrequencyManager;
+  protected EmailFrequencyManager $emailFrequencyManager;
 
   /**
    * The mail manager.
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The translation service.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
-  protected $translation;
+  protected TranslationInterface $translation;
 
   /**
    * {@inheritdoc}

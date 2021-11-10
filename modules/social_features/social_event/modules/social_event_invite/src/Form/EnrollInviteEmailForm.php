@@ -25,14 +25,14 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    *
    * @var \Drupal\Core\entity\EntityStorageInterface
    */
-  protected $entityStorage;
+  protected EntityStorageInterface $entityStorage;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private $tempStoreFactory;
+  private PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The Config factory.
@@ -46,7 +46,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * {@inheritdoc}

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerTrait;
@@ -37,35 +38,35 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $userExportPlugin;
+  protected UserExportPluginManager $userExportPlugin;
 
   /**
    * User export plugin definitions.
    *
    * @var array
    */
-  protected $pluginDefinitions;
+  protected array $pluginDefinitions;
 
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The user export plugin config object.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * Constructs a ExportUser object.
@@ -114,7 +115,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): void {
 
     // Check if headers exists.
     if (empty($this->context['sandbox']['results']['headers'])) {
@@ -250,7 +251,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    *   An array of export plugin's configuration.
    */
-  public function getPluginConfiguration($plugin_id, $entity_id): array {
+  public function getPluginConfiguration(int $plugin_id, int $entity_id): array {
     return [];
   }
 

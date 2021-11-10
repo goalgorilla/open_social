@@ -431,7 +431,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    *   Either TRUE or FALSE.
    */
-  private function checkGroupContentCreateAccess($gid, User $account, EntityInterface $entity): bool {
+  private function checkGroupContentCreateAccess(int $gid, User $account, EntityInterface $entity): bool {
     $group = Group::load($gid);
 
     if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {

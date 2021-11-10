@@ -28,7 +28,7 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
    *
    * @var \Drupal\activity_creator\ActivityFactory
    */
-  private $activityFactory;
+  private ActivityFactory $activityFactory;
 
   /**
    * {@inheritdoc}

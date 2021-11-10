@@ -34,7 +34,7 @@ class EdgeNode extends DataProducerPluginBase implements DataProducerPluginCachi
    * @return mixed
    *   The graph node.
    */
-  public function resolve(EdgeInterface $edge) {
+  public function resolve(EdgeInterface $edge): ?object {
     return $edge->getNode();
   }
 

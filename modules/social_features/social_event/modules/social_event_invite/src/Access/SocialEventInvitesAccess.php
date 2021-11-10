@@ -19,7 +19,7 @@ class SocialEventInvitesAccess {
    *
    * @var \Drupal\social_event_invite\SocialEventInviteAccessHelper
    */
-  protected $accessHelper;
+  protected SocialEventInviteAccessHelper $accessHelper;
 
   /**
    * EventInvitesAccess constructor.

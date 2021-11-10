@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Form;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -41,28 +42,28 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $entityStorage;
+  protected EntityStorageInterface $entityStorage;
 
   /**
    * The user storage.
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected EntityStorageInterface $userStorage;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The config factory.
@@ -76,14 +77,14 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The event enroll service.
    *
    * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
    */
-  protected $eventEnrollService;
+  protected SocialEventEnrollServiceInterface $eventEnrollService;
 
   /**
    * {@inheritdoc}

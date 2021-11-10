@@ -113,7 +113,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    *
    *   FALSE if its not allowed.
    */
-  private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match): bool {
+  private function calculateJoinPermission(string $permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match): bool {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
 

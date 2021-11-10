@@ -25,7 +25,7 @@ class ImagePopupController extends ControllerBase {
    *
    * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
-  public function render(PostInterface $post, $first_fid): array {
+  public function render(PostInterface $post, string $first_fid): array {
     $items = [FALSE => [], TRUE => []];
     $found = FALSE;
 
@@ -46,7 +46,7 @@ class ImagePopupController extends ControllerBase {
 
     return [
       '#theme' => 'album_post_popup',
-      '#urls' => array_merge($items[TRUE], $items[FALSE]),
+      '#urls' => [...$items[TRUE], ...$items[FALSE]],
       '#pid' => $post->id(),
     ];
   }

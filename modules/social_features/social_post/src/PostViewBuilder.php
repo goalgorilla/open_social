@@ -37,7 +37,7 @@ class PostViewBuilder extends EntityViewBuilder {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $socialGroupHelperService;
+  protected SocialGroupHelperService $socialGroupHelperService;
 
   /**
    * Constructs a new EntityViewBuilder.
@@ -88,7 +88,7 @@ class PostViewBuilder extends EntityViewBuilder {
     foreach ($entities as $id => $entity) {
 
       $build[$id]['links'] = [
-        '#lazy_builder' => [get_called_class() . '::renderLinks', [
+        '#lazy_builder' => [static::class . '::renderLinks', [
           $entity->id(),
           $view_mode,
           $entity->language()->getId(),

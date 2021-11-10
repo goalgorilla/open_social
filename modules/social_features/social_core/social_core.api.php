@@ -18,7 +18,7 @@
  *
  * @ingroup social_core_api
  */
-function hook_social_filter_format_default_alter(&$filter_format): void {
+function hook_social_filter_format_default_alter(string &$filter_format): void {
   $filter_format = 'full_html';
 }
 

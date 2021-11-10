@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -28,7 +27,7 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Creates a GroupHeroBlock instance.
@@ -86,7 +85,7 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account): AccessResultForbidden {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     $current_route = $this->routeMatch->getRouteName();
 
     if ($current_route == 'entity.group_content.create_form') {

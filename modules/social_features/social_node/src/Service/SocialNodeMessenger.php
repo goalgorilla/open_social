@@ -18,14 +18,14 @@ class SocialNodeMessenger extends Messenger implements SocialNodeMessengerInterf
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The node.
    *
    * @var \Drupal\node\NodeInterface
    */
-  protected $node;
+  protected ?NodeInterface $node = NULL;
 
   /**
    * SocialNodeMessenger constructor.

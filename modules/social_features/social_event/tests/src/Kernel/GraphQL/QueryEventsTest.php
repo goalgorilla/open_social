@@ -98,7 +98,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     }
 
     $event_uuids = array_map(
-      static fn($event) => $event->uuid(),
+      static fn($event): ?string => $event->uuid(),
       $events ?? []
     );
 

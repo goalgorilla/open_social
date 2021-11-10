@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Plugin\Block;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Access\AccessResult;
@@ -34,35 +35,35 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
    *
    * @var \Drupal\Core\Entity\EntityInterface|null
    */
-  protected $event;
+  protected ?EntityInterface $event = NULL;
 
   /**
    * Entity type manger.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Translation manager.
    *
    * @var \Drupal\Core\StringTranslation\TranslationManager
    */
-  protected $translation;
+  protected TranslationManager $translation;
 
   /**
    * Current route match.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The logger factory.
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected $loggerFactory;
+  protected LoggerChannelFactoryInterface $loggerFactory;
 
   /**
    * Constructs SocialGroupRequestMembershipNotification.

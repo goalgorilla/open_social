@@ -24,14 +24,14 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelper;
+  protected SocialGroupHelperService $groupHelper;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The module handler.

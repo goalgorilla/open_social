@@ -25,42 +25,42 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *
    * @var \Drupal\social_profile_fields\SocialProfileFieldsHelper
    */
-  protected $profileFieldsHelper;
+  protected SocialProfileFieldsHelper $profileFieldsHelper;
 
   /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidator
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidator $cacheTagsInvalidator;
 
   /**
    * Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
-  protected $moduleHandler;
+  protected ModuleHandler $moduleHandler;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * SocialProfileSettingsForm constructor.

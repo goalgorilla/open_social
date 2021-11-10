@@ -24,7 +24,7 @@ class SocialPostPostForm extends AreaPluginBase {
    *
    * @var \Drupal\Core\Block\BlockManagerInterface
    */
-  protected $blockManager;
+  protected BlockManagerInterface $blockManager;
 
   /**
    * {@inheritdoc}

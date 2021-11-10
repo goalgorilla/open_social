@@ -21,7 +21,7 @@ class ActivityNotifications extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * ActivityNotifications constructor.

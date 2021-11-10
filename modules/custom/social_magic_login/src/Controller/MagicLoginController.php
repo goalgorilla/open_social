@@ -23,21 +23,21 @@ class MagicLoginController extends ControllerBase {
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected UserStorageInterface $userStorage;
 
   /**
    * The logger service.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The config.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  public $config;
+  public ConfigFactory $config;
 
   /**
    * MagicLoginController constructor.
@@ -87,7 +87,7 @@ class MagicLoginController extends ControllerBase {
    *
    * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
-  public function login($uid, $timestamp, $hash, $destination): RedirectResponse {
+  public function login(int $uid, int $timestamp, string $hash, string $destination): RedirectResponse {
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
     // Verify that the user exists and is active.

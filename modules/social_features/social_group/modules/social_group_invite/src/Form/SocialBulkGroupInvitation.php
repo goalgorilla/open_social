@@ -39,14 +39,14 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The tempstore factory.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The logger factory.
@@ -82,28 +82,28 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * @var \Drupal\group\GroupMembershipLoaderInterface
    */
-  protected $groupMembershipLoader;
+  protected GroupMembershipLoaderInterface $groupMembershipLoader;
 
   /**
    * The Config factory.
    *
    * @var \Drupal\ginvite\GroupInvitationLoader
    */
-  protected $groupInvitationLoader;
+  protected GroupInvitationLoader $groupInvitationLoader;
 
   /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The group content plugin manager.
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $pluginManager;
+  protected GroupContentEnablerManagerInterface $pluginManager;
 
   /**
    * Constructs a new BulkGroupInvitation Form.

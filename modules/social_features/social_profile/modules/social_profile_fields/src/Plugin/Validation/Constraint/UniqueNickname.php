@@ -20,6 +20,6 @@ class UniqueNickname extends Constraint {
    *
    * @var string
    */
-  public $notUnique = '%value is already taken.';
+  public string $notUnique = '%value is already taken.';
 
 }

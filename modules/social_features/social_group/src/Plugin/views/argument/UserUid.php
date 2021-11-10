@@ -22,7 +22,7 @@ class UserUid extends ArgumentPluginBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.

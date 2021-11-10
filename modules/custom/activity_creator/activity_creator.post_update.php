@@ -5,6 +5,7 @@
  * Contains post update hook implementations.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Site\Settings;
 
 /**
@@ -14,7 +15,7 @@ use Drupal\Core\Site\Settings;
  * and marking them as seen. So, we have migrate the existing activity entries
  * to new table so as to avoid any missing notifications by users.
  */
-function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
+function activity_creator_post_update_8001_one_to_many_activities(&$sandbox): TranslatableMarkup {
   // Fetching amount of data we need to process.
   // Runs only once per update.
   $connection = \Drupal::database();

@@ -49,7 +49,7 @@ function _social_profile_fields_set_permissions(): void {
  * @param string $index_id
  *   The search index ID.
  */
-function _social_profile_fields_update_search_index($index_id = 'social_users'): void {
+function _social_profile_fields_update_search_index(string $index_id = 'social_users'): void {
   /** @var \Drupal\search_api\IndexInterface $index */
   $index = Index::load($index_id);
 

@@ -20,21 +20,21 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
    */
-  private $entityQuery;
+  private QueryFactory $entityQuery;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The activity factory service.
    *
    * @var \Drupal\activity_creator\ActivityFactory
    */
-  protected $activityFactory;
+  protected ActivityFactory $activityFactory;
 
   /**
    * ActivityContextBase constructor.

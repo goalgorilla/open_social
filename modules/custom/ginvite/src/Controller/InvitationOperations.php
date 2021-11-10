@@ -2,7 +2,7 @@
 
 namespace Drupal\ginvite\Controller;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -27,7 +27,7 @@ class InvitationOperations extends ControllerBase {
    *
    * @var \Drupal\group\GroupMembershipLoader
    */
-  protected $membershipLoader;
+  protected GroupMembershipLoader $membershipLoader;
 
   /**
    * The entity form builder.
@@ -143,7 +143,7 @@ class InvitationOperations extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResult
    *   Access check result.
    */
-  public function checkAccess(GroupContentInterface $group_content): CacheableDependencyInterface {
+  public function checkAccess(GroupContentInterface $group_content): AccessResult {
     $invited = $group_content->get('entity_id')->getString();
     $group = $group_content->getGroup();
     $membership = $this->membershipLoader->load($group, $this->currentUser());
@@ -165,7 +165,7 @@ class InvitationOperations extends ControllerBase {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Rendered translatable title.
    */
-  public function invitationTitle(GroupInterface $group): string {
+  public function invitationTitle(GroupInterface $group): TranslatableMarkup {
     $title = $this->t('Invite members');
 
     if (NULL !== $group->label()) {

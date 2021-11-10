@@ -23,28 +23,28 @@ class ActivityLoggerFactory {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The condition manager.
    *
    * @var \Drupal\activity_creator\Plugin\ActivityEntityConditionManager
    */
-  protected $activityEntityConditionManager;
+  protected ActivityEntityConditionManager $activityEntityConditionManager;
 
   /**
    * The context manager.
    *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
-  protected $activityContextManager;
+  protected ActivityContextManager $activityContextManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * ActivityLoggerFactory constructor.
@@ -77,7 +77,7 @@ class ActivityLoggerFactory {
    * @param string $action
    *   Action string. Defaults to 'create'.
    */
-  public function createMessages(EntityBase $entity, $action): void {
+  public function createMessages(EntityBase $entity, string $action): void {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
     // Loop through those message types and create messages.
@@ -154,7 +154,7 @@ class ActivityLoggerFactory {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getMessageTypes($action, EntityBase $entity): array {
+  public function getMessageTypes(string $action, EntityBase $entity): array {
     // Init.
     $messagetypes = [];
 
@@ -205,7 +205,7 @@ class ActivityLoggerFactory {
    * @param array $fields
    *   The data to insert in the field instances.
    */
-  protected function createFieldInstances($message_type, array $fields): void {
+  protected function createFieldInstances(string $message_type, array $fields): void {
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = $this->entityTypeManager
@@ -263,7 +263,7 @@ class ActivityLoggerFactory {
    * @retrun bool
    *   Returns true if the message exists.
    */
-  public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid): bool {
+  public function checkIfMessageExist(string $message_type, string $context, array $destination, array $related_object, string $uid): bool {
     $exists = FALSE;
 
     $query = $this->entityTypeManager->getStorage('message')->getQuery();

@@ -196,7 +196,7 @@ function _social_event_get_link_to_event_from_enrollment(int $event_enrollment_i
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _social_event_get_name_from_enrollment($id) {
+function _social_event_get_name_from_enrollment(int $id) {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */

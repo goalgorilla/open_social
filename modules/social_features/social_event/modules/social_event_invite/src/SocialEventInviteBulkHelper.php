@@ -30,7 +30,7 @@ class SocialEventInviteBulkHelper {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsers(array $users, $nid, array &$context): void {
+  public static function bulkInviteUsers(array $users, string $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $uid => $target_id) {
@@ -101,7 +101,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteEmails(array $emails, $nid, array &$context): void {
+  public static function bulkInviteEmails(array $emails, string $nid, array &$context): void {
     $results = [];
 
     foreach ($emails as $email) {
@@ -157,7 +157,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsersEmails(array $users, $nid, array &$context): void {
+  public static function bulkInviteUsersEmails(array $users, string $nid, array &$context): void {
     $results = [];
 
     foreach ($users as $user) {

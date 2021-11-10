@@ -91,7 +91,7 @@ class Topic extends DemoNode {
    * @return array|null
    *   Array containing related terms.
    */
-  protected function prepareTopicType($name): ?array {
+  protected function prepareTopicType(string $name): ?array {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
       'name' => $name,

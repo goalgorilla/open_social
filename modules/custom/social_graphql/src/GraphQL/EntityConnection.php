@@ -69,7 +69,7 @@ class EntityConnection implements ConnectionInterface {
    *
    * @var \GraphQL\Executor\Promise\Adapter\SyncPromise
    */
-  protected ?SyncPromise $result;
+  protected ?SyncPromise $result = NULL;
 
   /**
    * Create a new PaginatedEntityQuery.
@@ -156,8 +156,8 @@ class EntityConnection implements ConnectionInterface {
     // QueryHelper's and apply the edges in ::getEdges.
     return $this->getOrderedResult()
       ->then(
-        static fn ($edges) => array_map(
-          static fn (EdgeInterface $edge) => $edge->getNode(),
+        static fn ($edges): array => array_map(
+          static fn (EdgeInterface $edge): ?object => $edge->getNode(),
           $edges
         )
       );
@@ -221,7 +221,7 @@ class EntityConnection implements ConnectionInterface {
    * @return \GraphQL\Executor\Promise\Adapter\SyncPromise
    *   The result for this connection's query.
    */
-  protected function getResult() : SyncPromise {
+  protected function getResult() : ?SyncPromise {
     if (!$this->hasResult()) {
       $this->result = $this->execute();
     }

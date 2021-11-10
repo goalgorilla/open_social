@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_max_enroll\Service;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
@@ -19,21 +20,21 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityStorageInterface $storage;
 
   /**
    * The configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The social event enroll.
    *
    * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
    */
-  protected $socialEventEnroll;
+  protected SocialEventEnrollServiceInterface $socialEventEnroll;
 
   /**
    * EventMaxEnrollService constructor.

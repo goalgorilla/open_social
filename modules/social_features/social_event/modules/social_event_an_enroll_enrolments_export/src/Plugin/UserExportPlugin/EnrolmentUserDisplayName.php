@@ -26,7 +26,7 @@ class EnrolmentUserDisplayName extends UserDisplayName {
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * EnrolmentUserDisplayName constructor.

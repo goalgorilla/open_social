@@ -16,7 +16,7 @@ class EventAnEnrollCacheContext implements CacheContextInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a new PreviewLinkCacheContext.
@@ -45,7 +45,7 @@ class EventAnEnrollCacheContext implements CacheContextInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCacheableMetadata(): CacheableMetadata {
+  public function getCacheableMetadata(): self {
     return (new CacheableMetadata())->addCacheTags(['routes']);
   }
 

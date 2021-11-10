@@ -30,7 +30,7 @@ class DropdownWidgetType extends WidgetBase {
    *
    * @var string
    */
-  protected $column;
+  protected string $column;
 
   /**
    * Widget options.
@@ -44,7 +44,7 @@ class DropdownWidgetType extends WidgetBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  private $moduleHandler;
+  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}
@@ -175,7 +175,7 @@ class DropdownWidgetType extends WidgetBase {
    *
    *   The array of corresponding selected options.
    */
-  protected function getSelectedOptions(FieldItemListInterface $items, $delta = 0): array {
+  protected function getSelectedOptions(FieldItemListInterface $items, int $delta = 0): array {
     // We need to check against a flat list of options.
     $options = $this->getOptions($items->getEntity());
 

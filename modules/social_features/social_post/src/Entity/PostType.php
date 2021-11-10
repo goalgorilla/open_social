@@ -49,13 +49,13 @@ class PostType extends ConfigEntityBundleBase implements PostTypeInterface {
    *
    * @var string
    */
-  protected $id;
+  protected string $id;
 
   /**
    * The Post type label.
    *
    * @var string
    */
-  protected $label;
+  protected string $label;
 
 }

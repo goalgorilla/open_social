@@ -8,6 +8,7 @@
  * @todo Add support for multiple entity types.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -26,7 +27,7 @@ const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
 /**
  * Implements hook_node_access().
  */
-function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account) {
+function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account): AccessResult {
   return EntityAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 

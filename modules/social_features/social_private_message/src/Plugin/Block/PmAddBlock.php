@@ -2,7 +2,6 @@
 
 namespace Drupal\social_private_message\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Link;
@@ -24,7 +23,7 @@ class PmAddBlock extends BlockBase {
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  public function blockAccess(AccountInterface $account): AccessResult {
     if (
       $account->hasPermission('use private messaging system') &&
       $account->hasPermission('create private messages thread')

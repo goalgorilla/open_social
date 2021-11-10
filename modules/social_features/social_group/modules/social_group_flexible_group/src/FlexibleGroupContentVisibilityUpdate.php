@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_flexible_group;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -25,14 +26,14 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
@@ -113,7 +114,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, array $new_options, array &$context): void {
+  public function updateVisibility(CacheableDependencyInterface $entity, array $new_options, array &$context): void {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function updateVisibilityFinishedCallback().
@@ -149,7 +150,7 @@ class FlexibleGroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function updateVisibilityFinishedCallback($success, array $results, array $operations): void {
+  public static function updateVisibilityFinishedCallback(bool $success, array $results, array $operations): void {
     $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.
@@ -210,7 +211,7 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    *   The new visibility.
    */
-  public static function calculateVisibility($current_visibility, array $new_options): string {
+  public static function calculateVisibility(string $current_visibility, array $new_options): string {
     // If there is only one option just return that one.
     if (count($new_options) === 1) {
       return reset($new_options)['value'];

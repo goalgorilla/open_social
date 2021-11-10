@@ -23,7 +23,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * SearchHeroForm constructor.

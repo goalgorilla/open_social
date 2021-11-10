@@ -26,7 +26,7 @@ class ActivityRow extends EntityRow {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
-  protected $activityDestinationManager;
+  protected ActivityDestinationManager $activityDestinationManager;
 
   /**
    * ActivityRow constructor.

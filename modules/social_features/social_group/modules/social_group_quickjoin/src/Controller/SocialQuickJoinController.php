@@ -27,7 +27,7 @@ class SocialQuickJoinController extends ControllerBase {
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The config factory.

@@ -372,7 +372,7 @@ function social_content_block_update_8002(&$sandbox): void {
 /**
  * Change the weight of fields for correct order.
  */
-function social_content_block_update_8003() {
+function social_content_block_update_8003(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -393,7 +393,7 @@ function social_content_block_update_8004(): void {
 /**
  * Move the "Number of items" field to the "Content" section.
  */
-function social_content_block_update_8005() {
+function social_content_block_update_8005(): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 
@@ -429,7 +429,7 @@ function social_content_block_update_8801(&$sandbox): void {
 /**
  * Add translations support for "Custom content list" custom block fields.
  */
-function social_content_block_update_10300() {
+function social_content_block_update_10300(): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 
@@ -443,7 +443,7 @@ function social_content_block_update_10300() {
 /**
  * Add a field for days number.
  */
-function social_content_block_update_10301() {
+function social_content_block_update_10301(): string {
   $entity_type_ids = [
     'field.storage.block_content' => 'field_storage_config',
     'field.field.block_content.custom_content_list' => 'field_config',

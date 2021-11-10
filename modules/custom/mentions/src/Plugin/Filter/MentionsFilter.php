@@ -95,7 +95,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    *
    * @var string
    */
-  private ?string $textFormat;
+  private ?string $textFormat = NULL;
 
   /**
    * MentionsFilter constructor.
@@ -214,7 +214,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @retrun array
    *   A list of mentions.
    */
-  public function getMentions($text): array {
+  public function getMentions(string $text): array {
     $mentions = [];
     $config_names = $this->mentionTypes;
 
@@ -276,7 +276,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * @retrun string
    *   The processed text.
    */
-  public function filterMentions($text): string {
+  public function filterMentions(string $text): string {
     $mentions = $this->getMentions($text);
 
     foreach ($mentions as $match) {
@@ -342,7 +342,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function setTextFormat($text_format): void {
+  public function setTextFormat(?string $text_format): void {
     $this->textFormat = $text_format;
   }
 

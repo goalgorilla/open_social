@@ -28,7 +28,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\private_message\Service\PrivateMessageServiceInterface
    */
-  protected $privateMessageService;
+  protected PrivateMessageServiceInterface $privateMessageService;
 
   /**
    * PrivateMessageActivityContext constructor.

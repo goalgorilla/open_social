@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -16,7 +17,7 @@ class EmailFrequency extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The name of the flavor.
@@ -25,20 +26,20 @@ class EmailFrequency extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $name;
+  public Translation $name;
 
   /**
    * The weight of the frequency option.
    *
    * @var int
    */
-  public $weight;
+  public int $weight;
 
   /**
    * The send interval of the email frequency in seconds.
    *
    * @var int
    */
-  public $interval;
+  public int $interval;
 
 }

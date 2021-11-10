@@ -32,14 +32,14 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The event invite access helper.
    *
    * @var \Drupal\social_event_invite\SocialEventInviteAccessHelper
    */
-  protected $accessHelper;
+  protected SocialEventInviteAccessHelper $accessHelper;
 
   /**
    * EventAddBlock constructor.

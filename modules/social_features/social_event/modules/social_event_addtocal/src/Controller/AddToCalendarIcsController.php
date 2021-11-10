@@ -18,14 +18,14 @@ class AddToCalendarIcsController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\Request
    */
-  protected $request;
+  protected Request $request;
 
   /**
    * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
    */
-  protected $fileSystem;
+  protected FileSystemInterface $fileSystem;
 
   /**
    * AddToCalendarIcsController constructor.

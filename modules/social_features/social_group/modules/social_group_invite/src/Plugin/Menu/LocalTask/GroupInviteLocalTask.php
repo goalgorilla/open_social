@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Plugin\Menu\LocalTask;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
@@ -23,14 +24,14 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Group invitations loader.
    *
    * @var \Drupal\ginvite\GroupInvitationLoaderInterface
    */
-  protected $invitationLoader;
+  protected GroupInvitationLoaderInterface $invitationLoader;
 
   /**
    * Construct the UnapprovedComments object.
@@ -68,7 +69,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL): string {
+  public function getTitle(Request $request = NULL): TranslatableMarkup {
     if ($this->invitationLoader->loadByUser()) {
       // We don't need plural because users will be redirected
       // if there is no invite.

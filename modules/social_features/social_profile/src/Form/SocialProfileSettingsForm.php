@@ -22,14 +22,14 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManager
    */
-  protected $languageMananger;
+  protected LanguageManager $languageMananger;
 
   /**
    * SocialProfileSettingsForm constructor.

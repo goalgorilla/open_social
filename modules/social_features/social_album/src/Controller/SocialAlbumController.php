@@ -2,7 +2,7 @@
 
 namespace Drupal\social_album\Controller;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -31,14 +31,14 @@ class SocialAlbumController extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The Group Content Enabler manager.
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $gcContentEnabler;
+  protected GroupContentEnablerManagerInterface $gcContentEnabler;
 
   /**
    * SocialAlbumController constructor.
@@ -99,7 +99,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The title to page of the post.
    */
-  public function title(NodeInterface $node): string {
+  public function title(NodeInterface $node): TranslatableMarkup {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
   }
 
@@ -115,7 +115,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The renderable array.
    */
-  public function viewImage(NodeInterface $node, PostInterface $post, $fid): array {
+  public function viewImage(NodeInterface $node, PostInterface $post, int $fid): array {
     $query = $this->database->select('post__field_post_image', 'i')
       ->fields('i', ['field_post_image_target_id']);
 
@@ -150,7 +150,7 @@ class SocialAlbumController extends ControllerBase {
 
     return [
       '#theme' => 'social_album_post',
-      '#items' => array_merge($items[TRUE], $items[FALSE]),
+      '#items' => [...$items[TRUE], ...$items[FALSE]],
       '#album' => $node->label(),
     ];
   }
@@ -167,7 +167,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The renderable array.
    */
-  public function deleteImage(NodeInterface $node, PostInterface $post, $fid): array {
+  public function deleteImage(NodeInterface $node, PostInterface $post, int $fid): array {
     return [
       'form' => $this->entityFormBuilder()->getForm($post, 'delete_image', ['fid' => $fid]),
       'view' => $this->entityTypeManager()->getViewBuilder('post')->view($post, 'featured'),
@@ -251,7 +251,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The access result.
    */
-  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid, $operation = 'view'): CacheableDependencyInterface {
+  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, int $fid, string $operation = 'view'): AccessResult {
     if (
       $this->checkAlbumAccess($node) &&
       $post->access($operation) &&
@@ -282,7 +282,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The access result.
    */
-  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid): AccessResultInterface {
+  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, int $fid): AccessResultInterface {
     $access = $this->checkViewImageAccess($node, $post, $fid, 'delete');
 
     if ($access->isAllowed()) {
@@ -323,7 +323,7 @@ class SocialAlbumController extends ControllerBase {
    *
    *   The access result.
    */
-  public function checkGroupAlbumsAccess(GroupInterface $group): AccessResultInterface {
+  public function checkGroupAlbumsAccess(GroupInterface $group): AccessResult {
     $access = $this->checkUserAlbumsAccess();
     return $access->isForbidden() ? $access : $this->checkGroupAccess($group);
   }

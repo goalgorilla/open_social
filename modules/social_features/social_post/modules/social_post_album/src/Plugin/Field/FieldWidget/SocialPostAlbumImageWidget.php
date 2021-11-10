@@ -29,7 +29,7 @@ class SocialPostAlbumImageWidget extends ImageWidget {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs an SocialPostAlbumImageWidget object.

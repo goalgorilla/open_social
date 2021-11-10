@@ -27,7 +27,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constructs a ContentBlockPluginIdWidget object.

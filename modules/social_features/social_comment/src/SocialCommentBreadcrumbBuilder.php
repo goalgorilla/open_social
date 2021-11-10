@@ -2,6 +2,7 @@
 
 namespace Drupal\social_comment;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,7 +23,7 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityStorageInterface $storage;
 
   /**
    * Constructs the SocialCommentBreadcrumbBuilder.

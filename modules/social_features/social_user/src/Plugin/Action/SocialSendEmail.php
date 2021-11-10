@@ -35,49 +35,49 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The user storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityTypeManagerInterface $storage;
 
   /**
    * A logger instance.
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * The email validator.
    *
    * @var \Egulias\EmailValidator\EmailValidator
    */
-  protected $emailValidator;
+  protected EmailValidator $emailValidator;
 
   /**
    * The queue factory.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queue;
+  protected QueueFactory $queue;
 
   /**
    * TRUE if the current user can use the "Mail HTML" text format.
    *
    * @var bool
    */
-  protected $allowTextFormat;
+  protected bool $allowTextFormat;
 
   /**
    * Constructs a SocialSendEmail object.
@@ -189,7 +189,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param array $data
    *   The queue data.
    */
-  public function createQueueItem($name, array $data): void {
+  public function createQueueItem(string $name, array $data): void {
     // Put the $data in the queue item.
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
     $queue = $this->queue->get($name);

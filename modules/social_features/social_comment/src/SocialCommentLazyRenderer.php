@@ -20,7 +20,7 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entityTypeManager;
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -34,14 +34,14 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  private $routeMatch;
+  private RouteMatchInterface $routeMatch;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialCommentLazyRenderer constructor.
@@ -83,7 +83,7 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function renderComments($entity_type, $entity_id, $view_mode, $field_name, $num_comments, $pager_id, $build_view_mode = 'default') {
+  public function renderComments(string $entity_type, $entity_id, string $view_mode, string $field_name, $num_comments, int $pager_id, string $build_view_mode = 'default') {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     /** @var \Drupal\comment\CommentInterface[] $comments */

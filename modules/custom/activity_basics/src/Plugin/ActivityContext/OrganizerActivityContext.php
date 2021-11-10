@@ -25,7 +25,7 @@ class OrganizerActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a OrganizerActivityContext object.

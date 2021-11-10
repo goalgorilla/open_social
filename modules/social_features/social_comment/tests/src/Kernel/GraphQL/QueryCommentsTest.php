@@ -51,7 +51,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
    *
    * @var \Drupal\comment\CommentInterface[]
    */
-  private $comments = [];
+  private array $comments = [];
 
   /**
    * {@inheritdoc}
@@ -86,7 +86,7 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     }
 
     $comment_uuids = array_map(
-      static fn ($comment) => $comment->uuid(),
+      static fn ($comment): ?string => $comment->uuid(),
       $comments
     );
 

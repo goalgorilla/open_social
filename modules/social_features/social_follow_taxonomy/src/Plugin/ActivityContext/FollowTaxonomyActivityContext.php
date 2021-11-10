@@ -29,21 +29,21 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelperService;
+  protected SocialGroupHelperService $groupHelperService;
 
   /**
    * ActivityContextBase constructor.

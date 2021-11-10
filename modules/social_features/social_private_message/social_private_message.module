@@ -626,7 +626,7 @@ function social_private_message_views_query_alter(ViewExecutable $view, QueryPlu
 /**
  * Implements hook_private_message_thread_access().
  */
-function social_private_message_private_message_thread_access(PrivateMessageThreadInterface $entity, $operation, AccountInterface $account) {
+function social_private_message_private_message_thread_access(PrivateMessageThreadInterface $entity, $operation, AccountInterface $account): AccessResult {
   if ($operation === 'delete') {
     if (
       $account->hasPermission('use private messaging system') &&
@@ -637,12 +637,13 @@ function social_private_message_private_message_thread_access(PrivateMessageThre
 
     return AccessResult::forbidden();
   }
+  return AccessResult::neutral();
 }
 
 /**
  * Implements hook_private_message_create_access().
  */
-function social_private_message_private_message_create_access(AccountInterface $account, array $context, $entity_bundle) {
+function social_private_message_private_message_create_access(AccountInterface $account, array $context, $entity_bundle): AccessResult {
   return AccessResult::forbiddenIf(!($account->hasPermission('use private messaging system') && $account->hasPermission('create private messages thread')));
 }
 

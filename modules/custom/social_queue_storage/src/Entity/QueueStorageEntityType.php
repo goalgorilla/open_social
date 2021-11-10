@@ -49,13 +49,13 @@ class QueueStorageEntityType extends ConfigEntityBundleBase implements QueueStor
    *
    * @var string
    */
-  protected $id;
+  protected string $id;
 
   /**
    * The Queue storage entity type label.
    *
    * @var string
    */
-  protected $label;
+  protected string $label;
 
 }

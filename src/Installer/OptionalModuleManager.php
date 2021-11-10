@@ -22,14 +22,14 @@ class OptionalModuleManager implements ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Extension\ModuleExtensionList
    */
-  protected $moduleExtensionList;
+  protected ModuleExtensionList $moduleExtensionList;
 
   /**
    * The name of the active install profile.
    *
    * @var string
    */
-  protected $installProfile;
+  protected string $installProfile;
 
   /**
    * Constructs a OptionalModuleManager instance.

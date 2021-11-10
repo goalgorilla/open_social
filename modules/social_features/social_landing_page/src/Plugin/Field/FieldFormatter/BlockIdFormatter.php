@@ -28,14 +28,14 @@ class BlockIdFormatter extends FormatterBase implements ContainerFactoryPluginIn
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  private $renderer;
+  private RendererInterface $renderer;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Construct a BlockIdFormatter object.

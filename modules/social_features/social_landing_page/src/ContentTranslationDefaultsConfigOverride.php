@@ -2,6 +2,7 @@
 
 namespace Drupal\social_landing_page;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
@@ -21,7 +22,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   /**
    * {@inheritdoc}
    */
-  protected function getDisplayName(): string {
+  protected function getDisplayName(): TranslatableMarkup {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
     return \Drupal::translation()->translate('Landing Pages');

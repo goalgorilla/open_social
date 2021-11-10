@@ -20,7 +20,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Class constructor.

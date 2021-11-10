@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -21,28 +22,28 @@ class CrossPostingService {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The group content plugin manager.
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $groupContentManager;
+  protected GroupContentEnablerManagerInterface $groupContentManager;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The Group storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $groupStorage;
+  protected EntityStorageInterface $groupStorage;
 
   /**
    * Constructs a GroupContentMultipleActivityEntityCondition object.
@@ -199,9 +200,7 @@ class CrossPostingService {
    *   An array with plugin ids.
    */
   public function getValidGroupContentPluginIds(): array {
-    $groupContentPluginIds = array_filter($this->groupContentManager->getInstalledIds(), function ($string) {
-      return strpos($string, 'group_node:') === 0;
-    });
+    $groupContentPluginIds = array_filter($this->groupContentManager->getInstalledIds(), fn($string): bool => strpos($string, 'group_node:') === 0);
 
     $plugins = [];
     foreach ($groupContentPluginIds as $pluginId) {

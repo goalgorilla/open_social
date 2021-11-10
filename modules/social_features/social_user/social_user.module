@@ -395,7 +395,7 @@ function social_user_form_views_form_user_admin_people_page_1_alter(&$form, Form
  *
  *   TRUE if blocked FALSE if not blocked.
  */
-function social_user_is_blocked($name_or_mail): bool {
+function social_user_is_blocked(string $name_or_mail): bool {
   $is_blocked_name = (bool) \Drupal::entityQuery('user')
     ->condition('name', $name_or_mail)
     ->condition('status', 0)
@@ -710,7 +710,7 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account): 
   // If our array ends up being empty then we just stick to Drupal's default.
   foreach ($suggestions as $suggestion) {
     // Allow weight to be omitted and default to 0.
-    $suggestion['weight'] = $suggestion['weight'] ?? 0;
+    $suggestion['weight'] ??= 0;
 
     // If the suggestion's weight is equal to a previous entry then we use the
     // item that appears first in the array.

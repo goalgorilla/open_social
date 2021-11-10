@@ -53,7 +53,7 @@ interface GroupInvitationLoaderInterface {
    * @return \Drupal\ginvite\GroupInvitation[]
    *   The loaded GroupInvitations matching the criteria.
    */
-  public function loadByUser(AccountInterface $account = NULL, $roles = NULL, $status = GroupInvitation::INVITATION_PENDING): array;
+  public function loadByUser(AccountInterface $account = NULL, $roles = NULL, int $status = GroupInvitation::INVITATION_PENDING): array;
 
   /**
    * Load Invitations by their property values.

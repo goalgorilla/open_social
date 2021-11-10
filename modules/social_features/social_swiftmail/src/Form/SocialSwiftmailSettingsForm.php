@@ -23,21 +23,21 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination
    */
-  protected $emailActivityDestination;
+  protected object $emailActivityDestination;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The batch builder.
    *
    * @var \Drupal\Core\Batch\BatchBuilder
    */
-  protected $batchBuilder;
+  protected BatchBuilder $batchBuilder;
 
   /**
    * SocialSwiftmailSettingsForm constructor.
@@ -228,7 +228,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    * @return array[]
    *   Row.
    */
-  private function buildRow($template, array $notification_options, array $template_frequencies): array {
+  private function buildRow(string $template, array $notification_options, array $template_frequencies): array {
     $email_message_templates = $this->emailActivityDestination->getSendEmailMessageTemplates();
     $row = [
       [

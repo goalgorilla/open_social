@@ -26,7 +26,7 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
    *
    * @var \Drupal\activity_creator\Plugin\ActivityActionManager
    */
-  protected $actionManager;
+  protected ActivityActionManager $actionManager;
 
   /**
    * MessageQueueCreator constructor.

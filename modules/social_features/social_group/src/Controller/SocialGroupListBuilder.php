@@ -30,14 +30,14 @@ class SocialGroupListBuilder extends EntityListBuilder {
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
-  protected $dateTime;
+  protected DateFormatterInterface $dateTime;
 
   /**
    * The Group Statistics service.
    *
    * @var \Drupal\social_group\GroupStatistics
    */
-  protected $groupStatistics;
+  protected GroupStatistics $groupStatistics;
 
   /**
    * Constructs a new GroupListBuilder object.

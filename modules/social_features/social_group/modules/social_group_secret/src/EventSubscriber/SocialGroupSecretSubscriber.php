@@ -20,7 +20,7 @@ class SocialGroupSecretSubscriber extends HttpExceptionSubscriberBase {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a new SocialGroupSecretSubscriber.

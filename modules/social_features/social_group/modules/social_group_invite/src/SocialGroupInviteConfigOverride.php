@@ -23,28 +23,28 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Email validator.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * The current active database's master connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -117,7 +117,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * @return bool
    *   TRUE if invited data is valid.
    */
-  public function validateInviteData($invitee_mail, $destination): bool {
+  public function validateInviteData(string $invitee_mail, string $destination): bool {
 
     if (empty($invitee_mail) || empty($destination)) {
       return FALSE;

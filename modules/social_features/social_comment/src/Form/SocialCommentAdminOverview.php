@@ -2,6 +2,7 @@
 
 namespace Drupal\social_comment\Form;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -25,42 +26,42 @@ class SocialCommentAdminOverview extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The comment storage.
    *
    * @var \Drupal\comment\CommentStorageInterface
    */
-  protected $commentStorage;
+  protected EntityStorageInterface $commentStorage;
 
   /**
    * The date formatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
-  protected $dateFormatter;
+  protected DateFormatterInterface $dateFormatter;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The tempstore factory.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\Renderer
    */
-  protected $renderer;
+  protected Renderer $renderer;
 
   /**
    * Creates a CommentAdminOverview form.

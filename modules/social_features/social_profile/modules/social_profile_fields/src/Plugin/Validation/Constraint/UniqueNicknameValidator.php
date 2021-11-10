@@ -18,7 +18,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    *
    * @var \Drupal\profile\ProfileStorageInterface
    */
-  protected $profileStorage;
+  protected ProfileStorageInterface $profileStorage;
 
   /**
    * UniqueNicknameValidator constructor.
@@ -60,7 +60,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
    *   Returns TRUE if the name is not taken. Returns FALSE if the name is
    *   taken.
    */
-  private function isUnique($value): bool {
+  private function isUnique(string $value): bool {
     // Get all profiles with the provided nickname.
     $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
 

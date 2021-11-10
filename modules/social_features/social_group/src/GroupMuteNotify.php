@@ -25,7 +25,7 @@ class GroupMuteNotify {
    *
    * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * GroupMuteNotify constructor.

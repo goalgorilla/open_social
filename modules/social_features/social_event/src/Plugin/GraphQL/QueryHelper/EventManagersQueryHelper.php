@@ -71,7 +71,7 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
       fn (UserInterface $user) => $user->id(),
       array_filter(
         $users,
-        fn (EntityInterface $entity) => $entity instanceof UserInterface
+        fn (EntityInterface $entity): bool => $entity instanceof UserInterface
       )
     );
 
@@ -125,7 +125,7 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
   public function getLoaderPromise(array $result) : SyncPromise {
     // In case of no results we create a callback the returns an empty array.
     if (empty($result)) {
-      $callback = static fn () => [];
+      $callback = static fn (): array => [];
     }
     // Otherwise we create a callback that uses the GraphQL entity buffer to
     // ensure the entities for this query are only loaded once. Even if the
@@ -136,15 +136,13 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
     }
 
     return new Deferred(
-      function () use ($callback) {
-        return array_map(
-          fn (UserInterface $entity) => new Edge(
-            $entity,
-            new Cursor('user', $entity->id(), $this->sortKey, $this->getSortValue($entity))
-          ),
-          $callback()
-        );
-      }
+      fn(): array => array_map(
+        fn (UserInterface $entity): Edge => new Edge(
+          $entity,
+          new Cursor('user', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+        ),
+        $callback()
+      )
     );
   }
 

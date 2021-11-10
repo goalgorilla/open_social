@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -25,14 +26,14 @@ class GroupContentVisibilityUpdate {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
@@ -57,7 +58,7 @@ class GroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(GroupInterface $group, $new_type): void {
+  public static function batchUpdateGroupContentVisibility(GroupInterface $group, string $new_type): void {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to Memberships to content.
     $entities = $group->getContentEntities();
@@ -111,7 +112,7 @@ class GroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, $new_type, array &$context): void {
+  public function updateVisibility(CacheableDependencyInterface $entity, string $new_type, array &$context): void {
     // Find the corresponding visibility for the new group_type.
     $default_visibility = SocialGroupHelperService::getDefaultGroupVisibility($new_type);
 
@@ -156,7 +157,7 @@ class GroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function updateVisibilityFinishedCallback($success, array $results, array $operations): void {
+  public static function updateVisibilityFinishedCallback(bool $success, array $results, array $operations): void {
     $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.

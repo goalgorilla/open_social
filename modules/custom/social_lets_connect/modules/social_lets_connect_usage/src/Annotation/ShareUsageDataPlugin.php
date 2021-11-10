@@ -2,6 +2,7 @@
 
 namespace Drupal\social_lets_connect_usage\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -19,7 +20,7 @@ class ShareUsageDataPlugin extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The label of the plugin.
@@ -28,13 +29,13 @@ class ShareUsageDataPlugin extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $label;
+  public Translation $label;
 
   /**
    * The key of the setting.
    *
    * @var string
    */
-  public $setting;
+  public string $setting;
 
 }

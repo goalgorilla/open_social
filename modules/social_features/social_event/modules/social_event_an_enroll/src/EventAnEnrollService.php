@@ -16,21 +16,21 @@ class EventAnEnrollService {
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The current route.
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRouteMatch;
+  protected CurrentRouteMatch $currentRouteMatch;
 
   /**
    * Database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * EventAnEnrollService constructor.
@@ -56,7 +56,7 @@ class EventAnEnrollService {
    *
    *   The number of anonymous event enrollments.
    */
-  public function enrollmentCount($nid): int {
+  public function enrollmentCount(int $nid): int {
     $query = $this->database
       ->select('event_enrollment__field_account', 'eefa');
     $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
@@ -79,7 +79,7 @@ class EventAnEnrollService {
    *
    *   TRUE if token exists, FALSE otherwise.
    */
-  public function tokenExists($token, $nid): bool {
+  public function tokenExists(string $token, int $nid): bool {
     $query = $this->database
       ->select('event_enrollment__field_token', 'eeft');
     $query->join('event_enrollment__field_event', 'eefe', 'eeft.entity_id = eefe.entity_id');

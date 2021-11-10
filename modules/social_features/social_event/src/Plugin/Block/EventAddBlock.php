@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -27,7 +26,7 @@ class EventAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * EventAddBlock constructor.
@@ -63,7 +62,7 @@ class EventAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    *
    * Custom access logic to display the block only on current user Events page.
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     $route_user_id = $this->routeMatch->getParameter('user');
     if ($account->id() == $route_user_id && $account->hasPermission("create event content")) {
       return AccessResult::allowed();

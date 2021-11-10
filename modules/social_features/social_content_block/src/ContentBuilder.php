@@ -33,42 +33,42 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The current active database's master connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The content block manager.
    *
    * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $contentBlockManager;
+  protected ContentBlockManagerInterface $contentBlockManager;
 
   /**
    * The entity repository.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The time service.
    *
    * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $time;
+  protected TimeInterface $time;
 
   /**
    * ContentBuilder constructor.
@@ -142,9 +142,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       // available, those are removed.
       $field_names = array_filter(
         $definition['fields'],
-        static function ($field_name) use ($block_content) {
-          return $block_content->hasField($field_name);
-        }
+        static fn($field_name): bool => $block_content->hasField($field_name)
       );
     }
     // When the user selected some filter in the "Content selection" field then
@@ -412,9 +410,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $element['field_duration']['#states'] = [
       'visible' => [
         $selector => array_map(
-          function ($name) {
-            return ['value' => $name];
-          },
+          fn($name): array => ['value' => $name],
           $configurable
         ),
       ],
@@ -448,7 +444,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $form_state->setValue($value_parents, key($options));
     }
 
-    $parents = [NestedArray::getValue($form, array_merge($parents, ['#group']))];
+    $parents = [NestedArray::getValue($form, [...$parents, ...['#group']])];
 
     if ($form_state->has('layout_builder__component')) {
       $parents = array_merge(['settings', 'block_form'], $parents);

@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,7 +32,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityStorageInterface $storage;
 
   /**
    * Constructs a ViewsBulkOperationSendEmail object.
@@ -70,7 +72,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): string {
+  public function execute($entity = NULL): TranslatableMarkup {
     // Load the Group.
     $group = Group::load($this->configuration['groups']);
 

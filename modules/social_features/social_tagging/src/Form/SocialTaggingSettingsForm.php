@@ -25,28 +25,28 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * {@inheritdoc}

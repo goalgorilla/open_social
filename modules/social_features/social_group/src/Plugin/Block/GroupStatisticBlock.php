@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -31,14 +30,14 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Creates a GroupHeroBlock instance.
@@ -98,7 +97,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     // Show statistic block only when new style is enabled.
     if (theme_get_setting('style') === 'sky') {
       return AccessResult::allowed();

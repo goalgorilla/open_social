@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_addtocal\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -20,7 +21,7 @@ class SocialAddToCalendar extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The label of the plugin.
@@ -29,41 +30,41 @@ class SocialAddToCalendar extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $label;
+  public Translation $label;
 
   /**
    * The url for adding to calendar.
    *
    * @var string
    */
-  public $url;
+  public string $url;
 
   /**
    * The date modifications for all day events.
    *
    * @var string
    */
-  public $endDateModification = '+ 1 day';
+  public string $endDateModification = '+ 1 day';
 
   /**
    * Date format for all day event.
    *
    * @var string
    */
-  public $allDayFormat = 'Ymd';
+  public string $allDayFormat = 'Ymd';
 
   /**
    * Date format.
    *
    * @var string
    */
-  public $dateFormat = 'Ymd\THis';
+  public string $dateFormat = 'Ymd\THis';
 
   /**
    * Date format if users timezone is UTC.
    *
    * @var string
    */
-  public $utcDateFormat = 'Ymd\THis\Z';
+  public string $utcDateFormat = 'Ymd\THis\Z';
 
 }

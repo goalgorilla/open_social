@@ -17,7 +17,7 @@ class GroupStatistics {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Constructor for SocialGroupMembersCount.
@@ -51,7 +51,7 @@ class GroupStatistics {
    *
    *   The number of nodes.
    */
-  public function getGroupNodeCount(GroupInterface $group, $type): int {
+  public function getGroupNodeCount(GroupInterface $group, string $type): int {
     return $this->count($group, 'group_node-' . $type);
   }
 
@@ -65,7 +65,7 @@ class GroupStatistics {
    *
    *   The number of entities.
    */
-  protected function count(GroupInterface $group, $type): int {
+  protected function count(GroupInterface $group, string $type): int {
     // Additional caching not required since views does this for us.
     $query = $this->database->select('group_content_field_data', 'gcfd');
     $query->addField('gcfd', 'gid');

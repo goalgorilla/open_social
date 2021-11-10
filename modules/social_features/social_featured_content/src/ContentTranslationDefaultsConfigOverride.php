@@ -19,7 +19,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandler $moduleHandler;
 
   /**
    * Constructs the service with DI.

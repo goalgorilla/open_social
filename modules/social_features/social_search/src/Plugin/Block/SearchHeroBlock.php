@@ -22,7 +22,7 @@ class SearchHeroBlock extends BlockBase implements ContainerFactoryPluginInterfa
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * SearchHeroBlock constructor.

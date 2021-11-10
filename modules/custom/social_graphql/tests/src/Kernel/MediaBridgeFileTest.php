@@ -37,14 +37,14 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
    *
    * @var \Drupal\graphql\Plugin\DataProducerPluginManager
    */
-  protected $dataProducerPluginManager;
+  protected ?object $dataProducerPluginManager = NULL;
 
   /**
    * The image under test.
    *
    * @var \Drupal\media\Plugin\media\Source\Image
    */
-  protected $image;
+  protected File $image;
 
   /**
    * {@inheritdoc}

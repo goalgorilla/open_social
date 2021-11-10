@@ -59,7 +59,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    *
    * @var \Drupal\user\Entity\User[]
    */
-  private $users = [];
+  private array $users = [];
 
   /**
    * {@inheritdoc}
@@ -76,9 +76,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $this->users = array_values(
       array_filter(
         User::loadMultiple(),
-        static function (User $u) {
-          return !$u->isAnonymous();
-        }
+        static fn(User $u): bool => !$u->isAnonymous()
       )
     );
     // Create a set of 10 test users that we can query. The data of the users
@@ -160,7 +158,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * @return \Drupal\profile\Entity\ProfileInterface
    *   The profile that was updated or created.
    */
-  protected function ensureTestProfile(AccountInterface $user, string $profile_type): ProfileInterface {
+  protected function ensureTestProfile(AccountInterface $user, string $profile_type): ?ProfileInterface {
     /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
     $profile_storage = $this->container->get('entity_type.manager')->getStorage('profile');
     $profile = $profile_storage->loadByUser($user, $profile_type);

@@ -30,14 +30,14 @@ abstract class DemoSystem extends DemoContent {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $blockStorage;
+  protected EntityStorageInterface $blockStorage;
 
   /**
    * The Config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * The file storage.
@@ -51,7 +51,7 @@ abstract class DemoSystem extends DemoContent {
    *
    * @var \Drupal\Core\File\FileSystem
    */
-  protected $fileSystem;
+  protected FileSystem $fileSystem;
 
   /**
    * DemoComment constructor.
@@ -291,7 +291,7 @@ abstract class DemoSystem extends DemoContent {
    * @retrun array
    *   Returns an array.
    */
-  protected function fetchImage($image): ?EntityInterface {
+  protected function fetchImage(string $image): ?EntityInterface {
     $value = NULL;
     $files = $this->fileStorage->loadByProperties([
       'uuid' => $image,
@@ -313,7 +313,7 @@ abstract class DemoSystem extends DemoContent {
    * @return int|mixed|null|string
    *   Return the font.
    */
-  private function getOrCreateFont($fontName) {
+  private function getOrCreateFont(string $fontName) {
     /** @var \Drupal\social_font\Entity\Font $font_entities */
     foreach (Font::loadMultiple() as $font_entities) {
       if ($fontName == $font_entities->get('name')->value) {

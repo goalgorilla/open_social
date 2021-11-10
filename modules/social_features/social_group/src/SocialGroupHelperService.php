@@ -25,21 +25,21 @@ class SocialGroupHelperService {
    *
    * @var array
    */
-  protected $cache;
+  protected array $cache;
 
   /**
    * The database connection object.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor for SocialGroupHelperService.
@@ -69,7 +69,7 @@ class SocialGroupHelperService {
    *   The group that this entity belongs to or NULL if the entity doesn't
    *   belong to any group.
    */
-  public function getGroupFromEntity(array $entity, $read_cache = TRUE): ?int {
+  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE): ?int {
     $gid = NULL;
 
     // Comments can have groups based on what the comment is posted on so the
@@ -135,7 +135,7 @@ class SocialGroupHelperService {
    * @return string|null
    *   The default visibility.
    */
-  public static function getDefaultGroupVisibility($type): ?string {
+  public static function getDefaultGroupVisibility(string $type): ?string {
     $visibility = &drupal_static(__FUNCTION__ . $type);
 
     if (empty($visibility)) {
@@ -194,7 +194,7 @@ class SocialGroupHelperService {
    *
    *   List of group IDs the user is member of.
    */
-  public function getAllGroupsForUser($uid): array {
+  public function getAllGroupsForUser(int $uid): array {
     $groups = &drupal_static(__FUNCTION__);
 
     // Get the memberships for the user if they aren't known yet.
@@ -227,7 +227,7 @@ class SocialGroupHelperService {
    * @return int
    *   Count of groups a user is a member of.
    */
-  public function countGroupMembershipsForUser($uid): int {
+  public function countGroupMembershipsForUser(string $uid): int {
     $count = &drupal_static(__FUNCTION__);
 
     // Get the count of memberships for the user if they aren't known yet.

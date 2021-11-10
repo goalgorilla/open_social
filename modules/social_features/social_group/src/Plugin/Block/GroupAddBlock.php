@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Cache\Cache;
@@ -32,21 +31,21 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The social group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $socialGroupHelper;
+  protected SocialGroupHelperService $socialGroupHelper;
 
   /**
    * Constructs a GroupAddBlock object.
@@ -97,7 +96,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  public function blockAccess(AccountInterface $account): AccessResult {
     if (!$this->getUrl()->access($account)) {
       return AccessResult::forbidden();
     }

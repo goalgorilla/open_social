@@ -95,7 +95,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     }
 
     $topic_uuids = array_map(
-      static fn($topic) => $topic->uuid(),
+      static fn($topic): ?string => $topic->uuid(),
       $topics ?? []
     );
 

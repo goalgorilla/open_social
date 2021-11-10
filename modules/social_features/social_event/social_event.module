@@ -122,7 +122,7 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  *
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE): bool {
+function social_event_manager_or_organizer(NodeInterface $node = NULL, bool $skip_trusted_roles = FALSE): bool {
   $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
   if (!isset($social_event_manager_or_organizer)) {
@@ -518,7 +518,7 @@ function _social_event_format_date($event, $view_mode) {
  *
  *   User timezone.
  */
-function _social_event_user_timezone($timezone): string {
+function _social_event_user_timezone(string $timezone): string {
   if ($timezone !== DateTimeItemInterface::STORAGE_TIMEZONE) {
     $zones = array_column(system_time_zones(NULL, TRUE), $timezone);
     $user_timezone = reset($zones);
@@ -838,7 +838,7 @@ function social_event_get_current_event(): ?EntityInterface {
  * @param string $state
  *   Which state do you want for the form field. Defaults to visibility.
  */
-function social_event_field_visibility(array &$form, $field_name, array $fields, $state = 'visible'): void {
+function social_event_field_visibility(array &$form, string $field_name, array $fields, string $state = 'visible'): void {
   // @todo Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
@@ -1079,7 +1079,7 @@ function _social_event_get_enrollment_status(NodeInterface $event): bool {
  * @param string $display
  *   The views display id.
  */
-function _social_event_views_update($view_config, $display): void {
+function _social_event_views_update(string $view_config, string $display): void {
   // Get views config.
   $config = \Drupal::configFactory()
     ->getEditable($view_config);
@@ -1152,7 +1152,7 @@ function social_event_enroll_method_description($key): string {
  *
  *   The render array containing the tooltip.
  */
-function social_event_render_tooltip($field_name, $data_title, $description): array {
+function social_event_render_tooltip(string $field_name, string $data_title, string $description): array {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $build['toggle'] = [

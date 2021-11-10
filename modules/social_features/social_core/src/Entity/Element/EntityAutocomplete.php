@@ -71,9 +71,7 @@ class EntityAutocomplete extends EntityAutocompleteBase {
     // Potentially the #value is set directly, so it contains the 'target_id'
     // array structure instead of a string.
     if ($input !== FALSE && is_array($input)) {
-      $entity_ids = array_map(function (array $item) {
-        return $item['target_id'];
-      }, $input);
+      $entity_ids = array_map(fn(array $item) => $item['target_id'], $input);
 
       $entities = \Drupal::entityTypeManager()->getStorage($element['#target_type'])->loadMultiple($entity_ids);
 

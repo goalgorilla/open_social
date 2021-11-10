@@ -21,28 +21,28 @@ class EventEnrollmentStatusHelper {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * EventInvitesAccess constructor.
@@ -68,14 +68,15 @@ class EventEnrollmentStatusHelper {
    *
    * @param string $user
    *   The email or userid you want to check on.
-   * @param int $event
+   * @param int|null $event
    *   The event id you want to check on, use 0 for all.
-   * @param int $invite_status
+   * @param int|null $invite_status
    *   The event status to filter on.
    *
+   * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function userEnrollments($user, $event, $invite_status = NULL): array {
+  public function userEnrollments(string $user, int $event = NULL, int $invite_status = NULL): array {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
@@ -122,7 +123,7 @@ class EventEnrollmentStatusHelper {
    *
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function eventEnrollments($event, $invite_status = NULL): array {
+  public function eventEnrollments(int $event, $invite_status = NULL): array {
     $nid = $this->routeMatch->getRawParameter('node');
 
     if ($event) {
@@ -147,7 +148,7 @@ class EventEnrollmentStatusHelper {
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
    *   Returns all the enrollments for a user.
    */
-  public function getAllUserEventEnrollments($user): array {
+  public function getAllUserEventEnrollments(string $user): array {
     $conditions = $this->userEnrollments($user, NULL);
 
     unset($conditions['field_event']);
@@ -169,7 +170,7 @@ class EventEnrollmentStatusHelper {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns a specific event enrollment for a user.
    */
-  public function getEventEnrollments($user, $event, $ignore_all_status = FALSE): array {
+  public function getEventEnrollments(string $user, int $event, bool $ignore_all_status = FALSE): array {
     $conditions = $this->userEnrollments($user, $event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field
@@ -193,7 +194,7 @@ class EventEnrollmentStatusHelper {
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns all enrollments for an event.
    */
-  public function getAllEventEnrollments($event, $ignore_all_status = FALSE): array {
+  public function getAllEventEnrollments(int $event, bool $ignore_all_status = FALSE): array {
     $conditions = $this->eventEnrollments($event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field

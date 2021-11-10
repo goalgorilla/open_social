@@ -31,7 +31,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
    *
    * @var \Drupal\graphql\Plugin\DataProducerPluginManager
    */
-  protected $dataProducerPluginManager;
+  protected ?object $dataProducerPluginManager = NULL;
 
   /**
    * {@inheritdoc}

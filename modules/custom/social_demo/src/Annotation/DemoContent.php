@@ -16,27 +16,27 @@ class DemoContent extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The content type label.
    *
    * @var string
    */
-  public $label;
+  public string $label;
 
   /**
    * The source file.
    *
    * @var string
    */
-  public $source;
+  public string $source;
 
   /**
    * The entity type id.
    *
    * @var string
    */
-  public $entityType;
+  public string $entityType;
 
 }

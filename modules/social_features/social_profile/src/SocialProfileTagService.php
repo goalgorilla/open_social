@@ -2,6 +2,8 @@
 
 namespace Drupal\social_profile;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -20,21 +22,21 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
    *
    * @var \Drupal\taxonomy\TermStorageInterface
    */
-  protected $taxonomyStorage;
+  protected EntityStorageInterface $taxonomyStorage;
 
   /**
    * Profile config.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $profileConfig;
+  protected ImmutableConfig $profileConfig;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * SocialTaggingService constructor.

@@ -16,7 +16,7 @@ class UserStatistics {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Constructor for UserStatistics.
@@ -38,7 +38,7 @@ class UserStatistics {
    *
    *   The number of nodes.
    */
-  public function nodeCount($user_id, $type): int {
+  public function nodeCount(int $user_id, string $type): int {
     return $this->count($user_id, $type);
   }
 
@@ -52,7 +52,7 @@ class UserStatistics {
    *
    *   The number of entities.
    */
-  protected function count($user_id, $type): int {
+  protected function count(int $user_id, string $type): int {
     $query = $this->database->select('node_field_data', 'nfd');
     $query->addField('nfd', 'nid');
     $query->condition('nfd.uid', $user_id);

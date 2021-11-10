@@ -25,7 +25,7 @@ abstract class DemoUser extends DemoContent {
    *
    * @var \Drupal\profile\ProfileStorageInterface
    */
-  protected $profileStorage;
+  protected ProfileStorageInterface $profileStorage;
 
   /**
    * DemoUser constructor.

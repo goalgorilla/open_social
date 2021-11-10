@@ -25,7 +25,7 @@ class InviteEmailBaseForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The logger factory.
@@ -39,7 +39,7 @@ class InviteEmailBaseForm extends FormBase {
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
-  protected $group;
+  protected LoggerChannelFactoryInterface $group;
 
   /**
    * Constructs a new BulkGroupInvitation Form.

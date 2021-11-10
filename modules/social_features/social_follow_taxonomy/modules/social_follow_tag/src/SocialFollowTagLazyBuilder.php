@@ -26,49 +26,49 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The route match.
    *
    * @var \Drupal\social_tagging\SocialTaggingService
    */
-  protected $tagService;
+  protected SocialTaggingService $tagService;
 
   /**
    * Flag service.
    *
    * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The builder for flag links.
    *
    * @var \Drupal\flag\FlagLinkBuilderInterface
    */
-  protected $flagLinkBuilder;
+  protected FlagLinkBuilderInterface $flagLinkBuilder;
 
   /**
    * The Current User object.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * SocialFollowTagLazyBuilder constructor.
@@ -183,7 +183,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    *
    *   Render array.
    */
-  public function popupLazyBuild($url, $term_id, $field, $entity_type): array {
+  public function popupLazyBuild(string $url, $term_id, string $field, string $entity_type): array {
     /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
     return [

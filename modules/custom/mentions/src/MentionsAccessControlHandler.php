@@ -2,7 +2,6 @@
 
 namespace Drupal\mentions;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -18,7 +17,7 @@ class MentionsAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): CacheableDependencyInterface {
+  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
     /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     switch ($operation) {
       case 'view':

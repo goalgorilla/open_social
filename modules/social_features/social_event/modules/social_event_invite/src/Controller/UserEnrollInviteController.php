@@ -76,7 +76,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
    *   The message.
    */
-  public function getMessage(EventEnrollmentInterface $event_enrollment, $accept_decline): ?TranslatableMarkup {
+  public function getMessage(EventEnrollmentInterface $event_enrollment, string $accept_decline): ?TranslatableMarkup {
     $statusMessage = NULL;
     // Get the target event id.
     $target_event_id = $event_enrollment->get('field_event')->getValue();

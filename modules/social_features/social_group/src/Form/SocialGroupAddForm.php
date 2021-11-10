@@ -23,14 +23,14 @@ class SocialGroupAddForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * Constructs a new GroupContentController.
@@ -119,7 +119,7 @@ class SocialGroupAddForm extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getGroupTypeElement($container = FALSE): array {
+  public function getGroupTypeElement(bool $container = FALSE): array {
     $user = \Drupal::currentUser();
     $element = [
       '#type' => 'radios',

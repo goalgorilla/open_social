@@ -648,7 +648,7 @@ function social_group_group_visibility_description($key): string {
  *
  *   The render array containing the description.
  */
-function social_group_allowed_join_method_description($key): string {
+function social_group_allowed_join_method_description(string $key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -744,8 +744,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $group_forms['delete'][] = "group_{$social_group_type}_delete_form";
   }
 
-  $action_forms = array_merge($join_forms, $leave_forms, $membership_delete_forms, $membership_add_forms);
-  $membership_forms = array_merge($membership_add_forms, $membership_edit_forms);
+  $action_forms = [...$join_forms, ...$leave_forms, ...$membership_delete_forms, ...$membership_add_forms];
+  $membership_forms = [...$membership_add_forms, ...$membership_edit_forms];
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $membership_delete_forms)) {
@@ -1693,7 +1693,7 @@ function social_group_preprocess_views_view(&$variables): void {
  * Check if the user is viewing a closed_group, check if the user is a member.
  * If the user is not a member, the user has no access to view this block.
  */
-function social_group_block_access(Block $block, $operation, AccountInterface $account) {
+function social_group_block_access(Block $block, $operation, AccountInterface $account): AccessResult {
   $block_id = $block->getPluginId();
 
   // Lets hide the hero block when adding members directly, it doesnt
@@ -1980,7 +1980,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
  *
  *   An array of visibility options for the given group type.
  */
-function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL, $group = NULL): array {
+function social_group_get_allowed_visibility_options_per_group_type(?string $group_type_id, AccountInterface $account = NULL, $entity = NULL, $group = NULL): array {
 
   // Get the logged in user.
   if ($account === NULL) {
@@ -2421,7 +2421,7 @@ function _social_group_get_action_id(array &$batch): string {
  * @param array $operations
  *   Performed operations array.
  */
-function _social_group_action_batch_finish($success, array $results, array $operations): void {
+function _social_group_action_batch_finish(bool $success, array $results, array $operations): void {
   // When we do a bulk action on all the items in a view, across multiple pages,
   // the saveList function needs to be called. So after pre-populating the list
   // the actual action is performed on the entities.
@@ -2587,7 +2587,7 @@ function social_group_preprocess_field(&$variables): void {
  *
  *   The render array containing the tooltip.
  */
-function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description): array {
+function social_group_render_tooltip(string $field_name, TranslatableMarkup $data_title, string $description): array {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $icon = Bootstrap::glyphicon('question-sign');
@@ -2685,7 +2685,7 @@ function social_group_preprocess_fieldset(&$variables): void {
  *
  *   The render array containing the description.
  */
-function social_group_allowed_visibility_description($key): string {
+function social_group_allowed_visibility_description(string $key): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.

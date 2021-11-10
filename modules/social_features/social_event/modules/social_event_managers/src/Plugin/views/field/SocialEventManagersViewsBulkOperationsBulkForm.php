@@ -31,7 +31,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The action plugin manager.

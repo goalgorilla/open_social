@@ -16,7 +16,7 @@ class MagicUrl implements MagicUrlInterface {
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $pathValidator;
+  protected PathValidatorInterface $pathValidator;
 
   /**
    * MagicUrlCreate constructor.

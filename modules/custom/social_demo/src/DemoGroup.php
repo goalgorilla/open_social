@@ -122,7 +122,7 @@ abstract class DemoGroup extends DemoContent {
    * @return int|false
    *   Returns a timestamp on success, false otherwise.
    */
-  protected function createDate($date_string) {
+  protected function createDate(string $date_string) {
     // Split from delimiter.
     $timestamp = explode('|', $date_string);
 
@@ -168,7 +168,7 @@ abstract class DemoGroup extends DemoContent {
    * @retrun array
    *   Returns an array.
    */
-  protected function prepareFiles($files): array {
+  protected function prepareFiles(string $files): array {
     $values = [];
 
     foreach ($files as $file_uuid) {

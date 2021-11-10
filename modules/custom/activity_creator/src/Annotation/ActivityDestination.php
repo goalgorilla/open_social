@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -19,7 +20,7 @@ class ActivityDestination extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The label of the plugin.
@@ -28,20 +29,20 @@ class ActivityDestination extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $label;
+  public Translation $label;
 
   /**
    * Whether this destination supports aggregation or not.
    *
    * @var bool
    */
-  public $isAggregatable = FALSE;
+  public bool $isAggregatable = FALSE;
 
   /**
    * Whether this destination is common or not.
    *
    * @var bool
    */
-  public $isCommon = FALSE;
+  public bool $isCommon = FALSE;
 
 }

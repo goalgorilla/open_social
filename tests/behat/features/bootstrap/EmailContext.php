@@ -74,7 +74,7 @@ class EmailContext implements Context {
    *
    *   An unserialized email.
    */
-  public function getEmailContent($file): string {
+  public function getEmailContent(string $file): string {
     return unserialize(file_get_contents($file));
   }
 
@@ -118,7 +118,7 @@ class EmailContext implements Context {
    *   Email was found or not.
    * @throws Exception
    */
-  protected function findSubjectAndBody($subject, $body): bool {
+  protected function findSubjectAndBody(string $subject, array $body): bool {
     $finder = $this->getSpooledEmails();
 
     $found_email = FALSE;

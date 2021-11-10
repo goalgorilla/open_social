@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -19,7 +20,7 @@ class UserStatus extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): string {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Status');
   }
 

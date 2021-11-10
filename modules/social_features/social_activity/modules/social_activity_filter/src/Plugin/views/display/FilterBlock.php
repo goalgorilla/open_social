@@ -327,7 +327,7 @@ class FilterBlock extends ModeBlock {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getTermOptionslist($vid): array {
+  public function getTermOptionslist(string $vid): array {
     $taxonomy_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     $taxonomy_terms = $taxonomy_storage->loadTree($vid);
     $term_list = [];

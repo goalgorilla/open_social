@@ -31,14 +31,14 @@ class SendUsageData extends QueueWorkerBase implements ContainerFactoryPluginInt
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  public $config;
+  public ConfigFactory $config;
 
   /**
    * The http client.
    *
    * @var \GuzzleHttp\Client
    */
-  public $client;
+  public Client $client;
 
   /**
    * {@inheritdoc}

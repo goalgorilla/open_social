@@ -16,21 +16,21 @@ class InviteService {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * InviteService constructor.
@@ -57,7 +57,7 @@ class InviteService {
    * @return array|string
    *   Array containing the route name and or invite amount.
    */
-  public function getInviteData($specific = '') {
+  public function getInviteData(string $specific = '') {
     // Empty by default, we will decorate this in our custom extensions.
     // these can decide on priority what the baseRoute should be.
     $route = [

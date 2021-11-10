@@ -22,7 +22,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelper;
+  protected SocialGroupHelperService $groupHelper;
 
   /**
    * Constructs a Handler object.

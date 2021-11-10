@@ -30,14 +30,14 @@ class FieldDownloadCount extends GenericFileFormatter {
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  private $currentUser;
+  private AccountProxyInterface $currentUser;
 
   /**
    * The theme manager.
    *
    * @var \Drupal\Core\Theme\ThemeManagerInterface
    */
-  private $themeManager;
+  private ThemeManagerInterface $themeManager;
 
   /**
    * FieldDownloadCount constructor.

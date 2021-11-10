@@ -26,7 +26,7 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * ProfileHeroBlock constructor.

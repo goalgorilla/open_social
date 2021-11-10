@@ -22,14 +22,14 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventInviteStatus;
+  protected EventEnrollmentStatusHelper $eventInviteStatus;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private $tempStoreFactory;
+  private PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * {@inheritdoc}

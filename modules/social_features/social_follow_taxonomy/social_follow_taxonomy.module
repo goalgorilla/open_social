@@ -258,7 +258,7 @@ function social_follow_taxonomy_flag_link(TermInterface $term): string {
  *
  *   Count of related nodes.
  */
-function social_follow_taxonomy_related_entity_count(TermInterface $term, $field_id, $entity_type = 'node'): int {
+function social_follow_taxonomy_related_entity_count(TermInterface $term, string $field_id, string $entity_type = 'node'): int {
   switch ($entity_type) {
     case 'node':
       $items = \Drupal::entityTypeManager()

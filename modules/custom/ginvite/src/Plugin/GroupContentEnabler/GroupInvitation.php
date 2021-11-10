@@ -3,7 +3,6 @@
 namespace Drupal\ginvite\Plugin\GroupContentEnabler;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
@@ -109,7 +108,7 @@ class GroupInvitation extends GroupContentEnablerBase {
   /**
    * {@inheritdoc}
    */
-  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResultForbidden {
+  protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account): AccessResult {
     // Close access to edit group invitations.
     // It will not be supported for now.
     return GroupAccessResult::forbidden();

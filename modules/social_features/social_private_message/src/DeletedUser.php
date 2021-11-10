@@ -14,7 +14,7 @@ class DeletedUser {
    *
    * @var int
    */
-  protected $id;
+  protected int $id;
 
   /**
    * DeletedUser constructor.

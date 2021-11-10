@@ -33,42 +33,42 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The activity notifications.
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activityNotifications;
+  protected ActivityNotifications $activityNotifications;
 
   /**
    * The Entity Type Manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The controller resolver.
    *
    * @var \Drupal\Core\Controller\ControllerResolverInterface
    */
-  protected $controllerResolver;
+  protected ControllerResolverInterface $controllerResolver;
 
   /**
    * AccountHeaderBlock constructor.

@@ -26,7 +26,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a new SocialEventAnEnrollViewsBulkOperationsBulkForm object.

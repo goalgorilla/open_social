@@ -104,7 +104,7 @@ class SocialProfilePrivacyBatchHelper {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, array $results, array $operations): void {
+  public static function finishProcess(bool $success, array $results, array $operations): void {
     $message = t('Number of profiles affected by batch: @count', [
       '@count' => $results['processed'],
     ]);

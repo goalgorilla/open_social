@@ -26,7 +26,7 @@ class GroupActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $grouphelperService;
+  protected SocialGroupHelperService $grouphelperService;
 
   /**
    * ActivityContextBase constructor.

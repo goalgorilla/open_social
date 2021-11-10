@@ -22,7 +22,7 @@
  *
  * @ingroup social_event_managers_api
  */
-function hook_social_event_managers_action_ACTION_ID_finish($success): array {
+function hook_social_event_managers_action_ACTION_ID_finish(bool $success): array {
   if ($success) {
     return [
       'singular' => 'Your email has been sent to 1 selected enrollee successfully',

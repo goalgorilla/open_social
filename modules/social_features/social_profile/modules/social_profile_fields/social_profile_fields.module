@@ -23,7 +23,7 @@ use Drupal\profile\Entity\ProfileType;
 /**
  * Implements hook_entity_field_access().
  */
-function social_profile_fields_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+function social_profile_fields_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL): AccessResult {
 
   // By default, we return Switzerland.
   $access_result = AccessResult::neutral();
@@ -294,7 +294,7 @@ function social_profile_fields_profile_view_alter(array &$build, EntityInterface
  *
  *   If the field is enabled or disabled.
  */
-function _social_profile_fields_get_setting($key): bool {
+function _social_profile_fields_get_setting(string $key): bool {
   $config = \Drupal::config('social_profile_fields.settings');
   $setting_value = $config->get($key);
 
@@ -318,9 +318,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
     $type = $profile_type->id();
 
     $profile_fields = \Drupal::service('social_profile_fields.helper')->getProfileFields($type);
-    $filtered = array_filter($profile_fields, function ($arr) {
-      return $arr['id'] === 'profile_profile_field_profile_address';
-    });
+    $filtered = array_filter($profile_fields, fn($arr): bool => $arr['id'] === 'profile_profile_field_profile_address');
     if (!empty($filtered) || array_key_exists('profile_profile_field_profile_address', $profile_fields)) {
       $profile_fields[] = ['id' => 'profile_address_field_city'];
       $profile_fields[] = ['id' => 'profile_address_field_address'];

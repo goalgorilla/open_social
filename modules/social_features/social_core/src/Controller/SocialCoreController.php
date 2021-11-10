@@ -2,6 +2,7 @@
 
 namespace Drupal\social_core\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
@@ -25,14 +26,14 @@ class SocialCoreController extends ControllerBase {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * Views Bulk Operations action processor.
    *
    * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
    */
-  protected $actionProcessor;
+  protected ViewsBulkOperationsActionProcessorInterface $actionProcessor;
 
   /**
    * SocialGroupController constructor.
@@ -91,7 +92,7 @@ class SocialCoreController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    */
-  public function updateSelection($view_id, $display_id, Request $request): AjaxResponse {
+  public function updateSelection(string $view_id, string $display_id, Request $request): AjaxResponse {
     $view_data = $this->getTempstoreData($view_id, $display_id);
     if (empty($view_data)) {
       throw new NotFoundHttpException();
@@ -205,7 +206,7 @@ class SocialCoreController extends ControllerBase {
    *
    *   The page title.
    */
-  public function addPageTitle(NodeTypeInterface $node_type): string {
+  public function addPageTitle(NodeTypeInterface $node_type): TranslatableMarkup {
     // The node_types that have a different article than a.
     $node_types = [
       'event' => 'an',

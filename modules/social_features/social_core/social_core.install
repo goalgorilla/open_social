@@ -188,7 +188,7 @@ function _social_core_set_permissions(): void {
  *
  *   Returns an array containing the permissions.
  */
-function _social_core_get_permissions($role): array {
+function _social_core_get_permissions(string $role): array {
   // Anonymous.
   $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access content',
@@ -1159,7 +1159,7 @@ function social_core_update_8806(&$sandbox): void {
 /**
  * Basic block config changes.
  */
-function social_core_update_8807() {
+function social_core_update_8807(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1173,7 +1173,7 @@ function social_core_update_8807() {
 /**
  * Hide tabs from /user/x/profile page.
  */
-function social_core_update_8808() {
+function social_core_update_8808(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1187,7 +1187,7 @@ function social_core_update_8808() {
 /**
  * Hide primary admin actions from /user/x/edit and some other pages.
  */
-function social_core_update_8809() {
+function social_core_update_8809(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1208,7 +1208,7 @@ function social_core_update_8810(): void {
 /**
  * Block changes for the social_event request enrollment feature.
  */
-function social_core_update_8811() {
+function social_core_update_8811(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1236,7 +1236,7 @@ function social_core_update_8812(&$sandbox): void {
 /**
  * Block changes for the social_group_request feature.
  */
-function social_core_update_8813() {
+function social_core_update_8813(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1433,7 +1433,7 @@ function social_core_update_10105(): void {
 /**
  * Add translation support for custom blocks fields.
  */
-function social_core_update_10300() {
+function social_core_update_10300(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

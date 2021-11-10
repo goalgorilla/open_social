@@ -25,7 +25,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_invite\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -28,14 +27,14 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The route match.
    *
    * @var \Drupal\ginvite\GroupInvitationLoaderInterface
    */
-  protected $inviteService;
+  protected GroupInvitationLoaderInterface $inviteService;
 
   /**
    * EventAddBlock constructor.
@@ -73,7 +72,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
       // If group allows Group Invites by content plugin and user has access.

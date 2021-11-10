@@ -18,7 +18,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $pathValidator;
+  protected PathValidatorInterface $pathValidator;
 
   /**
    * Class constructor.
@@ -130,7 +130,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    * @retrun bool
    *   Returns true when path is allowed.
    */
-  private function isAllowedPath($path): bool {
+  private function isAllowedPath(string $path): bool {
     $unallowed_paths = [
       '/user/logout',
       '/ajax',

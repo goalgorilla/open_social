@@ -22,7 +22,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * {@inheritdoc}

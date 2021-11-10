@@ -23,21 +23,21 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * The entity manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -199,7 +199,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @retrun array
    *   Mapped array of views displays.
    */
-  public function getDisplayBlocks($views_id): array {
+  public function getDisplayBlocks(string $views_id): array {
     $view = $this->entityTypeManager->getStorage('view')->load($views_id);
 
     $blocks = [];
@@ -221,7 +221,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    * @param bool $enabled
    *   Flag to update/cleanup values.
    */
-  public function updateDisplayBlock($views_id, $display_id, $enabled = FALSE): void {
+  public function updateDisplayBlock(string $views_id, string $display_id, bool $enabled = FALSE): void {
     $config = $this->configFactory->getEditable("views.view.{$views_id}");
     $override_tags_filter = "display.{$display_id}.display_options.override_tags_filter";
     $activity_filter_tags = "display.{$display_id}.display_options.filters.activity_filter_tags";

@@ -26,14 +26,14 @@ abstract class DemoFile extends DemoContent {
    *
    * @var \Drupal\image_widget_crop\ImageWidgetCropManager
    */
-  protected $imageWidgetCropManager;
+  protected ImageWidgetCropManager $imageWidgetCropManager;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * DemoFile constructor.

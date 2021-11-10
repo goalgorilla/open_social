@@ -271,7 +271,7 @@ class SocialDrupalContext extends DrupalContext {
    * @param bool $just_delete
    *   If set to TRUE, it doesn't process the items, but simply deletes them.
    */
-  protected function processQueue($just_delete = FALSE): void {
+  protected function processQueue(bool $just_delete = FALSE): void {
     $workerManager = \Drupal::service('plugin.manager.queue_worker');
     /** @var Drupal\Core\Queue\QueueFactory; $queue */
     $queue = \Drupal::service('queue');

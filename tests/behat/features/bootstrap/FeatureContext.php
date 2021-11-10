@@ -40,7 +40,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @var array
      */
-    protected $groups = array();
+    protected array $groups = array();
 
     /**
      * @BeforeScenario
@@ -491,9 +491,7 @@ class FeatureContext extends RawMinkContext implements Context
       $elements = $this->getSession()->getPage()->findAll('css', $cssQuery);
 
       $items = array_map(
-        function ($element) {
-          return $element->getText();
-        },
+        fn($element): string => $element->getText(),
         $elements
       );
       $checkBefore = $textBefore;
@@ -734,7 +732,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @var array
      */
-    protected $intended_user_names = [];
+    protected array $intended_user_names = [];
 
     /**
      * Stores the user's name in $this->intended_user_names.
@@ -1073,7 +1071,7 @@ class FeatureContext extends RawMinkContext implements Context
      * @param bool $next
      *   (optional) TRUE if it is not first value.
      */
-    public function fillAutocompleteField($field, $text, $item, $next = FALSE): void {
+    public function fillAutocompleteField(string $field, string $text, string $item, bool $next = FALSE): void {
       $element = $this->getSession()->getPage()->findField($field);
 
       if (null === $element) {

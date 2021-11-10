@@ -25,14 +25,14 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * {@inheritdoc}
@@ -119,7 +119,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    *
    *   Return the fetched values.
    */
-  private function checkEmailAndAccount($enrollment_id, $account_id): array {
+  private function checkEmailAndAccount(string $enrollment_id, int $account_id): array {
     $email = NULL;
     $account = NULL;
 

@@ -31,7 +31,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
 
   /**
@@ -92,7 +92,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Yes, continue');
   }
 
@@ -124,7 +124,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): string {
+  public function getDescription(): TranslatableMarkup {
 
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);

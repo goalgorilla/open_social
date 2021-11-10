@@ -27,7 +27,7 @@ class CommunityAbout extends DataProducerPluginBase implements ContainerFactoryP
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config;
+  protected ConfigFactoryInterface $config;
 
   /**
    * {@inheritdoc}

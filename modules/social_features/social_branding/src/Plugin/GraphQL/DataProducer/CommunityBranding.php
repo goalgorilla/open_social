@@ -27,7 +27,7 @@ class CommunityBranding extends DataProducerPluginBase implements ContainerFacto
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config;
+  protected ConfigFactoryInterface $config;
 
   /**
    * {@inheritdoc}

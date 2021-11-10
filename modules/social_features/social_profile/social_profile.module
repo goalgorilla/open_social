@@ -407,6 +407,7 @@ function social_profile_preprocess_profile(array &$variables): void {
  * @param string $property
  *   The property against we need to check the access.
  *
+ * @return bool
  *   Return TRUE if current user is allowed to see the property else FALSE.
  */
 function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property): bool {
@@ -835,7 +836,7 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
 /**
  * Implements hook_ENTITY_TYPE_access().
  */
-function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
 
   $display_profile_teaser = FALSE;
   $route_match = \Drupal::service('current_route_match');
@@ -865,6 +866,7 @@ function social_profile_profile_access(EntityInterface $entity, $operation, Acco
   ) {
     return AccessResult::allowed();
   }
+  return AccessResult::neutral();
 }
 
 /**
@@ -872,7 +874,7 @@ function social_profile_profile_access(EntityInterface $entity, $operation, Acco
  *
  * Implements hook_block_access().
  */
-function social_profile_block_access(Block $block, $operation, AccountInterface $account) {
+function social_profile_block_access(Block $block, $operation, AccountInterface $account): AccessResult {
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:newest_users-page_newest_users')) {
     $access = AccessResult::forbidden();
     if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {

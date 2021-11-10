@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
@@ -22,7 +23,7 @@ class SocialEventController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * SocialEventController constructor.
@@ -92,7 +93,7 @@ class SocialEventController extends ControllerBase {
    *
    *   The decline title markup.
    */
-  public function getTitleDeclineRequest(): string {
+  public function getTitleDeclineRequest(): TranslatableMarkup {
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->requestStack->getCurrentRequest()->get('node');
 

@@ -32,14 +32,14 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The tempstore factory.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The logger factory.
@@ -301,7 +301,7 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  private function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state): void {
+  private function displayErrorMessage(array $invalid_emails, string $message_singular, string $message_plural, FormStateInterface $form_state): void {
     if (($count = count($invalid_emails)) > 1) {
       $error_message = '<ul>';
       foreach ($invalid_emails as $line => $invalid_email) {

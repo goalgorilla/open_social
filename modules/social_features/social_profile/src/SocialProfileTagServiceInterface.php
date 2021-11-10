@@ -50,7 +50,7 @@ interface SocialProfileTagServiceInterface {
    * @return array
    *   An array of child items.
    */
-  public function getChildrens($category): array;
+  public function getChildrens(int $category): array;
 
   /**
    * Returns whether using a parent of categories is allowed.
@@ -69,7 +69,7 @@ interface SocialProfileTagServiceInterface {
    * @return string
    *   Tag machine name.
    */
-  public function tagLabelToMachineName($label): string;
+  public function tagLabelToMachineName(string $label): string;
 
   /**
    * Returns a multilevel tree.

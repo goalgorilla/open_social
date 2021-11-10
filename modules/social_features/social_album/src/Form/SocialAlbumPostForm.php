@@ -33,7 +33,7 @@ class SocialAlbumPostForm extends PostForm {
    *
    * @var \Drupal\node\NodeInterface|null
    */
-  protected $node;
+  protected ?NodeInterface $node = NULL;
 
   /**
    * Form constructor.

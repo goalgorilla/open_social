@@ -171,7 +171,7 @@ function _social_group_set_permissions(): void {
  *
  *   Returns an array containing the permissions.
  */
-function _social_group_get_permissions($role): array {
+function _social_group_get_permissions(string $role): array {
   // Anonymous.
   $permissions[RoleInterface::ANONYMOUS_ID] = [
     'access group search',
@@ -618,7 +618,7 @@ function social_group_update_8502(): void {
 /**
  * Update view mode for new small teaser style.
  */
-function social_group_update_8801() {
+function social_group_update_8801(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -699,7 +699,7 @@ function social_group_update_8904(): void {
 /**
  * Update form displays for group types according new 10.x UX design.
  */
-function social_group_update_8905() {
+function social_group_update_8905(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -740,7 +740,7 @@ function social_group_update_8906(): void {
 /**
  * Add translation compatibility for Event fields and views.
  */
-function social_group_update_8907() {
+function social_group_update_8907(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -754,7 +754,7 @@ function social_group_update_8907() {
 /**
  * Add translations support for views with groups.
  */
-function social_group_update_10201() {
+function social_group_update_10201(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -768,7 +768,7 @@ function social_group_update_10201() {
 /**
  * Update the configs in the database in accordance with the newest schema.
  */
-function social_group_update_10301() {
+function social_group_update_10301(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -782,7 +782,7 @@ function social_group_update_10301() {
 /**
  * The Group Events view configuration update.
  */
-function social_group_update_10302() {
+function social_group_update_10302(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -834,7 +834,7 @@ function social_group_update_10304(): void {
 /**
  * Update User Groups view configurations.
  */
-function social_group_update_10305() {
+function social_group_update_10305(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -865,7 +865,7 @@ function social_group_update_10306(): void {
 /**
  * Update view displays for Group.
  */
-function social_group_update_10307() {
+function social_group_update_10307(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

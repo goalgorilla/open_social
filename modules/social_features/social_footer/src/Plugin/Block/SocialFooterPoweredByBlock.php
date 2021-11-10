@@ -29,14 +29,14 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The file storage.
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected $storage;
+  protected FileStorageInterface $storage;
 
   /**
    * Creates a SocialFooterPoweredByBlock instance.

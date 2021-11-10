@@ -26,7 +26,7 @@ class ProfileEntitySortable extends RenderedEntity {
    *
    * @var \Drupal\views\Plugin\ViewsHandlerManager
    */
-  protected $joinManager;
+  protected ViewsHandlerManager $joinManager;
 
   /**
    * The Drupal module handler service.
@@ -40,7 +40,7 @@ class ProfileEntitySortable extends RenderedEntity {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Constructs an GroupContentToEntityBase object.

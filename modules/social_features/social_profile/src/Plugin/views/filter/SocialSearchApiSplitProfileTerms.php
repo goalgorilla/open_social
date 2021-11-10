@@ -21,7 +21,7 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
    *
    * @var \Drupal\social_profile\SocialProfileTagServiceInterface
    */
-  protected $profileTagService;
+  protected ?SocialProfileTagServiceInterface $profileTagService = NULL;
 
   /**
    * {@inheritdoc}

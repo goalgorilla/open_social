@@ -87,7 +87,7 @@ abstract class DemoNode extends DemoContent {
    * @return int|false
    *   Returns a timestamp on success, false otherwise.
    */
-  protected function createDate($date_string) {
+  protected function createDate(string $date_string) {
     if ($date_string === 'now') {
       return time();
     }
@@ -128,7 +128,7 @@ abstract class DemoNode extends DemoContent {
    * @param string $uuid
    *   UUID of a group.
    */
-  public function createGroupContent(NodeInterface $entity, $uuid): void {
+  public function createGroupContent(NodeInterface $entity, string $uuid): void {
     // Load the group.
     $groups = $this->groupStorage->loadByProperties([
       'uuid' => $uuid,

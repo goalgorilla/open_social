@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResultAllowed;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Access\AccessResult;
@@ -107,7 +108,7 @@ class EnrollRequestDialogController extends ControllerBase {
    *
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node): string {
+  public function enrollTitle(NodeInterface $node): TranslatableMarkup {
     return $this->t('Request enrollment in @label Event', ['@label' => $node->label()]);
   }
 

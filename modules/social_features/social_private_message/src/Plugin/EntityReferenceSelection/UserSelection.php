@@ -34,9 +34,7 @@ class UserSelection extends UserSelectionBase {
     // Gets all roles that have permission to view private messages.
     /** @var \Drupal\user\RoleInterface[] $all_roles */
     $all_roles = $role_storage->loadMultiple();
-    $rids = array_keys(array_filter($all_roles, static function ($role) {
-      return $role->hasPermission('use private messaging system');
-    }));
+    $rids = array_keys(array_filter($all_roles, static fn($role): bool => $role->hasPermission('use private messaging system')));
 
     // Gets users IDs that have permission to view private messages.
     $uids = $this->entityTypeManager->getStorage('user')->getQuery()

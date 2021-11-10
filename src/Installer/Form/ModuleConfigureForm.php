@@ -18,7 +18,7 @@ class ModuleConfigureForm extends ConfigFormBase {
    *
    * @var \Drupal\social\Installer\OptionalModuleManager
    */
-  protected $optionalModuleManager;
+  protected OptionalModuleManager $optionalModuleManager;
 
   /**
    * Constructs a ModuleConfigureForm object.
@@ -85,17 +85,13 @@ class ModuleConfigureForm extends ConfigFormBase {
 
     $optional_features = $this->optionalModuleManager->getOptionalModules();
     $feature_options = array_map(
-      static function ($info) {
-        return $info['name'];
-      },
+      static fn($info) => $info['name'],
       $optional_features
     );
     $default_features = array_keys(
       array_filter(
         $optional_features,
-        static function ($info) {
-          return $info['default'];
-        }
+        static fn($info) => $info['default']
       )
     );
 

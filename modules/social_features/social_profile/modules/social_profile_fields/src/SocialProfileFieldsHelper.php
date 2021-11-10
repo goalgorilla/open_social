@@ -15,14 +15,14 @@ class SocialProfileFieldsHelper {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a new SocialProfileFieldsHelper object.
@@ -45,7 +45,7 @@ class SocialProfileFieldsHelper {
    *
    *   An array of fields.
    */
-  public function getProfileFields($profile_type_id): array {
+  public function getProfileFields(string $profile_type_id): array {
     $fields = [];
 
     // Use storage to get only the profile fields of the current bundle type.
@@ -85,7 +85,7 @@ class SocialProfileFieldsHelper {
    *
    *   An array of plugins.
    */
-  public function getUserExportPluginIdForField($field_id): array {
+  public function getUserExportPluginIdForField(string $field_id): array {
     $mapping = $this->mapProfileFieldsToUserExportPlugin();
     return array_keys($mapping, $field_id);
   }

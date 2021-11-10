@@ -27,7 +27,7 @@ use Drupal\social_post\Entity\PostInterface;
  *   (optional) TRUE if $posts contains an array of post IDs to be loaded, FALSE
  *   if it contains fully loaded posts. Defaults to FALSE.
  */
-function social_post_mass_update(array $posts, array $updates, $langcode = NULL, $load = FALSE): void {
+function social_post_mass_update(array $posts, array $updates, $langcode = NULL, bool $load = FALSE): void {
   // We use batch processing to prevent timeout when updating a large number
   // of posts.
   if (count($posts) > 10) {
@@ -108,7 +108,7 @@ function _social_post_mass_update_helper(PostInterface $post, array $updates, $l
  * @param array|\ArrayAccess $context
  *   An array of contextual key/values.
  */
-function _social_post_mass_update_batch_process(array $posts, array $updates, $langcode, $load, &$context): void {
+function _social_post_mass_update_batch_process(array $posts, array $updates, string $langcode, bool $load, &$context): void {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = count($posts);
@@ -156,7 +156,7 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
  *
  * @see _social_post_mass_update_batch_process()
  */
-function _social_post_mass_update_batch_finished($success, array $results, array $operations): void {
+function _social_post_mass_update_batch_finished(bool $success, array $results, array $operations): void {
   if ($success) {
     \Drupal::messenger()->addStatus(t('The update has been performed.'));
   }

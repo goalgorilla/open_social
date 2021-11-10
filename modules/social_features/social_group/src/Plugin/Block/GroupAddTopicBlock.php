@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
@@ -24,7 +23,7 @@ class GroupAddTopicBlock extends BlockBase {
    *
    * Custom access logic to display the block.
    */
-  public function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  public function blockAccess(AccountInterface $account): AccessResult {
     $group = _social_group_get_current_group();
 
     if (is_object($group)) {

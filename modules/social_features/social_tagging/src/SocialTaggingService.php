@@ -18,21 +18,21 @@ class SocialTaggingService {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * SocialTaggingService constructor.
@@ -165,7 +165,7 @@ class SocialTaggingService {
    *
    *   An array of child items.
    */
-  public function getChildren($category): array {
+  public function getChildren(int $category): array {
     // Define as array.
     $options = [];
 
@@ -212,7 +212,7 @@ class SocialTaggingService {
    *
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $term_ids, $entity_type): array {
+  public function buildHierarchy(array $term_ids, string $entity_type): array {
     $tree = [];
     // Load all the terms together.
     if (!empty($terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadMultiple(array_column($term_ids, 'target_id')))) {

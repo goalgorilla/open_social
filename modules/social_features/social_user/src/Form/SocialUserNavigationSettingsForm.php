@@ -21,7 +21,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}

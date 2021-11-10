@@ -35,35 +35,35 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The entity storage.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $storage;
+  protected EntityTypeManagerInterface $storage;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The language manager interface.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * The Email validator service.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * {@inheritdoc}

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Service;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -18,7 +19,7 @@ class PostPermissions implements PostPermissionsInterface {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityStorageInterface $storage;
 
   /**
    * PostPermissions constructor.

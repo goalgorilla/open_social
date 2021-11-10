@@ -30,7 +30,7 @@ function hook_social_group_flexible_group_content_routes_alter(array &$content_r
  *
  * @ingroup social_group_api
  */
-function hook_social_group_flexible_group_allowed_visibility_description_alter($key, &$description): void {
+function hook_social_group_flexible_group_allowed_visibility_description_alter($key, string &$description): void {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -27,14 +26,14 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * EnrollActionBlock constructor.
@@ -74,7 +73,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * Custom access logic to display the block on the hero region for an event.
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     $route_name = $this->routeMatch->getRouteName();
     $routes_to_check = [
       'view.event_enrollments.view_enrollments',

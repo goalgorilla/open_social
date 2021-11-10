@@ -26,14 +26,14 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The group mute notifications.
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * Constructs a GroupContentInMyGroupActivityContext object.

@@ -22,14 +22,14 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The Social Event AN Enroll config overrider.
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollOverride|null
    */
-  protected $socialEventAnEnrollOverrider;
+  protected ?EventAnEnrollOverride $socialEventAnEnrollOverrider;
 
   /**
    * Constructs the configuration override.

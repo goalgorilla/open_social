@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_managers\Access;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
@@ -31,7 +30,7 @@ class AddEnrolleeAccessCheck implements AccessInterface {
    *
    *   The access result.
    */
-  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account): CacheableDependencyInterface {
+  public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     $permission = $route->getRequirement('_enrollee_permission');
 
     // Don't interfere if no permission was specified.

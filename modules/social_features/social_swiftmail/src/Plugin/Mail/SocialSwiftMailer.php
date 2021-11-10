@@ -2,6 +2,7 @@
 
 namespace Drupal\social_swiftmail\Plugin\Mail;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Asset\AttachedAssets;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
@@ -29,7 +30,7 @@ class SocialSwiftMailer extends SwiftMailer {
     // Overwrite the Markup::Create of SwiftMailer.php.
     // This to take in to account our tables / <br> and basically
     // the custom HTML that is added within open social.
-    $message['body'] = Markup::create(implode($line_endings, array_map(function ($body) {
+    $message['body'] = Markup::create(implode($line_endings, array_map(function ($body): MarkupInterface {
       // If the field contains no html tags we can assume newlines will need be
       // converted to <br>.
       if (strlen(strip_tags($body)) === strlen($body)) {

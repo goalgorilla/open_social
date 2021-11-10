@@ -22,7 +22,7 @@ class SearchContentBlock extends BlockBase implements ContainerFactoryPluginInte
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * SearchHeroBlock constructor.

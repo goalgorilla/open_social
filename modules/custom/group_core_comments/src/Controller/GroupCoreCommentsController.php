@@ -23,7 +23,7 @@ class GroupCoreCommentsController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestService;
+  protected RequestStack $requestService;
 
   /**
    * Constructs a new GroupCoreCommentsController.

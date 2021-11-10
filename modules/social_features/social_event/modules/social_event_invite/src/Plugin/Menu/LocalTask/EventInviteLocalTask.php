@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Plugin\Menu\LocalTask;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
@@ -22,7 +23,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Construct the UnapprovedComments object.
@@ -56,7 +57,7 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL): string {
+  public function getTitle(Request $request = NULL): TranslatableMarkup {
     /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
     $enrollments = \Drupal::service('social_event.status_helper');
 

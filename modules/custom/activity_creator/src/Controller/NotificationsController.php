@@ -19,7 +19,7 @@ class NotificationsController extends ControllerBase {
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activities;
+  protected ActivityNotifications $activities;
 
   /**
    * NotificationsController constructor.

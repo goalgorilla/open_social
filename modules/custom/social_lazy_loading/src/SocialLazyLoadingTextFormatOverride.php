@@ -19,7 +19,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs the configuration override.
@@ -75,7 +75,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides): void {
+  protected function addFilterOverride(string $text_format, bool $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
 
     if ($convert_url) {

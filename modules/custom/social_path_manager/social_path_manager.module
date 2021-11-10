@@ -191,7 +191,7 @@ function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs):
  * @retrun string
  *   The url suffix of the tab.
  */
-function _social_path_manager_get_path_suffix(GroupInterface $group, $route): string {
+function _social_path_manager_get_path_suffix(GroupInterface $group, string $route): string {
   $url = Url::fromRoute($route, ['group' => $group->id()]);
 
   // Get the last part of the url.
@@ -212,7 +212,7 @@ function _social_path_manager_get_path_suffix(GroupInterface $group, $route): st
  *
  * @throws \Exception
  */
-function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE): void {
+function _social_path_manager_update_alias(EntityInterface $entity, string $op, bool $bulk = FALSE): void {
   if ($entity->getEntityTypeId() === 'group') {
     switch ($op) {
       case 'all':

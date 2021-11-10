@@ -23,7 +23,7 @@ use Drupal\taxonomy\Entity\Term;
  *
  * @ingroup social_topic_api
  */
-function hook_topic_type_title_alter(&$title, Term &$term): void {
+function hook_topic_type_title_alter(string &$title, Term &$term): void {
   if (isset($term)) {
     $term_title = $term->getName();
     $title = t('@type', ['@type' => $term_title]);

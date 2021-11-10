@@ -22,7 +22,7 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * SearchHeroBlock constructor.

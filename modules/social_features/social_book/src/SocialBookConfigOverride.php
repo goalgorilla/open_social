@@ -21,7 +21,7 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * SocialBookConfigOverride constructor.

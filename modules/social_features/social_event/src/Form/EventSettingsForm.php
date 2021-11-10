@@ -21,14 +21,14 @@ class EventSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * EventSettingsForm constructor.

@@ -18,7 +18,7 @@
  *
  * @ingroup social_event_api
  */
-function hook_social_event_enroll_method_description_alter($key, &$description): void {
+function hook_social_event_enroll_method_description_alter($key, string &$description): void {
   switch ($key) {
     case 'join_method_extra':
       $description = '<strong>' . t('QR Code')->render() . '</strong>';

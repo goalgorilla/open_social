@@ -20,14 +20,14 @@ class GroupRequestMembershipRejectForm extends ConfirmFormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Group membership request.
    *
    * @var \Drupal\group\Entity\GroupContentInterface
    */
-  protected $groupContent;
+  protected ?GroupContentInterface $groupContent = NULL;
 
   /**
    * {@inheritdoc}

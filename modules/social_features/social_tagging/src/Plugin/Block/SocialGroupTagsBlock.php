@@ -2,7 +2,6 @@
 
 namespace Drupal\social_tagging\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -29,14 +28,14 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The route match.
    *
    * @var \Drupal\social_tagging\SocialTaggingService
    */
-  protected $tagService;
+  protected SocialTaggingService $tagService;
 
   /**
    * EventAddBlock constructor.
@@ -76,7 +75,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
    *
    * Logic to display the block in the sidebar.
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     // If tagging is off, deny access always.
     if (!$this->tagService->active() || !$this->tagService->groupActive()) {
       return AccessResult::forbidden();

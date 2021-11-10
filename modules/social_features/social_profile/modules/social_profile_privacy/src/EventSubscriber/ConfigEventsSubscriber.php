@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile_privacy\EventSubscriber;
 
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,21 +22,21 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The Drupal entity type handler.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * A way for this module to log messages.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $logger;
+  protected LoggerChannelInterface $logger;
 
   /**
    * ConfigEventsSubscriber constructor.

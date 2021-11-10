@@ -35,7 +35,7 @@ class AutocompleteController extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The entity type manager.

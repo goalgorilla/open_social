@@ -117,7 +117,7 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
  *   Post visibility detail.
  */
-function social_post_get_visibility_details($visibility, $return_value = 'icon') {
+function social_post_get_visibility_details(string $visibility, string $return_value = 'icon') {
 
   $return = &drupal_static(__FUNCTION__ . $visibility);
 
@@ -279,7 +279,7 @@ function social_post_preprocess_field(array &$variables): void {
 /**
  * Implements hook_ENTITY_TYPE_create_access().
  */
-function social_post_comment_create_access(AccountInterface $account, array $context, $entity_bundle) {
+function social_post_comment_create_access(AccountInterface $account, array $context, $entity_bundle): AccessResult {
   if ($entity_bundle === 'post_comment') {
     $group = \Drupal::routeMatch()->getParameter('group');
     if (is_numeric($group) && !$group instanceof GroupInterface) {

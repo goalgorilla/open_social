@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -19,7 +20,7 @@ class ActivitySend extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The label of the plugin.
@@ -28,6 +29,6 @@ class ActivitySend extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $label;
+  public Translation $label;
 
 }

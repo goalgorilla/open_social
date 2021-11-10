@@ -19,7 +19,7 @@ class SocialGroupAdminPeopleConfigOverride implements ConfigFactoryOverrideInter
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs the configuration override.

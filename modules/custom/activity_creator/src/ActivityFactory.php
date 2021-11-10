@@ -28,7 +28,7 @@ class ActivityFactory extends ControllerBase {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
-  protected $activityDestinationManager;
+  protected ActivityDestinationManager $activityDestinationManager;
 
   /**
    * The entity type manager.
@@ -42,7 +42,7 @@ class ActivityFactory extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The language manager.
@@ -56,7 +56,7 @@ class ActivityFactory extends ControllerBase {
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The module handler.
@@ -479,7 +479,7 @@ class ActivityFactory extends ControllerBase {
    * @retrun array
    *   Message text array.
    */
-  public function getMessageText(Message $message, $langcode = ''): array {
+  public function getMessageText(Message $message, string $langcode = ''): array {
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
@@ -567,7 +567,7 @@ class ActivityFactory extends ControllerBase {
    *   The output with placeholders replaced with the token value,
    *   if there are indeed tokens.
    */
-  protected function processTokens(array $output, $clear, Message $message): array {
+  protected function processTokens(array $output, bool $clear, Message $message): array {
     $options = [
       'clear' => $clear,
     ];

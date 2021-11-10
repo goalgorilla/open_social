@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Entity;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -153,7 +154,7 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-  public function getDisplayName(): string {
+  public function getDisplayName(): TranslatableMarkup {
     if ($this->hasField('field_post_image') && !$this->get('field_post_image')->isEmpty()) {
       return t('photo');
     }

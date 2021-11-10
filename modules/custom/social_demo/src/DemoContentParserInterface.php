@@ -22,7 +22,7 @@ interface DemoContentParserInterface {
    * @return string
    *   String with the full pathname including the file.
    */
-  public function getPath($file, $module, $profile): string;
+  public function getPath(string $file, string $module, string $profile): string;
 
   /**
    * Parses YAML file into a PHP value.
@@ -37,6 +37,6 @@ interface DemoContentParserInterface {
    * @return mixed
    *   The YAML converted to a PHP value.
    */
-  public function parseFileFromModule($file, $module, $profile);
+  public function parseFileFromModule(string $file, string $module, string $profile);
 
 }

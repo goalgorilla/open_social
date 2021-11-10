@@ -23,14 +23,14 @@ abstract class PushBase extends PluginBase implements PushInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The current active user ID.
    *
    * @var int
    */
-  protected $currentUserId;
+  protected int $currentUserId;
 
   /**
    * Constructs a PushBase object.

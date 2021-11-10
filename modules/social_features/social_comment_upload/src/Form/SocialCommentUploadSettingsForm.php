@@ -21,7 +21,7 @@ class SocialCommentUploadSettingsForm extends ConfigFormBase implements Containe
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}

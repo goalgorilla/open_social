@@ -52,7 +52,7 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
    *
    *   A renderable array representing the post links.
    */
-  public static function renderLinks($node_id, $post_id, $file_id): array {
+  public static function renderLinks(int $node_id, int $post_id, int $file_id): array {
     $entity = \Drupal::entityTypeManager()->getStorage('post')->load($post_id);
 
     $links = call_user_func(

@@ -24,14 +24,14 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Group membership request.
    *
    * @var \Drupal\group\Entity\GroupContentInterface
    */
-  protected $groupContent;
+  protected ?GroupContentInterface $groupContent = NULL;
 
   /**
    * The redirect destination helper.
@@ -45,14 +45,14 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * GroupRequestMembershipRejectForm constructor.

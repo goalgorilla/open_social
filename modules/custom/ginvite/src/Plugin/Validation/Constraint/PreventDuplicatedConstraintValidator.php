@@ -23,14 +23,14 @@ class PreventDuplicatedConstraintValidator extends ConstraintValidator implement
    *
    * @var \Drupal\group\GroupMembershipLoaderInterface
    */
-  protected $groupMembershipLoader;
+  protected GroupMembershipLoaderInterface $groupMembershipLoader;
 
   /**
    * Group invitations loader.
    *
    * @var \Drupal\ginvite\GroupInvitationLoader
    */
-  protected $groupInvitationLoader;
+  protected GroupInvitationLoader $groupInvitationLoader;
 
   /**
    * Constructs PreventDuplicatedConstraintValidator.

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
@@ -29,14 +30,14 @@ class SocialGroupController extends ControllerBase {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * Views Bulk Operations action processor.
    *
    * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
    */
-  protected $actionProcessor;
+  protected ViewsBulkOperationsActionProcessorInterface $actionProcessor;
 
 
   /**
@@ -44,7 +45,7 @@ class SocialGroupController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * SocialGroupController constructor.
@@ -81,7 +82,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   The page title.
    */
-  public function groupMembersTitle($group): string {
+  public function groupMembersTitle(object $group): TranslatableMarkup {
     // If it's not a group then it's a gid.
     if (!$group instanceof Group) {
       $group = Group::load($group);
@@ -97,7 +98,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   The page title.
    */
-  public function groupStreamTitle($group): string {
+  public function groupStreamTitle(object $group): string {
     $group_label = $group->label();
     return $group_label;
   }
@@ -118,7 +119,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   The page title.
    */
-  public function groupAddMemberTitle(): string {
+  public function groupAddMemberTitle(): TranslatableMarkup {
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
     $group = \Drupal::routeMatch()->getParameter('group');
     if ($group_content instanceof GroupContent &&
@@ -140,7 +141,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   The page title.
    */
-  public function groupRemoveContentTitle($group): string {
+  public function groupRemoveContentTitle($group): TranslatableMarkup {
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
     if ($group_content instanceof GroupContent &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
@@ -220,7 +221,7 @@ class SocialGroupController extends ControllerBase {
    *
    *   The page title.
    */
-  public function createFormTitle(GroupInterface $group, $plugin_id): string {
+  public function createFormTitle(GroupInterface $group, string $plugin_id): TranslatableMarkup {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
     $group_content_type = GroupContentType::load($plugin->getContentTypeConfigId());

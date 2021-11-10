@@ -48,7 +48,7 @@ trait SocialProfileTrait {
    *   An array of account IDs for accounts whose account names begin with the
    *   given string.
    */
-  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL): array {
+  public function getUserIdsFromName(string $name, int $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL): array {
     $query = $this->startQuery();
     $name = '%' . ltrim($query->escapeLike($name)) . '%';
 
@@ -154,7 +154,7 @@ trait SocialProfileTrait {
    * @return \Drupal\Core\Database\Query\SelectInterface
    *   The select query.
    */
-  private function sortQuery(SelectInterface $query, $name, $suggestion_format): SelectInterface {
+  private function sortQuery(SelectInterface $query, string $name, string $suggestion_format): SelectInterface {
     if ($suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME && $this->useFullName()) {
       // Delete percent symbol on the beginning of the phrase for search from
       // the start of field values.

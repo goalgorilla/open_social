@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Entity\Access;
 
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
@@ -23,7 +22,7 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the group access control handler instance.
@@ -52,7 +51,7 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResultForbidden {
+  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
     if (
       !$account->hasPermission('bypass group access') &&
       !$account->hasPermission('bypass create group access') &&

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\ContextProvider;
 
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Context\ContextProviderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -26,14 +27,14 @@ class UserRouteContext implements ContextProviderInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $currentRouteMatch;
+  protected RouteMatchInterface $currentRouteMatch;
 
   /**
    * The user storage.
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected EntityStorageInterface $userStorage;
 
   /**
    * Constructs a new UserRouteContext.

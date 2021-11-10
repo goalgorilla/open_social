@@ -20,7 +20,7 @@ class SocialUserExportSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $exportPluginManager;
+  protected UserExportPluginManager $exportPluginManager;
 
   /**
    * Constructs a new DataPolicyRevisionDeleteForm.

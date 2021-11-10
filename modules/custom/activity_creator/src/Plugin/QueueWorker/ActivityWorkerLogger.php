@@ -2,6 +2,8 @@
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
 
+use Drupal\activity_creator\Plugin\ActivityContextManager;
+
 /**
  * A report worker.
  *
@@ -22,7 +24,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
-  protected $contextPluginManager;
+  protected ActivityContextManager $contextPluginManager;
 
   /**
    * The state.

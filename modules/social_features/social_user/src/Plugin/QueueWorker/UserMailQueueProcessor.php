@@ -35,35 +35,35 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The entity storage.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $storage;
+  protected EntityTypeManagerInterface $storage;
 
   /**
    * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The language manager interface.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * The Email validator service.
    *
    * @var \Drupal\Component\Utility\EmailValidatorInterface
    */
-  protected $emailValidator;
+  protected EmailValidatorInterface $emailValidator;
 
   /**
    * {@inheritdoc}
@@ -184,7 +184,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    *
    *   The remaining number.
    */
-  protected function lastItem($mail_id): bool {
+  protected function lastItem(string $mail_id): bool {
     // Escape the condition values.
     $item_type = $this->connection->escapeLike('mail');
     $item_id = $this->connection->escapeLike($mail_id);

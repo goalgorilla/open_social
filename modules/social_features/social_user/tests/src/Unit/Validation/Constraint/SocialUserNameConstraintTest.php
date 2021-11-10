@@ -193,7 +193,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    *
    *   Mock constraintViolationItems with the count of $number_of_items.
    */
-  protected function buildViolationList($number_of_items): array {
+  protected function buildViolationList(int $number_of_items): array {
     $violationList = [];
     for ($count = 0; $count < $number_of_items; $count++) {
       $violation = $this->createMock('Symfony\Component\Validator\ConstraintViolationInterface');

@@ -27,21 +27,21 @@ class SocialGroupSettings extends ConfigFormBase {
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $groupContentPluginManager;
+  protected GroupContentEnablerManagerInterface $groupContentPluginManager;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -276,7 +276,7 @@ class SocialGroupSettings extends ConfigFormBase {
    *
    *   TRUE if permission is granted.
    */
-  protected function hasPermission($name): bool {
+  protected function hasPermission(string $name): bool {
     return !empty($this->config('social_group.settings')->get($name));
   }
 

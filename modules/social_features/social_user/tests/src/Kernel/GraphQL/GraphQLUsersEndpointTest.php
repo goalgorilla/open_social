@@ -47,7 +47,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     ]);
     $this->assertEndpointSupportsPagination(
       'users',
-      array_map(static fn (UserInterface $user) => $user->uuid(), $users)
+      array_map(static fn (UserInterface $user): ?string => $user->uuid(), $users)
     );
   }
 

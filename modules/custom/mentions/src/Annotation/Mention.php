@@ -2,6 +2,7 @@
 
 namespace Drupal\mentions\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -15,7 +16,7 @@ class Mention extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The name of the flavor.
@@ -24,6 +25,6 @@ class Mention extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $name;
+  public Translation $name;
 
 }

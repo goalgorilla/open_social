@@ -17,7 +17,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
-  protected $moduleHandler;
+  protected ModuleHandler $moduleHandler;
 
   /**
    * Constructs the service with DI.

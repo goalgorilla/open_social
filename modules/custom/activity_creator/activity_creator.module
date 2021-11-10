@@ -322,7 +322,7 @@ function activity_creator_entity_delete(EntityInterface $entity): void {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _activity_creator_activity_for_entity_updater($action, EntityInterface $entity): void {
+function _activity_creator_activity_for_entity_updater(string $action, EntityInterface $entity): void {
   if ($entity !== NULL) {
     // We never create activities for configuration entities but accessing
     // entity queries during configuration changes may cause errors.

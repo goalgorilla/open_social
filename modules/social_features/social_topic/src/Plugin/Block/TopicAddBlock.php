@@ -2,7 +2,6 @@
 
 namespace Drupal\social_topic\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -27,7 +26,7 @@ class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * TopicAddBlock constructor.
@@ -63,7 +62,7 @@ class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    *
    * Custom access logic to display the block only on current user Topic page.
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     $route_user_id = $this->routeMatch->getParameter('user');
     if ($account->id() == $route_user_id && $account->hasPermission("create topic content")) {
       return AccessResult::allowed();

@@ -25,7 +25,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.
@@ -71,7 +71,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve): RedirectResponse {
+  public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, int $approve): RedirectResponse {
     // Just some sanity checks.
     if ($node instanceof Node && !empty($event_enrollment)) {
       // First, lets delete all messages to keep the messages clean.

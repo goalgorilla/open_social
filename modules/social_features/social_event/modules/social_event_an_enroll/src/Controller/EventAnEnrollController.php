@@ -2,7 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Controller;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
@@ -26,7 +26,7 @@ class EventAnEnrollController extends ControllerBase {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The entity type manager.
@@ -80,7 +80,7 @@ class EventAnEnrollController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden
    *   Allowed or not allowed.
    */
-  public function enrollAccess(NodeInterface $node): CacheableDependencyInterface {
+  public function enrollAccess(NodeInterface $node): AccessResult {
     $config = $this->config('social_event_an_enroll.settings');
     $is_global_enabled = $config->get('event_an_enroll');
     $is_event = $node->getType() === 'event';
@@ -141,7 +141,7 @@ class EventAnEnrollController extends ControllerBase {
    *
    *   The page title.
    */
-  public function enrollTitle(NodeInterface $node): string {
+  public function enrollTitle(NodeInterface $node): TranslatableMarkup {
     return $this->t('Enroll in @label Event', ['@label' => $node->label()]);
   }
 

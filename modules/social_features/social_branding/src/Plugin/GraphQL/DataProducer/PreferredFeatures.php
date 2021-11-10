@@ -26,7 +26,7 @@ class PreferredFeatures extends DataProducerPluginBase implements ContainerFacto
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * {@inheritdoc}
@@ -68,9 +68,7 @@ class PreferredFeatures extends DataProducerPluginBase implements ContainerFacto
     $this->moduleHandler->alter('social_branding_preferred_features', $preferred_features);
 
     // Order ascending by weight.
-    usort($preferred_features, function ($item1, $item2) {
-      return $item1->getWeight() <=> $item2->getWeight();
-    });
+    usort($preferred_features, fn($item1, $item2): int => $item1->getWeight() <=> $item2->getWeight());
 
     return $preferred_features;
   }

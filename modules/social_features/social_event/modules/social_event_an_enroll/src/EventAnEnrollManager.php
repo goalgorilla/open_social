@@ -23,7 +23,7 @@ class EventAnEnrollManager {
    * @return string
    *   Full name or E-mail address.
    */
-  public function getGuestName(EventEnrollmentInterface $entity, $email = TRUE): string {
+  public function getGuestName(EventEnrollmentInterface $entity, bool $email = TRUE): string {
     $parts = [];
 
     // If user doesn't have access to see the first/last/email value.

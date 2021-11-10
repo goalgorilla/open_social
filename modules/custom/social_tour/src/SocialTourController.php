@@ -29,14 +29,14 @@ class SocialTourController extends ControllerBase {
    *
    * @var \Drupal\user\UserDataInterface
    */
-  protected $userData;
+  protected UserDataInterface $userData;
 
   /**
    * The path validator.
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $pathValidator;
+  protected PathValidatorInterface $pathValidator;
 
   /**
    * The redirect destination helper.
@@ -176,7 +176,7 @@ class SocialTourController extends ControllerBase {
    * @param bool $disabled
    *   Type of bool, either TRUE or FALSE.
    */
-  private function setData($disabled = TRUE): void {
+  private function setData(bool $disabled = TRUE): void {
     $this->userData->set('social_tour', $this->currentUser->id(), 'onboarding_disabled', $disabled);
   }
 
@@ -189,15 +189,13 @@ class SocialTourController extends ControllerBase {
    * @retrun array
    *   The cache tags.
    */
-  public function getCacheTags($route_name): array {
+  public function getCacheTags(string $route_name): array {
     $tours = $this->entityTypeManager->getStorage('tour')
       ->getQuery()
       ->condition('routes.*.route_name', $route_name)
       ->execute();
 
-    return array_map(function ($tour) {
-      return 'user:' . $this->currentUser->id() . ':tour:' . $tour;
-    }, $tours);
+    return array_map(fn($tour): string => 'user:' . $this->currentUser->id() . ':tour:' . $tour, $tours);
   }
 
 }

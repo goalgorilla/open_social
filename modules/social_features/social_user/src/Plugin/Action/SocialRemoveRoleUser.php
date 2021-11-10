@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -27,14 +28,14 @@ class SocialRemoveRoleUser extends ChangeUserRoleBase implements ContainerFactor
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The role delegation delegatable roles interface.
    *
    * @var \Drupal\role_delegation\DelegatableRolesInterface
    */
-  protected $delegatableRoles;
+  protected DelegatableRolesInterface $delegatableRoles;
 
   /**
    * {@inheritdoc}

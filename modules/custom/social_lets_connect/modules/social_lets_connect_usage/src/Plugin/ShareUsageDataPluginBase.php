@@ -21,14 +21,14 @@ abstract class ShareUsageDataPluginBase extends PluginBase implements ShareUsage
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public $entityTypeManager;
+  public EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  public $config;
+  public ConfigFactory $config;
 
   /**
    * UserExportPluginBase constructor.

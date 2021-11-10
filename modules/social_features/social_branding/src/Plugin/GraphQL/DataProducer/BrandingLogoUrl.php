@@ -33,7 +33,7 @@ class BrandingLogoUrl extends DataProducerPluginBase implements ContainerFactory
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config;
+  protected ConfigFactoryInterface $config;
 
   /**
    * {@inheritdoc}

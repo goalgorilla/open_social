@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_request\Controller;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResult;
@@ -33,7 +34,7 @@ class GroupRequestController extends ControllerBase {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * GroupRequestController constructor.
@@ -89,14 +90,14 @@ class GroupRequestController extends ControllerBase {
   /**
    * Return the title for approve request confirmation page.
    */
-  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content): string {
+  public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
     return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
-  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content): string {
+  public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content): TranslatableMarkup {
     return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 

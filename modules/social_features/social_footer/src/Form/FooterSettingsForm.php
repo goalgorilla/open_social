@@ -19,21 +19,21 @@ class FooterSettingsForm extends FormBase {
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected $fileStorage;
+  protected FileStorageInterface $fileStorage;
 
   /**
    * The entity repository.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The file usage service.
    *
    * @var \Drupal\file\FileUsage\FileUsageInterface
    */
-  protected $fileUsage;
+  protected FileUsageInterface $fileUsage;
 
   /**
    * Creates a FooterSettingsForm instance.
@@ -162,7 +162,7 @@ class FooterSettingsForm extends FormBase {
    * @param string $text
    *   Text editor value.
    */
-  public function setInlineImagesAsPermanent($text) : void {
+  public function setInlineImagesAsPermanent(string $text) : void {
     $uuids = _editor_parse_file_uuids($text);
     foreach ($uuids as $uuid) {
       /** @var \Drupal\file\FileInterface|NULL $file */

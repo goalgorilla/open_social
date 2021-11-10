@@ -38,21 +38,21 @@ class EnrollRequestDeclineForm extends FormBase {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The event invite status helper.
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventInviteStatus;
+  protected EventEnrollmentStatusHelper $eventInviteStatus;
 
   /**
    * The full name of the user.
    *
    * @var string
    */
-  protected $fullName;
+  protected ?string $fullName = NULL;
 
   /**
    * EnrollRequestDeclineForm constructor.

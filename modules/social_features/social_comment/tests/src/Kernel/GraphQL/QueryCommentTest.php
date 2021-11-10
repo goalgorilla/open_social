@@ -51,7 +51,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
    *
    * @var \Drupal\comment\CommentInterface[]
    */
-  private $comments = [];
+  private array $comments = [];
 
   /**
    * {@inheritdoc}

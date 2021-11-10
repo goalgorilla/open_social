@@ -181,7 +181,7 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
    * @return array[]
    *   A flattened array of children.
    */
-  private function getTaxonomyChildren(array $parent, $hyphens = 0): array {
+  private function getTaxonomyChildren(array $parent, int $hyphens = 0): array {
     $children = [];
     $selected = [];
 

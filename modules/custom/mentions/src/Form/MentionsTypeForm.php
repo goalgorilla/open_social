@@ -27,7 +27,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
    *
    * @var \Drupal\mentions\MentionsPluginManager
    */
-  protected $mentionsManager;
+  protected MentionsPluginManager $mentionsManager;
 
   /**
    * The entity type manager service.
@@ -41,7 +41,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
    *
    * @var \Drupal\Core\Entity\EntityTypeRepositoryInterface
    */
-  protected $entityTypeRepository;
+  protected EntityTypeRepositoryInterface $entityTypeRepository;
 
   /**
    * The module handler service.

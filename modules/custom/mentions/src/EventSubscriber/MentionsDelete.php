@@ -16,14 +16,14 @@ class MentionsDelete implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * MentionsDelete constructor.

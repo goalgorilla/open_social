@@ -39,21 +39,21 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The entity buffer service.
    *
    * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
    */
-  protected $entityBuffer;
+  protected EntityBuffer $entityBuffer;
 
   /**
    * The Drupal renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  private $renderer;
+  private RendererInterface $renderer;
 
   /**
    * {@inheritdoc}

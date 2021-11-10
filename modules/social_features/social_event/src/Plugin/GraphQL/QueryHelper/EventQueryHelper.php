@@ -70,7 +70,7 @@ class EventQueryHelper extends ConnectionQueryHelperBase {
   public function getLoaderPromise(array $result) : SyncPromise {
     // In case of no results we create a callback the returns an empty array.
     if (empty($result)) {
-      $callback = static fn () => [];
+      $callback = static fn (): array => [];
     }
     // Otherwise we create a callback that uses the GraphQL entity buffer to
     // ensure the entities for this query are only loaded once. Even if the
@@ -81,15 +81,13 @@ class EventQueryHelper extends ConnectionQueryHelperBase {
     }
 
     return new Deferred(
-      function () use ($callback) {
-        return array_map(
-          fn (Node $entity) => new Edge(
-            $entity,
-            new Cursor('node', $entity->id(), $this->sortKey, $this->getSortValue($entity))
-          ),
-          $callback()
-        );
-      }
+      fn(): array => array_map(
+        fn (Node $entity): Edge => new Edge(
+          $entity,
+          new Cursor('node', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+        ),
+        $callback()
+      )
     );
   }
 

@@ -32,14 +32,14 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *
    * @var \Drupal\social_event\EventEnrollmentInterface
    */
-  protected $entity;
+  protected EventEnrollmentInterface $entity;
 
   /**
    * The event an enroll manager.
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a SocialEventAnEnrollSendEmail object.

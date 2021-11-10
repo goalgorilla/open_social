@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -28,7 +29,7 @@ class UserGroupMemberships extends UserExportPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  public $groupHelper;
+  public SocialGroupHelperService $groupHelper;
 
   /**
    * UserExportPluginBase constructor.
@@ -84,7 +85,7 @@ class UserGroupMemberships extends UserExportPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getHeader(): string {
+  public function getHeader(): TranslatableMarkup {
     return $this->t('Group memberships (specified)');
   }
 

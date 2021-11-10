@@ -38,7 +38,7 @@ class ExportAllEnrolments extends ExportEnrolments {
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a ExportAllEnrolments object.
@@ -107,7 +107,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   /**
    * {@inheritdoc}
    */
-  public function executeMultiple(array $entities) {
+  public function executeMultiple(array $entities): void {
     $this->entities = $entities;
 
     parent::executeMultiple($entities);

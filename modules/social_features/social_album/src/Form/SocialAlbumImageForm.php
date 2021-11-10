@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_post\Form\PostDeleteForm;
 
@@ -57,7 +58,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   /**
    * {@inheritdoc}
    */
-  public function getDescription(): string {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('Deleting this image will also delete it from the post it belongs to.');
   }
 

@@ -25,21 +25,21 @@ class GinviteSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\ginvite\GroupInvitationLoader
    */
-  protected $groupInvitationLoader;
+  protected GroupInvitationLoader $groupInvitationLoader;
 
   /**
    * The current user's account object.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The Messenger service.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * Constructs GinviteSubscriber.

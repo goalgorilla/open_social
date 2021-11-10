@@ -20,14 +20,14 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -93,7 +93,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, $convert_url, array &$overrides): void {
+  protected function addFilterOverride(string $text_format, bool $convert_url, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
@@ -136,7 +136,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addEditorOverride($text_format, array &$overrides): void {
+  protected function addEditorOverride(string $text_format, array &$overrides): void {
     $config_name = 'editor.editor.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);

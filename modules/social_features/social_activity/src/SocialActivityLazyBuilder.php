@@ -18,14 +18,14 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The views executable factory.
    *
    * @var \Drupal\views\ViewExecutableFactory
    */
-  protected $viewExecutable;
+  protected ViewExecutableFactory $viewExecutable;
 
   /**
    * SocialActivityLazyBuilder constructor.
@@ -66,7 +66,7 @@ class SocialActivityLazyBuilder implements TrustedCallbackInterface {
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags): ?array {
+  public function viewsLazyBuild(string $view_id, string $display_id, string $node_type, int $item_per_page, $vocabulary = NULL, ...$tags): ?array {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);

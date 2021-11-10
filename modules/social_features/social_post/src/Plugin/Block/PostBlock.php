@@ -28,49 +28,49 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
    *
    * @var string
    */
-  public $entityType;
+  public string $entityType;
 
   /**
    * The bundle.
    *
    * @var string
    */
-  public $bundle;
+  public string $bundle;
 
   /**
    * The form display.
    *
    * @var string
    */
-  public $formDisplay;
+  public string $formDisplay;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * PostBlock constructor.
@@ -144,7 +144,7 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $values = [];
     // Specify selected bundle if the entity has bundles.
     if ($this->entityTypeManager->getDefinition($this->entityType)->hasKey('bundle')) {

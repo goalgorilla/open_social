@@ -31,7 +31,7 @@ class GroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a new GroupViewsBulkOperationsBulkForm object.

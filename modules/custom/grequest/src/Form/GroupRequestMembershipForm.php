@@ -20,7 +20,7 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * {@inheritdoc}

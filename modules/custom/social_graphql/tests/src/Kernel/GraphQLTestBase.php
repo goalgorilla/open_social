@@ -72,7 +72,7 @@ abstract class GraphQLTestBase extends KernelTestBase {
    *
    * @var \Drupal\graphql\GraphQL\ResolverBuilder
    */
-  protected $builder;
+  protected ResolverBuilder $builder;
 
   /**
    * {@inheritdoc}

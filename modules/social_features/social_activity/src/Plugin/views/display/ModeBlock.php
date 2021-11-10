@@ -39,7 +39,7 @@ class ModeBlock extends Block {
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * Constructs a new Block instance.

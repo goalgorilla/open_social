@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs a new RouteSubscriber.

@@ -31,7 +31,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    *
    * @var array
    */
-  protected $fieldConfigs;
+  protected array $fieldConfigs;
 
   /**
    * Constructs a ContentBlockPluginFieldWidget object.

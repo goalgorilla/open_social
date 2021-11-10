@@ -23,7 +23,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The content block plugin definitions.

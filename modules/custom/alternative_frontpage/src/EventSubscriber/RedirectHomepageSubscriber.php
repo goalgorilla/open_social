@@ -2,6 +2,7 @@
 
 namespace Drupal\alternative_frontpage\EventSubscriber;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
@@ -28,49 +29,49 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\user\UserData
    */
-  protected $userData;
+  protected UserData $userData;
 
   /**
    * Protected var alternativeFrontpageSettings.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $alternativeFrontpageSettings;
+  protected ImmutableConfig $alternativeFrontpageSettings;
 
   /**
    * Protected var siteSettings.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $siteSettings;
+  protected ImmutableConfig $siteSettings;
 
   /**
    * Protected var for the current user.
    *
    * @var \Drupal\Core\Session\AccountProxy
    */
-  protected $currentUser;
+  protected AccountProxy $currentUser;
 
   /**
    * Protected var for the path matcher.
    *
    * @var \Drupal\Core\Path\PathMatcher
    */
-  protected $pathMatcher;
+  protected PathMatcher $pathMatcher;
 
   /**
    * The state.
    *
    * @var \Drupal\Core\State\State
    */
-  protected $state;
+  protected State $state;
 
   /**
    * Drupal\Core\Messenger\MessengerInterface definition.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * Constructor for the RedirectHomepageSubscriber.

@@ -21,7 +21,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.

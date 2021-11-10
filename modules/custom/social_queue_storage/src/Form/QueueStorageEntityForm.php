@@ -18,7 +18,7 @@ class QueueStorageEntityForm extends ContentEntityForm {
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $account;
+  protected ?object $account = NULL;
 
   /**
    * {@inheritdoc}

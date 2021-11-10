@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\activity_creator\ActivityNotifications;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
@@ -36,56 +37,56 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $frequencyManager;
+  protected EmailFrequencyManager $frequencyManager;
 
   /**
    * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The activity notification service.
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activityNotifications;
+  protected ActivityNotifications $activityNotifications;
 
   /**
    * Social mail settings.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $swiftmailSettings;
+  protected ImmutableConfig $swiftmailSettings;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The queue service.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queueFactory;
+  protected QueueFactory $queueFactory;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManager
    */
-  protected $languageManager;
+  protected LanguageManager $languageManager;
 
   /**
    * The group mute notifications.
    *
    * @var \Drupal\social_group\GroupMuteNotify
    */
-  protected $groupMuteNotify;
+  protected GroupMuteNotify $groupMuteNotify;
 
   /**
    * {@inheritdoc}

@@ -413,7 +413,7 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
 /**
  * Implements hook_block_access().
  */
-function social_group_request_block_access(Block $block, $operation, AccountInterface $account) {
+function social_group_request_block_access(Block $block, $operation, AccountInterface $account): AccessResult {
   if ($operation == 'view' && $block->getPluginId() == 'group_hero_block') {
     $route_name = \Drupal::routeMatch()->getRouteName();
     $excluded_routes = [
@@ -425,4 +425,5 @@ function social_group_request_block_access(Block $block, $operation, AccountInte
       return AccessResult::forbidden();
     }
   }
+  return AccessResult::neutral();
 }

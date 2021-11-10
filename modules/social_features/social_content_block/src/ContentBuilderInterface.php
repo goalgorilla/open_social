@@ -23,6 +23,6 @@ interface ContentBuilderInterface {
    *   A render array for the action link, empty if the user does not have
    *   access.
    */
-  public function build($entity_id, $entity_type_id, $entity_bundle) : array;
+  public function build(int $entity_id, string $entity_type_id, string $entity_bundle) : array;
 
 }

@@ -66,7 +66,7 @@ function social_album_install(): void {
  *
  *   List of block paths with new paths.
  */
-function _social_album_install_blocks($pages, array $paths): string {
+function _social_album_install_blocks(string $pages, array $paths): string {
   return $pages . "\r\n" . implode("\r\n", $paths);
 }
 
@@ -74,7 +74,7 @@ function _social_album_install_blocks($pages, array $paths): string {
  * Implements hook_uninstall().
  */
 function social_album_uninstall(): void {
-  _social_album_blocks(function ($pages, array $paths) {
+  _social_album_blocks(function ($pages, array $paths): string {
     $pages = explode("\r\n", $pages);
 
     foreach ($pages as $delta => $page) {
@@ -229,7 +229,7 @@ function _social_album_blocks(callable $function, array $items = [
 /**
  * Set some default group permissions and check them on the group albums page.
  */
-function social_album_update_8901() {
+function social_album_update_8901(): string {
   // Set some default group permissions.
   _social_album_set_group_permissions();
 
@@ -255,7 +255,7 @@ function social_album_update_8902(): void {
 /**
  * Limitate styling for modal windows only by post modal windows.
  */
-function social_album_update_8903() {
+function social_album_update_8903(): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 
@@ -280,7 +280,7 @@ function social_album_update_8904(): void {
 /**
  * Update album form labels.
  */
-function social_album_update_10201() {
+function social_album_update_10201(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

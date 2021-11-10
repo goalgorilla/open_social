@@ -26,7 +26,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    *
    * @var \Drupal\toolbar\Menu\ToolbarMenuLinkTree
    */
-  protected $toolbarMenuLinkTree;
+  protected ToolbarMenuLinkTree $toolbarMenuLinkTree;
 
   /**
    * Constructs a \Drupal\Core\Menu\DefaultMenuLinkTreeManipulators object.

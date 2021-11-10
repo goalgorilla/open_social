@@ -19,21 +19,21 @@ class AjaxCommentsController extends ContribController {
    *
    * @var int|null
    */
-  protected $errors = NULL;
+  protected ?int $errors = NULL;
 
   /**
    * TRUE if temporary storage should be cleared.
    *
    * @var bool
    */
-  protected $clearTempStore = TRUE;
+  protected bool $clearTempStore = TRUE;
 
   /**
    * The parent comment's comment ID.
    *
    * @var int|null
    */
-  protected $pid;
+  protected ?int $pid = NULL;
 
   /**
    * Cancel handler for the cancel form.
@@ -46,7 +46,7 @@ class AjaxCommentsController extends ContribController {
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   The Ajax response.
    */
-  public function socialCancel(Request $request, $cid): AjaxResponse {
+  public function socialCancel(Request $request, int $cid): AjaxResponse {
     // This is based on AjaxCommentsController::cancel.
     // the only change is we have some more wrappers we need to remove,
     // we can't tell this to ajax_comments because we render it in our template

@@ -47,7 +47,7 @@ function hook_social_group_hide_types_alter(array &$hidden_types): void {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_default_visibility_alter(&$visibility, $group_type_id): void {
+function hook_social_group_default_visibility_alter(string &$visibility, string $group_type_id): void {
   switch ($group_type_id) {
     case 'custom_public_group':
       $visibility = 'public';
@@ -78,7 +78,7 @@ function hook_social_group_default_visibility_alter(&$visibility, $group_type_id
  *
  * @ingroup social_group_api
  */
-function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id): void {
+function hook_social_group_allowed_visibilities_alter(array &$visibilities, string $group_type_id): void {
   if ($group_type_id === 'custom_public_group') {
     $visibilities['community'] = TRUE;
   }
@@ -125,7 +125,7 @@ function hook_social_group_move(NodeInterface $node): void {
  *
  * @ingroup social_group_api
  */
-function hook_social_group_content_visibility_description_alter($key, &$description): void {
+function hook_social_group_content_visibility_description_alter($key, string &$description): void {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -151,7 +151,7 @@ function hook_social_group_content_visibility_description_alter($key, &$descript
  *
  * @ingroup social_group_api
  */
-function hook_social_group_group_visibility_description_alter($key, &$description): void {
+function hook_social_group_group_visibility_description_alter($key, string &$description): void {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -177,7 +177,7 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
  *
  * @ingroup social_group_api
  */
-function hook_social_group_allowed_join_method_description_alter($key, &$description): void {
+function hook_social_group_allowed_join_method_description_alter($key, string &$description): void {
   switch ($key) {
     case 'join_method_extra':
       $description = '<strong>' . t('QR Code')->render() . '</strong>';
@@ -201,7 +201,7 @@ function hook_social_group_allowed_join_method_description_alter($key, &$descrip
  *
  * @ingroup social_group_api
  */
-function hook_social_group_settings_alter(&$social_group_types): void {
+function hook_social_group_settings_alter(string &$social_group_types): void {
   $social_group_types[] = 'flexible_group';
 }
 

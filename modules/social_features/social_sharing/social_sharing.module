@@ -14,7 +14,7 @@ use Drupal\Core\Access\AccessResult;
 /**
  * Implements hook_block_access().
  */
-function social_sharing_block_access(Block $block, $operation, AccountInterface $account) {
+function social_sharing_block_access(Block $block, $operation, AccountInterface $account): AccessResult {
 
   if ($operation == 'view' && $block->getPluginId() == 'shariff_block') {
     // Exclude Social Sharing block form Add and Edit node pages.

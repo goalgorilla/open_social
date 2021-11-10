@@ -48,28 +48,28 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @var string
    */
-  protected $id;
+  protected string $id;
 
   /**
    * Name and ID of Mentions Type.
    *
    * @var string
    */
-  protected $name;
+  protected string $name;
 
   /**
    * Description of Mentions Type.
    *
    * @var string
    */
-  protected $description;
+  protected string $description;
 
   /**
    * Where mention type appears.
    *
    * @var string
    */
-  protected $mentionType;
+  protected string $mentionType;
 
   /**
    * What is looked for when mentions are parsed.
@@ -85,9 +85,9 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * Keys of array: outputvalue, renderlink.
    *
-   * @var string
+   * @var array
    */
-  protected $output = [];
+  protected array $output = [];
 
   /**
    * {@inheritdoc}

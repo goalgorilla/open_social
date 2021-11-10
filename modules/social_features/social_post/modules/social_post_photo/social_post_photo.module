@@ -49,7 +49,7 @@ function social_post_photo_preprocess_image_formatter(&$variables): void {
  * @param string $to
  *   Type to change it to.
  */
-function _social_post_photo_settype($from, $to): void {
+function _social_post_photo_settype(string $from, string $to): void {
   // Get post storage.
   $poststorage = \Drupal::entityTypeManager()->getStorage('post');
   // Load all posts of type post.

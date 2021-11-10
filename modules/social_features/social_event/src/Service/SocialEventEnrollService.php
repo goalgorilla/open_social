@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Service;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -18,7 +19,7 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $eventSettings;
+  protected ImmutableConfig $eventSettings;
 
   /**
    * SocialEventEnrollService constructor.

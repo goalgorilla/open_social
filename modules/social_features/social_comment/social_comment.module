@@ -114,7 +114,7 @@ function social_comment_edit_form_submit(array $form, FormStateInterface $form_s
  * @param bool $add_status
  *   Add the status field, by default TRUE.
  */
-function social_comment_remove_author_field(array &$form, $add_status = TRUE): void {
+function social_comment_remove_author_field(array &$form, bool $add_status = TRUE): void {
   // Check if we need to hide the author fields for comments.
   $remove_author_fields = \Drupal::config('social_comment.comment_settings')->get('remove_author_field');
   if ($remove_author_fields) {

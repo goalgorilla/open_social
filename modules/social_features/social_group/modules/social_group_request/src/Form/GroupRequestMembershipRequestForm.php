@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_request\Form;
 
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -22,35 +23,35 @@ class GroupRequestMembershipRequestForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Group membership request.
    *
    * @var \Drupal\group\Entity\GroupContentInterface
    */
-  protected $groupContent;
+  protected GroupContentInterface $groupContent;
 
   /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * Entity type manger.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * GroupRequestMembershipRejectForm constructor.

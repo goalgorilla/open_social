@@ -23,7 +23,7 @@ class GroupContentSingleActivityEntityCondition extends ActivityEntityConditionB
    *
    * @var \Drupal\social_group\CrossPostingService
    */
-  protected $crossPostingService;
+  protected CrossPostingService $crossPostingService;
 
   /**
    * Constructs a GroupContentMultipleActivityEntityCondition object.

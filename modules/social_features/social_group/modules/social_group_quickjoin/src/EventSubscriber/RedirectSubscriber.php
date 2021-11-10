@@ -24,21 +24,21 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxy
    */
-  protected $currentUser;
+  protected AccountProxy $currentUser;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Redirectsubscriber construct.

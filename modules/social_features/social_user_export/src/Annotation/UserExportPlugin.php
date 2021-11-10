@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Annotation;
 
+use Drupal\Core\Annotation\Translation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
@@ -19,7 +20,7 @@ class UserExportPlugin extends Plugin {
    *
    * @var string
    */
-  public $id;
+  public string $id;
 
   /**
    * The label of the plugin.
@@ -28,13 +29,13 @@ class UserExportPlugin extends Plugin {
    *
    * @ingroup plugin_translatable
    */
-  public $label;
+  public Translation $label;
 
   /**
    * The plugin weight.
    *
    * @var int
    */
-  public $weight;
+  public int $weight;
 
 }

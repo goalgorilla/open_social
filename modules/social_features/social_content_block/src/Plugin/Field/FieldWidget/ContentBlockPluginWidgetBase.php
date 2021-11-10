@@ -22,7 +22,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
    *
    * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $contentBlockManager;
+  protected ContentBlockManagerInterface $contentBlockManager;
 
   /**
    * Constructs a ContentBlockPluginWidgetBase object.

@@ -113,7 +113,7 @@ function social_event_managers_link_alter(&$variables): void {
 /**
  * Implements hook_entity_access().
  */
-function social_event_managers_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_event_managers_entity_access(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
   // Event Manager & Organizers can view/delete/edit enrollments for events
   // they are organizing.
   if ($entity instanceof EventEnrollmentInterface) {
@@ -121,6 +121,7 @@ function social_event_managers_entity_access(EntityInterface $entity, $operation
       return AccessResult::allowedIf($entity instanceof EventEnrollmentInterface);
     }
   }
+  return AccessResult::neutral();
 }
 
 /**
@@ -264,7 +265,7 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
  * we are in operation update and if gnode already returns forbidden we are able
  * to return an allowed if user is an event manager.
  */
-function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
+function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account): AccessResult {
   return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 
@@ -414,7 +415,7 @@ function social_event_managers_batch_alter(&$batch): void {
  * @param array $operations
  *   Performed operations array.
  */
-function _social_event_managers_action_batch_finish($success, array $results, array $operations): void {
+function _social_event_managers_action_batch_finish(bool $success, array $results, array $operations): void {
   // When we do a bulk action on all the items in a view, across multiple pages,
   // the saveList function needs to be called. So after pre-populating the list
   // the actual action is performed on the entities.

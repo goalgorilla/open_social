@@ -27,7 +27,7 @@ use Drupal\social_post\Entity\PostInterface;
  *
  * @ingroup social_post_api
  */
-function hook_social_post_visibility_info_alter($visibility, &$icon, &$title): void {
+function hook_social_post_visibility_info_alter(string $visibility, string &$icon, string &$title): void {
   switch ($visibility) {
     case '5':
       $icon = 'community';

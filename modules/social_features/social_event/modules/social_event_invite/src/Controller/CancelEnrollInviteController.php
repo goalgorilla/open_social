@@ -25,7 +25,7 @@ class CancelEnrollInviteController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.

@@ -27,14 +27,14 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    *
    * @var array
    */
-  protected $content = [];
+  protected array $content = [];
 
   /**
    * Contains data from a file.
    *
    * @var array
    */
-  protected $data = [];
+  protected array $data = [];
 
   /**
    * Parser.
@@ -48,7 +48,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    *
    * @var string
    */
-  protected $profile = '';
+  protected string $profile = '';
 
   /**
    * The file storage.
@@ -216,7 +216,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityInterface[]|mixed
    *   Returns the entity.
    */
-  protected function loadByUuid($entity_type_id, $id, $all = FALSE) {
+  protected function loadByUuid(string $entity_type_id, $id, bool $all = FALSE) {
     if (property_exists($this, $entity_type_id . 'Storage')) {
       $storage = $this->{$entity_type_id . 'Storage'};
     }
@@ -251,7 +251,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @return mixed
    *   If nothing needs to be replaced, just return the same content.
    */
-  protected function checkMentionOrLinkByUuid($content): ?string {
+  protected function checkMentionOrLinkByUuid(string $content): ?string {
     // Check if there's a mention in the given content.
     if (strpos($content, '[~') !== FALSE || strpos($content, '[link=') !== FALSE) {
       // Put the content in a logical var.
@@ -326,7 +326,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @retrun array
    *   Returns an array for the image field.
    */
-  protected function prepareImage($picture, $alt = ''): ?array {
+  protected function prepareImage(string $picture, string $alt = ''): ?array {
     $value = NULL;
     $files = $this->loadByUuid('file', $picture);
 

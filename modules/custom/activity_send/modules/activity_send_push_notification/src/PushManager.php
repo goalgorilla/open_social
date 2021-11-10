@@ -50,9 +50,7 @@ class PushManager extends DefaultPluginManager {
   public function getDefinitions(): array {
     $definitions = parent::getDefinitions();
 
-    uasort($definitions, function ($a, $b) {
-      return SortArray::sortByKeyInt($a, $b, 'weight');
-    });
+    uasort($definitions, fn($a, $b): int => SortArray::sortByKeyInt($a, $b, 'weight'));
 
     return $definitions;
   }

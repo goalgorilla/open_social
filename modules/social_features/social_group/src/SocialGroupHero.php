@@ -15,7 +15,7 @@ class SocialGroupHero {
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * Whether the hero is shown in the small view mode.
@@ -64,7 +64,9 @@ class SocialGroupHero {
    */
   public function isSmall() :bool {
     // Invoke cropToStyle, to get info about the size.
-    $this->cropToStyle($this->configFactory->get('social_group.settings')->get('default_hero'));
+    if ($default_hero = $this->configFactory->get('social_group.settings')->get('default_hero')) {
+      $this->cropToStyle($default_hero);
+    }
     // Return info about the size.
     return $this->isSmall;
   }
@@ -78,7 +80,7 @@ class SocialGroupHero {
    * @return string
    *   The associated image style.
    */
-  protected function cropToStyle($cropType) :string {
+  protected function cropToStyle(string $cropType) :string {
     $values = [
       'hero' => 'social_xx_large',
       'hero_small' => 'social_hero_small',

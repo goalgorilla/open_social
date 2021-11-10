@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_request\Plugin\Block;
 
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -31,35 +32,35 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $account;
+  protected AccountInterface $account;
 
   /**
    * Group entity.
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Entity type manger.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Translation manager.
    *
    * @var \Drupal\Core\StringTranslation\TranslationManager
    */
-  protected $translation;
+  protected TranslationManager $translation;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs SocialGroupRequestMembershipNotification.

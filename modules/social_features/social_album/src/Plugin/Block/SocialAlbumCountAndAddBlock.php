@@ -38,7 +38,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a SocialAlbumCountAndAddBlock object.

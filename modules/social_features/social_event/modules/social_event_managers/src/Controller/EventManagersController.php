@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_managers\Controller;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -60,7 +59,7 @@ class EventManagersController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    *   Thrown if the storage handler couldn't be loaded.
    */
-  public function access(AccountInterface $account, RouteMatch $route_match): CacheableDependencyInterface {
+  public function access(AccountInterface $account, RouteMatch $route_match): AccessResult {
     if ($account->hasPermission('manage everything enrollments')) {
       return AccessResult::allowed();
     }

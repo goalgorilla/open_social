@@ -21,9 +21,7 @@ use Drupal\block_content\BlockContentInterface;
 function hook_social_content_block_query_alter(Select $query, BlockContentInterface $block_content): void {
   // Get topic type tags.
   $topic_types_list = $block_content->get('field_topic_type')->getValue();
-  $topic_types = array_map(function ($topic_type) {
-    return $topic_type['target_id'];
-  }, $topic_types_list);
+  $topic_types = array_map(fn($topic_type) => $topic_type['target_id'], $topic_types_list);
 
   // Add topic type tags.
   if (!empty($topic_types)) {

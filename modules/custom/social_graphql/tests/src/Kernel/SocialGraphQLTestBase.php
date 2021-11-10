@@ -162,7 +162,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     // Create a query for the filter under test. Include some data that allow
     // verifying the results.
     $open_path = empty($parents) ? "" : implode(" {", $parents) . " { ";
-    $close_path = empty($parents) ? "" : " } " . implode("}", array_map(static fn () => "", $parents));
+    $close_path = empty($parents) ? "" : " } " . implode("}", array_map(static fn (): string => "", $parents));
     $query = "
         query {
           ${open_path}
@@ -211,7 +211,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     self::assertEquals([], $executionResult->errors, "Errors for ${open_path}${field}(${filter})${close_path}");
     self::assertNotNull($executionResult->data, "No data for ${open_path}${field}(${filter})${close_path}");
 
-    $parent_fields = array_map(static fn ($f) => explode('(', $f)[0], $parents);
+    $parent_fields = array_map(static fn ($f): string => explode('(', $f)[0], $parents);
     $data = NestedArray::getValue($executionResult->data,
       [...$parent_fields, $field]);
     self::assertNotNull($data, "No data for ${open_path}${field}(${filter})${close_path}");
@@ -231,7 +231,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     self::assertEquals($expected_page_info, $data['pageInfo'], "Incorrect pageInfo for ${field}(${filter})");
 
     $expected_nodes = array_map(
-      static fn ($uuid) => ['id' => $uuid],
+      static fn ($uuid): array => ['id' => $uuid],
       $first_page
     );
 
@@ -241,7 +241,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     // good way of predicting its value for comparison. It's usefulness is
     // tested using the $second_page in a test.
     $expected_edge_data = array_map(
-      static fn ($uuid) => ['node' => ['id' => $uuid]],
+      static fn ($uuid): array => ['node' => ['id' => $uuid]],
       $first_page
     );
     $actual_edge_data = array_map(

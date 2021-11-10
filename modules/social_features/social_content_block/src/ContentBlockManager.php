@@ -23,7 +23,7 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
    *
    * @var array
    */
-  protected $fieldParents = [];
+  protected array $fieldParents = [];
 
   /**
    * {@inheritdoc}

@@ -31,42 +31,42 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The route match.
    *
    * @var \Drupal\social_tagging\SocialTaggingService
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The entity repository.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The title resolver service.
    *
    * @var \Drupal\Core\Controller\TitleResolverInterface
    */
-  protected $titleResolver;
+  protected TitleResolverInterface $titleResolver;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialPageTitleBlock constructor.

@@ -29,7 +29,7 @@ class PostTypeDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Delete');
   }
 

@@ -167,7 +167,7 @@ class Dropdown extends FieldItemBase {
    *
    * @see \Drupal\options\Plugin\Field\FieldType\ListTextItem::allowedValuesString()
    */
-  protected static function extractAllowedValues($string, $has_data): array {
+  protected static function extractAllowedValues(string $string, bool $has_data): array {
     $values = [];
 
     $list = explode("\n", $string);
@@ -210,7 +210,7 @@ class Dropdown extends FieldItemBase {
    * @param string $option
    *   The option value entered by the user.
    */
-  protected static function validateAllowedValue($option): void {}
+  protected static function validateAllowedValue(string $option): void {}
 
   /**
    * {@inheritdoc}

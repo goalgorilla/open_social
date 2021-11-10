@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_invite;
 
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -26,35 +25,35 @@ class SocialEventInviteAccessHelper {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelperService;
+  protected SocialGroupHelperService $groupHelperService;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * EventInvitesAccess constructor.
@@ -86,7 +85,7 @@ class SocialEventInviteAccessHelper {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function eventFeatureAccess(): AccessResultForbidden {
+  public function eventFeatureAccess(): AccessResult {
     $config = $this->configFactory->get('social_event_invite.settings');
     $enabled_global = $config->get('invite_enroll');
 

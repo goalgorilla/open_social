@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\social_comment\Kernel;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -44,14 +46,14 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  private $storage;
+  private EntityStorageInterface $storage;
 
   /**
    * Node entity to use in this test.
    *
    * @var \Drupal\node\Entity\Node
    */
-  private $node;
+  private NodeInterface $node;
 
   /**
    * {@inheritdoc}

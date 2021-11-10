@@ -228,7 +228,7 @@ function _social_tour_init() {
 /**
  * Check some stuff before doing anything with these tours.
  */
-function _social_tour_check() {
+function _social_tour_check(): bool {
   /** @var \Drupal\social_tour\SocialTourController $onboarding */
   $onboarding = \Drupal::service('social_tour.onboarding');
   return $onboarding->onboardingEnabled();

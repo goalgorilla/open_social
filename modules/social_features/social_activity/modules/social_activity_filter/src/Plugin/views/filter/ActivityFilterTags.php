@@ -22,7 +22,7 @@ class ActivityFilterTags extends FilterPluginBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * {@inheritdoc}

@@ -24,7 +24,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The request.

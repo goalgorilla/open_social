@@ -26,21 +26,21 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public $entityTypeManager;
+  public EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The date formatter.
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
-  public $dateFormatter;
+  public DateFormatterInterface $dateFormatter;
 
   /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  public $database;
+  public Connection $database;
 
   /**
    * UserExportPluginBase constructor.
@@ -212,9 +212,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
     }
 
     $names = array_map(
-      function (TermInterface $taxonomy_term) {
-        return $taxonomy_term->getName();
-      },
+      fn(TermInterface $taxonomy_term): string => $taxonomy_term->getName(),
       $user_profile->get($field_name)->referencedEntities()
     );
 

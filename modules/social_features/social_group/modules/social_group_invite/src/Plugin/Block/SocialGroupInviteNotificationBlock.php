@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Plugin\Block;
 
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -27,28 +28,28 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $account;
+  protected AccountInterface $account;
 
   /**
    * Group entity.
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Translation manager.
    *
    * @var \Drupal\Core\StringTranslation\TranslationManager
    */
-  protected $translation;
+  protected TranslationManager $translation;
 
   /**
    * Invitation Loader.
    *
    * @var \Drupal\ginvite\GroupInvitationLoaderInterface
    */
-  protected $inviteLoader;
+  protected GroupInvitationLoaderInterface $inviteLoader;
 
   /**
    * Constructs SocialGroupInviteNotificationBlock.

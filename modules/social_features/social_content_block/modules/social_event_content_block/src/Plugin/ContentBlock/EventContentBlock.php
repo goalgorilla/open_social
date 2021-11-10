@@ -31,7 +31,7 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * EventContentBlock constructor.

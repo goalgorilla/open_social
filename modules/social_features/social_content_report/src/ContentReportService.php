@@ -24,28 +24,28 @@ class ContentReportService implements ContentReportServiceInterface {
    *
    * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * Current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The current request.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Constructor for ContentReportService.

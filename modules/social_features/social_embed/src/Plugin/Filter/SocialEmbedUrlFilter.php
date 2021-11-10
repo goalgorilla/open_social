@@ -48,7 +48,7 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
    *
    *   Return if the item is on the whitelist or not.
    */
-  public function whiteList($text): bool {
+  public function whiteList(string $text): bool {
     // Fetch allowed patterns.
     $patterns = $this->getPatterns();
 

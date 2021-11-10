@@ -18,7 +18,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
    *
    * @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarManager
    */
-  protected $addToCalendarManager;
+  protected SocialAddToCalendarManager $addToCalendarManager;
 
   /**
    * SocialAddToCalendarSettingsForm constructor.

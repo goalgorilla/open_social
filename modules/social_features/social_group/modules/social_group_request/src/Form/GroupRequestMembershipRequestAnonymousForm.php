@@ -21,14 +21,14 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
    *
    * @var \Drupal\group\Entity\GroupInterface
    */
-  protected $group;
+  protected ?GroupInterface $group = NULL;
 
   /**
    * Request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * GroupRequestMembershipRejectForm constructor.

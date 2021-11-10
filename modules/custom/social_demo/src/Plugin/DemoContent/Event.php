@@ -115,7 +115,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Returns an array or null.
    */
-  protected function prepareEventType($uuid): ?array {
+  protected function prepareEventType(string $uuid): ?array {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
       'uuid' => $uuid,

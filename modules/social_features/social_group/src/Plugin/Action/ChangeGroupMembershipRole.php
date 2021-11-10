@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,14 +32,14 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $storage;
+  protected EntityStorageInterface $storage;
 
   /**
    * The currently active route match object.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Constructs a ViewsBulkOperationSendEmail object.
@@ -82,7 +84,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL): string {
+  public function execute($entity = NULL): TranslatableMarkup {
     $role = $this->configuration['role'];
     $is_member = $this->configuration['is_member'];
     $update = TRUE;

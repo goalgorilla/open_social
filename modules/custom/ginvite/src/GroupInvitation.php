@@ -19,7 +19,7 @@ class GroupInvitation implements CacheableDependencyInterface {
    *
    * @var \Drupal\group\Entity\GroupContentInterface
    */
-  protected $groupContent;
+  protected ?GroupContentInterface $groupContent;
 
   /**
    * Constructs a new GroupInvitation.

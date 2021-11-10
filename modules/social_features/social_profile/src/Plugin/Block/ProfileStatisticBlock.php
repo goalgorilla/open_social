@@ -2,7 +2,6 @@
 
 namespace Drupal\social_profile\Plugin\Block;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
@@ -29,7 +28,7 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * ProfileStatisticBlock constructor.
@@ -107,7 +106,7 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  protected function blockAccess(AccountInterface $account): CacheableDependencyInterface {
+  protected function blockAccess(AccountInterface $account): AccessResult {
     // Show statistic block only when new style is enabled.
     if (theme_get_setting('style') === 'sky') {
       return AccessResult::allowed();

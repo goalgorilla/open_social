@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_access_by_field;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
@@ -121,7 +120,7 @@ class EntityAccessHelper {
   /**
    * Gets the Entity access for the given node.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): CacheableDependencyInterface {
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): AccessResult {
     $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
 
     $moduleHandler = \Drupal::service('module_handler');

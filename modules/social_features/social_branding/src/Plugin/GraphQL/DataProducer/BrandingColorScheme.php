@@ -33,7 +33,7 @@ class BrandingColorScheme extends DataProducerPluginBase implements ContainerFac
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config;
+  protected ConfigFactoryInterface $config;
 
   /**
    * {@inheritdoc}

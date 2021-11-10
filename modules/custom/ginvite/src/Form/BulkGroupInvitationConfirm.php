@@ -25,7 +25,7 @@ class BulkGroupInvitationConfirm extends ConfirmFormBase implements ContainerInj
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The logger factory.
