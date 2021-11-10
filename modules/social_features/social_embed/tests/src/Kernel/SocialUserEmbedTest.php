@@ -51,8 +51,9 @@ class SocialUserEmbedTest extends KernelTestBase {
    * Test maximum number of times each user can generate embed content of a
    * given URL.
    */
-  public function testSocialUserEmbed() {
+  public function testSocialUserEmbed(): void {
     // Create a user with the necessary permission.
+    /** @var \Drupal\Core\Session\AccountInterface $user */
     $user = $this->createUser(['generate social embed content']);
     // Set created user as the current user.
     \Drupal::currentUser()->setAccount($user);
