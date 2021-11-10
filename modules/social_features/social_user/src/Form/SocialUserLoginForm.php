@@ -184,7 +184,7 @@ class SocialUserLoginForm extends UserLoginForm {
         if ($flood_config->get('uid_only')) {
           // Register flood events based on the uid only, so they apply for any
           // IP address. This is the most secure option.
-          $identifier = $account->id();
+          $identifier = (string) $account->id();
         }
         else {
           // The default identifier is a combination of uid and IP address. This
