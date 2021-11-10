@@ -57,3 +57,26 @@ Feature: Create Event
     Then I should see "Access denied"
       And I should see "You are not authorized to access this page."
       And I enable that the registered users to be verified immediately
+
+  @event-types
+  Scenario: Create event with event type
+    Given I enable the module "social_event_type"
+    And I set the configuration item "socialblue.settings" with key "style" to "sky"
+    And "event_types" terms:
+      | name         |
+      | Online Event |
+    And the cache has been cleared
+
+    Given I am logged in as an "authenticated user"
+    And I go to "node/add/event"
+    Then I should see "Online Event"
+    Then I click radio button "Online Event"
+    And I fill in the following:
+      | Title                                  | This is a test event |
+      | edit-field-event-date-0-value-date     | 2025-01-01           |
+      | edit-field-event-date-end-0-value-date | 2025-01-01           |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I press "Create event"
+    Then I should see the link "Online Event" in the "Hero block" region
+    Then I set the configuration item "socialblue.settings" with key "style" to "default"
+    And the cache has been cleared
