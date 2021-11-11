@@ -4,18 +4,44 @@ namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialUserSettingsForm.
+ * The SocialUserSettingsForm class.
  *
  * @package Drupal\social_user\Form
  */
 class SocialUserSettingsForm extends ConfigFormBase {
 
   /**
+   * The router builder.
+   *
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
+   */
+  protected $routerBuilder;
+
+  /**
+   * The cache tag invalidator.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   */
+  protected $cacheTagInvalidator;
+
+  /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  public static function create(ContainerInterface $container): self {
+    $instance = parent::create($container);
+    $instance->routerBuilder = $container->get('router.builder');
+    $instance->cacheTagInvalidator = $container->get('cache_tags.invalidator');
+
+    return $instance;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames(): array {
     return [
       'social_user.settings',
     ];
@@ -24,23 +50,24 @@ class SocialUserSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'social_user_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_user.settings');
 
     $form['social_user_profile_landingpage'] = [
       '#type' => 'select',
-      '#title' => t('Choose a default landing page'),
-      '#description' => t('When visiting a profile the user will end up at this page first'),
+      '#title' => $this->t('Choose a default landing page'),
+      '#description' => $this->t('When visiting a profile the user will end up at this page first'),
       '#options' => [
-        'social_user.stream' => t('Stream'),
-        'view.user_information.user_information' => t('Information'),
+        'social_user.stream' => $this->t('Stream'),
+        'view.user_information.user_information' => $this->t('Information'),
+        '<front>' => $this->t('Home'),
       ],
       '#default_value' => $config->get('social_user_profile_landingpage'),
     ];
@@ -50,18 +77,15 @@ class SocialUserSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
+
     $this->config('social_user.settings')
       ->set('social_user_profile_landingpage', $form_state->getValue('social_user_profile_landingpage'))
       ->save();
 
-    // Rebuild the router cache.
-    \Drupal::service('router.builder')->rebuild();
-
-    /** @var \Drupal\Core\Cache\CacheTagsInvalidator $cti */
-    $cti = \Drupal::service('cache_tags.invalidator');
-    $cti->invalidateTags(['rendered']);
+    $this->routerBuilder->rebuild();
+    $this->cacheTagInvalidator->invalidateTags(['rendered']);
   }
 
 }
