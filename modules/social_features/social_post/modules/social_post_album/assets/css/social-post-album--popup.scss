@@ -35,9 +35,19 @@
       margin-bottom: 0;
       z-index: 10000;
 
+      [dir='rtl'] & {
+        left: 13px;
+        right: auto;
+      }
+
       @media (max-width: 899px) {
         right: 9px;
         bottom: 19px;
+
+        [dir='rtl'] & {
+          left: 9px;
+          right: auto;
+        }
       }
 
       .label {
@@ -240,6 +250,11 @@
             max-width: 380px;
             left: auto;
             right: 0;
+
+            [dir='rtl'] & {
+              left: 0;
+              right: auto;
+            }
           }
 
           .card__nested-section {
