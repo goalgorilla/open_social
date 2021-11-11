@@ -243,7 +243,10 @@ class SocialTaggingService {
       // Build the hierarchy.
       foreach ($terms as $current_term) {
         // Must be a valid Term.
-        if (!$current_term instanceof TermInterface) {
+        if (
+          !$current_term instanceof TermInterface ||
+          !$current_term->isPublished()
+        ) {
           continue;
         }
         // Get current terms parents.
@@ -296,7 +299,9 @@ class SocialTaggingService {
   private function prepareTermOptions(array $terms) {
     $options = [];
     foreach ($terms as $category) {
-      $options[$category->tid] = $category->name;
+      if ((bool) $category->status) {
+        $options[$category->tid] = $category->name;
+      }
     }
 
     return $options;
