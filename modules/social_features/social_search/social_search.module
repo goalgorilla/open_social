@@ -73,6 +73,10 @@ function social_search_alter_users_exposed_filter_block(&$form, FormStateInterfa
  * Makes changes for the filter block on the groups search page.
  */
 function social_search_alter_groups_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
+  if (!isset($form['type'])) {
+    return;
+  }
+
   $options = [
     'All' => t('- Any -'),
   ];
