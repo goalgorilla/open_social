@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use CommerceGuys\Addressing\AddressFormat\AddressField;
+use CommerceGuys\Addressing\AddressFormat\FieldOverride;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
@@ -1061,10 +1063,6 @@ function social_profile_update_12009() : void {
   // @todo Add nickname_unique_validation schema.
   $social_profile_settings->set("nickname_unique_validation", (bool) $social_profile_fields_settings->get("nickname_unique_validation"));
   $social_profile_settings->save();
-
-  // @todo This doesn't handle address subfields.
-  // Clean up the config that's no longer used.
-  $social_profile_fields_settings->delete();
 }
 
 /**
@@ -1569,9 +1567,88 @@ function social_profile_update_12017() : void {
 }
 
 /**
- * Clean up migrated settings and permissions.
+ * Migrate address subfield configuration.
  */
 function social_profile_update_12018() : void {
+  // Type annotation needed for PHPStan until Drupal 9.2.0.
+  /** @var \Drupal\field\FieldConfigInterface|NULL $address_field */
+  $address_field = FieldConfig::loadByName('profile', 'profile', 'field_profile_address');
+
+  // If the field doesn't exist or a site builder has indicated it should be
+  // opted out of our management then we exit early.
+  if ($address_field === NULL || FieldManager::isOptedOutOfFieldAccessManagement($address_field)) {
+    return;
+  }
+
+  // Get the field overrides through a dummy field item. This brings the logic
+  // that automatically uses the (deprecated) `fields` or (current)
+  // `fields_override` setting depending on which is filled. This makes sure we
+  // get the config that's actually active.
+  // This change was made in https://drupal.org/node/2514126.
+  /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+  $profile = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->create(['type' => 'profile']);
+  /** @var \Drupal\address\Plugin\Field\FieldType\AddressFieldItemList $items */
+  $items = $profile->get($address_field->getName());
+  /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $item */
+  $item = $items->first() ?: $items->appendItem();
+  $field_overrides = $item->getFieldOverrides();
+
+  $settings = \Drupal::config('social_profile_fields.settings');
+
+  // If the field is enabled we use the default address behaviour (no override),
+  // if the field was disabled then we hide it always.
+  if ($settings->get('profile_address_field_city')) {
+    unset($field_overrides[AddressField::LOCALITY]);
+  }
+  else {
+    $field_overrides[AddressField::LOCALITY] = FieldOverride::HIDDEN;
+  }
+
+  if ($settings->get('profile_address_field_address')) {
+    unset($field_overrides[AddressField::ADDRESS_LINE1]);
+  }
+  else {
+    $field_overrides[AddressField::ADDRESS_LINE1] = FieldOverride::HIDDEN;
+  }
+
+  if ($settings->get('profile_address_field_postalcode')) {
+    unset($field_overrides[AddressField::POSTAL_CODE]);
+  }
+  else {
+    $field_overrides[AddressField::POSTAL_CODE] = FieldOverride::HIDDEN;
+  }
+
+  if ($settings->get('profile_address_field_administrative_area')) {
+    unset($field_overrides[AddressField::ADMINISTRATIVE_AREA]);
+  }
+  else {
+    $field_overrides[AddressField::ADMINISTRATIVE_AREA] = FieldOverride::HIDDEN;
+  }
+
+  // The settings are stored in the structure of the form but returned as
+  // flattened array by getFieldOverrides so we must inflate them.
+  $field_overrides = array_map(
+    fn (string $visibility) => ['override' => $visibility],
+    $field_overrides
+  );
+
+  /** @var \Drupal\Core\Field\FieldConfigBase $address_field */
+  $address_field
+    // We've transferred our custom config to the configuration which was
+    // latest. We now store this in the new `field_overrides` setting.
+    ->setSetting('field_overrides', $field_overrides)
+    // We now unset the fields configuration so that the new field_overrides
+    // property is used.
+    ->setSetting('fields', [])
+    ->save();
+}
+
+/**
+ * Clean up migrated settings and permissions.
+ */
+function social_profile_update_12019() : void {
   // This is done as a separate step on purpose. This allows extending modules
   // to set their update dependencies between an update hook performing set-up
   // but before the settings are removed. In case they want to make any changes
@@ -1594,6 +1671,12 @@ function social_profile_update_12018() : void {
   $user_data = \Drupal::service('user.data');
   $user_data->delete($modules);
 
+  // Delete the social_profile_fields settings since they're not removed in the
+  // module itself.
+  \Drupal::configFactory()
+    ->getEditable('social_profile_fields.settings')
+    ->delete();
+
   // Clean up the old show email setting.
   $field_show_email = FieldConfig::load("profile.profile.field_profile_show_email");
   if ($field_show_email) {
@@ -1609,12 +1692,12 @@ function social_profile_update_12018() : void {
 /**
  * Update field configuration to match removed profile template.
  */
-function social_profile_update_12019() : string {
+function social_profile_update_12020() : string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_12019');
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_12020');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

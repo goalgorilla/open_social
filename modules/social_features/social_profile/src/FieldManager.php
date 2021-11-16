@@ -219,7 +219,7 @@ class FieldManager implements EntityFieldManagerInterface {
    * @see https://www.drupal.org/project/drupal/issues/2399301
    * @see https://www.drupal.org/project/drupal/issues/2818877
    */
-  private static function getFieldStorageDefinition(FieldConfigInterface $field_definition) : FieldStorageConfigInterface {
+  public static function getFieldStorageDefinition(FieldConfigInterface $field_definition) : FieldStorageConfigInterface {
     /** @var \Drupal\field\FieldStorageConfigInterface $fsd */
     $fsd = $field_definition->getFieldStorageDefinition();
     return $fsd;
