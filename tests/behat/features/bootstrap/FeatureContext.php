@@ -882,7 +882,7 @@ class FeatureContext extends RawMinkContext implements Context
     public function openFileAndExpectAccess($fid, $expected_access) {
       /** @var \Drupal\file\Entity\File $file */
       $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
-      $url = $file->url();
+      $url = $file->createFileUrl();
       $page = file_url_transform_relative($url);
       $this->visitPath($page);
 
