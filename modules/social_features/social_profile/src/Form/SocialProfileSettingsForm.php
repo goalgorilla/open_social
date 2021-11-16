@@ -2,15 +2,20 @@
 
 namespace Drupal\social_profile\Form;
 
+use CommerceGuys\Addressing\AddressFormat\FieldOverride;
+use Drupal\address\LabelHelper;
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\TypedData\TypedDataManagerInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\social_profile\FieldManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\user\Entity\Role;
@@ -29,12 +34,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * contains only the default 'profile' profile type which is what Open Social
  * supports out of the box.
  *
- * @todo Support individual address sub-fields.
- *
  * @see \Drupal\social_profile\ProfileFieldsPermissionProvider
  * @see \social_profile_entity_field_access()
  */
-class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class SocialProfileSettingsForm extends ConfigFormBase {
 
   /**
    * The database.
@@ -51,11 +54,21 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   protected $languageMananger;
 
   /**
+   * The entity type manager.
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
    * Our Social Profile Field Manager.
    *
    * Contains methods to help us know whether we're managing particular fields.
    */
   private FieldManager $fieldManager;
+
+  /**
+   * Drupal's typed data manager.
+   */
+  private TypedDataManagerInterface $typedDataManager;
 
   /**
    * Fields synced from User to Profile.
@@ -76,18 +89,24 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Database\Connection $database
    *   The database.
    * @param \Drupal\Core\Language\LanguageManager $language_manager
    *   The language manager.
    * @param \Drupal\social_profile\FieldManager $field_manager
    *   The Social Profile Field Manager.
+   * @param \Drupal\Core\TypedData\TypedDataManagerInterface $typed_data_manager
+   *   The typed data manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Connection $database, LanguageManager $language_manager, FieldManager $field_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, Connection $database, LanguageManager $language_manager, FieldManager $field_manager, TypedDataManagerInterface $typed_data_manager) {
     parent::__construct($config_factory);
     $this->database = $database;
     $this->languageMananger = $language_manager;
     $this->fieldManager = $field_manager;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->typedDataManager = $typed_data_manager;
   }
 
   /**
@@ -96,9 +115,11 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('entity_type.manager'),
       $container->get('database'),
       $container->get('language_manager'),
-      $container->get('social_profile.field_manager')
+      $container->get('social_profile.field_manager'),
+      $container->get('typed_data_manager')
     );
   }
 
@@ -113,7 +134,9 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['social_profile.settings'];
+    return [
+      'social_profile.settings',
+    ];
   }
 
   /**
@@ -153,6 +176,8 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       '#default_value' => $config->get('nickname_unique_validation'),
     ];
 
+    $form['address'] = $this->buildAddressFieldset();
+
     // Profile tagging settings.
     $form['tagging'] = $this->buildTaggingFieldset();
 
@@ -177,11 +202,8 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     // description for the fieldset at the bottom which is not discoverable for
     // users.
     $fields['description'] = [
-      '#type' => 'inline_template',
-      '#template' => '<div class="form-item__description">{{ description }}</div>',
-      '#context' => [
-        'description' => new TranslatableMarkup("This form allows you to control the availability and behaviour of profile fields in your community. <em class='placeholder'>Public</em> visibility make fields visible to anonymous users. <em class='placeholder'>Community</em> visibility fields are only visible to logged in users. <em class='placeholder'>Private</em> fields are visible only to the user themselves. When users are allowed to edit the visibility the field will be made available on their account settings page. Roles selected under <em class='placeholder'>Always show for</em> will be able to view fields from a user's profile regardless of the visibility. Disabling a field will remove it from all places on the platform, data that users have filled in previously will not be lost."),
-      ],
+      '#type' => 'item',
+      '#description' => new TranslatableMarkup("This form allows you to control the availability and behaviour of profile fields in your community. <em class='placeholder'>Public</em> visibility make fields visible to anonymous users. <em class='placeholder'>Community</em> visibility fields are only visible to logged in users. <em class='placeholder'>Private</em> fields are visible only to the user themselves. When users are allowed to edit the visibility the field will be made available on their account settings page. Roles selected under <em class='placeholder'>Always show for</em> will be able to view fields from a user's profile regardless of the visibility. Disabling a field will remove it from all places on the platform, data that users have filled in previously will not be lost."),
     ];
 
     $fields['list'] = [
@@ -399,6 +421,135 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   }
 
   /**
+   * The fieldset to control address sub-field settings.
+   *
+   * @return array
+   *   The form fields for the address sub-field settings.
+   */
+  private function buildAddressFieldset() : array {
+    // Type annotation needed for PHPStan until Drupal 9.2.0.
+    /** @var \Drupal\field\FieldConfigInterface|NULL $address_field */
+    $address_field = FieldConfig::loadByName('profile', 'profile', 'field_profile_address');
+    // If the field doesn't exist or a site builder has indicated it should be
+    // opted out of our management then we exit early.
+    if ($address_field === NULL || $this->fieldManager::isOptedOutOfFieldAccessManagement($address_field)) {
+      return [];
+    }
+
+    // We only allow certain fields to be configured and the others are locked
+    // as hidden. This is because the address field allows entering some
+    // information (like name and organization) that we store in other profile
+    // fields. addressLine2 is not allowed because it does not contain a field
+    // label and allowing changing it may cause it to be shown with addressLine1
+    // if we want to show addressLine2 we should link it to the addressLine1
+    // setting.
+    $allowlist = [
+      'administrativeArea',
+      'locality',
+      'postalCode',
+      'addressLine1',
+    ];
+
+    $fields = [
+      '#type' => 'fieldset',
+      '#title' => new TranslatableMarkup('Address'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="fields[list][field_profile_address][disabled]"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
+    $fields['field_overrides_description'] = [
+      '#type' => 'item',
+      '#description' => new TranslatableMarkup('By default the available address properties will depend on the chosen country. You can override this behaviour, forcing specific properties to be always hidden, optional, or required.'),
+    ];
+
+    $fields['field_overrides'] = [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('Property'),
+        $this->t('Override'),
+      ],
+      '#element_validate' => [[AddressItem::class, 'fieldOverridesValidate']],
+    ];
+    $fields['fixed_field_overrides'] = [];
+    $field_overrides = $this->getAddressFieldOverrides($address_field);
+    foreach (LabelHelper::getGenericFieldLabels() as $field_name => $label) {
+      $override = $field_overrides[$field_name] ?? '';
+
+      if (in_array($field_name, $allowlist, TRUE)) {
+        $fields['field_overrides'][$field_name] = [
+          'field_label' => [
+            '#type' => 'markup',
+            '#markup' => $label,
+          ],
+          'override' => [
+            '#type' => 'select',
+            '#options' => [
+              FieldOverride::HIDDEN => $this->t('Hidden'),
+              FieldOverride::OPTIONAL => $this->t('Optional'),
+              FieldOverride::REQUIRED => $this->t('Required'),
+            ],
+            '#default_value' => $override,
+            '#empty_option' => $this->t('- No override -'),
+          ],
+        ];
+      }
+      elseif ($override !== '') {
+        // Keep non-empty overrides that may not be changed around as value so
+        // they don't disappear from the settings.
+        $fields['fixed_field_overrides'][$field_name] = [
+          'override' => [
+            '#parent' => ['address', 'field_overrides'],
+            '#type' => 'value',
+            '#value' => $override,
+          ],
+        ];
+      }
+    }
+
+    return $fields;
+  }
+
+  /**
+   * Gets the field overrides for the address field.
+   *
+   * @param \Drupal\field\FieldConfigInterface $addressField
+   *   The address field to get overrides for.
+   *
+   * @return array
+   *   FieldOverride constants keyed by AddressField constants.
+   *
+   * @see \Drupal\address\Plugin\Field\FieldType\AddressItem::getFieldOverrides()
+   */
+  private function getAddressFieldOverrides(FieldConfigInterface $addressField) : array {
+    // The fieldSettingsForm comes from the AddressItem so we need to create an
+    // entity and get a field item.
+    $entity_type_id = $addressField->getTargetEntityTypeId();
+    $entity_bundle = $addressField->getTargetBundle();
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+    $entity_values = [];
+    if ($entity_bundle !== NULL && ($bundle_key = $entity_type->getKey('bundle')) && is_string($bundle_key)) {
+      $entity_values[$bundle_key] = $entity_bundle;
+    }
+
+    /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
+    $entity = $this->entityTypeManager
+      ->getStorage($entity_type_id)
+      ->create($entity_values);
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressFieldItemList $items */
+    $items = $entity->get($addressField->getName());
+    /** @var \Drupal\address\Plugin\Field\FieldType\AddressItem $item */
+    $item = $items->first() ?: $items->appendItem();
+
+    return $item->getFieldOverrides();
+  }
+
+  /**
    * The fieldset to control tagging settings.
    *
    * @return array
@@ -477,6 +628,26 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'))
       ->save();
 
+    $this->submitFieldsFieldset($form, $form_state);
+
+    // Must run after submitFieldsFieldset because it's dependent on the status.
+    $this->submitAddressFieldset($form, $form_state);
+
+    parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Submit the fields configuration values.
+   *
+   * This is split out into a separate function to make it easier to find all
+   * the other settings this form stores.
+   *
+   * @param array $form
+   *   The settings form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  private function submitFieldsFieldset(array &$form, FormStateInterface $form_state) : void {
     // Keep track of changed roles so we can only save once.
     $modified_roles = [];
 
@@ -648,6 +819,44 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     }
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Submit the address sub-field configuration values.
+   *
+   * This is split out into a separate function to make it easier to find all
+   * the other settings this form stores.
+   *
+   * @param array $form
+   *   The settings form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  private function submitAddressFieldset(array &$form, FormStateInterface $form_state) : void {
+    // Type annotation needed for PHPStan until Drupal 9.2.0.
+    /** @var \Drupal\field\FieldConfigInterface|NULL $address_field */
+    $address_field = FieldConfig::loadByName('profile', 'profile', 'field_profile_address');
+    // If the field doesn't exist or a site builder has indicated it should be
+    // opted out of our management then we exit early.
+    if ($address_field === NULL || $this->fieldManager::isOptedOutOfFieldAccessManagement($address_field)) {
+      return;
+    }
+
+    // Nothing to save if the address field was disabled.
+    if (!$address_field->status()) {
+      return;
+    }
+
+    $updated_value = $form_state->getValue(['address', 'field_overrides'], [])
+      + $form_state->getValue(['address', 'fixed_field_overrides'], []);
+
+    /** @var \Drupal\Core\Field\FieldConfigBase $address_field */
+    $address_field
+      ->setSetting('field_overrides', $updated_value)
+      ->save();
+
+    // Reset the cache to ensure form shows the updated values.
+    $this->typedDataManager->clearCachedDefinitions();
   }
 
 }
