@@ -341,39 +341,6 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
-function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
-  // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
-  $original = $variables['theme_hook_original'];
-  $entity = $variables['elements']['#profile'];
-  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
-
-  $suggestions = [];
-  $suggestions[] = $original;
-  $suggestions[] = $original . '__' . $sanitized_view_mode;
-  $suggestions[] = $original . '__' . $entity->bundle();
-  $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
-  $suggestions[] = $original . '__' . $entity->id();
-  $suggestions[] = $original . '__' . $entity->id() . '__' . $sanitized_view_mode;
-
-  return $suggestions;
-}
-
-/**
- * Implements hook_theme().
- */
-function social_profile_theme(): array {
-  return [
-    'profile__profile__name' => [
-      'template' => 'profile--profile--name',
-      'render element' => 'elements',
-      'base hook' => 'profile',
-    ],
-  ];
-}
-
-/**
  * Prepares variables for profile templates.
  *
  * Default template: profile.html.twig.
