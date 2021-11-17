@@ -200,7 +200,6 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
           switch ($message_template_id) {
             case 'create_node_following_tag':
             case 'update_node_following_tag':
-            case 'create_node_following_tag_stream':
               if (isset($context['tokens']['cta_button'])) {
                 $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more about it'));
