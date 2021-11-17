@@ -608,23 +608,8 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     $show_email = $profile->field_profile_show_email->value;
     $form['profile_privacy'] = [
       '#type' => 'fieldset',
-      '#title' => [
-        'text' => [
-          '#markup' => t('Privacy settings'),
-        ],
-        'icon' => [
-          '#markup' => '<svg class="icon icon-expand_less"><use xlink:href="#icon-expand-less" /></svg>',
-          '#allowed_tags' => ['svg', 'use'],
-        ],
-      ],
+      '#title' => t('Privacy settings'),
       '#tree' => TRUE,
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
-      '#attributes' => [
-        'class' => [
-          'form-collapse',
-        ],
-      ],
     ];
     $form['profile_privacy']['social_profile_show_email'] = [
       '#type' => 'checkbox',
