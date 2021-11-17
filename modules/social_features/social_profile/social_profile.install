@@ -83,6 +83,8 @@ function social_profile_install() {
 
   _social_profile_populate_nationalities_vocabulary('10.3.0');
 
+  _social_profile_enable_profile_during_registration();
+
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
@@ -249,6 +251,53 @@ function _social_profile_populate_nationalities_vocabulary(string $version) : vo
       'name' => $nationality,
     ])->save();
   }
+}
+
+/**
+ * Make default profile always available during registration.
+ *
+ * This makes the profile available in registration always so that we can
+ * control the fields that are shown by changing the registration view mode. We
+ * can also change this setting dynamically but that would not persist the
+ * separate view mode and we may not want to show the entire profile on
+ * registration.
+ */
+function _social_profile_enable_profile_during_registration() : void {
+  /** @var \Drupal\profile\Entity\ProfileTypeInterface $profile_type */
+  $profile_type = ProfileType::load('profile');
+  $profile_type
+    ->setRegistration(TRUE)
+    ->save();
+
+  // Create a profile register display if it does not yet exist.
+  $register_profile_display = EntityFormDisplay::load('profile.profile.register');
+  if ($register_profile_display === NULL) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $register_default_display */
+    $register_default_display = EntityFormDisplay::load('profile.profile.default');
+    $register_profile_display = $register_default_display->createCopy('register');
+
+    // We don't want field groups on our registration form because nested
+    // fieldsets don't look right.
+    foreach ($register_profile_display->getThirdPartySettings('field_group') as $setting_name => $_) {
+      $register_profile_display->unsetThirdPartySetting('field_group', $setting_name);
+    }
+
+    // We don't touch preconfigured register fields but we don't add any by
+    // default.
+    foreach ($register_profile_display->getComponents() as $name => $_) {
+      $register_profile_display->removeComponent($name);
+    }
+
+    $register_profile_display->save();
+  }
+
+  // This user form display is made in ProfileType::postSave.
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $register_user_display */
+  $register_user_display = EntityFormDisplay::load('user.user.register');
+  $profile_widget = $register_user_display->getComponent('profile_profiles');
+  $profile_widget['settings']['form_mode'] = 'register';
+  $register_user_display->setComponent('profile_profiles', $profile_widget);
+  $register_user_display->save();
 }
 
 /**
@@ -664,8 +713,6 @@ function social_profile_update_12002() : void {
     'type' => 'string',
   ]);
   $profile_display->save();
-
-  // @todo Add view mode install configuration.
 }
 
 /**
@@ -966,8 +1013,6 @@ function social_profile_update_12007() : void {
 
 /**
  * Make default profile always available during registration.
- *
- * @todo This needs an install hook too.
  */
 function social_profile_update_12008() : void {
   // This makes the profile available in registration always so that we can
@@ -1060,7 +1105,6 @@ function social_profile_update_12009() : void {
     $field_config->save();
   }
 
-  // @todo Add nickname_unique_validation schema.
   $social_profile_settings->set("nickname_unique_validation", (bool) $social_profile_fields_settings->get("nickname_unique_validation"));
   $social_profile_settings->save();
 }
