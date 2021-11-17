@@ -149,8 +149,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     // @todo When the verified user role is created allow configuration of `"view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields"` permission to determine what role(s) count as community.
     $form['fields'] = $this->buildFieldsFieldset();
 
-    // @todo Move to separate function.
-    // @todo Rename to "Nickname".
+    // @todo Check if limit_search_and_mention is needed when search changes are implemented.
     $form['privacy'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Privacy'),
@@ -169,12 +168,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('limit_search_and_mention'),
     ];
 
-    $form['nickname_unique_validation'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Unique nicknames'),
-      '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
-      '#default_value' => $config->get('nickname_unique_validation'),
-    ];
+    $form['nickname'] = $this->buildNicknameFieldset();
 
     $form['address'] = $this->buildAddressFieldset();
 
@@ -418,6 +412,34 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     }
 
     return $fields;
+  }
+
+  /**
+   * Build the fieldset for nickname related settings.
+   *
+   * @return array
+   *   The nickname field related settings.
+   */
+  private function buildNicknameFieldset() : array {
+    $config = $this->config('social_profile.settings');
+
+    return [
+      '#type' => 'fieldset',
+      '#title' => new TranslatableMarkup('Nickname'),
+      '#open' => TRUE,
+      '#tree' => FALSE,
+      '#states' => [
+        'visible' => [
+          ':input[name="fields[list][field_profile_nick_name][disabled]"]' => ['checked' => FALSE],
+        ],
+      ],
+      'nickname_unique_validation' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Unique nicknames'),
+        '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
+        '#default_value' => $config->get('nickname_unique_validation'),
+      ],
+    ];
   }
 
   /**
