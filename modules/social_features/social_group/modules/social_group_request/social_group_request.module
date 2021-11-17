@@ -302,28 +302,30 @@ function social_group_request_preprocess_activity(array &$variables) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $activity->field_activity_message->entity;
 
-    if (!$message->get('template')->isEmpty()) {
-      $message_template = $message->template->target_id;
+    if (isset($message)) {
+      if (!$message->get('template')->isEmpty()) {
+            $message_template = $message->template->target_id;
 
-      if ($message_template === 'request_to_join_a_group') {
-        $activity_entity = $activity->getRelatedEntity();
+            if ($message_template === 'request_to_join_a_group') {
+                $activity_entity = $activity->getRelatedEntity();
 
-        if ($activity_entity instanceof GroupContentInterface) {
-          $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
-            'arg_0' => $activity_entity->getGroup()->id(),
-          ]);
+                if ($activity_entity instanceof GroupContentInterface) {
+                    $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
+                        'arg_0' => $activity_entity->getGroup()->id(),
+                    ]);
+                }
+            }
+
+            if ($message_template === 'approve_request_join_group') {
+                $activity_entity = $activity->getRelatedEntity();
+
+                if ($activity_entity instanceof GroupContentInterface) {
+                    $variables['full_url'] = Url::fromRoute('social_group.stream', [
+                        'group' => $activity_entity->getGroup()->id(),
+                    ]);
+                }
+            }
         }
-      }
-
-      if ($message_template === 'approve_request_join_group') {
-        $activity_entity = $activity->getRelatedEntity();
-
-        if ($activity_entity instanceof GroupContentInterface) {
-          $variables['full_url'] = Url::fromRoute('social_group.stream', [
-            'group' => $activity_entity->getGroup()->id(),
-          ]);
-        }
-      }
     }
   }
 }
