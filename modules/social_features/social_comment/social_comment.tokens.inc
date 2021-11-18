@@ -8,6 +8,7 @@
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -103,7 +104,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'comment_text':
         case 'comment_reply_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
@@ -189,7 +190,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'commented_entity_link':
         case 'commented_entity_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
@@ -278,9 +279,9 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
               // Replace the cta_button token value.
               if (isset($context['tokens']['cta_button'])) {
                 /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
-                $link = $commented_entity->toUrl('canonical', ['absolute' => TRUE])->toString() . '#comment-' . $comment->id();
+                $link = $commented_entity->toUrl('canonical', ['absolute' => TRUE, 'fragment' => 'comment-' . $comment->id()]);
 
-                $cta_button = $email_token_services->getCtaButton($link, 'Reply to this comment');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
               }
 

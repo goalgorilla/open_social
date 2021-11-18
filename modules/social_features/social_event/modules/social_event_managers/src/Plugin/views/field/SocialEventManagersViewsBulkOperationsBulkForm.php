@@ -2,10 +2,10 @@
 
 namespace Drupal\social_event_managers\Plugin\views\field;
 
+use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -34,6 +34,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   protected $entityTypeManager;
 
   /**
+   * The action plugin manager.
+   *
+   * @var \Drupal\Core\Action\ActionManager
+   */
+  protected $actionManager;
+
+  /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
    *
    * @param array $configuration
@@ -56,6 +63,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *   The request stack.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Action\ActionManager $pluginActionManager
+   *   The action manager.
    */
   public function __construct(
     array $configuration,
@@ -67,11 +76,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     PrivateTempStoreFactory $tempStoreFactory,
     AccountInterface $currentUser,
     RequestStack $requestStack,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
+    ActionManager $pluginActionManager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
+    $this->actionManager = $pluginActionManager;
   }
 
   /**
@@ -88,7 +99,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $container->get('tempstore.private'),
       $container->get('current_user'),
       $container->get('request_stack'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.action')
     );
   }
 
@@ -102,20 +114,22 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       return $bulk_options;
     }
 
-    foreach ($bulk_options as $id => &$label) {
-      if (!empty($this->options['preconfiguration'][$id]['label_override'])) {
-        $real_label = $this->options['preconfiguration'][$id]['label_override'];
+    foreach ($this->options['selected_actions'] as $key => $selected_action_data) {
+      $definition = $this->actions[$selected_action_data['action_id']];
+      if (!empty($selected_action_data['preconfiguration']['label_override'])) {
+        $real_label = $selected_action_data['preconfiguration']['label_override'];
       }
       else {
-        $real_label = $this->actions[$id]['label'];
+        $real_label = $definition['label'];
       }
 
-      $label = $this->t('<b>@action</b> selected enrollees', [
+      $bulk_options[$key] = $this->t('<b>@action</b> selected enrollees', [
         '@action' => $real_label,
       ]);
     }
 
-    return $bulk_options;
+    // Check access and return.
+    return $this->bulkOptionAccess($bulk_options);
   }
 
   /**
@@ -235,7 +249,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
       $items = [];
       foreach ($wrapper['action']['#options'] as $key => $value) {
-        if (!empty($key) && array_key_exists($key, $this->bulkOptions)) {
+        if ($key !== '' && array_key_exists($key, $this->bulkOptions)) {
           $items[] = [
             '#type' => 'submit',
             '#value' => $value,
@@ -250,6 +264,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // Remove the Views select list and submit button.
     $form['actions']['#type'] = 'hidden';
     $form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['action']['#access'] = FALSE;
+    // Hide multipage list.
+    $form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['multipage']['list']['#access'] = FALSE;
   }
 
   /**
@@ -260,22 +276,17 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
       // Grab all the actions that are available.
-      foreach (Element::children($this->actions) as $action) {
-        // If the option is not in our selected options, next.
-        if (empty($available_options[$action])) {
-          continue;
-        }
-
+      foreach ($this->options['selected_actions'] as $action_key => $action) {
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $available_options[$action];
+        $label = $available_options[$action_key];
 
         // Match the Users action from our custom dropdown.
         // Find the action from the VBO selection.
         // And set that as the chosen action in the form_state.
         if (strip_tags($label->render()) === $user_input['op']) {
-          $user_input['action'] = $action;
+          $user_input['action'] = $action_key;
           $form_state->setUserInput($user_input);
-          $form_state->setValue('action', $action);
+          $form_state->setValue('action', $action_key);
           $form_state->setTriggeringElement($this->actions[$action]);
           break;
         }
@@ -375,6 +386,55 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     }
 
     return $data;
+  }
+
+  /**
+   * Removes all bulk options that user don't have access to it.
+   *
+   * @param array $bulkOptions
+   *   Array of bulk options.
+   *
+   * @return array
+   *   Returns array of bulk options.
+   */
+  protected function bulkOptionAccess(array $bulkOptions) {
+    /** @var \Drupal\node\NodeInterface $event */
+    $event = social_event_get_current_event();
+    $isEventOrganizer = social_event_manager_or_organizer($event);
+
+    // Event organizers have all permissions.
+    if ($isEventOrganizer) {
+      return $bulkOptions;
+    }
+
+    // Get the user enrollment.
+    $eventEnrollment = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties([
+      'user_id' => $this->currentUser()->id(),
+      'field_event' => $event->id(),
+    ]);
+    $eventEnrollment = end($eventEnrollment);
+
+    // If the user is not enrolled, then they should not see
+    // any operations at all.
+    if (!$eventEnrollment) {
+      return [];
+    }
+
+    // Load each action and check the access.
+    foreach ($bulkOptions as $id => $name) {
+      $action_id = $this->options['selected_actions'][$id]['action_id'];
+      /** @var \Drupal\Core\Action\ActionInterface $action */
+      $action = $this->actionManager->createInstance($action_id);
+
+      // Check the access.
+      /** @var bool $access */
+      $access = $action->access($eventEnrollment, $this->currentUser);
+      if (!$access) {
+        unset($bulkOptions[$id]);
+      }
+    }
+
+    return $bulkOptions;
   }
 
 }

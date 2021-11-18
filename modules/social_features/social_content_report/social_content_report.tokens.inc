@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -93,8 +94,8 @@ function social_content_report_tokens_alter(array &$replacements, array $context
 
               // Replace the preview token.
               if (isset($context['tokens']['cta_button'])) {
-                $link = Url::fromRoute('view.report_overview.overview')->toString();
-                $cta_button = $email_token_services->getCtaButton($link, 'Check the reported contents');
+                $link = Url::fromRoute('view.report_overview.overview');
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
               }
 

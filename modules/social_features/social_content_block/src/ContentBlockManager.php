@@ -63,7 +63,7 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
     $parents = array_merge($this->fieldParents, [$field_name]);
 
     if ($column) {
-      $parents = array_merge($this->fieldParents, [0, $column]);
+      $parents = array_merge($parents, [0, $column]);
     }
 
     return $parents;

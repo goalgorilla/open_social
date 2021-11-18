@@ -7,6 +7,7 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\mentions\Entity\Mentions;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
@@ -85,7 +86,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
         case 'mentioned_user':
 
           if ($name === 'mentioned_user') {
-            if (!empty($message->get('field_message_related_object'))) {
+            if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
               $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
               $mention = \Drupal::entityTypeManager()
@@ -105,7 +106,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'commented_entity_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             /** @var \Drupal\mentions\Entity\Mentions $mention */
@@ -226,12 +227,14 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
 
               // Prepare the CTA button.
               if (isset($context['tokens']['cta_button'])) {
-                $link = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+                $options = ['absolute' => TRUE];
                 // Append the comment reference in link.
                 if ($comment instanceof CommentInterface) {
-                  $link .= '#comment-' . $comment->id();
+                  $options['fragment'] = 'comment-' . $comment->id();
                 }
-                $cta_button = $email_token_services->getCtaButton($link, 'Reply to this comment');
+
+                $link = $entity->toUrl('canonical', $options);
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment'));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

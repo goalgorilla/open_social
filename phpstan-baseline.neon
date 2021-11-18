@@ -21,6 +21,11 @@ parameters:
 			path: modules/custom/activity_basics/activity_basics.install
 
 		-
+			message: "#^Call to an undefined method object\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_basics/activity_basics.module
+
+		-
 			message: "#^Function _activity_basics_entity_action\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/activity_basics.module
@@ -187,6 +192,16 @@ parameters:
 
 		-
 			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
+			count: 1
+			path: modules/custom/activity_creator/activity.page.inc
+
+		-
+			message: "#^Cannot call method getMaxAge\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
+			count: 1
+			path: modules/custom/activity_creator/activity.page.inc
+
+		-
+			message: "#^Cannot call method getString\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity.page.inc
 
@@ -646,11 +661,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
 
 		-
-			message: "#^Method Drupal\\\\activity_creator\\\\ActivityNotifications\\:\\:markEntityAsRead\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityNotifications.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
@@ -702,6 +712,21 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value\\.$#"
+			count: 1
+			path: modules/custom/activity_creator/src/Entity/Activity.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getEntity\\(\\)\\.$#"
+			count: 2
+			path: modules/custom/activity_creator/src/Entity/Activity.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getVotedEntityId\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_creator/src/Entity/Activity.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getVotedEntityType\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Entity/Activity.php
 
@@ -951,6 +976,16 @@ parameters:
 			path: modules/custom/activity_creator/src/Plugin/QueueWorker/ActivityWorkerLogger.php
 
 		-
+			message: "#^Function activity_logger_update_10301\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
+
+		-
+			message: "#^Function activity_logger_update_dependencies\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.install
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.module
@@ -1027,6 +1062,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getGroup\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_logger/activity_logger.tokens.inc
+
+		-
+			message: "#^Call to method getThreadIdFromMessage\\(\\) on an unknown class %%private_message\\.mapper\\.class%%\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
@@ -1332,6 +1372,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\activity_send_email\\\\Plugin\\\\EmailFrequency\\\\Immediately\\:\\:sendEmail\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php
+
+		-
+			message: "#^Parameter \\#3 \\$to of method Drupal\\\\Core\\\\Mail\\\\MailManager\\:\\:mail\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php
 
@@ -2951,6 +2996,11 @@ parameters:
 			path: modules/custom/social_ajax_comments/src/Routing/RouteSubscriber.php
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getSetting\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/social_file_private/social_file_private.install
+
+		-
 			message: "#^Function social_file_private_requirements\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_file_private/social_file_private.install
@@ -3146,11 +3196,6 @@ parameters:
 			path: modules/custom/social_gdpr/social_gdpr.module
 
 		-
-			message: "#^Function social_gdpr_social_user_account_header_links\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_gdpr/social_gdpr.module
-
-		-
 			message: "#^Function social_graphql_install\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/social_graphql.install
@@ -3204,11 +3249,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_graphql\\\\Wrappers\\\\EdgeInterface\\:\\:getNode\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/src/Wrappers/EdgeInterface.php
-
-		-
-			message: "#^Method Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\FieldDataProducerAccessTest\\:\\:testFieldDataProducerAccessCheck\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/FieldDataProducerAccessTest.php
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$alt\\.$#"
@@ -3296,7 +3336,7 @@ parameters:
 			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeMediaTest.php
 
 		-
-			message: "#^Property Drupal\\\\Tests\\\\graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:\\$server \\(Drupal\\\\graphql\\\\Entity\\\\ServerInterface\\) does not accept Drupal\\\\graphql\\\\Entity\\\\Server\\|null\\.$#"
+			message: "#^Property Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:\\$server \\(Drupal\\\\graphql\\\\Entity\\\\ServerInterface\\) does not accept Drupal\\\\graphql\\\\Entity\\\\Server\\|null\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/tests/src/Kernel/SocialGraphQLTestBase.php
 
@@ -3476,21 +3516,6 @@ parameters:
 			path: modules/custom/social_language/social_language.module
 
 		-
-			message: "#^Cannot access property \\$links on array\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
-			message: "#^Parameter \\#1 \\$type of method Drupal\\\\Core\\\\Language\\\\LanguageManagerInterface\\:\\:getLanguageSwitchLinks\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/custom/social_language/src/Plugin/Block/LanguageSwitcherBlock.php
-
-		-
 			message: "#^Cannot call method getName\\(\\) on Drupal\\\\Core\\\\Language\\\\LanguageInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/social_language/src/Plugin/UserExportPlugin/UserLanguage.php
@@ -3509,16 +3534,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/social_language/src/SocialLanguageConfigOverride.php
-
-		-
-			message: "#^Parameter \\#2 \\$str of function explode expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/custom/social_language/src/SocialLanguageMetadataBubblingUrlGenerator.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/custom/social_language/src/SocialLanguageMetadataBubblingUrlGenerator.php
 
 		-
 			message: "#^Method Drupal\\\\social_language\\\\SocialLanguageServiceProvider\\:\\:alter\\(\\) has no return typehint specified\\.$#"
@@ -3689,6 +3704,11 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/social_magic_login/social_magic_login.module
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\data_policy\\\\DataPolicyConsentManager\\:\\:hasGivenConsent\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
 
 		-
 			message: "#^Method Drupal\\\\social_magic_login\\\\Controller\\\\MagicLoginController\\:\\:create\\(\\) has no return typehint specified\\.$#"
@@ -3864,6 +3884,11 @@ parameters:
 			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.module
+
+		-
+			message: "#^Call to an undefined method object\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/social_queue_storage/social_queue_storage.module
 
 		-
 			message: "#^Function social_queue_storage_activity_send_email_notifications_alter\\(\\) has no return typehint specified\\.$#"
@@ -4102,6 +4127,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of function array_keys expects array, array\\|int\\<min, \\-1\\>\\|int\\<1, max\\> given\\.$#"
+			count: 1
+			path: modules/custom/social_tour/social_tour.module
+
+		-
+			message: "#^Parameter \\#1 \\$route_name of method Drupal\\\\social_tour\\\\SocialTourController\\:\\:getCacheTags\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/social_tour/social_tour.module
 
@@ -4461,6 +4491,11 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.install
 
 		-
+			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/social_activity.install
+
+		-
 			message: "#^Cannot cast '99\\+'\\|int\\<min, 99\\>\\|void to string\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.module
@@ -4551,13 +4586,8 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
-			message: "#^Parameter \\#1 \\$count of method Drupal\\\\Core\\\\StringTranslation\\\\TranslationManager\\:\\:formatPlural\\(\\) expects int, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_group\\\\CrossPostingService\\:\\:countGroupsByGroupContentNode\\(\\) expects Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
 			count: 1
-			path: modules/social_features/social_activity/social_activity.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
-			count: 2
 			path: modules/social_features/social_activity/social_activity.tokens.inc
 
 		-
@@ -4986,6 +5016,11 @@ parameters:
 			path: modules/social_features/social_album/social_album.module
 
 		-
+			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_group\\\\SetGroupsForNodeService\\:\\:addGroupContent\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_album/social_album.module
+
+		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
 			count: 1
 			path: modules/social_features/social_album/src/Controller/SocialAlbumController.php
@@ -5246,6 +5281,11 @@ parameters:
 			path: modules/social_features/social_book/src/SocialBookConfigOverride.php
 
 		-
+			message: "#^Cannot call method getExternalUrl\\(\\) on bool\\|Drupal\\\\Core\\\\StreamWrapper\\\\StreamWrapperInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_branding/src/Plugin/GraphQL/DataProducer/BrandingLogoUrl.php
@@ -5322,6 +5362,16 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.module
+
+		-
+			message: "#^Cannot call method getMaxAge\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
+			count: 1
+			path: modules/social_features/social_comment/social_comment.module
+
+		-
+			message: "#^Cannot call method getString\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -5442,11 +5492,6 @@ parameters:
 
 		-
 			message: "#^Binary operation \"\\.\" between '\\<a href\\=\"' and Drupal\\\\Core\\\\GeneratedUrl\\|string results in an error\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.tokens.inc
-
-		-
-			message: "#^Binary operation \"\\.\" between Drupal\\\\Core\\\\GeneratedUrl\\|string and '\\#comment\\-' results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
@@ -5981,6 +6026,11 @@ parameters:
 			path: modules/social_features/social_content_block/social_content_block.install
 
 		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_content_block/social_content_block.install
+
+		-
 			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|int given\\.$#"
 			count: 2
 			path: modules/social_features/social_content_block/social_content_block.install
@@ -6252,11 +6302,6 @@ parameters:
 
 		-
 			message: "#^Function social_content_report_tokens_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_report/social_content_report.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/social_content_report.tokens.inc
 
@@ -6772,6 +6817,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/social_features/social_core/social_core.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.install
 
@@ -7821,6 +7871,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
 
 		-
+			message: "#^Parameter \\#2 \\$nid of method Drupal\\\\social_event_an_enroll\\\\EventAnEnrollService\\:\\:tokenExists\\(\\) expects int, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
@@ -7942,6 +7997,16 @@ parameters:
 
 		-
 			message: "#^Function social_event_enrolments_export_social_event_managers_action_social_event_enrolments_export_enrollments_action_finish\\(\\) has parameter \\$success with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
+
+		-
+			message: "#^Parameter \\#1 \\$path of function basename expects string, bool\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, bool\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
 
@@ -8786,6 +8851,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
 
 		-
+			message: "#^Parameter \\#1 \\$handler of static method Drupal\\\\Core\\\\Entity\\\\Element\\\\EntityAutocomplete\\:\\:matchEntityByTitle\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityReferenceSelection\\\\SelectionInterface, object\\|false given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
+
+		-
 			message: "#^Variable \\$invited_or_joined might not be defined\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
@@ -9081,6 +9151,16 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module
 
 		-
+			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_event_max_enroll\\\\Service\\\\EventMaxEnrollService\\:\\:getEnrollmentsLeft\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module
+
+		-
+			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_event_max_enroll\\\\Service\\\\EventMaxEnrollService\\:\\:isEnabled\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module
+
+		-
 			message: "#^Method Drupal\\\\social_event_max_enroll\\\\EventMaxEnrollOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_max_enroll/src/EventMaxEnrollOverride.php
@@ -9136,12 +9216,22 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_type/social_event_type.install
 
 		-
+			message: "#^Parameter \\#1 \\$entity_type_id of method Drupal\\\\Core\\\\Entity\\\\EntityTypeManagerInterface\\:\\:getStorage\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_type/social_event_type.install
+
+		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_type/social_event_type.install
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\:\\:getEditable\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_type/social_event_type.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_type/social_event_type.install
 
@@ -9526,8 +9616,23 @@ parameters:
 			path: modules/social_features/social_event/social_event.install
 
 		-
+			message: "#^Parameter \\#1 \\$entity_type_id of method Drupal\\\\Core\\\\Entity\\\\EntityTypeManagerInterface\\:\\:getStorage\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.install
+
+		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 6
+			path: modules/social_features/social_event/social_event.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
 			path: modules/social_features/social_event/social_event.install
 
 		-
@@ -9952,11 +10057,6 @@ parameters:
 
 		-
 			message: "#^Function social_event_tokens_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
 
@@ -10411,16 +10511,6 @@ parameters:
 			path: modules/social_features/social_event/src/Plugin/views/sort/EventDate.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addOrderBy\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Plugin/views/sort/EventPassedDesc.php
-
-		-
-			message: "#^Method Drupal\\\\social_event\\\\Plugin\\\\views\\\\sort\\\\EventPassedDesc\\:\\:query\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Plugin/views/sort/EventPassedDesc.php
-
-		-
 			message: "#^Method Drupal\\\\social_event\\\\Routing\\\\EnrollRequestsOverviewSubscriber\\:\\:checkAccessToEnrollRequestsOverview\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Routing/EnrollRequestsOverviewSubscriber.php
@@ -10641,21 +10731,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
 
 		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has parameter \\$context with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter\\(\\) has parameter \\$element with no typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
 			message: "#^Function social_follow_landing_page_preprocess_paragraph\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
@@ -10744,6 +10819,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|int\\<min, \\-1\\>\\|int\\<1, max\\> given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
+
+		-
+			message: "#^Call to an undefined method object\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
 		-
 			message: "#^Call to function is_null\\(\\) with Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface will always evaluate to false\\.$#"
@@ -10901,6 +10981,11 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
+			message: "#^Function social_follow_taxonomy_flag_link\\(\\) should return string but returns array\\|string\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
 			message: "#^Function social_follow_taxonomy_page_attachments\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
@@ -10951,6 +11036,11 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
+			message: "#^Parameter \\#2 \\$entity_id of method Drupal\\\\flag\\\\FlagLinkBuilder\\:\\:build\\(\\) expects int\\|string, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
 			message: "#^Function social_follow_taxonomy_token_info\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
@@ -10972,11 +11062,6 @@ parameters:
 
 		-
 			message: "#^Function social_follow_taxonomy_tokens_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc
 
@@ -11276,12 +11361,27 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
 
 		-
+			message: "#^Parameter \\#1 \\$entity_type_id of method Drupal\\\\Core\\\\Entity\\\\EntityTypeManagerInterface\\:\\:getStorage\\(\\) expects string, string\\|null given\\.$#"
+			count: 3
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 3
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\:\\:getEditable\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
+			count: 3
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
+
+		-
+			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
 
@@ -12011,6 +12111,16 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.module
 
 		-
+			message: "#^Parameter \\#1 \\$path of function basename expects string, bool\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.module
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, bool\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.module
+
+		-
 			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_members_export/src/Plugin/Action/ExportMember.php
@@ -12266,11 +12376,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
 		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
-
-		-
 			message: "#^Cannot call method hasPermission\\(\\) on Drupal\\\\social_group\\\\Entity\\\\Group\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
@@ -12471,6 +12576,11 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.install
 
 		-
+			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.install
+
+		-
 			message: "#^Function social_group_secret_form_group_secret_group_edit_form_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_secret/social_group_secret.module
@@ -12661,18 +12771,23 @@ parameters:
 			path: modules/social_features/social_group/social_group.install
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:setStatus\\(\\)\\.$#"
+			count: 2
+			path: modules/social_features/social_group/social_group.install
+
+		-
 			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 2
 			path: modules/social_features/social_group/social_group.install
 
 		-
 			message: "#^Cannot call method getComponent\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_group/social_group.install
 
 		-
 			message: "#^Cannot call method setComponent\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_group/social_group.install
 
 		-
@@ -12903,6 +13018,11 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$role of function _social_group_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
+			path: modules/social_features/social_group/social_group.install
+
+		-
+			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
+			count: 3
 			path: modules/social_features/social_group/social_group.install
 
 		-
@@ -13466,6 +13586,16 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
+			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
+			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 3
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -13548,11 +13678,6 @@ parameters:
 		-
 			message: "#^Function social_group_tokens_alter\\(\\) has no return typehint specified\\.$#"
 			count: 1
-			path: modules/social_features/social_group/social_group.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
-			count: 2
 			path: modules/social_features/social_group/social_group.tokens.inc
 
 		-
@@ -13727,6 +13852,11 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag @var has invalid value \\(/Drupal\\\\Core\\\\Entity\\\\EntityReferenceSelection\\\\SelectionInterface \\$handler\\)\\: Unexpected token \"/Drupal\\\\\\\\Core\\\\\\\\Entity\\\\\\\\EntityReferenceSelection\\\\\\\\SelectionInterface\", expected type at offset 9$#"
+			count: 1
+			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
+
+		-
+			message: "#^Parameter \\#1 \\$handler of static method Drupal\\\\Core\\\\Entity\\\\Element\\\\EntityAutocomplete\\:\\:matchEntityByTitle\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityReferenceSelection\\\\SelectionInterface, object\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
 
@@ -14646,11 +14776,6 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_like/social_like.tokens.inc
-
-		-
 			message: "#^Parameter \\#1 \\$str of function mb_strtolower expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
@@ -15476,6 +15601,11 @@ parameters:
 			path: modules/social_features/social_post/post.page.inc
 
 		-
+			message: "#^Cannot call method getString\\(\\) on Drupal\\\\Core\\\\Datetime\\\\FormattedDateDiff\\|string\\.$#"
+			count: 1
+			path: modules/social_features/social_post/post.page.inc
+
+		-
 			message: "#^Function template_preprocess_post\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/post.page.inc
@@ -16041,6 +16171,11 @@ parameters:
 			path: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php
 
 		-
+			message: "#^Parameter \\#2 \\$uuid of method Drupal\\\\Core\\\\Entity\\\\EntityRepository\\:\\:loadEntityByUuid\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php
+
+		-
 			message: "#^Variable \\$block_field_manager in PHPDoc tag @var does not match assigned variable \\$definitions\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php
@@ -16182,6 +16317,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/PostAccessControlHandler.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:hasPermission\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
@@ -16442,7 +16582,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 2
+			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
@@ -16566,6 +16706,11 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
+			message: "#^Function social_private_message_private_message_view_alter\\(\\) has parameter \\$viewMode with no typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
 			message: "#^Function social_private_message_redirect\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
@@ -16641,17 +16786,22 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:deleteUserDataThreadInfo\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityBase, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:updateLastThreadCheckTime\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityBase, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 2
+			path: modules/social_features/social_private_message/social_private_message.module
+
+		-
 			message: "#^Variable \\$member might not be defined\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
 			message: "#^Function social_private_message_tokens_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/social_private_message.tokens.inc
-
-		-
-			message: "#^Parameter \\#1 \\$link of method Drupal\\\\social_activity\\\\EmailTokenServices\\:\\:getCtaButton\\(\\) expects string, Drupal\\\\Core\\\\GeneratedUrl\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.tokens.inc
 
@@ -16696,11 +16846,6 @@ parameters:
 			path: modules/social_features/social_private_message/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\PrivateMessageMailer\\:\\:send\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/PrivateMessageMailer.php
-
-		-
 			message: "#^Cannot call method fetchAllKeyed\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|int\\|string\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
@@ -16712,16 +16857,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:deleteUserDataThreadInfo\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
-
-		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:getAllThreadIdsForUser\\(\\) has parameter \\$uid with no typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Service/SocialPrivateMessageService.php
 
@@ -16772,6 +16907,11 @@ parameters:
 
 		-
 			message: "#^Function social_profile_fields_update_8003\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
+
+		-
+			message: "#^Parameter \\#1 \\$account of method Drupal\\\\Core\\\\Session\\\\AccountSwitcher\\:\\:switchTo\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install
 
@@ -16878,6 +17018,11 @@ parameters:
 		-
 			message: "#^Method Drupal\\\\profile\\\\ProfileStorageInterface\\:\\:loadByUser\\(\\) invoked with 3 parameters, 2 required\\.$#"
 			count: 2
+			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
+
+		-
+			message: "#^Parameter \\#1 \\$profile_type_id of method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsHelper\\:\\:getProfileFields\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
 
 		-
@@ -17606,6 +17751,11 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
+			message: "#^Call to method getThreadIdForMembers\\(\\) on an unknown class %%private_message\\.mapper\\.class%%\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
 			message: "#^Cannot call method buildUrl\\(\\) on Drupal\\\\image\\\\Entity\\\\ImageStyle\\|null\\.$#"
 			count: 2
 			path: modules/social_features/social_profile/social_profile.module
@@ -17886,8 +18036,23 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
+			message: "#^Parameter \\#1 \\$uid of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:countGroupMembershipsForUser\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
 			message: "#^Parameter \\#1 \\$user_id of method Drupal\\\\social_profile\\\\UserStatistics\\:\\:nodeCount\\(\\) expects int, int\\|string\\|null given\\.$#"
 			count: 2
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
+			message: "#^Parameter \\#2 \\$bundle of method Drupal\\\\Core\\\\Entity\\\\EntityFieldManager\\:\\:getFieldDefinitions\\(\\) expects string, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
+			message: "#^Parameter \\#2 \\$uid of method Drupal\\\\user\\\\UserData\\:\\:set\\(\\) expects int, int\\|null given\\.$#"
+			count: 1
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
@@ -18072,11 +18237,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\Tests\\\\social_profile\\\\Kernel\\\\GraphQLUsersEndpointTest\\:\\:ensureTestProfile\\(\\) should return Drupal\\\\profile\\\\Entity\\\\ProfileInterface but returns Drupal\\\\profile\\\\Entity\\\\ProfileInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$account of method Drupal\\\\Tests\\\\graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:setCurrentUser\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
 
@@ -18886,12 +19046,22 @@ parameters:
 			path: modules/social_features/social_topic/social_topic.install
 
 		-
+			message: "#^Parameter \\#1 \\$entity_type_id of method Drupal\\\\Core\\\\Entity\\\\EntityTypeManagerInterface\\:\\:getStorage\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_topic/social_topic.install
+
+		-
 			message: "#^Parameter \\#1 \\$input of static method Symfony\\\\Component\\\\Yaml\\\\Yaml\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
 			count: 4
 			path: modules/social_features/social_topic/social_topic.install
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\:\\:getEditable\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_topic/social_topic.install
+
+		-
+			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\ConfigManager\\:\\:getEntityTypeIdByName\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.install
 
@@ -19461,11 +19631,6 @@ parameters:
 			path: modules/social_features/social_user/social_user.module
 
 		-
-			message: "#^Function social_user_social_user_account_header_account_links_alter\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
 			message: "#^Function social_user_theme\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.module
@@ -19917,28 +20082,13 @@ parameters:
 
 		-
 			message: "#^Cannot call method uuid\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLUsersEndpointTest.php
 
 		-
 			message: "#^Parameter \\#1 \\$other_object of method Drupal\\\\Core\\\\Cache\\\\CacheableMetadata\\:\\:addCacheableDependency\\(\\) expects object, Drupal\\\\user\\\\Entity\\\\User\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLUsersEndpointTest.php
-
-		-
-			message: "#^Cannot call method uuid\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLViewerEndpointTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$account of method Drupal\\\\Tests\\\\graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:setCurrentUser\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLViewerEndpointTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$other_object of method Drupal\\\\Core\\\\Cache\\\\CacheableMetadata\\:\\:addCacheableDependency\\(\\) expects object, Drupal\\\\user\\\\Entity\\\\User\\|false given\\.$#"
-			count: 1
-			path: modules/social_features/social_user/tests/src/Kernel/GraphQL/GraphQLViewerEndpointTest.php
 
 		-
 			message: "#^Method Drupal\\\\social_user\\\\Tests\\\\SocialUserNameConstraintTest\\:\\:itemsMock\\(\\) has no return typehint specified\\.$#"
@@ -19981,6 +20131,16 @@ parameters:
 			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
 
 		-
+			message: "#^Parameter \\#1 \\$context of method Symfony\\\\Component\\\\Validator\\\\ConstraintValidator\\:\\:initialize\\(\\) expects Symfony\\\\Component\\\\Validator\\\\Context\\\\ExecutionContextInterface, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 1
+			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$typed_data_manager of class Drupal\\\\social_user\\\\Plugin\\\\Validation\\\\Constraint\\\\SocialUserNameConstraintValidator constructor expects Drupal\\\\Core\\\\TypedData\\\\TypedDataManagerInterface, PHPUnit\\\\Framework\\\\MockObject\\\\MockObject given\\.$#"
+			count: 1
+			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
+
+		-
 			message: "#^Function social_user_export_update_8001\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.install
@@ -19997,6 +20157,16 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$array of function reset expects array\\|object, array\\|int given\\.$#"
+			count: 1
+			path: modules/social_features/social_user_export/social_user_export.module
+
+		-
+			message: "#^Parameter \\#1 \\$path of function basename expects string, bool\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_user_export/social_user_export.module
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, bool\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
 

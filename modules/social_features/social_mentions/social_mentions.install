@@ -5,7 +5,6 @@
  * Install, update and uninstall functions for the social_mentions module.
  */
 
-use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -14,8 +13,25 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_mentions.
  */
 function social_mentions_install() {
-  // Set some default permissions.
-  _social_mentions_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access mentions',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access mentions',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access mentions',
+    ]
+  );
   // Set default configurations.
   _social_mentions_set_default_config();
 }
@@ -29,46 +45,6 @@ function social_mentions_update_8001() {
   $config->set('suggestions_amount', 8);
 
   $config->save();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_mentions_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_mentions_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- */
-function _social_mentions_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'access mentions',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }
 
 /**

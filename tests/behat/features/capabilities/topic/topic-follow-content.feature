@@ -1,11 +1,11 @@
 @api @topic @stability @perfect @critical @DS-2311 @DS-7612 @stability-3 @topic-follow-content
 Feature: Follow Content
   Benefit: In order receive (email) notification  when a new comments or reply has been placed
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to be able to subscribe to content
 
   Scenario: Follow content
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "user"
     And I click "Topics"
     And I click "Create Topic"
@@ -85,7 +85,7 @@ Feature: Follow Content
       And I wait for the queue to be empty
       And I am at "notifications"
     Then I should not see text matching "Dude 3 commented on Dude 1's topic This is a follow topic you are following"
-      And I should not have an email with subject "Notification from Open Social" and in the content:
+      And I should not have an email with subject "Someone commented on your content" and in the content:
         | content                                                                     |
         | Hi Dude 1                                                                   |
         | Dude 3 commented on topic This is a follow topic you are following |
@@ -95,7 +95,7 @@ Feature: Follow Content
     Given I am logged in as "Dude 2"
       And I am at "notifications"
     Then I should see text matching "Dude 3 commented on Dude 1's topic This is a follow topic you are following"
-      And I should have an email with subject "Notification from Open Social" and in the content:
+      And I should have an email with subject "Someone commented on your content" and in the content:
         | content                                                                     |
         | Hi Dude 2                                                                   |
         | Dude 3 commented on topic This is a follow topic you are following |

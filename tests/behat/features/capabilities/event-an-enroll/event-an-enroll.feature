@@ -22,8 +22,8 @@ Feature: Enroll for an event without an account
     Then I should see "AN Event 1" in the "Hero block"
     And I should not see the link "Enroll" in the "Hero block"
     And I fill in the following:
-      | First name    | John  |
-      | Last name     | Doe   |
+      | First name    | John         |
+      | Last name     | Doe          |
       | Email address | john@doe.com |
     And I press "Enroll in event"
     Then I should see the success message "You have successfully enrolled to this event. You have also received a notification via email."
@@ -40,8 +40,8 @@ Feature: Enroll for an event without an account
     And I wait for AJAX to finish
     When I click "Enroll as guest"
     And I fill in the following:
-      | First name    | John  |
-      | Last name     | Doe   |
+      | First name    | John         |
+      | Last name     | Doe          |
       | Email address | john@doe.com |
     And I press "Enroll in event"
     Then I should see the success message "You have successfully enrolled to this event. You have also received a notification via email."
@@ -50,8 +50,8 @@ Feature: Enroll for an event without an account
     And I wait for AJAX to finish
     When I click "Enroll as guest"
     And I fill in the following:
-      | First name    | John  |
-      | Last name     | Doe   |
+      | First name    | John         |
+      | Last name     | Doe          |
       | Email address | john@doe.com |
     And I press "Enroll in event"
     Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email"
@@ -60,8 +60,8 @@ Feature: Enroll for an event without an account
     And I open the "event" node with title "AN Event 1"
     And I click "Manage enrollments"
     Then I should see "John Doe"
-    # AS LU I should not see Guest enrollments emails
-    Given I am logged in as an "authenticated user"
+    # AS Verified I should not see Guest enrollments emails
+    Given I am logged in as an "verified"
     And I open the "event" node with title "AN Event 1"
     Then I should not see "Manage enrollments"
 
@@ -71,9 +71,9 @@ Feature: Enroll for an event without an account
     And I am an anonymous user
     And I am viewing an event:
       | title                    | No guest enrollment |
-      | field_event_date         | +3 days                 |
-      | field_event_date_end     | +4 days                 |
-      | field_content_visibility | public                  |
+      | field_event_date         | +3 days             |
+      | field_event_date_end     | +4 days             |
+      | field_content_visibility | public              |
     When I press "Enroll"
     Then I should not see "Enroll as guest"
 
@@ -82,17 +82,17 @@ Feature: Enroll for an event without an account
     ## testing the effect of a hook_form_alter
     ##
     Given I set the configuration item "social_event_an_enroll.settings" with key "event_an_enroll_default_value" to 1
-    And I am logged in as a user with the "authenticated user" role
+    And I am logged in as a user with the "verified" role
     And I am on "node/add/event"
     When I fill in the custom fields for this "event"
     And I fill in the following:
-      | Title                    | Anonymous event enrollment |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-02 |
-      | Time          | 11:00:00 |
-      | Location name | GG HQ |
+      | Title                                  | Anonymous event enrollment |
+      | edit-field-event-date-0-value-date     | 2025-01-01                 |
+      | edit-field-event-date-end-0-value-date | 2025-01-02                 |
+      | Time                                   | 11:00:00                   |
+      | Location name                          | GG HQ                      |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public"
+    And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"
     And I press "Create event"
 
     Given I am an anonymous user

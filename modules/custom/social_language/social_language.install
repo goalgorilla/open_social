@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Serialization\Yaml;
-use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -17,48 +16,28 @@ function social_language_install() {
   // Make sure the module has more weight then "Content Translation" module.
   module_set_weight('social_language', 11);
 
-  // Set some default permissions.
-  _social_language_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'create content translations',
+      'delete content translations',
+      'update content translations',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'create content translations',
+      'delete content translations',
+      'update content translations',
+      'translate any entity',
+    ]
+  );
 
   \Drupal::configFactory()->getEditable('locale.settings')
     ->set('translation.path', '/tmp')
     ->save();
-}
-
-/**
- * Function to set permissions.
- */
-function _social_language_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_language_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- */
-function _social_language_get_permissions($role) {
-  // Content manager.
-  $permissions['contentmanager'] = [
-    'create content translations',
-    'delete content translations',
-    'update content translations',
-  ];
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'translate any entity',
-  ]);
-
-  return isset($permissions[$role]) ? $permissions[$role] : [];
 }
 
 /**

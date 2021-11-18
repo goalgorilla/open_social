@@ -1,16 +1,16 @@
 @api @group @notifications @TB-6072 @DS-811 @DS-816 @DS-4211 @stability @stability-1 @group-create-open
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Open Groups
 
   @email-spool
   Scenario: Successfully create open group
     Given users:
-      | name           | mail                     | status |
-      | Group User One | group_user_1@example.com | 1      |
-      | Group User Two | group_user_2@example.com | 1      |
-      | Outsider       | outsider@example.com     | 1      |
+      | name           | mail                     | status | roles    |
+      | Group User One | group_user_1@example.com | 1      | verified |
+      | Group User Two | group_user_2@example.com | 1      | verified |
+      | Outsider       | outsider@example.com     | 1      | verified |
     And I am logged in as "Group User One"
     And I am on "group/add"
     Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
@@ -22,10 +22,10 @@ Feature: Create Open Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Lviv |
+      | City           | Lviv           |
       | Street address | Fedkovycha 60a |
-      | Postal code | 79000 |
-      | Oblast | Lviv oblast |
+      | Postal code    | 79000          |
+      | Oblast         | Lviv oblast    |
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I should see "Technopark"
@@ -33,7 +33,7 @@ Feature: Create Open Group
     And I should see "Joined"
     And I should not see the link "Read more"
 
-  # DS-761 As a LU I want to view the hero area of a group
+  # DS-761 As a Verified I want to view the hero area of a group
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
     And I press "Joined"
@@ -45,12 +45,12 @@ Feature: Create Open Group
     And I should see "Lviv" in the "Hero block"
     And I should see "Lviv oblast" in the "Hero block"
 
-    # As a LU I want to see the information about a group
+    # As a Verified I want to see the information about a group
     When I click "About"
     Then I should see "Description text" in the "Main content"
 
   # @TODO: Uncomment this when Group hero caching will be fixed.
-  # DS-648 As a LU I want to see the members of a group
+  # DS-648 As a Verified I want to see the members of a group
     Given I logout
     And I am logged in as "Group User Two"
     And I am on "all-members"
@@ -64,7 +64,7 @@ Feature: Create Open Group
     And I click "Members"
     Then I should see "Group User One"
 
-  # DS-647 As a LU I want to join a group
+  # DS-647 As a Verified I want to join a group
     When I click "Stream" in the "Tabs"
     And I should see the link "Join"
     And I click "Join"
@@ -86,7 +86,7 @@ Feature: Create Open Group
     Given I am logged in as "Group User One"
     When I am on "/notifications"
     Then I should see "Group User Two created a post in the Test open group group"
-    And I should have an email with subject "Notification from Open Social" and in the content:
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
       | content                                                      |
       | Hi Group User One                                            |
       | Group User Two published a post in the Test open group group |
@@ -96,16 +96,16 @@ Feature: Create Open Group
     And I should see "Test open group"
     And I click "Test open group"
 
-  # DS-643 As a LU I want to see the events of a group
+  # DS-643 As a Verified I want to see the events of a group
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | Technopark |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | Time                                   | 11:00:00         |
+      | Location name                          | Technopark       |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
@@ -113,7 +113,7 @@ Feature: Create Open Group
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
-  # DS-639 As a LU I want to see which group the content belongs to, on the detail page
+  # DS-639 As a Verified I want to see which group the content belongs to, on the detail page
     And I should see the link "Test open group"
     And I click "Test open group"
   # TODO: And I should see "Upcoming Events" in the "Sidebar second"
@@ -123,7 +123,7 @@ Feature: Create Open Group
     And I should see "Test group event" in the "Main content"
     And I should see "Test open group" in the "Main content"
 
-  # DS-644 As a LU I want to see the topics of a group
+  # DS-644 As a Verified I want to see the topics of a group
     When I click "Topics"
     And I should see the link "Create Topic" in the "Sidebar second"
     And I click "Create Topic"
@@ -135,7 +135,7 @@ Feature: Create Open Group
     And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
-   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
+   # DS-639 As a Verified I want to see which group the content belongs to, on the detail page
     And I should see the link "Test open group"
     And I click "Test open group"
   # TODO: And I should see "Latest Topics" in the "Sidebar second"
@@ -162,7 +162,7 @@ Feature: Create Open Group
     Then I should see "Test group topic"
     And I logout
 
-  # DS-703 As a LU I want to leave a group
+  # DS-703 As a Verified I want to leave a group
     Given I am logged in as "Group User Two"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My groups"
@@ -186,7 +186,7 @@ Feature: Create Open Group
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero buttons"
 
-  # Check for latest groups block on LU homepage
+  # Check for latest groups block on Verified homepage
     When I am on "stream"
   # And I should see "Newest groups" in the "Sidebar second"
     And I should see the link "Test open group" in the "Sidebar second"

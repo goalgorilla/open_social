@@ -1,15 +1,15 @@
 @api @event @stability @overview @DS-421 @stability-2 @event-overview
 Feature: Overview
   Benefit: In order to learn details over an Event
-  Role: As a User
+  Role: As a Verified
   Goal/desire: I want to see an Event overview
 
-  @LU @perfect @critical
+  @verified @perfect @critical
   Scenario: Successfully see the event overview
     Given users:
-      | name     | mail               | status |
-      | User One | user_1@example.com | 1      |
-      | User Two | user_2@example.com | 1      |
+      | name     | mail               | status | roles    |
+      | User One | user_1@example.com | 1      | verified |
+      | User Two | user_2@example.com | 1      | verified |
     When I am logged in as "User One"
     And I am on "/user"
     And I click "Events"

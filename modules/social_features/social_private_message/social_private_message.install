@@ -5,22 +5,48 @@
  * The Social Private Message (de)installation file.
  */
 
-use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_uninstall().
  */
 function social_private_message_install() {
-  _social_private_message_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'use private messaging system',
+      'create private messages thread',
+      'reply to private messages thread',
+      'delete private messages thread',
+    ]
+  );
 
   // Disable the email notification provided by private_message.
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   \Drupal::getContainer()
     ->get('config.factory')
     ->getEditable('private_message.settings')
-    ->set('enable_email_notifications', FALSE)
-    ->set('send_by_default', FALSE)
+    ->set('enable_notifications', FALSE)
+    ->set('notify_by_default', FALSE)
     ->save();
 
   // Set module weight.
@@ -31,6 +57,11 @@ function social_private_message_install() {
   _social_private_message_set_private_message_default_view_settings();
   _social_private_message_set_private_message_inbox_view_settings();
   _social_private_message_set_private_message_thread_default_view_settings();
+
+  // Disable the default message template provided by private_message.
+  \Drupal::configFactory()->getEditable('message.template.private_message_notification')
+    ->set('status', FALSE)
+    ->save();
 }
 
 /**
@@ -155,57 +186,6 @@ function _social_private_message_set_private_message_thread_default_view_setting
 }
 
 /**
- * Function to set permissions.
- */
-function _social_private_message_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_private_message_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_private_message_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'use private messaging system',
-    'create private messages thread',
-    'reply to private messages thread',
-    'delete private messages thread',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-
-  return [];
-}
-
-/**
  * Set module weight.
  */
 function social_private_message_update_8001() {
@@ -320,4 +300,46 @@ function social_private_message_update_10301() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Install the message_notify module.
+ */
+function social_private_message_update_11002(): void {
+  \Drupal::service('module_installer')->install(['message_notify']);
+}
+
+/**
+ * Update the Inbox view configurations.
+ */
+function social_private_message_update_11003(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_private_message', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Disable the default message template provided by private_message.
+ */
+function social_private_message_update_11004(): void {
+  \Drupal::configFactory()->getEditable('message.template.private_message_notification')
+    ->set('status', FALSE)
+    ->save();
+}
+
+/**
+ * Disable the email notification provided by private_message.
+ */
+function social_private_message_update_11005(): void {
+  \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('private_message.settings')
+    ->set('enable_notifications', FALSE)
+    ->set('notify_by_default', FALSE)
+    ->save();
 }

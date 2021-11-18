@@ -1,15 +1,15 @@
 @api @group @notifications @TB-6072 @DS-3428 @DS-4211 @stability @stability-1 @group-create-closed
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Closed Groups
 
   @email-spool
   Scenario: Successfully create closed group
     Given users:
-      | name           | mail                     | status |
-      | Group User One | group_user_1@example.com | 1      |
-      | Group User Two | group_user_2@example.com | 1      |
+      | name           | mail                     | status | roles    |
+      | Group User One | group_user_1@example.com | 1      | verified |
+      | Group User Two | group_user_2@example.com | 1      | verified |
     And I am logged in as "Group User One"
     And I am on "group/add"
     Then I click radio button "Closed group This is a closed group. Users can only join by invitation and the content in the group is hidden from non members." with the id "edit-group-type-closed-group"
@@ -21,9 +21,9 @@ Feature: Create Closed Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Hengelo |
+      | City           | Hengelo         |
       | Street address | Padangstraat 11 |
-      | Postal code | 7556SP |
+      | Postal code    | 7556SP          |
     And I press "Save"
     And I should see "Test closed group" in the "Main content"
     And I should see "Disclosed"
@@ -63,11 +63,11 @@ Feature: Create Closed Group
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test closed group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | Technopark |
+      | Title                                  | Test closed group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01              |
+      | edit-field-event-date-end-0-value-date | 2025-01-01              |
+      | Time                                   | 11:00:00                |
+      | Location name                          | Technopark              |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
     And I should see "Test closed group event"
@@ -112,7 +112,7 @@ Feature: Create Closed Group
     Given I am logged in as "Group User Two"
     When I am on "/notifications"
     Then I should see "Group User One created a post in the Test closed group group"
-    And I should have an email with subject "Notification from Open Social" and in the content:
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
     | content                                                        |
     | Hi Group User Two                                              |
     | Group User One published a post in the Test closed group group |
@@ -120,8 +120,8 @@ Feature: Create Closed Group
   # As a non-member of the closed group, when I click on the closed group
   # I should be redirected to /group/x/about. I should not see the stream, events or topics page.
     Given users:
-      | name           | mail                      | status |
-      | Platform User  | platform_user@example.com | 1      |
+      | name           | mail                      | status | roles    |
+      | Platform User  | platform_user@example.com | 1      | verified |
     And I am logged in as "Platform User"
     And I open and check the access of content in group "Test closed group" and I expect access "denied"
     And I am on "/all-groups"
@@ -198,9 +198,9 @@ Feature: Create Closed Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Hengelo |
+      | City           | Hengelo         |
       | Street address | Padangstraat 11 |
-      | Postal code | 7556SP |
+      | Postal code    | 7556SP          |
     And I press "Save"
     And I should see "Test closed group 2" in the "Main content"
 
