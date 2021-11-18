@@ -3,9 +3,24 @@ services:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber, priority: 2 }
+
+  social_group.helper:
+    class: Drupal\social_group\Service\SocialGroupHelper
+    arguments:
+      - '@database'
+      - '@module_handler'
+      - '@string_translation'
+      - '@entity_type.manager'
+
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
-    arguments: ['@database', '@module_handler']
+    arguments:
+      - '@database'
+      - '@module_handler'
+      - '@string_translation'
+      - '@entity_type.manager'
+    deprecated: 'The "%service_id%" service is deprecated. Use "social_group.helper" instead. See https://drupal.org/node/3250215'
+
   social_group.cross_posting:
     class: Drupal\social_group\CrossPostingService
     arguments: ['@entity_type.manager', '@database', '@plugin.manager.group_content_enabler']
@@ -24,11 +39,11 @@ services:
     tags:
       - { name: event_subscriber }
   social_group.overrider:
-    class: \Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
+    class: Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
     tags:
       - {name: config.factory.override, priority: 10}
   social_group.admin_people_override:
-    class: \Drupal\social_group\SocialGroupAdminPeopleConfigOverride
+    class: Drupal\social_group\SocialGroupAdminPeopleConfigOverride
     arguments: ['@module_handler']
     tags:
     - {name: config.factory.override, priority: 10}
