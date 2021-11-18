@@ -63,7 +63,7 @@ function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
  * (State API) for all events that were for all-day, use the old logic for
  * checking.
  */
-function social_event_post_update_10204_set_all_day_value(array &$sandbox): void {
+function social_event_post_update_10302_set_all_day_value(array &$sandbox): void {
   if (!isset($sandbox['total'])) {
     $sandbox['ids'] = \Drupal::entityQuery('node')
       ->condition('type', 'event')
