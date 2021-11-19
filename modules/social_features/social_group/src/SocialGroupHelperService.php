@@ -15,7 +15,6 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupType;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
@@ -74,10 +73,8 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    * {@inheritdoc}
    */
   public function getGroupFromEntity(array $entity, bool $read_cache = TRUE) {
-    $gid = NULL;
-
     // Comments can have groups based on what the comment is posted on so the
-    // cache type differs from what we later use to fetch the group.
+    // cache type differs from what we later used to fetch the group.
     $cache_type = $entity['target_type'];
     $cache_id = $entity['target_id'];
 
@@ -103,8 +100,14 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
         $entity['target_type'] = $commented_entity->getEntityTypeId();
         $entity['target_id'] = $commented_entity->id();
       }
+      else {
+        $entity['target_type'] = NULL;
+      }
     }
-    elseif ($entity['target_type'] === 'post') {
+
+    $gid = NULL;
+
+    if ($entity['target_type'] === 'post') {
       $post = $this->entityTypeManager->getStorage('post')
         ->load($entity['target_id']);
 
@@ -140,9 +143,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     }
 
     // Cache the group id for this entity to optimise future calls.
-    $this->cache[$cache_type][$cache_id] = $gid;
-
-    return $gid;
+    return $this->cache[$cache_type][$cache_id] = $gid;
   }
 
   /**
@@ -201,7 +202,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    * {@inheritdoc}
    */
   public function getAllGroupsForUser(int $uid) {
-    $groups = &drupal_static(__FUNCTION__);
+    $groups = &drupal_static(__FUNCTION__, []);
 
     // Get the memberships for the user if they aren't known yet.
     if (!isset($groups[$uid])) {
@@ -215,10 +216,9 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       $query->addField('gcfd', 'gid');
       $query->condition('gcfd.entity_id', (string) $uid);
       $query->condition('gcfd.type', $group_content_types, 'IN');
+      $result = $query->execute();
 
-      if (($result = $query->execute()) !== NULL) {
-        $groups[$uid] = array_keys($result->fetchAllAssoc('gid'));
-      }
+      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
     }
 
     return $groups[$uid];
@@ -228,7 +228,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    * {@inheritdoc}
    */
   public function countGroupMembershipsForUser(string $uid): int {
-    $count = &drupal_static(__FUNCTION__);
+    $count = &drupal_static(__FUNCTION__, []);
 
     // Get the count of memberships for the user if they aren't known yet.
     if (!isset($count[$uid])) {
@@ -243,7 +243,11 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       $query->condition('gcfd.type', $group_content_types, 'IN');
       if (!empty($hidden_types)) {
         foreach ($hidden_types as $group_type) {
-          $query->condition('gcfd.type', '%' . $this->database->escapeLike($group_type) . '%', 'NOT LIKE');
+          $query->condition(
+            'gcfd.type',
+            '%' . $this->database->escapeLike($group_type) . '%',
+            'NOT LIKE',
+          );
         }
       }
       // We need to add another like for the fact that we have more plugins
@@ -253,9 +257,9 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       // Add a query tag for other modules to alter, this query.
       $query->addTag('count_memberships_for_user');
 
-      if (($result = $query->countQuery()->execute()) !== NULL) {
-        $count[$uid] = $result->fetchField();
-      }
+      $result = $query->countQuery()->execute();
+
+      $count[$uid] = $result !== NULL ? $result->fetchField() : 0;
     }
 
     return $count[$uid];
@@ -265,32 +269,32 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    * {@inheritdoc}
    */
   public function getGroupsToAddUrl(AccountInterface $account) {
-    $url = NULL;
-    $user_can_create_groups = [];
-    // Get all available group types.
-    foreach (GroupType::loadMultiple() as $group_type) {
-      // When the user has permission to create a group of the current type, add
-      // this to the create group array.
-      if ($account->hasPermission('create ' . $group_type->id() . ' group')) {
-        $user_can_create_groups[$group_type->id()] = $group_type;
-      }
+    $found = FALSE;
 
-      if (count($user_can_create_groups) > 1) {
+    $group_types = $this->entityTypeManager->getStorage('group_type')
+      ->getQuery()
+      ->execute();
+
+    // Get all available group types.
+    foreach ($group_types as $group_type) {
+      // When the user has permission to create a group of the current type, add
+      // this to the creation group array.
+      if ($account->hasPermission('create ' . $group_type . ' group')) {
+        $found = TRUE;
         break;
       }
     }
 
     // There's just one group this user can create.
-    if (count($user_can_create_groups) === 1) {
+    if ($found && isset($group_type)) {
       // When there is only one group allowed, add create the url to create a
       // group of this type.
-      $allowed_group_type = reset($user_can_create_groups);
-      /** @var \Drupal\group\Entity\Group $allowed_group_type */
-      $url = Url::fromRoute('entity.group.add_form', [
-        'group_type' => $allowed_group_type->id(),
+      return Url::fromRoute('entity.group.add_form', [
+        'group_type' => $group_type,
       ]);
     }
-    return $url;
+
+    return NULL;
   }
 
   /**
