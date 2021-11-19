@@ -271,6 +271,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   public function getGroupsToAddUrl(AccountInterface $account) {
     $found = FALSE;
 
+    /** @var array $group_types */
     $group_types = $this->entityTypeManager->getStorage('group_type')
       ->getQuery()
       ->execute();
