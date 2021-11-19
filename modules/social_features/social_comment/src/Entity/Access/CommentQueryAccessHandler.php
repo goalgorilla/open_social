@@ -3,10 +3,12 @@
 namespace Drupal\social_comment\Entity\Access;
 
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\entity\QueryAccess\ConditionGroup;
 use Drupal\entity\QueryAccess\QueryAccessHandlerBase;
 use Drupal\user\EntityOwnerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controls query access for comment entities.
@@ -14,6 +16,23 @@ use Drupal\user\EntityOwnerInterface;
  * @see \Drupal\entity\QueryAccess\QueryAccessHandler
  */
 class CommentQueryAccessHandler extends QueryAccessHandlerBase {
+
+  /**
+   * The Module Handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    $instance = parent::createInstance($container, $entity_type);
+    $instance->moduleHandler = $container->get('module_handler');
+
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -64,6 +83,8 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
     else {
       $conditions = $entity_conditions;
     }
+
+    $this->moduleHandler->alter('social_comment_query_access', $account,$this->entityType, $conditions);
 
     if (!$conditions) {
       // The user doesn't have access to any entities.
