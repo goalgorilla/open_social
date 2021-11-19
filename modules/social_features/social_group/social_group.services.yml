@@ -3,15 +3,6 @@ services:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber, priority: 2 }
-
-  social_group.helper:
-    class: Drupal\social_group\Service\SocialGroupHelper
-    arguments:
-      - '@database'
-      - '@module_handler'
-      - '@string_translation'
-      - '@entity_type.manager'
-
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
     arguments:
@@ -19,8 +10,6 @@ services:
       - '@module_handler'
       - '@string_translation'
       - '@entity_type.manager'
-    deprecated: 'The "%service_id%" service is deprecated. Use "social_group.helper" instead. See https://drupal.org/node/3250215'
-
   social_group.cross_posting:
     class: Drupal\social_group\CrossPostingService
     arguments: ['@entity_type.manager', '@database', '@plugin.manager.group_content_enabler']

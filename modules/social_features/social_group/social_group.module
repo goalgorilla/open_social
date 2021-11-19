@@ -810,8 +810,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
-  /** @var \Drupal\social_group\Service\SocialGroupHelperInterface $helper */
-  $helper = \Drupal::service('social_group.helper');
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
 
   // Change the form when adding members directly in groups.
   if (

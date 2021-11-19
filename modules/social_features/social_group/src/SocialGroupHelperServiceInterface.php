@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Service;
+namespace Drupal\social_group;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,12 +11,12 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 /**
  * Defines the helper service interface.
  *
- * @package Drupal\social_group\Service
+ * @package Drupal\social_group
  */
-interface SocialGroupHelperInterface {
+interface SocialGroupHelperServiceInterface {
 
   /**
-   * SocialGroupHelper constructor.
+   * SocialGroupHelperService constructor.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
