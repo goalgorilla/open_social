@@ -84,7 +84,7 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
       $conditions = $entity_conditions;
     }
 
-    $this->moduleHandler->alter('social_comment_query_access', $account,$this->entityType, $conditions);
+    $this->moduleHandler->alter('social_comment_query_access', $account, $this->entityType, $conditions);
 
     if (!$conditions) {
       // The user doesn't have access to any entities.
