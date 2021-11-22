@@ -11,11 +11,11 @@ Feature: Create Event
     And I click "Events"
     And I click "Create Event"
     When I fill in the following:
-         | Title | This is a test event |
-         | edit-field-event-date-0-value-date | 2025-01-01 |
-         | edit-field-event-date-end-0-value-date | 2025-01-01 |
-         | Time | 11:00:00 |
-         | Location name | Technopark |
+      | Title                                  | This is a test event |
+      | edit-field-event-date-0-value-date     | 2025-01-01           |
+      | edit-field-event-date-end-0-value-date | 2025-01-01           |
+      | edit-field-event-date-0-value-time     | 11:00:00             |
+      | Location name                          | Technopark           |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I select "UA" from "Country"
     And I wait for AJAX to finish
@@ -34,14 +34,14 @@ Feature: Create Event
     And I should see "79000" in the "Main content"
     And I should see "Lviv" in the "Main content"
     And I should see "Lviv oblast" in the "Main content"
-    And I should see "1 Jan '25 - 11:00" in the "Main content"
+    And I should see "1 Jan '25 11:00" in the "Main content"
 
     # Quick edit
     Given I click "Edit content"
     When I fill in the following:
       | Title | This is a test event - edit |
     And I show hidden checkboxes
-    And I check the box "edit-event-all-day"
+    And I check the box "edit-field-event-all-day-value"
     And I press "Save"
     Then I should see "Event This is a test event - edit has been updated"
     And I should see "THIS IS A TEST EVENT - EDIT"

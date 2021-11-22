@@ -15,11 +15,11 @@ Feature: Create event like
      And I click "Create Event"
 
     When I fill in the following:
-      | Title | Event for likes |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time | 11:00:00 |
-      | Location name | GG HQ |
+      | Title                                  | Event for likes |
+      | edit-field-event-date-0-value-date     | 2025-01-01      |
+      | edit-field-event-date-end-0-value-date | 2025-01-01      |
+      | edit-field-event-date-0-value-time     | 11:00:00        |
+      | Location name                          | GG HQ           |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
      And I press "Create event"
     Then I should see "Event for likes has been created."

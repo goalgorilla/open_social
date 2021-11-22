@@ -2,8 +2,6 @@
 
 namespace Drupal\social_event_addtocal\Plugin;
 
-use DateTime;
-use DateTimeZone;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Url;
@@ -48,9 +46,9 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    */
   public function getEventDates(NodeInterface $node) {
     // Set default values.
-    $all_day = FALSE;
-    $start_date = new DateTime($node->field_event_date->value, new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
-    $end_date = new DateTime($node->field_event_date_end->value, new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $all_day = !$node->get('field_event_all_day')->isEmpty() && $node->get('field_event_all_day')->getString() === '1';
+    $start_date = new \DateTime($node->field_event_date->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $end_date = new \DateTime($node->field_event_date_end->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     $date_time = [];
 
     // Set formats for event dates.
@@ -60,11 +58,6 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     }
     $all_day_format = $this->pluginDefinition['allDayFormat'];
 
-    // Check if all day event.
-    if ($start_date->format('i') === '01') {
-      $all_day = TRUE;
-    }
-
     // Convert date to correct format.
     // Set dates array.
     if ($all_day) {
@@ -73,8 +66,8 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       $date_time['end'] = $end_date->format($all_day_format);
     }
     else {
-      $start_date->setTimezone(new DateTimeZone(date_default_timezone_get()));
-      $end_date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+      $start_date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+      $end_date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
       $date_time['start'] = $start_date->format($format);
       $date_time['end'] = $end_date->format($format);
     }

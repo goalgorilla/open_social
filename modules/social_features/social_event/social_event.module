@@ -433,9 +433,13 @@ function social_event_user_delete(EntityInterface $entity) {
 
 /**
  * Formats the event start end date.
+ *
+ * @param \Drupal\node\NodeInterface $event
+ *   Event entity.
+ * @param string|null $view_mode
+ *   The view mode.
  */
-function _social_event_format_date($event, $view_mode) {
-
+function _social_event_format_date(NodeInterface $event, string $view_mode = NULL): string {
   $event_date = '';
   $event_config = \Drupal::config('social_event.settings');
   $add_timezone = $event_config->get('show_user_timezone');
@@ -451,37 +455,34 @@ function _social_event_format_date($event, $view_mode) {
   $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
 
   // Get start and end dates.
-  if ($start_date_field = $event->field_event_date) {
-    if (!empty($start_date_field->value)) {
-      // Since dates are stored as UTC, we will declare our event values
-      // as UTC. So we can actually calculate them back to the users timezone.
-      // This is necessary because we do not store the event value as being UTC
-      // so declaring it with setTimezone will result in wrong values.
-      $start_datetime = new DateTime($start_date_field->value, new DateTimeZone($utc_timezone));
-      $start_datetime->setTimezone(new DateTimeZone($timezone));
-      $start_datetime = $start_datetime->getTimestamp();
-    }
+  if (!$event->get('field_event_date')->isEmpty()) {
+    // Since dates are stored as UTC, we will declare our event values
+    // as UTC. So we can actually calculate them back to the users timezone.
+    // This is necessary because we do not store the event value as being UTC
+    // so declaring it with setTimezone will result in wrong values.
+    $start_datetime = new DateTime($event->get('field_event_date')->getString(), new DateTimeZone($utc_timezone));
+    $start_datetime->setTimezone(new DateTimeZone($timezone));
+    $start_datetime = $start_datetime->getTimestamp();
   }
-  if ($end_date_field = $event->field_event_date_end) {
-    if (!empty($end_date_field->value)) {
-      // Since dates are stored as UTC, we will declare our event values
-      // as UTC. So we can actually calculate them back to the users timezone.
-      // This is necessary because we do not store the event value as being UTC
-      // so declaring it with setTimezone will result in wrong values.
-      $end_datetime = new DateTime($end_date_field->value, new DateTimeZone($utc_timezone));
-      // We now calculate it back to the users timezone.
-      $end_datetime->setTimezone(new DateTimeZone($timezone));
-      $end_datetime = $end_datetime->getTimestamp();
-    }
+  if (!$event->get('field_event_date_end')->isEmpty()) {
+    // Since dates are stored as UTC, we will declare our event values
+    // as UTC. So we can actually calculate them back to the users timezone.
+    // This is necessary because we do not store the event value as being UTC
+    // so declaring it with setTimezone will result in wrong values.
+    $end_datetime = new DateTime($event->get('field_event_date_end')->getString(), new DateTimeZone($utc_timezone));
+    // We now calculate it back to the users timezone.
+    $end_datetime->setTimezone(new DateTimeZone($timezone));
+    $end_datetime = $end_datetime->getTimestamp();
   }
 
   // Get date and time formats.
   $date_formatter = \Drupal::service('date.formatter');
   $date_format = ($view_mode === 'hero') ? 'social_long_date' : 'social_medium_extended_date';
   $time_format = 'social_time';
+  $all_day_event = !$event->get('field_event_all_day')->isEmpty() && $event->get('field_event_all_day')->getString() === '1';
 
   if (!empty($start_datetime)) {
-    if ($date_formatter->format($start_datetime, 'custom', 'i') === '01') {
+    if ($all_day_event) {
       $start_date = $date_formatter->format($start_datetime, $date_format, '', $utc_timezone);
       $add_timezone = FALSE;
     }
@@ -489,17 +490,17 @@ function _social_event_format_date($event, $view_mode) {
       $start_date = $date_formatter->format($start_datetime, $date_format);
     }
     // Default time should not be displayed.
-    $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
+    $start_time = $all_day_event ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
-      if ($date_formatter->format($end_datetime, 'custom', 'i') === '01') {
+      if ($all_day_event) {
         $end_date = $date_formatter->format($end_datetime, $date_format, '', $utc_timezone);
       }
       else {
         $end_date = $date_formatter->format($end_datetime, $date_format);
       }
       // Default time should not be displayed.
-      $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
+      $end_time = $all_day_event ? '' : $date_formatter->format($end_datetime, $time_format);
     }
 
     // Date are the same or there are no end date.
@@ -640,18 +641,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       unset($form['field_enroll_method']['widget']['#options'][3]);
     }
 
-    // Add the all day event checkbox.
-    $form['event_all_day'] = [
-      '#type' => 'checkbox',
-      '#title' => t('All day'),
-    ];
-
-    // Set default value and fieldgroup for all day checkbox.
-    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
-      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
-      $form['event_all_day']['#default_value'] = $all_day_value;
-    }
-
     // Get user timezone.
     $user_timezone = _social_event_user_timezone(date_default_timezone_get());
     $timezone_label = t('Time zone');
@@ -687,9 +676,16 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       ],
     ];
 
-    $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+    if ($form['field_event_all_day']['widget']['value']['#default_value']) {
+      $start_date = &$form['field_event_date']['widget'][0]['value'];
+      $start_date['#default_value']->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->setTime(0, 0);
+      $start_date['#date_timezone'] = DateTimeItemInterface::STORAGE_TIMEZONE;
+      $end_date = &$form['field_event_date_end']['widget'][0]['value'];
+      $end_date['#default_value']->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->setTime(0, 0);
+      $end_date['#date_timezone'] = DateTimeItemInterface::STORAGE_TIMEZONE;
+    }
+
     $form['#fieldgroups']['group_date_time']->children[] = 'timezone_indication';
-    $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#group_children']['timezone_indication'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
   }
@@ -730,19 +726,39 @@ function social_event_date_after_build($form, &$form_state) {
  * Set default time to the date field if time was not set.
  */
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
-  $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
-  $form_input = $form_state->getUserInput();
+  $form_values = $form_state->getValues();
+  $input = NestedArray::getValue($form_values, $element['#parents']);
+
+  $all_day = (bool) $form_state->getValue(['field_event_all_day', 'value']);
+
+  // End date should not be empty if "All day" option was enabled.
+  if ($all_day) {
+    if (strpos($element['#name'], 'field_event_date_end') !== FALSE) {
+      if (empty($input['date'])) {
+        $form_state->setError($element, t('End date is required!'));
+        return;
+      }
+    }
+  }
 
   // Skip default validation for required time when date is required.
-  if (!empty($input['date']) && (empty($input['time']) || !empty($form_input['event_all_day']))) {
-    $input['time'] = '00:01:00';
-    $storage_format = DrupalDateTime::FORMAT;
-    $datetime = trim($input['date'] . ' ' . $input['time']);
-    $storage_timezone = new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
-    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $storage_timezone);
-    if ($input['object'] instanceof DrupalDateTime) {
-      $form_state->setValueForElement($element, $input);
+  if ($all_day) {
+    $input['time'] = '00:00:00';
+    if (is_null($input['object']) && !empty($input['date'])) {
+      $input['object'] = new DrupalDateTime($input['date'] . ' ' . $input['time'], new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     }
+    elseif ($input['object'] instanceof DrupalDateTime) {
+      $input['object'] = $input['object']->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->setTime(0, 0);
+    }
+  }
+  else {
+    if ($input['object'] instanceof DrupalDateTime) {
+      $input['object'] = new DrupalDateTime($input['object']->format('Y-m-d H:i:s'), new DateTimeZone(date_default_timezone_get()));
+    }
+  }
+
+  if ($input['object'] instanceof DrupalDateTime) {
+    $form_state->setValueForElement($element, $input);
   }
 }
 
@@ -762,31 +778,13 @@ function social_event_field_widget_form_alter(&$element, FormStateInterface $for
 function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
   // Time field should disappear when 'All day' is checked.
   $state = [
-    ':input[name="event_all_day"]' => [
+    ':input[name="field_event_all_day[value]"]' => [
       'checked' => TRUE,
     ],
   ];
   $element['time']['#states'] = [
     'invisible' => $state,
   ];
-  $form_input = $form_state->getUserInput();
-  $date = $element['#value']['object'];
-
-  if (!empty($form_input['op']) && isset($form_input['event_all_day'])) {
-    $element['time']['#value'] = '00:01:00';
-    $element['event_all_day']['#value'] = (bool) $form_input['event_all_day'];
-  }
-  elseif ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
-    $element['time']['#value'] = '00:01:00';
-    $element['event_all_day']['#value'] = TRUE;
-  }
-}
-
-/**
- * Check if event date is all day.
- */
-function social_event_date_is_all_day(DrupalDateTime $date) {
-  return $date->format('i') === '01';
 }
 
 /**

@@ -101,11 +101,11 @@ Feature: Create Open Group
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | Technopark |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | edit-field-event-date-0-value-time     | 11:00:00         |
+      | Location name                          | Technopark       |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
     And I click radio button "Community" with the id "edit-field-content-visibility-community"

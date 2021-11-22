@@ -11,11 +11,11 @@ Feature: All day event for different timezones
     And I am on "/node/add/event"
     When I fill in the custom fields for this "event"
     And I fill in the following:
-      | Title | This is a timezone test for all day events |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time | 11:00:00 |
-      | Location name | Technopark |
+      | Title                                  | This is a timezone test for all day events |
+      | edit-field-event-date-0-value-date     | 2025-01-01                                 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01                                 |
+      | edit-field-event-date-0-value-time     | 11:00:00                                   |
+      | Location name                          | Technopark                                 |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I select "UA" from "Country"
     And I wait for AJAX to finish
@@ -34,7 +34,7 @@ Feature: All day event for different timezones
     When I fill in the following:
       | Title | This is a test event - edit |
     And I show hidden checkboxes
-    And I check the box "edit-event-all-day"
+    And I check the box "edit-field-event-all-day-value"
     And I press "Save"
     Then I should see "Event This is a test event - edit has been updated"
     And I should see "1 Jan '25"
