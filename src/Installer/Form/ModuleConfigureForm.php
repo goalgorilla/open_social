@@ -146,7 +146,7 @@ class ModuleConfigureForm extends ConfigFormBase {
     // Set the modules to be installed by Drupal in the install_profile_modules
     // step.
     $install_modules = array_merge(
-      \Drupal::state()->get('install_profile_modules'),
+      \Drupal::state()->get('install_profile_modules') ?? [],
       $optional_modules
     );
     \Drupal::state()->set('install_profile_modules', $install_modules);
