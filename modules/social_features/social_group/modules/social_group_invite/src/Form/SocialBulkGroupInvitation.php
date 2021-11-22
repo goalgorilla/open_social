@@ -354,7 +354,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
             return;
           }
-          elseif (!empty($membership)) {
+          else {
             // Change the uservalue to email because the bulk invite for
             // groups can only handle emails.
             $form_state->setValue(['users_fieldset', 'user', $user], $account->getEmail());
