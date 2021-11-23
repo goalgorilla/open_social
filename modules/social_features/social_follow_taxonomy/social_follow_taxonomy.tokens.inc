@@ -71,7 +71,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
           // Get the related entity.
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
@@ -200,7 +200,6 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
           switch ($message_template_id) {
             case 'create_node_following_tag':
             case 'update_node_following_tag':
-            case 'create_node_following_tag_stream':
               if (isset($context['tokens']['cta_button'])) {
                 $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more about it'));
