@@ -61,6 +61,28 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         ];
 
         $account = User::load($match);
+        if($group->hasField('field_flexible_group_visibility')){
+          $group_visibilities = $group->get('field_flexible_group_visibility')->getValue();
+          $user_has_role = FALSE;
+          // Loop through group visibility and check if user has that role.
+          foreach($group_visibilities as $group_visibility){
+            if($account->hasRole($group_visibility['value'])){
+              $user_has_role = TRUE;
+            }
+          }
+          // Add error if user doesn't have required role.
+          if(!$user_has_role){
+            $message = \Drupal::translation()->translate(
+              "@username doesn't have the required role. You can't add them. Please contact your community manager.",
+              ['@username' => $account->getDisplayName()]
+            );
+            // We have to kick in a form set error here, or else the
+            // GroupContentCardinalityValidator will kick in and show a faulty
+            // error message. Alter this later when Group supports multiple members.
+            $form_state->setError($element, $message);
+            return;
+          }
+        }
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
         if ($group->getMember($account)) {
