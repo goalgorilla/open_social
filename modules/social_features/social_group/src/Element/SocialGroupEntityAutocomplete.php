@@ -68,6 +68,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
           foreach($group_visibilities as $group_visibility){
             if($account->hasRole($group_visibility['value'])){
               $user_has_role = TRUE;
+              break;
             }
           }
           // Add error if user doesn't have required role.
