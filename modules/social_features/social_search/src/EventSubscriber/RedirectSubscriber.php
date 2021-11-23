@@ -105,13 +105,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
     if (empty($query) || empty($query['created_op'])) {
       $query = ['created_op' => '<'];
       $parameters = $this->currentRoute->getParameters();
-      $currentUrl = Url::fromRoute($this->currentRoute->getRouteName());
-      if (!empty($parameters->get('keys'))) {
-        $currentUrl = Url::fromRoute($this->currentRoute->getRouteName(), ['keys' => $parameters->get('keys')]);
-      }
-      $redirect_path = $currentUrl->toString();
-      $redirect = Url::fromUserInput($redirect_path, ['query' => $query]);
-
+      $redirect_path = $this->currentRoute->getRouteName();
+      $options = ['query' => $query];
+      $route_parameters = ['keys' => $parameters->get('keys')];
+      $redirect = Url::fromRoute($redirect_path, $route_parameters, $options);
       $event->setResponse(new RedirectResponse($redirect->toString()));
     }
 
