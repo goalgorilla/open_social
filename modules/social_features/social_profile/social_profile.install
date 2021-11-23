@@ -40,7 +40,7 @@ function social_profile_requirements(string $phase) : array {
   $requirements = [];
 
   // Check that there are no modules that depend on any of the modules that will
-  // be uninstalled in 11.0.
+  // be uninstalled in 12.0.
   if ($phase === 'update') {
     $module_handler = \Drupal::moduleHandler();
     $modules = [
@@ -1717,21 +1717,28 @@ function social_profile_update_12019() : void {
   // to the default upgrade path.
   // A hook_requirements checks that uninstalling these modules does not take
   // any others with it. If modules still rely on any of these then the update
-  // to 11.0.0 is blocked.
-  $modules = [
-    'social_profile_fields',
-    'social_profile_privacy',
-    'social_registration_fields',
-  ];
+  // to 12.0.0 is blocked.
+  $modules = array_filter(
+    [
+      'social_profile_fields',
+      'social_profile_privacy',
+      'social_registration_fields',
+    ],
+    // Ensure we only try to uninstall modules that are actually enabled
+    // otherwise Drupal will uninstall nothing.
+    fn (string $name) => \Drupal::moduleHandler()->moduleExists($name)
+  );
 
-  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
-  $module_installer = \Drupal::service('module_installer');
-  $module_installer->uninstall($modules);
+  if (count($modules) !== 0) {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+    $module_installer = \Drupal::service('module_installer');
+    $module_installer->uninstall($modules);
 
-  // Manually remove user data in case modules didn't properly clean up.
-  /** @var \Drupal\user\UserDataInterface $user_data */
-  $user_data = \Drupal::service('user.data');
-  $user_data->delete($modules);
+    // Manually remove user data in case modules didn't properly clean up.
+    /** @var \Drupal\user\UserDataInterface $user_data */
+    $user_data = \Drupal::service('user.data');
+    $user_data->delete($modules);
+  }
 
   // Delete the social_profile_fields settings since they're not removed in the
   // module itself.
