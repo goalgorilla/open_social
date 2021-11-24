@@ -77,9 +77,6 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
               "@username doesn't have the required role. You can't add them. Please contact your community manager.",
               ['@username' => $account->getDisplayName()]
             );
-            // We have to kick in a form set error here, or else the
-            // GroupContentCardinalityValidator will kick in and show a faulty
-            // error message. Alter this later when Group supports multiple members.
             $form_state->setError($element, $message);
             return;
           }
