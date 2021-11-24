@@ -34,7 +34,6 @@ new TranslatableMarkup('
         To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a>');
 new TranslatableMarkup("@username doesn't have the required role. You can't add them. Please contact your community manager.");
 
-
 // Change in version 8.3.
 new TranslatableMarkup("Set wether event types field is required or not.");
 new TranslatableMarkup("Determine wether users can upload documents to comments.");
