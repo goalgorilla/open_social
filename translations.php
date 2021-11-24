@@ -32,6 +32,8 @@ new TranslatableMarkup('
         - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
         - Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. <br> <br>
         To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a>');
+new TranslatableMarkup("@username doesn't have the required role. You can't add them. Please contact your community manager.");
+
 
 // Change in version 8.3.
 new TranslatableMarkup("Set wether event types field is required or not.");
