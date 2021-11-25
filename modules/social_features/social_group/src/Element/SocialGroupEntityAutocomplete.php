@@ -61,19 +61,19 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         ];
 
         $account = User::load($match);
-        if ($group && $group->hasField('field_flexible_group_visibility')) {
+        if ($group !== NULL && $group->hasField('field_flexible_group_visibility')) {
           $group_visibilities = $group->get('field_flexible_group_visibility')
             ->getValue();
           $user_has_role = FALSE;
           // Loop through group visibility and check if user has that role.
           foreach ($group_visibilities as $group_visibility) {
-            if ($account && $account->hasRole($group_visibility['value'])) {
+            if ($account !== NULL && $account->hasRole($group_visibility['value'])) {
               $user_has_role = TRUE;
               break;
             }
           }
           // Add error if user doesn't have required role.
-          if ($account && !$user_has_role) {
+          if ($account !== NULL && !$user_has_role) {
             $message = \Drupal::translation()->translate(
               "@username doesn't have the required role. You can't add them. Please contact your community manager.",
               ['@username' => $account->getDisplayName()]
@@ -84,7 +84,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         }
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
-        if ($group && $group->getMember($account)) {
+        if ($group !== NULL && $account !== NULL && $group->getMember($account)) {
           $duplicated_values[] = $account->getDisplayName();
         }
         // We need set "validate_reference" for element to prevent
