@@ -54,8 +54,15 @@ class FeatureContext extends RawMinkContext implements Context
         $this->getSession()->start();
       }
 
+      $config_factory = \Drupal::configFactory();
+
       // Let's disable the tour module for all tests by default.
-      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+      $config_factory->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+
+      // Since we enable Sky theme by default we should make sure we run our
+      // tests on the old theme. In another case, it will break all our tests.
+      // @see https://www.drupal.org/project/socialblue/issues/3251299
+      $config_factory->getEditable('socialblue.settings')->set('style', '')->save();
 
       /** @var \Behat\Testwork\Environment\Environment $environment */
       $environment = $scope->getEnvironment();
