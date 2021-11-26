@@ -2,7 +2,6 @@
 
 namespace Drupal\social_embed\Controller;
 
-use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
@@ -96,32 +95,18 @@ class EmbedController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    // Let's prepare a unique flood identifier using our uuid.
-    // This is to to ensure that the value doesn't exceed 128 characters.
-    // As identifiers cannot be more than 128 characters long, otherwise
-    // it will cause an error when attempting to write the flood record
-    // to the database.
-    $hashedValue = Crypt::hashBase64($uuid);
-    // The reason we are also using the combination of uuid and client IP is
-    // to make sure we do not end up blocking a user who is just exploring our
-    // website. There can be a scenario where, this endpoint can be called more
-    // than our threshold value due to numerous embedded content on the
-    // platform, and if we use only clientIp, we might end up blocking a
-    // genuine request.
-    $floodIdentifier = $request->getClientIP() . $hashedValue;
-
     // The maximum number of times each user can do this event per time window.
     $retries = Settings::get('social_embed_retries', 50);
     // Number of seconds in the time window for embed.
-    $timeWindow = Settings::get('social_embed_time_window', 3600);
+    $timeWindow = Settings::get('social_embed_time_window', 600);
 
     // Only proceed if this is not a malicous request.
-    if (!$this->flood->isAllowed('social_embed.generateembed_flood_event', $retries, $timeWindow, $floodIdentifier)) {
+    if (!$this->flood->isAllowed('social_embed.generate_embed_flood_event', $retries, $timeWindow)) {
       throw new AccessDeniedHttpException();
     }
     else {
       // Register the flood event in system.
-      $this->flood->register('social_embed.generateembed_flood_event', $timeWindow, $floodIdentifier);
+      $this->flood->register('social_embed.generate_embed_flood_event', $timeWindow);
       // Use uuid to set the selector to the specific div we need to replace.
       $selector = "#social-embed-iframe-$uuid";
       // If the content is embeddable then return the iFrame.

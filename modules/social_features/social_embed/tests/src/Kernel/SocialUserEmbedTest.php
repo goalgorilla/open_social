@@ -60,6 +60,8 @@ class SocialUserEmbedTest extends KernelTestBase {
 
     // URL needed for the request.
     $url = 'https://www.youtube.com/watch?v=kgE9QNX8f3c';
+    // Generate random UUID.
+    $uuid = (new Php())->generate();
 
     // The maximum number of times each user can do this event per time window.
     $retries = 50;
@@ -68,8 +70,6 @@ class SocialUserEmbedTest extends KernelTestBase {
     $http_kernel = $this->container->get('http_kernel');
 
     for ($i = 0; $i <= $retries; $i++) {
-      // Generate random UUID.
-      $uuid = (new Php())->generate();
       // Create request.
       $request = Request::create("/api/opensocial/social-embed/generate?url=$url&uuid=$uuid");
       // Handle request.
