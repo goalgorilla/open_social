@@ -83,8 +83,12 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                 case 'node':
                   /** @var \Drupal\node\Entity\Node $entity */
                   if ($entity instanceof NodeInterface) {
-                    // Get the name of the content.
-                    $display_name = strtolower($entity->getType());
+                    /** @var \Drupal\node\NodeTypeInterface $node_type */
+                    $node_type = \Drupal::entityTypeManager()
+                      ->getStorage('node_type')
+                      ->load($entity->bundle());
+                    // Get the label of the content type.
+                    $display_name = mb_strtolower((string) $node_type->label());
 
                     // Get the names of terms related to the content.
                     $term_ids = social_follow_taxonomy_terms_list($entity);
