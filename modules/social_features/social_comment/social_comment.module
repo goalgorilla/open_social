@@ -212,6 +212,13 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
       }
     }
   }
+
+  if (
+    isset($links['comment']['#links']['comment-forbidden']) &&
+    empty($links['comment']['#links']['comment-forbidden']['title'])
+  ) {
+    unset($links['comment']['#links']['comment-forbidden']);
+  }
 }
 
 /**
