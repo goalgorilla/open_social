@@ -86,7 +86,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
         case 'mentioned_user':
 
           if ($name === 'mentioned_user') {
-            if (!empty($message->get('field_message_related_object'))) {
+            if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
               $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
               $mention = \Drupal::entityTypeManager()
@@ -106,7 +106,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'commented_entity_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             /** @var \Drupal\mentions\Entity\Mentions $mention */

@@ -1414,8 +1414,8 @@ function social_core_update_10103() {
  * Set default settings to use entity access API as FALSE.
  */
 function social_core_update_10104() {
-  $config = \Drupal::configFactory()->getEditable('social_core.settings');
-  $config->set('use_entity_access_api', 0)->save();
+  // Removed hook due to de deprecation of use_entity_access_api.
+  // @see https://www.drupal.org/project/social/issues/3215750
 }
 
 /**
@@ -1487,4 +1487,28 @@ function social_core_update_11002(): void {
     ]
   );
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, $permissions);
+}
+
+/**
+ * Install jQuery UI Accordion module.
+ */
+function social_core_update_11003(): void {
+  // Check if jquery_ui_accordion module exists.
+  if (\Drupal::service('extension.list.module')
+    ->getName('jquery_ui_accordion')) {
+    \Drupal::service('module_installer')
+      ->install(['jquery_ui_accordion'], TRUE);
+  }
+}
+
+/**
+ * Remove deprecated settings.
+ */
+function social_core_update_11004(): void {
+  // Remove deprecated configuration use_entity_access_api,
+  // as of at this update the only settings available on
+  // social_core.settings is use_entity_access_api we can remove it all.
+  if (\Drupal::config('social_core.settings')->get('use_entity_access_api') !== NULL) {
+    \Drupal::configFactory()->getEditable('social_core.settings')->delete();
+  }
 }

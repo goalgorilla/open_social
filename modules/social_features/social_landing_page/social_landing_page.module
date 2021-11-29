@@ -350,17 +350,33 @@ function social_landing_page_social_user_account_header_create_links($context) {
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Adds a specific template suggestion for landing page due to the structure of
+ * components when it uses for 404 page.
  */
-function social_landing_page_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+function social_landing_page_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
   // Get Request Object.
   $request = \Drupal::request();
 
-  // If there is HTTP Exception..
+  // If there is HTTP Exception.
   if ($exception = $request->attributes->get('exception')) {
     // Get the status code.
     $status_code = $exception->getStatusCode();
     if ($status_code == 404) {
-      $suggestions[] = 'page__node__landing_page';
+
+      // Get current node.
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = \Drupal::routeMatch()->getParameter('node');
+      if (!is_object($node)) {
+        $node = \Drupal::service('entity_type.manager')
+          ->getStorage('node')
+          ->load($node);
+      }
+      // Overrides template for 404 page only if target node has a landing page
+      // type.
+      if ($node instanceof NodeInterface && $node->getType() == 'landing_page') {
+        $suggestions[] = 'page__node__landing_page';
+      }
     }
   }
 }

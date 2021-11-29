@@ -83,10 +83,10 @@ function social_like_preprocess_like_and_dislike_icons(&$variables) {
 
     // If the entity is unpublished and of type comment disable voting.
     if (!$entity->isPublished() && $entity->getEntityTypeId() === 'comment') {
-      $variables['like_attributes']->addClass('disable-status');
-      $variables['dislike_attributes']->addClass('disable-status');
+      foreach ($variables['icons'] as &$icon) {
+        $icon['attributes']->addClass('disable-status');
+      }
     }
-
   }
   $variables['modal_title'] = t('Members who liked this @content', ['@content' => $bundle]);
 }
