@@ -27,7 +27,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
     if ($group === NULL) {
-      throw new \RuntimeException("We're tryting to add a user to a non-existing group. This indicates an implementation error where we may be mixing up entity types.");
+      throw new \RuntimeException("We're trying to add a user to a non-existing group. This indicates an implementation error where we may be mixing up entity types.");
     }
 
     if ($select2 !== TRUE) {
@@ -37,7 +37,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $input_values = $element['#value'];
     }
 
-    // Set the match variable on an initial value, so it's set.
+    // Set the match variable on an initial value, so it always exists.
     $match = NULL;
     foreach ($input_values as $input) {
       $match = static::extractEntityIdFromAutocompleteInput($input);
