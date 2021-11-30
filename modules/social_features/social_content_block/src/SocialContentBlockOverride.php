@@ -109,14 +109,14 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
             $fields_select_types = [
               'field_event_type',
               'field_group_type',
-              'field_topic_type'
+              'field_topic_type',
             ];
 
             if (in_array($field, $fields_select_types)) {
               $fields[$field] = [
                 'weight' => $weight++,
                 'settings' => [
-                  'autocomplete' => false,
+                  'autocomplete' => FALSE,
                   'match_operator' => 'CONTAINS',
                   'match_limit' => 10,
                 ],
