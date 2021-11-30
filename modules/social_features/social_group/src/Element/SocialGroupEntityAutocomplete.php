@@ -26,6 +26,9 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
+    if ($group === NULL) {
+      throw new \RuntimeException("We're tryting to add a user to a non-existing group. This indicates an implementation error where we may be mixing up entity types.");
+    }
 
     if ($select2 !== TRUE) {
       $input_values = Tags::explode($element['#value']);
@@ -34,6 +37,8 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $input_values = $element['#value'];
     }
 
+    // Set the match variable on an initial value, so it's set.
+    $match = NULL;
     foreach ($input_values as $input) {
       $match = static::extractEntityIdFromAutocompleteInput($input);
       // If we use the select 2 widget then we already got a nice array.
@@ -42,12 +47,13 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       }
       if ($match === NULL) {
         $options = $element['#selection_settings'] + [
-          'target_type' => $element['#target_type'],
-          'handler' => $element['#selection_handler'],
-        ];
+            'target_type' => $element['#target_type'],
+            'handler' => $element['#selection_handler'],
+          ];
 
-        /** @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
-        $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
+        /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
+        $handler = \Drupal::service('plugin.manager.entity_reference_selection')
+          ->getInstance($options);
         $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
         // Try to get a match from the input string when the user didn't use
         // the autocomplete but filled in a value manually.
@@ -61,19 +67,22 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         ];
 
         $account = User::load($match);
-        if ($group !== NULL && $group->hasField('field_flexible_group_visibility')) {
+        if ($account === NULL) {
+          throw new \RuntimeException("Input matched a user that was supposed to exist but couldn't be loaded. This indicates an implementation error where we may be mixing up entity types.");
+        }
+        if ($group->hasField('field_flexible_group_visibility')) {
           $group_visibilities = $group->get('field_flexible_group_visibility')
             ->getValue();
           $user_has_role = FALSE;
           // Loop through group visibility and check if user has that role.
           foreach ($group_visibilities as $group_visibility) {
-            if ($account !== NULL && $account->hasRole($group_visibility['value'])) {
+            if ($account->hasRole($group_visibility['value'])) {
               $user_has_role = TRUE;
               break;
             }
           }
           // Add error if user doesn't have required role.
-          if ($account !== NULL && !$user_has_role) {
+          if (!$user_has_role) {
             $message = \Drupal::translation()->translate(
               "@username doesn't have the required role. You can't add them. Please contact your community manager.",
               ['@username' => $account->getDisplayName()]
@@ -84,7 +93,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         }
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
-        if ($group !== NULL && $account !== NULL && $group->getMember($account)) {
+        if ($group->getMember($account)) {
           $duplicated_values[] = $account->getDisplayName();
         }
         // We need set "validate_reference" for element to prevent
@@ -122,7 +131,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       // Select2 gives us an array back, which errors the field even though we
       // don't use it to perform the action, but we should mimic the behaviour
       // as it would be without Select2.
-      if ($select2 === TRUE) {
+      if ($select2 === TRUE && $match !== NULL) {
         $form_state->setValue(['entity_id', '0', 'target_id'], $match);
       }
       $form_state->setValue('entity_id_new', $value);
