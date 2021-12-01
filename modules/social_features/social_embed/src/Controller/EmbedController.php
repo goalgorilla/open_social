@@ -96,9 +96,9 @@ class EmbedController extends ControllerBase {
     }
 
     // The maximum number of times each user can do this event per time window.
-    $retries = Settings::get('social_embed_retries', 50);
+    $retries = Settings::get('social_embed_flood_retries', 50);
     // Number of seconds in the time window for embed.
-    $timeWindow = Settings::get('social_embed_time_window', 600);
+    $timeWindow = Settings::get('social_embed_flood_time_window', 300);
 
     // Only proceed if this is not a malicous request.
     if (!$this->flood->isAllowed('social_embed.generate_embed_flood_event', $retries, $timeWindow)) {
