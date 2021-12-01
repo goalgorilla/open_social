@@ -118,7 +118,7 @@ function social_embed_update_11002() :void {
       [
         0 =>
           [
-            'value' => 0,
+            'value' => 1,
           ],
       ],
     'default_value_callback' => '',
@@ -183,4 +183,7 @@ function social_embed_update_11003() :void {
     $user_config->set('content', array_merge($existing_content, $field_user_embed_content_consent));
   }
   $user_config->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
 }
