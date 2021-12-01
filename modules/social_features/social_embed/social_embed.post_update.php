@@ -5,26 +5,58 @@
  * The post update hooks for social_embed module.
  */
 
+use Drupal\Core\Site\Settings;
+
 /**
  * Implements hook_post_update_NAME().
  */
-function social_embed_post_update_11001_populate_field_embed_content_settings(&$sandbox) {
+function social_embed_post_update_11001_populate_field_embed_content_settings(&$sandbox): void {
   // Even though we have provided 'field_user_embed_content_consent',
   // a default value of 1. This will only pre-filled for any newly created
   // users, but not already existing users.
   // We need populate the field value of newly added field for existing users.
   // @see social_embed_update_11002().
-  $all_bundle_fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('user', 'user');
+  $all_bundle_fields = \Drupal::service('entity_field.manager')
+    ->getFieldDefinitions('user', 'user');
+
   // Proceed only if the new field is installed.
   if (isset($all_bundle_fields['field_user_embed_content_consent'])
     && ($all_bundle_fields['field_user_embed_content_consent']->getType() === 'boolean')) {
     $database = \Drupal::database();
-    $query = $database->select('users', 'u');
-    $query->fields('u', ['uid']);
-    $result = $query->execute();
-
     $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
-    while ($uid = $result->fetchAssoc()) {
+
+    if (!isset($sandbox['progress'])) {
+      // Get user ids from user table.
+      $uids = $database->select('users', 'u')
+        ->fields('u', ['uid'])
+        ->condition('uid', 0, '>')
+        ->execute()->fetchCol();
+
+      // 'count' is the number of total records we’ll be processing.
+      $sandbox['count'] = 0;
+
+      // Let's store the user IDs and their count.
+      if (!empty($uids)) {
+        $sandbox['uids'] = $uids;
+        $sandbox['count'] = count($uids);
+      }
+
+      // If 'count' is empty, we have nothing to process.
+      if (empty($sandbox['count'])) {
+        $sandbox['#finished'] = 1;
+        return;
+      }
+
+      // 'progress' will represent the current progress of our processing.
+      $sandbox['progress'] = 0;
+    }
+
+    $step_size = Settings::get('entity_update_batch_size', 50);
+
+    // Extract user ids for deletion per batch.
+    $uids_for_delete = array_splice($sandbox['uids'], 0, $step_size);
+    // Insert the values in table.
+    foreach ($uids_for_delete as $uid) {
       $database->insert('user__field_user_embed_content_consent')
         ->fields(
           [
@@ -39,14 +71,19 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(&$
           [
             'user',
             0,
-            $uid['uid'],
-            $uid['uid'],
+            $uid,
+            $uid,
             $langcode,
             0,
             1,
           ]
         )
         ->execute();
+      $sandbox['progress']++;
     }
+
+    // Drupal’s Batch API will stop executing our update hook as soon as
+    // $sandbox['#finished'] == 1 (viz., it evaluates to TRUE).
+    $sandbox['#finished'] = empty($sandbox['uids']) ? 1 : $sandbox['progress'] / $sandbox['count'];
   }
 }
