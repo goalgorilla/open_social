@@ -5,7 +5,7 @@
  * Install, update and uninstall functions for the social_embed module.
  */
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
@@ -39,6 +39,7 @@ function social_embed_install(bool $is_syncing) {
 
   if (!$is_syncing) {
     social_embed_update_11003();
+    social_embed_update_11004();
   }
 }
 
@@ -83,107 +84,71 @@ function social_embed_update_11001() :void {
 }
 
 /**
- * Adds field_user_embed_content_consent field to user entity.
+ * Install field_user_embed_content_consent field to user entity.
  */
 function social_embed_update_11002() :void {
-  $embedded_content_consent_storage = FieldStorageConfig::create(
-    [
-      'langcode' => 'en',
-      'status' => TRUE,
-      'field_name' => 'field_user_embed_content_consent',
-      'entity_type' => 'user',
-      'type' => 'boolean',
-      'settings' => [],
-      'module' => 'core',
-      'locked' => FALSE,
-      'cardinality' => 1,
-      'translatable' => TRUE,
-      'indexes' => [],
-      'persist_with_no_fields' => FALSE,
-      'custom_storage' => FALSE,
-    ]);
-  $embedded_content_consent_storage->save();
-
-  FieldConfig::create([
-    'langcode' => 'en',
-    'status' => TRUE,
-    'field_name' => 'field_user_embed_content_consent',
-    'entity_type' => 'user',
-    'bundle' => 'user',
-    'label' => new TranslatableMarkup('Enforce consent for all embedded content'),
-    'description' => new TranslatableMarkup('This options enables you to provide consent for embedded content before it is displayed in your stream. For example, YouTube videos.'),
-    'required' => FALSE,
-    'translatable' => FALSE,
-    'default_value' =>
-      [
-        0 =>
-          [
-            'value' => 1,
-          ],
-      ],
-    'default_value_callback' => '',
-    'settings' =>
-      [
-        'on_label' => 'On',
-        'off_label' => 'Off',
-      ],
-    'field_type' => 'boolean',
-    'field_storage' => $embedded_content_consent_storage,
-  ])->save();
+  $config_directory_path = drupal_get_path('module', 'social_embed') . '/config/install';
+  $config_directory = new FileStorage($config_directory_path);
+  $field_storage_name = 'field.storage.user.field_user_embed_content_consent';
+  $config_record = $config_directory->read($field_storage_name);
+  if (!FieldStorageConfig::loadByName($config_record['entity_type'], $config_record['field_name'])) {
+    FieldStorageConfig::create($config_record)->save();
+  }
+  $field_config_name = 'field.field.user.user.field_user_embed_content_consent';
+  $config_record = $config_directory->read($field_config_name);
+  if (!FieldConfig::loadByName($config_record['entity_type'], $config_record['bundle'], $config_record['field_name'])) {
+    FieldConfig::create($config_record)->save();
+  }
 }
 
 /**
- * Add new fieldgroup and field to user edit form.
- *
- * 1. Fieldgroup => group_remote_content_settings
- * 2. Field => field_user_embed_content_consent.
+ * Add new field 'field_user_embed_content_consent' to user edit form.
  *
  * This enables the user to toggle the option for embedded content settings.
  */
 function social_embed_update_11003() :void {
-  // Add the new field group.
-  $group_remote_content_settings = [
-    'group_remote_content_settings' => [
+  // Add the new field to user entity form display.
+  $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
+  $form_display = $form_display->setComponent('field_user_embed_content_consent', [
+    'label' => 'above',
+    'type' => 'boolean_checkbox',
+  ]);
+  $form_display->save();
+}
+
+/**
+ * Add new field_group 'group_remote_content_settings' to user edit form.
+ *
+ * And add the newly installed field 'field_user_embed_content_consent'
+ * as its children.
+ */
+function social_embed_update_11004() {
+  // Add it to a field group now.
+  $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
+  if (!empty($form_display->getComponent('field_user_embed_content_consent'))) {
+    $new_group = (object) [
+      'group_name' => 'group_remote_content_settings',
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'mode' => 'default',
+      'context' => 'form',
       'children' => [
         0 => 'field_user_embed_content_consent',
       ],
       'parent_name' => '',
-      'weight' => 2,
+      'weight' => 20,
       'format_type' => 'fieldset',
       'region' => 'hidden',
       'format_settings' => [
-        'show_empty_fields' => FALSE,
+        'show_empty_fields' => 0,
         'id' => '',
         'classes' => '',
         'description' => '',
-        'required_fields' => TRUE,
+        'required_fields' => 1,
       ],
       'label' => 'Remote content settings',
-    ],
-  ];
+    ];
 
-  // Add the new field to entity form view.
-  $field_user_embed_content_consent = [
-    'field_user_embed_content_consent' => [
-      'type' => 'boolean_checkbox',
-      'weight' => 3,
-      'region' => 'content',
-      'settings' => [
-        'display_label' => TRUE,
-      ],
-      'third_party_settings' => [],
-    ],
-  ];
-
-  $user_config = \Drupal::configFactory()->getEditable('core.entity_form_display.user.user.default');
-  if (is_array($existing_field_groups = $user_config->get('third_party_settings.field_group'))) {
-    $user_config->set('third_party_settings.field_group', array_merge($existing_field_groups, $group_remote_content_settings));
+    field_group_group_save($new_group);
   }
-  if (is_array($existing_content = $user_config->get('content'))) {
-    $user_config->set('content', array_merge($existing_content, $field_user_embed_content_consent));
-  }
-  $user_config->save();
-
-  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
-  \Drupal::entityTypeManager()->clearCachedDefinitions();
 }
