@@ -10,7 +10,7 @@ use Drupal\Core\Site\Settings;
 /**
  * Implements hook_post_update_NAME().
  */
-function social_embed_post_update_11001_populate_field_embed_content_settings(&$sandbox): void {
+function social_embed_post_update_11001_populate_field_embed_content_settings(array &$sandbox): void {
   // Even though we have provided 'field_user_embed_content_consent',
   // a default value of 1. This will only pre-filled for any newly created
   // users, but not already existing users.
@@ -27,10 +27,13 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(&$
 
     if (!isset($sandbox['progress'])) {
       // Get user ids from user table.
-      $uids = $database->select('users', 'u')
+      $query = $database->select('users', 'u')
         ->fields('u', ['uid'])
-        ->condition('uid', 0, '>')
-        ->execute()->fetchCol();
+        ->condition('uid', '0', '>')
+        ->execute();
+      if (!empty($query)) {
+        $uids = $query->fetchCol();
+      }
 
       // 'count' is the number of total records we’ll be processing.
       $sandbox['count'] = 0;
