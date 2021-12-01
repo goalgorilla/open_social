@@ -67,7 +67,7 @@ class SocialUserEmbedTest extends KernelTestBase {
     $this->setUpCurrentUser([], ['generate social embed content']);
 
     // URL needed for the request.
-    $url = 'https://www.youtube.com/watch?v=kgE9QNX8f3c';
+    $url = 'https://www.youtube.com/watch?v=ojafuCcUZzU';
     // Generate random UUID.
     $uuid = (new Php())->generate();
 
@@ -94,7 +94,7 @@ class SocialUserEmbedTest extends KernelTestBase {
    */
   public function testFloodControlForAnonymousUser(): void {
     // URL needed for the request.
-    $url = 'https://www.youtube.com/watch?v=kgE9QNX8f3c';
+    $url = 'https://www.youtube.com/watch?v=ojafuCcUZzU';
     // Generate random UUID.
     $uuid = (new Php())->generate();
 
