@@ -134,7 +134,7 @@ class SetGroupsForNodeService {
     }
 
     // Add the content to the Group if we placed it in a group.
-    if (!empty($groups_to_add) && !$is_new) {
+    if (!empty($groups_to_add)) {
       $groups = Group::loadMultiple($groups_to_add);
       foreach ($groups as $group) {
         self::addGroupContent($node, $group);
@@ -165,7 +165,10 @@ class SetGroupsForNodeService {
   public static function addGroupContent(NodeInterface $node, Group $group) {
     // @todo Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
-    $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
+    $group_contents = GroupContent::loadByEntity($node);
+    if (empty($group_contents)) {
+      $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
+    }
   }
 
   /**
@@ -178,7 +181,7 @@ class SetGroupsForNodeService {
    */
   public static function removeGroupContent(NodeInterface $node, Group $group) {
     // Try to load group content from entity.
-    if ($group_contents = GroupContent::loadByEntity($node)) {
+    if (($group_contents = GroupContent::loadByEntity($node)) && !empty($group_contents)) {
       /** @var @param \Drupal\group\Entity\GroupContent $group_content */
       foreach ($group_contents as $group_content) {
         if ($group->id() === $group_content->getGroup()->id()) {
