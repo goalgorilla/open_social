@@ -39,7 +39,7 @@ Feature: Embed
     And I click "Show content"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And The embedded content in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+    And The embedded content in the body description should have the src "https://www.youtube.com/watch?v=ojafuCcUZzU"
     And I logout
 
     # Restore the settings
@@ -55,7 +55,7 @@ Feature: Embed
     Given I am logged in as an "authenticated user"
     And I am on the homepage
     And I click "Embed consent"
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+    And The iframe in the body description should have the src "https://www.youtube.com/watch?v=ojafuCcUZzU"
 
   @AN
   Scenario: Check the working of consent settings for AN
@@ -86,7 +86,7 @@ Feature: Embed
     And I click "Show content"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And The embedded content in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+    And The embedded content in the body description should have the src "https://www.youtube.com/watch?v=ojafuCcUZzU"
 
     # Restore the settings
     Given I am logged in as a user with the "administer social embed settings" permission
@@ -98,4 +98,4 @@ Feature: Embed
 
     # Check the content as AN again
     And I open the "topic" node with title "Embed consent (AN)"
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+    And The iframe in the body description should have the src "https://www.youtube.com/watch?v=ojafuCcUZzU"
