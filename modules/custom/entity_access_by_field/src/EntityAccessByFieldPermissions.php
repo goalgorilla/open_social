@@ -81,6 +81,10 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
             if (!in_array($field_key, $this->getIgnoredValues())) {
+              if ($field_key === 'group') {
+                continue;
+              }
+
               // e.g. label = node.article.field_content_visibility:public.
               $permission_label = $field->id() . ':' . $field_key;
               $permission = 'view ' . $permission_label . ' content';
@@ -116,6 +120,10 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
+            if ($field_key === 'group') {
+              continue;
+            }
+
             // e.g. label = node.article.field_content_visibility:public.
             $permission_label = $field->id() . ':' . $field_key;
             $op = 'view';

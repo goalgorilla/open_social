@@ -19,7 +19,7 @@ use Drupal\gnode\Plugin\GroupContentEnabler\GroupNode;
  *   deriver = "Drupal\gnode\Plugin\GroupContentEnabler\GroupNodeDeriver",
  *   handlers = {
  *     "access" = "Drupal\social_event_managers\Plugin\EventsGroupContentAccessControlHandler",
- *     "permission_provider" = "Drupal\gnode\Plugin\GroupNodePermissionProvider",
+ *     "permission_provider" = "Drupal\social_event_managers\Plugin\GroupNodePermissionProvider",
  *   }
  * )
  */
