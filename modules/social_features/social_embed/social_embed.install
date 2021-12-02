@@ -94,7 +94,7 @@ function social_embed_update_11002() :void {
   if (is_array($config_record)
     && !empty($config_record['entity_type'])
     && !empty($config_record['field_name'])
-    && (!empty(FieldStorageConfig::loadByName($config_record['entity_type'], $config_record['field_name'])))
+    && (empty(FieldStorageConfig::loadByName($config_record['entity_type'], $config_record['field_name'])))
   ) {
     FieldStorageConfig::create($config_record)->save();
   }
@@ -103,7 +103,7 @@ function social_embed_update_11002() :void {
   if (is_array($config_record)
     && !empty($config_record['entity_type'])
     && !empty($config_record['field_name'])
-    && (!empty(FieldConfig::loadByName($config_record['entity_type'], $config_record['bundle'], $config_record['field_name'])))
+    && (empty(FieldConfig::loadByName($config_record['entity_type'], $config_record['bundle'], $config_record['field_name'])))
     ) {
     FieldConfig::create($config_record)->save();
   }

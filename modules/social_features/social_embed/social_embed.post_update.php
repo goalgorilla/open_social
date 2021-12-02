@@ -8,11 +8,11 @@
 use Drupal\Core\Site\Settings;
 
 /**
- * Implements hook_post_update_NAME().
+ * Populate the default value in new field for already existing users.
  */
 function social_embed_post_update_11001_populate_field_embed_content_settings(array &$sandbox): void {
   // Even though we have provided 'field_user_embed_content_consent',
-  // a default value of 1. This will only pre-filled for any newly created
+  // a default value of 1. This will only pre-fill for any newly created
   // users, but not already existing users.
   // We need populate the field value of newly added field for existing users.
   // @see social_embed_update_11002().
