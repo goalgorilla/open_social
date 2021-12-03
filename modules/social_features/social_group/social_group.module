@@ -1191,15 +1191,28 @@ function _social_group_grant_admin_role($uid, $gid) {
 }
 
 /**
- * When creating a new group membership.
+ * When creating a new group membership or a node with group reference.
  *
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  *   The group content.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
+  if ($group_content->getEntity()->getEntityTypeId() === 'user') {
+    if ($group_content->bundle() === $group_content->getGroup()->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
+    }
+  }
+  // When moving a node from 1 group to the other as SM
+  // it means you as SM are the new owner, instead of the original author.
+  // Which results in wrong activity authors being used.
+  $referenced_entity = $group_content->getEntity();
+  if ($referenced_entity instanceof NodeInterface) {
+    $author = $referenced_entity->getRevisionUser();
+    if (is_int($author->id())) {
+      $group_content->setOwnerId($author->id());
+      $group_content->save();
     }
   }
 }
@@ -1979,6 +1992,30 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   if ($is_original_language) {
     $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
     $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  }
+}
+
+/**
+ * When updating a group_content item, also a node with group reference.
+ *
+ * @param \Drupal\group\Entity\GroupContentInterface $group_content
+ *   The group content.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_group_content_update(GroupContentInterface $group_content): void {
+  // In GroupContent::postSave it re-saves the entity resulting
+  // in group_content updating the author to the current logged in user.
+  // For example when moving a node from 1 group to the other as SM
+  // it means you as SM are the new owner, instead of the original author.
+  // Which results in wrong activity authors being used.
+  $referenced_entity = $group_content->getEntity();
+  if ($referenced_entity instanceof NodeInterface) {
+    $author = $referenced_entity->getRevisionUser();
+    if (is_int($author->id())) {
+      $group_content->setOwnerId($author->id());
+      $group_content->save();
+    }
   }
 }
 
