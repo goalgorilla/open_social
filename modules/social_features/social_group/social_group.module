@@ -1996,30 +1996,6 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
 }
 
 /**
- * When updating a group_content item, also a node with group reference.
- *
- * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *   The group content.
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
- */
-function social_group_group_content_update(GroupContentInterface $group_content): void {
-  // In GroupContent::postSave it re-saves the entity resulting
-  // in group_content updating the author to the current logged in user.
-  // For example when moving a node from 1 group to the other as SM
-  // it means you as SM are the new owner, instead of the original author.
-  // Which results in wrong activity authors being used.
-  $referenced_entity = $group_content->getEntity();
-  if ($referenced_entity instanceof NodeInterface) {
-    $author = $referenced_entity->getRevisionUser();
-    if ($author->id() !== NULL) {
-      $group_content->setOwnerId((int) $author->id());
-      $group_content->save();
-    }
-  }
-}
-
-/**
  * Get the allowed visibility options for a given group type.
  *
  * @param string|null $group_type_id
