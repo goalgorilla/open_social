@@ -1210,8 +1210,8 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
   $referenced_entity = $group_content->getEntity();
   if ($referenced_entity instanceof NodeInterface) {
     $author = $referenced_entity->getRevisionUser();
-    if (is_int($author->id())) {
-      $group_content->setOwnerId($author->id());
+    if ($author->id() !== NULL) {
+      $group_content->setOwnerId((int) $author->id());
       $group_content->save();
     }
   }
@@ -2012,8 +2012,8 @@ function social_group_group_content_update(GroupContentInterface $group_content)
   $referenced_entity = $group_content->getEntity();
   if ($referenced_entity instanceof NodeInterface) {
     $author = $referenced_entity->getRevisionUser();
-    if (is_int($author->id())) {
-      $group_content->setOwnerId($author->id());
+    if ($author->id() !== NULL) {
+      $group_content->setOwnerId((int) $author->id());
       $group_content->save();
     }
   }
