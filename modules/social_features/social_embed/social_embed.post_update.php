@@ -35,20 +35,15 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
         $uids = $query->fetchCol();
       }
 
-      // 'count' is the number of total records we’ll be processing.
-      $sandbox['count'] = 0;
-
-      // Let's store the user IDs and their count.
-      if (!empty($uids)) {
-        $sandbox['uids'] = $uids;
-        $sandbox['count'] = count($uids);
-      }
-
       // If 'count' is empty, we have nothing to process.
-      if (empty($sandbox['count'])) {
+      if (!empty($uids)) {
         $sandbox['#finished'] = 1;
         return;
       }
+
+      // Let's store the user IDs and their count.
+      $sandbox['uids'] = $uids;
+      $sandbox['count'] = count($uids);
 
       // 'progress' will represent the current progress of our processing.
       $sandbox['progress'] = 0;

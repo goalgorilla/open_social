@@ -114,7 +114,7 @@ function social_embed_update_11002() :void {
  *
  * This enables the user to toggle the option for embedded content settings.
  */
-function social_embed_update_11003() :void {
+function social_embed_update_11003(): void {
   // Add the new field to user entity form display.
   $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
   $form_display = $form_display->setComponent('field_user_embed_content_consent', [

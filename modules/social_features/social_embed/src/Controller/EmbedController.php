@@ -91,7 +91,7 @@ class EmbedController extends ControllerBase {
     $uuid = $request->query->get('uuid');
 
     // If $url or $uuid is not present, then request is malformed.
-    if ($url == NULL && Uuid::isValid($uuid) != FALSE) {
+    if ($url === NULL && Uuid::isValid($uuid) !== FALSE) {
       throw new NotFoundHttpException();
     }
 

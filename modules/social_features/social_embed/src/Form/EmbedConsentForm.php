@@ -16,7 +16,7 @@ class EmbedConsentForm extends ConfigFormBase {
    *
    * @var string
    */
-  const SETTINGS = 'social_embed.settings';
+  private const SETTINGS = 'social_embed.settings';
 
   /**
    * {@inheritdoc}
