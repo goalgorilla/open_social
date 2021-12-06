@@ -53,7 +53,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Not exposable.
    */
   public function canExpose(): bool {
     return FALSE;
