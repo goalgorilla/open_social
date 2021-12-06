@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Settings file for tugboat builds.
+ */
+
 $databases['default']['default'] = [
   'database' => 'tugboat',
   'username' => 'tugboat',
