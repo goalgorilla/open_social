@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -384,14 +385,14 @@ function social_tagging_entity_delete(EntityInterface $entity) {
 /**
  * Build output on node view.
  *
- * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
  *   A node.
  *
  * @return array
  *   Hierarchic presentation of the terms.
  */
-function social_tagging_process_tags(EntityInterface $entity) {
-  if (!($entity instanceof EntityInterface && $entity->hasField('social_tagging'))) {
+function social_tagging_process_tags(FieldableEntityInterface $entity): array {
+  if (!$entity->hasField('social_tagging')) {
     return [];
   }
 
@@ -404,9 +405,13 @@ function social_tagging_process_tags(EntityInterface $entity) {
   $terms = $entity->get('social_tagging')->getValue();
 
   if ($tag_service->allowSplit()) {
+    $taghierarchy = $tag_service->buildHierarchy($terms, $entity->getEntityTypeId());
+    if (empty($taghierarchy)) {
+      return [];
+    }
     $renderable = [
       '#theme' => 'social_tagging_split',
-      '#taghierarchy' => $tag_service->buildHierarchy($terms, $entity->getEntityTypeId()),
+      '#taghierarchy' => $taghierarchy,
     ];
   }
   else {
@@ -424,11 +429,18 @@ function social_tagging_process_tags(EntityInterface $entity) {
         'tag[]' => $term['target_id'],
       ]);
 
-      /** @var Drupal\taxonomy\Entity\Term $term */
-      $taxonomy_term = Term::load($term['target_id']);
-      $tarray[$taxonomy_term->getName()] = $url->toString();
+      /** @var \Drupal\taxonomy\TermInterface $taxonomy_term */
+      $taxonomy_term = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->load($term['target_id']);
+      if ($taxonomy_term->isPublished()) {
+        $tarray[$taxonomy_term->getName()] = $url->toString();
+      }
     }
 
+    if (empty($tarray)) {
+      return [];
+    }
     $renderable = [
       '#theme' => 'social_tagging_nosplit',
       '#tagstitle' => t('Tags'),
@@ -438,7 +450,7 @@ function social_tagging_process_tags(EntityInterface $entity) {
 
   $renderable['#entity_type'] = $entity->getEntityTypeId();
 
-  return \Drupal::service('renderer')->render($renderable);
+  return $renderable;
 }
 
 /**
@@ -551,10 +563,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  *   A machine name so it can be used pogrammatically.
  */
 function social_tagging_to_machine_name($text) {
-  $text = strtolower($text);
-  $text = str_replace(' ', '', $text);
-
-  return $text;
+  return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 
 /**

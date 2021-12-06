@@ -54,8 +54,8 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
           if ($tag_service->allowSplit()) {
             /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $parent_field */
             $parent_field = $term->get('parent');
-            if (!$parent_field->isEmpty()) {
-              $parents = $parent_field->referencedEntities();
+            $parents = $parent_field->referencedEntities();
+            if (!empty($parents)) {
               /** @var \Drupal\taxonomy\TermInterface $parent */
               $parent = reset($parents);
               $category = $parent->getName();
@@ -97,8 +97,9 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $subform = FALSE;
+  $entity_type_manager = \Drupal::entityTypeManager();
   if (isset($element['subform']['field_tag'])) {
     $subform = &$element['subform'];
   }
@@ -112,7 +113,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
 
   if ($subform) {
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-    $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+    $tag_service = \Drupal::service('social_tagging.tag_service');
     // Check if tagging is turned on/off.
     if (!$tag_service->active() || !$tag_service->hasContent()) {
       // Remove the field from the form.
@@ -133,7 +134,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
           if ($tid === '_none') {
             continue;
           }
-          $terms = \Drupal::entityTypeManager()
+          $terms = $entity_type_manager
             ->getStorage('taxonomy_term')
             ->loadParents($tid);
           if (empty($terms)) {
@@ -185,7 +186,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
               }
               elseif (isset($parent_value[$parents[1]]['target_id'])) {
                 /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
-                $paragraph_entity = \Drupal::entityTypeManager()->getStorage('paragraph')->load($parent_value[$parents[1]]['target_id']);
+                $paragraph_entity = $entity_type_manager->getStorage('paragraph')->load($parent_value[$parents[1]]['target_id']);
                 $tag_value = $paragraph_entity->get('field_tag')->getValue();
               }
 
@@ -203,19 +204,24 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
 
       if (empty($default_value) && isset($context['items'])) {
         $items_value = $context['items']->getValue();
-        if (isset($items_value[0]['entity']) && $items_value[0]['entity'] instanceof ParagraphInterface) {
+        if (isset($items_value[0]['entity'])) {
           $paragraph_entity = $items_value[0]['entity'];
-          if (
-            $paragraph_entity->hasField('field_tag') &&
-            !$paragraph_entity->get('field_tag')->isEmpty()
-          ) {
-            $tag_value = $paragraph_entity->get('field_tag')->getValue();
+        }
+        elseif (isset($items_value[0]['target_id'])) {
+          $paragraph_entity = $entity_type_manager->getStorage('paragraph')->load($items_value[0]['target_id']);
+        }
+        if (
+          isset($paragraph_entity) &&
+          $paragraph_entity instanceof ParagraphInterface &&
+          $paragraph_entity->hasField('field_tag') &&
+          !$paragraph_entity->get('field_tag')->isEmpty()
+        ) {
+          $tag_value = $paragraph_entity->get('field_tag')->getValue();
 
-            if ($tag_value) {
-              foreach ($tag_value as $key => $value) {
-                if (isset($value['target_id'])) {
-                  $default_value[] = $value['target_id'];
-                }
+          if ($tag_value) {
+            foreach ($tag_value as $key => $value) {
+              if (isset($value['target_id'])) {
+                $default_value[] = $value['target_id'];
               }
             }
           }

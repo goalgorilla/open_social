@@ -14,7 +14,6 @@ services:
 
   social_post_album.override:
     class: Drupal\social_post_album\SocialPostPhotoAlbumConfigOverride
-    arguments: ['@current_route_match']
     tags:
       - { name: config.factory.override, priority: 5 }
 

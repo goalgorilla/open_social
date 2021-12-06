@@ -46,7 +46,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    */
   public function getEventDates(NodeInterface $node) {
     // Set default values.
-    $all_day = FALSE;
+    $all_day = !$node->get('field_event_all_day')->isEmpty() && $node->get('field_event_all_day')->getString() === '1';
     $start_date = new \DateTime($node->field_event_date->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     $end_date = new \DateTime($node->field_event_date_end->value, new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
     $date_time = [];
@@ -57,11 +57,6 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
       $format = $this->pluginDefinition['utcDateFormat'];
     }
     $all_day_format = $this->pluginDefinition['allDayFormat'];
-
-    // Check if all day event.
-    if ($start_date->format('i') === '01') {
-      $all_day = TRUE;
-    }
 
     // Convert date to correct format.
     // Set dates array.
