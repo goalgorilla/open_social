@@ -199,15 +199,18 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     // Posts: all the posts the user has access to by permission.
     $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-    $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
-    if (!$account->hasPermission('view public posts')) {
-      $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
-    }
-    if (!$account->hasPermission('view community posts')) {
-      $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
-      // Also do not show recipient posts (e.g. on open groups).
-      $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
+    if (!$account->hasPermission('bypass group access')) {
+      $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
+
+      if (!$account->hasPermission('view public posts')) {
+        $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
+      }
+      if (!$account->hasPermission('view community posts')) {
+        $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
+        // Also do not show recipient posts (e.g. on open groups).
+        $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
+      }
     }
 
     $or->condition($post_access);
