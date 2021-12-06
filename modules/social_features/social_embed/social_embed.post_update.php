@@ -51,9 +51,9 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
     $step_size = Settings::get('entity_update_batch_size', 50);
 
     // Extract user ids for deletion per batch.
-    $uids_for_delete = array_splice($sandbox['uids'], 0, $step_size);
+    $uids_for_adding_records = array_splice($sandbox['uids'], 0, $step_size);
     // Insert the values in table.
-    foreach ($uids_for_delete as $uid) {
+    foreach ($uids_for_adding_records as $uid) {
       $database->insert('user__field_user_embed_content_consent')
         ->fields(
           [

@@ -104,21 +104,19 @@ class EmbedController extends ControllerBase {
     if (!$this->flood->isAllowed('social_embed.generate_embed_flood_event', $retries, $timeWindow)) {
       throw new AccessDeniedHttpException();
     }
+    // Register the flood event in system.
+    $this->flood->register('social_embed.generate_embed_flood_event', $timeWindow);
+    // Use uuid to set the selector to the specific div we need to replace.
+    $selector = "#social-embed-iframe-$uuid";
+    // If the content is embeddable then return the iFrame.
+    $info = $this->urlEmbed->getUrlInfo($url);
+    if ($info && !empty($iframe = $info['code'])) {
+      $provider = strtolower($info['providerName']);
+      $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
+    }
     else {
-      // Register the flood event in system.
-      $this->flood->register('social_embed.generate_embed_flood_event', $timeWindow);
-      // Use uuid to set the selector to the specific div we need to replace.
-      $selector = "#social-embed-iframe-$uuid";
-      // If the content is embeddable then return the iFrame.
-      $info = $this->urlEmbed->getUrlInfo($url);
-      if ($info && !empty($iframe = $info['code'])) {
-        $provider = strtolower($info['providerName']);
-        $content = "<div id='social-embed-iframe-$uuid' class='social-embed-iframe-$provider'><p>$iframe</p></div>";
-      }
-      else {
-        // Else return the link itself.
-        $content = Link::fromTextAndUrl($url, Url::fromUri($url))->toString();
-      }
+      // Else return the link itself.
+      $content = Link::fromTextAndUrl($url, Url::fromUri($url))->toString();
     }
 
     // Let's prepare the response.
