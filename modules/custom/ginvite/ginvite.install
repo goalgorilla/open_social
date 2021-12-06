@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the ginvite module.
+ */
+
+/**
+ * Update group_invitations view to use the new cache group permissions context.
+ */
+function ginvite_update_8001() :void {
+  if (\Drupal::moduleHandler()->moduleExists('views')) {
+    $view = \Drupal::configFactory()->getEditable('views.view.group_invitations');
+    if (!$view->isNew()) {
+      foreach (['default', 'page_1'] as $display) {
+        $cache_metadata_key = "display.$display.cache_metadata";
+        $cache_metadata = $view->get($cache_metadata_key);
+
+        // Remove the deleted cache context and add the updated metadata.
+        $key = array_search('group_membership.roles.permissions', $cache_metadata['contexts']);
+
+        if ($key !== FALSE) {
+          unset($cache_metadata['contexts'][$key]);
+        }
+
+        $cache_metadata['contexts'] = array_values($cache_metadata['contexts']);
+
+        $cache_metadata['max-age'] = -1;
+
+        $contexts = ['route.group', 'user.group_permissions'];
+        foreach ($contexts as $context) {
+          if (!in_array($context, $cache_metadata['contexts'])) {
+            $cache_metadata['contexts'][] = $context;
+          }
+        }
+        $view->set($cache_metadata_key, $cache_metadata);
+      }
+
+      $view->save(TRUE);
+    }
+  }
+}

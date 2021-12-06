@@ -37,7 +37,7 @@
             },
             "drupal/core": {
                 "Color module html preview optional": "https://www.drupal.org/files/issues/color-optional-html-preview-2844190-2.patch",
-                "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/2018-10-26/2528214-47.patch",
+                "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/2019-05-10/2528214-54.patch",
                 "Optimize getCommentedEntity()": "https://www.drupal.org/files/issues/2018-12-28/2580551-72.patch",
                 "#states cannot check/uncheck 'radios' and 'checkboxes' elements": "https://www.drupal.org/files/issues/drupal-994360-74-states-checkboxes-checked.patch",
                 "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2019-11-14/3007424-68.patch",
@@ -52,7 +52,8 @@
                 "Empty language (langcode) field wrapper inserted into contact form": "https://www.drupal.org/files/issues/2020-03-06/empty-langcode-field-wrapper-2842405-17.patch",
                 "Broken title in modal dialog when title is a render array": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
                 "PHPDocs with wrong parameters": "https://www.drupal.org/files/issues/2019-09-03/queryinterface-range-updated-phpdocs.patch",
-                "Post update hook naming convention patch": "https://git.drupalcode.org/project/drupal/-/merge_requests/1215.patch"
+                "Post update hook naming convention patch": "https://git.drupalcode.org/project/drupal/-/merge_requests/1215.patch",
+                "Flood MemoryBackend::events[] key of micro time cannot guarantee uniqueness": "https://www.drupal.org/files/issues/2021-02-15/2910000-22-floodmemorybackend-time.patch"
             },
             "drupal/coder": {
                 "Allow class property types instead of @var comments": "https://www.drupal.org/files/issues/2021-09-21/coder-3123282-3.patch"
@@ -64,15 +65,12 @@
                 "Automated crop integration": "https://www.drupal.org/files/issues/2018-12-16/2830768-crop-automated_crop_integration-45.patch"
             },
             "drupal/group": {
-                "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch",
-                "Use VBO together with group permission": "https://www.drupal.org/files/issues/2019-10-09/vbo-and-group-permission-3020883-10.patch",
+                "Add computed field for Group reference": "https://www.drupal.org/files/issues/2020-09-24/group-2718195-57-groups-computed-field.patch",
                 "Ability to use group tokens in node context": "https://www.drupal.org/files/issues/2018-12-19/group-2774827-41-gnode-tokens.patch",
                 "Group: Don't try to re-save deleted entities": "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch",
-                "Request membership feature": "https://www.drupal.org/files/issues/2019-07-04/group-request_membership_feature_grequest_module-2752603-110.patch",
                 "Rely on toUrl defaults for Entity url link": "https://www.drupal.org/files/issues/2019-12-04/group-3098675-2.patch",
-                "Group Invite": "https://www.drupal.org/files/issues/2020-03-26/ginvite_module_port-2801603-112.patch",
-                "Cache context update": "https://www.drupal.org/files/issues/2018-05-04/group-cache-context-2882102-2.patch",
-                "Missing config schema for condition.plugin.group_type": "https://www.drupal.org/files/issues/2018-12-14/group-group_type_condition_plugin_config_schema-3020554-2.patch"
+                "Missing config schema for condition.plugin.group_type": "https://www.drupal.org/files/issues/2018-12-14/group-group_type_condition_plugin_config_schema-3020554-2.patch",
+                "gnode access checks revert for D9 so we dont cause major regression": "https://www.drupal.org/files/issues/2021-11-30/bring-back-node-access-grants-3162511-69.patch"
             },
             "drupal/paragraphs": {
                 "Integrity constraint violation: 1048 Column 'langcode' cannot be null": "https://www.drupal.org/files/issues/2019-07-10/paragraphs-set_langcode_widgets-2901390-29.patch"
@@ -132,7 +130,7 @@
         "drupal/better_exposed_filters": "5.0.0",
         "drupal/block_field": "1.0-rc1",
         "drupal/config_update": "1.7",
-        "drupal/core": "8.8 - 9.1",
+        "drupal/core": "^8.9",
         "drupal/core-composer-scaffold": "8.8 - 9.3",
         "drupal/crop": "2.1.0",
         "drupal/csv_serialization": "2.0",
@@ -148,7 +146,7 @@
         "drupal/gin": "3.0.0-alpha37",
         "drupal/gin_toolbar": "1.0.0-beta20",
         "drupal/graphql": "4.1",
-        "drupal/group": "1.0-rc5",
+        "drupal/group": "1.4",
         "drupal/image_effects": "3.1",
         "drupal/image_widget_crop": "2.3.0",
         "drupal/jquery_ui_accordion": "1.1",

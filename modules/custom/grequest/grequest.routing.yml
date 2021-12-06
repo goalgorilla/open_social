@@ -1,0 +1,36 @@
+grequest.request_membership:
+  path: '/group/{group}/request-membership'
+  defaults:
+    _form: '\Drupal\grequest\Form\GroupRequestMembershipForm'
+    _title: 'Request membership'
+  requirements:
+    _group_permission: 'request group membership'
+    _group_member: 'FALSE'
+
+grequest.group_request_membership_approve:
+  path: '/group/{group}/content/{group_content}/approve-membership'
+  defaults:
+    _title: 'Approve membership request'
+    _controller: 'Drupal\grequest\Controller\GrequestController::approveRequest'
+  requirements:
+    _group_permission: 'administer members'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+      group_content:
+        type: 'entity:group_content'
+
+grequest.group_request_membership_reject:
+  path: '/group/{group}/content/{group_content}/reject-membership'
+  defaults:
+    _title: 'Approve membership request'
+    _form: 'Drupal\grequest\Form\GroupRequestMembershipRejectForm'
+  requirements:
+    _group_permission: 'administer members'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+      group_content:
+        type: 'entity:group_content'

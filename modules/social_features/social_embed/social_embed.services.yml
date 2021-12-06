@@ -4,3 +4,7 @@ services:
     arguments: ['@module_handler', '@config.factory']
     tags:
       - {name: config.factory.override, priority: 50}
+
+  social_embed.helper_service:
+    class: \Drupal\social_embed\Service\SocialEmbedHelper
+    arguments: ['@uuid', '@current_user', '@renderer']
