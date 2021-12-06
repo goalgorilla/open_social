@@ -53,9 +53,9 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   }
 
   /**
-   * Not exposable.
+   * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -75,7 +75,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query():void {
     $account = $this->view->getUser();
 
     $open_groups = [];
@@ -107,7 +107,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = [
@@ -117,7 +118,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'field' => 'entity_id',
       'operator' => '=',
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
     // Join group content table.
@@ -134,7 +136,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('group_content', $join, 'group_content');
 
     // Join node table(s).
@@ -151,12 +154,14 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 
     if ($account->isAnonymous()) {
       $configuration['table'] = 'node_field_data';
-      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $configuration);
       $this->query->addRelationship('node_field_data', $join, 'node_field_data');
     }
 
