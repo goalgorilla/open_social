@@ -32,21 +32,20 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
         ->condition('uid', '0', '>')
         ->execute();
       if (!empty($query)) {
-        $uids = $query->fetchCol();
+        // If 'count' is empty, we have nothing to process.
+        if (!empty($uids = $query->fetchCol())) {
+          $sandbox['#finished'] = 1;
+          return;
+        }
+        else {
+          // Let's store the user IDs and their count.
+          $sandbox['uids'] = $uids;
+          $sandbox['count'] = count($uids);
+
+          // 'progress' will represent the current progress of our processing.
+          $sandbox['progress'] = 0;
+        }
       }
-
-      // If 'count' is empty, we have nothing to process.
-      if (!empty($uids)) {
-        $sandbox['#finished'] = 1;
-        return;
-      }
-
-      // Let's store the user IDs and their count.
-      $sandbox['uids'] = $uids;
-      $sandbox['count'] = count($uids);
-
-      // 'progress' will represent the current progress of our processing.
-      $sandbox['progress'] = 0;
     }
 
     $step_size = Settings::get('entity_update_batch_size', 50);
