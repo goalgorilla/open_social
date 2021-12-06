@@ -1512,3 +1512,21 @@ function social_core_update_11004(): void {
     \Drupal::configFactory()->getEditable('social_core.settings')->delete();
   }
 }
+
+
+/**
+ * Update image style social_medium
+ *
+ * Update the image effect to use the teaser crop because our content offers
+ * large and small croppings and we don't want to introduce a new cropping.
+ */
+function social_core_update_11005() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_11005');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
