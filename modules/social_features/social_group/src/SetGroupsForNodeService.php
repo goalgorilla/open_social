@@ -134,7 +134,7 @@ class SetGroupsForNodeService {
     }
 
     // Add the content to the Group if we placed it in a group.
-    if (!empty($groups_to_add) && !$is_new) {
+    if (!empty($groups_to_add)) {
       $groups = Group::loadMultiple($groups_to_add);
       foreach ($groups as $group) {
         self::addGroupContent($node, $group);
