@@ -270,6 +270,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    */
   public function getGroupsToAddUrl(AccountInterface $account) {
     $found = FALSE;
+    $accessible_group_type = NULL;
 
     /** @var array $group_types */
     $group_types = $this->entityTypeManager->getStorage('group_type')
@@ -281,17 +282,22 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       // When the user has permission to create a group of the current type, add
       // this to the creation group array.
       if ($account->hasPermission('create ' . $group_type . ' group')) {
-        $found = TRUE;
-        break;
+        if ($accessible_group_type === NULL) {
+          $accessible_group_type = $group_type;
+        }
+        else {
+          $found = TRUE;
+          break;
+        }
       }
     }
 
     // There's just one group this user can create.
-    if ($found && isset($group_type)) {
+    if (!$found && isset($accessible_group_type)) {
       // When there is only one group allowed, add create the url to create a
       // group of this type.
       return Url::fromRoute('entity.group.add_form', [
-        'group_type' => $group_type,
+        'group_type' => $accessible_group_type,
       ]);
     }
 
