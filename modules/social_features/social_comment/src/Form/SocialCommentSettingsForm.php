@@ -34,8 +34,7 @@ class SocialCommentSettingsForm extends ConfigFormBase {
 
     $form['reverse'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Reverse'),
-      '#description' => $this->t('Display comments in reverse order.'),
+      '#title' => $this->t('Show most recent comments first'),
       '#default_value' => $config->get('reverse'),
     ];
 
