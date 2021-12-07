@@ -149,7 +149,11 @@ class SocialDrupalContext extends DrupalContext {
       }
       $entity = $this->nodeCreate($node);
       if (isset($node->alias)) {
-        \Drupal::service('path.alias_storage')->save("/node/" . $entity->nid, $node->alias);
+        $path_alias = \Drupal::entityTypeManager()->getStorage('path_alias')->create([
+          'path' => "/node/" . $entity->nid,
+          'alias' => $node->alias,
+        ]);
+        $path_alias->save();
       }
     }
   }
