@@ -92,15 +92,20 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       'created',
       'login',
     ];
+    // Remove the #type change for filters when the below issue is fixed.
+    // See: https://www.drupal.org/node/2648950
     foreach ($filters as $filter) {
+      // Change for min date.
       $form[$filter . '_wrapper'][$filter]['min']['#type'] = 'date';
       $form[$filter . '_wrapper'][$filter]['min']['#title'] = t('Date');
       $form[$filter . '_wrapper'][$filter]['min']['#states']['visible'] = [];
       $form[$filter . '_wrapper'][$filter]['min']['#states']['visible'][0][':input[name="' . $filter . '_op"]'] = [
         'value' => 'between',
       ];
+      // We don't need size property on date type.
       unset($form[$filter . '_wrapper'][$filter]['min']['#size']);
 
+      // Change for max date.
       $form[$filter . '_wrapper'][$filter]['max']['#type'] = 'date';
       $form[$filter . '_wrapper'][$filter]['max']['#title'] = t('Date');
       $form[$filter . '_wrapper'][$filter]['max']['#states']['visible'] = [];
@@ -109,6 +114,7 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       ];
       unset($form[$filter . '_wrapper'][$filter]['max']['#size']);
 
+      // Change of value element.
       $form[$filter . '_wrapper'][$filter]['value']['#states']['visible'] = [];
       $form[$filter . '_wrapper'][$filter]['value']['#states']['visible'][0][':input[name="' . $filter . '_op"]'] = [
         'value' => '<',
@@ -120,12 +126,15 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       $form[$filter . '_wrapper'][$filter]['value']['#title'] = t('Date');
       unset($form[$filter . '_wrapper'][$filter]['value']['#size']);
 
+      // Change the labels for operators.
       $form[$filter . '_wrapper'][$filter . '_op']['#weight'] = -5;
       $form[$filter . '_wrapper'][$filter . '_op']['#options']['between'] = t('Between');
       $form[$filter . '_wrapper'][$filter . '_op']['#options']['>'] = t('After');
       $form[$filter . '_wrapper'][$filter . '_op']['#options']['<'] = t('Before');
       unset($form[$filter . '_wrapper'][$filter . '_op']['#title_display']);
     }
+
+    // Fill in group filter options.
     if (isset($form['group']) && ($items = _social_user_get_groups())) {
       $form['group'] = array_merge($form['group'], [
         '#type' => 'select',
