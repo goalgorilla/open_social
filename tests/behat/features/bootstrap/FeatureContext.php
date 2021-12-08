@@ -660,6 +660,7 @@ class FeatureContext extends RawMinkContext implements Context
     public function getGroupIdFromTitle($group_title) {
 
       $query = \Drupal::entityQuery('group')
+        ->accessCheck(FALSE)
         ->condition('label', $group_title);
 
       $group_ids = $query->execute();
