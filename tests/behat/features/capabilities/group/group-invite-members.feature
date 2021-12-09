@@ -8,6 +8,7 @@ Feature: Send invite group email notifications
   Scenario: Send group invite email for new user
 
     Given I set the configuration item "system.site" with key "name" to "Open Social"
+    Given I enable the module "social_group_flexible_group"
     Given users:
       | name            | mail                        | status | roles       |
       | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
