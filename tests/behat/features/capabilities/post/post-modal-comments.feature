@@ -29,5 +29,6 @@ Feature: Comment on a Post with an Image
     When I fill in "Comment #2" for "Post comment" in the "Modal"
     And I press "Comment" in the "Modal"
     And I wait for AJAX to finish
+    And I wait for "1" seconds
     Then I should see the success message "Your comment has been posted." in the "Modal"
     And I should see the text "Comment #2" in the "Modal"
