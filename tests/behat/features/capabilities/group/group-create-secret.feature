@@ -1,4 +1,4 @@
-@api @group @TB-6072 @stability @stability-1 @group-create-secret
+@api @group @notifications @TB-6072 @stability @stability-1 @group-create-secret
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
   Role: As a Verified
@@ -6,11 +6,11 @@ Feature: Create Secret Group
 
   @email-spool
   Scenario: Successfully create secret group
+    Given I enable the module "social_group_secret"
     Given users:
       | name                 | mail                     | status | roles       |
       | SecretGroup User One | group_user_1@example.com | 1      | sitemanager |
       | SecretGroup User Two | group_user_2@example.com | 1      | verified    |
-    And I enable the module "social_group_secret"
     And I am logged in as an "verified"
     And I am on "group/add"
     Then I should not see "Secret group"
