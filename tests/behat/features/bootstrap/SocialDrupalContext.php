@@ -179,6 +179,8 @@ class SocialDrupalContext extends DrupalContext {
         'type' => 'topic',
         'title' => str_replace('[id]', $index, $title),
         'uid' => $account->id(),
+        'created' => time() + $index,
+        'changed' => time() + $index,
       ];
 
       $this->nodeCreate($node);
