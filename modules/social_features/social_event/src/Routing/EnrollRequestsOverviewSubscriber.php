@@ -6,7 +6,7 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -29,10 +29,10 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
   /**
    * Check if the user is allowed to view this overview.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkAccessToEnrollRequestsOverview(GetResponseEvent $event) {
+  public function checkAccessToEnrollRequestsOverview(RequestEvent $event) {
     $current_route = \Drupal::routeMatch()->getRouteName();
     // First, lets check if the route matches.
     if ($current_route === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
