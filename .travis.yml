@@ -78,7 +78,7 @@ install:
   # Reset the entire branch, so we can checkout goalgorilla/drupal_social:3.0.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
   # Update this to tag 3.0.0 once feature/opensocial-11 in drupal_social is released
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout feature/opensocial-11; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout feature/drupal-9.2.x; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
