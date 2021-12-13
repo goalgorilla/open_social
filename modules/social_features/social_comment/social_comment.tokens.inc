@@ -104,7 +104,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'comment_text':
         case 'comment_reply_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
@@ -190,7 +190,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
         case 'commented_entity_link':
         case 'commented_entity_link_html':
 
-          if (!empty($message->get('field_message_related_object'))) {
+          if (!$message->get('field_message_related_object')->isEmpty()) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 

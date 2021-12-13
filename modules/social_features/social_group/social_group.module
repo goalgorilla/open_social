@@ -23,6 +23,8 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\GroupMembership;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
@@ -334,7 +336,7 @@ function social_group_preprocess_group(array &$variables) {
     // Ensure all groups get the group.type differentiating labels in teasers
     // hero's and full nodes.
     // But also if the allowed join method is there, this should be added.
-    $variables['#cache']['contexts'][] = 'group.type';
+    $variables['#cache']['contexts'][] = 'route.group';
     if ($group->hasField('field_group_allowed_join_method') &&
       !empty($group->getFieldValue('field_group_allowed_join_method', 'value'))) {
       $variables['#cache']['contexts'][] = 'social_group_join_method';
@@ -346,7 +348,7 @@ function social_group_preprocess_group(array &$variables) {
   // Prepare variables for statistic block.
   if ($variables['view_mode'] === 'statistic') {
     // Add context, since we render join / invite only etc links in the block.
-    $variables['#cache']['contexts'][] = 'group';
+    $variables['#cache']['contexts'][] = 'route.group';
     $variables['#cache']['contexts'][] = 'user';
     $about_url = Url::fromRoute('view.group_information.page_group_about', [
       'group' => $group->id(),
@@ -709,7 +711,7 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
         // Add cache contexts for group type & permissions.
         // We need join / leave for the CTA and also update permissions
         // for the button to edit a group.
-        $build['#cache']['contexts'][] = 'group.type';
+        $build['#cache']['contexts'][] = 'route.group';
         $build['#cache']['contexts'][] = 'user.group_permissions';
         $build['#cache']['tags'][] = 'group_block:' . $entity->id();
         break;
@@ -1177,28 +1179,43 @@ function _social_group_grant_admin_role($uid, $gid) {
 
     // Check what roles are there.
     $roles = [];
-    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
-      $roles[] = $group_role_ref->target_id;
-    }
+    if ($membership instanceof GroupMembership) {
+      foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+        $roles[] = $group_role_ref->target_id;
+      }
 
-    // No admin? Add it.
-    if (!in_array($admin_role, $roles)) {
-      $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
-      $membership->getGroupContent()->save();
+      // No admin? Add it.
+      if (!in_array($admin_role, $roles)) {
+        $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
+        $membership->getGroupContent()->save();
+      }
     }
   }
 }
 
 /**
- * When creating a new group membership.
+ * When creating a new group membership or a node with group reference.
  *
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  *   The group content.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
+  if ($group_content->getEntity()->getEntityTypeId() === 'user') {
+    if ($group_content->bundle() === $group_content->getGroup()->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
+    }
+  }
+  // When moving a node from 1 group to the other as SM
+  // it means you as SM are the new owner, instead of the original author.
+  // Which results in wrong activity authors being used.
+  $referenced_entity = $group_content->getEntity();
+  if ($referenced_entity instanceof NodeInterface) {
+    $author = $referenced_entity->getRevisionUser();
+    if ($author->id() !== NULL) {
+      $group_content->setOwnerId((int) $author->id());
+      $group_content->save();
     }
   }
 }
@@ -2076,22 +2093,6 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  // User Groups view.
-  if ($view->id() == 'groups' && $view->getDisplay()->display['id'] == 'page_user_groups') {
-    // Change Join type if we want to see muted groups.
-    // @todo Remove changing Join type below when will be fixed issue where
-    // exposed flag filter can't show unflagged groups.
-    // @see https://www.drupal.org/project/group/issues/3219902
-    /** @var \Drupal\views\Plugin\views\query\Sql $query */
-    if (isset($query->where[1]['conditions'][0]['operator']) && $query->where[1]['conditions'][0]['operator'] === 'IS NOT NULL') {
-      $table = $query->getTableInfo('flagging_groups_field_data');
-      if (isset($table['join']->type) && $table['join']->type === 'LEFT') {
-        // Change Join type.
-        $table['join']->type = 'INNER';
-      }
-    }
-  }
-
   if (\Drupal::currentUser()->isAuthenticated()) {
     return;
   }
@@ -2746,4 +2747,61 @@ function social_group_allowed_visibility_description($key) {
   \Drupal::moduleHandler()->alter('social_group_content_visibility_description', $key, $description);
 
   return $description;
+}
+
+/**
+ * Implements hook_entity_display_build_alter().
+ */
+function social_group_entity_display_build_alter(array &$build, array $context) {
+  // For our nodes, renderd as small_teaser
+  // since thee Group 1.0 update it renders all group details.
+  // As our group types are optional and not a dependency
+  // we cant update our yml files but have to do it like this.
+  if (!$context['entity'] instanceof Node && $context['view_mode'] !== 'small_teaser') {
+    return;
+  }
+  $os_groups = [
+    'groups_type_flexible_group',
+    'groups_type_public_group',
+    'groups_type_open_group',
+    'groups_type_secret_group',
+    'groups_type_closed_group',
+    'groups',
+  ];
+  // For each Open Social group type we check if there are any
+  // group details in the build array, if so unset it.
+  // If it's not an OS group, people likely wanted to add it.
+  foreach ($os_groups as $key) {
+    if (array_key_exists($key, $build)) {
+      unset($build[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function social_group_preprocess_page(array &$variables) {
+  /** @var \Drupal\Core\Routing\AdminContext $admin_context */
+  $admin_context = \Drupal::service('router.admin_context');
+  // Don't add the modal for admin pages.
+  // Only for sky theme.
+  if ($admin_context->isAdminRoute() || theme_get_setting('style') !== 'sky') {
+    return;
+  }
+
+  $route_matches = [
+    'social_group_gvbo.views_bulk_operations.confirm',
+    'views_bulk_operations.confirm',
+    'views_bulk_operations.execute_batch',
+    'social_group_gvbo.views_bulk_operations.execute_configurable',
+  ];
+
+  // Make sure we do the expensive checks only after we see that there's
+  // something in the URL for nodes.
+  foreach ($route_matches as $route_name) {
+    if (\Drupal::routeMatch()->getRouteName() === $route_name) {
+      $variables['page']['complementary_top'] = [];
+    }
+  }
 }

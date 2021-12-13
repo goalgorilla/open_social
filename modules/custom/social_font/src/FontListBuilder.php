@@ -31,12 +31,16 @@ class FontListBuilder extends EntityListBuilder {
     $row = [];
     /** @var \Drupal\social_font\Entity\Font $entity */
     $row['id'] = $entity->id();
-    $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
-      'entity.font.edit_form', [
-        'font' => $entity->id(),
-      ]
-    ));
+    $label = $entity->label();
+    if (!empty($row['id']) && !empty($label)) {
+      $row['name'] = Link::fromTextAndUrl($label, new Url(
+        'entity.font.edit_form', [
+          'font' => $entity->id(),
+        ]
+      ));
+    }
     return $row + parent::buildRow($entity);
+
   }
 
 }

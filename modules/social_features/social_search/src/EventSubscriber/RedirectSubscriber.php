@@ -9,7 +9,7 @@ use Drupal\Core\Url;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -84,10 +84,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
   /**
    * This method is called when the KernelEvents::REQUEST event is dispatched.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function redirectSearchWithPrefilledExposedFilters(GetResponseEvent $event) {
+  public function redirectSearchWithPrefilledExposedFilters(RequestEvent $event) {
     $routeMatch = [
       'view.search_users.page_no_value',
       'view.search_users.page',
@@ -105,13 +105,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
     if (empty($query) || empty($query['created_op'])) {
       $query = ['created_op' => '<'];
       $parameters = $this->currentRoute->getParameters();
-      $currentUrl = Url::fromRoute($this->currentRoute->getRouteName());
-      if (!empty($parameters->get('keys'))) {
-        $currentUrl = Url::fromRoute($this->currentRoute->getRouteName(), ['keys' => $parameters->get('keys')]);
-      }
-      $redirect_path = $currentUrl->toString();
-      $redirect = Url::fromUserInput($redirect_path, ['query' => $query]);
-
+      $redirect_path = $this->currentRoute->getRouteName();
+      $options = ['query' => $query];
+      $route_parameters = ['keys' => $parameters->get('keys')];
+      $redirect = Url::fromRoute($redirect_path, $route_parameters, $options);
       $event->setResponse(new RedirectResponse($redirect->toString()));
     }
 

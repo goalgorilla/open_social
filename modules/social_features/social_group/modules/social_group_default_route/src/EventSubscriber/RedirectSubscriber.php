@@ -9,7 +9,7 @@ use Drupal\group\Entity\Group;
 use Drupal\user\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -60,10 +60,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
   /**
    * This method is called when the KernelEvents::REQUEST event is dispatched.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function groupLandingPage(GetResponseEvent $event) {
+  public function groupLandingPage(RequestEvent $event) {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();

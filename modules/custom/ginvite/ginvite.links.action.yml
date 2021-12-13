@@ -1,0 +1,16 @@
+ginvite.invite_member:
+  route_name: 'entity.group_content.add_form'
+  route_parameters:
+    plugin_id: 'group_invitation'
+  class: '\Drupal\group\Plugin\Menu\LocalAction\WithDestination'
+  title: 'Invite member'
+  appears_on:
+    - 'view.group_members.page_1'
+    - 'view.group_invitations.page_1'
+
+ginvite.invitation.bulk:
+  route_name: 'ginvite.invitation.bulk'
+  title: 'Invite members'
+  appears_on:
+    - 'view.group_members.page_1'
+    - 'view.group_invitations.page_1'
