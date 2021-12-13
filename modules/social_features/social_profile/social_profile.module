@@ -343,7 +343,10 @@ function social_profile_preprocess_profile(array &$variables) {
 
   if (_social_profile_check_property_access($profile, $current_user, 'email')) {
     // Derived from MailToFormatter.php.
-    $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+    $email = $user->getEmail();
+    if (!empty($email)) {
+      $variables['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
+    }
   }
 
   // Language field.
