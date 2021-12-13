@@ -19,7 +19,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // For the comment functionality.
     'social_comment',
     'comment',

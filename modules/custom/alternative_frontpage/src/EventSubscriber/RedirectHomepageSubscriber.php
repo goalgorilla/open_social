@@ -14,6 +14,7 @@ use Drupal\Core\State\State;
 use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -111,13 +112,11 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * This method is called whenever the request event is dispatched.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
-   *   The event to process.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   Triggering event.
    */
-  public function checkForHomepageRedirect(GetResponseEvent $event): void {
+  public function checkForHomepageRedirect(RequestEvent $event) {
+
     // Make sure front page module is not run when using cli or doing install.
     if (PHP_SAPI === 'cli' || InstallerKernel::installationAttempted()) {
       return;

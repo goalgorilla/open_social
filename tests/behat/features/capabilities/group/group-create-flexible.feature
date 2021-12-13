@@ -56,6 +56,7 @@ Feature: Create flexible Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     # I can see members from flexible groups with Community visibility as outsider.
     Given I am logged in as "GivenUserTwo"
@@ -237,6 +238,7 @@ Feature: Create flexible Group
     And I should see the link "Members"
     And I should see the link "Events"
     And I should see the link "Topics"
+    And I logout
 
     # Test flexible group with community visibility and members only / invite for closed group.
     Given I am logged in as "GivenUserOne"

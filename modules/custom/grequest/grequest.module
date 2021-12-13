@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for grequest module.
+ */
+
+use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\group\Entity\GroupContentInterface;
+
+/**
+ * Updates status of membership requests when membership is created.
+ *
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function grequest_group_content_insert(GroupContentInterface $group_content) {
+  $type = $group_content->getContentPlugin()->getPluginId();
+  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
+
+  // If new membership is created, check related membership request exists.
+  // if so - mark request as accepted.
+  if ($type == 'group_membership' && $membership_request_enabled) {
+    $approver = \Drupal::currentUser();
+    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
+    $filters = [
+      'entity_id' => $group_content->get('entity_id')->getString(),
+      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
+    ];
+    $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+
+    /** @var \Drupal\group\Entity\GroupContentInterface $request */
+    foreach ($requests as $request) {
+      $request
+        ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
+        // Who created request will become an 'approver' for Membership request.
+        ->set('grequest_updated_by', $approver->id())
+        ->save();
+    }
+  }
+}
