@@ -86,7 +86,7 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       $entity = $route_match->getParameter('entity');
       $label = $entity->label();
       if (!empty($label)) {
-        $breadcrumb->addLink(new Link($entity->label(), $entity->toUrl()));
+        $breadcrumb->addLink(new Link($label, $entity->toUrl()));
       }
       $breadcrumb->addCacheableDependency($entity);
     }

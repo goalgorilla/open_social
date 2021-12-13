@@ -12,14 +12,12 @@ use Drupal\Core\Url;
  *
  * @ingroup social_font
  */
-class FontListBuilder extends EntityListBuilder
-{
+class FontListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
    */
-  public function buildHeader()
-  {
+  public function buildHeader() {
     $header = [];
     $header['id'] = $this->t('Font ID');
     $header['name'] = $this->t('Name');
@@ -29,20 +27,20 @@ class FontListBuilder extends EntityListBuilder
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity)
-  {
+  public function buildRow(EntityInterface $entity) {
     $row = [];
     /** @var \Drupal\social_font\Entity\Font $entity */
     $row['id'] = $entity->id();
     $label = $entity->label();
     if (!empty($row['id']) && !empty($label)) {
-      $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
+      $row['name'] = Link::fromTextAndUrl($label, new Url(
         'entity.font.edit_form', [
           'font' => $entity->id(),
         ]
       ));
-      return $row + parent::buildRow($entity);
     }
+    return $row + parent::buildRow($entity);
 
   }
+
 }

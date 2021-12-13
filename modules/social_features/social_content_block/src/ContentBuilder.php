@@ -173,7 +173,7 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
     $table = $entity_type->getDataTable();
-    if (!empty($table) && $table instanceof SelectInterface) {
+    if (!empty($table) && is_string($table)) {
       $query = $this->connection->select($table, 'base_table')
         ->fields('base_table', [$entity_type->getKey('id')]);
 

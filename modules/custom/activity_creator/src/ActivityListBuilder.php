@@ -33,7 +33,7 @@ class ActivityListBuilder extends EntityListBuilder {
     $row['id'] = $entity->id();
     $label = $entity->label();
     if (!empty($row['id']) && !empty($label)) {
-      $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
+      $row['name'] = Link::fromTextAndUrl($label, new Url(
         'entity.activity.edit_form', [
           'activity' => $entity->id(),
         ]
