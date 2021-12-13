@@ -9,11 +9,11 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\State\State;
 use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -114,9 +114,11 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   Triggering event.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function checkForHomepageRedirect(RequestEvent $event) {
-
+  public function checkForHomepageRedirect(RequestEvent $event): void {
     // Make sure front page module is not run when using cli or doing install.
     if (PHP_SAPI === 'cli' || InstallerKernel::installationAttempted()) {
       return;
@@ -127,24 +129,42 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     }
 
     // Ignore non index.php requests (like cron).
-    if (!empty($_SERVER['SCRIPT_FILENAME']) && realpath(DRUPAL_ROOT . '/index.php') != realpath($_SERVER['SCRIPT_FILENAME'])) {
-      return;
-    }
-
-    // No redirection is required for administrators. Ideally, we want to
-    // check the permission (for example, "administer site configuration"),
-    // but SM also has this permission, and we have no other permission to
-    // check if the user is an administrator.
-    if (in_array('administrator', $this->currentUser->getRoles(), TRUE)) {
+    if (!empty($_SERVER['SCRIPT_FILENAME']) && realpath(DRUPAL_ROOT . '/index.php') !== realpath($_SERVER['SCRIPT_FILENAME'])) {
       return;
     }
 
     $request = $event->getRequest();
     $request_path = $request->getPathInfo();
     $site_settings_frontpage = $this->configFactory->get('system.site')->get('page.front');
+    $active_language = $this->languageManager->getCurrentLanguage()->getId();
+
+    // No redirection is required for administrators and no alternative front
+    // page for authenticated users. Ideally, we want to check the permission
+    // (for example, "administer site configuration"), but SM also has this
+    // permission, and we have no other permission to check if the user
+    // is an administrator.
+    if (in_array('administrator', $this->currentUser->getRoles(), TRUE)) {
+      $authenticated_page = $this->entityTypeManager
+        ->getStorage('alternative_frontpage')
+        ->loadByProperties(['roles_target_id' => AccountInterface::AUTHENTICATED_ROLE]);
+
+      if (empty($authenticated_page)) {
+        return;
+      }
+
+      /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $authenticated_page */
+      $authenticated_page = reset($authenticated_page);
+
+      if ($request_path === $authenticated_page->path) {
+        return;
+      }
+
+      if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
+        $this->doRedirect($event, 'administrator', $authenticated_page->path);
+      }
+    }
 
     $current_user_roles = $this->currentUser->getRoles(FALSE);
-
     $current_user_data = $this->getAlternativePageDataForCurrentUser($current_user_roles);
     $user_role = $current_user_data['role'] ?? '';
     $user_page = $current_user_data['page'] ?? '';
@@ -164,7 +184,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     }
 
     // We only proceed if the user requests the home page.
-    if ($request_path === $site_settings_frontpage || $request_path === '/' || $request_path === '/' . $active_language) {
+    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
       // The home page for the user is the same as in the site configuration,
       // and we are not redirecting, otherwise there will be an endless loop.
       if ($user_page === $site_settings_frontpage) {
@@ -179,12 +199,26 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
         $redirect_path = '/' . $active_language . $user_page;
       }
 
-      $cache_contexts = new CacheableMetadata();
-      $cache_contexts->setCacheContexts(['user.roles:' . $user_role]);
-      $response = new CacheableRedirectResponse($redirect_path);
-      $response->addCacheableDependency($cache_contexts);
-      $event->setResponse($response);
+      $this->doRedirect($event, $user_role, $redirect_path);
     }
+  }
+
+  /**
+   * Redirect to a page for a specific role.
+   */
+  private function doRedirect(RequestEvent $event, string $user_role, string $redirect_path): void {
+    $cache_contexts = new CacheableMetadata();
+    $cache_contexts->setCacheContexts(['user.roles:' . $user_role]);
+    $response = new CacheableRedirectResponse($redirect_path);
+    $response->addCacheableDependency($cache_contexts);
+    $event->setResponse($response);
+  }
+
+  /**
+   * Check if the requested page is a front page.
+   */
+  private function isFrontPageRequested(string $request_path, string $site_settings_frontpage, string $active_language): bool {
+    return $request_path === $site_settings_frontpage || $request_path === '/' || $request_path === '/' . $active_language;
   }
 
   /**
@@ -251,9 +285,6 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *
    * @return null|string[]
    *   The array of role and page URL.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function getAlternativePageDataForCurrentUser(array $current_user_roles): ?array {
     $user_front_pages = $this->getAlternativePagesForUserRoles($current_user_roles);

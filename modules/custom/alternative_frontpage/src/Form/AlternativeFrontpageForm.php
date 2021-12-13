@@ -99,6 +99,9 @@ class AlternativeFrontpageForm extends EntityForm {
       '#default_value' => $settings->roles_target_id,
       '#description' => $this->t('Which roles should it apply to'),
       '#required' => TRUE,
+      '#attributes' => [
+        'required' => 'required',
+      ],
     ];
 
     return $form;
