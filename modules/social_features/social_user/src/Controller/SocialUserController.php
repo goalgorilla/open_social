@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialUserController.
+ * Returns responses for User routes.
  *
  * @package Drupal\social_user\Controller
  */
@@ -112,6 +112,54 @@ class SocialUserController extends ControllerBase {
       return AccessResult::forbidden();
     }
     return AccessResult::allowed();
+  }
+
+  /**
+   * Returns titles list of all groups, ordered by their type and/or label.
+   *
+   * @param bool $split
+   *   (optional) TRUE if groups should be split by type. Defaults to FALSE.
+   */
+  public static function getGroups(bool $split = FALSE): array {
+    if (!empty($data = &drupal_static('_social_user_get_groups', []))) {
+      return $data;
+    }
+
+    $query = \Drupal::database()->select('groups_field_data', 'gfd')
+      ->fields('gfd', ['id', 'label']);
+
+    if ($split) {
+      $query->addField('gfd', 'type');
+      $query->orderBy('type');
+    }
+
+    if (
+      ($query = $query->orderBy('label')->execute()) === NULL ||
+      !($groups = $split ? $query->fetchAll() : $query->fetchAllKeyed())
+    ) {
+      return $data;
+    }
+
+    if ($split) {
+      $bundles = \Drupal::service('entity_type.bundle.info')
+        ->getBundleInfo('group');
+
+      foreach ($groups as $group) {
+        $data[$bundles[$group->type]['label']][$group->id] = $group->label;
+      }
+    }
+    else {
+      $data = $groups;
+    }
+
+    return $data;
+  }
+
+  /**
+   * Returns titles list of all groups, ordered by their type and label.
+   */
+  public static function getSplitGroups(): array {
+    return static::getGroups(TRUE);
   }
 
 }

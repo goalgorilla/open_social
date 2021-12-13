@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_user\Controller\SocialUserController;
 use Drupal\social_user\Entity\User;
 use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
@@ -147,30 +148,10 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * Returns array with titles of all groups, ordered by their type and label.
+ * Returns array with titles of all groups, ordered by their label.
  */
 function _social_user_get_groups(): array {
-  if (!empty($data = &drupal_static(__FUNCTION__, []))) {
-    return $data;
-  }
-
-  $groups = \Drupal::database()->select('groups_field_data', 'gfd')
-    ->fields('gfd', ['id', 'label', 'type'])
-    ->orderBy('type')
-    ->orderBy('label')
-    ->execute();
-
-  if ($groups === NULL || !($groups = $groups->fetchAll())) {
-    return $data;
-  }
-
-  $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('group');
-
-  foreach ($groups as $group) {
-    $data[$bundles[$group->type]['label']][$group->id] = $group->label;
-  }
-
-  return $data;
+  return call_user_func([SocialUserController::class, 'getGroups']);
 }
 
 /**
@@ -766,6 +747,10 @@ function social_user_views_data_alter(array &$data): void {
   if (isset($data['groups_field_data'])) {
     $filter = &$data['groups_field_data']['id']['filter'];
     $filter['id'] = 'in_operator';
-    $filter['options callback'] = '_social_user_get_groups';
+
+    $filter['options callback'] = [
+      SocialUserController::class,
+      'getSplitGroups',
+    ];
   }
 }
