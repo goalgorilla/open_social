@@ -167,14 +167,16 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                 if ($name === 'recipient-user') {
                   if (!empty($recipient_user)) {
                     $account = &$recipient_user;
-                  } else {
+                  }
+                  else {
                     $account = \Drupal::entityTypeManager()->getStorage('user')
                       ->load(0);
                   }
 
                   /** @var \Drupal\user\UserInterface $account */
                   $replacements[$original] = $account->getDisplayName();
-                } elseif ($name === 'recipient-user-url') {
+                }
+                elseif ($name === 'recipient-user-url') {
                   if (!empty($recipient_user)) {
                     $target_stream_url = Url::fromRoute('entity.user.canonical',
                       ['user' => $recipient_user->id()],
