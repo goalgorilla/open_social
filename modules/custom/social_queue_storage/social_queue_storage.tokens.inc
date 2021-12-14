@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\message\Entity\Message;
 
 /**
  * Implements hook_token_info().
@@ -39,19 +40,21 @@ function social_queue_storage_tokens($type, $tokens, array $data, array $options
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      if ($name === 'mail_task_subject' && $message->getFieldValue('field_message_related_object', 'target_type') === 'queue_storage_entity') {
-        // Get the target storage entity and get the subject.
-        $target_type = $message->get('field_message_related_object')->target_type;
-        $target_id = $message->get('field_message_related_object')->target_id;
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        if ($name === 'mail_task_subject' && $message->getFieldValue('field_message_related_object', 'target_type') === 'queue_storage_entity') {
+          // Get the target storage entity and get the subject.
+          $target_type = $message->get('field_message_related_object')->target_type;
+          $target_id = $message->get('field_message_related_object')->target_id;
 
-        /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
-        $entity = \Drupal::entityTypeManager()
-          ->getStorage($target_type)
-          ->load($target_id);
+          /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+          $entity = \Drupal::entityTypeManager()
+            ->getStorage($target_type)
+            ->load($target_id);
 
-        if ($entity->hasField('field_subject')) {
-          $replacements[$original] = $entity->get('field_subject')->value;
+          if ($entity->hasField('field_subject')) {
+            $replacements[$original] = $entity->get('field_subject')->value;
+          }
         }
       }
     }
