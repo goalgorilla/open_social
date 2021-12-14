@@ -48,7 +48,7 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch feature/opensocial-11 https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 3.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 2.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
@@ -76,8 +76,7 @@ install:
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   # Reset the entire branch, so we can checkout goalgorilla/drupal_social:3.0.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
-  # Update this to tag 3.0.0 once feature/opensocial-11 in drupal_social is released
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout feature/opensocial-11; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 3.0.0; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi

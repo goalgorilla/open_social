@@ -38,9 +38,12 @@ class UserSelection extends UserSelectionBase {
       $target_type = $this->configuration['target_type'];
       $entity_type = $this->entityTypeManager->getDefinition($target_type);
       $query = $this->buildEntityQuery(NULL, 'CONTAINS', $ids);
-      $result = $query
-        ->condition($entity_type->getKey('id'), $ids, 'IN')
-        ->execute();
+      $id = $entity_type->getKey('id');
+      if (is_string($id)) {
+        $result = $query
+          ->condition($id, $ids, 'IN')
+          ->execute();
+      }
     }
 
     return $result;
