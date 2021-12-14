@@ -50,6 +50,7 @@ Feature: Create Public Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     And I am logged in as "GivenUserTwo"
     And I am on "all-members"

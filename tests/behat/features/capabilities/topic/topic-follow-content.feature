@@ -55,6 +55,7 @@ Feature: Follow Content
       And I wait for AJAX to finish
     Then I should see the link "Unfollow content"
       And I should not see the link "Follow content"
+      And I logout
 
     Given I am logged in as "Dude 2"
       And I am on "/all-topics"
@@ -66,6 +67,7 @@ Feature: Follow Content
       And I wait for AJAX to finish
     Then I should see the link "Unfollow content"
       And I should not see the link "Follow content"
+      And I logout
 
     Given I am logged in as "Dude 3"
       And I am on "/all-topics"
@@ -79,6 +81,7 @@ Feature: Follow Content
       And I should see "This is a test comment" in the "Main content"
       And I should see "second"
       And I should see "ago"
+      And I logout
 
     # Check if the Dude 1 got a notification.
     Given I am logged in as "Dude 1"
