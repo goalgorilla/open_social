@@ -13,6 +13,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -105,14 +106,20 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
    */
   public function processItem($data) {
     if (!empty($data['uid']) && !empty($data['frequency']) && !empty($data['activities'])) {
+      /** @var \Drupal\user\UserStorage $user_storage */
       $user_storage = $this->entityTypeManager->getStorage('user');
+      /** @var \Drupal\Core\Entity\ContentEntityNullStorage $message_storage */
       $message_storage = $this->entityTypeManager->getStorage('message');
+
       // Get target account.
-      /** @var \Drupal\user\Entity\User $target */
+      /** @var \Drupal\user\UserInterface $target */
       $target = $user_storage->load($data['uid']);
 
       // Make sure we have an actual user account to work with.
-      if (is_object($target) && $target->isActive()) {
+      if (($target instanceof UserInterface)
+        && $target->isActive()
+        && $target->isAuthenticated()
+      ) {
         $langcode = $target->getPreferredLangcode();
         $digest_notifications = [
           '#theme' => 'digestmail',
@@ -125,9 +132,9 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
 
           // Only for users that have access to related content.
           if (
-          ($activity instanceof Activity) &&
+            ($activity instanceof Activity) &&
             ($activity->getRelatedEntity() !== NULL) &&
-            !$activity->getRelatedEntity()->access('view', $target)
+            ($activity->getRelatedEntity()->access('view', $target) === FALSE)
           ) {
             continue;
           }
