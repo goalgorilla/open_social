@@ -9,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
+use Drupal\message\Entity\Message;
 use Drupal\user\UserInterface;
 
 /**
@@ -44,21 +45,23 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
     /** @var Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      if ($name === 'request_page_link') {
-        // Get the related entity.
-        if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
-          $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
-          $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        if ($name === 'request_page_link') {
+          // Get the related entity.
+          if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
+            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
-          if (isset($target_type) && !empty($target_type) && $target_type === 'group_content') {
-            /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
-            $group_content = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
-              ->load($target_id);
+            if (isset($target_type) && !empty($target_type) && $target_type === 'group_content') {
+              /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+              $group_content = \Drupal::entityTypeManager()
+                ->getStorage($target_type)
+                ->load($target_id);
 
-            if (!empty($group_content)) {
-              $replacements[$original] = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group_content->getGroup()->id()])->toString();
+              if (!empty($group_content)) {
+                $replacements[$original] = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group_content->getGroup()->id()])->toString();
+              }
             }
           }
         }
