@@ -128,7 +128,10 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
     $post = _social_post_mass_update_helper($post, $updates, $langcode);
 
     // Store result for post-processing in the finished callback.
-    $context['results'][] = Link::fromTextAndUrl($post->label(), $post->toUrl());
+    $lable = $post->label();
+    if (!empty($lable)) {
+      $context['results'][] = Link::fromTextAndUrl($lable, $post->toUrl());
+    }
 
     // Update our progress information.
     $context['sandbox']['progress']++;

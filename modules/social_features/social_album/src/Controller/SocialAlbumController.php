@@ -3,6 +3,7 @@
 namespace Drupal\social_album\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -15,6 +16,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 
 /**
  * Returns responses for Album routes.
@@ -31,6 +33,13 @@ class SocialAlbumController extends ControllerBase {
   protected $database;
 
   /**
+   * The Group Content Enabler manager.
+   *
+   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   */
+  protected $gcContentEnabler;
+
+  /**
    * SocialAlbumController constructor.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
@@ -45,6 +54,8 @@ class SocialAlbumController extends ControllerBase {
    *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory service.
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_enabler
+   *   The group content manager.
    */
   public function __construct(
     TranslationInterface $translation,
@@ -52,7 +63,8 @@ class SocialAlbumController extends ControllerBase {
     EntityTypeManagerInterface $entity_type_manager,
     EntityFormBuilderInterface $entity_form_builder,
     AccountInterface $current_user,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
+    GroupContentEnablerManagerInterface $gc_enabler
   ) {
     $this->setStringTranslation($translation);
     $this->database = $database;
@@ -60,6 +72,7 @@ class SocialAlbumController extends ControllerBase {
     $this->entityFormBuilder = $entity_form_builder;
     $this->currentUser = $current_user;
     $this->configFactory = $config_factory;
+    $this->gcContentEnabler = $gc_enabler;
   }
 
   /**
@@ -72,7 +85,8 @@ class SocialAlbumController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('entity.form_builder'),
       $container->get('current_user'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('plugin.manager.group_content_enabler')
     );
   }
 
@@ -332,16 +346,22 @@ class SocialAlbumController extends ControllerBase {
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function checkGroupAlbumAccess(GroupInterface $group) {
+  public function checkGroupAlbumAccess(GroupInterface $group): AccessResultInterface {
     $access = $this->checkGroupAccess($group);
 
     if ($access->isAllowed()) {
-      return $group
-        ->getGroupType()
-        ->getContentPlugin('group_node:album')
-        ->createEntityAccess($group, $this->currentUser())
-        ->andIf($this->checkUserAlbumsAccess());
+      /** @var \Drupal\group\Plugin\GroupContentAccessControlHandler $handler */
+      $handler = $this->gcContentEnabler->getAccessControlHandler('group_node:album');
+      // Reset the access, we are aware there is a plugin.
+      $access = $handler->relationCreateAccess($group, $this->currentUser(), TRUE);
+      if ($access instanceof AccessResultInterface) {
+        return $access;
+      }
+      return AccessResult::allowedIf($access);
     }
 
     return $access;

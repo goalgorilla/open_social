@@ -11,7 +11,7 @@
  * - flaggable: The flaggable entity.
  */
 #}
-{% spaceless %}
+{% apply spaceless %}
 {# Attach the flag JS library.#}
 {{ attach_library('social_follow_taxonomy/follow_term.link_ajax') }}
 
@@ -51,4 +51,4 @@
     {% endif %}
   </div>
 
-{% endspaceless %}
+{% endapply %}

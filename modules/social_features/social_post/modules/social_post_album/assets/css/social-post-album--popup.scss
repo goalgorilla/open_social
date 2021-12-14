@@ -35,9 +35,19 @@
       margin-bottom: 0;
       z-index: 10000;
 
+      [dir='rtl'] & {
+        left: 13px;
+        right: auto;
+      }
+
       @media (max-width: 899px) {
         right: 9px;
         bottom: 19px;
+
+        [dir='rtl'] & {
+          left: 9px;
+          right: auto;
+        }
       }
 
       .label {
@@ -100,6 +110,7 @@
         width: 18px;
         height: 2px;
         background: #777;
+        transition: none;
 
         @media (max-width: 899px) {
           top: 18px;
@@ -240,6 +251,11 @@
             max-width: 380px;
             left: auto;
             right: 0;
+
+            [dir='rtl'] & {
+              left: 0;
+              right: auto;
+            }
           }
 
           .card__nested-section {
@@ -317,6 +333,7 @@
 
       .slick-prev {
         left: 0;
+        right: auto;
 
         @media(min-width: 900px) {
           left: -60px;
@@ -325,6 +342,7 @@
 
       .slick-next {
         right: 0;
+        left: auto;
 
         @media(min-width: 900px) {
           right: -60px;
@@ -360,6 +378,7 @@
 
   .slick-list,
   .slick-track {
+    display: flex;
     height: 100%;
   }
 }

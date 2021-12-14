@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.event.field_event_enroll_outside_group
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
+    - field.field.node.event.field_event_all_day
     - field.field.node.event.field_files
     - image.style.social_x_large
     - node.type.event
@@ -44,6 +45,7 @@ third_party_settings:
       region: hidden
     group_date_time:
       children:
+        - field_event_all_day
         - field_event_date
         - field_event_date_end
       parent_name: ''
@@ -249,6 +251,13 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
+  field_event_all_day:
+    weight: 9
+    settings:
+      display_label: true
+    third_party_settings: { }
+    type: boolean_checkbox
     region: content
   groups:
     type: options_select

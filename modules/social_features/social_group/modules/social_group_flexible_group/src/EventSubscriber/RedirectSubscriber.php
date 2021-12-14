@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -62,10 +62,10 @@ class RedirectSubscriber implements EventSubscriberInterface {
   /**
    * This method is called when the KernelEvents::REQUEST event is dispatched.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    */
-  public function checkForRedirection(GetResponseEvent $event) {
+  public function checkForRedirection(RequestEvent $event) {
     // Check if there is a group object on the current route.
     if (!($group = _social_group_get_current_group())) {
       return;
@@ -114,12 +114,12 @@ class RedirectSubscriber implements EventSubscriberInterface {
   /**
    * Makes redirect to the "About" group tab.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event.
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group.
    */
-  protected function doRedirect(GetResponseEvent $event, GroupInterface $group) {
+  protected function doRedirect(RequestEvent $event, GroupInterface $group) {
     $url = Url::fromRoute('view.group_information.page_group_about', [
       'group' => $group->id(),
     ]);

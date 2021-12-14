@@ -9,7 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Provides an overridden elements.
+ * Configuration overrides for Social Embed module.
  *
  * @package Drupal\social_embed
  */
@@ -103,9 +103,9 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $overrides[$config_name]['dependencies']['module'] = $dependencies;
     $overrides[$config_name]['dependencies']['module'][] = 'url_embed';
 
-    $overrides[$config_name]['filters']['url_embed'] = [
-      'id' => 'url_embed',
-      'provider' => 'url_embed',
+    $overrides[$config_name]['filters']['social_embed_url_embed'] = [
+      'id' => 'social_embed_url_embed',
+      'provider' => 'social_embed',
       'status' => TRUE,
       'weight' => 100,
       'settings' => [],

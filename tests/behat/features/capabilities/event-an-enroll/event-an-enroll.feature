@@ -89,7 +89,8 @@ Feature: Enroll for an event without an account
       | Title                                  | Anonymous event enrollment |
       | edit-field-event-date-0-value-date     | 2025-01-01                 |
       | edit-field-event-date-end-0-value-date | 2025-01-02                 |
-      | Time                                   | 11:00:00                   |
+      | edit-field-event-date-0-value-time     | 11:00:00                   |
+      | edit-field-event-date-end-0-value-time | 11:00:00                   |
       | Location name                          | GG HQ                      |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I click the xth "0" element with the css "[for=edit-field-content-visibility-public]"

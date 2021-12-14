@@ -129,7 +129,6 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   public function getCacheContexts() {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user';
-    $cache_contexts[] = 'group';
     $cache_contexts[] = 'route.group';
     $cache_contexts[] = 'url';
     return $cache_contexts;
