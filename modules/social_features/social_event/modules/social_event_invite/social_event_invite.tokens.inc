@@ -81,7 +81,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
       }
       if ($name == 'user_login_event_destination') {
         /** @var \Drupal\message\Entity\Message $message */
-        $message = $data['message'];
+        $message = $data['message'] ?? NULL;
 
         if ($message instanceof Message) {
           // Load the current Event enrollments so we can check duplicates.
@@ -101,7 +101,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
       }
       if ($name == 'user_login_event_invites_overview') {
         /** @var \Drupal\message\Entity\Message $message */
-        $message = $data['message'];
+        $message = $data['message'] ?? NULL;
 
         if ($message instanceof Message) {
           // Load the current Event enrollments so we can check duplicates.
