@@ -118,6 +118,8 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
       $cache_tags[] = 'node:' . $node->id();
     }
 
+    $cache_tags[] = 'taxonomy_term_list:social_tagging';
+
     return $cache_tags;
   }
 
@@ -129,8 +131,14 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
     $node = $this->routeMatch->getParameter('node');
 
+    $content = social_tagging_process_tags($node);
+
+    if (empty($content)) {
+      return [];
+    }
+
     if ($node instanceof NodeInterface) {
-      $build['content']['#markup'] = social_tagging_process_tags($node);
+      $build['content'] = $content;
     }
 
     return $build;

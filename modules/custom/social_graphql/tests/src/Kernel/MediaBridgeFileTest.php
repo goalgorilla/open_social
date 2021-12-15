@@ -25,7 +25,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'file',
     'image',
     'graphql',
@@ -49,7 +49,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() :void {
     parent::setUp();
 
     // Borrowed from \Drupal\Tests\image\Kernel\ImageItemTest.

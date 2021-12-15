@@ -19,9 +19,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
-    // For its `use_entity_access_api` setting.
-    'social_core',
+  protected static $modules = [
     // For the comment functionality.
     'social_comment',
     'comment',
@@ -59,14 +57,6 @@ class CommentViewAccessTest extends EntityKernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-
-    // Manually enable query_access checks, until `use_entity_access_api` is no
-    // longer a setting. Installing all the `social_core` config doesn't work at
-    // the time of writing. This must happen before the comment entity is
-    // installed or its handlers will be incorrect.
-    $this->config('social_core.settings')
-      ->set('use_entity_access_api', TRUE)
-      ->save(TRUE);
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');

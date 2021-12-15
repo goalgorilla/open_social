@@ -17,8 +17,8 @@ Feature: Mute/Unmute group notifications
   @group-mute-group-notifications-group-page
   Scenario: LU able to mute/umute group notifications
     Given I am logged in as "dude_1st"
-      And I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
+      And I am on "/my-groups"
+    Then I should see "Ressinel's group 1st" in the "Main content"
       And I click "Ressinel's group 1st"
     Then I should see the button "Joined"
       And I press "Joined"
@@ -33,8 +33,8 @@ Feature: Mute/Unmute group notifications
   @group-mute-group-notifications-overview-page
   Scenario: LU able to view all Groups muted
     Given I am logged in as "dude_1st"
-      And I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
+      And I am on "/my-groups"
+    Then I should see "Ressinel's group 1st" in the "Main content"
       And I click "Ressinel's group 1st"
     Then I should see the button "Joined"
       And I press "Joined"
@@ -42,8 +42,7 @@ Feature: Mute/Unmute group notifications
     When I click "Mute group"
       And I wait for AJAX to finish
     Then I should see "Unmute group"
-    When I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
+    When I am on "/my-groups"
     Then I should see "Ressinel's group 2nd"
     When I select "My muted groups" from "Muted groups"
       And I press the "Apply" button
@@ -86,8 +85,8 @@ Feature: Mute/Unmute group notifications
     # Log in and check if we have notifications.
     Given I am logged in as "dude_1st"
     # Ensure that group notifications are not muted.
-    When I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
+    When I am on "/my-groups"
+    Then I should see "Ressinel's group 1st"
       And I click "Ressinel's group 1st"
     Then I should see the button "Joined"
       And I press "Joined"
@@ -113,8 +112,8 @@ Feature: Mute/Unmute group notifications
 
     # Login and mute group notifications.
     Given I am logged in as "dude_1st"
-    When I click the xth "0" element with the css ".navbar-nav .profile"
-      And I click "My groups"
+    When I am on "/my-groups"
+    Then I should see "Ressinel's group 1st"
       And I click "Ressinel's group 1st"
     Then I should see the button "Joined"
       And I press "Joined"

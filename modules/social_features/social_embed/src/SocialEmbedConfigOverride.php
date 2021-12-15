@@ -9,7 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialEmbedConfigOverride.
+ * Configuration overrides for Social Embed module.
  *
  * @package Drupal\social_embed
  */
@@ -47,6 +47,21 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = [];
+    $found = FALSE;
+
+    foreach ($names as $name) {
+      if (
+        strpos($name, 'filter.format.') === 0 ||
+        strpos($name, 'editor.editor.') === 0
+      ) {
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if (!$found) {
+      return $overrides;
+    }
 
     $formats = [
       'basic_html' => TRUE,
@@ -88,9 +103,9 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $overrides[$config_name]['dependencies']['module'] = $dependencies;
     $overrides[$config_name]['dependencies']['module'][] = 'url_embed';
 
-    $overrides[$config_name]['filters']['url_embed'] = [
-      'id' => 'url_embed',
-      'provider' => 'url_embed',
+    $overrides[$config_name]['filters']['social_embed_url_embed'] = [
+      'id' => 'social_embed_url_embed',
+      'provider' => 'social_embed',
       'status' => TRUE,
       'weight' => 100,
       'settings' => [],
@@ -132,7 +147,6 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
       return;
     }
 
-    $overrides = [];
     $button_exists = FALSE;
 
     foreach ($settings['toolbar']['rows'] as $row) {

@@ -172,53 +172,56 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
-    $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
-      ->fields('base_table', [$entity_type->getKey('id')]);
+    $table = $entity_type->getDataTable();
+    if (!empty($table) && is_string($table)) {
+      $query = $this->connection->select($table, 'base_table')
+        ->fields('base_table', [$entity_type->getKey('id')]);
 
-    if (isset($definition['bundle'])) {
-      $query->condition(
-        'base_table.' . $entity_type->getKey('bundle'),
-        $definition['bundle']
-      );
-    }
-
-    $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
-    if ($fields) {
-      $plugin->query($query, $fields);
-    }
-
-    // Allow other modules to change the query to add additions.
-    $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
-
-    // Apply our sorting logic.
-    $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
-
-    // Add range.
-    $query->range(0, $block_content->field_item_amount->value);
-
-    // Execute the query to get the results.
-    $entities = $query->execute()->fetchAllKeyed(0, 0);
-
-    if ($entities) {
-      // Load all the topics so we can give them back.
-      $entities = $this->entityTypeManager
-        ->getStorage($definition['entityTypeId'])
-        ->loadMultiple($entities);
-
-      foreach ($entities as $key => $entity) {
-        if ($entity->access('view') === FALSE) {
-          unset($entities[$key]);
-        }
-        else {
-          // Get entity translation if exists.
-          $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
-        }
+      if (isset($definition['bundle'])) {
+        $query->condition(
+          'base_table.' . $entity_type->getKey('bundle'),
+          $definition['bundle']
+        );
       }
 
-      return $this->entityTypeManager
-        ->getViewBuilder($definition['entityTypeId'])
-        ->viewMultiple($entities, 'small_teaser');
+      $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+      if ($fields) {
+        $plugin->query($query, $fields);
+      }
+
+      // Allow other modules to change the query to add additions.
+      $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
+
+      // Apply our sorting logic.
+      $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
+
+      // Add range.
+      $query->range(0, $block_content->field_item_amount->value);
+
+      // Execute the query to get the results.
+      $entities = $query->execute()->fetchAllKeyed(0, 0);
+
+      if ($entities) {
+        // Load all the topics so we can give them back.
+        $entities = $this->entityTypeManager
+          ->getStorage($definition['entityTypeId'])
+          ->loadMultiple($entities);
+
+        foreach ($entities as $key => $entity) {
+          if ($entity->access('view') === FALSE) {
+            unset($entities[$key]);
+          }
+          else {
+            // Get entity translation if exists.
+            $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+          }
+        }
+
+        return $this->entityTypeManager
+          ->getViewBuilder($definition['entityTypeId'])
+          ->viewMultiple($entities, 'small_teaser');
+      }
     }
 
     return [
@@ -634,8 +637,14 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       }
     }
 
-    if ($base_field) {
-      $query->groupBy($base_field);
+    $fields = $query->getFields();
+
+    foreach ($fields as $key => $field) {
+      $query->groupBy($key);
+    }
+
+    if (in_array($sort_by, ['created', 'changed'])) {
+      $query->groupBy($sorting_field);
     }
 
     $query->orderBy($sorting_field, $direction);

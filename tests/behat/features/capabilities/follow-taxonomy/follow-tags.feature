@@ -85,6 +85,7 @@ Feature: Follow Tags
 
     Then I should see "Category 1"
     And I should see "Category 2.2"
+    And I logout
 
     # Create topic with tag to trigger activity
     Given I am logged in as "content_creator"

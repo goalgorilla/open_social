@@ -274,3 +274,17 @@ function social_user_update_11003(): void {
     'assign verified role',
   ]);
 }
+
+/**
+ * Update the views filter to limit operators in admin/people.
+ */
+function social_user_update_11004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_user', 'social_user_update_11004');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

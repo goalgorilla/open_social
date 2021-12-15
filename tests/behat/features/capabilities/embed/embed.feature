@@ -18,10 +18,10 @@ Feature: Embed
       | Title | Embed WYSIWYG |
     And I click on the embed icon in the WYSIWYG editor
     And I wait for AJAX to finish
-    And I fill in "URL" with "https://www.youtube.com/watch?v=kgE9QNX8f3c"
+    And I fill in "URL" with "https://www.youtube.com/watch?v=ojafuCcUZzU"
     And I click the xth "0" element with the css ".url-select-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Create topic"
     Then I should see "Topic Embed WYSIWYG has been created."
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
+    And The iframe in the body description should have the src "https://www.youtube.com/embed/ojafuCcUZzU"

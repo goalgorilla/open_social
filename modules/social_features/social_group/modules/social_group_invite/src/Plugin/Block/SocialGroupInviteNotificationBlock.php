@@ -148,7 +148,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
     // so we don't see the message on every group.
     $contexts = Cache::mergeContexts($contexts, [
       'url',
-      'group',
+      'route.group',
     ]);
     return $contexts;
   }

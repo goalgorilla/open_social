@@ -23,7 +23,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'social_event',
     'entity',
     // For the event author and viewer.
@@ -70,6 +70,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     // social_topic should be removed from $modules when
     // https://github.com/drupal-graphql/graphql/pull/1220 is merged.
     'social_topic',
+    'variationcache',
   ];
 
   /**

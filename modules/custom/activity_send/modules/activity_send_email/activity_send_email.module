@@ -9,6 +9,7 @@ use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Email frequencies.
@@ -125,30 +126,15 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   $form['email_notifications'] = [
     '#type' => 'fieldset',
-    '#title' => [
-      'text' => [
-        '#markup' => t('Email notifications'),
-      ],
-      'icon' => [
-        '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
-        '#allowed_tags' => ['svg', 'use'],
-      ],
-    ],
+    '#title' => new TranslatableMarkup('Email notifications'),
+    '#description' => new TranslatableMarkup('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.'),
     '#tree' => TRUE,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
     '#attributes' => [
       'class' => [
         'form-horizontal',
         'form-email-notification',
       ],
     ],
-  ];
-
-  $form['email_notifications']['description'] = [
-    '#type' => 'html_tag',
-    '#tag' => 'p',
-    '#value' => t('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.'),
   ];
 
   $items = _activity_send_email_default_template_items();

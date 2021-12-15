@@ -165,7 +165,7 @@ class SocialUserLoginForm extends UserLoginForm {
       // independent of the per-user limit to catch attempts from one IP to log
       // in to many different user accounts.  We have a reasonably high limit
       // since there may be only one IP for all users at an institution.
-      if (!$this->flood->isAllowed('user.failed_login_ip', $flood_config->get('ip_limit'), $flood_config->get('ip_window'))) {
+      if (!$this->userFloodControl->isAllowed('user.failed_login_ip', $flood_config->get('ip_limit'), $flood_config->get('ip_window'))) {
         $form_state->set('flood_control_triggered', 'ip');
         return;
       }
@@ -184,7 +184,7 @@ class SocialUserLoginForm extends UserLoginForm {
         if ($flood_config->get('uid_only')) {
           // Register flood events based on the uid only, so they apply for any
           // IP address. This is the most secure option.
-          $identifier = $account->id();
+          $identifier = (string) $account->id();
         }
         else {
           // The default identifier is a combination of uid and IP address. This
@@ -196,7 +196,7 @@ class SocialUserLoginForm extends UserLoginForm {
 
         // Don't allow login if the limit for this user has been reached.
         // Default is to allow 5 failed attempts every 6 hours.
-        if (!$this->flood->isAllowed('user.failed_login_user', $flood_config->get('user_limit'), $flood_config->get('user_window'), $identifier)) {
+        if (!$this->userFloodControl->isAllowed('user.failed_login_user', $flood_config->get('user_limit'), $flood_config->get('user_window'), $identifier)) {
           $form_state->set('flood_control_triggered', 'user');
           return;
         }
@@ -220,10 +220,10 @@ class SocialUserLoginForm extends UserLoginForm {
       $this->setGeneralErrorMessage($form, $form_state);
 
       // Always register an IP-based failed login event.
-      $this->flood->register('user.failed_login_ip', $flood_config->get('ip_window'));
+      $this->userFloodControl->register('user.failed_login_ip', $flood_config->get('ip_window'));
       // Register a per-user failed login event.
       if ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
-        $this->flood->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
+        $this->userFloodControl->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
       }
       $flood_control_triggered = $form_state->get('flood_control_triggered');
       if (!$flood_control_triggered) {
@@ -247,7 +247,7 @@ class SocialUserLoginForm extends UserLoginForm {
     elseif ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
       // Clear past failures for this user so as not to block a user who might
       // log in and out more than once in an hour.
-      $this->flood->clear('user.failed_login_user', $flood_control_user_identifier);
+      $this->userFloodControl->clear('user.failed_login_user', $flood_control_user_identifier);
     }
   }
 

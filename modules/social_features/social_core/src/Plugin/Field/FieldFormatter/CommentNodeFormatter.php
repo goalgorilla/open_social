@@ -58,7 +58,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     if (!empty($group_contents)) {
       // Add cache contexts.
-      $elements['#cache']['contexts'][] = 'group.type';
+      $elements['#cache']['contexts'][] = 'route.group';
       $elements['#cache']['contexts'][] = 'user.group_permissions';
 
       $account = \Drupal::currentUser();

@@ -8,6 +8,7 @@ Feature: Send invite group email notifications
   Scenario: Send group invite email for new user
 
     Given I set the configuration item "system.site" with key "name" to "Open Social"
+    Given I enable the module "social_group_flexible_group"
     Given users:
       | name            | mail                        | status | roles       |
       | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
@@ -37,8 +38,9 @@ Feature: Send invite group email notifications
     Given I am logged in as "site_manager_1"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My groups"
+    Then I should see "Test-invite-group"
     And I click "Test-invite-group"
-    When I click "Manage members"
+    And I click "Manage members"
     Then I should see "Add members"
     When I click the xth "1" element with the css ".btn.dropdown-toggle"
     And I click "Invite users"
@@ -46,8 +48,8 @@ Feature: Send invite group email notifications
     And I fill in select2 input ".form-type-select" with "new_test_user@example.com" and select "new_test_user@example.com"
     And I press "Send your invite(s) by email"
     Then I wait for the batch job to finish
-    And I wait for the queue to be empty
-    Then I should see "Invite sent to new_test_user@example.com"
+    And I should see "Invite sent to new_test_user@example.com"
+    When I wait for the queue to be empty
     And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
       | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  Accept invite	About Open Social |
 
@@ -70,6 +72,7 @@ Feature: Send invite group email notifications
     And I am logged in as "site_manager_1"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My groups"
+    Then I should see "Test-invite-group"
     And I click "Test-invite-group"
     When I click "Manage members"
     Then I should see "Add members"
@@ -79,10 +82,10 @@ Feature: Send invite group email notifications
     And I fill in select2 input ".form-type-select" with "existing_user_1@example.com" and select "existing_user_1@example.com"
     And I press "Send your invite(s) by email"
     Then I wait for the batch job to finish
-    And I wait for the queue to be empty
     Then I should see "Invite sent to existing_user_1"
 
-    And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
+    When I wait for the queue to be empty
+    Then I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
       | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  Accept invite	About Open Social |
 
     # Login and check if invite has been sent to existing user.
