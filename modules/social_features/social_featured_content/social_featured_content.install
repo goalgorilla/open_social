@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_featured_content module.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Add translations support for "Featured Content" custom block fields.
  */
@@ -17,4 +19,21 @@ function social_featured_content_update_10300() {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Import featured view display of flexible group.
+ */
+function social_featured_content_update_10301() {
+  $configs = [
+    'core.entity_view_display.group.flexible_group.featured' => 'core.entity_view_display.group.flexible_group.featured_10301',
+  ];
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_featured_content') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
