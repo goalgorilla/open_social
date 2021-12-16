@@ -147,7 +147,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
     if (!empty($group_contents)) {
       // Add cache contexts.
-      $output['#cache']['contexts'][] = 'group.type';
+      $output['#cache']['contexts'][] = 'route.group';
       $output['#cache']['contexts'][] = 'user.group_permissions';
 
       $account = $this->currentUser;

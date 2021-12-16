@@ -6,8 +6,6 @@
  */
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultAllowed;
-use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -251,18 +249,6 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
 }
 
 /**
- * Implements hook_module_implements_alter().
- */
-function social_event_managers_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'node_access') {
-    // Remove the gnode implementation, we have a fallback in our hook.
-    if (isset($implementations['gnode']) && function_exists('gnode_node_access')) {
-      unset($implementations['gnode']);
-    }
-  }
-}
-
-/**
  * Implements hook_node_access().
  *
  * Remember: if any module returns forbidden and denies access to certain node
@@ -279,25 +265,6 @@ function social_event_managers_module_implements_alter(&$implementations, $hook)
  * to return an allowed if user is an event manager.
  */
 function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  // Only continue if the gnode module is enabled.
-  if (function_exists('gnode_node_access')) {
-    $gnode_access = gnode_node_access($node, $op, $account);
-
-    if ($op === 'update') {
-      if ($gnode_access instanceof AccessResultForbidden) {
-        $social_event_managers_access = SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
-
-        // Only return the result of SocialEventManagersAccessHelper
-        // if it is allowed.
-        if ($social_event_managers_access instanceof AccessResultAllowed) {
-          return $social_event_managers_access;
-        }
-      }
-      return $gnode_access;
-    }
-    return $gnode_access;
-  }
-
   return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 
