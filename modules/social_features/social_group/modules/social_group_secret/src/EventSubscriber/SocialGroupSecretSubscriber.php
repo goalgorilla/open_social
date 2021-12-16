@@ -57,7 +57,7 @@ class SocialGroupSecretSubscriber extends HttpExceptionSubscriberBase {
     // Show 404 page instead of 403 page for secret groups.
     if ($group instanceof GroupInterface && $group->bundle() === 'secret_group') {
       // Change the exception to show as 404 instead of 403.
-      $event->setException(new NotFoundHttpException());
+      $event->setThrowable(new NotFoundHttpException());
     }
   }
 
