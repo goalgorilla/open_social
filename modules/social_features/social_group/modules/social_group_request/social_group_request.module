@@ -7,7 +7,6 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Link;
@@ -368,12 +367,15 @@ function social_group_request_preprocess_page_title(&$variables) {
 }
 
 /**
- * Allowed join method values.
+ * Implements hook_social_group_join_methods().
  */
-function social_group_request_allowed_join_method_values(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
-  $allowed_values = $definition->getSetting('allowed_values');
-  $allowed_values['request'] = t('Request to join');
-  return $allowed_values;
+function social_group_request_social_group_join_methods(): array {
+  return [
+    'request' => [
+      'title' => t('Request to join'),
+      'weight' => 15,
+    ],
+  ];
 }
 
 /**

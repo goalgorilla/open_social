@@ -170,6 +170,32 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
 }
 
 /**
+ * Define join methods.
+ *
+ * @return array
+ *   An associative array of join method definitions. The keys are the
+ *   identifiers. The values are associative arrays that should contain the
+ *   following elements:
+ *   - title: The human-readable name of the join method.
+ *   - weight: Integer weight used for sorting join methods.
+ *
+ * @see _social_group_allowed_values_callback()
+ * @ingroup social_group_api
+ */
+function hook_social_group_join_methods() {
+  return [
+    'direct' => [
+      'title' => t('Open to join'),
+      'weight' => 10,
+    ],
+    'added' => [
+      'title' => t('Invite only'),
+      'weight' => 20,
+    ],
+  ];
+}
+
+/**
  * Provide a description for a given key from the content visibility #options.
  *
  * @param string $description
