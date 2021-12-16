@@ -4,7 +4,7 @@ namespace Drupal\social_embed\Plugin\Filter;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\UrlHelper;
-use Drupal\Component\Uuid\Php;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\filter\FilterProcessResult;
@@ -29,9 +29,9 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
   /**
    * Uuid services.
    *
-   * @var \Drupal\Component\Uuid\Php
+   * @var \Drupal\Component\Uuid\UuidInterface
    */
-  protected Php $uuid;
+  protected UuidInterface $uuid;
 
   /**
    * The config factory services.
@@ -65,7 +65,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
    *   The plugin implementation definition.
    * @param \Drupal\url_embed\UrlEmbedInterface $url_embed
    *   The URL embed service.
-   * @param \Drupal\Component\Uuid\Php $uuid
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid
    *   The uuid services.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The config factory services.
@@ -79,7 +79,7 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
     $plugin_id,
     $plugin_definition,
     UrlEmbedInterface $url_embed,
-    Php $uuid,
+    UuidInterface $uuid,
     ConfigFactory $config_factory,
     SocialEmbedHelper $embed_helper,
     AccountProxyInterface $current_user
