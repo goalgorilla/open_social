@@ -170,26 +170,61 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
 }
 
 /**
+ * Define fields for selecting the join method.
+ *
+ * @return array
+ *   An associative array of join method definitions. The keys are strings that
+ *   should contain the following elements:
+ *   - entity_type_id: The entity type ID.
+ *   - bundle: (optional) The bundle.
+ *   - field: The field.
+ *
+ * @see social_group_preprocess_fieldset()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_join_method() {
+  return [
+    'entity_type_id' => 'group',
+    'bundle' => 'flexible_group',
+    'field' => 'field_group_allowed_join_method',
+  ];
+}
+
+/**
  * Define join methods.
  *
  * @return array
  *   An associative array of join method definitions. The keys are the
  *   identifiers. The values are associative arrays that should contain the
  *   following elements:
- *   - title: The human-readable name of the join method.
+ *   - title: The human-readable name of the join method. If this should be
+ *     translated, create a \Drupal\Core\StringTranslation\TranslatableMarkup
+ *     object.
+ *   - description: The description of the join method. The "@entity_type_id"
+ *     placeholder will be replaced automatically. If this should be translated,
+ *     create a \Drupal\Core\StringTranslation\TranslatableMarkup object.
+ *   - icon: The join method unique icon.
  *   - weight: Integer weight used for sorting join methods.
  *
  * @see _social_group_allowed_values_callback()
+ * @see social_group_allowed_join_method_description()
+ *
  * @ingroup social_group_api
  */
 function hook_social_group_join_methods() {
   return [
     'direct' => [
       'title' => t('Open to join'),
+      'description' => t('users can join this @entity_type_id without approval.'),
+      'icon' => 'join_open',
       'weight' => 10,
     ],
     'added' => [
       'title' => t('Invite only'),
+      'description' => t('users can only join this @entity_type_id if they are
+added/invited by @entity_type_id managers.'),
+      'icon' => 'invite',
       'weight' => 20,
     ],
   ];

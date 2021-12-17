@@ -686,25 +686,32 @@ function social_group_social_group_join_methods(): array {
   return [
     'direct' => [
       'title' => t('Open to join'),
+      'description' => t('users can join this @entity_type_id without approval.'),
+      'icon' => 'join_open',
       'weight' => 10,
     ],
     'added' => [
       'title' => t('Invite only'),
+      'description' => t('users can only join this @entity_type_id if they are
+added/invited by @entity_type_id managers.'),
+      'icon' => 'invite',
       'weight' => 20,
     ],
   ];
 }
 
 /**
- * Returns a description array for the field_group_allowed_join_method options.
+ * Returns a description for the field_group_allowed_join_method options.
  *
  * @param string $key
  *   The join method key.
- *
- * @return string
- *   The render array containing the description.
+ * @param string $entity_type_id
+ *   (optional) The entity type ID. Defaults to 'group'.
  */
-function social_group_allowed_join_method_description($key) {
+function social_group_allowed_join_method_description(
+  string $key,
+  string $entity_type_id = 'group'
+): string {
   $description = '';
 
   // We need it to be specified otherwise we can't build the markup.
@@ -712,37 +719,62 @@ function social_group_allowed_join_method_description($key) {
     return $description;
   }
 
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'direct':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_open"></use></svg></strong>';
-      $description .= '<strong>' . t('Open to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can join this group without approval.')->render();
-      $description .= '</p>';
-      break;
+  $hook = 'social_group_join_methods';
 
-    case 'request':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_close"></use></svg></strong>';
-      $description .= '<strong>' . t('Request to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'added':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-invite"></use></svg></strong>';
-      $description .= '<strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
+  if (!($modules = \Drupal::moduleHandler()->getImplementations($hook))) {
+    return $description;
   }
+
+  $found = FALSE;
+
+  foreach ($modules as $module) {
+    /** @var callable $function */
+    $function = $module . '_' . $hook;
+
+    foreach ($function() as $id => $item) {
+      if ($id === $key) {
+        $found = TRUE;
+        break 2;
+      }
+    }
+  }
+
+  if (!$found || !isset($item)) {
+    return $description;
+  }
+
+  /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $text */
+  $text = $item['description'];
+
+  $definition = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+
+  if ($definition === NULL) {
+    return $description;
+  }
+
+  // @codingStandardsIgnoreStart
+  $text = t(
+    $text->getUntranslatedString(),
+    $text->getArguments() + [
+      '@entity_type_id' => $definition->getSingularLabel(),
+    ],
+  );
+  // @codingStandardsIgnoreEnd
+
+  // Add explanatory descriptive text after the icon.
+  $description = '<p>';
+  $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-' . $item['icon'] . '"></use></svg></strong>';
+  $description .= '<strong>' . $item['title']->render() . '</strong>';
+  $description .= ' - ' . $text->render();
+  $description .= '</p>';
 
   // Allow modules to provide their own markup for a given key in the
   // join method #options array.
-  \Drupal::moduleHandler()
-    ->alter('social_group_allowed_join_method_description', $key, $description);
+  \Drupal::moduleHandler()->alter(
+    'social_group_allowed_join_method_description',
+    $key,
+    $description,
+  );
 
   return $description;
 }
@@ -2744,23 +2776,92 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
 }
 
 /**
- * Implements template_preprocess_form_element().
+ * Implements hook_preprocess_HOOK().
  */
-function social_group_preprocess_fieldset(&$variables) {
+function social_group_preprocess_fieldset(array &$variables): void {
   // Make sure our flexible group visibility field renders a tooltip, since
   // this field is rendered as fieldset with legend and radios as children
   // we need to do it in this preprocess.
   $element = $variables['element'];
-  if (!empty($element['#field_name']) && $element['#field_name'] === 'field_content_visibility') {
+
+  if (empty($element['#field_name'])) {
+    return;
+  }
+
+  if ($element['#field_name'] === 'field_content_visibility') {
     $description = '';
-    foreach ($element['#options'] as $key => $label) {
+
+    /** @var string $key */
+    foreach (array_keys($element['#options']) as $key) {
       $description .= social_group_allowed_visibility_description($key);
     }
 
     // Render a specific tooltip based on a field name and description.
     // This is done in the fieldset, next to the <legend>.
-    $variables['popover'] = social_group_render_tooltip('field_content_visibility', t('Visibility'), $description);
+    $variables['popover'] = social_group_render_tooltip(
+      'field_content_visibility',
+      t('Visibility'),
+      $description,
+    );
+
+    return;
   }
+
+  $parameters = \Drupal::routeMatch()->getParameters();
+
+  if (!$parameters->has('entity_type_id')) {
+    return;
+  }
+
+  $entity_type_id = $parameters->get('entity_type_id');
+  $hook = 'social_group_join_method';
+  $found = FALSE;
+
+  if ($parameters->has('bundle_parameter')) {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $type */
+    $type = $parameters->get($parameters->get('bundle_parameter'));
+
+    $bundle = $type->id();
+  }
+
+  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+    /** @var callable $function */
+    $function = $module . '_' . $hook;
+
+    $data = $function();
+
+    if (
+      $data['entity_type_id'] === $entity_type_id &&
+      isset($bundle) === isset($data['bundle']) &&
+      (!isset($bundle) || $data['bundle'] === $bundle) &&
+      $data['field'] === $element['#field_name']
+    ) {
+      $found = TRUE;
+      break;
+    }
+  }
+
+  if (!$found || !isset($data)) {
+    return;
+  }
+
+  $description = '';
+
+  /** @var string $key */
+  foreach (array_keys($element['#options']) as $key) {
+    $description .= social_group_allowed_join_method_description(
+      $key,
+      $data['entity_type_id'],
+    );
+  }
+
+  // Render a specific tooltip based on a field name and description.
+  // This is done in the fieldset, next to the <legend>.
+  $variables['popover'] = social_group_render_tooltip(
+    $data['field'],
+    t('Join methods'),
+    $description,
+  );
 }
 
 /**
