@@ -14,6 +14,7 @@ use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -661,7 +662,10 @@ function social_group_group_visibility_description($key) {
  * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
  *   (optional) The entity object.
  */
-function _social_group_allowed_values_callback(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL): array {
+function _social_group_allowed_values_callback(
+  FieldStorageDefinitionInterface $definition,
+  FieldableEntityInterface $entity = NULL
+): array {
   $values = [];
   $hook = 'social_group_join_methods';
 
@@ -913,6 +917,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
+  $form_object = $form_state->getFormObject();
+
+  if ($form_object instanceof EntityFormInterface) {
+    $entity = $form_object->getEntity();
+  }
+
   // Check if form is group content create form.
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     // Add custom validate handler to check if groups field values in node.
@@ -925,17 +935,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // We don't want to override the form::save in group.
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
     }
-    else {
+    elseif (isset($entity)) {
       // If node don't belong to any group as a group content plugin
       // we don't need group visibility field.
-      if (method_exists($form_state->getFormObject(), 'getEntity')) {
-        /** @var \Drupal\Core\Entity\EntityInterface $node */
-        $node = $form_state->getFormObject()->getEntity();
-        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
-        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
-        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $node->bundle())) {
-          unset($form['groups']);
-        }
+      /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+      $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+
+      if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
+        unset($form['groups']);
       }
     }
   }
@@ -1009,33 +1016,78 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  $group_types = ['flexible_group'];
-  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+  if (
+    isset($entity) &&
+    $form_object instanceof EntityFormInterface &&
+    in_array($form_object->getOperation(), ['default', 'add', 'edit'])
+  ) {
+    $hook = 'social_group_join_method';
+    $found = FALSE;
 
-  $group_form_ids = [];
-  foreach ($group_types as $group_type) {
-    $group_form_ids[] = 'group_' . $group_type . '_edit_form';
-    $group_form_ids[] = 'group_' . $group_type . '_add_form';
-  }
+    foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+      /** @var callable $function */
+      $function = $module . '_' . $hook;
 
-  if (isset($form['field_group_allowed_join_method']) && in_array($form_id, $group_form_ids)) {
-    $join_method_default_value = 'added';
-    // Ensure we have a better descriptive label.
-    if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite only');
+      $data = $function();
+
+      if (
+        $data['entity_type_id'] === $entity->getEntityTypeId() &&
+        (
+          !isset($data['bundle']) &&
+          $entity->getEntityType()->getBundleEntityType() === NULL ||
+          $data['bundle'] === $entity->bundle()
+        ) &&
+        isset($form[$data['field']])
+      ) {
+        $found = TRUE;
+        break;
+      }
     }
-    if (array_key_exists('direct', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join');
+
+    if ($found && isset($data)) {
+      $field = &$form[$data['field']]['widget'];
+
+      if ($multiple = $field['#type'] === 'checkboxes') {
+        $field['#type'] = 'radios';
+      }
+
+      if ($entity->isNew()) {
+        $hook = 'social_group_join_methods';
+        $join_methods = [];
+
+        foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+          /** @var callable $function */
+          $function = $module . '_' . $hook;
+
+          foreach ($function() as $id => $join_method) {
+            $join_methods[] = [
+              'id' => $id,
+              'weight' => $join_method['weight'],
+            ];
+          }
+        }
+
+        usort($join_methods, [SortArray::class, 'sortByWeightElement']);
+
+        $join_methods = array_column($join_methods, 'id');
+        $join_method = array_pop($join_methods);
+        $join_methods = array_reverse($join_methods);
+
+        if ($multiple) {
+          foreach ($join_methods as $current_join_method) {
+            if (in_array($current_join_method, $field['#default_value'])) {
+              $default_join_method = $current_join_method;
+              break;
+            }
+          }
+
+          $field['#default_value'] = $default_join_method ?? $join_method;
+        }
+        else {
+          $field['#default_value'] = $join_methods[0];
+        }
+      }
     }
-    // If directly exists it's becoming the default.
-    if (in_array('direct', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
-      $join_method_default_value = 'direct';
-    }
-    elseif (in_array('request', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
-      $join_method_default_value = 'request';
-    }
-    $form['field_group_allowed_join_method']['widget']['#type'] = 'radios';
-    $form['field_group_allowed_join_method']['widget']['#default_value'] = $join_method_default_value;
   }
 
   // Exposed Filter block on the all-groups overview.
@@ -2770,8 +2822,6 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
     ],
   ];
 
-  $variables['popover'] = $build;
-
   return $build;
 }
 
@@ -2809,20 +2859,39 @@ function social_group_preprocess_fieldset(array &$variables): void {
 
   $parameters = \Drupal::routeMatch()->getParameters();
 
-  if (!$parameters->has('entity_type_id')) {
-    return;
+  if ($parameters->has('entity_type_id')) {
+    $entity_type_id = $parameters->get('entity_type_id');
+
+    if ($parameters->has('bundle_parameter')) {
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $type */
+      $type = $parameters->get($parameters->get('bundle_parameter'));
+
+      $bundle = $type->id();
+    }
+  }
+  else {
+    $found = FALSE;
+
+    foreach ($parameters->all() as $parameter) {
+      if ($parameter instanceof EntityInterface) {
+        $entity_type_id = $parameter->getEntityTypeId();
+
+        if ($parameter->getEntityType()->getBundleEntityType() !== NULL) {
+          $bundle = $parameter->bundle();
+        }
+
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if (!$found || !isset($entity_type_id)) {
+      return;
+    }
   }
 
-  $entity_type_id = $parameters->get('entity_type_id');
   $hook = 'social_group_join_method';
   $found = FALSE;
-
-  if ($parameters->has('bundle_parameter')) {
-    /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $type */
-    $type = $parameters->get($parameters->get('bundle_parameter'));
-
-    $bundle = $type->id();
-  }
 
   foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
     /** @var callable $function */
@@ -2851,7 +2920,7 @@ function social_group_preprocess_fieldset(array &$variables): void {
   foreach (array_keys($element['#options']) as $key) {
     $description .= social_group_allowed_join_method_description(
       $key,
-      $data['entity_type_id'],
+      $entity_type_id,
     );
   }
 

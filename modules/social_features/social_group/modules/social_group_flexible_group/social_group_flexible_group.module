@@ -78,20 +78,6 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
     $form['#id'] === 'views-exposed-form-search-groups-page') {
-
-    // Update filter values so it matches the join methods in the popover.
-    if (!empty($form['field_group_allowed_join_method'])) {
-      if (array_key_exists('added', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['added'] = t('Invite only');
-      }
-      if (array_key_exists('direct', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['direct'] = t('Open to join');
-      }
-      if (array_key_exists('request', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['request'] = t('Request to join');
-      }
-    }
-
     // Add states so this is only available when flexible groups is checked.
     // Could be hidden when only flexible groups is enabled, so check that.
     // @todo remove this once everything is migrated to flexible groups.
@@ -130,18 +116,6 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
     }
     // Change the allowed join method on flexible groups.
     if (!empty($form['field_group_allowed_join_method'])) {
-      // First we reorder the elmements, if invite only is part of it
-      // we always want to show this last.
-      if (!empty($form['field_group_allowed_join_method']['widget']['#options'])) {
-        if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
-          $option = $form['field_group_allowed_join_method']['widget']['#options']['added'];
-          // Unset it.
-          unset($form['field_group_allowed_join_method']['widget']['#options']['added']);
-          // Add it at the end.
-          $form['field_group_allowed_join_method']['widget']['#options']['added'] = $option;
-        }
-      }
-
       if (!empty($form['field_group_allowed_join_method']['widget']['#title'])) {
         $form['field_group_allowed_join_method']['widget']['#title'] = t('Join methods');
       }
