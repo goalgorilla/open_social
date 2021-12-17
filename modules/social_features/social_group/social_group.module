@@ -13,11 +13,13 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -65,6 +67,12 @@ function social_group_theme() {
     ],
     'flag__mute_group_notifications' => [
       'base hook' => 'flag',
+    ],
+    'join' => [
+      'variables' => [
+        'primary' => NULL,
+        'secondary' => NULL,
+      ],
     ],
   ];
 }
@@ -212,6 +220,79 @@ function _social_group_get_group_labels() {
     $group,
   ];
 
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function social_group_preprocess(&$variables, $hook): void {
+  if (
+    !isset($variables['elements']['#view_mode']) ||
+    $variables['elements']['#view_mode'] !== 'statistic' ||
+    !isset($variables['elements']['#' . $hook])
+  ) {
+    return;
+  }
+
+  $entity = $variables['elements']['#' . $hook];
+
+  if (
+    !$entity instanceof ContentEntityInterface ||
+    !method_exists($entity, 'getMember')
+  ) {
+    return;
+  }
+
+  $hook = 'social_group_join_method';
+  $entity_type = $entity->getEntityType();
+  $entity_type_id = $entity->getEntityTypeId();
+  $found = FALSE;
+
+  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+    /** @var callable $function */
+    $function = $module . '_' . $hook;
+
+    $data = $function();
+
+    if (
+      $data['entity_type_id'] === $entity_type_id &&
+      (
+        !isset($data['bundle']) &&
+        $entity_type->getBundleEntityType() === NULL ||
+        $data['bundle'] === $entity->bundle()
+      )
+    ) {
+      $found = TRUE;
+
+      break;
+    }
+  }
+
+  if (!$found || !isset($data)) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Session\AccountProxyInterface $account */
+  $account = $variables['user'];
+
+  /** @var \Drupal\user\UserInterface $account */
+  $account = \Drupal::entityTypeManager()->getStorage('user')
+    ->load($account->id());
+
+  if ($entity->getMember($account)) {
+    $variables['join'] = [
+      '#theme' => 'join',
+      '#primary' => t('Joined', [], ['context' => 'Is a member']),
+      '#secondary' => Link::createFromRoute(
+        t(
+          'Leave @entity_type_id',
+          ['@entity_type_id' => $entity_type->getSingularLabel()],
+        ),
+        'entity.' . $entity_type_id . '.leave',
+        [$entity_type_id => $entity->id()],
+      )->toRenderable(),
+    ];
+  }
 }
 
 /**
