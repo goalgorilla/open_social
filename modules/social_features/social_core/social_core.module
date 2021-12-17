@@ -7,7 +7,10 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,6 +25,8 @@ use Drupal\group\Entity\Group;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
+use Drupal\social_core\Event\EntityPublishedEvent;
+use Drupal\social_core\Event\SocialCoreEventsInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -1117,6 +1122,30 @@ function social_core_preprocess_status_messages(&$variables) {
       // Unset them finally.
       if (strpos((string) $message, 'The crop') !== FALSE) {
         unset($variables['message_list']['status'][$delta]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_core_entity_update(EntityInterface $entity): void {
+  // Listen if entity become published.
+  if ($entity instanceof EntityPublishedInterface) {
+    // Check if entity change state from "unpublished" to "published".
+    if ($entity->isNew()) {
+      if ($entity->isPublished()) {
+        \Drupal::service('event_dispatcher')->dispatch(SocialCoreEventsInterface::PUBLISHED, new EntityPublishedEvent($entity));
+      }
+    }
+    else {
+      /** @var \Drupal\Core\Entity\ContentEntityBase $original */
+      $original = $entity->original ?? NULL;
+      if ($original instanceof ContentEntityInterface &&
+        (!$original->isPublished() && $entity->isPublished())
+      ) {
+        \Drupal::service('event_dispatcher')->dispatch(SocialCoreEventsInterface::PUBLISHED, new EntityPublishedEvent($entity));
       }
     }
   }
