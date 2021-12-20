@@ -8,43 +8,12 @@
 # ticket information (for current user and all users?)
 # information about all enrolees
 
-enum SCOPE_TARGET {
-  SCOPE_USER
-  SCOPE_BOT
-}
-directive @scope(id: String!, target: [SCOPE_TARGET]) on OBJECT | FIELD_DEFINITION
-
-extend type Mutation {
-  createEvent(input: CreateEventInput) @scope(id: "event:write", target: [SCOPE_USER, SCOPE_BOT]) : CreateEventPayload
-  updateEvent(input: UpdateEventInput) @scope(id: "event:write", target: [SCOPE_USER, SCOPE_BOT]) : UpdateEventPayload
-  deleteEvent(input: DeleteEventInput) @scope(id: "event:write", target: [SCOPE_USER, SCOPE_BOT]) : DeleteEventPayload
-
-  viewerEnrollInEvent(input: ViewerEnrollInEventInput) @scope(id: "event:enroll", target: [SCOPE_USER]) : ViewerEnrollInEventPayload
-  viewerUnenrollInEvent(input: ViewerUnenrollInEventInput) @scope(id: "event:enroll", target: [SCOPE_USER]) : ViewerUnenrollInEventPayload
-
-  # If we do not require any additional scopes then we can accept just an ID and go just by the `comment:write` scope.
-  # However, the fact that that is successful with a random ID gives attackers a way to probe the platform for the existence
-  # of commentable types on the platform. Is that a problem? If so how can we fix it?
-  # With that in mind we should probably make mutations to comment on specific things. Rather than:
-  #  viewerCommentOnCommentable(input: ViewerCommentOnCommentableInput) @scope(id: "comment:write", target: [SCOPE_USER, SCOPE_BOT]) : ViewerCommentOnCommentable
-  # Comment should come first because it can be simplified to `comment:write` which would be easier to explain to a user as
-  # "Allows commenting on any content it can read"
-  viewerCommentOnEvent(input: ...) @scope(id: "comment:event:write", target: [SCOPE_USER, SCOPE_BOT])
-
-  # Choose one of the following?
-  messageEventEnrollees(input: MessageEventEnroleesInput) @scope(id: ["event_enrollments:manage"], target: [SCOPE_USER, SCOPE_BOT]) : MessageEventEnroleesPayload
-  messageEventEnrollees(input: MessageEventEnroleesInput) @scope(id: ["event:enrollees:manage"], target: [SCOPE_USER, SCOPE_BOT]) : MessageEventEnroleesPayload
-
-  # Nice to have for standalone applications, already useful for event managers and site managers though
-  inviteUserToEvent(input: Input, target: [SCOPE_USER]) : Payload
-  enrolleUserToEvent(input: UnenrollUserInEventInput, target: [SCOPE_USER]) : EnrollUserInEventPayload
-  unenrollUserFromEvent(input: UnenrollUserInEventInput, target: [SCOPE_USER]) : UnenrollUserInEventPayload
-}
+directive scope(id: String!)
 
 """
 A type of content on Open Social which allows users to organize, discuss topics, and join activities.
 """
-type Event implements Node & Commentable @scope(id: "event:read", target: [SCOPE_USER, SCOPE_BOT]) {
+type Event implements Node & Commentable @scope(id: "event:read") {
 
   """
   The unique identifier for the event.

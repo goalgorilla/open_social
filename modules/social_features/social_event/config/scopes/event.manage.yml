@@ -1,0 +1,9 @@
+id: event:manage
+description:
+  user: Allows an application to manage events on your behalf.
+  bot: Allows the application to manage events on the platform.
+# This scope may not be used in the schema because it is an umbrella scope for
+# other scopes such as "event:enroll" and "event:write". By disallowing this in
+# the schema we ensure that in our schema design we always provide applications
+# scopes to use that are of lower permissions.
+usable_in_schema: false
