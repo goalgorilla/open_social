@@ -19,8 +19,8 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -279,20 +279,37 @@ function social_group_preprocess(array &$variables, string $hook): void {
   $account = \Drupal::entityTypeManager()->getStorage('user')
     ->load($account->id());
 
-  if ($entity->getMember($account)) {
+  /** @var \Drupal\social_group\JoinManagerInterface $manager */
+  $manager = \Drupal::service('plugin.manager.join');
+
+  $found = FALSE;
+
+  foreach ($manager->getDefinitions() as $plugin_id => $definition) {
+    if (
+      isset($definition['entityTypeId']) &&
+      $definition['entityTypeId'] !== $entity_type_id
+    ) {
+      continue;
+    }
+
+    /** @var \Drupal\social_group\JoinPluginInterface $plugin */
+    $plugin = $manager->createInstance($plugin_id);
+
+    $items = array_map(function ($item) {
+      return $item instanceof RenderableInterface ? $item->toRenderable() : $item;
+    }, $plugin->actions($entity, $account));
+
+    if ($items) {
+      $found = TRUE;
+      break;
+    }
+  }
+
+  if ($found && isset($items)) {
     $variables['join'] = [
       '#theme' => 'join',
-      '#primary' => t('Joined', [], ['context' => 'Is a member']),
-      '#secondaries' => [
-        Link::createFromRoute(
-          t(
-            'Leave @entity_type_id',
-            ['@entity_type_id' => $entity_type->getSingularLabel()],
-          ),
-          'entity.' . $entity_type_id . '.leave',
-          [$entity_type_id => $entity->id()],
-        )->toRenderable(),
-      ],
+      '#primary' => array_shift($items),
+      '#secondaries' => $items,
     ];
   }
 }
@@ -354,7 +371,7 @@ function social_group_preprocess_group(array &$variables) {
     if ($account->isAuthenticated()) {
       $content = $renderer->render($variables['content']['flag_mute_group_notifications']);
 
-      if ($content) {
+      if ((string) $content) {
         $variables['join']['#secondaries'][] = $content;
       }
     }

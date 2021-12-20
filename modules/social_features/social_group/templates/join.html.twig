@@ -1,8 +1,10 @@
-{% if primary %}
+{% if secondaries %}
   <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-block btn-lg btn-raised dropdown-toggle">{{ primary }}<span class="caret"></span></button>
   <ul class="dropdown-menu dropdown-menu-right">
     {% for secondary in secondaries %}
       <li>{{ secondary }}</li>
     {% endfor %}
   </ul>
+{% else %}
+  {{ primary }}
 {% endif %}
