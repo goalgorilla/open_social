@@ -71,7 +71,7 @@ function social_group_theme() {
     'join' => [
       'variables' => [
         'primary' => NULL,
-        'secondary' => NULL,
+        'secondaries' => NULL,
       ],
     ],
   ];
@@ -225,7 +225,7 @@ function _social_group_get_group_labels() {
 /**
  * Implements hook_preprocess().
  */
-function social_group_preprocess(&$variables, $hook): void {
+function social_group_preprocess(array &$variables, string $hook): void {
   if (
     !isset($variables['elements']['#view_mode']) ||
     $variables['elements']['#view_mode'] !== 'statistic' ||
@@ -283,14 +283,16 @@ function social_group_preprocess(&$variables, $hook): void {
     $variables['join'] = [
       '#theme' => 'join',
       '#primary' => t('Joined', [], ['context' => 'Is a member']),
-      '#secondary' => Link::createFromRoute(
-        t(
-          'Leave @entity_type_id',
-          ['@entity_type_id' => $entity_type->getSingularLabel()],
-        ),
-        'entity.' . $entity_type_id . '.leave',
-        [$entity_type_id => $entity->id()],
-      )->toRenderable(),
+      '#secondaries' => [
+        Link::createFromRoute(
+          t(
+            'Leave @entity_type_id',
+            ['@entity_type_id' => $entity_type->getSingularLabel()],
+          ),
+          'entity.' . $entity_type_id . '.leave',
+          [$entity_type_id => $entity->id()],
+        )->toRenderable(),
+      ],
     ];
   }
 }
@@ -336,20 +338,32 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
   }
 
+  /** @var \Drupal\Core\Render\RendererInterface $renderer */
+  $renderer = \Drupal::service('renderer');
+
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
-  $variables['group_settings_help'] = \Drupal::service('renderer')
-    ->renderPlain($group_settings_help);
+  $variables['group_settings_help'] = $renderer->renderPlain($group_settings_help);
 
   $account = \Drupal::currentUser();
 
+  if (
+    in_array($variables['view_mode'], ['statistic', 'hero']) &&
+    $group->getMember($account)
+  ) {
+    if ($account->isAuthenticated()) {
+      $content = $renderer->render($variables['content']['flag_mute_group_notifications']);
+
+      if ($content) {
+        $variables['join']['#secondaries'][] = $content;
+      }
+    }
+  }
   // Prevent access to mute group notifications if a user is not a group member.
-  if (!in_array($variables['view_mode'], [
-    'statistic',
-    'hero',
-  ]) || !$group->getMember($account)) {
+  else {
     unset($variables['content']['flag_mute_group_notifications']);
   }
+
   // Set joined to true for teaser when current logged in
   // user is member of the group.
   if ($group->getMember($account)) {
