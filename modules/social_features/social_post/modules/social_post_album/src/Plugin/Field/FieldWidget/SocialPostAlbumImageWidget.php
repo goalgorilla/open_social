@@ -89,7 +89,7 @@ class SocialPostAlbumImageWidget extends ImageWidget {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('plugin.manager.element_info'),
+      $container->get('social_post_album.element_info'),
       $container->get('image.factory'),
       $container->get('current_route_match')
     );

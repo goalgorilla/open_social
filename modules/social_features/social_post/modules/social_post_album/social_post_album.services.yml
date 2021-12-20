@@ -1,4 +1,13 @@
 services:
+  social_post_album.element_info:
+    class: Drupal\social_post_album\Service\SocialPostAlbumElementInfoManager
+    arguments:
+      - '@container.namespaces'
+      - '@cache.discovery'
+      - '@cache_tags.invalidator'
+      - '@module_handler'
+      - '@theme.manager'
+
   social_post_album.lazy_renderer:
     class: Drupal\social_post_album\LazyRenderer
     arguments: ['@entity_type.manager']
