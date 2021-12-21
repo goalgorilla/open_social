@@ -16,16 +16,13 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
   use ContextAwarePluginManagerTrait;
 
   /**
-   * The field parents.
-   *
-   * @var array
-   */
-  protected $fieldParents = [];
-
-  /**
    * {@inheritdoc}
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(
+    \Traversable $namespaces,
+    CacheBackendInterface $cache_backend,
+    ModuleHandlerInterface $module_handler
+  ) {
     parent::__construct(
       'Plugin/Join',
       $namespaces,

@@ -6,5 +6,5 @@
     {% endfor %}
   </ul>
 {% else %}
-  {{ primary }}
+  <a{{ primary.attributes.addClass('btn', 'btn-block', 'use-ajax') }}>{{ primary.label }}</a>
 {% endif %}
