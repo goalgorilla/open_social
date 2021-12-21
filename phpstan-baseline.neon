@@ -741,6 +741,11 @@ parameters:
 			path: modules/custom/activity_creator/src/Entity/Activity.php
 
 		-
+			message: "#^Class Drupal\\\\activity_creator\\\\Form\\\\ActivityDeleteForm extends @internal class Drupal\\\\Core\\\\Entity\\\\ContentEntityDeleteForm\\.$#"
+			count: 1
+			path: modules/custom/activity_creator/src/Form/ActivityDeleteForm.php
+
+		-
 			message: "#^Method Drupal\\\\activity_creator\\\\Form\\\\ActivityForm\\:\\:save\\(\\) should return int but return statement is missing\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Form/ActivityForm.php
@@ -3391,9 +3396,9 @@ parameters:
 			path: modules/custom/social_font/src/FontHtmlRouteProvider.php
 
 		-
-			message: "#^Parameter \\#1 \\$text of static method Drupal\\\\Core\\\\Link\\:\\:fromTextAndUrl\\(\\) expects string, string\\|null given\\.$#"
+			message: "#^Class Drupal\\\\social_font\\\\Form\\\\FontDeleteForm extends @internal class Drupal\\\\Core\\\\Entity\\\\ContentEntityDeleteForm\\.$#"
 			count: 1
-			path: modules/custom/social_font/src/FontListBuilder.php
+			path: modules/custom/social_font/src/Form/FontDeleteForm.php
 
 		-
 			message: "#^Method Drupal\\\\social_font\\\\Form\\\\FontForm\\:\\:save\\(\\) should return int but return statement is missing\\.$#"
@@ -8061,11 +8066,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/SocialEventAnEnrollEnrolmentsExportOverrides.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\File\\\\FileSystem\\:\\:uriScheme\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
-
-		-
 			message: "#^Function social_event_enrolments_export_file_download\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
@@ -10296,6 +10296,11 @@ parameters:
 			path: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php
 
 		-
+			message: "#^Class Drupal\\\\social_event\\\\Form\\\\EventEnrollmentDeleteForm extends @internal class Drupal\\\\Core\\\\Entity\\\\ContentEntityDeleteForm\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Form/EventEnrollmentDeleteForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_event\\\\Form\\\\EventEnrollmentForm\\:\\:save\\(\\) should return int but return statement is missing\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EventEnrollmentForm.php
@@ -11999,11 +12004,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_group_invite\\\\SocialGroupInviteServiceProvider\\:\\:alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/SocialGroupInviteServiceProvider.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\File\\\\FileSystem\\:\\:uriScheme\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.module
 
 		-
 			message: "#^Function social_group_members_export_file_download\\(\\) has no return type specified\\.$#"
@@ -14986,6 +14986,11 @@ parameters:
 			path: modules/social_features/social_node/src/Service/SocialNodeMessengerInterface.php
 
 		-
+			message: "#^Class Drupal\\\\social_node\\\\SocialNodeForm extends @internal class Drupal\\\\node\\\\NodeForm\\.$#"
+			count: 1
+			path: modules/social_features/social_node/src/SocialNodeForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_node\\\\SocialNodeForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_node/src/SocialNodeForm.php
@@ -15324,6 +15329,11 @@ parameters:
 			message: "#^Method Drupal\\\\social_post_album\\\\Routing\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/modules/social_post_album/src/Routing/RouteSubscriber.php
+
+		-
+			message: "#^Plugin definitions cannot be altered\\.$#"
+			count: 1
+			path: modules/social_features/social_post/modules/social_post_album/src/Service/SocialPostAlbumElementInfoManager.php
 
 		-
 			message: "#^Method Drupal\\\\social_post_album\\\\SocialPostPhotoAlbumConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -15704,6 +15714,11 @@ parameters:
 			message: "#^Variable \\$visibility might not be defined\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Entity/Post.php
+
+		-
+			message: "#^Class Drupal\\\\social_post\\\\Form\\\\PostDeleteForm extends @internal class Drupal\\\\Core\\\\Entity\\\\ContentEntityDeleteForm\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/Form/PostDeleteForm.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
@@ -17292,11 +17307,6 @@ parameters:
 
 		-
 			message: "#^Function _social_profile_create_menu_links\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.install
-
-		-
-			message: "#^Function _social_profile_field_definitions_update not found\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
 
@@ -19096,16 +19106,6 @@ parameters:
 			path: modules/social_features/social_user/social_user.module
 
 		-
-			message: "#^Function social_user_admin_people_overview_validate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
-			message: "#^Function social_user_admin_people_overview_validate\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
 			message: "#^Function social_user_block_view_search_content_block_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.module
@@ -19416,6 +19416,11 @@ parameters:
 			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
 
 		-
+			message: "#^Class Drupal\\\\social_user\\\\Form\\\\SocialUserLoginForm extends @internal class Drupal\\\\user\\\\Form\\\\UserLoginForm\\.$#"
+			count: 1
+			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserLoginForm\\:\\:setGeneralErrorMessage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
@@ -19472,6 +19477,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:isActive\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
+
+		-
+			message: "#^Class Drupal\\\\social_user\\\\Form\\\\SocialUserPasswordForm extends @internal class Drupal\\\\user\\\\Form\\\\UserPasswordForm\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
 
@@ -19769,11 +19779,6 @@ parameters:
 			message: "#^Function social_user_export_update_8001\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.install
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\File\\\\FileSystem\\:\\:uriScheme\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/social_user_export.module
 
 		-
 			message: "#^Function social_user_export_file_download\\(\\) has no return type specified\\.$#"
