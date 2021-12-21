@@ -5,14 +5,15 @@
  * The Social User Export module.
  */
 
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\file\Entity\File;
 
 /**
  * Implements hook_file_download().
  */
 function social_user_export_file_download($uri) {
-  $scheme = \Drupal::service('file_system')->uriScheme($uri);
-  $target = \Drupal::service('stream_wrapper_manager')->getTarget($uri);
+  $scheme = StreamWrapperManager::getScheme($uri);
+  $target = StreamWrapperManager::getTarget($uri);
 
   // Get the file to see who the owner is.
   $query = \Drupal::entityQuery('file');
