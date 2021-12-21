@@ -5,7 +5,7 @@ namespace Drupal\social_embed\Service;
 use Drupal\Core\Render\Renderer;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\filter\FilterProcessResult;
-use Drupal\Component\Uuid\Php;
+use Drupal\Component\Uuid\UuidInterface;
 
 /**
  * Service class for Social Embed.
@@ -15,9 +15,9 @@ class SocialEmbedHelper {
   /**
    * Uuid generator.
    *
-   * @var \Drupal\Component\Uuid\Php
+   * @var \Drupal\Component\Uuid\UuidInterface
    */
-  protected Php $uuidGenerator;
+  protected UuidInterface $uuidGenerator;
 
   /**
    * Current user object.
@@ -36,14 +36,14 @@ class SocialEmbedHelper {
   /**
    * Constructor for SocialEmbedHelper.
    *
-   * @param \Drupal\Component\Uuid\Php $uuid_generator
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid_generator
    *   The UUID generator.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   Current user object.
    * @param \Drupal\Core\Render\Renderer $renderer
    *   Renderer services.
    */
-  public function __construct(Php $uuid_generator, AccountProxyInterface $current_user, Renderer $renderer) {
+  public function __construct(UuidInterface $uuid_generator, AccountProxyInterface $current_user, Renderer $renderer) {
     $this->uuidGenerator = $uuid_generator;
     $this->currentUser = $current_user;
     $this->renderer = $renderer;

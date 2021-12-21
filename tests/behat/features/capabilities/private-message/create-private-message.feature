@@ -19,8 +19,7 @@
     And I fill in "Member(s)" with "PM User" and select "PM User Two"
     And I fill in "Message" with "Hi PM User Two, I heard you like pineapple on your pizza..."
     And I press "Send"
-    Then I should see the following success messages:
-      | Your message has been created. |
+    Then I should see "Your message has been created."
 
     # I want to send a new message from a user`s profile teaser
     When I am on "/all-members"
@@ -29,8 +28,7 @@
     Then I should see "PM User Two"
     And I fill in "Message" with "Hi PM User Two, I heard you like salami on your pizza..."
     And I press "Send"
-    Then I should see the following success messages:
-      | Your message has been created. |
+    Then I should see "Your message has been created."
 
     # I want to send a new message from a user`s profile
     And the cache has been cleared
@@ -43,8 +41,7 @@
     And I should see "You"
     When I fill in "Message" with "Hi PM User Two, are we going to eat some pizza tomorrow?"
     And I press "Send"
-    Then I should see the following success messages:
-      | Your message has been created. |
+    Then I should see "Your message has been created."
 
     # I want to see my new message and reply.
     Given I am logged in as "PM User Two"
@@ -56,8 +53,7 @@
     Then I should see "Hi PM User Two, are we going to eat some pizza tomorrow?"
     When I fill in "Message" with "Hey PM User One, ...That's fine. I will order!"
     And I press "Send"
-    Then I should see the following success messages:
-      | Your message has been created. |
+    Then I should see "Your message has been created."
 
     # Delete the thread.
     When I click "View thread"
@@ -65,8 +61,7 @@
     Then I click "Delete thread"
     And I should see "This action cannot be undone."
     And I press "Delete thread"
-    Then I should see the following success messages:
-      | Your message has been deleted. |
+    Then I should see "Your message has been deleted."
     And I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
 
     # LU should not be able to create messages.
@@ -93,8 +88,7 @@
     And I fill next in "Member(s)" with "PM User" and select "PM User Two"
     And I fill in "Message" with "Hi, let's discuss what pizza's we're gonna order!"
     Then I press "Send"
-    Then I should see the following success messages:
-      | Your message has been created. |
+    Then I should see "Your message has been created."
 
     # Check that all the users in the thread received the message.
     When I am logged in as "PM User One"

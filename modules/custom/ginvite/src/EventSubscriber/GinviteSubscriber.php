@@ -7,7 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitationLoader;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -60,10 +60,10 @@ class GinviteSubscriber implements EventSubscriberInterface {
   /**
    * Notify user about Pending invitations.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
-   *   The GetResponseEvent to process.
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   The RequestEvent to process.
    */
-  public function notifyAboutPendingInvitations(GetResponseEvent $event) {
+  public function notifyAboutPendingInvitations(RequestEvent $event) {
     if ($this->groupInvitationLoader->loadByUser()) {
       $replace = ['@url' => Url::fromRoute('view.my_invitations.page_1', ['user' => $this->currentUser->id()])->toString()];
       $message = $this->t('You have pending group invitations. <a href="@url">Visit your profile</a> to see them.', $replace);

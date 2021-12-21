@@ -23,6 +23,7 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\GroupMembership;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
@@ -1178,14 +1179,16 @@ function _social_group_grant_admin_role($uid, $gid) {
 
     // Check what roles are there.
     $roles = [];
-    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
-      $roles[] = $group_role_ref->target_id;
-    }
+    if ($membership instanceof GroupMembership) {
+      foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+        $roles[] = $group_role_ref->target_id;
+      }
 
-    // No admin? Add it.
-    if (!in_array($admin_role, $roles)) {
-      $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
-      $membership->getGroupContent()->save();
+      // No admin? Add it.
+      if (!in_array($admin_role, $roles)) {
+        $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
+        $membership->getGroupContent()->save();
+      }
     }
   }
 }
