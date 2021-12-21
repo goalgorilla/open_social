@@ -7,7 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Drupal\mentions\Plugin\Filter\MentionsFilter;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
@@ -111,7 +111,7 @@ function mentions_entity_delete(EntityInterface $entity) {
   $storage_handler->delete($entities);
 
   $event_dispatcher = \Drupal::service('event_dispatcher');
-  $event_dispatcher->dispatch('mentions.delete', new Event());
+  $event_dispatcher->dispatch(new Event(), 'mentions.delete');
 }
 
 /**
@@ -165,7 +165,7 @@ function mentions_crud_update($type, $mentions, $id, $author) {
     $mention = $mentions_storage->create($mention_attributes);
     $mention->save();
 
-    $event_dispatcher->dispatch('mentions.insert', new Event());
+    $event_dispatcher->dispatch(new Event(), 'mentions.insert');
   }
 
   // Update existing mentions.
@@ -173,13 +173,13 @@ function mentions_crud_update($type, $mentions, $id, $author) {
     $entity = $mentions_storage->load($old_mids[$uid]);
     $entity->set('created', \Drupal::time()->getRequestTime());
     $entity->save();
-    $event_dispatcher->dispatch('mentions.update', new Event());
+    $event_dispatcher->dispatch(new Event(), 'mentions.update');
   }
 
   // Delete old mentions.
   foreach (array_diff($old_users, $new_users) as $uid) {
     $entity = $mentions_storage->load($old_mids[$uid]);
     $entity->delete();
-    $event_dispatcher->dispatch('mentions.delete', new Event());
+    $event_dispatcher->dispatch(new Event(), 'mentions.delete');
   }
 }

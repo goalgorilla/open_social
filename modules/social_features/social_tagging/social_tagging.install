@@ -23,9 +23,6 @@ function social_tagging_install() {
     ]
   );
 
-  // Update field definitions.
-  _social_tagging_field_definitions_update();
-
   // If the search module is enabled trigger updating of the indexes affected
   // by tagging.
   try {
@@ -51,8 +48,6 @@ function social_tagging_update_8001() {
  * Toggle group index.
  */
 function social_tagging_update_8002() {
-  // Update field definitions.
-  _social_tagging_field_definitions_update();
   // Toggle the index groups.
   try {
     // If the search module is enabled we need to update the group index.
@@ -63,15 +58,6 @@ function social_tagging_update_8002() {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
-}
-
-/**
- * Update the field definitions on install, or in an update hook.
- */
-function _social_tagging_field_definitions_update() {
-  // Create field storage for the 'Highlight' base field.
-  \Drupal::entityTypeManager()->clearCachedDefinitions();
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
 }
 
 /**
@@ -90,7 +76,7 @@ function social_tagging_update_8003() {
     ])
     ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
     ->setDisplayOptions('view', [
-      'type' => 'hidden',
+      'region' => 'hidden',
     ])
     ->setDisplayOptions('form', [
       'type' => 'options_select',
@@ -108,8 +94,6 @@ function social_tagging_update_8003() {
  * Toggle user index.
  */
 function social_tagging_update_8004() {
-  // Update field definitions.
-  _social_tagging_field_definitions_update();
   // Toggle the index users.
   try {
     // If the search module is enabled we need to update the group index.

@@ -352,7 +352,7 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
       ])
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', [
-        'type' => 'hidden',
+        'region' => 'hidden',
       ])
       ->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -563,10 +563,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  *   A machine name so it can be used pogrammatically.
  */
 function social_tagging_to_machine_name($text) {
-  $text = strtolower($text);
-  $text = str_replace(' ', '', $text);
-
-  return $text;
+  return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 
 /**

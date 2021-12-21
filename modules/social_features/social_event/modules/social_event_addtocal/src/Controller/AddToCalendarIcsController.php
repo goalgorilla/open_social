@@ -100,6 +100,7 @@ class AddToCalendarIcsController extends ControllerBase {
       }
 
       // Set end of file.
+      $file_data[] = 'TRANSP:OPAQUE';
       $file_data[] = 'END:VEVENT';
       $file_data[] = 'END:VCALENDAR';
 
