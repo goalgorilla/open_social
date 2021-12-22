@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\user\UserInterface;
@@ -34,11 +33,11 @@ interface JoinPluginInterface extends ContainerFactoryPluginInterface {
   /**
    * Gets a list of clickable elements.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The content entity object.
+   * @param \Drupal\social_group\EntityMemberInterface $entity
+   *   The membership entity object.
    * @param \Drupal\user\UserInterface $account
    *   The user entity object.
    */
-  public function actions(ContentEntityInterface $entity, UserInterface $account): array;
+  public function actions(EntityMemberInterface $entity, UserInterface $account): array;
 
 }

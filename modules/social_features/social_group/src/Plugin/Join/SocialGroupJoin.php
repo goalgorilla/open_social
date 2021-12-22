@@ -2,8 +2,8 @@
 
 namespace Drupal\social_group\Plugin\Join;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Link;
+use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
 use Drupal\user\UserInterface;
 
@@ -19,24 +19,27 @@ class SocialGroupJoin extends JoinBase {
   /**
    * {@inheritdoc}
    */
-  public function actions(ContentEntityInterface $entity, UserInterface $account): array {
-    if (method_exists($entity, 'getMember') && $entity->getMember($account)) {
-      $entity_type_id = $entity->getEntityTypeId();
+  public function actions(EntityMemberInterface $entity, UserInterface $account): array {
+    $items = [];
 
-      return [
-        $this->t('Joined', [], ['context' => 'Is a member']),
-        Link::createFromRoute(
-          $this->t(
-            'Leave @entity_type_id',
-            ['@entity_type_id' => $entity->getEntityType()->getSingularLabel()],
-          ),
-          'entity.' . $entity_type_id . '.leave',
-          [$entity_type_id => $entity->id()],
-        ),
-      ];
+    if (!$entity->hasMember($account)) {
+      return $items;
     }
 
-    return [];
+    $items[] = $this->t('Joined', [], ['context' => 'Is a member']);
+
+    $entity_type_id = $entity->getEntityTypeId();
+
+    $items[] = Link::createFromRoute(
+      $this->t(
+        'Leave @entity_type_id',
+        ['@entity_type_id' => $entity->getEntityType()->getSingularLabel()],
+      ),
+      'entity.' . $entity_type_id . '.leave',
+      [$entity_type_id => $entity->id()],
+    );
+
+    return $items;
   }
 
 }

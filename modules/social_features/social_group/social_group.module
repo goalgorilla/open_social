@@ -15,7 +15,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -44,6 +43,7 @@ use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\user\Entity\Role;
@@ -237,10 +237,7 @@ function social_group_preprocess(array &$variables, string $hook): void {
 
   $entity = $variables['elements']['#' . $hook];
 
-  if (
-    !$entity instanceof ContentEntityInterface ||
-    !method_exists($entity, 'getMember')
-  ) {
+  if (!$entity instanceof EntityMemberInterface) {
     return;
   }
 
