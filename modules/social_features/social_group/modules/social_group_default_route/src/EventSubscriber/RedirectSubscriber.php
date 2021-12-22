@@ -5,8 +5,7 @@ namespace Drupal\social_group_default_route\EventSubscriber;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
-use Drupal\user\Entity\User;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -79,7 +78,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // Fetch the group parameter and check if's an actual group.
     $group = $this->currentRoute->getParameter('group');
     // Not group, then we leave.
-    if (!$group instanceof Group) {
+    if (!$group instanceof SocialGroupInterface) {
       return;
     }
 
@@ -91,7 +90,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     $route = $group->getFieldValue('default_route', 'value');
 
     // Check if current user is a member.
-    if ($group->getMember(User::load($this->currentUser->id())) === FALSE) {
+    if (!$group->hasMember($this->currentUser)) {
       $route = $group->getFieldValue('default_route_an', 'value');
       // If you're not a member and the group type is closed.
       if ($route === NULL) {

@@ -2,13 +2,13 @@
 
 namespace Drupal\social_group_request\Plugin\Join;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,10 +71,10 @@ class SocialGroupRequestJoin extends JoinBase {
   /**
    * {@inheritdoc}
    */
-  public function actions(ContentEntityInterface $entity, UserInterface $account): array {
+  public function actions(EntityMemberInterface $entity, UserInterface $account): array {
     $items = [];
 
-    /** @var \Drupal\group\Entity\GroupInterface $group */
+    /** @var \Drupal\social_group\SocialGroupInterface $group */
     $group = $entity;
 
     $group_type = $group->getGroupType();

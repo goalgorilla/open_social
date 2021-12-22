@@ -79,7 +79,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // If the user can manage groups or the user is a member.
     if (
       $this->currentUser->hasPermission('manage all groups') ||
-      $group->getMember($this->currentUser)
+      $group->hasMember($this->currentUser)
     ) {
       return;
     }

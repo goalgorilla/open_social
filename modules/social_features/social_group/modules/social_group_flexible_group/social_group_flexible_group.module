@@ -19,6 +19,7 @@ use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
@@ -258,7 +259,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   $result = AccessResult::neutral();
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
-  /** @var \Drupal\group\Entity\GroupInterface $entity */
+  /** @var \Drupal\social_group\SocialGroupInterface $entity */
   if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
@@ -288,7 +289,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   // If group visibility exists and members only is selected, we need to check
   // if user is logged in and is a member of the group.
   if ($group_visibility === 'members') {
-    $not_a_member = !$entity->getMember($account) || $account->isAnonymous();
+    $not_a_member = !$entity->hasMember($account) || $account->isAnonymous();
     return AccessResult::forbiddenIf($not_a_member)
       ->cachePerPermissions()
       ->cachePerUser()
@@ -554,7 +555,7 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
 /**
  * Determine whether a user can see flexible groups as outsider.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\social_group\SocialGroupInterface $group
  *   The group we are checking.
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The user to check for.
@@ -562,14 +563,17 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
  * @return bool
  *   Whether the user is allowed to view this flexible groups.
  */
-function social_group_flexible_group_can_view_flexible_groups(Group $group, AccountInterface $account) : bool {
+function social_group_flexible_group_can_view_flexible_groups(
+  SocialGroupInterface $group,
+  AccountInterface $account
+): bool {
   // Users who can manage all can manage everything.
   if ($account->hasPermission('manage all groups')) {
     return TRUE;
   }
 
   // If User is a member it can see it.
-  if ($group->getMember($account) !== FALSE) {
+  if ($group->hasMember($account)) {
     return TRUE;
   }
 
@@ -710,9 +714,11 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
       return AccessResult::neutral();
     }
 
-    if (!$group->getMember($account) &&
+    if (
+      !$group->hasMember($account) &&
       !social_group_flexible_group_community_enabled($group) &&
-      !social_group_flexible_group_public_enabled($group)) {
+      !social_group_flexible_group_public_enabled($group)
+    ) {
       // If it is flexible and the current user is not an member of this group,
       // and content visibility is not public and also not community
       // hide it.
