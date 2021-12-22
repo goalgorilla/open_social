@@ -173,21 +173,28 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
  * Define fields for selecting the join method.
  *
  * @return array
- *   An associative array of join method definitions. The keys are strings that
- *   should contain the following elements:
+ *   An array of entity types/bundles definitions that support join methods. The
+ *   values are associative arrays that should contain the following elements:
  *   - entity_type_id: The entity type ID.
  *   - bundle: (optional) The bundle.
- *   - field: The field.
+ *   - field: The field contains a list of supported join methods when the
+ *     "method" item isn't defined. Otherwise, the field indicates if an entity
+ *     can use the join method defined in the "method" item.
+ *   - method: (optional) The join method.
  *
+ * @see social_group_form_alter()
+ * @see social_group_preprocess()
  * @see social_group_preprocess_fieldset()
  *
  * @ingroup social_group_api
  */
 function hook_social_group_join_method() {
   return [
-    'entity_type_id' => 'group',
-    'bundle' => 'flexible_group',
-    'field' => 'field_group_allowed_join_method',
+    [
+      'entity_type_id' => 'group',
+      'bundle' => 'flexible_group',
+      'field' => 'field_group_allowed_join_method',
+    ],
   ];
 }
 

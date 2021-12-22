@@ -23,4 +23,9 @@ class Join extends Plugin {
    */
   public ?string $entityTypeId = NULL;
 
+  /**
+   * The join method.
+   */
+  public ?string $method = NULL;
+
 }

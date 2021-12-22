@@ -251,23 +251,30 @@ function social_group_preprocess(array &$variables, string $hook): void {
     /** @var callable $function */
     $function = $module . '_' . $hook;
 
-    $data = $function();
+    foreach ($function() as $data) {
+      if (
+        $data['entity_type_id'] === $entity_type_id &&
+        (
+          !isset($data['bundle']) &&
+          $entity_type->getBundleEntityType() === NULL ||
+          $data['bundle'] === $entity->bundle()
+        )
+      ) {
+        $methods = array_column(
+          $entity->get($data['field'])->getValue(),
+          'value',
+        );
 
-    if (
-      $data['entity_type_id'] === $entity_type_id &&
-      (
-        !isset($data['bundle']) &&
-        $entity_type->getBundleEntityType() === NULL ||
-        $data['bundle'] === $entity->bundle()
-      )
-    ) {
-      $found = TRUE;
+        if (!isset($data['method']) || $methods[0]) {
+          $found = TRUE;
+        }
 
-      break;
+        break 2;
+      }
     }
   }
 
-  if (!$found || !isset($data)) {
+  if (!$found || !isset($data, $methods)) {
     return;
   }
 
@@ -283,10 +290,16 @@ function social_group_preprocess(array &$variables, string $hook): void {
 
   $found = FALSE;
 
+  if (isset($data['method'])) {
+    $methods = [$data['method']];
+  }
+
   foreach ($manager->getDefinitions() as $plugin_id => $definition) {
     if (
       isset($definition['entityTypeId']) &&
-      $definition['entityTypeId'] !== $entity_type_id
+      $definition['entityTypeId'] !== $entity_type_id ||
+      isset($definition['method']) &&
+      !in_array($definition['method'], $methods)
     ) {
       continue;
     }
@@ -1159,19 +1172,20 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       /** @var callable $function */
       $function = $module . '_' . $hook;
 
-      $data = $function();
-
-      if (
-        $data['entity_type_id'] === $entity->getEntityTypeId() &&
-        (
-          !isset($data['bundle']) &&
-          $entity->getEntityType()->getBundleEntityType() === NULL ||
-          $data['bundle'] === $entity->bundle()
-        ) &&
-        isset($form[$data['field']])
-      ) {
-        $found = TRUE;
-        break;
+      foreach ($function() as $data) {
+        if (
+          !isset($data['method']) &&
+          $data['entity_type_id'] === $entity->getEntityTypeId() &&
+          (
+            !isset($data['bundle']) &&
+            $entity->getEntityType()->getBundleEntityType() === NULL ||
+            $data['bundle'] === $entity->bundle()
+          ) &&
+          isset($form[$data['field']])
+        ) {
+          $found = TRUE;
+          break 2;
+        }
       }
     }
 
@@ -3027,16 +3041,17 @@ function social_group_preprocess_fieldset(array &$variables): void {
     /** @var callable $function */
     $function = $module . '_' . $hook;
 
-    $data = $function();
-
-    if (
-      $data['entity_type_id'] === $entity_type_id &&
-      isset($bundle) === isset($data['bundle']) &&
-      (!isset($bundle) || $data['bundle'] === $bundle) &&
-      $data['field'] === $element['#field_name']
-    ) {
-      $found = TRUE;
-      break;
+    foreach ($function() as $data) {
+      if (
+        !isset($data['method']) &&
+        $data['entity_type_id'] === $entity_type_id &&
+        isset($bundle) === isset($data['bundle']) &&
+        (!isset($bundle) || $data['bundle'] === $bundle) &&
+        $data['field'] === $element['#field_name']
+      ) {
+        $found = TRUE;
+        break 2;
+      }
     }
   }
 

@@ -3,7 +3,6 @@
 namespace Drupal\social_group_request\Plugin\Join;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
@@ -19,6 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Join(
  *   id = "social_group_request_join",
  *   entityTypeId = "group",
+ *   method = "request",
  * )
  */
 class SocialGroupRequestJoin extends JoinBase {
@@ -27,11 +27,6 @@ class SocialGroupRequestJoin extends JoinBase {
    * The group invitation loader.
    */
   private ?GroupInvitationLoaderInterface $loader = NULL;
-
-  /**
-   * The module handler.
-   */
-  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * The entity type manager.
@@ -62,7 +57,6 @@ class SocialGroupRequestJoin extends JoinBase {
       $instance->loader = $loader;
     }
 
-    $instance->moduleHandler = $container->get('module_handler');
     $instance->entityTypeManager = $container->get('entity_type.manager');
 
     return $instance;
@@ -91,25 +85,6 @@ class SocialGroupRequestJoin extends JoinBase {
       ]);
 
       if ($group_invites !== []) {
-        return $items;
-      }
-    }
-
-    $group_types = ['flexible_group'];
-    $this->moduleHandler->alter('social_group_request', $group_types);
-
-    if (in_array($group_type->id(), $group_types)) {
-      $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-      $request_option = in_array('request', array_column($join_methods, 'value'));
-
-      if (!$request_option) {
-        return $items;
-      }
-    }
-    else {
-      $allow_request = $group->get('allow_request');
-
-      if ($allow_request->isEmpty() || $allow_request->value == 0) {
         return $items;
       }
     }
