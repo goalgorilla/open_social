@@ -28,4 +28,9 @@ class Join extends Plugin {
    */
   public ?string $method = NULL;
 
+  /**
+   * The weight.
+   */
+  public int $weight = 0;
+
 }

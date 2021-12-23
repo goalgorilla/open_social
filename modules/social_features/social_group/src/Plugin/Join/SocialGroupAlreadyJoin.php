@@ -8,13 +8,13 @@ use Drupal\social_group\JoinBase;
 use Drupal\user\UserInterface;
 
 /**
- * Provides a join plugin instance for all entity types.
+ * Provides a join plugin instance for members.
  *
  * @Join(
- *   id = "social_group_join",
+ *   id = "social_group_already_join",
  * )
  */
-class SocialGroupJoin extends JoinBase {
+class SocialGroupAlreadyJoin extends JoinBase {
 
   /**
    * {@inheritdoc}

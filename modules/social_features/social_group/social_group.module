@@ -258,24 +258,17 @@ function social_group_preprocess(array &$variables, string $hook): void {
         (
           !isset($data['bundle']) &&
           $entity_type->getBundleEntityType() === NULL ||
-          $data['bundle'] === $entity->bundle()
+          in_array($entity->bundle(), (array) $data['bundle'])
         )
       ) {
-        $methods = array_column(
-          $entity->get($data['field'])->getValue(),
-          'value',
-        );
-
-        if (!isset($data['method']) || $methods[0]) {
-          $found = TRUE;
-        }
+        $found = TRUE;
 
         break 2;
       }
     }
   }
 
-  if (!$found || !isset($data, $methods)) {
+  if (!$found || !isset($data)) {
     return;
   }
 
@@ -292,21 +285,31 @@ function social_group_preprocess(array &$variables, string $hook): void {
   $found = FALSE;
 
   if (isset($data['method'])) {
-    $methods = [$data['method']];
+    $methods = (array) $data['method'];
+  }
+  else {
+    $methods = array_column($entity->get($data['field'])->getValue(), 'value');
   }
 
-  foreach ($manager->getDefinitions() as $plugin_id => $definition) {
-    if (
-      isset($definition['entityTypeId']) &&
-      $definition['entityTypeId'] !== $entity_type_id ||
-      isset($definition['method']) &&
-      !in_array($definition['method'], $methods)
-    ) {
-      continue;
+  $definitions = array_filter(
+    $manager->getDefinitions(),
+    function ($definition) use ($entity_type_id, $methods) {
+      return (
+          !isset($definition['entityTypeId']) ||
+          $definition['entityTypeId'] === $entity_type_id
+        ) &&
+        (
+          !isset($definition['method']) ||
+          in_array($definition['method'], $methods)
+        );
     }
+  );
 
+  usort($definitions, [SortArray::class, 'sortByWeightElement']);
+
+  foreach ($definitions as $definition) {
     /** @var \Drupal\social_group\JoinPluginInterface $plugin */
-    $plugin = $manager->createInstance($plugin_id);
+    $plugin = $manager->createInstance($definition['id']);
 
     $items = array_map(function ($item) {
       if ($item instanceof RenderableInterface) {
@@ -316,12 +319,16 @@ function social_group_preprocess(array &$variables, string $hook): void {
         $attributes = $item['attributes'];
 
         /** @var \Drupal\Core\Url $url */
-        $url = $item['url'];
+        $url = $item['url'] ?? Url::fromRoute('<none>');
 
         $attributes['href'] = $url->toString();
 
         if (!isset($item['title'])) {
           $attributes['title'] = $item['label'];
+        }
+
+        if (!isset($item['url'])) {
+          $attributes['class'][] = 'disabled';
         }
 
         $item['attributes'] = new Attribute($attributes);
@@ -412,44 +419,6 @@ function social_group_preprocess_group(array &$variables) {
   // Prevent access to mute group notifications if a user is not a group member.
   else {
     unset($variables['content']['flag_mute_group_notifications']);
-  }
-
-  // Set joined to true for teaser when current logged in
-  // user is member of the group.
-  if ($group->hasMember($account)) {
-    $variables['joined'] = TRUE;
-    if ($group->hasPermission('leave group', $account)) {
-      $variables['group_operations_url'] = Url::fromRoute('entity.group.leave', ['group' => $group->id()]);
-    }
-  }
-  elseif ($group->hasPermission('join group', $account)) {
-    // @todo switch this to get URL from routes correctly.
-    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-
-    if (
-      in_array($group_type_id, $group_types) &&
-      !social_group_flexible_group_can_join_directly($group)
-    ) {
-      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-      $variables['closed_group'] = TRUE;
-      $variables['cta'] = t('Invitation only');
-    }
-  }
-  // If the group type is a closed_group.
-  elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
-    // Users can only be invited.
-    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-    $variables['closed_group'] = TRUE;
-    $variables['cta'] = t('Invitation only');
-  }
-  // Non logged in users should still see "join" button on a group page.
-  if (
-    $account->isAnonymous() &&
-    (in_array($group_type_id, $group_types) &&
-      social_group_flexible_group_can_join_directly($group) ||
-      in_array($group_type_id, ['public_group']))
-  ) {
-    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
   }
 
   // Add the hero styled image.
@@ -829,6 +798,24 @@ function _social_group_allowed_values_callback(
 }
 
 /**
+ * Implements hook_social_group_join_method().
+ */
+function social_group_social_group_join_method(): array {
+  return [
+    [
+      'entity_type_id' => 'group',
+      'bundle' => 'closed_group',
+      'method' => 'added',
+    ],
+    [
+      'entity_type_id' => 'group',
+      'bundle' => ['open_group', 'public_group'],
+      'method' => ['direct', 'added'],
+    ],
+  ];
+}
+
+/**
  * Implements hook_social_group_join_methods().
  */
 function social_group_social_group_join_methods(): array {
@@ -1184,7 +1171,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
           (
             !isset($data['bundle']) &&
             $entity->getEntityType()->getBundleEntityType() === NULL ||
-            $data['bundle'] === $entity->bundle()
+            in_array($entity->bundle(), (array) $data['bundle'])
           ) &&
           isset($form[$data['field']])
         ) {

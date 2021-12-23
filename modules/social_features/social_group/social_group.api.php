@@ -170,17 +170,32 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
 }
 
 /**
+ * Alter the list of join plugin definitions.
+ *
+ * @param array $info
+ *   The join plugin definitions to be altered.
+ *
+ * @see \Drupal\social_group\Annotation\Join
+ * @see \Drupal\social_group\JoinManager
+ */
+function hook_social_group_join_info_alter(array &$info) {
+  if (isset($info['social_group_request_join'])) {
+    unset($info['social_group_request_join']['entityTypeId']);
+  }
+}
+
+/**
  * Define fields for selecting the join method.
  *
  * @return array
  *   An array of entity types/bundles definitions that support join methods. The
  *   values are associative arrays that should contain the following elements:
  *   - entity_type_id: The entity type ID.
- *   - bundle: (optional) The bundle.
+ *   - bundle: (optional) The bundle(s).
  *   - field: The field contains a list of supported join methods when the
  *     "method" item isn't defined. Otherwise, the field indicates if an entity
  *     can use the join method defined in the "method" item.
- *   - method: (optional) The join method.
+ *   - method: (optional) The join method(s).
  *
  * @see social_group_form_alter()
  * @see social_group_preprocess()

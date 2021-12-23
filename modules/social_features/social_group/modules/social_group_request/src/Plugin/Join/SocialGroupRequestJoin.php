@@ -13,12 +13,13 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a join plugin instance for the group entity type.
+ * Provides a join plugin instance for joining after sending a request.
  *
  * @Join(
  *   id = "social_group_request_join",
  *   entityTypeId = "group",
  *   method = "request",
+ *   weight = 30,
  * )
  */
 class SocialGroupRequestJoin extends JoinBase {
@@ -97,7 +98,7 @@ class SocialGroupRequestJoin extends JoinBase {
           ['group' => $group->id()],
         ),
         'attributes' => [
-          'class' => ['btn-accent'],
+          'class' => ['btn-accent', 'use-ajax'],
         ],
       ];
 
@@ -143,7 +144,7 @@ class SocialGroupRequestJoin extends JoinBase {
           ['group' => $group->id()],
         ),
         'attributes' => [
-          'class' => ['btn-accent'],
+          'class' => ['btn-accent', 'use-ajax'],
         ],
       ];
     }

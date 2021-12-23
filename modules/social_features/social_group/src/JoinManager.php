@@ -31,7 +31,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
       Join::class
     );
 
-    $this->alterInfo('join_info');
+    $this->alterInfo('social_group_join_info');
     $this->setCacheBackend($cache_backend, 'join_plugins');
   }
 
