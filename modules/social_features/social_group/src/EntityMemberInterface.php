@@ -2,13 +2,13 @@
 
 namespace Drupal\social_group;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
  * Defines a common interface for entities that support memberships.
  */
-interface EntityMemberInterface extends EntityInterface {
+interface EntityMemberInterface extends ContentEntityInterface {
 
   /**
    * Checks if a user is a member.

@@ -113,9 +113,10 @@ function template_preprocess_group_settings_help(array &$variables) {
  *   TRUE if a user may edit a existings groups group type.
  */
 function social_group_group_type_permission_check() {
-  $user = \Drupal::currentUser();
   // Get the Group object from the route.
-  $group = _social_group_get_current_group();
+  if (($group = _social_group_get_current_group()) === NULL) {
+    return FALSE;
+  }
 
   // Check if we have a default visibility, if we don't it must be a custom
   // group type, we need to have a visibility in order to update group content.
@@ -125,8 +126,8 @@ function social_group_group_type_permission_check() {
     return FALSE;
   }
 
-  // Otherwise return true when we are able to edit the current group type.
-  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
+  // Otherwise, return true when we are able to edit the current group type.
+  return \Drupal::currentUser()->hasPermission('edit group types');
 }
 
 /**
@@ -1107,11 +1108,13 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     if (in_array($form_id, $group_forms['edit'])) {
       $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
       $group_type_element = $social_group_form->getGroupTypeElement(TRUE);
+
       // Get the current group.
-      $group = _social_group_get_current_group();
-      // Set the default value in the form.
-      $group_type_element['widget']['#default_value'] = $group->getGroupType()
-        ->id();
+      if (($group = _social_group_get_current_group()) !== NULL) {
+        // Set the default value in the form.
+        $group_type_element['widget']['#default_value'] = $group->getGroupType()
+          ->id();
+      }
 
       // If user doesn't have permission to change group types disable it.
       // Or if group types can't be edited due to visibility issues.
@@ -1146,9 +1149,11 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
     }
 
-    if (in_array($form_id, $group_forms['delete'])) {
+    if (
+      in_array($form_id, $group_forms['delete']) &&
+      ($group = _social_group_get_current_group()) !== NULL
+    ) {
       // Add custom submit handler to delete all content of the group.
-      $group = _social_group_get_current_group();
       $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group? This action cannot be undone.', ['@group' => $group->label()]);
       $form['actions']['cancel'] = [
         '#type' => 'submit',
@@ -1898,6 +1903,7 @@ function _social_group_get_current_group($node = NULL): ?SocialGroupInterface {
     $cache[$nid] = $group ?? FALSE;
   }
 
+  /** @var \Drupal\social_group\SocialGroupInterface|null $group */
   return $group;
 }
 

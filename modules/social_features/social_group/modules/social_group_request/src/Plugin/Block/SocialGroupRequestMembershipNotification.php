@@ -14,6 +14,7 @@ use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\social_group\Entity\Group;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,11 +35,9 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   protected $account;
 
   /**
-   * Group entity.
-   *
-   * @var \Drupal\group\Entity\GroupInterface
+   * The group entity object.
    */
-  protected $group;
+  protected ?SocialGroupInterface $group;
 
   /**
    * Entity type manger.
@@ -115,7 +114,10 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    * {@inheritdoc}
    */
   public function build() {
-    if (!$this->group->getGroupType()->hasContentPlugin('group_membership_request')) {
+    if (
+      $this->group === NULL ||
+      !$this->group->getGroupType()->hasContentPlugin('group_membership_request')
+    ) {
       return [];
     }
 
@@ -202,10 +204,16 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    * {@inheritdoc}
    */
   public function getCacheTags() {
-    return Cache::mergeTags(parent::getCacheTags(), [
-      'request-membership:' . $this->group->id(),
-      'group:' . $this->group->id(),
-    ]);
+    $tags = parent::getCacheTags();
+
+    if ($this->group !== NULL) {
+      $tags = Cache::mergeTags($tags, [
+        'request-membership:' . $this->group->id(),
+        'group:' . $this->group->id(),
+      ]);
+    }
+
+    return $tags;
   }
 
 }

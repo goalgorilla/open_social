@@ -165,8 +165,10 @@ function social_group_invite_preprocess_views_view(&$variables) {
     }
   }
   // Implement button to go back to the group for our custom view.
-  if ($variables['view']->id() === 'social_group_invitations') {
-    $group = _social_group_get_current_group();
+  elseif (
+    $view->id() === 'social_group_invitations' &&
+    ($group = _social_group_get_current_group()) !== NULL
+  ) {
     $variables['more'] = [
       '#title' => t('Back to group'),
       '#type' => 'link',
@@ -307,17 +309,17 @@ function social_group_invite_theme_registry_alter(&$theme_registry) {
  */
 function social_group_invite_preprocess_page_title(&$variables) {
   // Add count of pending invites to the page title for a group.
-  if (\Drupal::routeMatch()->getParameter('view_id') === 'social_group_invitations' &&
-    !empty(\Drupal::routeMatch()->getParameter('group'))) {
-    $group = _social_group_get_current_group();
-    if (!empty($group->label())) {
-      $loader = \Drupal::service('ginvite.invitation_loader');
-      $count = count($loader->loadByProperties(['gid' => $group->id()]));
-      $title = \Drupal::translation()->formatPlural($count, '1 membership invite for group: @group_name', '@count membership invites for group: @group_name', ['@group_name' => $group->label()]);
-      $variables['title'] = $title;
-      $variables['#cache']['tags'][] = 'group_content_list:group:' . $group->id();
-      $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:group:' . $group->id();
-    }
+  if (
+    \Drupal::routeMatch()->getParameter('view_id') === 'social_group_invitations' &&
+    !empty(\Drupal::routeMatch()->getParameter('group')) &&
+    ($group = _social_group_get_current_group()) !== NULL
+  ) {
+    $loader = \Drupal::service('ginvite.invitation_loader');
+    $count = count($loader->loadByProperties(['gid' => $group->id()]));
+    $title = \Drupal::translation()->formatPlural($count, '1 membership invite for group: @group_name', '@count membership invites for group: @group_name', ['@group_name' => $group->label()]);
+    $variables['title'] = $title;
+    $variables['#cache']['tags'][] = 'group_content_list:group:' . $group->id();
+    $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:group:' . $group->id();
   }
   // Add count of pending invites to the page title for a user.
   if (\Drupal::routeMatch()->getParameter('view_id') === 'social_group_user_invitations' &&

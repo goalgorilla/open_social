@@ -269,32 +269,32 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   }
 
   // If group visibility value doesn't exist we can skip.
-  if (empty($entity->getFieldValue('field_flexible_group_visibility', 'value'))) {
+  if ($entity->field_flexible_group_visibility->isEmpty()) {
     return $result;
   }
 
-  // If group visibility exists and public is selected, we can skip.
-  $group_visibility = $entity->getFieldValue('field_flexible_group_visibility', 'value');
-  if ($group_visibility === 'public') {
-    return $result;
-  }
+  switch ($entity->field_flexible_group_visibility->value) {
+    // If group visibility exists and public is selected, we can skip.
+    case 'public':
+      return $result;
 
-  // If group visibility exists and community or members is selected, check
-  // if user is logged.
-  if ($group_visibility === 'community') {
-    return AccessResult::forbiddenIf($account->isAnonymous())
-      ->cachePerUser()
-      ->addCacheableDependency($entity);
-  }
-  // If group visibility exists and members only is selected, we need to check
-  // if user is logged in and is a member of the group.
-  if ($group_visibility === 'members') {
-    $not_a_member = !$entity->hasMember($account) || $account->isAnonymous();
-    return AccessResult::forbiddenIf($not_a_member)
-      ->cachePerPermissions()
-      ->cachePerUser()
-      ->addCacheableDependency($entity)
-      ->addCacheableDependency($account);
+    // If group visibility exists and community or members is selected, check
+    // if user is logged.
+    case 'community':
+      return AccessResult::forbiddenIf($account->isAnonymous())
+        ->cachePerUser()
+        ->addCacheableDependency($entity);
+
+    // If group visibility exists and members only is selected, we need to check
+    // if user is logged in and is a member of the group.
+    case 'members':
+      $not_a_member = !$entity->hasMember($account) || $account->isAnonymous();
+
+      return AccessResult::forbiddenIf($not_a_member)
+        ->cachePerPermissions()
+        ->cachePerUser()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($account);
   }
 
   return $result;
@@ -461,20 +461,20 @@ function social_group_flexible_group_can_join_directly(GroupInterface $group) {
 /**
  * Check if a user can be added to a group.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\social_group\SocialGroupInterface $group
  *   The group we are checking.
  *
  * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_can_be_added(Group $group) {
-  $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-
-  if (!in_array('added', array_column($join_methods, 'value'), FALSE)) {
-    return FALSE;
-  }
-
-  return TRUE;
+function social_group_flexible_group_can_be_added(SocialGroupInterface $group): bool {
+  return in_array(
+    'added',
+    array_column(
+      $group->get('field_group_allowed_join_method')->getValue(),
+      'value',
+    ),
+  );
 }
 
 /**
@@ -537,18 +537,17 @@ function social_group_flexible_group_members_enabled(Group $group) {
 /**
  * Implements hook_menu_local_actions_alter().
  */
-function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
-  $group = _social_group_get_current_group();
-  $user = \Drupal::currentUser();
+function social_group_flexible_group_menu_local_actions_alter(array &$local_actions): void {
+  $account = \Drupal::currentUser();
 
-  // Remove the social_group add member action on the
-  // membership overview if we can't add members directly.
-  // SM+ can still add members though.
-  if ($group instanceof GroupInterface
-    && $group->getGroupType()->id() === 'flexible_group'
-    && !social_group_flexible_group_can_be_added($group)
-    && !$user->hasPermission('manage all groups')
-    && !$group->hasPermission('administer members', $user)
+  // Remove the social_group add member action on the membership overview if we
+  // can't add members directly. SM+ can still add members though.
+  if (
+    ($group = _social_group_get_current_group()) !== NULL &&
+    $group->getGroupType()->id() === 'flexible_group' &&
+    !social_group_flexible_group_can_be_added($group) &&
+    !$account->hasPermission('manage all groups') &&
+    !$group->hasPermission('administer members', $account)
   ) {
     unset($local_actions['social_group.add_member']);
   }

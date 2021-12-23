@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\Component\Utility\Tags;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Provides an Group member autocomplete form element.
@@ -20,7 +20,7 @@ use Drupal\user\Entity\User;
 class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
   /**
-   * Form element validation handler for entity_autocomplete elements.
+   * {@inheritdoc}
    */
   public static function validateEntityAutocomplete(
     array &$element,
@@ -28,8 +28,6 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     array &$complete_form,
     bool $select2 = FALSE
   ): void {
-    $duplicated_values = $value = [];
-
     /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
 
@@ -50,6 +48,9 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     else {
       $input_values = $element['#value'];
     }
+
+    $duplicated_values = $value = [];
+    $storage = \Drupal::entityTypeManager()->getStorage('user');
 
     foreach ($input_values as $input) {
       $match = static::extractEntityIdFromAutocompleteInput($input);
@@ -77,10 +78,12 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
           'target_id' => $match,
         ];
 
-        $account = User::load($match);
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
-        if ($entity->getMember($account)) {
+        if (
+          ($account = $storage->load($match)) instanceof UserInterface &&
+          $entity->getMember($account)
+        ) {
           $duplicated_values[] = $account->getDisplayName();
         }
         // We need set "validate_reference" for element to prevent
