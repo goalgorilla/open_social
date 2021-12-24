@@ -86,7 +86,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
       }
     }
 
-    if ($invited) {
+    if ($invited && isset($group_content)) {
       $items[] = [
         'label' => $this->t('Accept'),
         'url' => Url::fromRoute('ginvite.invitation.accept', [

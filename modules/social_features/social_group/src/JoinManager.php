@@ -19,6 +19,8 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
   use ContextAwarePluginManagerTrait;
 
+  private const HOOK = 'social_group_join_method';
+
   /**
    * {@inheritdoc}
    */
@@ -42,6 +44,22 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function relations(): array {
+    $items = [];
+
+    foreach ($this->moduleHandler->getImplementations(self::HOOK) as $module) {
+      /** @var callable $function */
+      $function = $module . '_' . self::HOOK;
+
+      $items = array_merge($items, $function());
+    }
+
+    return $this->moduleHandler->alter(self::HOOK, $items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preprocess(array &$variables, string $hook): void {
     if (
       !isset($variables['elements']['#view_mode']) ||
@@ -57,28 +75,22 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
       return;
     }
 
-    $hook = 'social_group_join_method';
     $entity_type = $entity->getEntityType();
     $entity_type_id = $entity->getEntityTypeId();
     $found = FALSE;
 
-    foreach ($this->moduleHandler->getImplementations($hook) as $module) {
-      /** @var callable $function */
-      $function = $module . '_' . $hook;
+    foreach ($this->relations() as $data) {
+      if (
+        $data['entity_type_id'] === $entity_type_id &&
+        (
+          !isset($data['bundle']) &&
+          $entity_type->getBundleEntityType() === NULL ||
+          in_array($entity->bundle(), (array) $data['bundle'])
+        )
+      ) {
+        $found = TRUE;
 
-      foreach ($function() as $data) {
-        if (
-          $data['entity_type_id'] === $entity_type_id &&
-          (
-            !isset($data['bundle']) &&
-            $entity_type->getBundleEntityType() === NULL ||
-            in_array($entity->bundle(), (array) $data['bundle'])
-          )
-        ) {
-          $found = TRUE;
-
-          break 2;
-        }
+        break;
       }
     }
 

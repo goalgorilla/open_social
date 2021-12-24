@@ -1036,27 +1036,28 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form_object instanceof EntityFormInterface &&
     in_array($form_object->getOperation(), ['default', 'add', 'edit'])
   ) {
-    $hook = 'social_group_join_method';
+    /** @var \Drupal\social_group\JoinManagerInterface $manager */
+    $manager = \Drupal::service('plugin.manager.join');
+
     $found = FALSE;
+    $entity_type_id = $entity->getEntityTypeId();
 
-    foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-      /** @var callable $function */
-      $function = $module . '_' . $hook;
+    $bundle = $entity->getEntityType()->getBundleEntityType() === NULL
+      ? NULL : $entity->bundle();
 
-      foreach ($function() as $data) {
-        if (
-          !isset($data['method']) &&
-          $data['entity_type_id'] === $entity->getEntityTypeId() &&
-          (
-            !isset($data['bundle']) &&
-            $entity->getEntityType()->getBundleEntityType() === NULL ||
-            in_array($entity->bundle(), (array) $data['bundle'])
-          ) &&
-          isset($form[$data['field']])
-        ) {
-          $found = TRUE;
-          break 2;
-        }
+    foreach ($manager->relations() as $data) {
+      if (
+        isset($form[$data['field']]) &&
+        !isset($data['method']) &&
+        $data['entity_type_id'] === $entity_type_id &&
+        (
+          !isset($data['bundle']) &&
+          $bundle === NULL ||
+          in_array($bundle, (array) $data['bundle'])
+        )
+      ) {
+        $found = TRUE;
+        break;
       }
     }
 
@@ -2906,24 +2907,21 @@ function social_group_preprocess_fieldset(array &$variables): void {
     }
   }
 
-  $hook = 'social_group_join_method';
+  /** @var \Drupal\social_group\JoinManagerInterface $manager */
+  $manager = \Drupal::service('plugin.manager.join');
+
   $found = FALSE;
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-    /** @var callable $function */
-    $function = $module . '_' . $hook;
-
-    foreach ($function() as $data) {
-      if (
-        !isset($data['method']) &&
-        $data['entity_type_id'] === $entity_type_id &&
-        isset($bundle) === isset($data['bundle']) &&
-        (!isset($bundle) || $data['bundle'] === $bundle) &&
-        $data['field'] === $element['#field_name']
-      ) {
-        $found = TRUE;
-        break 2;
-      }
+  foreach ($manager->relations() as $data) {
+    if (
+      !isset($data['method']) &&
+      $data['entity_type_id'] === $entity_type_id &&
+      isset($bundle) === isset($data['bundle']) &&
+      (!isset($bundle) || $data['bundle'] === $bundle) &&
+      $data['field'] === $element['#field_name']
+    ) {
+      $found = TRUE;
+      break;
     }
   }
 

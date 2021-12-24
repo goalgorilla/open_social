@@ -10,6 +10,11 @@ use Drupal\Core\Plugin\Context\ContextAwarePluginManagerInterface;
 interface JoinManagerInterface extends ContextAwarePluginManagerInterface {
 
   /**
+   * Returns list of entity types and their bundles that support join methods.
+   */
+  public function relations(): array;
+
+  /**
    * Preprocess theme variables for templates.
    *
    * @param array $variables
