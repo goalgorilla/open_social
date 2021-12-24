@@ -235,7 +235,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
         $build = [
           '#theme' => 'mention_link',
           '#mention_id' => $match['target']['entity_id'],
-          '#link' => $output['link'],
+          '#link' => base_path() . $output['link'],
           '#render_link' => $output_settings['renderlink'],
           '#render_value' => $output['value'],
         ];
