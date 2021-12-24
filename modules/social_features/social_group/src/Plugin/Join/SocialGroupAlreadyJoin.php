@@ -5,7 +5,6 @@ namespace Drupal\social_group\Plugin\Join;
 use Drupal\Core\Link;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
-use Drupal\user\UserInterface;
 
 /**
  * Provides a join plugin instance for members.
@@ -19,10 +18,10 @@ class SocialGroupAlreadyJoin extends JoinBase {
   /**
    * {@inheritdoc}
    */
-  public function actions(EntityMemberInterface $entity, UserInterface $account): array {
+  public function actions(EntityMemberInterface $entity, array &$variables): array {
     $items = [];
 
-    if (!$entity->hasMember($account)) {
+    if (!$entity->hasMember($this->currentUser)) {
       return $items;
     }
 

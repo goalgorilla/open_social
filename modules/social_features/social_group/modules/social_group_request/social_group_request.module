@@ -145,60 +145,6 @@ function social_group_request_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function social_group_request_preprocess_group(array &$variables): void {
-  /** @var \Drupal\social_group\SocialGroupInterface $group */
-  $group = $variables['group'];
-
-  // If the user is already a member we don't bother processing any further.
-  if ($group->hasMember($account = \Drupal::currentUser())) {
-    return;
-  }
-
-  /** @var \Drupal\social_group\JoinManagerInterface $manager */
-  $manager = \Drupal::service('plugin.manager.join');
-
-  /** @var \Drupal\social_group\JoinPluginInterface $plugin */
-  $plugin = $manager->createInstance('social_group_request_join');
-
-  /** @var \Drupal\user\UserInterface $account */
-  $account = \Drupal::entityTypeManager()->getStorage('user')
-    ->load($account->id());
-
-  $items = $plugin->actions($group, $account);
-
-  if (count($items) === 0) {
-    return;
-  }
-
-  $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
-  $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
-
-  if (count($items) === 1 && $account->isAnonymous()) {
-    $variables['anonymous_request'] = TRUE;
-    return;
-  }
-
-  $variables['closed_group'] = $variables['allow_request'] = TRUE;
-
-  if (count($items) === 2) {
-    $variables['requested'] = TRUE;
-
-    /** @var \Drupal\Core\Link $link */
-    $link = $items[1];
-
-    $variables['group_operations_url'] = $link->getUrl();
-  }
-  else {
-    $variables['group_operations_url'] = $items[0]['url'];
-  }
-
-  $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
-  $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
-}
-
-/**
  * Implements hook_activity_send_email_notifications_alter().
  */
 function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {

@@ -3,8 +3,8 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Provides an interface for join plugins.
@@ -22,12 +22,15 @@ interface JoinPluginInterface extends ContainerFactoryPluginInterface {
    *   The plugin implementation definition.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The string translation service.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current active user.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     $plugin_definition,
-    TranslationInterface $translation
+    TranslationInterface $translation,
+    AccountProxyInterface $current_user
   );
 
   /**
@@ -35,9 +38,9 @@ interface JoinPluginInterface extends ContainerFactoryPluginInterface {
    *
    * @param \Drupal\social_group\EntityMemberInterface $entity
    *   The membership entity object.
-   * @param \Drupal\user\UserInterface $account
-   *   The user entity object.
+   * @param array $variables
+   *   The variables.
    */
-  public function actions(EntityMemberInterface $entity, UserInterface $account): array;
+  public function actions(EntityMemberInterface $entity, array &$variables): array;
 
 }

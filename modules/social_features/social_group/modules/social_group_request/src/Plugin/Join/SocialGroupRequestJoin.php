@@ -9,7 +9,6 @@ use Drupal\ginvite\GroupInvitationLoaderInterface;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
-use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -66,7 +65,7 @@ class SocialGroupRequestJoin extends JoinBase {
   /**
    * {@inheritdoc}
    */
-  public function actions(EntityMemberInterface $entity, UserInterface $account): array {
+  public function actions(EntityMemberInterface $entity, array &$variables): array {
     $items = [];
 
     /** @var \Drupal\social_group\SocialGroupInterface $group */
@@ -82,7 +81,7 @@ class SocialGroupRequestJoin extends JoinBase {
     if ($this->loader !== NULL) {
       $group_invites = $this->loader->loadByProperties([
         'gid' => $group->id(),
-        'uid' => $account->id(),
+        'uid' => $this->currentUser->id(),
       ]);
 
       if ($group_invites !== []) {
@@ -90,7 +89,10 @@ class SocialGroupRequestJoin extends JoinBase {
       }
     }
 
-    if ($account->isAnonymous()) {
+    $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
+
+    if ($this->currentUser->isAnonymous()) {
       $items[] = [
         'label' => $this->t('Request to join'),
         'url' => Url::fromRoute(
@@ -106,7 +108,7 @@ class SocialGroupRequestJoin extends JoinBase {
     }
 
     if (
-      !$group->hasPermission('request group membership', $account) ||
+      !$group->hasPermission('request group membership', $this->currentUser) ||
       !$group->hasField('allow_request')
     ) {
       return $items;
@@ -121,7 +123,7 @@ class SocialGroupRequestJoin extends JoinBase {
       ->getQuery()
       ->condition('type', $types)
       ->condition('gid', $group->id())
-      ->condition('entity_id', $account->id())
+      ->condition('entity_id', $this->currentUser->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
       ->range(0, 1)
       ->count()
@@ -148,6 +150,9 @@ class SocialGroupRequestJoin extends JoinBase {
         ],
       ];
     }
+
+    $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
+    $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
 
     return $items;
   }

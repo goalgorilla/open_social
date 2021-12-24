@@ -5,7 +5,6 @@ namespace Drupal\social_group\Plugin\Join;
 use Drupal\Core\Url;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
-use Drupal\user\UserInterface;
 
 /**
  * Provides a join plugin instance for joining directly.
@@ -22,13 +21,13 @@ class SocialGroupDirectJoin extends JoinBase {
   /**
    * {@inheritdoc}
    */
-  public function actions(EntityMemberInterface $entity, UserInterface $account): array {
+  public function actions(EntityMemberInterface $entity, array &$variables): array {
     $items = [];
 
     /** @var \Drupal\social_group\SocialGroupInterface $entity */
     if (
-      $entity->hasPermission('join group', $account) ||
-      $account->isAnonymous() &&
+      $entity->hasPermission('join group', $this->currentUser) ||
+      $this->currentUser->isAnonymous() &&
       in_array($entity->bundle(), ['flexible_group', 'public_group'])
     ) {
       $items[] = [
