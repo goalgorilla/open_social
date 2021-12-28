@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -71,7 +72,10 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
           // Get the related entity.
-          if (!$message->get('field_message_related_object')->isEmpty()) {
+          if (
+            ($message instanceof Message) &&
+            !$message->get('field_message_related_object')->isEmpty()
+          ) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
@@ -155,25 +159,27 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      if ($name === 'post_url' && isset($message->field_message_related_object)) {
-        $replacements[$original] = '';
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        if ($name === 'post_url' && isset($message->field_message_related_object)) {
+          $replacements[$original] = '';
 
-        $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
-        $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+          $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+          $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
-        $entity = \Drupal::entityTypeManager()
-          ->getStorage($target_type)
-          ->load($target_id);
+          $entity = \Drupal::entityTypeManager()
+            ->getStorage($target_type)
+            ->load($target_id);
 
-        if ($entity) {
-          if ($target_type === 'post') {
-            $post_link = Url::fromRoute('entity.post.canonical',
-              ['post' => $entity->id()],
-              ['absolute' => TRUE]
-            )->toString();
+          if ($entity) {
+            if ($target_type === 'post') {
+              $post_link = Url::fromRoute('entity.post.canonical',
+                ['post' => $entity->id()],
+                ['absolute' => TRUE]
+              )->toString();
 
-            $replacements[$original] = $post_link;
+              $replacements[$original] = $post_link;
+            }
           }
         }
       }
