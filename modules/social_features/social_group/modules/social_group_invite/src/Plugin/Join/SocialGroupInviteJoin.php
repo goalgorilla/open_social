@@ -76,7 +76,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
         $invitation = reset($invitations);
 
         if ($invitation instanceof GroupInvitationWrapper) {
-          // Lets grab the group content so we can build the URL.
+          // Let's grab the group content, so we can build the URL.
           $group_content = $invitation->getGroupContent();
 
           if ($group_content instanceof GroupContentInterface) {

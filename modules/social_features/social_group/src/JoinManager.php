@@ -54,7 +54,9 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
       $items = array_merge($items, $function());
     }
 
-    return $this->moduleHandler->alter(self::HOOK, $items);
+    $this->moduleHandler->alter(self::HOOK, $items);
+
+    return $items;
   }
 
   /**
