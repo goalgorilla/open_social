@@ -2,10 +2,11 @@
 
 namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\Core\Url;
 use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterBase;
 
 /**
@@ -160,6 +161,23 @@ class CommentPostFormatter extends SocialCommentFormatterBase {
             ],
             ],
             '#create_placeholder' => TRUE,
+          ];
+        }
+        else {
+          // Add log in and sign up links below discussion comments for AN user.
+          $log_in_url = Url::fromRoute('user.login');
+          $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)
+            ->toString();
+          $create_account_url = Url::fromRoute('user.register');
+          $sign_up = Link::fromTextAndUrl(t('sign up'), $create_account_url)
+            ->toString();
+          $description = $this->t('Please @log_in or @sign_up to comment.', [
+            '@log_in' => $log_in_link,
+            '@sign_up' => $sign_up,
+          ]);
+          $output['comment_form'] = [
+            '#prefix' => '<hr>',
+            '#markup' => $description,
           ];
         }
       }

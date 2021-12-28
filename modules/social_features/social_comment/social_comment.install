@@ -14,6 +14,8 @@ use Drupal\user\Entity\Role;
  */
 function social_comment_install() {
   // Grant the default permissions for this feature.
+  user_role_grant_permissions('anonymous', ['access comments']);
+  user_role_grant_permissions('authenticated', ['access comments']);
   user_role_grant_permissions(
     'verified',
     [

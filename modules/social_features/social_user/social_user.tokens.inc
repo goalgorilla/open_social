@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\message\Entity\Message;
 
 /**
  * Implements hook_token_info().
@@ -39,15 +40,17 @@ function social_user_tokens($type, $tokens, array $data, array $options, Bubblea
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
 
-        case 'recipient':
+          case 'recipient':
 
-          if (isset($data['display_name'])) {
-            $replacements[$original] = $data['display_name'];
-          }
-          break;
+            if (isset($data['display_name'])) {
+              $replacements[$original] = $data['display_name'];
+            }
+            break;
+        }
       }
     }
   }

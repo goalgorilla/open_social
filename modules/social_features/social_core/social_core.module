@@ -107,9 +107,12 @@ function social_core_entity_form_display_alter(EntityFormDisplayInterface $form_
       $fields
     );
 
-    $form_display
-      ->setThirdPartySetting('field_group', 'group_settings', $field_groups['group_settings'])
-      ->save();
+    // This is intended to move the already existing "other fields" in the
+    // Settings section, only if they are not part of any field group.
+    // As this happens in an alter, we don't need to save our
+    // ThirdPartySettings.
+    // @see \Drupal\Core\Entity\EntityInterface::save().
+    $form_display->setThirdPartySetting('field_group', 'group_settings', $field_groups['group_settings']);
   }
 }
 
