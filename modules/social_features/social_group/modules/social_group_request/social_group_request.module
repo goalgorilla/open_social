@@ -68,15 +68,30 @@ function social_group_request_entity_base_field_info(EntityTypeInterface $entity
  * Implements hook_social_group_join_method_alter().
  */
 function social_group_request_social_group_join_method_alter(array &$items): void {
-  foreach ($items as &$item) {
-    if ($item['entity_type_id'] === 'group' && !isset($item['field'])) {
-      $item['field'] = 'allow_request';
+  $bundles = [];
 
-      $item['method'] = array_merge(
-        (array) ($item['method'] ?? []),
-        ['request'],
-      );
+  foreach ($items as $item) {
+    if (
+      isset($item['entity_type_id'], $item['bundle']) &&
+      $item['entity_type_id'] === 'group'
+    ) {
+      $bundles = array_merge($bundles, (array) $item['bundle']);
     }
+  }
+
+  /** @var array $bundles */
+  $bundles = \Drupal::entityQuery('group_type')
+    ->accessCheck(FALSE)
+    ->condition('id', $bundles, 'NOT IN')
+    ->execute();
+
+  foreach ($bundles as $bundle) {
+    $items[] = [
+      'entity_type_id' => 'group',
+      'bundle' => $bundle,
+      'field' => 'allow_request',
+      'method' => 'request',
+    ];
   }
 }
 
