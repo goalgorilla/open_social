@@ -22,7 +22,6 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
     $options = $selection_settings + [
       'target_type' => $target_type,
       'handler' => $selection_handler,
-      'handler_settings' => $selection_settings,
     ];
     $handler = $this->selectionManager->getInstance($options);
 
