@@ -320,7 +320,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
 /**
  * Submit function for resetting password form.
  */
-function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
+function _social_user_pass_reset_submit(array $form, FormStateInterface $form_state): void {
   $storage = $form_state->getValues();
   $submitted_user_id = $storage['uid'] ?? '';
 
