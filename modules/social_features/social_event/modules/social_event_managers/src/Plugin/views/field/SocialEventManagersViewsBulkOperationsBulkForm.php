@@ -350,11 +350,15 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // It must be a Guest, so we pick the name values we can get.
     if (!$profile) {
       $name = '';
-      if (!empty($first_name = $entity->get('field_first_name')->getValue())) {
+      if (!empty($first_name = $entity->get('field_first_name')->getValue())
+        && !empty($first_name[0]['value'])
+      ) {
         $name .= $first_name[0]['value'];
         $name .= ' ';
       }
-      if (!empty($last_name = $entity->get('field_last_name')->getValue())) {
+      if (!empty($last_name = $entity->get('field_last_name')->getValue())
+        && !empty($last_name[0]['value'])
+      ) {
         $name .= $last_name[0]['value'];
       }
 
