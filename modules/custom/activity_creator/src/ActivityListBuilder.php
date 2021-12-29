@@ -31,11 +31,15 @@ class ActivityListBuilder extends EntityListBuilder {
     $row = [];
     /** @var \Drupal\activity_creator\Entity\Activity $entity */
     $row['id'] = $entity->id();
-    $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
-      'entity.activity.edit_form', [
-        'activity' => $entity->id(),
-      ]
-    ));
+    $label = $entity->label();
+    if (!empty($row['id']) && !empty($label)) {
+      $row['name'] = Link::fromTextAndUrl($label, new Url(
+        'entity.activity.edit_form', [
+          'activity' => $entity->id(),
+        ]
+      ));
+    }
+
     return $row + parent::buildRow($entity);
   }
 

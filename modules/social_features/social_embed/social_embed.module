@@ -5,19 +5,21 @@
  * The Social Embed module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\File\FileSystemInterface;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\file\Entity\File;
 
 /**
  * Function that creates an embed button with a custom icon.
  */
-function social_embed_create_media_button() {
+function _social_embed_create_media_button() :void {
 
   // Create a File entity for the icon.
   $path = drupal_get_path('module', 'social_embed');
-  $image_path = $path . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
+  $image_path = $path . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
   $uri = \Drupal::service('file_system')->copy($image_path, 'public://urlembed.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
@@ -40,4 +42,53 @@ function social_embed_create_media_button() {
   ]);
   $button->save();
 
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_embed_form_user_form_alter(array &$form, FormStateInterface $form_state, string $form_id) :void {
+  if ($form_id === 'user_form') {
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+
+    /** @var \Drupal\user\Entity\User $user */
+    $user = $form_object->getEntity();
+
+    if ($user->hasField('field_user_embed_content_consent')) {
+      // We need to invalidate few tags if the user toggles
+      // field_user_embed_content_consent value.
+      // @see _social_embed_form_user_form_submit().
+      if (\Drupal::config('social_embed.settings')->get('embed_consent_settings_lu')) {
+        /** @var \Drupal\user\Entity\User $user */
+        $form['actions']['submit']['#submit'][] = '_social_embed_form_user_form_submit';
+      }
+      else {
+        // If the site manager has not enabled this feature on the platform
+        // simply hide the field from the user on settings page.
+        $form['field_user_embed_content_consent'] = [
+          '#hidden' => TRUE,
+        ];
+        $form['#fieldgroups']['group_remote_content_settings']->hidden = TRUE;
+      }
+    }
+  }
+}
+
+/**
+ * Save embed content consent settings a user.
+ */
+function _social_embed_form_user_form_submit(array $form, FormStateInterface $form_state) :void {
+  $uid = $form_state->getValue('uid');
+
+  $user_consent_settings = $form_state->getValue(['field_user_embed_content_consent']);
+
+  if ($form['field_user_embed_content_consent']['widget']['value']['#default_value'] != $user_consent_settings['value']) {
+    // Let's invalidate our custom tags so that render cache of such content
+    // can be rebuilt and the effect of changed settings can take place.
+    // @see: SocialEmbedConvertUrlToEmbedFilter
+    // @see: SocialEmbedUrlEmbedFilter
+    // @see: SocialEmbedHelper::addDependencies()
+    Cache::invalidateTags(["social_embed.filter.$uid"]);
+  }
 }

@@ -5,7 +5,6 @@
  * Contains social_tagging.module.
  */
 
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -352,7 +351,7 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
       ])
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', [
-        'type' => 'hidden',
+        'region' => 'hidden',
       ])
       ->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -587,36 +586,6 @@ function social_tagging_preprocess_profile(array &$variables) {
       $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
     }
   }
-}
-
-/**
- * Implements hook_entity_form_display_alter().
- */
-function social_tagging_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
-
-  // Creates a "Tags" fieldset for all existing content types. So, "Tags" fields
-  // will be attached in that section when a user enable tagging options.
-  if ($context['entity_type'] !== 'node' || !in_array($context['form_mode'], ['edit', 'default'])) {
-    return;
-  }
-
-  $settings = [
-    "children" => [],
-    "parent_name" => "",
-    "weight" => '1',
-    "label" => "Tags",
-    "format_type" => "fieldset",
-    "format_settings" => [
-      "required_fields" => TRUE,
-      "id" => "tags",
-      "classes" => "card",
-      "label" => "Tags",
-    ],
-    "region" => "hidden",
-  ];
-
-  $form_display->setThirdPartySetting('field_group', 'group_social_tags', $settings);
-  $form_display->save();
 }
 
 /**

@@ -26,7 +26,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'social_topic',
     'entity',
     // For the topic author and viewer.
@@ -63,6 +63,7 @@ class QueryTopicTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'views',
     'group',
+    'variationcache',
   ];
 
   /**

@@ -21,7 +21,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'graphql',
     'social_graphql',
   ];
@@ -36,7 +36,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() :void {
     parent::setUp();
 
     // Create a test image.

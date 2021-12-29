@@ -50,6 +50,7 @@ Feature: Create Public Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     And I am logged in as "GivenUserTwo"
     And I am on "all-members"
@@ -121,7 +122,7 @@ Feature: Create Public Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"

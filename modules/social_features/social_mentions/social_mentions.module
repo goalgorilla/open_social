@@ -101,7 +101,11 @@ function social_mentions_preprocess_mentions(&$variables) {
 function social_mentions_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $field_name = $entity->getFieldName();
   $commented_entity = $entity->getCommentedEntity();
-  if ($entity->hasParentComment() && $commented_entity->get($field_name)->status == CommentItemInterface::OPEN) {
+  if (
+    $entity->hasParentComment() &&
+    $commented_entity->get($field_name)->status == CommentItemInterface::OPEN &&
+    \Drupal::currentUser()->isAuthenticated()
+  ) {
     /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $entity->getOwner();
     $storage = \Drupal::entityTypeManager()->getStorage('profile');

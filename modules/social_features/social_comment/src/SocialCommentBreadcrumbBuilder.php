@@ -82,8 +82,12 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     // Add Entity path to Breadcrumb for Reply.
     if ($route_match->getParameter('entity') &&
       $route_match->getParameter('entity') instanceof EntityInterface) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $route_match->getParameter('entity');
-      $breadcrumb->addLink(new Link($entity->label(), $entity->toUrl()));
+      $label = $entity->label();
+      if (!empty($label)) {
+        $breadcrumb->addLink(new Link($label, $entity->toUrl()));
+      }
       $breadcrumb->addCacheableDependency($entity);
     }
 
