@@ -30,16 +30,20 @@ class SocialGroupDirectJoin extends JoinBase {
 
     $entity_type_id = $entity->getEntityTypeId();
 
+    $url = Url::fromRoute(
+      'entity.' . $entity_type_id . '.join',
+      [$entity_type_id => $entity->id()],
+    );
+
     $items[] = [
       'label' => $this->t('Join'),
-      'url' => Url::fromRoute(
-        'entity.' . $entity_type_id . '.join',
-        [$entity_type_id => $entity->id()],
-      ),
+      'url' => $url,
       'attributes' => [
         'class' => ['btn-accent'],
       ],
     ];
+
+    $variables['group_operations_url'] = $url;
 
     return $items;
   }

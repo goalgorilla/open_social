@@ -71,7 +71,9 @@ function social_group_theme() {
       'variables' => [
         'primary' => NULL,
         'secondaries' => NULL,
+        'attributes' => [],
       ],
+      'file' => 'social_group.theme.inc',
     ],
   ];
 }
@@ -1047,7 +1049,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
     foreach ($manager->relations() as $data) {
       if (
-        isset($form[$data['field']]) &&
+        isset($data['field'], $form[$data['field']]) &&
         !isset($data['method']) &&
         $data['entity_type_id'] === $entity_type_id &&
         (

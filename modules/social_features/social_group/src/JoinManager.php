@@ -65,7 +65,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
   public function preprocess(array &$variables, string $hook): void {
     if (
       !isset($variables['elements']['#view_mode']) ||
-      $variables['elements']['#view_mode'] !== 'statistic' ||
+      !in_array($variables['elements']['#view_mode'], ['hero', 'statistic']) ||
       !isset($variables['elements']['#' . $hook])
     ) {
       return;

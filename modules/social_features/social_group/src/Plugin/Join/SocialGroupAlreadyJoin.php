@@ -38,6 +38,8 @@ class SocialGroupAlreadyJoin extends JoinBase {
       [$entity_type_id => $entity->id()],
     );
 
+    $variables['joined'] = TRUE;
+
     return $items;
   }
 

@@ -118,7 +118,8 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
         unset($items[0]['url']);
       }
 
-      $items[0]['label'] = $this->t('Invitation only');
+      $items[0]['label'] = $variables['cta'] = $this->t('Invitation only');
+      $variables['closed_group'] = TRUE;
     }
 
     return $items;
