@@ -362,7 +362,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         $name .= $last_name[0]['value'];
       }
 
-      return $name;
+      return trim($name);
     }
 
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
