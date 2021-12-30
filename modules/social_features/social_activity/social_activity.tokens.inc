@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 
 /**
@@ -52,7 +53,12 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
   if ($type === 'message' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
-    if ($message->hasField('field_message_related_object') && !$message->get('field_message_related_object')->isEmpty()) {
+
+    if (
+      ($message instanceof Message) &&
+      $message->hasField('field_message_related_object') &&
+      !$message->get('field_message_related_object')->isEmpty()
+    ) {
       /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
       $email_token_services = \Drupal::service('social_activity.email_token_services');
 

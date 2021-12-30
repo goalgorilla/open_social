@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -43,23 +44,25 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+    if ($message instanceof Message) {
+      $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
-    foreach ($tokens as $name => $original) {
-      // Set the URL for the reported content.
-      if ($name === 'content_url' && $message->getFieldValue('field_message_related_object', 'target_type') === 'flagging') {
-        // Load the flag.
-        $flagging_id = $message->getFieldValue('field_message_related_object', 'target_id');
+      foreach ($tokens as $name => $original) {
+        // Set the URL for the reported content.
+        if ($name === 'content_url' && $message->getFieldValue('field_message_related_object', 'target_type') === 'flagging') {
+          // Load the flag.
+          $flagging_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
-        /** @var \Drupal\flag\FlaggingInterface $flagging */
-        $flagging = $storage->load($flagging_id);
+          /** @var \Drupal\flag\FlaggingInterface $flagging */
+          $flagging = $storage->load($flagging_id);
 
-        // Load the flagged entity.
-        /** @var \Drupal\Core\Entity\EntityInterface $entity */
-        $entity = $flagging->getFlaggable();
+          // Load the flagged entity.
+          /** @var \Drupal\Core\Entity\EntityInterface $entity */
+          $entity = $flagging->getFlaggable();
 
-        // Set the URL for the entity.
-        $replacements[$original] = $entity->toUrl()->setAbsolute()->toString();
+          // Set the URL for the entity.
+          $replacements[$original] = $entity->toUrl()->setAbsolute()->toString();
+        }
       }
     }
   }
