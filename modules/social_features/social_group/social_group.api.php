@@ -185,56 +185,6 @@ function hook_social_group_join_info_alter(array &$info) {
 }
 
 /**
- * Define fields for selecting the join method.
- *
- * @return array
- *   An array of entity types/bundles definitions that support join methods. The
- *   values are associative arrays that should contain the following elements:
- *   - entity_type_id: The entity type ID.
- *   - bundle: (optional) The bundle(s).
- *   - field: The field contains a list of supported join methods when the
- *     "method" item isn't defined. Otherwise, the field indicates if an entity
- *     can use the join method defined in the "method" item.
- *   - method: (optional) The join method(s).
- *
- * @see \Drupal\social_group\JoinManager::relations()
- *
- * @ingroup social_group_api
- */
-function hook_social_group_join_method() {
-  return [
-    [
-      'entity_type_id' => 'group',
-      'bundle' => 'flexible_group',
-      'field' => 'field_group_allowed_join_method',
-    ],
-  ];
-}
-
-/**
- * Alter the list of fields for selecting the join method.
- *
- * @param array $items
- *   The join method fields to be altered.
- *
- * @see \Drupal\social_group\JoinManager::relations()
- */
-function hook_social_group_join_method_alter(array &$items) {
-  foreach ($items as &$item) {
-    if (
-      $item['entity_type_id'] === 'group' &&
-      isset($item['bundle']) &&
-      $item['bundle'] === 'closed_group' &&
-      !isset($item['field'])
-    ) {
-      $item['field'] = 'field_group_allowed_join_method';
-
-      break;
-    }
-  }
-}
-
-/**
  * Define join methods.
  *
  * @return array
@@ -252,10 +202,11 @@ function hook_social_group_join_method_alter(array &$items) {
  *
  * @see _social_group_allowed_values_callback()
  * @see social_group_allowed_join_method_description()
+ * @see social_group_form_alter()
  *
  * @ingroup social_group_api
  */
-function hook_social_group_join_methods() {
+function hook_social_group_join_method_info() {
   return [
     'direct' => [
       'title' => t('Open to join'),
@@ -271,6 +222,56 @@ added/invited by @entity_type_id managers.'),
       'weight' => 20,
     ],
   ];
+}
+
+/**
+ * Define entity type bundles that support join methods.
+ *
+ * @return array
+ *   An array of entity types/bundles definitions that support join methods. The
+ *   values are associative arrays that should contain the following elements:
+ *   - entity_type_id: The entity type ID.
+ *   - bundle: (optional) The bundle(s).
+ *   - field: The field contains a list of supported join methods when the
+ *     "method" item isn't defined. Otherwise, the field indicates if an entity
+ *     can use the join method defined in the "method" item.
+ *   - method: (optional) The join method(s).
+ *
+ * @see \Drupal\social_group\JoinManager::relations()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_join_method_usage() {
+  return [
+    [
+      'entity_type_id' => 'group',
+      'bundle' => 'flexible_group',
+      'field' => 'field_group_allowed_join_method',
+    ],
+  ];
+}
+
+/**
+ * Alter the list of relations between entity type bundles and join methods.
+ *
+ * @param array $items
+ *   The join method fields to be altered.
+ *
+ * @see \Drupal\social_group\JoinManager::relations()
+ */
+function hook_social_group_join_method_usage_alter(array &$items) {
+  foreach ($items as &$item) {
+    if (
+      $item['entity_type_id'] === 'group' &&
+      isset($item['bundle']) &&
+      $item['bundle'] === 'closed_group' &&
+      !isset($item['field'])
+    ) {
+      $item['field'] = 'field_group_allowed_join_method';
+
+      break;
+    }
+  }
 }
 
 /**

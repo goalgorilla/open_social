@@ -19,7 +19,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
   use ContextAwarePluginManagerTrait;
 
-  private const HOOK = 'social_group_join_method';
+  private const HOOK = 'social_group_join_method_usage';
 
   /**
    * {@inheritdoc}
