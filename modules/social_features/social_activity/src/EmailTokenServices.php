@@ -128,13 +128,18 @@ class EmailTokenServices {
       $date = _social_event_format_date($node, NULL);
     }
 
+    /** @var \Drupal\node\NodeTypeInterface $node_type */
+    $node_type = $this->entityTypeManager
+      ->getStorage('node_type')
+      ->load($node->bundle());
+
     // Prepare the preview.
     $preview_info = [
       '#theme' => 'message_content_preview',
       '#author_name' => $node->getOwner()->getDisplayName(),
       '#date' => $date,
       '#title' => $node->getTitle(),
-      '#type' => strtoupper($node->getType()),
+      '#type' => mb_strtoupper((string) $node_type->label()),
       '#link' => $link,
     ];
 
