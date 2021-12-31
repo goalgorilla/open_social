@@ -62,3 +62,31 @@ function improved_theme_settings_update_8001() {
   // Save the new config.
   $config->setData($colors)->save();
 }
+
+/**
+ * Add new color settings.
+ */
+function improved_theme_settings_update_11001(): void {
+  // Get the current default theme.
+  $theme = \Drupal::configFactory()->get('system.theme')->get('default');
+  // Get the color values.
+  $config = \Drupal::configFactory()->getEditable('color.theme.' . $theme);
+  $colors = $config->getRawData();
+
+  // Set new colors.
+  if (isset($colors['palette']['second-line-navbar-bg'])) {
+    $colors['palette']['second-line-navbar-bg'] = '#004494';
+  }
+  if (isset($colors['palette']['second-line-navbar-text'])) {
+    $colors['palette']['second-line-navbar-text'] = '#fffff1';
+  }
+  if (isset($colors['palette']['second-line-navbar-active-bg'])) {
+    $colors['palette']['second-line-navbar-active-bg'] = '#f2f5f9';
+  }
+  if (isset($colors['palette']['second-line-navbar-active-text'])) {
+    $colors['palette']['second-line-navbar-active-text'] = '#002f67';
+  }
+
+  // Save the new config.
+  $config->setData($colors)->save();
+}
