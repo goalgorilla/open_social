@@ -58,7 +58,7 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function outputCallback($mention, $settings) {
+  public function outputCallback(array $mention, $settings): array {
     $entity = $this->entityTypeManager->getStorage($mention['target']['entity_type'])
       ->load($mention['target']['entity_id']);
     $output = [];
@@ -67,6 +67,7 @@ class Entity implements MentionsPluginInterface {
     if ($settings['renderlink']) {
       $output['link'] = $this->tokenService->replace($settings['rendertextbox'], [$mention['target']['entity_type'] => $entity]);
     }
+
     return $output;
   }
 

@@ -12,6 +12,9 @@ use Drupal\Component\Serialization\Json;
 use Drupal\mentions\Entity\MentionsType;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\mentions\Plugin\Filter\MentionsFilter;
+use Drupal\social_post\Entity\Post;
+use Drupal\comment\Entity\Comment;
 
 /**
  * Implements hook_form_alter().
@@ -22,6 +25,8 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
     'comment_post_comment_form',
     'comment_comment_form',
   ];
+  $user_mention_type_id = 'UserMention';
+  $profile_mention_type_id = 'ProfileMention';
 
   if (in_array($form_id, $mentions_forms)) {
     // Initialize variables.
@@ -31,17 +36,41 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
     $config = \Drupal::config('mentions.settings');
 
     if ($config->get('suggestions_format') === 'username') {
-      if ($usermention = MentionsType::load('UserMention')) {
+      if ($usermention = MentionsType::load($user_mention_type_id)) {
         $usermention = $usermention->getInputSettings();
         $prefix = $usermention['prefix'];
         $suffix = $usermention['suffix'];
       }
     }
     else {
-      if ($profilemention = MentionsType::load('ProfileMention')) {
+      if ($profilemention = MentionsType::load($profile_mention_type_id)) {
         $profilemention = $profilemention->getInputSettings();
         $prefix = $profilemention['prefix'];
         $suffix = $profilemention['suffix'];
+      }
+    }
+
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+    $entity = $form_object->getEntity();
+    $post_field_key = 'field_post';
+    $comment_field_key = 'field_comment_body';
+    $mentions = [];
+
+    if (
+      ($entity instanceof Post && $entity->hasField($post_field_key) && !$entity->get($post_field_key)->isEmpty()) ||
+      ($entity instanceof Comment && $entity->hasField($comment_field_key) && !$entity->get($comment_field_key)->isEmpty())
+    ) {
+      $field_key = $entity instanceof Post ? $post_field_key : $comment_field_key;
+      $value = $entity->get($field_key)->value;
+      $container = \Drupal::getContainer();
+      $filter_mentions = MentionsFilter::create($container, [], 'filter_mentions', []);
+      $filter_mentions->settings['mentions_filter'] = [
+        $user_mention_type_id => $user_mention_type_id,
+        $profile_mention_type_id => $profile_mention_type_id,
+      ];
+      if ($filter_mentions->checkMentionTypes()) {
+        $mentions = $filter_mentions->getInitMentionsData($value);
       }
     }
 
@@ -50,6 +79,7 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
       'suggestionsFormat' => $config->get('suggestions_format'),
       'prefix' => $prefix,
       'suffix' => $suffix,
+      'initMentions' => $mentions,
     ];
   }
 }
