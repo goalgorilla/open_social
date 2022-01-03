@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @YANG-4830 @database @stability-2 @post-modal-comments
+@api @post @stability @perfect @critical @YANG-4830 @database @stability @post-modal-comments
 Feature: Comment on a Post with an Image
   Benefit: In order to give my opinion on a post with an image
   Role: As a Verified
@@ -19,15 +19,17 @@ Feature: Comment on a Post with an Image
     And I click the xth "0" element with the css ".post-with-image a" in the "Main content"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And I fill in "Comment #1" for "Post comment" in the "Modal"
+    Then I should see "This post with a photo"
+    And I fill in "Comment #1" for "Write a comment..." in the "Modal"
     And I press "Comment" in the "Modal"
     And I wait for AJAX to finish
     And I wait for "1" seconds
     Then I should see the success message "Your comment has been posted." in the "Modal"
     And I should see the text "Comment #1" in the "Modal"
 
-    When I fill in "Comment #2" for "Post comment" in the "Modal"
+    When I fill in "Comment #2" for "Write a comment..." in the "Modal"
     And I press "Comment" in the "Modal"
     And I wait for AJAX to finish
+    And I wait for "1" seconds
     Then I should see the success message "Your comment has been posted." in the "Modal"
     And I should see the text "Comment #2" in the "Modal"

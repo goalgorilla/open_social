@@ -32,9 +32,9 @@ use Drupal\user\UserInterface;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\block\Entity\Block;
 
-define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
-define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
-define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
+const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
+const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
+const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -336,14 +336,23 @@ function social_profile_preprocess_profile(array &$variables) {
   // The actual label text should be changeable in the template.
   // Disable for the LU's own profile.
   $variables['profile_contact_label'] = 'profile_info';
-  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId() && $current_user->hasPermission('use private messaging system') && User::load($profile->getOwnerId())->hasPermission('use private messaging system')) {
+  if (
+    \Drupal::moduleHandler()->moduleExists('social_private_message') &&
+    $current_user->id() != $profile->getOwnerId() &&
+    $current_user->hasPermission('use private messaging system') &&
+    $current_user->hasPermission('create private messages thread') &&
+    User::load($profile->getOwnerId())->hasPermission('use private messaging system')
+  ) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
   }
 
   if (_social_profile_check_property_access($profile, $current_user, 'email')) {
     // Derived from MailToFormatter.php.
-    $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+    $email = $user->getEmail();
+    if (!empty($email)) {
+      $variables['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
+    }
   }
 
   // Language field.

@@ -14,6 +14,7 @@ Feature: See Comments
     Given "60" comments with text "Behat Comment [id]" for "Behat Topic 15"
 
     When I am logged in as "Behat User"
+    And I am at "/all-topics"
     And I click "Behat Topic 15"
     Then I should see the text "Behat Comment 1"
     And I should not see the text "Behat Comment 51"

@@ -1,0 +1,15 @@
+social_embed.generate:
+  path: '/api/opensocial/social-embed/generate'
+  defaults:
+    _controller: '\Drupal\social_embed\Controller\EmbedController::generateEmbed'
+    _title: 'Generate embed'
+  requirements:
+    _permission: 'generate social embed content'
+
+social_embed.settings:
+  path: 'admin/config/opensocial/embed-consent'
+  defaults:
+    _form: '\Drupal\social_embed\Form\EmbedConsentForm'
+    _title: 'Embedded content user consent settings'
+  requirements:
+    _permission: 'administer social embed settings'

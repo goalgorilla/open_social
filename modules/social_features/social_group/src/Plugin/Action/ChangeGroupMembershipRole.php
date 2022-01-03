@@ -152,7 +152,7 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     );
 
     $form['description'] = [
-      '#markup' => $markup,
+      '#markup' => '<p>' . $markup . '</p>',
     ];
 
     $form_state->set('member_role', $id);
