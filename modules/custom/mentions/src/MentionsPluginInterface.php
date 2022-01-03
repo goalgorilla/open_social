@@ -28,15 +28,15 @@ interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
   /**
    * The outputCallback function.
    *
-   * @param string $mention
+   * @param array $mention
    *   The mention.
    * @param array|string $settings
    *   The settings.
    *
-   * @return mixed
-   *   Returns mixed.
+   * @return array
+   *   Returns output array.
    */
-  public function outputCallback($mention, $settings);
+  public function outputCallback(array $mention, $settings): array;
 
   /**
    * The patternCallback function.
