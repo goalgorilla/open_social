@@ -411,11 +411,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityAccessControlHandler.php
 
 		-
-			message: "#^Parameter \\#1 \\$condition of static method Drupal\\\\Core\\\\Access\\\\AccessResult\\:\\:allowedIf\\(\\) expects bool, bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface given\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityAccessControlHandler.php
-
-		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityFactory.php
@@ -1602,11 +1597,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityPostVisibilityAccess.php
-
-		-
-			message: "#^Method Drupal\\\\activity_viewer\\\\Plugin\\\\views\\\\filter\\\\ActivityPostVisibilityAccess\\:\\:canExpose\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityPostVisibilityAccess.php
 
@@ -7986,11 +7976,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.module
 
 		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/Action/ExportAllEnrolments.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_an_enroll_enrolments_export\\\\Plugin\\\\Action\\\\ExportAllEnrolments\\:\\:executeMultiple\\(\\) should return array but return statement is missing\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/Action/ExportAllEnrolments.php
@@ -8029,11 +8014,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, bool\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
-
-		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_enrolments_export/src/Plugin/Action/ExportEnrolments.php
 
 		-
 			message: "#^Method Drupal\\\\social_event_enrolments_export\\\\Plugin\\\\Action\\\\ExportEnrolments\\:\\:executeMultiple\\(\\) should return array but return statement is missing\\.$#"
@@ -8907,11 +8887,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\social_event\\\\EventEnrollmentInterface\\:\\:getFieldValue\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/EventEnrollmentEntityDeleteAction.php
-
-		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/EventEnrollmentEntityDeleteAction.php
 
@@ -11926,11 +11901,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.module
 
 		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_members_export/src/Plugin/Action/ExportMember.php
-
-		-
 			message: "#^Method Drupal\\\\social_group_members_export\\\\Plugin\\\\Action\\\\ExportMember\\:\\:executeMultiple\\(\\) should return array but return statement is missing\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_members_export/src/Plugin/Action/ExportMember.php
@@ -13671,11 +13641,6 @@ parameters:
 			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
 
 		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_group\\\\Form\\\\SocialGroupAddForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
@@ -13777,11 +13742,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method getGroupType\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php
-
-		-
-			message: "#^Cannot call method isAllowed\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php
 
@@ -15729,16 +15689,6 @@ parameters:
 			message: "#^Cannot call method hasKey\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Plugin/Block/PostBlock.php
-
-		-
-			message: "#^Method Drupal\\\\social_post\\\\Plugin\\\\Block\\\\PostBlock\\:\\:blockAccess\\(\\) should return Drupal\\\\Core\\\\Access\\\\AccessResult but returns bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Plugin/Block/PostBlock.php
-
-		-
-			message: "#^Method Drupal\\\\social_post\\\\Plugin\\\\Block\\\\PostGroupBlock\\:\\:blockAccess\\(\\) should return Drupal\\\\Core\\\\Access\\\\AccessResult but returns bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Plugin/Block/PostGroupBlock.php
 
 		-
 			message: "#^Call to an undefined method object\\:\\:id\\(\\)\\.$#"
@@ -19409,11 +19359,6 @@ parameters:
 			message: "#^Property Drupal\\\\social_user\\\\Plugin\\\\Action\\\\SocialAddRoleUser\\:\\:\\$currentUser \\(Drupal\\\\Core\\\\Session\\\\AccountProxyInterface\\) does not accept Drupal\\\\Core\\\\Session\\\\AccountInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Plugin/Action/SocialAddRoleUser.php
-
-		-
-			message: "#^Cannot call method andIf\\(\\) on bool\\|Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Plugin/Action/SocialBlockUser.php
 
 		-
 			message: "#^Cannot call method hasPermission\\(\\) on Drupal\\\\Core\\\\Session\\\\AccountInterface\\|null\\.$#"
