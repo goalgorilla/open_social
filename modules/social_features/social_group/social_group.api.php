@@ -232,9 +232,9 @@ added/invited by @entity_type_id managers.'),
  *   values are associative arrays that should contain the following elements:
  *   - entity_type_id: The entity type ID.
  *   - bundle: (optional) The bundle(s).
- *   - field: The field contains a list of supported join methods when the
- *     "method" item isn't defined. Otherwise, the field indicates if an entity
- *     can use the join method defined in the "method" item.
+ *   - field: (optional) The field contains a list of supported join methods
+ *     when the "method" item isn't defined. Otherwise, the field indicates if
+ *     an entity can use the join method defined in the "method" item.
  *   - method: (optional) The join method(s).
  *
  * @see \Drupal\social_group\JoinManager::relations()

@@ -24,4 +24,14 @@ interface JoinManagerInterface extends ContextAwarePluginManagerInterface {
    */
   public function preprocess(array &$variables, string $hook): void;
 
+  /**
+   * Check if specific bundle supports selected the join method.
+   *
+   * @param string $bundle
+   *   The bundle.
+   * @param string $method
+   *   The join method.
+   */
+  public function hasMethod(string $bundle, string $method): bool;
+
 }

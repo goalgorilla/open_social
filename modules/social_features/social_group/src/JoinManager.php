@@ -165,4 +165,25 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasMethod(string $bundle, string $method): bool {
+    foreach ($this->relations() as $relation) {
+      if (
+        $relation['entity_type_id'] === 'group' &&
+        isset($relation['bundle']) &&
+        in_array($bundle, (array) $relation['bundle']) &&
+        (
+          !isset($relation['method']) ||
+          in_array($method, (array) $relation['method'])
+        )
+      ) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
 }

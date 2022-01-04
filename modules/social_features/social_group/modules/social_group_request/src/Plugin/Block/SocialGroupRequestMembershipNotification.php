@@ -6,14 +6,13 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\social_group\Entity\Group;
+use Drupal\social_group\JoinManagerInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -54,11 +53,9 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   protected $translation;
 
   /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * The join manager.
    */
-  protected $moduleHandler;
+  private JoinManagerInterface $joinManager;
 
   /**
    * Constructs SocialGroupRequestMembershipNotification.
@@ -75,8 +72,8 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationManager $translation
    *   The translation manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
+   * @param \Drupal\social_group\JoinManagerInterface $join_manager
+   *   The join manager.
    */
   public function __construct(
     array $configuration,
@@ -85,14 +82,14 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
     TranslationManager $translation,
-    ModuleHandlerInterface $module_handler
+    JoinManagerInterface $join_manager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;
     $this->group = _social_group_get_current_group();
     $this->entityTypeManager = $entity_type_manager;
-    $this->translation = $translation;
-    $this->moduleHandler = $module_handler;
+    $this->setStringTranslation($translation);
+    $this->joinManager = $join_manager;
   }
 
   /**
@@ -106,7 +103,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('string_translation'),
-      $container->get('module_handler')
+      $container->get('plugin.manager.join'),
     );
   }
 
@@ -114,43 +111,47 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    * {@inheritdoc}
    */
   public function build() {
-    if (
-      $this->group === NULL ||
-      !$this->group->getGroupType()->hasContentPlugin('group_membership_request')
-    ) {
+    if ($this->group === NULL) {
       return [];
     }
 
-    $group_types = ['flexible_group'];
-    $this->moduleHandler->alter('social_group_request', $group_types);
+    $group_type = $this->group->getGroupType();
 
-    if (in_array($this->group->getGroupType()->id(), $group_types)) {
-      $join_methods = $this->group->get('field_group_allowed_join_method')->getValue();
-      $request_option = in_array('request', array_column($join_methods, 'value'), FALSE);
-      if (!$request_option) {
+    if (!$group_type->hasContentPlugin('group_membership_request')) {
+      return [];
+    }
+
+    /** @var string $bundle */
+    $bundle = $group_type->id();
+
+    if ($this->joinManager->hasMethod($bundle, 'request')) {
+      $join_methods = $this->group->field_group_allowed_join_method->getValue();
+
+      if (!in_array('request', array_column($join_methods, 'value'))) {
         return [];
       }
     }
     else {
-      $allow_request = $this->group->get('allow_request');
+      $allow_request = $this->group->allow_request;
+
       if ($allow_request->isEmpty() || $allow_request->value == 0) {
         return [];
       }
     }
 
-    $contentTypeConfigId = $this->group
-      ->getGroupType()
+    $content_type_config_id = $group_type
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
-    $requests = $this->entityTypeManager->getStorage('group_content')->getQuery()
-      ->condition('type', $contentTypeConfigId)
+    $requests = $this->entityTypeManager->getStorage('group_content')
+      ->getQuery()
+      ->condition('type', $content_type_config_id)
       ->condition('gid', $this->group->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
       ->count()
       ->execute();
 
-    if (!$requests) {
+    if ($requests === 0) {
       return [];
     }
 
@@ -159,8 +160,15 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       '#tag' => 'div',
       '#value' => $this->t('There @link to join this group.', [
         '@link' => Link::fromTextAndUrl(
-          $this->translation->formatPlural($requests, 'is (1) new request', 'are (@count) new requests'),
-          Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $this->group->id()])
+          $this->translation->formatPlural(
+            $requests,
+            'is (1) new request',
+            'are (@count) new requests',
+          ),
+          Url::fromRoute(
+            'view.group_pending_members.membership_requests',
+            ['arg_0' => $this->group->id()],
+          ),
         )->toString(),
       ]),
       '#attributes' => [
@@ -176,28 +184,29 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    * {@inheritdoc}
    */
   public function access(AccountInterface $account, $return_as_object = FALSE) {
-    $is_group_page = isset($this->group);
-    if ($this->group instanceof Group) {
-      $is_group_manager = $this->group->hasPermission('administer members', $account);
-      return AccessResult::allowedIf($is_group_page && $is_group_manager);
+    if ($this->group === NULL) {
+      $access = AccessResult::forbidden();
+    }
+    else {
+      $access = AccessResult::allowedIf(
+        $this->group->hasPermission('administer members', $account),
+      );
     }
 
-    return AccessResult::forbidden();
+    return $return_as_object ? $access : $access->isAllowed();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCacheContexts() {
-    $contexts = parent::getCacheContexts();
-    // Ensure the context keeps track of the URL
-    // so we don't see the message on every group.
-    $contexts = Cache::mergeContexts($contexts, [
+    // Ensure the context keeps track of the URL, so we don't see the message on
+    // every group.
+    return Cache::mergeContexts(parent::getCacheContexts(), [
       'url',
       'user.permissions',
       'route.group',
     ]);
-    return $contexts;
   }
 
   /**

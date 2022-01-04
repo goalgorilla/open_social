@@ -9,6 +9,7 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -17,7 +18,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentTypeInterface;
 use Drupal\group\Entity\GroupContentInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\message\Entity\Message;
 
@@ -62,37 +62,6 @@ function social_group_request_entity_base_field_info(EntityTypeInterface $entity
   }
 
   return $fields;
-}
-
-/**
- * Implements hook_social_group_join_method_usage_alter().
- */
-function social_group_request_social_group_join_method_usage_alter(array &$items): void {
-  $bundles = [];
-
-  foreach ($items as $item) {
-    if (
-      isset($item['entity_type_id'], $item['bundle']) &&
-      $item['entity_type_id'] === 'group'
-    ) {
-      $bundles = array_merge($bundles, (array) $item['bundle']);
-    }
-  }
-
-  /** @var array $bundles */
-  $bundles = \Drupal::entityQuery('group_type')
-    ->accessCheck(FALSE)
-    ->condition('id', $bundles, 'NOT IN')
-    ->execute();
-
-  foreach ($bundles as $bundle) {
-    $items[] = [
-      'entity_type_id' => 'group',
-      'bundle' => $bundle,
-      'field' => 'allow_request',
-      'method' => 'request',
-    ];
-  }
 }
 
 /**
@@ -173,6 +142,40 @@ function social_group_request_theme_registry_alter(&$theme_registry) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_request_preprocess_group(array &$variables): void {
+  if (!\Drupal::config('social_group.settings')->get('social_group_type_required')) {
+    return;
+  }
+
+  /** @var \Drupal\social_group\SocialGroupInterface $group */
+  $group = $variables['group'];
+
+  if (!$group->hasField('field_group_type')) {
+    return;
+  }
+
+  /** @var \Drupal\social_group\JoinManagerInterface $manager */
+  $manager = \Drupal::service('plugin.manager.join');
+
+  /** @var string $bundle */
+  $bundle = $group->getGroupType()->id();
+
+  if ($manager->hasMethod($bundle, 'request')) {
+    $field = $group->field_group_type;
+
+    if (!$field->isEmpty()) {
+      /** @var \Drupal\taxonomy\TermInterface $term */
+      $term = $field->entity;
+
+      $variables['group_type'] = $term->getName();
+      $variables['group_type_icon'] = $term->field_group_type_icon->value;
+    }
+  }
+}
+
+/**
  * Implements hook_activity_send_email_notifications_alter().
  */
 function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
@@ -188,7 +191,7 @@ function social_group_request_activity_send_email_notifications_alter(array &$it
 /**
  * Implements hook_form_alter().
  */
-function social_group_request_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+function social_group_request_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -197,19 +200,21 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
 
-  $group_membership_add_forms = [];
-  foreach ($social_group_types as $social_group_type) {
-    $group_membership_add_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
-  }
-
-  $route = \Drupal::routeMatch()->getRouteName();
-  if (in_array($form_id, $group_membership_add_forms) && $route === 'grequest.group_request_membership_approve') {
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'grequest.group_request_membership_approve' &&
+    preg_match('/^group_content_(' . implode('|', $social_group_types) . ')-group_membership_add_form$/', $form_id)
+  ) {
     // Name of user which we're adding to the group.
-    $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->getDisplayName();
+    $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']
+      ->getDisplayName();
+
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => t('Are you sure you want to approve the membership request for @name?', ['@name' => $user_name]),
+      '#value' => t(
+        'Are you sure you want to approve the membership request for @name?',
+        ['@name' => $user_name],
+      ),
       '#weight' => 1,
     ];
 
@@ -224,21 +229,35 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 
     $form['actions']['submit']['#value'] = t('Yes');
   }
+  elseif (preg_match(
+    '/^group_(' . implode('|', $social_group_types) . ')_(add|edit)_form$/',
+    $form_id,
+  )) {
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
 
-  $group_forms = [];
-  foreach ($social_group_types as $social_group_type) {
-    $group_forms[] = "group_{$social_group_type}_edit_form";
-    $group_forms[] = "group_{$social_group_type}_add_form";
-  }
+    /** @var \Drupal\group\Entity\GroupInterface $group */
+    $group = $form_object->getEntity();
 
-  if (in_array($form_id, $group_forms)) {
-    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-    $group_type = $form_state->getFormObject()->getEntity()->getGroupType();
+    $group_type = $group->getGroupType();
+    $prohibit = FALSE;
 
-    $group_types = ['flexible_group'];
-    \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+    if ($group_type->hasContentPlugin('group_membership_request')) {
+      /** @var \Drupal\social_group\JoinManagerInterface $manager */
+      $manager = \Drupal::service('plugin.manager.join');
 
-    if (in_array($group_type->id(), $group_types) || !$group_type->hasContentPlugin('group_membership_request')) {
+      /** @var string $bundle */
+      $bundle = $group_type->id();
+
+      if ($manager->hasMethod($bundle, 'request')) {
+        $prohibit = TRUE;
+      }
+    }
+    else {
+      $prohibit = TRUE;
+    }
+
+    if ($prohibit) {
       unset($form['allow_request']);
     }
   }

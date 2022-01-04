@@ -265,18 +265,6 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_type_id'] = $group_type_id;
   $variables['group_type'] = $group->getGroupType()->label();
 
-  $group_types = ['flexible_group'];
-  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
-
-  if (in_array($group_type_id, $group_types)
-    && $group->hasField('field_group_type')
-    && !empty($term = $group->get('field_group_type')->entity)
-    && \Drupal::config('social_group.settings')
-      ->get('social_group_type_required')) {
-    $variables['group_type'] = $term->getName();
-    $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
-  }
-
   /** @var \Drupal\Core\Render\RendererInterface $renderer */
   $renderer = \Drupal::service('renderer');
 
