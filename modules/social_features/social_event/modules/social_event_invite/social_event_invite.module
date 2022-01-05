@@ -252,7 +252,7 @@ function social_event_invite_user_insert(UserInterface $entity) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function social_event_invite_node_delete(NodeInterface $node) {
+function social_event_invite_node_delete(NodeInterface $node): void {
   $type = $node->getType();
   if ($type != "event") {
     return;
