@@ -17,7 +17,7 @@ class SearchApiSubscriber implements EventSubscriberInterface {
    * @param \Drupal\search_api\Event\MappingViewsHandlersEvent $event
    *   The Search API event.
    */
-  public function onMappingViewsFilterHandlers(MappingViewsHandlersEvent $event) {
+  public function onMappingViewsFilterHandlers(MappingViewsHandlersEvent $event): void {
     $mapping = &$event->getHandlerMapping();
 
     // Override the Search API views filter connected to date with
