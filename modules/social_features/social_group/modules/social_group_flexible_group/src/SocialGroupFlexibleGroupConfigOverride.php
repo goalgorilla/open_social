@@ -397,7 +397,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'exposed' => TRUE,
       'expose' => [
         'operator_id' => 'field_group_allowed_join_method_value_op',
-        'label' => 'Join method',
+        'label' => t('Join method'),
         'description' => '',
         'use_operator' => FALSE,
         'operator' => 'field_group_allowed_join_method_value_op',
@@ -450,7 +450,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
         ],
         'field_settings' => [
           'field_group_allowed_join_method' => [
-            'label' => 'Allowed join method',
+            'label' => t('Allowed join method'),
             'datasource_id' => 'entity:group',
             'property_path' => 'field_group_allowed_join_method',
             'type' => 'string',
@@ -478,7 +478,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'exposed' => TRUE,
       'expose' => [
         'operator_id' => 'field_group_allowed_join_method_op',
-        'label' => 'Join method',
+        'label' => t('Join method'),
         'description' => '',
         'use_operator' => FALSE,
         'operator' => 'field_group_allowed_join_method_op',

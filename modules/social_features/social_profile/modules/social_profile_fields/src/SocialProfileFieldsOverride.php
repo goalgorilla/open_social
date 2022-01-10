@@ -62,7 +62,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
           ],
           'field_settings' => [
             'field_profile_nick_name' => [
-              'label' => 'Nickname',
+              'label' => t('Nickname'),
               'datasource_id' => 'entity:profile',
               'property_path' => 'field_profile_nick_name',
               'type' => 'text',

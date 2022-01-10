@@ -29,7 +29,7 @@ function social_content_block_preprocess_block(&$variables) {
       }
       $variables['content_type'] = ['#plain_text' => _social_content_block_get_content_type_for_block($block_entity)];
       if (!$block_entity->field_subtitle->isEmpty()) {
-        $variables['subtitle'] = $block_entity->field_subtitle->view(['label' => 'hidden']);
+        $variables['subtitle'] = $block_entity->field_subtitle->view(['label' => t('hidden')]);
       }
     }
   }

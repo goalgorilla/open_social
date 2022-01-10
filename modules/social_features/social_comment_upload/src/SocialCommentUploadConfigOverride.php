@@ -58,13 +58,13 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
             'weight' => 20,
             'format_type' => 'details',
             'format_settings' => [
-              'label' => 'Add attachment',
+              'label' => t('Add attachment'),
               'required_fields' => TRUE,
               'id' => '',
               'classes' => 'comment-attachments',
               'open' => FALSE,
             ],
-            'label' => 'Add attachment',
+            'label' => t('Add attachment'),
             'region' => 'content',
           ],
         ],
@@ -95,7 +95,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
       $content = [
         'field_comment_files' => [
           'weight' => 1,
-          'label' => 'hidden',
+          'label' => t('hidden'),
           'settings' => [
             'image_style' => 'social_x_large',
             'image_link' => '',

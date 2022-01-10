@@ -212,15 +212,15 @@ class Post extends ContentEntityBase implements PostInterface {
     $default_visibilities = [
       [
         'id' => 'community',
-        'label' => 'Community',
+        'label' => t('Community'),
       ],
       [
         'id' => 'public',
-        'label' => 'Public',
+        'label' => t('Public'),
       ],
       [
         'id' => 'group',
-        'label' => 'Group members',
+        'label' => t('Group members'),
       ],
     ];
 
@@ -322,7 +322,7 @@ class Post extends ContentEntityBase implements PostInterface {
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => t('hidden'),
         'type' => 'author',
         'weight' => 0,
       ])

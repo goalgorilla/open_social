@@ -89,7 +89,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
           ->get('field_settings');
 
         $field_settings['social_tagging'] = [
-          'label' => 'Tags',
+          'label' => t('Tags'),
           'datasource_id' => 'entity:' . $type,
           'property_path' => 'social_tagging',
           'type' => 'integer',
@@ -101,7 +101,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     // Prepare fields.
     $fields['social_tagging'] = [
       'identifier' => 'tag',
-      'label' => 'Tags',
+      'label' => t('Tags'),
     ];
 
     if ($tag_service->allowSplit()) {
@@ -212,7 +212,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $fields = [];
     $fields['social_tagging_target_id'] = [
       'identifier' => 'tag',
-      'label' => 'Tags',
+      'label' => t('Tags'),
     ];
 
     if ($tag_service->allowSplit()) {
@@ -335,7 +335,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $overrides[$config_name]['content']['social_tagging'] = [
         'weight' => 7,
-        'label' => 'visually_hidden',
+        'label' => t('visually_hidden'),
         'settings' => [
           'link' => 'true',
         ],

@@ -152,7 +152,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => t('hidden'),
         'type' => 'author',
         'weight' => 0,
       ])

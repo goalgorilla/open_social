@@ -186,7 +186,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
           'type' => 'number_integer',
         ])
         ->setComponent('grequest_updated_by', [
-          'label' => 'above',
+          'label' => t('above'),
           'type' => 'entity_reference_label',
           'settings' => [
             'link' => 1,

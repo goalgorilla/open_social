@@ -203,7 +203,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => t('hidden'),
         'type' => 'author',
         'weight' => 0,
       ])
@@ -229,7 +229,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label' => 'above',
+        'label' => t('above'),
         'type' => 'string',
         'weight' => -4,
       ])

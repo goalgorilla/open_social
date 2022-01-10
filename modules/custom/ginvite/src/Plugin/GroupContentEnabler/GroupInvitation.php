@@ -236,7 +236,7 @@ class GroupInvitation extends GroupContentEnablerBase {
       // Assign display settings for the 'default' view mode.
       $view_display
         ->setComponent('group_roles', [
-          'label' => 'above',
+          'label' => t('above'),
           'type' => 'entity_reference_label',
           'settings' => [
             'link' => 0,

@@ -170,7 +170,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', [
-        'label' => 'hidden',
+        'label' => t('hidden'),
         'type' => 'author',
         'weight' => 0,
       ])
@@ -196,7 +196,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label' => 'above',
+        'label' => t('above'),
         'type' => 'string',
         'weight' => -4,
       ])

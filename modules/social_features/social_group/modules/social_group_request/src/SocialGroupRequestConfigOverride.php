@@ -316,7 +316,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Message',
+                  'label' => t('Message'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -450,7 +450,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Parent group',
+                  'label' => t('Parent group'),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -516,7 +516,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'ID',
+                  'label' => t('ID'),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => FALSE,

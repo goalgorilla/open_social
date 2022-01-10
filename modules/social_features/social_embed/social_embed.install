@@ -118,7 +118,7 @@ function social_embed_update_11003(): void {
   // Add the new field to user entity form display.
   $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
   $form_display = $form_display->setComponent('field_user_embed_content_consent', [
-    'label' => 'above',
+    'label' => t('above'),
     'type' => 'boolean_checkbox',
   ]);
   $form_display->save();
@@ -154,7 +154,7 @@ function social_embed_update_11004(): void {
         'description' => '',
         'required_fields' => 1,
       ],
-      'label' => 'Remote content settings',
+      'label' => t('Remote content settings'),
     ];
 
     field_group_group_save($new_group);

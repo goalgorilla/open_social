@@ -64,7 +64,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
         $content['field_event_type'] = [
           'type' => 'entity_reference_label',
           'weight' => 2,
-          'label' => 'hidden',
+          'label' => t('hidden'),
           'settings' => [
             'link' => FALSE,
           ],

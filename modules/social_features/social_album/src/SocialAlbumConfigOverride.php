@@ -103,7 +103,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
             'type' => 'social_album_entity_reference_label',
             'weight' => 5,
             'region' => 'content',
-            'label' => 'hidden',
+            'label' => t('hidden'),
             'settings' => [
               'link' => TRUE,
             ],
