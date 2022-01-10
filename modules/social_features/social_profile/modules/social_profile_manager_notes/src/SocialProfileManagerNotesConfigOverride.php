@@ -64,7 +64,7 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
           'third_party_settings' => [],
           'type' => 'comment_default',
           'region' => 'content',
-          'label' => t('visually_hidden'),
+          'label' => 'visually_hidden',
         ];
       }
     }

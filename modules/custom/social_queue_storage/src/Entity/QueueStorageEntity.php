@@ -196,7 +196,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label' => t('above'),
+        'label' => 'above',
         'type' => 'string',
         'weight' => -4,
       ])

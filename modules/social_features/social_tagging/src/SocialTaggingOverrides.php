@@ -335,7 +335,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $overrides[$config_name]['content']['social_tagging'] = [
         'weight' => 7,
-        'label' => t('visually_hidden'),
+        'label' => 'visually_hidden',
         'settings' => [
           'link' => 'true',
         ],

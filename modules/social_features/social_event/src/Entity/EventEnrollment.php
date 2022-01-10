@@ -229,7 +229,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label' => t('above'),
+        'label' => 'above',
         'type' => 'string',
         'weight' => -4,
       ])

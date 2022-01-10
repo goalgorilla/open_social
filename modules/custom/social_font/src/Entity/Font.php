@@ -182,7 +182,7 @@ class Font extends ContentEntityBase implements FontInterface {
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label' => t('above'),
+        'label' => 'above',
         'type' => 'string',
         'weight' => -4,
       ])
