@@ -95,7 +95,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
       $content = [
         'field_comment_files' => [
           'weight' => 1,
-          'label' => t('hidden'),
+          'label' => 'hidden',
           'settings' => [
             'image_style' => 'social_x_large',
             'image_link' => '',

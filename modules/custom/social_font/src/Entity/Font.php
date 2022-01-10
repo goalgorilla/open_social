@@ -156,7 +156,7 @@ class Font extends ContentEntityBase implements FontInterface {
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
-        'label' => t('hidden'),
+        'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
       ])

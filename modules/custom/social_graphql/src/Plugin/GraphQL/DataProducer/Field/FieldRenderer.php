@@ -85,7 +85,7 @@ class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPl
    */
   public function resolve(FieldItemListInterface $field, RefinableCacheableDependencyInterface $metadata): ?string {
     $render_array = $field->view([
-      'label' => t('hidden'),
+      'label' => 'hidden',
     ]);
     if (empty($render_array)) {
       return NULL;

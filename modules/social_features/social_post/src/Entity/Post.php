@@ -322,7 +322,7 @@ class Post extends ContentEntityBase implements PostInterface {
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
-        'label' => t('hidden'),
+        'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
       ])
