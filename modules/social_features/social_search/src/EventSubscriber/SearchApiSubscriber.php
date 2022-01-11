@@ -23,11 +23,9 @@ class SearchApiSubscriber implements EventSubscriberInterface {
     // Override the Search API views filter connected to date with
     // SocialDate.php (Extends current one limits options).
     // @see Drupal\social_search\Plugin\views\filter\SocialDate.
-    $mapping['date'] = [
-      'filter' => [
-        'id' => 'social_date_filter',
-      ],
-    ];
+    if (!empty($mapping['date']['filter']['id']) && $mapping['date']['filter']['id'] === 'search_api_date') {
+      $mapping['date']['filter']['id'] = 'social_date_filter';
+    }
   }
 
   /**
