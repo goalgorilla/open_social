@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
 
@@ -246,6 +247,37 @@ function social_event_invite_user_insert(UserInterface $entity) {
     $enrollment->set('user_id', $entity->id());
     $enrollment->save();
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_event_invite_node_delete(NodeInterface $node): void {
+  $type = $node->getType();
+  if ($type != "event") {
+    return;
+  }
+
+  $conditions = [
+    'field_event' => $node->id(),
+  ];
+
+  /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
+  $enrollments = \Drupal::entityTypeManager()
+    ->getStorage('event_enrollment')
+    ->loadByProperties($conditions);
+
+  $tags = [];
+  foreach ($enrollments as $enrollment) {
+    $enrollment->delete();
+
+    $tags[] = 'enrollment:' . $enrollment->field_event->value . '-' . $enrollment->user_id->target_id;
+    $tags[] = 'event_content_list:entity:' . $enrollment->field_event->value;
+    $tags[] = 'event_content_list:user:' . $enrollment->user_id->value;
+    $tags[] = 'event_enrollment_view';
+  }
+
+  Cache::invalidateTags($tags);
 }
 
 /**
