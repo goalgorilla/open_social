@@ -65,7 +65,7 @@ class SocialSearchApiSplitProfileTerms extends SearchApiTerm {
     }
 
     // Render all value if split tag disabled.
-    if (!$this->profileTagService->allowSplit()) {
+    if (!$this->profileTagService->allowSplit() && !empty($element['#options'])) {
       $term_ids = [];
       $element['#type'] = 'select2';
       $options = &$element['#options'];
