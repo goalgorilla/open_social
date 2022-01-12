@@ -44,8 +44,6 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
  * Makes changes for the filter block on the user search page.
  */
 function social_search_alter_users_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
@@ -55,10 +53,12 @@ function social_search_alter_users_exposed_filter_block(&$form, FormStateInterfa
     }
   }
 
-  if (!empty($form['created']) && !empty($form['created_op'])) {
-    $form['settings']['created_op'] = $form['created_op'];
-    $form['settings']['created'] = $form['created'];
-    unset($form['created_op'], $form['created']);
+  if (!empty($form['created_wrapper']['created'])
+    && !empty($form['created_wrapper']['created_op'])) {
+    $form['settings']['created_op'] = $form['created_wrapper']['created_op'];
+    $form['settings']['created'] = $form['created_wrapper']['created'];
+    // $form['settings']['#attributes']['class'] = ['indent_filter'];
+    unset($form['created_wrapper']);
   }
 }
 
@@ -97,7 +97,8 @@ function social_search_alter_content_exposed_filter_block(&$form, FormStateInter
     $form['type']['#weight'] = '-100';
   }
 
-  if (!empty($form['field_event_date']) && !empty($form['field_event_date_op'])) {
+  if (!empty($form['field_event_date_wrapper']['field_event_date'])
+    && !empty($form['field_event_date_wrapper']['field_event_date_op'])) {
     if (!empty($form['settings'])) {
       $form['settings']['#states'] = [
         'visible' => [
@@ -106,13 +107,12 @@ function social_search_alter_content_exposed_filter_block(&$form, FormStateInter
           ],
         ],
       ];
-      $form['settings']['#weight'] = '-99';
-      $form['settings']['#attributes']['class'] = ['indent_filter'];
+
     }
 
-    $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
-    $form['settings']['field_event_date'] = $form['field_event_date'];
-    unset($form['field_event_date'], $form['field_event_date_op']);
+    $form['settings']['field_event_date_op'] = $form['field_event_date_wrapper']['field_event_date_op'];
+    $form['settings']['field_event_date'] = $form['field_event_date_wrapper']['field_event_date'];
+    unset($form['field_event_date_wrapper']);
   }
 
   if (!empty($form['location_details'])) {
@@ -192,15 +192,6 @@ function social_search_views_data_alter(array &$data) {
       'field' => 'created',
     ],
   ];
-}
-
-/**
- * Implements hook_search_api_views_handler_mapping_alter().
- */
-function social_search_search_api_views_handler_mapping_alter(array &$mapping) {
-  // Override the Search API views filter connected to date with
-  // SocialDate.php (Extends current one limits options).
-  $mapping['date']['filter']['id'] = 'social_date_filter';
 }
 
 /**
