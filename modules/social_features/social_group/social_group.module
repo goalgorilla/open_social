@@ -10,7 +10,6 @@ use Drupal\bootstrap\Bootstrap;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -2810,7 +2809,7 @@ function social_group_preprocess_page(array &$variables) {
 /**
  * Implements hook_preprocess_html().
  */
-function social_group_preprocess_html(array &$variables) {
+function social_group_preprocess_html(array &$variables):void {
   $route_name = \Drupal::routeMatch()->getRouteName();
 
   if ($route_name === 'entity.group_content.edit_form' || $route_name === 'entity.group_content.delete_form') {
