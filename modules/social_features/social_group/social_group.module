@@ -2805,3 +2805,15 @@ function social_group_preprocess_page(array &$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function social_group_preprocess_html(array &$variables):void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($route_name === 'entity.group_content.edit_form' || $route_name === 'entity.group_content.delete_form' || $route_name === 'entity.group_content.canonical') {
+    $variables['attributes']['class'][] = 'path-group--membership-actions';
+    $variables['#attached']['library'][] = 'socialblue/page-node';
+  }
+}
