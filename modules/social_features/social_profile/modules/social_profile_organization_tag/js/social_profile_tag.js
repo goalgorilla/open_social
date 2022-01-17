@@ -20,24 +20,27 @@
         teaserC.css('overflow', 'visible');
         teaserP.css('overflow', 'visible');
 
-        if (percentage >= conditionPercentage) {
-          text.css({
-            'left': 'auto',
-            'right': '100%'
-          });
-        }
-        else if (percentage <= conditionPercentage) {
-          text.css({
-            'left': '100%',
-            'right': 'auto'
-          });
-        }
-        else {
-          text.css({
-            'left': '50%',
-            'right': 'auto',
-            'margin-left': -(150 / 2) + 'px'
-          });
+        if($('body.path-user').length === 0) {
+          console.log(1);
+          if (percentage >= conditionPercentage) {
+            text.css({
+              'left': 'auto',
+              'right': '100%'
+            });
+          }
+          else if (percentage <= conditionPercentage) {
+            text.css({
+              'left': '100%',
+              'right': 'auto'
+            });
+          }
+          else {
+            text.css({
+              'left': '50%',
+              'right': 'auto',
+              'margin-left': -(150 / 2) + 'px'
+            });
+          }
         }
       });
 
