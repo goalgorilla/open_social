@@ -227,6 +227,15 @@ function social_user_update_8810() {
 }
 
 /**
+ * Revoke the permission select account cancellation method.
+ */
+function social_user_update_8811(): void {
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
+    'select account cancellation method',
+  ]);
+}
+
+/**
  * Create the default configuration for the verified immediately site setting.
  */
 function social_user_update_11001(): void {
