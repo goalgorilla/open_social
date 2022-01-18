@@ -208,8 +208,12 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function build(int $entity_id, string $entity_type_id, string $entity_bundle): array {
-    if ($entity_type_id !== 'block_content' || $entity_bundle !== 'custom_content_list') {
+  public function build($entity_id, string $entity_type_id, string $entity_bundle): array {
+    if (
+      $entity_id === NULL ||
+      $entity_type_id !== 'block_content' ||
+      $entity_bundle !== 'custom_content_list'
+    ) {
       return [];
     }
 

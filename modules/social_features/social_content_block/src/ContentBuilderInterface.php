@@ -57,7 +57,7 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
   /**
    * Lazy builder callback for displaying a content blocks.
    *
-   * @param int $entity_id
+   * @param string|int|null $entity_id
    *   The entity ID.
    * @param string $entity_type_id
    *   The entity type id.
@@ -68,7 +68,7 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
    *   A render array for the action link, empty if the user does not have
    *   access.
    */
-  public function build(int $entity_id, string $entity_type_id, string $entity_bundle): array;
+  public function build($entity_id, string $entity_type_id, string $entity_bundle): array;
 
   /**
    * Update the sorting field after a plugin choice change.

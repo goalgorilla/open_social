@@ -16,7 +16,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
   /**
    * {@inheritdoc}
    */
-  public function build(int $entity_id, string $entity_type_id, string $entity_bundle): array {
+  public function build($entity_id, string $entity_type_id, string $entity_bundle): array {
     $build = parent::build($entity_id, $entity_type_id, $entity_bundle);
 
     if (!$build) {
