@@ -17,16 +17,6 @@ Feature: Send invite group email notifications
       | label             | field_group_description        | author          | type           | langcode | field_flexible_group_visibility |
       | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       | public                          |
 
-    # Lets first check if sending mail works properly
-    Given I am logged in as an "administrator"
-    And I go to "/admin/config/swiftmailer/test"
-    And I should see "This page allows you to send a test e-mail to a recipient of your choice."
-    When I fill in the following:
-      | E-mail | site_manager_1@example.com |
-    Then I press "Send"
-    And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
-      | This e-mail has been sent from Open Social by the Swift Mailer module. |
-
     # Enable "Allow invited user to skip email verification" option for groups
     When I go to "/admin/config/opensocial/social-group"
     Then I click the element with css selector "#edit-group-invite"
@@ -50,8 +40,6 @@ Feature: Send invite group email notifications
     Then I wait for the batch job to finish
     And I should see "Invite sent to new_test_user@example.com"
     When I wait for the queue to be empty
-    And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
-      | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  Accept invite	About Open Social |
 
     # Register as new user and accept invitation.
     Given I logout

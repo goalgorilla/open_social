@@ -60,13 +60,11 @@ Feature: Mute/Unmute group notifications
   Scenario: LU able to receive notifications from the unmuted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
-      And I go to "/admin/config/swiftmailer/test"
+      And I go to "/admin/config/system/mailer/test"
       And I should see "This page allows you to send a test e-mail to a recipient of your choice."
     When I fill in the following:
       | E-mail | site_manager_1@example.com |
     Then I press "Send"
-      And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
-        | This e-mail has been sent from Open Social by the Swift Mailer module. |
 
     # Add content to the group by another user.
     Given I am logged in as "dude_2nd"
@@ -95,20 +93,16 @@ Feature: Mute/Unmute group notifications
     # There should be notifications.
     When I am on "/notifications"
     Then I should see "dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group"
-      And I should have an email with subject "New content has been added to a group you are in" and in the content:
-        | dude_2nd created a topic Topic for unmute notify in the Ressinel's group 1st group |
 
   @email-spool
   Scenario: LU not able to receive notifications from the muted group
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"
-    And I go to "/admin/config/swiftmailer/test"
+    And I go to "/admin/config/system/mailer/test"
     And I should see "This page allows you to send a test e-mail to a recipient of your choice."
     When I fill in the following:
       | E-mail | site_manager_1@example.com |
     Then I press "Send"
-    And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
-      | This e-mail has been sent from Open Social by the Swift Mailer module. |
 
     # Login and mute group notifications.
     Given I am logged in as "dude_1st"

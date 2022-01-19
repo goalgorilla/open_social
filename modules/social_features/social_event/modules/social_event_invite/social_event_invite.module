@@ -75,43 +75,6 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
 }
 
 /**
- * Implements hook_mail().
- *
- * This mail is sent when people who do not have an account on the website yet
- * are invited into an event. It is sent in the language the inviter was using
- * the website in.
- */
-function social_event_invite_mail($key, &$message, $params) {
-  if ($key === 'invite') {
-    $token_service = \Drupal::token();
-    $language_manager = \Drupal::languageManager();
-
-    $langcode = $message['langcode'];
-
-    $language = $language_manager->getLanguage($langcode);
-    $original_language = $language_manager->getConfigOverrideLanguage();
-    $language_manager->setConfigOverrideLanguage($language);
-
-    // Load event invite configuration.
-    $invite_config = \Drupal::service('config.factory')->getEditable('social_event_invite.settings');
-
-    $invitation_subject = $invite_config->get('invite_subject');
-    $invitation_body = $invite_config->get('invite_message');
-
-    unset($params['existing_user']);
-
-    $body = $token_service->replace($invitation_body, $params);
-    $subject = $token_service->replace($invitation_subject, $params);
-
-    $message['subject'] = $subject;
-    $message['body'][] = $body;
-
-    $language_manager->setConfigOverrideLanguage($original_language);
-
-  }
-}
-
-/**
  * Prefill email address on registration url.
  *
  * Implements hook_form_FORM_ID_alter().
