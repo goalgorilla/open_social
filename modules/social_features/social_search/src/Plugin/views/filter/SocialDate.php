@@ -3,7 +3,7 @@
 namespace Drupal\social_search\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\search_api\Plugin\views\filter\SearchApiDate as DateTimeDate;
+use Drupal\search_api\Plugin\views\filter\SearchApiDate;
 
 /**
  * Defines a filter for filtering on dates.
@@ -12,7 +12,7 @@ use Drupal\search_api\Plugin\views\filter\SearchApiDate as DateTimeDate;
  *
  * @ViewsFilter("social_date_filter")
  */
-class SocialDate extends DateTimeDate {
+class SocialDate extends SearchApiDate {
 
   /**
    * {@inheritdoc}
@@ -104,20 +104,22 @@ class SocialDate extends DateTimeDate {
 
     // Key is form field name, value is title name.
     $form_keys = [
-      'field_event_date_op' => $this->t('Date of Event'),
-      'created_op' => $this->t('Registration Date'),
+      'field_event_date' => $this->t('Date of Event'),
+      'created' => $this->t('Registration Date'),
     ];
 
     // Update form values for the options.
     foreach ($form_keys as $key => $title) {
-      if (!empty($form[$key])) {
+      if (!empty($form[$key . '_wrapper'][$key . '_op'])) {
         $form['settings'] = [
           '#type' => 'details',
           '#title' => $title,
           '#attributes' => [
             'class' => [
               'filter',
+              'indent_filter',
             ],
+            '#weight' => '-99',
           ],
         ];
 
@@ -131,7 +133,6 @@ class SocialDate extends DateTimeDate {
           }
           if (!empty($form['value']['min'])) {
             $form['value']['min']['#type'] = 'date';
-            $form['value']['min']['#title'] = '';
           }
           if (!empty($form['value']['max'])) {
             $form['value']['max']['#type'] = 'date';

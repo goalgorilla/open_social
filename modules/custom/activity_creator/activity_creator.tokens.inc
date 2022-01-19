@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\message\Entity\Message;
 use Drupal\user\UserInterface;
 
 /**
@@ -41,36 +42,36 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
+          case 'field_activity_recipient_user_display_name':
+            // Get the targeted user and its display name.
+            if ($name === 'field_activity_recipient_user_display_name') {
+              if (!$message->get('field_message_related_object')->isEmpty()) {
+                $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+                $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                $entity = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
 
-        case 'field_activity_recipient_user_display_name':
+                // Or special handling for post entities.
+                if ($entity->getEntityTypeId() === 'post') {
+                  if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
+                    $target_id = $entity->field_recipient_user->target_id;
+                    $recipient_user = \Drupal::entityTypeManager()
+                      ->getStorage('user')
+                      ->load($target_id);
 
-          // Get the targeted user and its display name.
-          if ($name === 'field_activity_recipient_user_display_name') {
-            if (!$message->get('field_message_related_object')->isEmpty()) {
-              $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
-              $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
-              $entity = \Drupal::entityTypeManager()
-                ->getStorage($target_type)
-                ->load($target_id);
-
-              // Or special handling for post entities.
-              if ($entity->getEntityTypeId() === 'post') {
-                if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
-                  $target_id = $entity->field_recipient_user->target_id;
-                  $recipient_user = \Drupal::entityTypeManager()
-                    ->getStorage('user')
-                    ->load($target_id);
-
-                  if ($recipient_user instanceof UserInterface) {
-                    $replacements[$original] = $recipient_user->getDisplayName();
+                    if ($recipient_user instanceof UserInterface) {
+                      $replacements[$original] = $recipient_user->getDisplayName();
+                    }
                   }
                 }
               }
             }
-          }
-          break;
+            break;
+        }
       }
     }
   }

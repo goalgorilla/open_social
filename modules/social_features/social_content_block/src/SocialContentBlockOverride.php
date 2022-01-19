@@ -106,18 +106,39 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
             $dependencies[] = $field_config;
             $group[] = $field;
 
-            $fields[$field] = [
-              'weight' => $weight++,
-              'settings' => [
-                'match_operator' => 'CONTAINS',
-                'size' => 60,
-                'placeholder' => '',
-                'match_limit' => 10,
-              ],
-              'third_party_settings' => [],
-              'type' => 'entity_reference_autocomplete_tags',
-              'region' => 'content',
+            $fields_select_types = [
+              'field_event_type',
+              'field_group_type',
+              'field_topic_type',
             ];
+
+            if (in_array($field, $fields_select_types)) {
+              $fields[$field] = [
+                'weight' => $weight++,
+                'settings' => [
+                  'autocomplete' => FALSE,
+                  'match_operator' => 'CONTAINS',
+                  'match_limit' => 10,
+                ],
+                'third_party_settings' => [],
+                'type' => 'select2_entity_reference',
+                'region' => 'content',
+              ];
+            }
+            else {
+              $fields[$field] = [
+                'weight' => $weight++,
+                'settings' => [
+                  'match_operator' => 'CONTAINS',
+                  'size' => 60,
+                  'placeholder' => '',
+                  'match_limit' => 10,
+                ],
+                'third_party_settings' => [],
+                'type' => 'entity_reference_autocomplete_tags',
+                'region' => 'content',
+              ];
+            }
           }
         }
       }
