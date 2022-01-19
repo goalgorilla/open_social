@@ -16,16 +16,6 @@ Feature: Send invite event email notifications
       | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author         |
       | Invite Event  | +2 days          | 1      | public                   | 1                     | site_manager_1 |
 
-    # Lets first check if sending mail works properly
-    Given I am logged in as an "administrator"
-    And I go to "/admin/config/swiftmailer/test"
-    And I should see "This page allows you to send a test e-mail to a recipient of your choice."
-    When I fill in the following:
-      | E-mail | site_manager_1@example.com |
-    Then I press "Send"
-    And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
-      | This e-mail has been sent from Open Social by the Swift Mailer module. |
-
     # Enable "Allow invited user to skip email verification" option
     When I go to "/admin/config/opensocial/event-invite"
     And I should see "Allow invited user to skip email verification"
@@ -47,8 +37,6 @@ Feature: Send invite event email notifications
     Then I wait for the batch job to finish
     And I wait for the queue to be empty
     Then I should see "Invite(s) have been successfully sent."
-    And I should have an email with subject "site_manager_1 has invited you to the event Invite Event on Open Social" and in the content:
-      | Hi, I would like to invite you to my event Invite Event on Open Social. Kind regards, site_manager_1 See event About Open Social |
 
     # Register as new user and accept invitation.
     Given I logout
@@ -79,9 +67,6 @@ Feature: Send invite event email notifications
     Then I wait for the batch job to finish
     And I wait for the queue to be empty
     Then I should see "Invite(s) have been successfully sent. "
-
-    And I should have an email with subject "site_manager_1 has invited you to the event Invite Event on Open Social" and in the content:
-      | Hi, I would like to invite you to my event Invite Event on Open Social. Kind regards, site_manager_1 |
 
     # Login and check if invite has been sent to existing user.
     Given I logout

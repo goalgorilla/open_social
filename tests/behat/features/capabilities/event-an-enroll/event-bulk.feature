@@ -69,16 +69,3 @@ Feature: Event bulk actions
       And I wait for AJAX to finish
       # And I wait for the queue to be empty
       And I run cron
-      # Check if emails have been sent.
-      And I should have an email with subject "Test subject" and in the content:
-        | content             |
-        | Hi event_attendee_1 |
-        | Test message        |
-      And I should have an email with subject "Test subject" and in the content:
-        | content             |
-        | Hi event_attendee_2 |
-        | Test message        |
-      And I should have an email with subject "Test subject" and in the content:
-        | content             |
-        | Hi event_attendee_3 |
-        | Test message        |
