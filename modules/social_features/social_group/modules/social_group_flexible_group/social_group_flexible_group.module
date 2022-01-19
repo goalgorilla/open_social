@@ -49,6 +49,14 @@ function social_group_flexible_group_views_data_alter(array &$data) {
       'id' => 'flexible_group_node_access',
     ],
   ];
+  $data['groups_field_data']['flexible_group_access'] = [
+    'title' => t('Filter groups you have access to.'),
+    'filter' => [
+      'title' => t('Filter out groups if you don\'t have access to them.'),
+      'help' => t('Filter out groups if you don\'t have access to them.'),
+      'id' => 'flexible_group_access',
+    ],
+  ];
 }
 
 /**
