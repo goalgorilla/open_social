@@ -86,10 +86,6 @@ Feature: Create Open Group
     Given I am logged in as "Group User One"
     When I am on "/notifications"
     Then I should see "Group User Two created a post in the Test open group group"
-    And I should have an email with subject "New content has been added to a group you are in" and in the content:
-      | content                                                      |
-      | Hi Group User One                                            |
-      | Group User Two published a post in the Test open group group |
 
     Given I am logged in as "Group User Two"
     Then I am on "all-groups"

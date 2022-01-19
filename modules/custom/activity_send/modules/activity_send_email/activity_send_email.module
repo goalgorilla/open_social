@@ -267,34 +267,6 @@ function sort_email_frequency_options() {
 }
 
 /**
- * Implements hook_mail().
- */
-function activity_send_email_mail($key, &$message, $params) {
-  $options = [
-    'langcode' => $message['langcode'],
-  ];
-
-  $variables = [
-    '%site_name' => \Drupal::config('system.site')->get('name'),
-  ];
-
-  switch ($key) {
-    case 'activity_send_email':
-      // Mail subject.
-      $message['subject'] = t('Notification from %site_name', $variables, $options);
-      // It could be we have a email subject coming from
-      // our message.
-      if (!empty($params['subject'])) {
-        $message['subject'] = $params['subject'];
-      }
-
-      // Mail body.
-      $message['body'][] = $params['body'];
-      break;
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {

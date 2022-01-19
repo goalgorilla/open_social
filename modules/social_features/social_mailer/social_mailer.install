@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Social Mailer module.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function social_mailer_install(): void {
+  $config_factory = \Drupal::configFactory();
+
+  // Copy configuration from the swiftmailer module for the existing sites.
+  if ($data = $config_factory->get('social_swiftmail.settings')->getRawData()) {
+    $config_factory
+      ->getEditable('social_mailer.settings')
+      ->setData($data)
+      ->save();
+  }
+
+  // If it is a fresh install, grant the necessary permissions to the roles.
+  // Otherwise, grant the permission to the roles which already had it.
+  if (!\Drupal::moduleHandler()->moduleExists('social_swiftmailer')) {
+    user_role_grant_permissions('verified', ['use text format mail_html']);
+    user_role_grant_permissions('contentmanager', ['use text format mail_html']);
+    user_role_grant_permissions('sitemanager', [
+      'use text format mail_html',
+      'administer social mail',
+    ]);
+  }
+  else {
+    foreach (Role::loadMultiple() as $role) {
+      if ($role->hasPermission('administer social swiftmail')) {
+        $role
+          ->grantPermission('administer social mail')
+          ->trustData()
+          ->save();
+      }
+    }
+  }
+
+  // The symfony_mailer_bc module is not compatible with mailsystem.
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall(['swiftmailer', 'mailsystem']);
+  $module_installer->install(['symfony_mailer_bc']);
+
+  // Remove unnecessary mailer policies and set the correct theme to the default
+  // policy.
+  $keys = $config_factory->listAll('symfony_mailer.mailer_policy.');
+
+  foreach ($keys as $key) {
+    $config = $config_factory->getEditable($key);
+
+    if ($key === 'symfony_mailer.mailer_policy._') {
+      $config
+        ->set('configuration.email_theme.theme', '_default')
+        ->save();
+    }
+    else {
+      $config->delete();
+    }
+  }
+}

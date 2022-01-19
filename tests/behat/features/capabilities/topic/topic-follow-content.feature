@@ -98,8 +98,3 @@ Feature: Follow Content
     Given I am logged in as "Dude 2"
       And I am at "notifications"
     Then I should see text matching "Dude 3 commented on Dude 1's topic This is a follow topic you are following"
-      And I should have an email with subject "Someone commented on your content" and in the content:
-        | content                                                                     |
-        | Hi Dude 2                                                                   |
-        | Dude 3 commented on topic This is a follow topic you are following |
-        | This is a test comment                                                      |
