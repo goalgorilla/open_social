@@ -176,7 +176,7 @@ class OwnerActivityContext extends ActivityContextBase {
       }
     }
 
-    if (method_exists($entity, 'getOwnerId')) {
+    if ($entity instanceof EntityOwnerInterface) {
       $recipients[] = [
         'target_type' => 'user',
         'target_id' => $entity->getOwnerId(),

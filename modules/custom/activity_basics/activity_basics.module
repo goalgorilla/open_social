@@ -36,7 +36,7 @@ function activity_basics_entity_update(EntityInterface $entity): void {
  */
 function activity_basics_entity_presave(EntityInterface $entity): void {
   // Check if the entity become published.
-  if ($entity instanceof EntityPublishedInterface) {
+  if ($entity instanceof EntityPublishedInterface && !$entity->isNew()) {
     // Check if entity change state from "unpublished" to "published".
     // @phpstan-ignore-next-line
     $original = $entity->original;
