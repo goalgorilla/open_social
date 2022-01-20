@@ -19,14 +19,17 @@
     background-size: cover;
     display: block;
   }
+
   span {
     position: absolute;
+    min-width: 120px;
+    max-width: 150px;
     left: 100%;
     margin-left: 5px;
     top: 50%;
     transform: translateY(-50%);
     padding: 5px 10px;
-    white-space: nowrap;
+    word-break: normal;
     color: white;
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 2px;
@@ -34,12 +37,9 @@
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
+    z-index: 10;
+
     @media(max-width: 600px) {
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%, 0);
-      margin-top: 5px;
-      margin-left: 0;
       .region--hero & {
         left: auto;
         right: 0;
@@ -47,6 +47,7 @@
       }
     }
   }
+
   &.open {
     span {
       display: block;
