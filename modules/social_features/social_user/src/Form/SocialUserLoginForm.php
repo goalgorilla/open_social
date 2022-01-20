@@ -263,7 +263,7 @@ class SocialUserLoginForm extends UserLoginForm {
           <li>Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. </li>
         </ul>
         <p>To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a></p>',
-      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => Url::fromRoute('user.pass')]));
+      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => Url::fromRoute('user.pass')->toString()]));
   }
 
 }
