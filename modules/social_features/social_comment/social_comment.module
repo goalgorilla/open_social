@@ -392,13 +392,3 @@ function social_comment_preprocess_pager(&$variables) {
     $items['pages'][$key]['href'] = preg_replace($pattern, '', $item['href']);
   }
 }
-
-/**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function social_comment_comment_delete(CommentInterface $comment): void {
-  // Always invalidate the cache tag for the commented entity.
-  if ($commented_entity = $comment->getCommentedEntity()) {
-    \Drupal::service('cache_tags.invalidator')->invalidateTags($commented_entity->getCacheTagsToInvalidate());
-  }
-}
