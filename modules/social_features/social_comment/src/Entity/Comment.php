@@ -16,7 +16,7 @@ class Comment extends CommentBase {
   /**
    * {@inheritdoc}
    */
-  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+  public static function postDelete(EntityStorageInterface $storage, array $entities): void {
     parent::postDelete($storage, $entities);
     // Always invalidate the cache tag for the commented entity.
     /** @var \Drupal\comment\CommentInterface $entity */
