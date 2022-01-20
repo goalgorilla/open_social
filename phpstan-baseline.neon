@@ -7611,12 +7611,11 @@ parameters:
 			path: modules/social_features/social_embed/src/SocialEmbedConfigOverride.php
 
 		-
-			message:
-				"""
-					#^Call to deprecated method assertEqual\\(\\) of class Drupal\\\\KernelTests\\\\KernelTestBase\\:
-					in drupal\\:8\\.0\\.0 and is removed from drupal\\:10\\.0\\.0\\. Use
-					  \\$this\\-\\>assertEquals\\(\\) instead\\.$#
-				"""
+			message: """
+				#^Call to deprecated method assertEqual\\(\\) of class Drupal\\\\KernelTests\\\\KernelTestBase\\:
+				in drupal\\:8\\.0\\.0 and is removed from drupal\\:10\\.0\\.0\\. Use
+				  \\$this\\-\\>assertEquals\\(\\) instead\\.$#
+			"""
 			count: 2
 			path: modules/social_features/social_embed/tests/src/Kernel/SocialUserEmbedTest.php
 
@@ -18152,11 +18151,6 @@ parameters:
 
 		-
 			message: "#^Function social_search_resave_search_indexes\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_search/social_search.module
-
-		-
-			message: "#^Function social_search_search_api_views_handler_mapping_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_search/social_search.module
 
