@@ -2,11 +2,12 @@
 
 namespace Drupal\social_group\Element;
 
+use Drupal\Component\Utility\Tags;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
-use Drupal\Component\Utility\Tags;
+use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -36,7 +37,13 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $entity = $entity->getGroup();
     }
 
-    if (!method_exists($entity, 'getMember')) {
+    // We need set "validate_reference" for element to prevent receive notice
+    // Undefined index #validate_reference.
+    if (!isset($element['#validate_reference'])) {
+      $element['#validate_reference'] = FALSE;
+    }
+
+    if (!$entity instanceof SocialGroupInterface) {
       parent::validateEntityAutocomplete($element, $form_state, $complete_form);
 
       return;
@@ -86,11 +93,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         ) {
           $duplicated_values[] = $account->getDisplayName();
         }
-        // We need set "validate_reference" for element to prevent
-        // receive notice Undefined index #validate_reference.
-        if (!isset($element['#validate_reference'])) {
-          $element['#validate_reference'] = FALSE;
-        }
+
         // Validate input for every single user. This way we make sure that
         // The element validates one, or more users added in the autocomplete.
         // This is because Group doesn't allow adding multiple users at once,
