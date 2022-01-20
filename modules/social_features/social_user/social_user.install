@@ -161,7 +161,6 @@ function _social_user_get_permissions($role) {
     'access user profiles',
     'cancel account',
     'change own username',
-    'select account cancellation method',
   ]);
 
   // Content manager.
@@ -204,5 +203,14 @@ function social_user_update_8810() {
   // Grant the sitemanagers new permissions.
   user_role_grant_permissions('sitemanager', [
     'view blocked user',
+  ]);
+}
+
+/**
+ * Revoke the permission select account cancellation method.
+ */
+function social_user_update_8811() {
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
+    'select account cancellation method',
   ]);
 }
