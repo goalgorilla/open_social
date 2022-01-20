@@ -1698,6 +1698,35 @@ function social_group_preprocess_views_view(&$variables) {
 }
 
 /**
+ * Implements theme_preprocess_menu_local_task().
+ *
+ * Sets an active class on stream tab when viewing group canonical page.
+ */
+function social_group_preprocess_menu_local_task(&$variables) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name != 'entity.group.canonical') {
+    return;
+  }
+
+  /** @var array $link */
+  $link = $variables['link'] ?? NULL;
+  if (!$link) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Url $menu_url */
+  $menu_url = $link['#url'] ?? NULL;
+  if (!$menu_url) {
+    return;
+  }
+
+  if ($menu_url->getRouteName() === 'social_group.stream') {
+    $variables['element']['#active'] = TRUE;
+    $variables['attributes']['class'][] = 'active';
+  }
+}
+
+/**
  * Implements hook_block_access().
  *
  * Check if the user is viewing a closed_group, check if the user is a member.
