@@ -86,6 +86,8 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   public function testSupportsRelayPagination(): void {
     $this->setUpCurrentUser([], ['view node.topic.field_content_visibility:public content']);
 
+    $topics = [];
+
     for ($i = 0; $i < 10; ++$i) {
       $topics[] = $this->createNode([
         'type' => 'topic',

@@ -89,6 +89,8 @@ class QueryEventsTest extends SocialGraphQLTestBase {
   public function testSupportsRelayPagination(): void {
     $this->setUpCurrentUser([], ['view node.event.field_content_visibility:public content']);
 
+    $events = [];
+
     for ($i = 0; $i < 10; ++$i) {
       $events[] = $this->createNode([
         'type' => 'event',
