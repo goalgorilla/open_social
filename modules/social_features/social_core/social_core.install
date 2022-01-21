@@ -569,7 +569,7 @@ function social_core_update_8009() {
   if ($system_theme_settings === 'socialbase') {
 
     $themes = ['socialblue'];
-    \Drupal::service('theme_handler')->install($themes);
+    \Drupal::service('theme_installer')->install($themes);
 
     \Drupal::configFactory()
       ->getEditable('system.theme')

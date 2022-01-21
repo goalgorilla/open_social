@@ -9,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -52,36 +53,40 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
   if ($type === 'social_event' && !empty($data['message'])) {
     /** @var Drupal\message\Entity\Message $message */
     $message = $data['message'];
-    $event_enrollment_id = $message->getFieldValue('field_message_related_object', 'target_id');
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
-        case 'event_iam_organizing':
-          if (!empty($event_enrollment_id)) {
-            $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id);
-            if ($link !== NULL) {
-              $replacements[$original] = $link;
-            }
-          }
-          break;
 
-        case 'enrolled_event_url':
-          if (!empty($event_enrollment_id)) {
-            $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id, TRUE);
-            if ($link !== NULL) {
-              $replacements[$original] = $link;
-            }
-          }
-          break;
+    if ($message instanceof Message) {
+      $event_enrollment_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
-        case 'enrolled_user':
-          if (!empty($event_enrollment_id)) {
-            $enrollment_name = _social_event_get_name_from_enrollment($event_enrollment_id);
-
-            if ($enrollment_name !== NULL) {
-              $replacements[$original] = $enrollment_name;
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
+          case 'event_iam_organizing':
+            if (!empty($event_enrollment_id)) {
+              $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id);
+              if ($link !== NULL) {
+                $replacements[$original] = $link;
+              }
             }
-          }
-          break;
+            break;
+
+          case 'enrolled_event_url':
+            if (!empty($event_enrollment_id)) {
+              $link = _social_event_get_link_to_event_from_enrollment($event_enrollment_id, TRUE);
+              if ($link !== NULL) {
+                $replacements[$original] = $link;
+              }
+            }
+            break;
+
+          case 'enrolled_user':
+            if (!empty($event_enrollment_id)) {
+              $enrollment_name = _social_event_get_name_from_enrollment($event_enrollment_id);
+
+              if ($enrollment_name !== NULL) {
+                $replacements[$original] = $enrollment_name;
+              }
+            }
+            break;
+        }
       }
     }
   }

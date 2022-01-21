@@ -5,14 +5,42 @@
  * Install, update and uninstall functions for the social_embed module.
  */
 
+use Drupal\Core\Config\FileStorage;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
 /**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_embed.
  */
-function social_embed_install() {
+function social_embed_install(bool $is_syncing) {
   // Create the social_embed icon.
-  social_embed_create_media_button();
+  _social_embed_create_media_button();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'anonymous',
+    [
+      'generate social embed content',
+    ]
+  );
+  user_role_grant_permissions(
+    'authenticated',
+    [
+      'generate social embed content',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'administer social embed settings',
+    ]
+  );
+
+  if (!$is_syncing) {
+    social_embed_update_11003();
+    social_embed_update_11004();
+  }
 }
 
 /**
@@ -20,7 +48,7 @@ function social_embed_install() {
  */
 function social_embed_update_8001() {
   // Create the social_embed icon.
-  social_embed_create_media_button();
+  _social_embed_create_media_button();
 }
 
 /**
@@ -28,4 +56,107 @@ function social_embed_update_8001() {
  */
 function social_embed_update_10301() {
   user_role_grant_permissions('sitemanager', ['administer url_embed']);
+}
+
+/**
+ * Add permissions for site manager to access embed consent settings form.
+ */
+function social_embed_update_11001() :void {
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'anonymous',
+    [
+      'generate social embed content',
+    ]
+  );
+  user_role_grant_permissions(
+    'authenticated',
+    [
+      'generate social embed content',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'administer social embed settings',
+    ]
+  );
+}
+
+/**
+ * Install field_user_embed_content_consent field to user entity.
+ */
+function social_embed_update_11002() :void {
+  $config_directory_path = drupal_get_path('module', 'social_embed') . '/config/install';
+  $config_directory = new FileStorage($config_directory_path);
+  $field_storage_name = 'field.storage.user.field_user_embed_content_consent';
+  $config_record = $config_directory->read($field_storage_name);
+  if (is_array($config_record)
+    && !empty($config_record['entity_type'])
+    && !empty($config_record['field_name'])
+    && (empty(FieldStorageConfig::loadByName($config_record['entity_type'], $config_record['field_name'])))
+  ) {
+    FieldStorageConfig::create($config_record)->save();
+  }
+  $field_config_name = 'field.field.user.user.field_user_embed_content_consent';
+  $config_record = $config_directory->read($field_config_name);
+  if (is_array($config_record)
+    && !empty($config_record['entity_type'])
+    && !empty($config_record['field_name'])
+    && (empty(FieldConfig::loadByName($config_record['entity_type'], $config_record['bundle'], $config_record['field_name'])))
+    ) {
+    FieldConfig::create($config_record)->save();
+  }
+}
+
+/**
+ * Add new field 'field_user_embed_content_consent' to user edit form.
+ *
+ * This enables the user to toggle the option for embedded content settings.
+ */
+function social_embed_update_11003(): void {
+  // Add the new field to user entity form display.
+  $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
+  $form_display = $form_display->setComponent('field_user_embed_content_consent', [
+    'label' => 'above',
+    'type' => 'boolean_checkbox',
+  ]);
+  $form_display->save();
+}
+
+/**
+ * Add new field_group 'group_remote_content_settings' to user edit form.
+ *
+ * And add the newly installed field 'field_user_embed_content_consent'
+ * as its children.
+ */
+function social_embed_update_11004(): void {
+  // Add it to a field group now.
+  $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('user', 'user');
+  if (!empty($form_display->getComponent('field_user_embed_content_consent'))) {
+    $new_group = (object) [
+      'group_name' => 'group_remote_content_settings',
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'mode' => 'default',
+      'context' => 'form',
+      'children' => [
+        0 => 'field_user_embed_content_consent',
+      ],
+      'parent_name' => '',
+      'weight' => 20,
+      'format_type' => 'fieldset',
+      'region' => 'hidden',
+      'format_settings' => [
+        'show_empty_fields' => 0,
+        'id' => '',
+        'classes' => '',
+        'description' => '',
+        'required_fields' => 1,
+      ],
+      'label' => 'Remote content settings',
+    ];
+
+    field_group_group_save($new_group);
+  }
 }

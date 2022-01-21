@@ -4,6 +4,7 @@ namespace Drupal\social_group\Element;
 
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\Component\Utility\Tags;
 use Drupal\user\Entity\User;
@@ -21,11 +22,27 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
   /**
    * Form element validation handler for entity_autocomplete elements.
    */
-  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form, $select2 = FALSE) {
+  public static function validateEntityAutocomplete(
+    array &$element,
+    FormStateInterface $form_state,
+    array &$complete_form,
+    bool $select2 = FALSE
+  ): void {
     $duplicated_values = $value = [];
 
-    // Load the current Group so we can see if there are existing members.
-    $group = _social_group_get_current_group();
+    /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+
+    if (($entity = $form_object->getEntity()) instanceof GroupContentInterface) {
+      // Load the current Group, so we can see if there are existing members.
+      $entity = $entity->getGroup();
+    }
+
+    if (!method_exists($entity, 'getMember')) {
+      parent::validateEntityAutocomplete($element, $form_state, $complete_form);
+
+      return;
+    }
 
     if ($select2 !== TRUE) {
       $input_values = Tags::explode($element['#value']);
@@ -63,7 +80,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         $account = User::load($match);
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
-        if ($group->getMember($account)) {
+        if ($entity->getMember($account)) {
           $duplicated_values[] = $account->getDisplayName();
         }
         // We need set "validate_reference" for element to prevent
@@ -85,9 +102,12 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $usernames = implode(', ', $duplicated_values);
 
       $message = \Drupal::translation()->formatPlural(count($duplicated_values),
-        "@usernames is already member of the group, you can't add them again",
-        "@usernames are already members of the group, you can't add them again",
-        ['@usernames' => $usernames]
+        "@usernames is already member of the @type, you can't add them again",
+        "@usernames are already members of the @type, you can't add them again",
+        [
+          '@usernames' => $usernames,
+          '@type' => $entity->getEntityType()->getSingularLabel(),
+        ]
       );
 
       // We have to kick in a form set error here, or else the
@@ -102,7 +122,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       // don't use it to perform the action, but we should mimic the behaviour
       // as it would be without Select2.
       if ($select2 === TRUE) {
-        $form_state->setValue(['entity_id', '0', 'target_id'], $match);
+        $form_state->setValue($element['#parents'], $match);
       }
       $form_state->setValue('entity_id_new', $value);
     }

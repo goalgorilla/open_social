@@ -18,6 +18,10 @@
     <env name="SIMPLETEST_DB" value="sqlite://localhost/sites/default/files/db.sqlite" />
     <!-- Put any browser test output in a place where we can view it -->
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/var/www/html/sites/simpletest/browser_output"/>
+    <!-- To disable deprecation testing completely set SYMFONY_DEPRECATIONS_HELPER value: 'disabled' -->
+    <!-- Will be removed in Open Social 12.0.0 -->
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled" />
+    <!-- End remove. -->
   </php>
   <testsuites>
     <testsuite name="unit">

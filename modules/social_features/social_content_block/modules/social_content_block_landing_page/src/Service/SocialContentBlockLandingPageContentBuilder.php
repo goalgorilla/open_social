@@ -4,20 +4,19 @@ namespace Drupal\social_content_block_landing_page\Service;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\social_content_block\ContentBuilder;
 
 /**
- * Class SocialContentBlockLandingPageContentBuilder.
+ * Defines the content builder service.
  *
  * @package Drupal\social_content_block_landing_page\Service
  */
-class SocialContentBlockLandingPageContentBuilder extends ContentBuilder implements TrustedCallbackInterface {
+class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
 
   /**
    * {@inheritdoc}
    */
-  public function build($entity_id, $entity_type_id, $entity_bundle) : array {
+  public function build($entity_id, string $entity_type_id, string $entity_bundle): array {
     $build = parent::build($entity_id, $entity_type_id, $entity_bundle);
 
     if (!$build) {
@@ -43,11 +42,14 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
       '#weight' => 0,
     ];
 
-    if (!isset($build['content']['entities']['#markup']) && !isset($build['content']['entities']['#lazy_builder'])) {
+    if (
+      !isset($build['content']['entities']['#markup']) &&
+      !isset($build['content']['entities']['#lazy_builder'])
+    ) {
       $build['content']['entities']['#prefix'] = str_replace(
         'content-list__items',
         'field--name-field-featured-items',
-        $build['content']['entities']['#prefix']
+        $build['content']['entities']['#prefix'],
       );
     }
 
@@ -57,7 +59,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
   /**
    * {@inheritdoc}
    */
-  public function getEntities($block_id) {
+  public function getEntities($block_id): array {
     $elements = parent::getEntities($block_id);
 
     foreach (Element::children($elements) as $delta) {
@@ -70,7 +72,7 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
   /**
    * {@inheritdoc}
    */
-  protected function getLink(BlockContentInterface $block_content) : array {
+  protected function getLink(BlockContentInterface $block_content): array {
     if ($link = parent::getLink($block_content)) {
       $link['#url']->setOption('attributes', []);
 
@@ -84,13 +86,6 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder impleme
     }
 
     return $link;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['build'];
   }
 
 }

@@ -94,7 +94,13 @@
           <div class="teaser__teaser-type">
             <svg class="teaser__teaser-type-icon" aria-labelledby="{{- node.type.0.entity.label() -}}-{{ node.id }}">
               <title id="{{- node.type.0.entity.label() -}}-{{ node.id }}">{{- node.type.0.entity.label() -}}: &nbsp;{{- label|render|striptags|trim -}}</title>
-              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+              {% if topic_type_icon %}
+                <use xlink:href="#{{- topic_type_icon -}}"></use>
+              {% elseif event_type_icon %}
+                <use xlink:href="#{{- event_type_icon -}}"></use>
+              {% else %}
+                <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+              {% endif %}
             </svg>
           </div>
         </a>
@@ -129,7 +135,7 @@
                   <span class="sr-only">{% trans %}Created on{% endtrans %} </span>
                   <div class="teaser__published-date">{{ date }} <span aria-hidden="true">&bullet;</span></div>
                   <span class="sr-only"> {% trans %}by{% endtrans %} </span>
-                  <div class="teaser__published-author">{{ author_name }}</div>
+                  <div class="teaser__published-author">{{ author }}</div>
                 </div>
               {%- endblock -%}
             {% endembed %}

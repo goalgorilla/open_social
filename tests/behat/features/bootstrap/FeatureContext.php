@@ -3,6 +3,7 @@
 
 namespace Drupal\social\Behat;
 
+use Drupal\group\Entity\GroupContentType;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -141,6 +142,32 @@ class FeatureContext extends RawMinkContext implements Context
     public function iFrameInBodyDescriptionShouldHaveTheSrc($src) {
 
       $cssSelector = 'article .card__body .body-text iframe';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $iframe_source = $element->getAttribute('src');
+
+      // the sources could contain certain metadata making it hard to test
+      // if it matches the given source. So we don't strict check rather
+      // check if part of the source matches.
+      if (strpos($iframe_source, $src) === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The iframe source does not contain the src: "%s" it is however: "%s"', $src, $iframe_source));
+      }
+    }
+
+    /**
+     * @Then /^The embedded content in the body description should have the src "([^"]*)"$/
+     */
+    public function embeddedContentInBodyDescriptionShouldHaveTheSrc($src) {
+
+      $cssSelector = 'article .card__body .body-text .social-embed-container iframe';
 
       $session = $this->getSession();
       $element = $session->getPage()->find(
@@ -633,6 +660,7 @@ class FeatureContext extends RawMinkContext implements Context
     public function getGroupIdFromTitle($group_title) {
 
       $query = \Drupal::entityQuery('group')
+        ->accessCheck(FALSE)
         ->condition('label', $group_title);
 
       $group_ids = $query->execute();
@@ -687,7 +715,7 @@ class FeatureContext extends RawMinkContext implements Context
       $query = \Drupal::entityQuery('node')
         ->condition('type', $type)
         ->condition('title', $title, '=')
-        ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT');
+        ->accessCheck(FALSE);
       $nids = $query->execute();
 
       if (!empty($nids) && count($nids) === 1) {
@@ -888,7 +916,7 @@ class FeatureContext extends RawMinkContext implements Context
     public function openFileAndExpectAccess($fid, $expected_access) {
       /** @var \Drupal\file\Entity\File $file */
       $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
-      $url = $file->url();
+      $url = $file->createFileUrl();
       $page = file_url_transform_relative($url);
       $this->visitPath($page);
 
@@ -940,7 +968,7 @@ class FeatureContext extends RawMinkContext implements Context
 
         if ($gid) {
           $group = Group::load($gid);
-          $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
+          $group_content_types = GroupContentType::loadByEntityTypeId('node');
           $group_content_types = array_keys($group_content_types);
 
           // Get all the node's related to the current group

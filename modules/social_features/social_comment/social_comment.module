@@ -212,6 +212,8 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
       }
     }
   }
+
+  unset($links['comment']['#links']['comment-forbidden']);
 }
 
 /**
