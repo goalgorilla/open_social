@@ -96,7 +96,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
                     'id' => 'field_event_type_target_id',
                     'table' => 'node__field_event_type',
                     'field' => 'field_event_type_target_id',
-                    'relationship' => $config_name === 'views.view.group_events' ? 'gc__node': 'none',
+                    'relationship' => $config_name === 'views.view.group_events' ? 'gc__node' : 'none',
                     'group_type' => 'group',
                     'admin_label' => '',
                     'operator' => 'or',

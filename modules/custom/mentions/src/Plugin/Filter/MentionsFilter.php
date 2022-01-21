@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\mentions\MentionsPluginManager;
-use Drupal\Core\Utility\Token;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Entity\FilterFormat;
 

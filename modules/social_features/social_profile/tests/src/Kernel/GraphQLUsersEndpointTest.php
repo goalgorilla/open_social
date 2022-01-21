@@ -5,7 +5,6 @@ namespace Drupal\Tests\social_profile\Kernel;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\user\Entity\User;
 
 /**
  * Tests the additions made to the user endpoint by this module.
@@ -53,7 +52,6 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "views.view.newest_users",
     "views.view.user_information",
   ];
-
 
   /**
    * {@inheritdoc}
