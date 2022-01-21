@@ -56,6 +56,7 @@ Feature: Create flexible Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     # I can see members from flexible groups with Community visibility as outsider.
     Given I am logged in as "GivenUserTwo"
@@ -118,7 +119,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group community topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
 
     # Create a topic in the flexible group, visible to group members only.
@@ -129,7 +130,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group private topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Group members" with the id "edit-field-content-visibility-group"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
 
     # Check the topic is shown correctly to author after saving.
@@ -237,6 +238,7 @@ Feature: Create flexible Group
     And I should see the link "Members"
     And I should see the link "Events"
     And I should see the link "Topics"
+    And I logout
 
     # Test flexible group with community visibility and members only / invite for closed group.
     Given I am logged in as "GivenUserOne"

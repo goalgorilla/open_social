@@ -17,7 +17,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
     // @todo Possibly untangle this?

@@ -4,9 +4,7 @@ namespace Drupal\social_event_an_enroll\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Component\Utility\Crypt;
-use Drupal\Component\Serialization\Json;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -60,33 +58,20 @@ class EventAnEnrollForm extends EnrollActionForm {
     ];
 
     if ($this->moduleHandler->moduleExists('data_policy')) {
-      $data_policy_config = $this->configFactory->get('data_policy.data_policy');
-      // Check if data policy is created.
-      if (!empty($data_policy_config->get('entity_id'))) {
-        $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      /** @var \Drupal\data_policy\DataPolicyConsentManagerInterface $data_policy_manager */
+      // We can't use dependency injection here because the module might not
+      // be enabled. So we have to use the manager directly.
+      // @phpstan-ignore-next-line
+      $data_policy_manager = \Drupal::service('data_policy.manager');
 
-        $link = Link::createFromRoute($this->t('data policy'), 'data_policy.data_policy', [], [
-          'attributes' => [
-            'class' => ['use-ajax'],
-            'data-dialog-type' => 'modal',
-            'data-dialog-options' => Json::encode([
-              'title' => t('Data policy'),
-              'width' => 700,
-              'height' => 700,
-            ]),
-          ],
-        ]);
-
-        $enforce_consent = !empty($data_policy_config->get('enforce_consent'));
-
-        $form['data_policy'] = [
-          '#type' => 'checkbox',
-          '#title' => $this->t('I agree with the @url', [
-            '@url' => $link->toString(),
-          ]),
-          '#required' => $enforce_consent,
-        ];
+      if (!$data_policy_manager->isDataPolicy()) {
+        return $form;
       }
+
+      // We are not saving this data to the database, but simply just showing
+      // it, as data_policy is set to use user_id, which is not unique if the
+      // user is anonymous.
+      $data_policy_manager->addCheckbox($form);
     }
 
     $submit_text = $this->t('Enroll in event');

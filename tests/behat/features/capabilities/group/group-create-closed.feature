@@ -53,7 +53,7 @@ Feature: Create Closed Group
     When I fill in the following:
       | Title | Test closed group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Test closed group topic"
 
@@ -66,7 +66,8 @@ Feature: Create Closed Group
       | Title                                  | Test closed group event |
       | edit-field-event-date-0-value-date     | 2025-01-01              |
       | edit-field-event-date-end-0-value-date | 2025-01-01              |
-      | Time                                   | 11:00:00                |
+      | edit-field-event-date-0-value-time     | 11:00:00                |
+      | edit-field-event-date-end-0-value-time | 11:00:00                |
       | Location name                          | Technopark              |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"

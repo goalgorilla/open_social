@@ -13,7 +13,7 @@ Feature: Follow Content
     When I fill in the following:
       | Title | This is a follow topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Topic This is a follow topic has been created."
     And I should see "This is a follow topic" in the "Hero block"
@@ -44,7 +44,7 @@ Feature: Follow Content
       And I fill in the following:
         | Title | This is a follow topic |
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-      And I click radio button "Discussion"
+      And I click radio button "News"
       And I press "Create topic"
     Then I should see "Topic This is a follow topic has been created."
       And I should see "This is a follow topic" in the "Hero block"
@@ -55,6 +55,7 @@ Feature: Follow Content
       And I wait for AJAX to finish
     Then I should see the link "Unfollow content"
       And I should not see the link "Follow content"
+      And I logout
 
     Given I am logged in as "Dude 2"
       And I am on "/all-topics"
@@ -66,6 +67,7 @@ Feature: Follow Content
       And I wait for AJAX to finish
     Then I should see the link "Unfollow content"
       And I should not see the link "Follow content"
+      And I logout
 
     Given I am logged in as "Dude 3"
       And I am on "/all-topics"
@@ -79,6 +81,7 @@ Feature: Follow Content
       And I should see "This is a test comment" in the "Main content"
       And I should see "second"
       And I should see "ago"
+      And I logout
 
     # Check if the Dude 1 got a notification.
     Given I am logged in as "Dude 1"

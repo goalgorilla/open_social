@@ -57,9 +57,12 @@ function social_topic_preprocess_node(array &$variables) {
         $variables['metadata'] = t('in @topic', ['@topic' => $topic->toLink()->toString()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
-        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
-          ->toString();
-        $variables['topic_type'] = $topic_type_link;
+        $label = $topic->label();
+        if (!empty($label)) {
+          $topic_type_link = Link::fromTextAndUrl($label, $topic_type_url)
+            ->toString();
+          $variables['topic_type'] = $topic_type_link;
+        }
 
         if ($topic->hasField('field_topic_type_icon') && !$topic->get('field_topic_type_icon')->isEmpty()) {
           $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;

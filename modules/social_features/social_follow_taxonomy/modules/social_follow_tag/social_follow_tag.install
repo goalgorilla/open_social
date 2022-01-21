@@ -77,7 +77,17 @@ function social_follow_tag_update_8803() {
 /**
  * Update template in existing messages.
  */
-function social_follow_tag_update_8804(&$sandbox) {
+function social_follow_tag_update_8804(array &$sandbox): void {
+  _social_follow_tag_update_existing_messages($sandbox);
+}
+
+/**
+ * Helper callback to apply config updates.
+ *
+ * @param array $sandbox
+ *   The update sandbox array.
+ */
+function _social_follow_tag_update_existing_messages(array &$sandbox): void {
   $message_storage = \Drupal::entityTypeManager()->getStorage('message');
   if (!isset($sandbox['total'])) {
     // Get all message IDs than should be updated.
@@ -174,5 +184,25 @@ function social_follow_tag_update_10302() {
         ->getEditable('message.template.create_node_following_tag_stream');
       $config->setData($settings)->save(TRUE);
     }
+  }
+}
+
+/**
+ * Revert "message.template.create_node_following_tag_stream" config.
+ */
+function social_follow_tag_update_10303(array &$sandbox): void {
+  _social_follow_tag_update_existing_messages($sandbox);
+}
+
+/**
+ * Delete "message.template.create_node_following_tag_stream" config.
+ */
+function social_follow_tag_update_10304(array &$sandbox): void {
+  $message_template = \Drupal::entityTypeManager()
+    ->getStorage('message_template')
+    ->load('create_node_following_tag_stream');
+
+  if (!is_null($message_template)) {
+    $message_template->delete();
   }
 }

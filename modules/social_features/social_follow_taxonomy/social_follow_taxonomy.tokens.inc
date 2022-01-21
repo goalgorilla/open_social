@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -71,7 +72,10 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
           // Get the related entity.
-          if (!$message->get('field_message_related_object')->isEmpty()) {
+          if (
+            ($message instanceof Message) &&
+            !$message->get('field_message_related_object')->isEmpty()
+          ) {
             $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
             $entity = \Drupal::entityTypeManager()
@@ -83,8 +87,12 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                 case 'node':
                   /** @var \Drupal\node\Entity\Node $entity */
                   if ($entity instanceof NodeInterface) {
-                    // Get the name of the content.
-                    $display_name = strtolower($entity->getType());
+                    /** @var \Drupal\node\NodeTypeInterface $node_type */
+                    $node_type = \Drupal::entityTypeManager()
+                      ->getStorage('node_type')
+                      ->load($entity->bundle());
+                    // Get the label of the content type.
+                    $display_name = mb_strtolower((string) $node_type->label());
 
                     // Get the names of terms related to the content.
                     $term_ids = social_follow_taxonomy_terms_list($entity);
@@ -151,25 +159,27 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      if ($name === 'post_url' && isset($message->field_message_related_object)) {
-        $replacements[$original] = '';
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        if ($name === 'post_url' && isset($message->field_message_related_object)) {
+          $replacements[$original] = '';
 
-        $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
-        $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+          $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+          $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
-        $entity = \Drupal::entityTypeManager()
-          ->getStorage($target_type)
-          ->load($target_id);
+          $entity = \Drupal::entityTypeManager()
+            ->getStorage($target_type)
+            ->load($target_id);
 
-        if ($entity) {
-          if ($target_type === 'post') {
-            $post_link = Url::fromRoute('entity.post.canonical',
-              ['post' => $entity->id()],
-              ['absolute' => TRUE]
-            )->toString();
+          if ($entity) {
+            if ($target_type === 'post') {
+              $post_link = Url::fromRoute('entity.post.canonical',
+                ['post' => $entity->id()],
+                ['absolute' => TRUE]
+              )->toString();
 
-            $replacements[$original] = $post_link;
+              $replacements[$original] = $post_link;
+            }
           }
         }
       }
@@ -200,7 +210,6 @@ function social_follow_taxonomy_tokens_alter(array &$replacements, array $contex
           switch ($message_template_id) {
             case 'create_node_following_tag':
             case 'update_node_following_tag':
-            case 'create_node_following_tag_stream':
               if (isset($context['tokens']['cta_button'])) {
                 $link = $entity->toUrl('canonical', ['absolute' => TRUE]);
                 $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more about it'));
