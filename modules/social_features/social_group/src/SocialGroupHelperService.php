@@ -15,6 +15,7 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
@@ -307,7 +308,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addMemberFormField() {
+  public function addMemberFormField(): array {
     return [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
@@ -320,7 +321,12 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       ],
       '#selection_handler' => 'social',
       '#target_type' => 'user',
-      '#element_validate' => ['_social_group_unique_members'],
+      '#element_validate' => [
+        [
+          SocialGroupEntityAutocomplete::class,
+          'validateEntityAutocompleteSelect2',
+        ],
+      ],
     ];
   }
 
