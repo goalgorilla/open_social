@@ -54,12 +54,6 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "views.view.user_information",
   ];
 
-  /**
-   * An array of test users that serves as test data.
-   *
-   * @var \Drupal\user\Entity\User[]
-   */
-  private $users = [];
 
   /**
    * {@inheritdoc}
@@ -70,22 +64,6 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('profile_type');
     $this->installEntitySchema('profile');
     $this->installConfig('social_profile');
-
-    // Load the existing non-anonymous users as they're part of the dataset that
-    // we want to verify test output against.
-    $this->users = array_values(
-      array_filter(
-        User::loadMultiple(),
-        static function (User $u) {
-          return !$u->isAnonymous();
-        }
-      )
-    );
-    // Create a set of 10 test users that we can query. The data of the users
-    // shouldn't matter.
-    for ($i = 0; $i < 10; ++$i) {
-      $this->users[] = $this->createUser();
-    }
   }
 
   /**

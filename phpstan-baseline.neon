@@ -3026,11 +3026,6 @@ parameters:
 			path: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php
 
 		-
-			message: "#^Property Drupal\\\\mentions\\\\Plugin\\\\Filter\\\\MentionsFilter\\:\\:\\$tokenService is never read, only written\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php
-
-		-
 			message: "#^Offset 'entity_type' does not exist on array\\|string\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/Plugin/Mentions/Entity.php
@@ -9196,16 +9191,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_type\\\\SocialEventTypeConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
-
-		-
-			message: "#^Offset 'display' does not exist on array\\{display\\: non\\-empty\\-array\\<literal\\-string&non\\-empty\\-string, array\\{display_options\\: array\\{filters\\: array\\{field_event_type_target_id\\: array\\{id\\: 'field_event_type…', table\\: 'node__field_event…', field\\: 'field_event_type…', relationship\\: 'none', group_type\\: 'group', admin_label\\: '', operator\\: 'or', value\\: array\\{\\}, \\.\\.\\.\\}\\}\\}\\}\\>\\}\\|array\\{third_party_settings\\?\\: array\\{field_group\\: array\\{group_title_image\\: array\\{children\\: mixed\\}\\}\\}, content\\: mixed\\}\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
-
-		-
-			message: "#^Offset 'field_event_type…' on array\\{field_event_type_target_id\\: array\\{id\\: 'field_event_type…', table\\: 'node__field_event…', field\\: 'field_event_type…', relationship\\: 'none', group_type\\: 'group', admin_label\\: '', operator\\: 'or', value\\: array\\{\\}, \\.\\.\\.\\}\\} in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
 
@@ -17668,11 +17653,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/UserStatistics.php
-
-		-
-			message: "#^Array \\(array\\<Drupal\\\\user\\\\Entity\\\\User\\>\\) does not accept Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
 
 		-
 			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface\\|null\\.$#"

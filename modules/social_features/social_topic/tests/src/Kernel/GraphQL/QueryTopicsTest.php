@@ -96,7 +96,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
 
     $topic_uuids = array_map(
       static fn($topic) => $topic->uuid(),
-      $topics ?? []
+      $topics
     );
 
     $this->assertEndpointSupportsPagination(

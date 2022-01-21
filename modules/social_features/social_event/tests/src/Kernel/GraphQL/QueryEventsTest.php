@@ -99,7 +99,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
 
     $event_uuids = array_map(
       static fn($event) => $event->uuid(),
-      $events ?? []
+      $events
     );
 
     $this->assertEndpointSupportsPagination(
