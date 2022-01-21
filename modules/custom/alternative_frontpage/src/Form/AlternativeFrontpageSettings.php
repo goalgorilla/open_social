@@ -3,6 +3,7 @@
 namespace Drupal\alternative_frontpage\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Path\PathValidatorInterface;
@@ -21,16 +22,30 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   protected $pathValidator;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Class constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
    * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
    *   The factory for configuration objects.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, PathValidatorInterface $path_validator) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    PathValidatorInterface $path_validator,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     parent::__construct($config_factory);
     $this->pathValidator = $path_validator;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -40,7 +55,8 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
     // Instantiates this form class.
     return new static(
       $container->get('config.factory'),
-      $container->get('path.validator')
+      $container->get('path.validator'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -102,6 +118,9 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
       elseif (!$this->isAllowedPath($frontpage_for_anonymous_user)) {
         $form_state->setErrorByName('frontpage_for_anonymous_users', $this->t('The path for the anonymous frontpage is not allowed.'));
       }
+      elseif (!$this->isPathPublicContent($frontpage_for_anonymous_user)) {
+        $form_state->setErrorByName('frontpage_for_anonymous_users', $this->t('The path for the anonymous frontpage needs to have public visibility.'));
+      }
     }
     else {
       $form_state->setErrorByName('frontpage_for_anonymous_users', $this->t('The path for the anonymous frontpage cannot be empty.'));
@@ -137,6 +156,33 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
     ];
     foreach ($unallowed_paths as $unallowed_path) {
       if ($unallowed_path === substr($path, 0, strlen($unallowed_path))) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
+   * Checks if a content path has public visibility.
+   *
+   * @param string $path
+   *   Path to check.
+   *
+   * @return bool
+   *   Returns true when content path has public visibility.
+   */
+  private function isPathPublicContent($path) {
+    /** @var \Drupal\Core\Url $url */
+    $url = $this->pathValidator->getUrlIfValid($path);
+    $params = $url->getRouteParameters();
+    $entity_type = key($params);
+
+    if ($entity_type === 'node') {
+      /** @var \Drupal\node\Entity\Node $node */
+      $node = $this->entityTypeManager->getStorage($entity_type)
+        ->load($params[$entity_type]);
+
+      if ($node->hasField('field_content_visibility') && $node->get('field_content_visibility')->getString() !== 'public') {
         return FALSE;
       }
     }
