@@ -307,7 +307,7 @@ function social_group_request_preprocess_activity(array &$variables) {
     if ($message instanceof Message) {
       if (!$message->get('template')->isEmpty()) {
         $activity_entity = $activity->getRelatedEntity();
-        switch ($message->template->target_id)  {
+        switch ($message->template->target_id) {
           case 'request_to_join_a_group':
 
             if ($activity_entity instanceof GroupContentInterface) {
