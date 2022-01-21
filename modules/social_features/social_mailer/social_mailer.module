@@ -13,6 +13,7 @@ use Drupal\file\FileInterface;
 use Drupal\social_mailer\Element\SocialMailerTextFormat;
 use Drupal\user\UserInterface;
 use Drupal\symfony_mailer\EmailInterface;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 /**
  * Gets a logo for emails from the theme.
@@ -168,5 +169,7 @@ function social_mailer_mailer_builder_info_alter(array &$email_builders): void {
  * Implements hook_post_render().
  */
 function social_mailer_post_render(EmailInterface $email): void {
-  $email->setHtmlBody(check_markup((string) $email->getHtmlBody(), 'full_html'));
+  $css_inliner = new CssToInlineStyles();
+  $body = (string) $email->getHtmlBody();
+  $email->setHtmlBody(check_markup($css_inliner->convert($body), 'full_html'));
 }
