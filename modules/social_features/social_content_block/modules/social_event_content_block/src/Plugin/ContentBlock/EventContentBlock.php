@@ -65,7 +65,7 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function query(SelectInterface $query, array $fields) {
+  public function query(SelectInterface $query, array $fields): void {
     foreach ($fields as $field_name => $field_value) {
       switch ($field_name) {
         case 'field_event_type':
