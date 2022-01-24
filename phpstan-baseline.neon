@@ -26,26 +26,6 @@ parameters:
 			path: modules/custom/activity_basics/activity_basics.module
 
 		-
-			message: "#^Function _activity_basics_entity_action\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/activity_basics.module
-
-		-
-			message: "#^Function activity_basics_entity_insert\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/activity_basics.module
-
-		-
-			message: "#^Function activity_basics_entity_update\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/activity_basics.module
-
-		-
-			message: "#^Function activity_basics_social_group_move\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/activity_basics.module
-
-		-
 			message: "#^Method Drupal\\\\activity_basics\\\\Plugin\\\\ActivityAction\\\\CreateActivityAction\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityAction/CreateActivityAction.php
@@ -97,7 +77,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
-			count: 3
+			count: 2
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
 		-
@@ -3026,11 +3006,6 @@ parameters:
 			path: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php
 
 		-
-			message: "#^Property Drupal\\\\mentions\\\\Plugin\\\\Filter\\\\MentionsFilter\\:\\:\\$tokenService is never read, only written\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php
-
-		-
 			message: "#^Offset 'entity_type' does not exist on array\\|string\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/Plugin/Mentions/Entity.php
@@ -5926,11 +5901,6 @@ parameters:
 			path: modules/social_features/social_comment_upload/src/SocialCommentUploadConfigOverride.php
 
 		-
-			message: "#^Method Drupal\\\\social_book_content_block\\\\Plugin\\\\ContentBlock\\\\BookContentBlock\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/modules/social_book_content_block/src/Plugin/ContentBlock/BookContentBlock.php
-
-		-
 			message: "#^Function social_content_block_landing_page_preprocess\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/modules/social_content_block_landing_page/social_content_block_landing_page.module
@@ -5989,21 +5959,6 @@ parameters:
 			message: "#^Function social_event_content_block_update_8003\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.install
-
-		-
-			message: "#^Method Drupal\\\\social_event_content_block\\\\Plugin\\\\ContentBlock\\\\EventContentBlock\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/modules/social_event_content_block/src/Plugin/ContentBlock/EventContentBlock.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_content_block\\\\Plugin\\\\ContentBlock\\\\GroupContentBlock\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/modules/social_group_content_block/src/Plugin/ContentBlock/GroupContentBlock.php
-
-		-
-			message: "#^Method Drupal\\\\social_page_content_block\\\\Plugin\\\\ContentBlock\\\\PageContentBlock\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/modules/social_page_content_block/src/Plugin/ContentBlock/PageContentBlock.php
 
 		-
 			message: "#^Cannot call method getSetting\\(\\) on Drupal\\\\field\\\\FieldStorageConfigInterface\\|null\\.$#"
@@ -6181,11 +6136,6 @@ parameters:
 			path: modules/social_features/social_content_block/src/Annotation/ContentBlock.php
 
 		-
-			message: "#^Method Drupal\\\\social_content_block\\\\ContentBlockPluginInterface\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/ContentBlockPluginInterface.php
-
-		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$title\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
@@ -6196,24 +6146,9 @@ parameters:
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
 
 		-
-			message: "#^Method Drupal\\\\social_content_block\\\\ContentBuilder\\:\\:updateFormSortingOptions\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/ContentBuilder.php
-
-		-
-			message: "#^Method Drupal\\\\social_content_block\\\\ContentBuilder\\:\\:updateFormSortingOptions\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/ContentBuilder.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
-
-		-
-			message: "#^Method Drupal\\\\social_content_block\\\\Plugin\\\\ContentBlock\\\\TopicContentBlock\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/Plugin/ContentBlock/TopicContentBlock.php
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\:\\:\\$field_plugin_id\\.$#"
@@ -8770,16 +8705,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/src/Controller/EventManagersController.php
 
 		-
-			message: "#^Method Drupal\\\\social_event_managers\\\\Element\\\\SocialEnrollmentAutocomplete\\:\\:validateEntityAutocomplete\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
-
-		-
-			message: "#^Method Drupal\\\\social_event_managers\\\\Element\\\\SocialEnrollmentAutocomplete\\:\\:validateEntityAutocomplete\\(\\) has parameter \\$select2 with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
-
-		-
 			message: "#^PHPDoc tag @var has invalid value \\(/Drupal\\\\Core\\\\Entity\\\\EntityReferenceSelection\\\\SelectionInterface \\$handler\\)\\: Unexpected token \"/Drupal\\\\\\\\Core\\\\\\\\Entity\\\\\\\\EntityReferenceSelection\\\\\\\\SelectionInterface\", expected type at offset 9$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php
@@ -9246,16 +9171,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_type\\\\SocialEventTypeConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
-
-		-
-			message: "#^Offset 'display' does not exist on array\\{display\\: non\\-empty\\-array\\<literal\\-string&non\\-empty\\-string, array\\{display_options\\: array\\{filters\\: array\\{field_event_type_target_id\\: array\\{id\\: 'field_event_type…', table\\: 'node__field_event…', field\\: 'field_event_type…', relationship\\: 'none', group_type\\: 'group', admin_label\\: '', operator\\: 'or', value\\: array\\{\\}, \\.\\.\\.\\}\\}\\}\\}\\>\\}\\|array\\{third_party_settings\\?\\: array\\{field_group\\: array\\{group_title_image\\: array\\{children\\: mixed\\}\\}\\}, content\\: mixed\\}\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
-
-		-
-			message: "#^Offset 'field_event_type…' on array\\{field_event_type_target_id\\: array\\{id\\: 'field_event_type…', table\\: 'node__field_event…', field\\: 'field_event_type…', relationship\\: 'none', group_type\\: 'group', admin_label\\: '', operator\\: 'or', value\\: array\\{\\}, \\.\\.\\.\\}\\} in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
 
@@ -12830,11 +12745,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function _social_group_action_batch_finish\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -13340,11 +13250,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Parameter \\#1 \\$type of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getDefaultGroupVisibility\\(\\) expects string, int\\|string\\|null given\\.$#"
 			count: 3
 			path: modules/social_features/social_group/social_group.module
@@ -13575,21 +13480,6 @@ parameters:
 			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
 
 		-
-			message: "#^Cannot call method getMember\\(\\) on Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Element\\\\SocialGroupEntityAutocomplete\\:\\:validateEntityAutocomplete\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Element\\\\SocialGroupEntityAutocomplete\\:\\:validateEntityAutocomplete\\(\\) has parameter \\$select2 with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
-
-		-
 			message: "#^PHPDoc tag @var has invalid value \\(/Drupal\\\\Core\\\\Entity\\\\EntityReferenceSelection\\\\SelectionInterface \\$handler\\)\\: Unexpected token \"/Drupal\\\\\\\\Core\\\\\\\\Entity\\\\\\\\EntityReferenceSelection\\\\\\\\SelectionInterface\", expected type at offset 9$#"
 			count: 1
 			path: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php
@@ -13775,11 +13665,6 @@ parameters:
 			path: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php
 
 		-
-			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddBlock.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php
@@ -13963,61 +13848,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_group\\\\SocialGroupAdminPeopleConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupAdminPeopleConfigOverride.php
-
-		-
-			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 2
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method fetchAllAssoc\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method get\\(\\) on Drupal\\\\social_post\\\\Entity\\\\Post\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method getCommentedEntity\\(\\) on Drupal\\\\comment\\\\Entity\\\\Comment\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getGroupsToAddUrl\\(\\) should return Drupal\\\\Core\\\\Url but returns Drupal\\\\Core\\\\Url\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^PHPDoc tag @var has invalid value \\(/Drupal/social_post/Entity/Post \\$post\\)\\: Unexpected token \"/Drupal/social_post/Entity/Post\", expected type at offset 9$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupHelperService.php
 
 		-
 			message: "#^Method Drupal\\\\social_group\\\\SocialGroupSelectorWidgetConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -16450,11 +16280,6 @@ parameters:
 			path: modules/social_features/social_private_message/src/Controller/SocialPrivateMessageController.php
 
 		-
-			message: "#^Method Drupal\\\\social_private_message\\\\Element\\\\SocialPrivateMessageEntityAutocomplete\\:\\:validateEntityAutocomplete\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/src/Element/SocialPrivateMessageEntityAutocomplete.php
-
-		-
 			message: "#^Call to method hasPermission\\(\\) on an unknown class Drupal\\\\Session\\\\AccountProxyInterface\\.$#"
 			count: 2
 			path: modules/social_features/social_private_message/src/Mapper/PrivateMessageMapper.php
@@ -17808,11 +17633,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/UserStatistics.php
-
-		-
-			message: "#^Array \\(array\\<Drupal\\\\user\\\\Entity\\\\User\\>\\) does not accept Drupal\\\\user\\\\Entity\\\\User\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
 
 		-
 			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\TypedData\\\\TypedDataInterface\\|null\\.$#"
