@@ -2,23 +2,29 @@
 
 namespace Drupal\social_group;
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Entity\GroupType;
-use Drupal\node\Entity\Node;
-use Drupal\social_post\Entity\Post;
-use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
- * Class SocialGroupHelperService.
+ * Defines the helper service.
  *
  * @package Drupal\social_group
  */
-class SocialGroupHelperService {
+class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
+
+  use StringTranslationTrait;
 
   /**
    * A cache of groups that have been matched to entities.
@@ -35,107 +41,115 @@ class SocialGroupHelperService {
   protected $database;
 
   /**
-   * Module handler.
+   * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
   /**
-   * Constructor for SocialGroupHelperService.
+   * The entity type manager.
    *
-   * @param \Drupal\Core\Database\Connection $connection
-   *   The database connection.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   Module handler.
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public function __construct(Connection $connection, ModuleHandlerInterface $module_handler) {
+  private $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    Connection $connection,
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $translation,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     $this->database = $connection;
     $this->moduleHandler = $module_handler;
+    $this->setStringTranslation($translation);
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
-   * Returns a group id from a entity (post, node).
-   *
-   * @param array $entity
-   *   The entity in the form of an entity reference array to get the group for.
-   * @param bool $read_cache
-   *   Whether the per request cache should be used. This should only be
-   *   disabled if you know that the group for the entity has changed because
-   *   disabling this can have serious performance implications. Setting this to
-   *   FALSE will update the cache for subsequent calls.
-   *
-   * @return \Drupal\group\Entity\GroupInterface|null
-   *   The group that this entity belongs to or NULL if the entity doesn't
-   *   belong to any group.
+   * {@inheritdoc}
    */
-  public function getGroupFromEntity(array $entity, $read_cache = TRUE) {
-    $gid = NULL;
-
+  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE) {
     // Comments can have groups based on what the comment is posted on so the
-    // cache type differs from what we later use to fetch the group.
+    // cache type differs from what we later used to fetch the group.
     $cache_type = $entity['target_type'];
     $cache_id = $entity['target_id'];
 
-    if ($read_cache && is_array($this->cache) && is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
+    if (
+      $read_cache &&
+      is_array($this->cache) &&
+      is_array($this->cache[$cache_type]) &&
+      isset($this->cache[$cache_type][$cache_id])
+    ) {
       return $this->cache[$cache_type][$cache_id];
     }
 
     // Special cases for comments.
     // Returns the entity to which the comment is attached.
     if ($entity['target_type'] === 'comment') {
-      $comment = \Drupal::entityTypeManager()
-        ->getStorage('comment')
+      $comment = $this->entityTypeManager->getStorage('comment')
         ->load($entity['target_id']);
-      $commented_entity = $comment->getCommentedEntity();
-      $entity['target_type'] = $commented_entity->getEntityTypeId();
-      $entity['target_id'] = $commented_entity->id();
+
+      if (
+        $comment instanceof CommentInterface &&
+        ($commented_entity = $comment->getCommentedEntity()) !== NULL
+      ) {
+        $entity['target_type'] = $commented_entity->getEntityTypeId();
+        $entity['target_id'] = $commented_entity->id();
+      }
+      else {
+        $entity['target_type'] = NULL;
+      }
     }
 
+    $gid = NULL;
+
     if ($entity['target_type'] === 'post') {
-      /** @var /Drupal/social_post/Entity/Post $post */
-      $post = Post::load($entity['target_id']);
-      $recipient_group = $post->get('field_recipient_group')->getValue();
-      if (!empty($recipient_group)) {
-        $gid = $recipient_group['0']['target_id'];
+      $post = $this->entityTypeManager->getStorage('post')
+        ->load($entity['target_id']);
+
+      if ($post instanceof PostInterface) {
+        $recipient_group = $post->get('field_recipient_group')->getValue();
+        if (!empty($recipient_group)) {
+          $gid = $recipient_group['0']['target_id'];
+        }
       }
     }
     elseif ($entity['target_type'] === 'node') {
+      $node = $this->entityTypeManager->getStorage('node')
+        ->load($entity['target_id']);
+
       // Try to load the entity.
-      if ($node = Node::load($entity['target_id'])) {
+      if ($node instanceof ContentEntityInterface) {
         // Try to load group content from entity.
-        if ($groupcontent = GroupContent::loadByEntity($node)) {
-          // Potentially there are more than one.
-          $groupcontent = reset($groupcontent);
+        if ($group_contents = GroupContent::loadByEntity($node)) {
           // Set the group id.
-          $gid = $groupcontent->getGroup()->id();
+          $gid = reset($group_contents)->getGroup()->id();
         }
       }
     }
     elseif ($entity['target_type'] === 'group_content') {
+      $group_content = $this->entityTypeManager->getStorage('group_content')
+        ->load($entity['target_id']);
+
       // Try to load the entity.
-      if ($groupcontent = GroupContent::load($entity['target_id'])) {
+      if ($group_content instanceof GroupContentInterface) {
         // Get group id.
-        $gid = $groupcontent->getGroup()->id();
+        $gid = $group_content->getGroup()->id();
       }
     }
 
     // Cache the group id for this entity to optimise future calls.
-    $this->cache[$cache_type][$cache_id] = $gid;
-
-    return $gid;
+    return $this->cache[$cache_type][$cache_id] = $gid;
   }
 
   /**
-   * Returns the default visibility.
-   *
-   * @param string $type
-   *   The Group Type.
-   *
-   * @return string|null
-   *   The default visibility.
+   * {@inheritdoc}
    */
-  public static function getDefaultGroupVisibility($type) {
+  public static function getDefaultGroupVisibility(string $type) {
     $visibility = &drupal_static(__FUNCTION__ . $type);
 
     if (empty($visibility)) {
@@ -164,10 +178,7 @@ class SocialGroupHelperService {
   }
 
   /**
-   * Returns the statically cached group members form the current group.
-   *
-   * @return array
-   *   All group members as array with value user->id().
+   * {@inheritdoc}
    */
   public static function getCurrentGroupMembers() {
     $cache = &drupal_static(__FUNCTION__, []);
@@ -188,16 +199,10 @@ class SocialGroupHelperService {
   }
 
   /**
-   * Get all group memberships for a certain user.
-   *
-   * @param int $uid
-   *   The UID for which we fetch the groups it is member of.
-   *
-   * @return array
-   *   List of group IDs the user is member of.
+   * {@inheritdoc}
    */
-  public function getAllGroupsForUser($uid) {
-    $groups = &drupal_static(__FUNCTION__);
+  public function getAllGroupsForUser(int $uid) {
+    $groups = &drupal_static(__FUNCTION__, []);
 
     // Get the memberships for the user if they aren't known yet.
     if (!isset($groups[$uid])) {
@@ -209,28 +214,21 @@ class SocialGroupHelperService {
 
       $query = $this->database->select('group_content_field_data', 'gcfd');
       $query->addField('gcfd', 'gid');
-      $query->condition('gcfd.entity_id', $uid);
+      $query->condition('gcfd.entity_id', (string) $uid);
       $query->condition('gcfd.type', $group_content_types, 'IN');
-      $query->execute()->fetchAll();
+      $result = $query->execute();
 
-      $group_ids = $query->execute()->fetchAllAssoc('gid');
-      $groups[$uid] = array_keys($group_ids);
+      $groups[$uid] = $result !== NULL ? $result->fetchCol() : [];
     }
 
     return $groups[$uid];
   }
 
   /**
-   * Count all group memberships for a certain user.
-   *
-   * @param string $uid
-   *   The UID for which we fetch the groups it is member of.
-   *
-   * @return int
-   *   Count of groups a user is a member of.
+   * {@inheritdoc}
    */
-  public function countGroupMembershipsForUser($uid): int {
-    $count = &drupal_static(__FUNCTION__);
+  public function countGroupMembershipsForUser(string $uid): int {
+    $count = &drupal_static(__FUNCTION__, []);
 
     // Get the count of memberships for the user if they aren't known yet.
     if (!isset($count[$uid])) {
@@ -245,7 +243,11 @@ class SocialGroupHelperService {
       $query->condition('gcfd.type', $group_content_types, 'IN');
       if (!empty($hidden_types)) {
         foreach ($hidden_types as $group_type) {
-          $query->condition('gcfd.type', '%' . $this->database->escapeLike($group_type) . '%', 'NOT LIKE');
+          $query->condition(
+            'gcfd.type',
+            '%' . $this->database->escapeLike($group_type) . '%',
+            'NOT LIKE',
+          );
         }
       }
       // We need to add another like for the fact that we have more plugins
@@ -254,54 +256,72 @@ class SocialGroupHelperService {
       $query->condition('gcfd.type', '%group_membership', 'LIKE');
       // Add a query tag for other modules to alter, this query.
       $query->addTag('count_memberships_for_user');
-      $query->execute()->fetchAll();
 
-      $group_ids = $query->countQuery()->execute()->fetchField();
-      $count[$uid] = $group_ids;
+      $result = $query->countQuery()->execute();
+
+      $count[$uid] = $result !== NULL ? $result->fetchField() : 0;
     }
 
     return $count[$uid];
   }
 
   /**
-   * Get the add group URL for given user.
-   *
-   * This returns either /group/add or /group/add/{group_type}
-   * depending upon the permission of the user to create group.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user account.
-   *
-   * @return \Drupal\Core\Url
-   *   URL of the group add page.
+   * {@inheritdoc}
    */
   public function getGroupsToAddUrl(AccountInterface $account) {
-    $url = NULL;
-    $user_can_create_groups = [];
-    // Get all available group types.
-    foreach (GroupType::loadMultiple() as $group_type) {
-      // When the user has permission to create a group of the current type, add
-      // this to the create group array.
-      if ($account->hasPermission('create ' . $group_type->id() . ' group')) {
-        $user_can_create_groups[$group_type->id()] = $group_type;
-      }
+    $found = FALSE;
+    $accessible_group_type = NULL;
 
-      if (count($user_can_create_groups) > 1) {
-        break;
+    /** @var array $group_types */
+    $group_types = $this->entityTypeManager->getStorage('group_type')
+      ->getQuery()
+      ->execute();
+
+    // Get all available group types.
+    foreach ($group_types as $group_type) {
+      // When the user has permission to create a group of the current type, add
+      // this to the creation group array.
+      if ($account->hasPermission('create ' . $group_type . ' group')) {
+        if ($accessible_group_type === NULL) {
+          $accessible_group_type = $group_type;
+        }
+        else {
+          $found = TRUE;
+          break;
+        }
       }
     }
 
     // There's just one group this user can create.
-    if (count($user_can_create_groups) === 1) {
+    if (!$found && isset($accessible_group_type)) {
       // When there is only one group allowed, add create the url to create a
       // group of this type.
-      $allowed_group_type = reset($user_can_create_groups);
-      /** @var \Drupal\group\Entity\Group $allowed_group_type */
-      $url = Url::fromRoute('entity.group.add_form', [
-        'group_type' => $allowed_group_type->id(),
+      return Url::fromRoute('entity.group.add_form', [
+        'group_type' => $accessible_group_type,
       ]);
     }
-    return $url;
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addMemberFormField() {
+    return [
+      '#title' => $this->t('Find people by name or email address'),
+      '#type' => 'select2',
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#select2' => [
+        'placeholder' => $this->t('Jane Doe'),
+        'tokenSeparators' => [',', ';'],
+      ],
+      '#selection_handler' => 'social',
+      '#target_type' => 'user',
+      '#element_validate' => ['_social_group_unique_members'],
+    ];
   }
 
 }
