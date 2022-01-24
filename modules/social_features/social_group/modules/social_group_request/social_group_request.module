@@ -305,11 +305,11 @@ function social_group_request_preprocess_activity(array &$variables) {
     $message = $activity->field_activity_message->entity;
 
     if ($message instanceof Message) {
+
       if (!$message->get('template')->isEmpty()) {
         $activity_entity = $activity->getRelatedEntity();
         switch ($message->template->target_id) {
           case 'request_to_join_a_group':
-
             if ($activity_entity instanceof GroupContentInterface) {
               $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
                 'arg_0' => $activity_entity->getGroup()->id(),
@@ -318,7 +318,6 @@ function social_group_request_preprocess_activity(array &$variables) {
             break;
 
           case 'approve_request_join_group':
-
             if ($activity_entity instanceof GroupContentInterface) {
               $variables['full_url'] = Url::fromRoute('social_group.stream', [
                 'group' => $activity_entity->getGroup()->id(),
