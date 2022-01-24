@@ -46,13 +46,6 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   protected $entityTypeManager;
 
   /**
-   * Translation manager.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationManager
-   */
-  protected $translation;
-
-  /**
    * The join manager.
    */
   private JoinManagerInterface $joinManager;
@@ -160,7 +153,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       '#tag' => 'div',
       '#value' => $this->t('There @link to join this group.', [
         '@link' => Link::fromTextAndUrl(
-          $this->translation->formatPlural(
+          $this->getStringTranslation()->formatPlural(
             $requests,
             'is (1) new request',
             'are (@count) new requests',
