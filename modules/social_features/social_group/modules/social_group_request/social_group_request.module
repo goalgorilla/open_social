@@ -300,32 +300,28 @@ function social_group_request_preprocess_activity(array &$variables) {
   $activity = $variables['elements']['#activity'];
 
   if (!$activity->get('field_activity_message')->isEmpty()) {
-    $message_storage = \Drupal::entityTypeManager()->getStorage('message');
     /** @var Drupal\message\Entity\Message $message */
     $message = $activity->field_activity_message->entity;
 
-    if ($message instanceof Message) {
+    if ($message instanceof Message && !$message->get('template')->isEmpty()) {
+      switch ($message->template->target_id) {
+        case 'request_to_join_a_group':
+          $activity_entity = $activity->getRelatedEntity();
+          if ($activity_entity instanceof GroupContentInterface) {
+            $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
+              'arg_0' => $activity_entity->getGroup()->id(),
+            ]);
+          }
+          break;
 
-      if (!$message->get('template')->isEmpty()) {
-        switch ($message->template->target_id) {
-          case 'request_to_join_a_group':
-            $activity_entity = $activity->getRelatedEntity();
-            if ($activity_entity instanceof GroupContentInterface) {
-              $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
-                'arg_0' => $activity_entity->getGroup()->id(),
-              ]);
-            }
-            break;
-
-          case 'approve_request_join_group':
-            $activity_entity = $activity->getRelatedEntity();
-            if ($activity_entity instanceof GroupContentInterface) {
-              $variables['full_url'] = Url::fromRoute('social_group.stream', [
-                'group' => $activity_entity->getGroup()->id(),
-              ]);
-            }
-            break;
-        }
+        case 'approve_request_join_group':
+          $activity_entity = $activity->getRelatedEntity();
+          if ($activity_entity instanceof GroupContentInterface) {
+            $variables['full_url'] = Url::fromRoute('social_group.stream', [
+              'group' => $activity_entity->getGroup()->id(),
+            ]);
+          }
+          break;
       }
     }
   }
