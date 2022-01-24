@@ -136,7 +136,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
-    $requests = $this->entityTypeManager->getStorage('group_content')
+    $requests = (int) $this->entityTypeManager->getStorage('group_content')
       ->getQuery()
       ->condition('type', $content_type_config_id)
       ->condition('gid', $this->group->id())
