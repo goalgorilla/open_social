@@ -132,7 +132,7 @@ class AlternativeFrontpageForm extends EntityForm {
         $form_state->setErrorByName('path', $this->t('The path for the frontpage is not allowed.'));
       }
       // Check access to the provided path for anonymous users.
-      elseif ($role === 'anonymous' && !$this->isPathPublicContent($path)){
+      elseif ($role === 'anonymous' && !$this->isPathPublicContent($path)) {
         $form_state->setErrorByName('path', $this->t('The path for the frontpage is not allowed for anonymous users.'));
       }
     }
