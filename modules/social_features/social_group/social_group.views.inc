@@ -43,4 +43,18 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'social_group_membership_count',
     ],
   ];
+
+  // Filter groups when you don't have access to them.
+  $data['groups_field_data']['group_access'] = [
+    'title' => t('Filter groups you have access to.'),
+    'filter' => [
+      'title' => t('Filter out groups if you don\'t have access to them.'),
+      'help' => t('Filter out groups if you don\'t have access to them.'),
+      'id' => 'group_access',
+    ],
+  ];
+}
+
+function social_group_views_pre_execute(&$view) {
+  var_dump($view->build_info['query']);
 }
