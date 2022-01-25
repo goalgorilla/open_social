@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * The Social Follow User module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\flag\FlagInterface;
+use Drupal\profile\Entity\ProfileInterface;
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
+  // Follow button appears on listed profile display modes.
+  $allowed_display_modes = ['default', 'teaser', 'statistic'];
+
+  // Allow other modules to change the list.
+  \Drupal::moduleHandler()->alter('social_follow_user_profile_modes', $allowed_display_modes);
+
+  if ($context['entity_type'] === 'profile' && !in_array($context['view_mode'], $allowed_display_modes)) {
+    // By default, flag module add flags to all entity view display modes.
+    // We want hide "Follow" button for the list of display modes.
+    $display->removeComponent('flag_follow_user');
+  }
+}
+
+/**
+ * Implements hook_follow_user_flag_action_access().
+ */
+function social_follow_user_flag_action_access(string $action, FlagInterface $flag, AccountInterface $account, EntityInterface $flaggable = NULL): AccessResultInterface {
+  if ($flaggable instanceof ProfileInterface) {
+    // User should not be able to follow own profile.
+    return AccessResult::forbiddenIf($flaggable->getOwnerId() === $account->id());
+  }
+
+  return AccessResult::neutral();
+}

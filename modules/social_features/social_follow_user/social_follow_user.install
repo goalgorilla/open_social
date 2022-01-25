@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Lifecycle functions for the "Social Follow User" module.
+ */
+
+use Drupal\social_follow_user\SocialFollowUserHelper;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_user.
+ */
+function social_follow_user_install(): void {
+  // Set default permissions.
+  SocialFollowUserHelper::setPermissions();
+}
