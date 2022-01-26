@@ -3,23 +3,18 @@
 namespace Drupal\social_group\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 
 /**
- * Filter by groups access.
+ * Filter groups by access.
  *
  * @ingroup views_filter_handlers
  *
  * @ViewsFilter("group_access")
  */
 class GroupAccessFilter extends FilterPluginBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function adminSummary() {
-  }
 
   /**
    * {@inheritdoc}
@@ -51,7 +46,6 @@ class GroupAccessFilter extends FilterPluginBase {
         $group_visible->condition($group_access);
       }
 
-      // And we should check for open / public.
       $this->query->addWhere('visibility', $group_visible);
     }
   }
@@ -62,22 +56,20 @@ class GroupAccessFilter extends FilterPluginBase {
    */
   public function getCacheContexts() {
     $contexts = parent::getCacheContexts();
-
     $contexts[] = 'user';
-
     return $contexts;
   }
 
   /**
    * Filter groups on membership for given account.
    *
-   * @param $account
+   * @param \Drupal\Core\Session\AccountProxyInterface $account
    *   The account to check memberships for.
    *
    * @return \Drupal\Core\Database\Query\Condition|null
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function filterGroupsOnMembership($account): ?Condition {
+  private function filterGroupsOnMembership(AccountProxyInterface $account): ?Condition {
     $group_memberships = \Drupal::service('social_group.helper_service')
       ->getAllGroupsForUser($account->id());
     // If user is part of groups and is not anonymous.
@@ -104,13 +96,13 @@ class GroupAccessFilter extends FilterPluginBase {
   /**
    * Filter flexible groups.
    *
-   * @param $anonymous
-   *   Whether or not the current user is anonymous.
+   * @param bool $anonymous
+   *   Whether the current user is anonymous.
    *
-   * @return void
+   * @return \Drupal\Core\Database\Query\Condition
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function filterFlexibleGroups($anonymous): Condition {
+  private function filterFlexibleGroups(bool $anonymous): Condition {
     $configuration = [
       'left_table' => 'groups_field_data',
       'left_field' => 'id',

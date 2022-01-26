@@ -8,9 +8,9 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialGroupSecretConfigOverride.
+ * Class SocialGroupConfigOverride.
  *
- * @package Drupal\social_group_secret
+ * @package Drupal\social_group
  */
 class SocialGroupConfigOverride implements ConfigFactoryOverrideInterface {
 
@@ -90,9 +90,6 @@ class SocialGroupConfigOverride implements ConfigFactoryOverrideInterface {
       if (in_array($config_name_groups, $names)) {
         foreach ($displays_groups as $display_group) {
           $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['group_access'] = $filter_group_access;
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['defaults']['filter_groups'] = TRUE;
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filter_groups']['groups'][2] = 'OR';
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filter_groups']['operator'] = 'AND';
         }
       }
     }
