@@ -56,8 +56,13 @@ class GroupAccessFilter extends FilterPluginBase {
 
       $group_visible = new Condition('OR');
       $group_visible->condition('groups_field_data.type', 'public_group');
+
       if (!$account->isAnonymous()) {
         $group_visible->condition('groups_field_data.type', 'open_group');
+      }
+      if (\Drupal::service('module_handler')
+        ->moduleExists('social_group_flexible_group')) {
+        $this->filterFlexibleGroups($group_visible, $account);
       }
       if ($group_access !== NULL) {
         $group_visible->condition($group_access);
@@ -68,6 +73,7 @@ class GroupAccessFilter extends FilterPluginBase {
     }
   }
 
+
   /**
    * {@inheritdoc}
    */
@@ -77,6 +83,24 @@ class GroupAccessFilter extends FilterPluginBase {
     $contexts[] = 'user.node_grants:view';
 
     return $contexts;
+  }
+
+  private function filterFlexibleGroups(&$condition, $account) {
+    $configuration = [
+      'left_table' => 'groups_field_data',
+      'left_field' => 'id',
+      'table' => 'group__field_flexible_group_visibility',
+      'field' => 'entity_id',
+      'operator' => '=',
+    ];
+
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
+    $this->query->addRelationship('group_visibility', $join, 'groups_field_data');
+    $condition->condition('group_visibility.field_flexible_group_visibility_value', 'public');
+    if (!$account->isAnonymous()) {
+      $condition->condition('group_visibility.field_flexible_group_visibility_value', 'community');
+    }
   }
 
 }
