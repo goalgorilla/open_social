@@ -3,9 +3,15 @@
 namespace Drupal\social_group\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Updater\Module;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filter groups by access.
@@ -14,19 +20,46 @@ use Drupal\views\Views;
  *
  * @ViewsFilter("group_access")
  */
-class GroupAccessFilter extends FilterPluginBase {
+class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The Module Handler to use.
+   */
+  private ModuleHandler $moduleHandler;
+
+  /**
+   * The Module Handler to use.
+   */
+  private SocialGroupHelperService $socialGroupHelper;
+
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandler $module_handler, SocialGroupHelperService $social_group_helper) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->socialGroupHelper = $social_group_helper;
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query() {
+  public function query(): void {
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $this->view->getUser();
     if (!$account->hasPermission('administer group') && !$account->hasPermission('bypass group access')) {
       $group_access = $this->filterGroupsOnMembership($account);
@@ -37,8 +70,7 @@ class GroupAccessFilter extends FilterPluginBase {
       if (!$account->isAnonymous()) {
         $group_visible->condition('groups_field_data.type', 'open_group');
       }
-      if (\Drupal::service('module_handler')
-        ->moduleExists('social_group_flexible_group')) {
+      if ($this->moduleHandler->moduleExists('social_group_flexible_group')) {
         $flexible_groups_visible = $this->filterFlexibleGroups($account->isAnonymous());
         $group_visible->condition($flexible_groups_visible);
       }
@@ -69,9 +101,8 @@ class GroupAccessFilter extends FilterPluginBase {
    * @return \Drupal\Core\Database\Query\Condition|null
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function filterGroupsOnMembership(AccountProxyInterface $account): ?Condition {
-    $group_memberships = \Drupal::service('social_group.helper_service')
-      ->getAllGroupsForUser($account->id());
+  private function filterGroupsOnMembership(AccountInterface $account): ?Condition {
+    $group_memberships = $this->socialGroupHelper->getAllGroupsForUser($account->id());
     // If user is part of groups and is not anonymous.
     if (!empty($group_memberships) && !$account->isAnonymous()) {
       $configuration = [
