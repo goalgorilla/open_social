@@ -5,7 +5,6 @@ namespace Drupal\social_group;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
-use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 
 /**
