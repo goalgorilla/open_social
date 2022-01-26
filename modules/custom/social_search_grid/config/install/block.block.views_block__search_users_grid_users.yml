@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.search_users_grid
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+  enforced:
+    module:
+      - social_search_grid
+id: views_block__search_users_grid_users
+theme: socialblue
+region: content
+weight: -8
+provider: null
+plugin: 'views_block:search_users_grid-users'
+settings:
+  id: 'views_block:search_users_grid-users'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  type: none
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/all\r\n/search/all/*"
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,150 @@
+<?php
+
+/**
+ * @file
+ * Contains social_search_grid.module.
+ */
+
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_search_grid_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
+  $view_ids = [
+    'search_node_grid',
+    'search_groups_grid',
+    'search_users_grid',
+  ];
+
+  if (in_array($view->id(), $view_ids, TRUE)) {
+    $args[0] = \Drupal::routeMatch()->getParameter('keys');
+  }
+}
+
+/**
+ * Implements hook_views_post_execute().
+ */
+function social_search_grid_views_post_execute(ViewExecutable $view): void {
+  // Since in the view we display all results when keys in the URL not exist,
+  // then in this case we should also brake the view.
+  // Ideally we should think hot to disable "Search all" view and add
+  // new route for our blocks.
+  if ($view->id() === 'search_all') {
+    $view->result = [];
+    // @phpstan-ignore-next-line
+    $view->pager = [];
+    $view->header = [];
+    $view->empty = [];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_search_grid_preprocess_views_view(array &$variables): void {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = $variables['view'];
+  $view_title = (string) $view->getTitle();
+  $keys = \Drupal::routeMatch()->getParameter('keys');
+
+  switch ($view->id()) {
+    case 'search_node_grid':
+      if ($view->current_display === 'contents') {
+        _social_search_grid_override_views_more_link($variables, 'view.search_content.page', $keys, $view_title);
+      }
+      if ($view->current_display === 'events') {
+        _social_search_grid_override_views_more_link($variables, 'view.search_content.page', $keys, $view_title, ['query' => ['type' => 'event']]);
+      }
+      break;
+
+    case 'search_groups_grid':
+      if ($view->current_display === 'groups') {
+        _social_search_grid_override_views_more_link($variables, 'view.search_groups.page', $keys, $view_title);
+      }
+      break;
+
+    case 'search_users_grid':
+      if ($view->current_display === 'users') {
+        _social_search_grid_override_views_more_link($variables, 'view.search_users.page', $keys, $view_title);
+      }
+      break;
+  }
+
+  $variables['#attached']['library'][] = 'social_search_grid/social_search_grid';
+}
+
+/**
+ * Override default more link from the view.
+ *
+ * @param array $variables
+ *   Preprocess variables.
+ * @param string $route_name
+ *   The route name.
+ * @param null|string $keys
+ *   Query keys.
+ * @param string $label
+ *   New label for the more button.
+ * @param array $options
+ *   And extra options for URL object.
+ */
+function _social_search_grid_override_views_more_link(array &$variables, string $route_name, ?string $keys, string $label, array $options = []): void {
+  $variables['more']['#url'] = Url::fromRoute($route_name, ['keys' => $keys ?? 'all'], [
+    'attributes' => [
+      'class' => [
+        'btn',
+        'btn-flat',
+      ],
+    ],
+  ] + $options);
+
+  $variables['more']['#title'] = 'See all ' . strtolower($label);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_search_grid_theme(): array {
+  return [
+    'block__views_block__search_node_grid_contents' => [
+      'base hook' => 'block',
+    ],
+    'block__views_block__search_node_grid_events' => [
+      'base hook' => 'block',
+    ],
+    'block__views_block__search_groups_grid_groups' => [
+      'base hook' => 'block',
+    ],
+    'block__views_block__search_users_grid_users' => [
+      'base hook' => 'block',
+    ],
+    'container__more_link' => [
+      'base hook' => 'container',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_search_grid_preprocess_page__search__all(array &$variables): void {
+  $attributes = $variables['content_attributes'] instanceof Attribute ? $variables['content_attributes'] : new Attribute();
+
+  if ($variables['page']['complementary_top']) {
+    $attributes->removeClass('row', 'layout--with-complementary');
+    $variables['content_attributes'] = $attributes;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.
+ */
+function social_search_grid_preprocess_html(array &$variables): void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($route_name === 'view.search_all.page' || $route_name === 'view.search_all.page_no_value') {
+    $variables['attributes']['class'][] = 'path-search-all-page';
+  }
+}

@@ -5,6 +5,8 @@ Feature: Search
   Goal/desire: I want to search the site
 
   Scenario: Successfully search groups
+    Given I enable the module "social_search_grid"
+
     Given users:
       | name           | status | pass   |
       | tjakka user    | 1      | maxic  |
