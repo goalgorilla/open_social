@@ -1720,7 +1720,7 @@ function social_group_preprocess_views_view(&$variables) {
  * Check if the user is viewing a closed_group, check if the user is a member.
  * If the user is not a member, the user has no access to view this block.
  */
-function social_group_block_access(Block $block, $operation, AccountInterface $account): AccessResult {
+function social_group_block_access(Block $block, $operation, AccountInterface $account) {
   $block_id = $block->getPluginId();
 
   // Lets hide the hero block when adding members directly, it doesnt
