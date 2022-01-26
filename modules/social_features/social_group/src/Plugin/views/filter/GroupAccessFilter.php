@@ -23,14 +23,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The Module Handler to use.
+   * The Social group helper to use.
    */
-  private ModuleHandler $moduleHandler;
-
-  /**
-   * The Module Handler to use.
-   */
-  private SocialGroupHelperService $socialGroupHelper;
+  protected SocialGroupHelperService $socialGroupHelper;
 
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandler $module_handler, SocialGroupHelperService $social_group_helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -59,7 +54,6 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function query(): void {
-    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $this->view->getUser();
     if (!$account->hasPermission('administer group') && !$account->hasPermission('bypass group access')) {
       $group_access = $this->filterGroupsOnMembership($account);
