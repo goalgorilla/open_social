@@ -478,7 +478,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       if (in_array($config_name_groups, $names)) {
         foreach ($displays_groups as $display_group) {
           $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['flexible_group_access'] = $filter_group_access;
+          //$overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['flexible_group_access'] = $filter_group_access;
         }
       }
     }
