@@ -89,7 +89,7 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
   /**
    * Filter groups on membership for given account.
    *
-   * @param \Drupal\Core\Session\AccountProxyInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   The account to check memberships for.
    *
    * @return \Drupal\Core\Database\Query\Condition|null
