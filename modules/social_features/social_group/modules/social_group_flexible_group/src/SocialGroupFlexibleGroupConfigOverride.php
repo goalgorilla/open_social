@@ -425,48 +425,6 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'plugin_id' => 'list_field',
     ];
 
-    // Filter plugin for Flexible group  access.
-    $filter_group_access = [
-      'id' => 'flexible_group_access',
-      'table' => 'groups_field_data',
-      'field' => 'flexible_group_access',
-      'relationship' => 'none',
-      'group_type' => 'group',
-      'admin_label' => '',
-      'operator' => '=',
-      'value' => [],
-      'group' => 1,
-      'exposed' => FALSE,
-      'expose' => [
-        'operator_id' => '',
-        'label' => '',
-        'description' => '',
-        'use_operator' => FALSE,
-        'operator' => '',
-        'identifier' => '',
-        'required' => FALSE,
-        'remember' => FALSE,
-        'multiple' => FALSE,
-        'remember_roles' => [
-          'authenticated' => 'authenticated',
-        ],
-      ],
-      'is_grouped' => FALSE,
-      'group_info' => [
-        'label' => '',
-        'description' => '',
-        'identifier' => '',
-        'optional' => TRUE,
-        'widget' => 'select',
-        'multiple' => FALSE,
-        'remember' => FALSE,
-        'default_group' => 'All',
-        'default_group_multiple' => [],
-        'group_items' => [],
-      ],
-      'plugin_id' => 'flexible_group_access',
-    ];
-
     $config_names_groups = [
       'views.view.newest_groups' => [
         'default',
@@ -478,7 +436,6 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       if (in_array($config_name_groups, $names)) {
         foreach ($displays_groups as $display_group) {
           $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
-          //$overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['flexible_group_access'] = $filter_group_access;
         }
       }
     }
