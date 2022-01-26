@@ -3,11 +3,8 @@
 namespace Drupal\social_group\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
-use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Updater\Module;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
@@ -27,18 +24,31 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
    */
   protected SocialGroupHelperService $socialGroupHelper;
 
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandler $module_handler, SocialGroupHelperService $social_group_helper) {
+  /**
+   * Constructs a GroupAccessFilter.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper
+   *   The social group helper service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $social_group_helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->moduleHandler = $module_handler;
     $this->socialGroupHelper = $social_group_helper;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('module_handler'),
       $container->get('social_group.helper_service')
     );
   }
@@ -76,7 +86,6 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
     }
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -93,6 +102,8 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
    *   The account to check memberships for.
    *
    * @return \Drupal\Core\Database\Query\Condition|null
+   *   Returns the Condition or NULL if user has no memberships.
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   private function filterGroupsOnMembership(AccountInterface $account): ?Condition {
@@ -125,6 +136,8 @@ class GroupAccessFilter extends FilterPluginBase implements ContainerFactoryPlug
    *   Whether the current user is anonymous.
    *
    * @return \Drupal\Core\Database\Query\Condition
+   *   Returns the Condition.
+   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   private function filterFlexibleGroups(bool $anonymous): Condition {
