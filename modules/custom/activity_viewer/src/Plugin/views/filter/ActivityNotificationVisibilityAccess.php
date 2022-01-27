@@ -231,6 +231,12 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $or->condition($membership_access);
     }
 
+    // Simple condition that allows to receive the notifications sent directly
+    // to the recipient.
+    if ($authenticated) {
+      $or->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
+    }
+
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);
     $this->query->addWhere('visibility', $and_wrapper);
