@@ -313,5 +313,5 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     }
     return $options;
   }
-  
+
 }
