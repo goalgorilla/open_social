@@ -2,6 +2,7 @@
 
 namespace Drupal\social_swiftmail\Form;
 
+use Drupal;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Batch\BatchBuilder;
@@ -171,6 +172,32 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Enter information you want to show in the email notifications footer'),
     ];
 
+    $form['timeslot'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Time slot for daily or weekly notifications'),
+      '#open' => FALSE,
+    ];
+
+    // Settings helper for admins.
+    $form['timeslot']['helper'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Define a time slot on a day for sending daily or weekly notifications.'),
+    ];
+    $form['timeslot']['timeslot_start'] = [
+      '#type' => 'select',
+      '#title' => $this->t("Send daily or weekly notifications after"),
+      '#options' => $this->timeinterval(),
+      '#default_value' => $config->get('timeslot_start') ? $config->get('timeslot_start') : 0,
+      '#description' => t('For reference, current server time is: @time', ['@time' => \Drupal::service('date.formatter')->format( time(), 'custom', 'H:i', Drupal::config('system.date')->get('timezone')['default'])]),
+    ];
+    $form['timeslot']['timeslot_end'] = [
+      '#type' => 'select',
+      '#title' => $this->t("Send daily or weekly notifications before"),
+      '#options' => $this->timeinterval(),
+      '#default_value' => $config->get('timeslot_end') ? $config->get('timeslot_end') : 1435,
+      '#description' => $this->t('Be aware, that a cron run has to happen during the time slot!'),
+    ];
     $form['remove_open_social_branding'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Remove Open Social Branding'),
@@ -186,6 +213,17 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     ];
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $start = $form_state->getValue('timeslot_start');
+    $end = $form_state->getValue('timeslot_end');
+    if ($end <= $start) {
+      $form_state->setErrorByName('timeslot_end', t('Please specify a valid time slot'));
+    }
   }
 
   /**
@@ -207,6 +245,10 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
         $config->set('template_frequencies.' . $template, $user_inputs[$template]);
       }
     }
+
+    // Set the timeslot start and end time for sending daily or weekly notifications.
+    $config->set('timeslot_start', $form_state->getValue('timeslot_start'));
+    $config->set('timeslot_end', $form_state->getValue('timeslot_end'));
 
     // Set the template header and footer settings.
     $config->set('template_header', $form_state->getValue('template_header'));
@@ -256,4 +298,20 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     return $row;
   }
 
+  /**
+   * Returns timeintervals.
+   *
+   * @return array[]
+   *   Interval.
+   */
+  private function timeinterval() {
+    $options = [];
+    for ($x = 0; $x < 24; $x++) {
+      for ($y = 0; $y < 60; $y = $y +5) {
+        $key = $x * 60 + $y;
+        $options[$key] = ($x >= 10 ? $x: '0' . $x) . ":" . ($y >= 10 ? $y: '0' . $y);
+      }
+    }
+    return $options;
+  }
 }

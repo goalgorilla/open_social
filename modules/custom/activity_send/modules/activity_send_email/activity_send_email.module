@@ -42,9 +42,26 @@ function activity_send_email_cron() {
       $last_run = \Drupal::state()
         ->get('digest.' . $frequency['id'] . '.last_run', 0);
 
+      $in_slot = TRUE;
+      $interval = $interval - 300;
+      $timeslot_start = \Drupal::config('social_swiftmail.settings')->get('timeslot_start');
+      $timeslot_end = \Drupal::config('social_swiftmail.settings')->get('timeslot_end');
+      if (!$timeslot_start) {
+        $timeslot_start = 0;
+      }
+      if (!$timeslot_end) {
+        $timeslot_end = 1435;
+      }
+      $now = \Drupal::service('date.formatter')->format( time(), 'custom', 'H:i', Drupal::config('system.date')->get('timezone')['default']);
+      $start = \Drupal::service('date.formatter')->format( $timeslot_start * 60, 'custom', 'H:i', 'GMT');
+      $end = \Drupal::service('date.formatter')->format( $timeslot_end * 60, 'custom', 'H:i', 'GMT');
+      if ($now < $start || $now > $end) {
+        $in_slot = FALSE;
+      }
+
       // If interval of frequency passed since last time, try to create queue
       // items.
-      if ((time() - $last_run) > $interval) {
+      if ((time() - $last_run) > $interval && $in_slot) {
         // Query to get the data to process per user per frequency. And we make
         // sure to check only for items that need to be sent.
         $db = Database::getConnection();
