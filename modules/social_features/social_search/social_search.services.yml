@@ -8,3 +8,9 @@ services:
     arguments: ['@current_route_match', '@current_user', '@config.factory', '@request_stack']
     tags:
       - { name: event_subscriber }
+
+  social_search.search_api_subscriber:
+    class: Drupal\social_search\EventSubscriber\SearchApiSubscriber
+    arguments: [ ]
+    tags:
+      - { name: event_subscriber }

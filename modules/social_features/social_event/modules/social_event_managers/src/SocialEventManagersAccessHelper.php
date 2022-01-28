@@ -19,6 +19,10 @@ class SocialEventManagersAccessHelper {
 
       // Only for events.
       if ($node->getType() === 'event') {
+        if ($account->hasPermission('administer nodes')
+          || $account->hasPermission('bypass node access')) {
+          return 2;
+        }
         // Only continue if the user has access to view the event.
         if ($node->access('view', $account)) {
           // The owner has access.
@@ -29,7 +33,7 @@ class SocialEventManagersAccessHelper {
           $event_managers = $node->get('field_event_managers')->getValue();
 
           foreach ($event_managers as $event_manager) {
-            if (isset($event_manager['target_id']) && $account->id() == $event_manager['target_id']) {
+            if (isset($event_manager['target_id']) && $account->id() === $event_manager['target_id']) {
               return 2;
             }
           }

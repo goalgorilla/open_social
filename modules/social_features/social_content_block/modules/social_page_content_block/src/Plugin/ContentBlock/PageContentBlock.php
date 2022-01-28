@@ -20,8 +20,6 @@ class PageContentBlock extends ContentBlockBase {
   /**
    * {@inheritdoc}
    */
-  public function query(SelectInterface $query, array $fields) {
-
-  }
+  public function query(SelectInterface $query, array $fields): void {}
 
 }

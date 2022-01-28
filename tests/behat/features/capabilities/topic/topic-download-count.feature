@@ -14,13 +14,13 @@ Feature: Download Topic
     When I fill in the following:
       | Title | This is a test topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I attach the file "/files/humans.txt" to "Attachments"
     And I wait for AJAX to finish
     And I press "Create topic"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
-    And I should see "Discussion"
+    And I should see "News"
     And I should see "Body description text" in the "Main content"
     And I click "Open or download file"
     Given I am logged in as an "verified"

@@ -21,7 +21,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'social_topic',
     'entity',
     // For the topic author and viewer.
@@ -58,6 +58,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
     'group_core_comments',
     'views',
     'group',
+    'variationcache',
   ];
 
   /**
@@ -85,6 +86,8 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
   public function testSupportsRelayPagination(): void {
     $this->setUpCurrentUser([], ['view node.topic.field_content_visibility:public content']);
 
+    $topics = [];
+
     for ($i = 0; $i < 10; ++$i) {
       $topics[] = $this->createNode([
         'type' => 'topic',
@@ -95,7 +98,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
 
     $topic_uuids = array_map(
       static fn($topic) => $topic->uuid(),
-      $topics ?? []
+      $topics
     );
 
     $this->assertEndpointSupportsPagination(
