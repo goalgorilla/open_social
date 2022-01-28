@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.custom_multiple_content_list.field_multiple_content_block
+    - paragraphs.paragraphs_type.custom_multiple_content_list
+  module:
+    - block_field
+id: paragraph.custom_multiple_content_list.default
+targetEntityType: paragraph
+bundle: custom_multiple_content_list
+mode: default
+content:
+  field_multiple_content_block:
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: block_field
+    region: content
+hidden:
+  search_api_excerpt: true
