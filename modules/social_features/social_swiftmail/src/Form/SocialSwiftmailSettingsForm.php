@@ -2,7 +2,6 @@
 
 namespace Drupal\social_swiftmail\Form;
 
-use Drupal;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Batch\BatchBuilder;
@@ -189,7 +188,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#title' => $this->t("Send daily or weekly notifications after"),
       '#options' => $this->timeinterval(),
       '#default_value' => $config->get('timeslot_start') ? $config->get('timeslot_start') : 0,
-      '#description' => t('For reference, current server time is: @time', ['@time' => \Drupal::service('date.formatter')->format( time(), 'custom', 'H:i', Drupal::config('system.date')->get('timezone')['default'])]),
+      '#description' => t('For reference, current server time is: @time', ['@time' => \Drupal::service('date.formatter')->format(time(), 'custom', 'H:i', \Drupal::config('system.date')->get('timezone')['default'])]),
     ];
     $form['timeslot']['timeslot_end'] = [
       '#type' => 'select',
@@ -246,7 +245,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       }
     }
 
-    // Set the timeslot start and end time for sending daily or weekly notifications.
+    // Define the time slot for sending daily or weekly notifications.
     $config->set('timeslot_start', $form_state->getValue('timeslot_start'));
     $config->set('timeslot_end', $form_state->getValue('timeslot_end'));
 
@@ -307,11 +306,12 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   private function timeinterval() {
     $options = [];
     for ($x = 0; $x < 24; $x++) {
-      for ($y = 0; $y < 60; $y = $y +5) {
+      for ($y = 0; $y < 60; $y = $y + 5) {
         $key = $x * 60 + $y;
-        $options[$key] = ($x >= 10 ? $x: '0' . $x) . ":" . ($y >= 10 ? $y: '0' . $y);
+        $options[$key] = ($x >= 10 ? $x : '0' . $x) . ":" . ($y >= 10 ? $y : '0' . $y);
       }
     }
     return $options;
   }
+  
 }

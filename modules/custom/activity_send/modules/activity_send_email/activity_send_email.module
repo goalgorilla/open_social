@@ -52,9 +52,9 @@ function activity_send_email_cron() {
       if (!$timeslot_end) {
         $timeslot_end = 1435;
       }
-      $now = \Drupal::service('date.formatter')->format( time(), 'custom', 'H:i', Drupal::config('system.date')->get('timezone')['default']);
-      $start = \Drupal::service('date.formatter')->format( $timeslot_start * 60, 'custom', 'H:i', 'GMT');
-      $end = \Drupal::service('date.formatter')->format( $timeslot_end * 60, 'custom', 'H:i', 'GMT');
+      $now = \Drupal::service('date.formatter')->format(time(), 'custom', 'H:i', Drupal::config('system.date')->get('timezone')['default']);
+      $start = \Drupal::service('date.formatter')->format($timeslot_start * 60, 'custom', 'H:i', 'GMT');
+      $end = \Drupal::service('date.formatter')->format($timeslot_end * 60, 'custom', 'H:i', 'GMT');
       if ($now < $start || $now > $end) {
         $in_slot = FALSE;
       }
