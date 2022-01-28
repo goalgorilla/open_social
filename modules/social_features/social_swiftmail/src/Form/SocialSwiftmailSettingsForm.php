@@ -6,6 +6,7 @@ use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -40,6 +41,13 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   protected $batchBuilder;
 
   /**
+   * The batch builder.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
    * SocialSwiftmailSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -48,17 +56,21 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    *   The activity destination manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   *   The Date formatter.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     ActivityDestinationManager $activity_destination_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    DateFormatterInterface $date_formatter
   ) {
     parent::__construct($config_factory);
 
     $this->emailActivityDestination = $activity_destination_manager->createInstance('email');
     $this->batchBuilder = new BatchBuilder();
     $this->moduleHandler = $module_handler;
+    $this->dateFormatter = $date_formatter;
   }
 
   /**
@@ -68,7 +80,8 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.activity_destination.processor'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('date.formatter')
     );
   }
 
@@ -188,7 +201,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#title' => $this->t("Send daily or weekly notifications after"),
       '#options' => $this->timeinterval(),
       '#default_value' => $config->get('timeslot_start') ? $config->get('timeslot_start') : 0,
-      '#description' => t('For reference, current server time is: @time', ['@time' => \Drupal::service('date.formatter')->format(time(), 'custom', 'H:i', \Drupal::config('system.date')->get('timezone')['default'])]),
+      '#description' => t('For reference, current server time is: @time', ['@time' => $this->dateFormatter->format(time(), 'custom', 'H:i', $this->config('system.date')->get('timezone')['default'])]),
     ];
     $form['timeslot']['timeslot_end'] = [
       '#type' => 'select',
@@ -300,7 +313,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * Returns timeintervals.
    *
-   * @return array[]
+   * @return array
    *   Interval.
    */
   private function timeinterval() {
