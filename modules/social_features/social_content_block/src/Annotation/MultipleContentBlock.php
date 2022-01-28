@@ -37,7 +37,7 @@ class MultipleContentBlock extends Plugin {
   /**
    * The bundle.
    *
-   * @var string
+   * @var string|null
    */
   public $bundle = NULL;
 

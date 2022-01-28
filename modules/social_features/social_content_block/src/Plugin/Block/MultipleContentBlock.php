@@ -170,7 +170,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
   /**
    * {@inheritdoc}
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->setConfigurationValue('subtitle', $form_state->getValue([
       'info',
       'subtitle',
@@ -253,7 +253,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
 
     // Select all entities from multiple content types.
     foreach ($types as $type => $bundles) {
-      $entities_data = array_merge($entities_data, $this->getEntitiesByDefinitions($type, $bundles));
+      $entities_data = array_merge($entities_data, $this->getEntitiesByDefinitions((string) $type, $bundles));
       ${$type . '_storage'} = $this->entityTypeManager->getStorage($type);
     }
 
@@ -299,7 +299,10 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     $id_key = $entity_type->getKey('id');
 
     // Create select based on entity data table.
-    $query = $this->database->select($entity_type->getDataTable(), 'base_table');
+    if (($data_table = $entity_type->getDataTable()) === NULL) {
+      return [];
+    }
+    $query = $this->database->select($data_table, 'base_table');
     $query->addField('base_table', $id_key);
     $query->addField('base_table', $sorting);
 
@@ -307,7 +310,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     $query->condition('default_langcode', '1');
 
     // Only if plugin has bundles add a condition by type.
-    if ($bundles !== NULL) {
+    if ($bundles !== NULL && is_string($entity_type->getKey('bundle'))) {
       $query->condition($entity_type->getKey('bundle'), $bundles, 'IN');
     }
 
@@ -326,11 +329,13 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
 
     // Select only specific number of items provided by block configuration.
     $query->range(0, $this->getAmountItems());
-    $result = $query->execute()->fetchAll();
+    $result = $query->execute();
 
-    // Prepare list of entities with values for sorting process.
-    foreach ($result as $row) {
-      $entities["{$type}__{$row->{$id_key}}"] = $row->{$sorting};
+    if ($result !== NULL) {
+      // Prepare list of entities with values for sorting process.
+      foreach ($result->fetchAll() as $row) {
+        $entities["{$type}__{$row->{$id_key}}"] = $row->{$sorting};
+      }
     }
 
     return $entities ?? [];
