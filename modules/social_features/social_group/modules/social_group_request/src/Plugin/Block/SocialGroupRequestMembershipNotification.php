@@ -193,7 +193,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     $contexts = Cache::mergeContexts($contexts, [
       'url',
       'user.permissions',
-      'group',
+      'route.group',
     ]);
     return $contexts;
   }

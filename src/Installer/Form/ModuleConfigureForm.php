@@ -143,13 +143,25 @@ class ModuleConfigureForm extends ConfigFormBase {
       $optional_modules = array_values($selected_modules);
     }
 
-    // Set the modules to be installed by Drupal in the install_profile_modules
-    // step.
-    $install_modules = array_merge(
-      \Drupal::state()->get('install_profile_modules'),
-      $optional_modules
-    );
-    \Drupal::state()->set('install_profile_modules', $install_modules);
+    // $install_state is an array of information about the current
+    // installation state. This gets passed in each task of Drupal installation.
+    // So, we need to alter that to ask Drupal to install the
+    // modules selected by user in this form.
+    // @see install_get_form()
+    $build_info = $form_state->getBuildInfo();
+
+    if (
+      !empty($build_info['args'][0]['profile_info']) &&
+      !empty($build_info['args'][0]['profile_info']['install'])
+    ) {
+      $install_modules = array_merge(
+        $build_info['args'][0]['profile_info']['install'] ?? [],
+        $optional_modules
+      );
+
+      $build_info['args'][0]['profile_info']['install'] = $install_modules;
+      $form_state->setBuildInfo($build_info);
+    }
 
     // Store whether we need to set up demo content.
     \Drupal::state()->set('social_install_demo_content', $form_state->getValue('demo_content'));

@@ -6,11 +6,11 @@ Feature: Create Secret Group
 
   @email-spool
   Scenario: Successfully create secret group
+    Given I enable the module "social_group_secret"
     Given users:
       | name                 | mail                     | status | roles       |
       | SecretGroup User One | group_user_1@example.com | 1      | sitemanager |
       | SecretGroup User Two | group_user_2@example.com | 1      | verified    |
-    And I enable the module "social_group_secret"
     And I am logged in as an "verified"
     And I am on "group/add"
     Then I should not see "Secret group"
@@ -57,7 +57,7 @@ Feature: Create Secret Group
     When I fill in the following:
       | Title | Test secret group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Test secret group topic"
 
@@ -70,7 +70,8 @@ Feature: Create Secret Group
       | Title                                  | Test secret group event |
       | edit-field-event-date-0-value-date     | 2025-01-01              |
       | edit-field-event-date-end-0-value-date | 2025-01-01              |
-      | Time                                   | 11:00:00                |
+      | edit-field-event-date-0-value-time     | 11:00:00                |
+      | edit-field-event-date-end-0-value-time | 11:00:00                |
       | Location name                          | Technopark              |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"

@@ -35,6 +35,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "edit-form" = "/admin/structure/post/{post_type}/edit",
  *     "delete-form" = "/admin/structure/post/{post_type}/delete",
  *     "collection" = "/admin/structure/post"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label"
  *   }
  * )
  */

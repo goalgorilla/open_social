@@ -5,6 +5,8 @@
  * Hooks specific to the Social Node module.
  */
 
+use Drupal\node\NodeInterface;
+
 /**
  * @addtogroup hooks
  * @{
@@ -21,7 +23,7 @@
  *
  * @see \Drupal\social_node\Service\SocialNodeMessenger::addStatus()
  */
-function hook_social_node_message(\Drupal\node\NodeInterface $node) {
+function hook_social_node_message(NodeInterface $node) {
   $t_args = [
     '@type' => node_get_type_label($node),
     '%title' => $node->toLink()->toString(),

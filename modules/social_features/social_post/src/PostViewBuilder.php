@@ -2,10 +2,12 @@
 
 namespace Drupal\social_post;
 
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Theme\Registry;
 use Drupal\group\Entity\Group;
 use Drupal\message\Entity\MessageTemplate;
@@ -18,6 +20,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Render controller for posts.
  */
 class PostViewBuilder extends EntityViewBuilder {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return [
+      'build',
+      'buildMultiple',
+      'renderLinks',
+    ];
+  }
 
   /**
    * The social group helper service.
@@ -37,11 +50,13 @@ class PostViewBuilder extends EntityViewBuilder {
    *   The language manager.
    * @param \Drupal\Core\Theme\Registry $theme_registry
    *   The theme registry.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
    *   The social group helper service.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, SocialGroupHelperService $social_group_helper_service) {
-    parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry);
+  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry, EntityDisplayRepositoryInterface $entity_display_repository, SocialGroupHelperService $social_group_helper_service) {
+    parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry, $entity_display_repository);
 
     $this->socialGroupHelperService = $social_group_helper_service;
   }
@@ -55,6 +70,7 @@ class PostViewBuilder extends EntityViewBuilder {
       $container->get('entity.repository'),
       $container->get('language_manager'),
       $container->get('theme.registry'),
+      $container->get('entity_display.repository'),
       $container->get('social_group.helper_service')
     );
   }
@@ -171,10 +187,10 @@ class PostViewBuilder extends EntityViewBuilder {
    * @return array
    *   A renderable array representing the post links.
    */
-  public static function renderLinks($post_entity_id, $view_mode, $langcode, $is_in_preview) {
+  public static function renderLinks(string $post_entity_id, string $view_mode, string $langcode, bool $is_in_preview): array {
     $links = [
       '#theme' => 'links',
-      '#pre_render' => ['drupal_pre_render_links'],
+      '#pre_render' => [[Link::class, 'preRenderLinks']],
       '#attributes' => ['class' => ['links', 'inline']],
     ];
 
@@ -203,7 +219,7 @@ class PostViewBuilder extends EntityViewBuilder {
    * @return array
    *   An array that can be processed by drupal_pre_render_links().
    */
-  protected static function buildLinks(Post $entity, $view_mode) {
+  protected static function buildLinks(Post $entity, string $view_mode): array {
     $links = [];
 
     if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {

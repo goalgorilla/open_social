@@ -21,7 +21,11 @@
     <div class="teaser__teaser-type">
       <svg class="teaser__teaser-type-icon">
         <title>{% trans %}Group: &nbsp;{% endtrans %}{{- label|render|striptags|trim -}}</title>
-        <use xlink:href="#icon-group-white"></use>
+        {% if group_type_icon %}
+          <use xlink:href="#{{- group_type_icon -}}"></use>
+        {% else %}
+          <use xlink:href="#icon-group-white"></use>
+        {% endif %}
       </svg>
     </div>
   </a>

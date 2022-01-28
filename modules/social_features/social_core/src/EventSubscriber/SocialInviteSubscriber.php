@@ -9,7 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\social_core\InviteService;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -90,10 +90,10 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
   /**
    * Notify user about Pending invitations.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
-   *   The GetResponseEvent to process.
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
+   *   The RequestEvent to process.
    */
-  public function notifyAboutPendingInvitations(GetResponseEvent $event) {
+  public function notifyAboutPendingInvitations(RequestEvent $event) {
     // Only show this message when a user is logged in.
     if ($this->currentUser->isAuthenticated()) {
       $data = $this->inviteService->getInviteData();

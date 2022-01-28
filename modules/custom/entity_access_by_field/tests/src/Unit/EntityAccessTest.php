@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -12,6 +13,7 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
  */
 class EntityAccessTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The field type random machinename.
    *

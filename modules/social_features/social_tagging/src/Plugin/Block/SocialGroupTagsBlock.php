@@ -133,7 +133,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
     $group = $this->routeMatch->getParameter('group');
 
     if ($group instanceof GroupInterface) {
-      $contexts = Cache::mergeContexts($contexts, ['group']);
+      $contexts = Cache::mergeContexts($contexts, ['route.group']);
     }
 
     $cache_tags[] = 'taxonomy_term_list:social_tagging';
