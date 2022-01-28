@@ -49,6 +49,7 @@ function social_comment_install() {
       'delete own comments',
       'administer own comments',
       'administer comments',
+      'administer social_comment settings',
     ]
   );
 
@@ -129,4 +130,11 @@ function social_comment_update_8901() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Allow changing the order of comments to reverse by SM.
+ */
+function social_comment_update_11001(): void {
+  user_role_grant_permissions('sitemanager', ['administer social_comment settings']);
 }

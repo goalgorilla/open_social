@@ -5,27 +5,105 @@
  * The Social comment module.
  */
 
-use Drupal\comment\CommentInterface;
+use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\comment\CommentInterface;
 use Drupal\social_comment\Entity\Access\CommentQueryAccessHandler;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentFieldItemList;
+use Drupal\social_comment\SocialCommentStorage;
 use Drupal\social_comment\SocialCommentViewBuilder;
 
 /**
  * Implements hook_entity_type_alter().
  */
-function social_comment_entity_type_alter(array &$entity_types) {
+function social_comment_entity_type_alter(array &$entity_types): void {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (isset($entity_types['comment'])) {
-    $entity_types['comment']->setClass(Comment::class);
-    $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
-    $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
+    $entity_types['comment']
+      ->setClass(Comment::class)
+      ->setStorageClass(SocialCommentStorage::class)
+      ->setViewBuilderClass(SocialCommentViewBuilder::class)
+      ->setHandlerClass('query_access', CommentQueryAccessHandler::class);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_comment_query_comment_filter_alter(AlterableInterface $query): void {
+  /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+  if ($query->getMetaData('base_table') !== 'comment') {
+    return;
+  }
+
+  $data = $query->getMetaData('field_name');
+  $valid = TRUE;
+
+  /** @var \Drupal\Component\Serialization\SerializationInterface $serialization */
+  $serialization = \Drupal::service('serialization.json');
+
+  try {
+    $items = $serialization->decode($data);
+  }
+  catch (InvalidDataTypeException $exception) {
+    $valid = FALSE;
+  }
+
+  if ($valid && isset($items['field_name'], $items['formatter'])) {
+    $conditions = &$query->conditions();
+
+    foreach ($conditions as &$condition) {
+      if (is_array($condition) && $condition['field'] === 'c.field_name') {
+        $condition['value'] = $items['field_name'];
+        break;
+      }
+    }
+
+    /** @var \Drupal\Component\Plugin\PluginManagerInterface $manager */
+    $manager = \Drupal::service('plugin.manager.field.formatter');
+
+    if ($manager->hasDefinition($items['formatter'])) {
+      $definition = $manager->getDefinition($items['formatter']);
+
+      /** @var callable $callback */
+      $callback = [$definition['class'], 'alterQuery'];
+
+      call_user_func($callback, $query, $items['limit'], $items['order']);
+    }
+  }
+
+  if (!\Drupal::config('social_comment.comment_settings')->get('reverse')) {
+    return;
+  }
+
+  $order_by = &$query->getOrderBy();
+
+  if (isset($order_by['c.cid'])) {
+    $order_by['c.cid'] = $order_by['c.cid'] === 'ASC' ? 'DESC' : 'ASC';
+  }
+  elseif (isset($order_by['torder'])) {
+    $is_asc = $order_by['torder'] === 'ASC';
+    $order_by['torder'] = $is_asc ? 'DESC' : 'ASC';
+
+    if ($is_asc) {
+      $expression = &$query->getExpressions();
+      $expression['torder']['expression'] = 'SUBSTRING_INDEX(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.\', 1)';
+
+      $alias = $query->addExpression(
+        'CONCAT(SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1)), \'.z\')',
+        'children_order',
+      );
+
+      $query->orderBy($alias, 'DESC');
+    }
   }
 }
 
@@ -214,6 +292,18 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
   }
 
   unset($links['comment']['#links']['comment-forbidden']);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_comment_preprocess_field(array &$variables): void {
+  $element = $variables['element'];
+
+  if ($element['#formatter'] === 'comment_node') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
+  }
 }
 
 /**

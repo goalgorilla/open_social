@@ -1,23 +1,22 @@
 <?php
 
-namespace Drupal\social_core\Plugin\Field\FieldFormatter;
+namespace Drupal\social_comment\Plugin\Field\FieldFormatter;
 
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\comment\CommentManagerInterface;
-use Drupal\comment\CommentInterface;
 use Drupal\Core\Link;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\group\Entity\GroupContent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a node comment formatter.
  *
  * @FieldFormatter(
  *   id = "comment_node",
- *   module = "social_core",
+ *   module = "social_comment",
  *   label = @Translation("Comment on node list"),
  *   field_types = {
  *     "comment"
@@ -27,7 +26,35 @@ use Drupal\group\Entity\GroupContent;
  *   }
  * )
  */
-class CommentNodeFormatter extends CommentDefaultFormatter {
+class CommentNodeFormatter extends SocialCommentFormatterBase {
+
+  /**
+   * Newest comments first.
+   */
+  const ORDER = 'DESC';
+
+  /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  private $renderer;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition
+  ): self {
+    $instance = parent::create($container, $configuration, $plugin_id, $configuration);
+
+    $instance->renderer = $container->get('renderer');
+
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -43,16 +70,14 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = [];
-    $output = [];
+    $elements = $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
-    $status = $items->status;
     $access_comments_in_group = FALSE;
 
     // Exclude entities without the set id.
-    if (!empty($entity->id())) {
+    if ($entity instanceof ContentEntityInterface && !empty($entity->id())) {
       $group_contents = GroupContent::loadByEntity($entity);
     }
 
@@ -61,14 +86,12 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       $elements['#cache']['contexts'][] = 'route.group';
       $elements['#cache']['contexts'][] = 'user.group_permissions';
 
-      $account = \Drupal::currentUser();
-      $renderer = \Drupal::service('renderer');
-
       foreach ($group_contents as $group_content) {
         $group = $group_content->getGroup();
-        $membership = $group->getMember($account);
-        $renderer->addCacheableDependency($elements, $membership);
-        if ($group->hasPermission('access comments', $account)) {
+        $membership = $group->getMember($this->currentUser);
+        $this->renderer->addCacheableDependency($elements, $membership);
+
+        if ($group->hasPermission('access comments', $this->currentUser)) {
           $access_comments_in_group = TRUE;
         }
       }
@@ -76,13 +99,17 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($access_comments_in_group && $status !== CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if (
+      $access_comments_in_group &&
+      isset($items->status) &&
+      $items->status !== CommentItemInterface::HIDDEN &&
+      empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
-      !in_array($this->viewMode, ['search_result', 'search_index'])) {
-      $comment_settings = $this->getFieldSettings();
-
+      !in_array($this->viewMode, ['search_result', 'search_index']) &&
+      isset($entity->get($field_name)->comment_count)
+    ) {
       $comment_count = $entity->get($field_name)->comment_count;
 
       // Only attempt to render comments if the entity has visible comments.
@@ -90,11 +117,19 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       // $entity->get($field_name)->comment_count, but unpublished comments
       // should display if the user is an administrator.
       $elements['#cache']['contexts'][] = 'user.permissions';
-      if ($this->currentUser->hasPermission('access comments') || $this->currentUser->hasPermission('administer comments')) {
+
+      if (
+        $this->currentUser->hasPermission('access comments') ||
+        $this->currentUser->hasPermission('administer comments')
+      ) {
         $output['comments'] = [];
 
-        if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
+        if (
+          $comment_count ||
+          $this->currentUser->hasPermission('administer comments')
+        ) {
           $comment_settings = $this->getFieldSettings();
+
           $output['comments'] = [
             '#lazy_builder' => [
               'social_comment.lazy_renderer:renderComments',
@@ -105,6 +140,10 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
                 $items->getName(),
                 $comment_settings['per_page'],
                 $this->getSetting('pager_id'),
+                'default',
+                self::ORDER,
+                0,
+                $this->getBaseId(),
               ],
             ],
             '#create_placeholder' => TRUE,
@@ -146,14 +185,12 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         // Build the link.
         $more_button = Link::fromTextAndUrl($more_link, $link_url);
 
-        $always_show_all_comments = $this->getSetting('always_show_all_comments');
-        if ($always_show_all_comments && $comment_count > 1) {
+        if ($this->getSetting('always_show_all_comments') && $comment_count > 1) {
           $output['more_link'] = $more_button;
         }
         elseif ($comments_per_page && $comment_count > $comments_per_page) {
           $output['more_link'] = $more_button;
         }
-
       }
 
       $elements[] = $output + [
@@ -173,6 +210,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = [];
+
     $element['num_comments'] = [
       '#type' => 'number',
       '#min' => 0,
@@ -180,12 +218,14 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
     ];
+
     $element['always_show_all_comments'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Always show all comments link'),
       '#description' => $this->t('If selected it will show a "all comments" link if there is at least 1 comment.'),
       '#default_value' => $this->getSetting('always_show_all_comments'),
     ];
+
     return $element;
   }
 
@@ -198,52 +238,15 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
   /**
    * {@inheritdoc}
-   *
-   * @see Drupal\comment\CommentStorage::loadThead()
    */
-  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
-    // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = \Drupal::database()->select('comment_field_data', 'c');
-    $query->addField('c', 'cid');
-    $query
-      ->condition('c.entity_id', $entity->id())
-      ->condition('c.entity_type', $entity->getEntityTypeId())
-      ->condition('c.field_name', $field_name)
-      ->condition('c.default_langcode', 1)
-      ->isNull('c.pid')
-      ->addTag('entity_access')
-      ->addTag('comment_filter')
-      ->addMetaData('base_table', 'comment')
-      ->addMetaData('entity', $entity)
-      ->addMetaData('field_name', $field_name);
+  public static function alterQuery(
+    SelectInterface $query,
+    int $limit,
+    string $order = 'ASC'
+  ): void {
+    parent::alterQuery($query, $limit, self::ORDER);
 
-    if (!$this->currentUser->hasPermission('administer comments')) {
-      $query->condition('c.status', CommentInterface::PUBLISHED);
-    }
-    if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
-      $query->orderBy('c.cid', 'DESC');
-    }
-    else {
-      // See comment above. Analysis reveals that this doesn't cost too
-      // much. It scales much much better than having the whole comment
-      // structure.
-      $query->addExpression('SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1))', 'torder');
-      $query->orderBy('torder', 'DESC');
-    }
-
-    // Limit The number of results.
-    if ($comments_per_page) {
-      $query->range(0, $comments_per_page);
-    }
-
-    $cids = $query->execute()->fetchCol();
-
-    $comments = [];
-    if ($cids) {
-      $comments = $this->storage->loadMultiple($cids);
-    }
-
-    return $comments;
+    $query->isNull('c.pid');
   }
 
 }

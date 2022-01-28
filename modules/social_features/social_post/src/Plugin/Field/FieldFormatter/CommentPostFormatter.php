@@ -3,14 +3,11 @@
 namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\comment\CommentManagerInterface;
-use Drupal\comment\CommentInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\social_comment\Plugin\Field\FieldFormatter\SocialCommentFormatterBase;
 
 /**
  * Provides a post comment formatter.
@@ -27,7 +24,7 @@ use Drupal\Core\Url;
  *   }
  * )
  */
-class CommentPostFormatter extends CommentDefaultFormatter {
+class CommentPostFormatter extends SocialCommentFormatterBase {
 
   /**
    * {@inheritdoc}
@@ -43,8 +40,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = [];
-    $output = [];
+    $elements = $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
@@ -53,26 +49,45 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if (
+      $status != CommentItemInterface::HIDDEN &&
+      empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
-      !in_array($this->viewMode, ['search_result', 'search_index'])) {
+      !in_array($this->viewMode, ['search_result', 'search_index'])
+    ) {
       $comment_settings = $this->getFieldSettings();
-
-      $comment_count = $entity->get($field_name)->comment_count;
 
       // Only attempt to render comments if the entity has visible comments.
       // Unpublished comments are not included in
       // $entity->get($field_name)->comment_count, but unpublished comments
       // should display if the user is an administrator.
       $elements['#cache']['contexts'][] = 'user.permissions';
-      if ($this->currentUser->hasPermission('access comments') || $this->currentUser->hasPermission('administer comments')) {
+
+      if (
+        $this->currentUser->hasPermission('access comments') ||
+        $this->currentUser->hasPermission('administer comments')
+      ) {
         $output['comments'] = [];
 
-        if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
-          $mode = $comment_settings['default_mode'];
-          $comments = $this->loadThread($entity, $field_name, $mode, $comments_per_page, FALSE);
+        $comment_count = $entity->get($field_name)->comment_count;
+
+        if (
+          $comment_count ||
+          $this->currentUser->hasPermission('administer comments')
+        ) {
+          $comments = $this->storage->loadFormatterThread(
+            $this->getBaseId(),
+            $entity,
+            $field_name,
+            $comment_settings['default_mode'],
+            0,
+            0,
+            $this->getSetting('order'),
+            $comments_per_page,
+          );
+
           if ($comments) {
             $build = $this->viewBuilder->viewMultiple($comments);
             $output['comments'] += $build;
@@ -108,22 +123,34 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
       // Append comment form if the comments are open and the form is set to
       // display below the entity. Do not show the form for the print view mode.
-      if ($status == CommentItemInterface::OPEN && $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW && $this->viewMode != 'print') {
+      if (
+        $status == CommentItemInterface::OPEN &&
+        $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW &&
+        $this->viewMode !== 'print'
+      ) {
         // Only show the add comment form if the user has permission.
         $elements['#cache']['contexts'][] = 'user';
         $add_comment_form = FALSE;
+
+        /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
+        $field = $entity->get('field_recipient_group');
+
         // Check if the post has been posted in a group.
-        $group_id = $entity->field_recipient_group->target_id;
-        if ($group_id) {
-          /** @var \Drupal\group\Entity\Group $group */
-          $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
-          if ($group->hasPermission('add post entities in group', $this->currentUser) && $this->currentUser->hasPermission('post comments')) {
+        if (!$field->isEmpty()) {
+          /** @var \Drupal\group\Entity\GroupInterface $group */
+          $group = $field->entity;
+
+          if (
+            $group->hasPermission('add post entities in group', $this->currentUser) &&
+            $this->currentUser->hasPermission('post comments')
+          ) {
             $add_comment_form = TRUE;
           }
         }
         elseif ($this->currentUser->hasPermission('post comments')) {
           $add_comment_form = TRUE;
         }
+
         if ($add_comment_form) {
           $output['comment_form'] = [
             '#lazy_builder' => ['comment.lazy_builders:renderForm', [
@@ -172,6 +199,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = [];
+
     $element['num_comments'] = [
       '#type' => 'number',
       '#min' => 0,
@@ -179,17 +207,18 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
     ];
-    $orders = [
-      'ASC' => $this->t('Oldest first'),
-      'DESC' => $this->t('Newest first'),
-    ];
+
     $element['order'] = [
       '#type' => 'select',
       '#title' => $this->t('Order'),
       '#description' => $this->t('Select the order used to show the list of comments.'),
       '#default_value' => $this->getSetting('order'),
-      '#options' => $orders,
+      '#options' => [
+        'ASC' => $this->t('Oldest first'),
+        'DESC' => $this->t('Newest first'),
+      ],
     ];
+
     return $element;
   }
 
@@ -198,57 +227,6 @@ class CommentPostFormatter extends CommentDefaultFormatter {
    */
   public function settingsSummary() {
     return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @see Drupal\comment\CommentStorage::loadThead()
-   */
-  public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
-    // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = \Drupal::database()->select('comment_field_data', 'c');
-    $query->addField('c', 'cid');
-    $query
-      ->condition('c.entity_id', $entity->id())
-      ->condition('c.entity_type', $entity->getEntityTypeId())
-      ->condition('c.field_name', $field_name)
-      ->condition('c.default_langcode', 1)
-      ->addTag('entity_access')
-      ->addTag('comment_filter')
-      ->addMetaData('base_table', 'comment')
-      ->addMetaData('entity', $entity)
-      ->addMetaData('field_name', $field_name);
-
-    $comments_order = $this->getSetting('order');
-
-    if (!$this->currentUser->hasPermission('administer comments')) {
-      $query->condition('c.status', CommentInterface::PUBLISHED);
-    }
-    if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
-      $query->orderBy('c.cid', $comments_order);
-    }
-    else {
-      // See comment above. Analysis reveals that this doesn't cost too
-      // much. It scales much much better than having the whole comment
-      // structure.
-      $query->addExpression('SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1))', 'torder');
-      $query->orderBy('torder', $comments_order);
-    }
-
-    // Limit The number of results.
-    if ($comments_per_page) {
-      $query->range(0, $comments_per_page);
-    }
-
-    $cids = $query->execute()->fetchCol();
-
-    $comments = [];
-    if ($cids) {
-      $comments = $this->storage->loadMultiple($cids);
-    }
-
-    return $comments;
   }
 
 }

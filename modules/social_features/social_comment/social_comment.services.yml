@@ -4,13 +4,15 @@ services:
     class: Drupal\social_comment\SocialCommentBreadcrumbBuilder
     tags:
       - { name: breadcrumb_builder, priority: 101 }
+
   social_comment.route_subscriber:
     class: Drupal\social_comment\Routing\RouteSubscriber
     arguments: ['@config.factory']
     tags:
       - { name: event_subscriber }
+
   social_comment.lazy_renderer:
-    class: Drupal\social_comment\SocialCommentLazyRenderer
+    class: Drupal\social_comment\Service\SocialCommentLazyRenderer
     arguments:
       - '@entity_type.manager'
       - '@current_route_match'
