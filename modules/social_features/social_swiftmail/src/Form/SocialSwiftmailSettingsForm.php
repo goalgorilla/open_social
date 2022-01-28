@@ -56,7 +56,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    *   The activity destination manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The Date formatter.
    */
   public function __construct(
