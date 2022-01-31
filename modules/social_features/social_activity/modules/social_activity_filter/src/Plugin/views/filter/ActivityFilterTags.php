@@ -52,7 +52,7 @@ class ActivityFilterTags extends FilterPluginBase {
   public function query() {
     $tags = '';
     $taxonomy_field = '';
-    
+
     if (isset($this->view->filter_tags)) {
       $tags = $this->view->filter_tags;
     }
