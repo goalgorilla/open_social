@@ -673,12 +673,12 @@ function _social_group_allowed_values_callback(
 function social_group_social_group_join_method_usage(): array {
   return [
     [
-      'entity_type_id' => 'group',
+      'entity_type' => 'group',
       'bundle' => 'closed_group',
       'method' => 'added',
     ],
     [
-      'entity_type_id' => 'group',
+      'entity_type' => 'group',
       'bundle' => ['open_group', 'public_group'],
       'method' => ['direct', 'added'],
     ],
@@ -1039,7 +1039,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       if (
         isset($data['field'], $form[$data['field']]) &&
         !isset($data['method']) &&
-        $data['entity_type_id'] === $entity_type_id &&
+        $data['entity_type'] === $entity_type_id &&
         (
           !isset($data['bundle']) &&
           $bundle === NULL ||
@@ -2926,7 +2926,7 @@ function social_group_preprocess_fieldset(array &$variables): void {
   foreach ($manager->relations() as $data) {
     if (
       !isset($data['method']) &&
-      $data['entity_type_id'] === $entity_type_id &&
+      $data['entity_type'] === $entity_type_id &&
       isset($bundle) === isset($data['bundle']) &&
       (!isset($bundle) || $data['bundle'] === $bundle) &&
       $data['field'] === $element['#field_name']

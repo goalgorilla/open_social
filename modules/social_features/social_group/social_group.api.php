@@ -230,7 +230,7 @@ added/invited by @entity_type_id managers.'),
  * @return array
  *   An array of entity types/bundles definitions that support join methods. The
  *   values are associative arrays that should contain the following elements:
- *   - entity_type_id: The entity type ID.
+ *   - entity_type: The entity type ID.
  *   - bundle: (optional) The bundle(s).
  *   - field: (optional) The field contains a list of supported join methods
  *     when the "method" item isn't defined. Otherwise, the field indicates if
@@ -244,7 +244,7 @@ added/invited by @entity_type_id managers.'),
 function hook_social_group_join_method_usage() {
   return [
     [
-      'entity_type_id' => 'group',
+      'entity_type' => 'group',
       'bundle' => 'flexible_group',
       'field' => 'field_group_allowed_join_method',
     ],
@@ -262,7 +262,7 @@ function hook_social_group_join_method_usage() {
 function hook_social_group_join_method_usage_alter(array &$items) {
   foreach ($items as &$item) {
     if (
-      $item['entity_type_id'] === 'group' &&
+      $item['entity_type'] === 'group' &&
       isset($item['bundle']) &&
       $item['bundle'] === 'closed_group' &&
       !isset($item['field'])

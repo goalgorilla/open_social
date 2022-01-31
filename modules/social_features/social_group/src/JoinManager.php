@@ -83,7 +83,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
     foreach ($this->relations() as $data) {
       if (
-        $data['entity_type_id'] === $entity_type_id &&
+        $data['entity_type'] === $entity_type_id &&
         (
           !isset($data['bundle']) &&
           $entity_type->getBundleEntityType() === NULL ||
@@ -171,7 +171,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
   public function hasMethod(string $bundle, string $method): bool {
     foreach ($this->relations() as $relation) {
       if (
-        $relation['entity_type_id'] === 'group' &&
+        $relation['entity_type'] === 'group' &&
         isset($relation['bundle']) &&
         in_array($bundle, (array) $relation['bundle']) &&
         (
