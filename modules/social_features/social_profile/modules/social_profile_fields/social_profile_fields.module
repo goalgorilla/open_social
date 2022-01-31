@@ -148,7 +148,7 @@ function social_profile_fields_form_profile_profile_edit_form_alter(&$form, Form
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) : array {
+function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account): array {
   $suggestions = [];
 
   $entityTypeManager = \Drupal::entityTypeManager();
@@ -160,7 +160,8 @@ function social_profile_fields_social_user_name_display_suggestions(AccountInter
     return $suggestions;
   }
 
-  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->get('field_profile_nick_name')->isEmpty()) {
+  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->get('field_profile_nick_name')
+      ->isEmpty()) {
     /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
     $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
 
@@ -318,7 +319,8 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
   foreach (ProfileType::loadMultiple() as $profile_type) {
     $type = $profile_type->id();
 
-    $profile_fields = \Drupal::service('social_profile_fields.helper')->getProfileFields($type);
+    $profile_fields = \Drupal::service('social_profile_fields.helper')
+      ->getProfileFields($type);
     $filtered = array_filter($profile_fields, function ($arr) {
       return $arr['id'] === 'profile_profile_field_profile_address';
     });
@@ -334,7 +336,8 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
 
       $setting_value = $config->get($field['id']);
       if (isset($setting_value) && !$setting_value) {
-        $plugin_ids_for_fields = \Drupal::service('social_profile_fields.helper')->getUserExportPluginIdForField($field['id']);
+        $plugin_ids_for_fields = \Drupal::service('social_profile_fields.helper')
+          ->getUserExportPluginIdForField($field['id']);
         if (!empty($plugin_ids_for_fields)) {
           foreach ($plugin_ids_for_fields as $plugin_id) {
             if ($plugins[$plugin_id]) {
@@ -411,7 +414,7 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
 /**
  * Implements hook_theme().
  */
-function social_profile_fields_theme() {
+function social_profile_fields_theme($existing, $type, $theme, $path) {
   return [
     'field__field_profile_nationality' => [
       'base hook' => 'field',
@@ -419,6 +422,12 @@ function social_profile_fields_theme() {
     'field__field_profile_nationality__sky' => [
       'base hook' => 'field',
     ],
+    'profile__profile__name' => [
+      'template' => 'profile--profile--name',
+      'path' => $path . '/templates',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ]
   ];
 }
 
