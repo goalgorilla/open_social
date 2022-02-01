@@ -87,6 +87,10 @@ Feature: Create Public Group
     Given I am logged in as "GivenUserOne"
     When I am on "/notifications"
     Then I should see "GivenUserTwo created a post in the Test public group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                      |
+      | Hi GivenUserOne                                              |
+      | GivenUserTwo published a post in the Test public group group |
 
     Given I am logged in as "GivenUserTwo"
     Then I am on "all-groups"

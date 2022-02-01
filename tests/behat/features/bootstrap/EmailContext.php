@@ -9,6 +9,11 @@ use Drupal\ultimate_cron\Entity\CronJob;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Mime\Email as MimeEmail;
+use Drupal\symfony_mailer\Email as DrupalSymfonyEmail;
+use Symfony\Component\Mime\Header\Headers;
+use Symfony\Component\Mime\Header\UnstructuredHeader;
+use Drupal\symfony_mailer\Address;
 
 /**
  * Provides helpful test steps around the handling of e-mails.
@@ -27,11 +32,19 @@ class EmailContext implements Context {
    * @BeforeScenario @email-spool
    */
   public function enableEmailSpool() : void {
-    // Update Drupal configuration.
-    $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
-    $swiftmailer_config->set('transport', 'spool');
-    $swiftmailer_config->set('spool_directory', $this->getSpoolDir());
-    $swiftmailer_config->save();
+    // Set transport to null to stop sending out emails.
+    $config = \Drupal::configFactory()
+      ->getEditable('symfony_mailer.mailer_transport.sendmail');
+    $config->set('plugin', 'null');
+    $config->set('configuration', []);
+    $config->save();
+
+    // Add the mail logger plugin to the default policy.
+    $config = \Drupal::configFactory()
+      ->getEditable('symfony_mailer.mailer_policy._');
+    $mailer_configuration = $config->get('configuration');
+    $mailer_configuration['log_mail'] = ['spool_directory' => $this->getSpoolDir()];
+    $config->set('configuration', $mailer_configuration)->save();
 
     // Clean up emails that were left behind.
     $this->purgeSpool();
@@ -43,10 +56,22 @@ class EmailContext implements Context {
    * @AfterScenario @email-spool
    */
   public function disableEmailSpool() : void {
-    // Update Drupal configuration.
-    $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
-    $swiftmailer_config->set('transport', 'native');
-    $swiftmailer_config->save();
+    // Restore transport back to mailcatcher.
+    $config = \Drupal::configFactory()
+      ->getEditable('symfony_mailer.mailer_transport.sendmail');
+    $config->set('plugin', 'smtp');
+    $config->set('configuration.user', '');
+    $config->set('configuration.pass', '');
+    $config->set('configuration.host', 'mailcatcher');
+    $config->set('configuration.port', '1025');
+    $config->save();
+
+    // Remove the mail logger plugin to the default policy.
+    $config = \Drupal::configFactory()
+      ->getEditable('symfony_mailer.mailer_policy._');
+    $mailer_configuration = $config->get('configuration');
+    unset($mailer_configuration['log_mail']);
+    $config->set('configuration', $mailer_configuration)->save();
   }
 
   /**
@@ -64,26 +89,14 @@ class EmailContext implements Context {
       return;
     }
 
-    $exts = [
-      "text/html" => "html",
-      "text/plain" => "txt",
-    ];
-
     $spool_directory = $this->getSpoolDir();
     $emails = $this->getSpooledEmails();
     foreach ($emails as $serialized) {
       $path = $spool_directory . DIRECTORY_SEPARATOR . $serialized->getBasename($serialized->getExtension());
 
       $email = $this->getEmailContent($serialized);
-      assert($email instanceof \Swift_Message);
-
-      foreach ($email->getChildren() as $i => $part) {
-        file_put_contents($path . ($exts[$part->getContentType()] ?? "{$i}.unknown"), $part->getBody());
-      }
-
-      // The primary (preferred) body is not considered to be a child, so we
-      // must treat it separately.
-      file_put_contents($path . ($exts[$email->getBodyContentType()] ?? "unknown"), $email->getBody());
+      file_put_contents($path . "html", $email->getHtmlBody());
+      file_put_contents($path . "txt", $email->getTextBody());
       file_put_contents($path . "metadata", $email->getHeaders()->toString());
     }
   }
@@ -320,7 +333,6 @@ class EmailContext implements Context {
     $emails = [];
     foreach ($finder as $file) {
       $email = $this->getEmailContent($file);
-      assert($email instanceof \Swift_Message);
 
       if ($email->getSubject() === $subject) {
         $emails[] = $email;
@@ -371,12 +383,18 @@ class EmailContext implements Context {
    * @param \Symfony\Component\Finder\SplFileInfo $file
    *   The .message file to get content for.
    *
-   * @return
+   * @return \Drupal\symfony_mailer\Email
    *   A deserialized email.
    */
-  protected function getEmailContent(SplFileInfo $file) {
+  protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {
     assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
-    return unserialize($file->getContents());
+    return unserialize(file_get_contents($file), ["allowed_classes" => [
+      DrupalSymfonyEmail::class,
+      Headers::class,
+      UnstructuredHeader::class,
+      Address::class,
+      MimeEmail::class
+    ]]);
   }
 
   /**
@@ -392,7 +410,7 @@ class EmailContext implements Context {
    *   $email.
    */
   protected function getMatchingLinesForEmail(array $expected_lines, $email) : array {
-    $body = $email->getBody();
+    $body = $email->getHtmlBody();
 
     // Make it a traversable HTML doc.
     $doc = new \DOMDocument();

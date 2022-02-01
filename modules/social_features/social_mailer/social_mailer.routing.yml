@@ -5,3 +5,10 @@ social_mailer.settings:
     _title: 'Email notification settings'
   requirements:
     _permission: 'administer social mail'
+social_mailer.test:
+  path: '/admin/config/system/mailer/test'
+  defaults:
+    _form: '\Drupal\social_mailer\Form\TestForm'
+    _title: 'Test'
+  requirements:
+    _permission: 'administer social mail'

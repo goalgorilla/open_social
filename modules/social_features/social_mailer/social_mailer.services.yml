@@ -1,0 +1,6 @@
+services:
+  social_mailer_message_event_subscriber:
+    class: Drupal\social_mailer\EventSubscriber\MessageEventSubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }
