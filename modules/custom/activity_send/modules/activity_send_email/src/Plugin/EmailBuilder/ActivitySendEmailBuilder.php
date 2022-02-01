@@ -61,12 +61,18 @@ class ActivitySendEmailBuilder extends EmailProcessorBase implements ContainerFa
    * {@inheritdoc}
    */
   public function preRender(EmailInterface $email): void {
-    $site_name = $this->configFactory->get('system.site')->get('name');
-    $email->setSubject($this->t('Notification from %site_name', [
-      '%site_name' => $site_name,
-    ], [
-      'langcode' => $email->getLangcode(),
-    ]));
+    if ($subject = $email->getParam('subject')) {
+      $email->setSubject(strip_tags($subject));
+    }
+    else {
+      $site_name = $this->configFactory->get('system.site')->get('name');
+      $email->setSubject($this->t('Notification from %site_name', [
+        '%site_name' => $site_name,
+      ], [
+        'langcode' => $email->getLangcode(),
+      ]));
+    }
+
     $email->setBody($email->getParam('body'));
   }
 

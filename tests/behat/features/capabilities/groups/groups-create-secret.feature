@@ -118,6 +118,10 @@ Feature: Create Secret Group
     Given I am logged in as "SecretGroup User One"
     When I am on "/notifications"
     Then I should see "SecretGroup User Two created a post in the Test secret group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                              |
+      | Hi SecretGroup User One                                              |
+      | SecretGroup User Two published a post in the Test secret group group |
 
   # As a non-member of the secret group, I should not see anything.
     Given users:
