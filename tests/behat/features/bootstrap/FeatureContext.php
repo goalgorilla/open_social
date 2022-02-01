@@ -1206,4 +1206,13 @@ class FeatureContext extends RawMinkContext implements Context
         }
       }
     }
+
+    /**
+     * Set "/stream" as a front page.
+     *
+     * @AfterScenario @alternative-frontpage
+     */
+    public function setFrontPage() {
+      \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/stream')->save();
+    }
 }
