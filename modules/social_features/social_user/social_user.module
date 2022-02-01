@@ -332,7 +332,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
  */
 function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
-  $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
+  $submitted_user_id = $storage['uid'] ?? '';
 
   // Only when there is actual user, and the actual user is changing its own
   // account we redirect. When you're editing others you don't want this.
