@@ -613,7 +613,7 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
   if (in_array($view->id(), array_keys($tagging_views)) && in_array($view->getDisplay()->getBaseId(), $tagging_views)) {
     /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $org_query = $query->where['2'];
-    $conditions = isset($org_query['conditions']) ? $org_query['conditions'] : [];
+    $conditions = $org_query['conditions'] ?? [];
     $count_conditions = count($conditions);
 
     // This only make sense if there are multiple
