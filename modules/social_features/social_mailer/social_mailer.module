@@ -120,10 +120,17 @@ function social_mailer_preprocess_email(array &$variables): void {
 
   /** @var \Drupal\symfony_mailer\EmailInterface $email */
   $email = $variables['email'];
-  $to = $email->getTo();
   $context = $email->getParam('context');
 
-  if (!empty($to[0]) && ($user = user_load_by_mail($to[0]->getAddress())) instanceof UserInterface) {
+  if ($to = $email->getHeaders()->getHeaderBody('X-Rerouted-Original-to')) {
+    $mail = $to;
+  }
+  else {
+    $to = $email->getTo();
+    $mail = isset($to[0]) ?? FALSE;
+  }
+
+  if ($mail && ($user = user_load_by_mail($mail)) instanceof UserInterface) {
     $display_name = $user->getDisplayName();
   }
   elseif (!empty($context['display_name'])) {
@@ -166,10 +173,17 @@ function social_mailer_mailer_builder_info_alter(array &$email_builders): void {
 }
 
 /**
- * Implements hook_post_render().
+ * Implements hook_mailer_post_render().
  */
-function social_mailer_post_render(EmailInterface $email): void {
+function social_mailer_mailer_post_render(EmailInterface $email): void {
   $css_inliner = new CssToInlineStyles();
   $body = (string) $email->getHtmlBody();
-  $email->setHtmlBody(check_markup($css_inliner->convert($body), 'full_html'));
+  $email->setHtmlBody($css_inliner->convert(check_markup($body, 'full_html')));
+
+  $dsn = $email->getTransportDSN();
+
+  if (strpos($dsn, 'null://file-spool:/') === 0) {
+    $email->addTextHeader('X-Transport', 'FileSpool');
+    $email->addTextHeader('X-Spool-Directory', substr($dsn, 19));
+  }
 }

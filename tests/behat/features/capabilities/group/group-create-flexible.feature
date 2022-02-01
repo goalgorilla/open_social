@@ -276,9 +276,29 @@ Feature: Create flexible Group
     Then I should see text matching "GivenUserTwo joined the Test flexible group"
     # Notification about the created post.
     And I should see "GivenUserTwo created a post in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                        |
+      | Hi GivenUserOne                                                |
+      | GivenUserTwo published a post in the Test flexible group group |
+      | This is a flexible group post.                                 |
     # Notification about the created community topic.
     And I should see "GivenUserTwo created a topic Test group community topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group community topic                                      |
     # Notification about the created private topic.
     And I should see "GivenUserTwo created a topic Test group private topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group private topic                                        |
     # Notification about the created event.
     And I should see "GivenUserTwo created an event Test group event in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                          |
+      | Hi GivenUserOne                                                  |
+      | GivenUserTwo published an event in the Test flexible group group |
+      | Test group event                                                 |
