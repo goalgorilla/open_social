@@ -56,7 +56,7 @@ class DemoContentManager extends DefaultPluginManager {
     $instances = [];
 
     foreach ($plugin_ids as $plugin_id) {
-      $configuration = isset($configurations[$plugin_id]) ? $configurations[$plugin_id] : [];
+      $configuration = $configurations[$plugin_id] ?? [];
       $instances[$plugin_id] = static::createInstance($plugin_id, $configuration);
     }
 

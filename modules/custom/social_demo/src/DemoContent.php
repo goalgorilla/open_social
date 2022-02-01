@@ -130,7 +130,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   public function getSource() {
     $definition = $this->getPluginDefinition();
-    return isset($definition['source']) ? $definition['source'] : NULL;
+    return $definition['source'] ?? NULL;
   }
 
   /**
@@ -145,14 +145,14 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   public function getModule() {
     $definition = $this->getPluginDefinition();
-    return isset($definition['provider']) ? $definition['provider'] : NULL;
+    return $definition['provider'] ?? NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getProfile() {
-    return isset($this->profile) ? $this->profile : '';
+    return $this->profile ?? '';
   }
 
   /**
