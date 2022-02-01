@@ -237,7 +237,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $default_value = isset($template_frequencies[$template]) ? $template_frequencies[$template] : 'immediately';
+    $default_value = $template_frequencies[$template] ?? 'immediately';
 
     foreach ($notification_options as $notification_id => $notification_option) {
       $parents_for_id = [$template, $notification_id];

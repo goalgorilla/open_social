@@ -43,7 +43,7 @@ class EntityTypeCount extends ShareUsageDataPluginBase {
           // Suppress warning about unused variable.
           unset($bundle_data);
           $keys = $definition->getKeys();
-          $bundle_key = $keys['bundle'] === NULL ? 'bundle' : $keys['bundle'];
+          $bundle_key = $keys['bundle'] ?? 'bundle';
 
           $query = \Drupal::entityQuery($entity_type_id);
           $query->condition($bundle_key, $bundle_id);
