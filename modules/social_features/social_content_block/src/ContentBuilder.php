@@ -475,6 +475,19 @@ class ContentBuilder implements ContentBuilderInterface {
         $sorting_field = $query->addExpression("COUNT($comment_alias.cid)", 'comment_count');
         break;
 
+      case 'last_commented':
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
+        }
+        else {
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+        }
+
+        $sorting_field = $query->addExpression("MAX($comment_alias.created)", 'comment_created');
+        break;
+
       // Creates a join to select the number of likes for a given entity in a
       // recent timeframe and use that for sorting.
       case 'most_liked':
