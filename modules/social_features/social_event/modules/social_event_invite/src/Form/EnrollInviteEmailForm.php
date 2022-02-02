@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -10,9 +11,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
+use Drupal\node\NodeInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -49,6 +52,13 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   protected $token;
 
   /**
+   * The social event enroll.
+   *
+   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
+   */
+  protected $eventEnrollService;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -65,13 +75,15 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     EntityStorageInterface $entity_storage,
     PrivateTempStoreFactory $tempStoreFactory,
     ConfigFactoryInterface $config_factory,
-    Token $token
+    Token $token,
+    SocialEventEnrollServiceInterface $event_enroll_service
   ) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
     $this->entityStorage = $entity_storage;
     $this->tempStoreFactory = $tempStoreFactory;
     $this->configFactory = $config_factory;
     $this->token = $token;
+    $this->eventEnrollService = $event_enroll_service;
   }
 
   /**
@@ -85,7 +97,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $container->get('entity_type.manager')->getStorage('event_enrollment'),
       $container->get('tempstore.private'),
       $container->get('config.factory'),
-      $container->get('token')
+      $container->get('token'),
+      $container->get('social_event.enroll')
     );
   }
 
@@ -262,6 +275,53 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));
       $this->messenger->addWarning(t('Unable to proceed, please try again.'));
     }
+  }
+
+  /**
+   * Returns access to the invite page.
+   *
+   * @param \Drupal\node\NodeInterface|mixed[] $node
+   *   The node entity.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access results.
+   */
+  public function inviteAccess(NodeInterface $node) {
+    // Allow for event managers/organizers.
+    if (social_event_manager_or_organizer()) {
+      return AccessResult::allowed();
+    }
+
+    // Disable access for non-enrolled users, invite by users was disabled in
+    // the event invite settings, enrolment is disabled for this event or event
+    // is visible only for group members.
+    $event_invite_settings = $this->config('social_event_invite.settings');
+    $enrollment = $this->entityTypeManager->getStorage('event_enrollment')
+      ->loadByProperties([
+        'status' => TRUE,
+        'field_account' => $this->currentUser()->id(),
+        'field_event' => $node->id(),
+        'field_enrollment_status' => '1',
+      ]);
+    if (
+      !$event_invite_settings->get('invite_by_users') ||
+      !$this->eventEnrollService->isEnabled($node) ||
+      empty($enrollment) ||
+      $node->get('field_content_visibility')->getString() === 'group'
+    ) {
+      return AccessResult::forbidden();
+    }
+
+    // Allow sharing/invites for users only if allowed by the event manager.
+    if (
+      $node->hasField('field_event_send_invite_by_user') &&
+      !$node->get('field_event_send_invite_by_user')->isEmpty() &&
+      $node->get('field_event_send_invite_by_user')->getString() === '1'
+    ) {
+      return AccessResult::allowed();
+    }
+
+    return AccessResult::neutral();
   }
 
 }

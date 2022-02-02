@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\ginvite\GroupInvitationLoader;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\user\Entity\User;
@@ -534,6 +536,43 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     }
 
     return $matches[0];
+  }
+
+  /**
+   * Returns access to the invite page.
+   *
+   * @param \Drupal\group\Entity\GroupInterface|mixed[] $group
+   *   The group entity.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access results.
+   */
+  public function inviteAccess(GroupInterface $group) {
+    // Allow for Group admin/managers.
+    if ($group->hasPermission('administer members', $this->currentUser())) {
+      return AccessResult::allowed();
+    }
+
+    // Disable access for non-members or invite by members was disabled in the
+    // group settings.
+    $group_settings = $this->config('social_group.settings');
+    if (
+      !(bool) $group_settings->get('group_invite.invite_by_members') ||
+      !$group->getMember($this->currentUser())
+    ) {
+      return AccessResult::forbidden();
+    }
+
+    // Allow sharing/invites for members only if allowed by the group manager.
+    if (
+      $group->hasField('field_group_invite_by_member') &&
+      !$group->get('field_group_invite_by_member')->isEmpty() &&
+      $group->get('field_group_invite_by_member')->getString() === '1'
+    ) {
+      return AccessResult::allowed();
+    }
+
+    return AccessResult::neutral();
   }
 
 }

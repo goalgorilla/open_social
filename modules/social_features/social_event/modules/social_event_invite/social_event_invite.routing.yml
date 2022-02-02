@@ -8,7 +8,7 @@ social_event_invite.invite_email:
       node:
         type: entity:node
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\social_event_invite\Form\EnrollInviteEmailForm::inviteAccess'
 
 social_event_invite.invite_user:
   path: '/node/{node}/invite/user'
