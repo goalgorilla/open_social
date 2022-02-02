@@ -266,7 +266,8 @@ function social_profile_update_8006(&$sandbox) {
           'uid' => $account->id(),
         ])->save();
         $sandbox['profiles_created']++;
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         \Drupal::logger('social_profile')
           ->error('Could not create profile for @user_id', ['@user_id' => $uid]);
       }
@@ -555,9 +556,14 @@ function social_profile_update_11002(): string {
  */
 function social_profile_update_11006(array &$sandbox): void {
   $module_path = drupal_get_path('module', 'social_profile');
-  $yml = Yaml::parse(file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml'));
-  EntityViewMode::create($yml)->save();
-  $module_path = drupal_get_path('module', 'social_profile');
-  $yml = Yaml::parse(file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml'));
-  EntityViewDisplay::create($yml)->save();
+  $content = file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml');
+  if ($content) {
+    $yml = Yaml::parse($content);
+    EntityViewMode::create($yml)->save();
+    $content = file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml');
+    if ($content) {
+      $yml = Yaml::parse($content);
+      EntityViewDisplay::create($yml)->save();
+    }
+  }
 }
