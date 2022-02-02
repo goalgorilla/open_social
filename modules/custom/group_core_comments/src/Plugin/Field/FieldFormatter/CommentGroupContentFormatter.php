@@ -263,6 +263,24 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
         '#create_placeholder' => TRUE,
       ];
     }
+
+    if (!$this->currentUser->hasPermission('post comments')) {
+      // Add log in and sign up links below discussion comments for AN user.
+      $log_in_url = Url::fromRoute('user.login');
+      $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)
+        ->toString();
+      $create_account_url = Url::fromRoute('user.register');
+      $sign_up = Link::fromTextAndUrl(t('sign up'), $create_account_url)
+        ->toString();
+      $description = $this->t('Please @log_in or @sign_up to comment.', [
+        '@log_in' => $log_in_link,
+        '@sign_up' => $sign_up,
+      ]);
+      $output[0]['comment_form'] = [
+        '#prefix' => '<hr>',
+        '#markup' => $description,
+      ];
+    }
     return $output;
   }
 

@@ -131,6 +131,11 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       '#type' => 'html_tag',
       '#tag' => 'div',
       '#value' => $title,
+      '#attributes' => [
+        'class' => [
+          'vbo-info-list-wrapper',
+        ],
+      ],
     ];
 
     // Add selector so the JS of VBO applies correctly.

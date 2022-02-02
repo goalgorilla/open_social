@@ -671,7 +671,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
 function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   $field_definition = $context['items']->getFieldDefinition();
 
-  if ($field_definition->getType() == 'path') {
+  if ($field_definition->getType() === 'path') {
     $url = Url::fromRoute('<front>', [], [
       'absolute' => TRUE,
     ]);
@@ -706,6 +706,10 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
     }
 
     $element['#element_validate'] = ['social_core_path_validate'];
+  }
+  if ($field_definition->getType() === 'address') {
+    $default_country = \Drupal::config('system.date')->get('country.default');
+    $element['address']['#default_value']['country_code'] = $element['address']['#default_value']['country_code'] ?? $default_country;
   }
 }
 
@@ -989,9 +993,9 @@ function _social_core_path_widget_submit(array $form, FormStateInterface $form_s
   // since we hide the element, and the default is checked,
   // the path will never be overridden if someone updates it.
   // So we need to check this in our custom submit handler.
-  $default_path = isset($form['path']['widget'][0]['alias']['#default_value']) ? $form['path']['widget'][0]['alias']['#default_value'] : '';
+  $default_path = $form['path']['widget'][0]['alias']['#default_value'] ?? '';
   $input = $form_state->getUserInput();
-  $updated_path = isset($input['path'][0]['alias']) ? $input['path'][0]['alias'] : '';
+  $updated_path = $input['path'][0]['alias'] ?? '';
   // If we don't have a match, make sure we override the checkbox as well.
   if ($updated_path !== $default_path) {
     // Override the User input, act as if this was changed.

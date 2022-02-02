@@ -22,7 +22,7 @@ class ActivityFilterTags extends FilterPluginBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * {@inheritdoc}
@@ -50,8 +50,16 @@ class ActivityFilterTags extends FilterPluginBase {
    * Filters out activity items by the taxonomy tags.
    */
   public function query() {
-    $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
-    $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
+    $tags = '';
+    $taxonomy_field = '';
+
+    if (isset($this->view->filter_tags)) {
+      $tags = $this->view->filter_tags;
+    }
+
+    if (isset($this->view->filter_vocabulary)) {
+      $taxonomy_field = $this->view->filter_vocabulary;
+    }
 
     $or = new Condition('OR');
     $and_wrapper = new Condition('AND');
@@ -162,7 +170,7 @@ class ActivityFilterTags extends FilterPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user';
