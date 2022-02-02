@@ -178,11 +178,11 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
    */
   public function supportedSortOptions(): array {
     return parent::supportedSortOptions() + [
-        'event_date' => [
-          'label' => $this->t('Event date'),
-          'limit' => FALSE,
-        ],
-      ];
+      'event_date' => [
+        'label' => $this->t('Event date'),
+        'limit' => FALSE,
+      ],
+    ];
   }
 
 }
