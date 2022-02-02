@@ -291,24 +291,10 @@ function social_user_update_11004(): string {
 }
 
 /**
- * Update the views filter to limit operators in admin/people.
- */
-function social_user_update_11005(): string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_user', 'social_user_update_11005');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
  * Update 'views.view.user_admin_people'.
  */
-function social_user_update_11006(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11006.yml';
+function social_user_update_11005(array &$sandbox): void {
+  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11005.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));
