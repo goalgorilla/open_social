@@ -66,7 +66,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
               'classes' => 'comment-attachments',
               'open' => FALSE,
             ],
-            'label' => t('Add attachment'),
+            'label' => $this->t('Add attachment'),
             'region' => 'content',
           ],
         ],
