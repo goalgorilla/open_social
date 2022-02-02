@@ -57,7 +57,7 @@
 
     # Delete the thread.
     When I click "View thread"
-    And I click the xth "0" element with the css ".dropdown-toggle" in the "Main content"
+    And I click the xth "0" element with the css ".message__thread-actions .dropdown-toggle"
     Then I click "Delete thread"
     And I should see "This action cannot be undone."
     And I press "Delete thread"
