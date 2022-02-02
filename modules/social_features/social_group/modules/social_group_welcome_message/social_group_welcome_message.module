@@ -156,7 +156,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
 
     // Set sender (owner) of the pm.
     if (count($g_managers_users) > 0) {
-      list($owner) = $g_managers_users;
+      [$owner] = $g_managers_users;
     }
     else {
       $owner = $group->getOwner();

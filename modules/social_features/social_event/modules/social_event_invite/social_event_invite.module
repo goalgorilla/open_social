@@ -8,13 +8,29 @@
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function social_event_invite_theme(): array {
+  return [
+    'invite_to_event_by_user' => [
+      'variables' => [
+        'url' => NULL,
+        'link' => NULL,
+      ],
+    ],
+  ];
+}
 
 /**
  * Sends email when invitation created for not registered user.
@@ -39,11 +55,22 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   ];
 
   // Only set this message when the request status is pending.
-  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY &&
-    empty($eventEnrollment->get('field_account')->getString())) {
-    // Send a normal mail when the user has no account yet.
-    $params['existing_user'] = FALSE;
-    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+    $not_empty = FALSE;
+    $to = NULL;
+    if (!$eventEnrollment->get('field_account')->isEmpty()) {
+      $to_uid = $eventEnrollment->get('field_account')->getString();
+      /** @var \Drupal\user\UserInterface $to */
+      $to = \Drupal::entityTypeManager()->getStorage('user')->load($to_uid);
+      $not_empty = TRUE;
+      $mail = $to->getEmail();
+    }
+
+    if (!empty($mail) && (!$not_empty || ($to instanceof UserInterface && !$to->hasPermission('view published event enrollment entities')))) {
+      // Send a normal mail when the user has no account yet.
+      $params['existing_user'] = FALSE;
+      $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+    }
   }
 }
 
@@ -215,6 +242,24 @@ function social_event_invite_preprocess_node(array &$variables) {
       // method OR the fact if a user is enrolled or not.
       $variables['#cache']['contexts'][] = 'user';
     }
+
+    $event_invite_settings = \Drupal::config('social_event_invite.settings');
+    if (
+      $event_invite_settings->get('invite_by_users') &&
+      $node->bundle() === 'event'
+    ) {
+      $url = Url::fromRoute('social_event_invite.invite_email', ['node' => $node->id()]);
+      $node_url = $node->toUrl('canonical', ['absolute' => TRUE]);
+      if ($url->access(\Drupal::currentUser())) {
+        $variables['users_allowed_to_invite'] = TRUE;
+        $variables['invite_content'] = [
+          '#theme' => 'invite_to_event_by_user',
+          '#url' => $node_url,
+          '#link' => Link::fromTextAndUrl(t('Invite via email'), $url)
+            ->toRenderable(),
+        ];
+      }
+    }
   }
 }
 
@@ -379,5 +424,77 @@ function social_event_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
         unset($data['tabs'][0][$task_name]);
       }
     }
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_event_invite_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if ($form_display->id() === 'node.event.default') {
+    $content = $form_display->get('content');
+    $hidden = $form_display->get('hidden');
+    if (!isset($content['field_event_send_invite_by_user'])) {
+      $content['field_event_send_invite_by_user'] = [
+        'type' => 'boolean_checkbox',
+        'region' => 'content',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 99,
+        'third_party_settings' => [],
+      ];
+      $form_display->set('content', $content);
+    }
+    if (isset($hidden[''])) {
+      unset($hidden['']);
+      $form_display->set('hidden', $hidden);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function social_event_invite_form_node_form_alter(array &$form, FormStateInterface $form_state): void {
+  if (!isset($form['field_event_send_invite_by_user'])) {
+    return;
+  }
+
+  $event_invite_settings = \Drupal::config('social_event_invite.settings');
+  // The event manager is able to allow users to share events or invite to it
+  // only if SM+ is enabled this feature.
+  if (!$event_invite_settings->get('invite_by_users')) {
+    $form['field_event_send_invite_by_user']['#access'] = FALSE;
+  }
+
+  // Wrapper for the sharing/invitation event settings field.
+  $form['event_sharing'] = [
+    '#type' => 'container',
+    '#weight' => 120,
+    '#access' => $form['field_event_send_invite_by_user']['#access'],
+    'label' => [
+      '#type' => 'html_tag',
+      '#tag' => 'label',
+      '#value' => t('Sharing Options'),
+      '#attributes' => [
+        'class' => [
+          'control-label',
+        ],
+      ],
+    ],
+    'field_event_send_invite_by_user' => $form['field_event_send_invite_by_user'],
+  ];
+
+  // Remove default field as it was added to the wrapper and to remove
+  // duplicates on the form.
+  unset($form['field_event_send_invite_by_user']);
+
+  // Add wrapper of the sharing/invitation to the specific field group.
+  if (isset($form['#fieldgroups']['group_event_visibility'])) {
+    $form['#fieldgroups']['group_event_visibility']->children[] = 'event_sharing';
+  }
+  else {
+    $form['#fieldgroups']['group_settings']->children[] = 'event_sharing';
   }
 }
