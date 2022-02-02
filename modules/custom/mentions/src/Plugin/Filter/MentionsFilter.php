@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\mentions\MentionsPluginManager;
-use Drupal\Core\Utility\Token;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Entity\FilterFormat;
 
@@ -54,11 +53,6 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   protected MentionsPluginManager $mentionsManager;
 
   /**
-   * The token service.
-   */
-  private Token $tokenService;
-
-  /**
    * The available mention types.
    *
    * @var string[]
@@ -98,15 +92,12 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    *   The config factory.
    * @param \Drupal\mentions\MentionsPluginManager $mentions_manager
    *   The mentions manager.
-   * @param \Drupal\Core\Utility\Token $token
-   *   The token service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, RendererInterface $render, ConfigFactory $config, MentionsPluginManager $mentions_manager, Token $token) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, RendererInterface $render, ConfigFactory $config, MentionsPluginManager $mentions_manager) {
     $this->entityManager = $entity_manager;
     $this->mentionsManager = $mentions_manager;
     $this->renderer = $render;
     $this->config = $config;
-    $this->tokenService = $token;
 
     if (!isset($plugin_definition['provider'])) {
       $plugin_definition['provider'] = 'mentions';
@@ -123,7 +114,6 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
     $renderer = $container->get('renderer');
     $config = $container->get('config.factory');
     $mentions_manager = $container->get('plugin.manager.mentions');
-    $token = $container->get('token');
 
     return new static($configuration,
       $plugin_id,
@@ -132,7 +122,6 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       $renderer,
       $config,
       $mentions_manager,
-      $token
     );
   }
 
@@ -226,7 +215,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       $mention = $this->mentionsManager->createInstance($mention_type);
 
       if ($mention instanceof MentionsPluginInterface) {
-        $pattern = '/(?:' . preg_quote($input_settings['prefix']) . ')([ a-z0-9@+_.\'-]+)' . preg_quote($input_settings['suffix']) . '/';
+        $pattern = '/(?:' . preg_quote($this->inputSettings[$config_name]['prefix']) . ')([ a-z0-9@+_.\'-]+)' . preg_quote($this->inputSettings[$config_name]['suffix']) . '/';
 
         preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
 

@@ -32,6 +32,10 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
         'label' => t('Most commented'),
         'description' => 'See posts with the most comments first.',
       ],
+      'last_commented' => [
+        'label' => 'Last commented',
+        'description' => 'See the last commented nodes first.',
+      ],
       'most_liked' => [
         'label' => t('Most liked'),
         'description' => 'See posts with the most likes first.',

@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_group_invite_by_member
+    - group.type.flexible_group
+id: group.flexible_group.field_group_invite_by_member
+field_name: field_group_invite_by_member
+entity_type: group
+bundle: flexible_group
+label: 'Allow members to share the group with others'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

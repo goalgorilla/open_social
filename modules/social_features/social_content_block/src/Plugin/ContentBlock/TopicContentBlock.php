@@ -24,7 +24,7 @@ class TopicContentBlock extends ContentBlockBase {
   /**
    * {@inheritdoc}
    */
-  public function query(SelectInterface $query, array $fields) {
+  public function query(SelectInterface $query, array $fields): void {
     foreach ($fields as $field_name => $entity_ids) {
       switch ($field_name) {
         // Add topic type tags.

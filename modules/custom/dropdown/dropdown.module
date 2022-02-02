@@ -74,7 +74,7 @@ function template_preprocess_dropdown(array &$variables) {
   }
   $variables['items'] = $items;
   $variables['label'] = Html::escape($element['#title']);
-  $variables['selected'] = isset($selected) ? $selected : $variables['label'];
-  $variables['active'] = isset($active) ? $active : 0;
+  $variables['selected'] = $selected ?? $variables['label'];
+  $variables['active'] = $active ?? 0;
   $variables['children'] = $element['#children'];
 }

@@ -5,30 +5,41 @@
  * Hooks provided by the Social Content Block module.
  */
 
-use Drupal\Core\Database\Driver\mysql\Select;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 
 /**
- * Provide a method to alter the query to get content.
+ * Provides a method to alter the query to get content.
  *
- * @param \Drupal\Core\Database\Driver\mysql\Select $query
- *   Query to alter the results.
+ * @param \Drupal\Core\Database\Query\SelectInterface $query
+ *   The query to alter the results.
  * @param \Drupal\block_content\BlockContentInterface $block_content
- *   Current block content.
+ *   The current block content.
+ *
+ * @deprecated in social:11.1.0 and is removed from social:12.0.0. Use
+ *   hook_query_social_content_block_alter instead.
+ *
+ * @see https://www.drupal.org/node/3258202
  *
  * @ingroup social_content_block_api
  */
-function hook_social_content_block_query_alter(Select $query, BlockContentInterface $block_content) {
-  // Get topic type tags.
-  $topic_types_list = $block_content->get('field_topic_type')->getValue();
-  $topic_types = array_map(function ($topic_type) {
-    return $topic_type['target_id'];
-  }, $topic_types_list);
+function hook_social_content_block_query_alter(SelectInterface $query, BlockContentInterface $block_content): void {
+  /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
+  $field = $block_content->field_topic_type;
 
   // Add topic type tags.
-  if (!empty($topic_types)) {
-    $query->innerJoin('node__field_topic_type', 'tt', 'tt.entity_id = n.nid');
-    $query->condition('tt.field_topic_type_target_id', $topic_types, 'IN');
+  if (!$field->isEmpty()) {
+    $alias = $query->innerJoin(
+      'node__field_topic_type',
+      'tt',
+      '%alias.entity_id = n.nid',
+    );
+
+    $query->condition(
+      "$alias.field_topic_type_target_id",
+      array_column($field->getValue(), 'target_id'),
+      'IN',
+    );
   }
 }
 

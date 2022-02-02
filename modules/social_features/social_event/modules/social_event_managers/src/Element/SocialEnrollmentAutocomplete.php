@@ -2,11 +2,11 @@
 
 namespace Drupal\social_event_managers\Element;
 
+use Drupal\Component\Utility\Tags;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_core\Entity\Element\EntityAutocomplete;
-use Drupal\Component\Utility\Tags;
 use Drupal\node\NodeInterface;
+use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -20,9 +20,14 @@ use Drupal\social_event\EventEnrollmentInterface;
 class SocialEnrollmentAutocomplete extends EntityAutocomplete {
 
   /**
-   * Form element validation handler for entity_autocomplete elements.
+   * {@inheritdoc}
    */
-  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form, $select2 = FALSE) {
+  public static function validateEntityAutocomplete(
+    array &$element,
+    FormStateInterface $form_state,
+    array &$complete_form,
+    bool $select2 = FALSE
+  ): void {
     $duplicated_values = $value = [];
 
     // Load the current Event enrollments so we can check duplicates.
@@ -70,7 +75,10 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
           'target_id' => $match,
         ];
 
-        $enrollments = $storage->loadByProperties(['field_event' => $nid, 'field_account' => $match]);
+        $enrollments = $storage->loadByProperties([
+          'field_event' => $nid,
+          'field_account' => $match,
+        ]);
 
         // If the social_event_invite module is enabled, we want to check if
         // an user is already invited, but not really enrolled yet.
