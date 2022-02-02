@@ -553,11 +553,11 @@ function social_profile_update_11002(): string {
 /**
  * Install 'name' view mode.
  */
-function social_user_update_11006(array &$sandbox): void {
-  $module_path = drupal_get_path('module', 'social_user');
+function social_profile_update_11006(array &$sandbox): void {
+  $module_path = drupal_get_path('module', 'social_profile');
   $yml = Yaml::parse(file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml'));
   EntityViewMode::create($yml)->save();
-  $module_path = drupal_get_path('module', 'social_user');
+  $module_path = drupal_get_path('module', 'social_profile');
   $yml = Yaml::parse(file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml'));
   EntityViewDisplay::create($yml)->save();
 }
