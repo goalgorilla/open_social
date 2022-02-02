@@ -20,7 +20,6 @@ function social_user_install() {
     [
       'cancel account',
       'change own username',
-      'select account cancellation method',
     ]
   );
   user_role_grant_permissions(
@@ -176,7 +175,6 @@ function _social_user_get_permissions($role) {
   $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
     'cancel account',
     'change own username',
-    'select account cancellation method',
   ]);
 
   // Verified.
@@ -260,7 +258,6 @@ function social_user_update_11002(): void {
     [
       'cancel account',
       'change own username',
-      'select account cancellation method',
     ]
   );
 }
@@ -287,4 +284,13 @@ function social_user_update_11004(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Revoke the permission select account cancellation method.
+ */
+function social_user_update_11005(): void {
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
+    'select account cancellation method',
+  ]);
 }
