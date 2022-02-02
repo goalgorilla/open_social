@@ -15,8 +15,6 @@
  *
  * Selectors on the gin theme.
  */
-body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
-body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
 body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before {
   width: 80px;
   left: 6px;
@@ -27,10 +25,13 @@ body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.too
   background: url('../images/os-logo.svg') no-repeat;
 }
 
+[dir='rtl'] body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before {
+  left: auto;
+  right: -36px;
+}
+
 /* Media query from Gin theme */
 @media (max-width: 975px) {
-  body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
-  body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before,
   body[class*='gin'] .toolbar .toolbar-bar #toolbar-item-administration-tray a.toolbar-icon.toolbar-icon-social-lets-connect-main:before {
     width: 30px;
     top: 18px;

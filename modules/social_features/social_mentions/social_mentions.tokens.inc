@@ -5,8 +5,11 @@
  * Builds placeholder replacement tokens for Social Mentions module.
  */
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\mentions\Entity\Mentions;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
 
@@ -78,86 +81,195 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
 
-        case 'mentioned_user':
+          case 'mentioned_user':
 
-          if ($name === 'mentioned_user') {
-            if (isset($message->field_message_related_object)) {
-              $target_type = $message->field_message_related_object->target_type;
-              $target_id = $message->field_message_related_object->target_id;
+            if ($name === 'mentioned_user') {
+              if (!$message->get('field_message_related_object')->isEmpty()) {
+                $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+                $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                $mention = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
+
+                if ($mention->getEntityTypeId() == 'mentions') {
+                  $loadUserId = User::load($mention->getMentionedUserID());
+                  $user = $loadUserId->getDisplayName();
+
+                  $replacements[$original] = $user;
+                }
+              }
+            }
+
+            break;
+
+          case 'commented_entity_link_html':
+
+            if (!$message->get('field_message_related_object')->isEmpty()) {
+              $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+              $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+              /** @var \Drupal\mentions\Entity\Mentions $mention */
               $mention = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
 
-              if ($mention->getEntityTypeId() == 'mentions') {
-                $loadUserId = User::load($mention->getMentionedUserID());
-                $user = $loadUserId->getDisplayName();
-
-                $replacements[$original] = $user;
+              if ($mention instanceof Mentions && $mentioned_entity = $mention->getMentionedEntity()) {
+                if ($mentioned_entity->getEntityTypeId() === 'comment') {
+                  $entity = $mentioned_entity->getCommentedEntity();
+                }
+                else {
+                  $entity = $mentioned_entity;
+                }
               }
             }
-          }
 
-          break;
+            if (isset($entity)) {
+              switch ($entity->getEntityTypeId()) {
+                case 'node':
+                  // Then get the bundle name.
+                  $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
+                    ->getStorage('node_type')
+                    ->load($entity->bundle())
+                    ->label());
+                  break;
 
-        case 'commented_entity_link_html':
+                case 'post':
+                case 'photo':
+                case 'comment':
+                  $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
+                  break;
 
-          if (isset($message->field_message_related_object)) {
-            $target_type = $message->field_message_related_object->target_type;
-            $target_id = $message->field_message_related_object->target_id;
-            /** @var \Drupal\mentions\Entity\Mentions $mention */
-            $mention = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
-              ->load($target_id);
+              }
+
+              $url_options = ['absolute' => TRUE];
+              $link = $entity->toUrl('canonical', $url_options)->toString();
+
+              // We should only use the label of entities who have a label.
+              if ($link_label = $entity->label()) {
+                $entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
+              }
+              else {
+                $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
+              }
+
+              $replacements[$original] = Markup::create($entity_link_html);
+            }
+
+            break;
+        }
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_mentions_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    /** @var Drupal\message\Entity\Message $message */
+    $message = $context['data']['message'];
+
+    // Alter the [message:cta_button] or [message:preview] token,
+    // and replace it with the rendered content with new text and link.
+    if (isset($context['tokens']['cta_button']) || isset($context['tokens']['preview'])) {
+      if (isset($message->field_message_related_object)) {
+        $message_template_id = $message->getTemplate()->id();
+        switch ($message_template_id) {
+          case 'create_mention_comment':
+          case 'create_mention_post':
+          case 'create_comment_reply_mention':
+            /** @var \Drupal\social_activity\EmailTokenServices $email_token_services */
+            $email_token_services = \Drupal::service('social_activity.email_token_services');
+            $mention = $email_token_services->getRelatedObject($message);
 
             if ($mention instanceof Mentions && $mentioned_entity = $mention->getMentionedEntity()) {
               if ($mentioned_entity->getEntityTypeId() === 'comment') {
+                /** @var \Drupal\comment\Entity\Comment $mentioned_entity */
                 $entity = $mentioned_entity->getCommentedEntity();
               }
               else {
                 $entity = $mentioned_entity;
               }
             }
-          }
+            if (isset($entity)) {
+              // Prepare comment field name.
+              $comment_field_name = '';
+              $entity_id = $entity->getEntityTypeId();
+              switch ($entity_id) {
+                case 'comment':
+                  $comment_field_name = 'field_comment_body';
+                  break;
 
-          if (isset($entity)) {
-            switch ($entity->getEntityTypeId()) {
-              case 'node':
-                // Then get the bundle name.
-                $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
-                  ->getStorage('node_type')
-                  ->load($entity->bundle())
-                  ->label());
-                break;
+                case 'node':
+                  $comment_field_name = 'field_' . $entity->bundle() . '_comments';
+                  break;
 
-              case 'post':
-              case 'photo':
-              case 'comment':
-                $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
-                break;
+                case 'post':
+                case 'photo':
+                  // Get the summary of the comment.
+                  $comment_field_name = 'field_post_comments';
+                  break;
+              }
 
+              // Get the comment entity.
+              $comment = NULL;
+              if ($comment_field_name && $entity->hasField($comment_field_name)) {
+                $comment_id = $entity->getFieldValue($comment_field_name, 'cid');
+                if ($comment_id) {
+                  /** @var Drupal\comment\Entity\Comment $comment */
+                  $comment = \Drupal::entityTypeManager()->getStorage('comment')
+                    ->load($comment_id);
+                }
+              }
+
+              // Prepare the CTA button.
+              if (isset($context['tokens']['cta_button'])) {
+                $options = ['absolute' => TRUE];
+                // Append the comment reference in link.
+                if ($comment instanceof CommentInterface) {
+                  $options['fragment'] = 'comment-' . $comment->id();
+                }
+
+                $link = $entity->toUrl('canonical', $options);
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment'));
+                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                  ->renderPlain($cta_button);
+              }
+
+              // Prepare the comment preview.
+              if (isset($context['tokens']['preview'])) {
+                $preview_info = [];
+                switch ($entity_id) {
+                  // If the mention was made in a comment on a comment
+                  // or a comment on node.
+                  case 'comment':
+                  case 'node':
+                    // Get the summary of the comment.
+                    if ($comment instanceof CommentInterface) {
+                      $preview_info = $email_token_services->getCommentPreview($comment);
+                    }
+                    break;
+
+                  // If the mention was made in a post itself.
+                  case 'post':
+                  case 'photo':
+                    // Get the summary of the post.
+                    $preview_info = $email_token_services->getPostPreview($entity);
+                    break;
+                }
+                $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
+                  ->renderPlain($preview_info);
+              }
             }
-
-            $url_options = ['absolute' => TRUE];
-            $link = $entity->toUrl('canonical', $url_options)->toString();
-
-            // We should only use the label of entities who have a label.
-            if ($link_label = $entity->label()) {
-              $entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
-            }
-            else {
-              $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
-            }
-
-            $replacements[$original] = Markup::create($entity_link_html);
-          }
-
-          break;
+            break;
+        }
       }
     }
   }
-
-  return $replacements;
 }

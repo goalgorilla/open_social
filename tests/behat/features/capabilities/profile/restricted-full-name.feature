@@ -1,7 +1,7 @@
 @account @profile @api @issue-3039084 @stability @stability-2 @restricted-full-name
 Feature: I want to restrict full name visibility when nickname is used
   Benefit: In order to have better privacy
-  Role: LU
+  Role: As a Verified
   Goal/desire: So I can hide my full name on the platform
 
   Background:
@@ -10,16 +10,16 @@ Feature: I want to restrict full name visibility when nickname is used
     And I enable the nickname field on profiles
     And users:
       | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name | roles       |
-      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         |             |
-      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            |             |
-      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |             |
+      | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         | verified    |
+      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            | verified    |
+      | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    | verified    |
       | sm     | site_manager@example.com | 1      |                          |                         |                         | sitemanager |
 
 
   Scenario: Extra protection for real names
     Given I restrict real name usage
     And Search indexes are up to date
-    And I am logged in as an "authenticated user"
+    And I am logged in as an "verified"
 
     # Profile displays the correct name.
     When I go to the profile of "user_1"
@@ -92,7 +92,7 @@ Feature: I want to restrict full name visibility when nickname is used
   Scenario: Searching by username works when name is unrestricted
     Given I unrestrict real name usage
     And Search indexes are up to date
-    And I am logged in as an "authenticated user"
+    And I am logged in as an "verified"
 
     When I search users for "user"
     Then I should see "Open User"
@@ -106,7 +106,7 @@ Feature: I want to restrict full name visibility when nickname is used
   Scenario: Searching by username still works when name is restricted
     Given I restrict real name usage
     And Search indexes are up to date
-    And I am logged in as an "authenticated user"
+    And I am logged in as an "verified"
 
     When I search users for "user"
     Then I should see "Open User"
@@ -122,7 +122,7 @@ Feature: I want to restrict full name visibility when nickname is used
   Scenario: Nickname replaces full name when filled in
     Given I unrestrict real name usage
     And Search indexes are up to date
-    And I am logged in as an "authenticated user"
+    And I am logged in as an "verified"
 
     # Profile displays the correct name.
     When I go to the profile of "user_1"
@@ -171,7 +171,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Open User"
@@ -313,7 +313,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Open User"
@@ -453,7 +453,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Hide my name"

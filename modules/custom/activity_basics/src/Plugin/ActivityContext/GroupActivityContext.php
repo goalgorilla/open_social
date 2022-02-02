@@ -104,23 +104,30 @@ class GroupActivityContext extends ActivityContextBase {
   public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
-      // Returns the entity to which the comment is attached.
-      $entity = $entity->getCommentedEntity();
+      /** @var \Drupal\comment\CommentInterface $comment */
+      $comment = $entity;
+      $entity = $comment->getCommentedEntity();
+      if (!($entity instanceof EntityInterface)) {
+        return FALSE;
+      }
     }
 
-    if (!isset($entity)) {
-      return FALSE;
-    }
-
-    // Check if it's placed in a group (regardless off content type).
-    if (GroupContent::loadByEntity($entity)) {
+    if ($entity->getEntityTypeId() === 'group_content') {
       return TRUE;
     }
 
     if ($entity->getEntityTypeId() === 'post') {
-      if (!$entity->field_recipient_group->isEmpty()) {
+      /** @var \Drupal\social_post\Entity\PostInterface $post */
+      $post = $entity;
+      if ($post->hasField('field_recipient_group') && !$post->get('field_recipient_group')->isEmpty()) {
         return TRUE;
       }
+    }
+
+    // Check if the content is placed in a group (regardless of content type).
+    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    if (GroupContent::loadByEntity($entity)) {
+      return TRUE;
     }
 
     return FALSE;

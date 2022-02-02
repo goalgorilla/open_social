@@ -55,7 +55,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -75,7 +75,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query():void {
     $account = $this->view->getUser();
 
     $open_groups = [];
@@ -107,7 +107,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = [
@@ -117,8 +118,27 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'field' => 'entity_id',
       'operator' => '=',
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
+
+    // Join group content table.
+    $configuration = [
+      'left_table' => 'activity__field_activity_entity',
+      'left_field' => 'field_activity_entity_target_id',
+      'table' => 'group_content_field_data',
+      'field' => 'id',
+      'operator' => '=',
+      'extra' => [
+        0 => [
+          'left_field' => 'field_activity_entity_target_type',
+          'value' => 'group_content',
+        ],
+      ],
+    ];
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
+    $this->query->addRelationship('group_content', $join, 'group_content');
 
     // Join node table(s).
     $configuration = [
@@ -134,12 +154,14 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $join = Views::pluginManager('join')
+      ->createInstance('standard', $configuration);
     $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 
     if ($account->isAnonymous()) {
       $configuration['table'] = 'node_field_data';
-      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $configuration);
       $this->query->addRelationship('node_field_data', $join, 'node_field_data');
     }
 
@@ -182,15 +204,18 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     // Posts: all the posts the user has access to by permission.
     $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-    $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
-    if (!$account->hasPermission('view public posts')) {
-      $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
-    }
-    if (!$account->hasPermission('view community posts')) {
-      $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
-      // Also do not show recipient posts (e.g. on open groups).
-      $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
+    if (!$account->hasPermission('bypass group access')) {
+      $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
+
+      if (!$account->hasPermission('view public posts')) {
+        $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
+      }
+      if (!$account->hasPermission('view community posts')) {
+        $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
+        // Also do not show recipient posts (e.g. on open groups).
+        $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
+      }
     }
 
     $or->condition($post_access);
@@ -219,6 +244,13 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);
     }
+
+    // For "group content" entities we need to add the condition
+    // to check what groups user has access.
+    $membership_access = new Condition('AND');
+    $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
+    $membership_access->condition('group_content.gid', $groups_unique ?: [0], 'IN');
+    $or->condition($membership_access);
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);

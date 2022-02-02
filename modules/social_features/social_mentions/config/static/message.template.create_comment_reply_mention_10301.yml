@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      comment-comment: comment-comment
+    activity_action: create_entitiy_action
+    activity_context: mention_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: comment_reply
+template: create_comment_reply_mention
+label: 'Create reply on comment with mentions'
+description: 'A person replied to a comment where I am mentioned'
+text:
+  -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied to a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> where you are mentioned</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied to a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> where you are mentioned</p>\r\n"
+    format: full_html
+  -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied to a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in which you were&nbsp;mentioned.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

@@ -7,7 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
 
 /**
- * Provides add to Google calendar plugin.
+ * Provides add to Yahoo calendar plugin.
  *
  * @SocialAddToCalendar(
  *   id = "yahoo",

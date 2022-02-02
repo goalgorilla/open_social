@@ -5,7 +5,6 @@ namespace Drupal\activity_creator;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -150,31 +149,6 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
-   * Mark an entity as read for a given account.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account object.
-   * @param \Drupal\Core\Entity\EntityBase $entity
-   *   Entity object.
-   *
-   * @deprecated in opensocial:8.x-7.1 and is removed from opensocial:8.x-8.0. Use
-   *   \Drupal\activity_creator\ActivityNotifications
-   * ::markEntityNotificationsAsSeen() instead.
-   *
-   * @todo Change @see to point to a change record.
-   * @see https://www.drupal.org/project/social/issues/3087083
-   */
-  public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
-    // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [
-      ACTIVITY_STATUS_RECEIVED,
-      ACTIVITY_STATUS_SEEN,
-    ]);
-
-    $this->changeStatusOfActivity($ids, $account);
-  }
-
-  /**
    * Change the status of an activity.
    *
    * @param array $ids
@@ -228,7 +202,7 @@ class ActivityNotifications extends ControllerBase {
       try {
         $query = $this->database->select('activity_notification_status', 'ans')
           ->fields('ans', ['aid'])
-          ->condition('uid', $uid);
+          ->condition('uid', (string) $uid);
 
         if (!empty($status)) {
           $query->condition('status', $status, 'IN');

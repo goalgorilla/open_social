@@ -170,7 +170,10 @@ class SocialCoreController extends ControllerBase {
     $count = empty($view_data['exclude_mode']) ? count($view_data['list']) : $view_data['total_results'] - count($view_data['list']);
 
     $response = new AjaxResponse();
-    $response->setData(['count' => $count]);
+    $response->setData([
+      'count' => $count,
+      'selection_info' => $this->formatPlural($count, '<b><em class="placeholder">1</em> Member</b> is selected', '<b><em class="placeholder">@count</em> Members</b> are selected'),
+    ]);
     return $response;
   }
 

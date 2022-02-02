@@ -21,7 +21,7 @@ use Drupal\field\Entity\FieldConfig;
 /**
  * Here we define a constant for our node access grant ID.
  */
-define('ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM', 1);
+const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
 
 /**
  * Implements hook_node_access().
@@ -33,7 +33,7 @@ function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInt
 /**
  * Implements hook_node_grants().
  */
-function entity_access_by_field_node_grants(AccountInterface $account, $op) {
+function entity_access_by_field_node_grants(AccountInterface $account, $op): array {
   $grants = [];
   if ($op === 'view') {
 
@@ -57,7 +57,7 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
 /**
  * Implements hook_node_access_records().
  */
-function entity_access_by_field_node_access_records(NodeInterface $node) {
+function entity_access_by_field_node_access_records(NodeInterface $node): array {
 
   $grants = [];
 

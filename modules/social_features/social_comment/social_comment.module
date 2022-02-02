@@ -25,13 +25,7 @@ function social_comment_entity_type_alter(array &$entity_types) {
   if (isset($entity_types['comment'])) {
     $entity_types['comment']->setClass(Comment::class);
     $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
-
-    // When the platform has opted in to using the entity_access api we set our
-    // custom handler. This ensures we don't break existing projects who may
-    // already have their own query_access handlers.
-    if (\Drupal::config('social_core.settings')->get('use_entity_access_api')) {
-      $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
-    }
+    $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
   }
 }
 
@@ -170,6 +164,9 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
  */
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   if (!$entity->isPublished()) {
+    if (\Drupal::moduleHandler()->moduleExists('social_ajax_comments')) {
+      unset($links['comment']['#links']['comment-reply']['attributes']['class']);
+    }
     // If the comment is not published disable the reply link.
     $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');
   }
@@ -215,6 +212,8 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
       }
     }
   }
+
+  unset($links['comment']['#links']['comment-forbidden']);
 }
 
 /**
@@ -225,6 +224,7 @@ function social_comment_preprocess_comment(&$variables) {
   $comment = $variables['elements']['#comment'];
 
   // Display comment created date in format 'time ago'.
+  /** @var \Drupal\Core\Datetime\FormattedDateDiff $created_time_ago */
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), [
       'granularity' => 1,
@@ -234,7 +234,7 @@ function social_comment_preprocess_comment(&$variables) {
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
 
   $variables['submitted'] = Link::fromTextAndUrl($date, $comment->toUrl());
-  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
+  $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $account = $comment->getOwner();
   if ($account) {
@@ -291,26 +291,10 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
 
-      // Define which display mode should be used for commented_entity.
-      $allowed_routes = [
-        'entity.node.canonical',
-        'layout_builder.overrides.node.view',
-      ];
-
-      if (
-        in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
-        \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
-      ) {
-        $node_view_display = 'featured';
-      }
-      else {
-        $node_view_display = 'activity_comment';
-      }
-
       // Teaser of commented entity.
       $build['commented_entity'] = \Drupal::entityTypeManager()
         ->getViewBuilder($commented_entity_type)
-        ->view($commented_entity, $node_view_display);
+        ->view($commented_entity, 'activity_comment');
 
       // Prepare the "Show all comments" link.
       if ($commented_entity_type === 'post') {
@@ -337,7 +321,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         )->toRenderable();
       }
 
-      $comment_count = $commented_entity->{$comment_field_name}->comment_count;
+      $comment_count = isset($comment_field_name) ? $commented_entity->{$comment_field_name}->comment_count : '';
       $t_args = [':num_comments' => $comment_count];
 
       if ($comment_count > 1) {

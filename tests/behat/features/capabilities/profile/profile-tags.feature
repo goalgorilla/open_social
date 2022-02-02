@@ -6,11 +6,11 @@ Feature: Add profile tags to the user profiles
 
   Scenario: Disable access to add profile tags
     Given users:
-      | name   | status | uid |
-      | Member | 1      | 999 |
+      | name   | status | uid | roles    |
+      | Member | 1      | 999 | verified |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I uncheck the box "Allow profiles to be tagged"
+    And I uncheck the box "Allow profile tagging for content managers"
     And I press "Save configuration"
     And I go to "/user/999/profile"
     Then I should not see the text "Profile tag"
@@ -21,11 +21,11 @@ Feature: Add profile tags to the user profiles
       | Behat Profile tag 1 |        |
       | Behat Profile tag 2 |        |
     Given users:
-      | name   | status | uid |
-      | Member | 1      | 999 |
+      | name   | status | uid | roles    |
+      | Member | 1      | 999 | verified |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profiles to be tagged"
+    And I check the box "Allow profile tagging for content managers"
     And I uncheck the box "Allow category split"
     And I press "Save configuration"
     Then I am logged in as an "contentmanager"
@@ -48,11 +48,11 @@ Feature: Add profile tags to the user profiles
       | Behat Profile tag 2.1 | Behat Profile tag 2 |
       | Behat Profile tag 2.2 | Behat Profile tag 2 |
     Given users:
-      | name   | status | uid |
-      | Member | 1      | 999 |
+      | name   | status | uid | roles    |
+      | Member | 1      | 999 | verified |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profiles to be tagged"
+    And I check the box "Allow profile tagging for content managers"
     And I check the box "Allow category split"
     And I press "Save configuration"
     Then I am logged in as an "contentmanager"
@@ -78,11 +78,11 @@ Feature: Add profile tags to the user profiles
       | Behat Profile tag 2   |                     |
       | Behat Profile tag 2.1 | Behat Profile tag 2 |
     Given users:
-      | name   | status | uid |
-      | Member | 1      | 999 |
+      | name   | status | uid | roles    |
+      | Member | 1      | 999 | verified |
     Then I am logged in as an "sitemanager"
     And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profiles to be tagged"
+    And I check the box "Allow profile tagging for content managers"
     And I check the box "Allow category split"
     And I check the box "Allow parents to be used as tag"
     And I press "Save configuration"

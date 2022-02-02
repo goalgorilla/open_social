@@ -9,26 +9,8 @@ field_name: field_sorting
 entity_type: block_content
 type: list_string
 settings:
-  allowed_values:
-    -
-      value: created
-      label: 'Last created'
-    -
-      value: changed
-      label: 'Last updated'
-    -
-      value: most_commented
-      label: 'Most commented'
-    -
-      value: most_liked
-      label: 'Most liked'
-    -
-      value: last_interacted
-      label: 'Last interacted'
-    -
-      value: event_date
-      label: 'Event date'
-  allowed_values_function: ''
+  allowed_values: {  }
+  allowed_values_function: '_social_content_block_allowed_values_callback'
 module: options
 locked: false
 cardinality: 1

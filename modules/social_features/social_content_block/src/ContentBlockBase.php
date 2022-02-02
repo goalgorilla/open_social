@@ -19,11 +19,36 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
    */
   public function supportedSortOptions() : array {
     return [
-      'created' => 'Last created',
-      'changed' => 'Last updated',
-      'most_commented' => 'Most commented',
-      'most_liked' => 'Most liked',
-      'last_interacted' => 'Last interacted',
+      'created' => [
+        'label' => 'Most recent',
+        'description' => 'Show the newest posts first.',
+        'limit' => FALSE,
+      ],
+      'changed' => [
+        'label' => 'Last updated',
+        'limit' => FALSE,
+      ],
+      'most_commented' => [
+        'label' => 'Most commented',
+        'description' => 'See posts with the most comments first.',
+      ],
+      'last_commented' => [
+        'label' => 'Last commented',
+        'description' => 'See the last commented nodes first.',
+      ],
+      'most_liked' => [
+        'label' => 'Most liked',
+        'description' => 'See posts with the most likes first.',
+      ],
+      'last_interacted' => [
+        'label' => 'Trending',
+        'description' => 'See the posts people are currently interacting with first.',
+        'limit' => FALSE,
+      ],
+      'trending' => [
+        'label' => 'Most popular',
+        'description' => 'Show posts with the highest comments and likes first.',
+      ],
     ];
   }
 

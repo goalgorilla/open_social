@@ -6,58 +6,33 @@
  */
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\user\RoleInterface;
 
 /**
  * Install hook for Social Post Photo.
  */
 function social_post_photo_install() {
-  // Set some default permissions.
-  _social_post_photo_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'add photo post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'add photo post entities',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'add photo post entities',
+    ]
+  );
 
   // Change post to photo.
   _social_post_photo_settype('post', 'photo');
-}
-
-/**
- * Function to set permissions.
- */
-function _social_post_photo_set_permissions() {
-  $roles = \Drupal::entityQuery('user_role')
-    ->condition('id', 'administrator', '<>')
-    ->execute();
-
-  foreach ($roles as $role) {
-    $permissions = _social_post_photo_get_permissions($role);
-    user_role_grant_permissions($role, $permissions);
-  }
-}
-
-/**
- * Return the permissions per role.
- *
- * @param string $role
- *   The role to get the permissions for.
- *
- * @return array
- *   A list of permissions.
- */
-function _social_post_photo_get_permissions($role) {
-  // Anonymous.
-  $permissions[RoleInterface::ANONYMOUS_ID] = [];
-
-  // Authenticated.
-  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
-    'add photo post entities',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
-
-  return $permissions[$role] ?? [];
 }
 
 /**
@@ -127,4 +102,31 @@ function social_post_photo_update_8901() {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Display field_album for post photo featured view mode.
+ */
+function social_post_photo_update_10201() {
+  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.post.photo.featured');
+  $content = $config->get('content');
+  $hidden = $config->get('hidden');
+
+  $content['field_album'] = [
+    'type' => 'social_album_entity_reference_label',
+    'weight' => 4,
+    'region' => 'content',
+    'label' => 'hidden',
+    'settings' => ['link' => TRUE],
+    'third_party_settings' => [],
+  ];
+
+  if (in_array('field_album', $hidden)) {
+    unset($hidden['field_album']);
+  }
+
+  $config
+    ->set('content', $content)
+    ->set('hidden', $hidden)
+    ->save();
 }

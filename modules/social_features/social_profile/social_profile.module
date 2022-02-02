@@ -32,9 +32,9 @@ use Drupal\user\UserInterface;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\block\Entity\Block;
 
-define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
-define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
-define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
+const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
+const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
+const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -70,11 +70,16 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
  */
 function social_profile_form_profile_profile_add_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile creation.
@@ -100,14 +105,19 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $viewing_user = \Drupal::currentUser();
+  $profile_settings = \Drupal::config('social_profile.settings');
 
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $form_state->getFormObject()->getEntity();
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$viewing_user->hasPermission('edit profile tags')) {
-    $form['field_profile_profile_tag']['#access'] = FALSE;
+  $form['field_profile_profile_tag']['#access'] = FALSE;
+  if (
+    $profile_settings->get('allow_tagging_for_lu') ||
+    $viewing_user->hasPermission('edit profile tags')
+  ) {
+    $form['field_profile_profile_tag']['#access'] = TRUE;
   }
 
   // Remove the save and set default submit button on profile edit.
@@ -326,14 +336,23 @@ function social_profile_preprocess_profile(array &$variables) {
   // The actual label text should be changeable in the template.
   // Disable for the LU's own profile.
   $variables['profile_contact_label'] = 'profile_info';
-  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId() && $current_user->hasPermission('use private messaging system') && User::load($profile->getOwnerId())->hasPermission('use private messaging system')) {
+  if (
+    \Drupal::moduleHandler()->moduleExists('social_private_message') &&
+    $current_user->id() != $profile->getOwnerId() &&
+    $current_user->hasPermission('use private messaging system') &&
+    $current_user->hasPermission('create private messages thread') &&
+    User::load($profile->getOwnerId())->hasPermission('use private messaging system')
+  ) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
   }
 
   if (_social_profile_check_property_access($profile, $current_user, 'email')) {
     // Derived from MailToFormatter.php.
-    $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+    $email = $user->getEmail();
+    if (!empty($email)) {
+      $variables['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
+    }
   }
 
   // Language field.
@@ -373,7 +392,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')->countGroupMembershipsForUser($user->id());
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
@@ -521,8 +540,23 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     $show_email = $profile->field_profile_show_email->value;
     $form['profile_privacy'] = [
       '#type' => 'fieldset',
-      '#title' => t('Privacy settings'),
+      '#title' => [
+        'text' => [
+          '#markup' => t('Privacy settings'),
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_less"><use xlink:href="#icon-expand-less" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
       '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#attributes' => [
+        'class' => [
+          'form-collapse',
+        ],
+      ],
     ];
     $form['profile_privacy']['social_profile_show_email'] = [
       '#type' => 'checkbox',

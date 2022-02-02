@@ -1,16 +1,17 @@
-@api @group @stability @stability-1 @group-create-secret
+@api @group @notifications @TB-6072 @stability @stability-1 @group-create-secret
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Secret Groups
 
+  @email-spool
   Scenario: Successfully create secret group
+    Given I enable the module "social_group_secret"
     Given users:
-      | name             | mail                     | status | roles       |
-      |  SecretGroup User One   | group_user_1@example.com | 1      | sitemanager |
-      |  SecretGroup User Two   | group_user_2@example.com | 1      |             |
-    And I enable the module "social_group_secret"
-    And I am logged in as an "authenticated user"
+      | name                 | mail                     | status | roles       |
+      | SecretGroup User One | group_user_1@example.com | 1      | sitemanager |
+      | SecretGroup User Two | group_user_2@example.com | 1      | verified    |
+    And I am logged in as an "verified"
     And I am on "group/add"
     Then I should not see "Secret group"
     Given I am logged in as "SecretGroup User One"
@@ -24,9 +25,9 @@ Feature: Create Secret Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Hengelo |
+      | City           | Hengelo         |
       | Street address | Padangstraat 11 |
-      | Postal code | 7556SP |
+      | Postal code    | 7556SP          |
     When I press "Save"
     Then I should see "Test secret group" in the "Main content"
     And I should see "Disclosed"
@@ -56,7 +57,7 @@ Feature: Create Secret Group
     When I fill in the following:
       | Title | Test secret group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Test secret group topic"
 
@@ -66,11 +67,12 @@ Feature: Create Secret Group
     And I should see the link "Create Event"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test secret group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | Technopark |
+      | Title                                  | Test secret group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01              |
+      | edit-field-event-date-end-0-value-date | 2025-01-01              |
+      | edit-field-event-date-0-value-time     | 11:00:00                |
+      | edit-field-event-date-end-0-value-time | 11:00:00                |
+      | Location name                          | Technopark              |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
     And I should see "Test secret group event"
@@ -99,10 +101,30 @@ Feature: Create Secret Group
     And I logout
     And I open and check the access of content in group "Test secret group" and I expect access "denied"
 
+  # Lets check notifications for secret group.
+    Given I am logged in as "SecretGroup User Two"
+    And I am on "/all-groups"
+    Then I should see "Test secret group"
+    When I click "Test secret group"
+    # Create a post inside the secret group.
+    When I fill in "Say something to the group" with "This is a secret group post."
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a secret group post."
+    And I wait for the queue to be empty
+    # Check if SecretGroup User One has notifications.
+    Given I am logged in as "SecretGroup User One"
+    When I am on "/notifications"
+    Then I should see "SecretGroup User Two created a post in the Test secret group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                              |
+      | Hi SecretGroup User One                                              |
+      | SecretGroup User Two published a post in the Test secret group group |
+
   # As a non-member of the secret group, I should not see anything.
     Given users:
-      | name           | mail                      | status |
-      | Site User  | platform_user@example.com | 1      |
+      | name      | mail                      | status | roles    |
+      | Site User | platform_user@example.com | 1      | verified |
     And I am logged in as "Site User"
     And I open and check the access of content in group "Test secret group" and I expect access "denied"
     And I am on "/all-groups"
@@ -135,8 +157,8 @@ Feature: Create Secret Group
     Then I should see "Test secret group topic"
     And I logout
 
-    # As a outsider with role Authenticated user I should not be able to find the group in search.
-    Given I am logged in as an "authenticated user"
+    # As a outsider with role Verified user I should not be able to find the group in search.
+    Given I am logged in as an "verified"
     And Search indexes are up to date
     And I am on "search/groups"
     When I fill in "search_input" with "Test secret group"

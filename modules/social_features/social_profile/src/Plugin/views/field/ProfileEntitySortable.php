@@ -2,6 +2,8 @@
 
 namespace Drupal\social_profile\Plugin\views\field;
 
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -53,6 +55,10 @@ class ProfileEntitySortable extends RenderedEntity {
    *   The entity manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
    *   The views plugin join manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -66,11 +72,13 @@ class ProfileEntitySortable extends RenderedEntity {
     array $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     LanguageManagerInterface $language_manager,
+    EntityRepositoryInterface $entity_repository,
+    EntityDisplayRepositoryInterface $entity_display_repository,
     ViewsHandlerManager $join_manager,
     ModuleHandlerInterface $module_handler,
     AccountInterface $current_user
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, $entity_repository, $entity_display_repository);
     $this->joinManager = $join_manager;
     $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
@@ -86,6 +94,8 @@ class ProfileEntitySortable extends RenderedEntity {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('language_manager'),
+      $container->get('entity.repository'),
+      $container->get('entity_display.repository'),
       $container->get('plugin.manager.views.join'),
       $container->get('module_handler'),
       $container->get('current_user')
@@ -124,9 +134,31 @@ class ProfileEntitySortable extends RenderedEntity {
           $this->field_alias = 'profile_full_name';
           // We will have different expressions depending on is the Nickname
           // field provided or not.
+          // Members will be sort by next queue:
+          // - Nickname
+          // - Firstname + Lastname (if Nickname is NULL)
+          // - Firstname (if Nickname and Lastname are NULL)
+          // - Lastname (if Nickname and Firstname are NULL)
+          // - Username (if all Name fields are NULL)
           $field = in_array('field_profile_nick_name', $order_by_fields) ?
-            "CASE WHEN profile__field_profile_nick_name.field_profile_nick_name_value IS NULL THEN CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value)) ELSE TRIM(profile__field_profile_nick_name.field_profile_nick_name_value) END" :
-            "CONCAT(TRIM(profile__field_profile_first_name.field_profile_first_name_value), ' ', TRIM(profile__field_profile_last_name.field_profile_last_name_value))";
+            "CASE WHEN
+              profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
+            THEN
+              TRIM(profile__field_profile_nick_name.field_profile_nick_name_value)
+            WHEN
+              (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+            THEN
+              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
+            ELSE
+              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+            END" :
+            "CASE WHEN
+              ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
+            THEN
+              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
+            ELSE
+              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
+            END";
           $query->addField(
             NULL,
             $field,

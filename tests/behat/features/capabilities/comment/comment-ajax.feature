@@ -1,19 +1,20 @@
 @api @comment @stability @YANG-4950 @YANG-5030 @stability-2 @comment-ajax
 Feature: See Comments
   Benefit: In order to interact with people on the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to see comments
 
   Scenario: Successfully see comments
 
     Given I enable the module "social_ajax_comments"
     Given users:
-      | name       |
-      | Behat User |
+      | name       | roles    |
+      | Behat User | verified |
     Given "15" topics with title "Behat Topic [id]" by "Behat User"
     Given "60" comments with text "Behat Comment [id]" for "Behat Topic 15"
 
     When I am logged in as "Behat User"
+    And I am at "/all-topics"
     And I click "Behat Topic 15"
     Then I should see the text "Behat Comment 1"
     And I should not see the text "Behat Comment 51"

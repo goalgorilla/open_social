@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -12,6 +13,7 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
  */
 class EntityAccessTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The field type random machinename.
    *
@@ -67,9 +69,9 @@ class EntityAccessTest extends UnitTestCase {
 
     $account = $this->prophesize(AccountInterface::class)->reveal();
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(0, $access_result);
-    $this->assertNotEquals(2, $access_result);
-    $this->assertNotEquals(1, $access_result);
+    $this->assertEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
   /**
@@ -109,9 +111,9 @@ class EntityAccessTest extends UnitTestCase {
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(1, $access_result);
-    $this->assertNotEquals(0, $access_result);
-    $this->assertNotEquals(2, $access_result);
+    $this->assertEquals(EntityAccessHelper::FORBIDDEN, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
 
   }
 
@@ -156,9 +158,9 @@ class EntityAccessTest extends UnitTestCase {
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(2, $access_result);
-    $this->assertNotEquals(0, $access_result);
-    $this->assertNotEquals(1, $access_result);
+    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
   /**
@@ -200,9 +202,9 @@ class EntityAccessTest extends UnitTestCase {
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(2, $access_result);
-    $this->assertNotEquals(0, $access_result);
-    $this->assertNotEquals(1, $access_result);
+    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
 }

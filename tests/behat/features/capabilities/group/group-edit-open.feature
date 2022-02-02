@@ -6,9 +6,9 @@ Feature: Edit my group as a group manager
 
   Scenario: Successfully create and edit my group as a group manager
     Given users:
-      | name              | mail             | field_profile_organization | status |
-      | Group Manager One | gm_1@example.com | GoalGorilla                | 1      |
-      | Group Member Two  | gm_2@example.com | Drupal                     | 1      |
+      | name              | mail             | field_profile_organization | status | roles    |
+      | Group Manager One | gm_1@example.com | GoalGorilla                | 1      | verified |
+      | Group Member Two  | gm_2@example.com | Drupal                     | 1      | verified |
     And I am logged in as "Group Manager One"
     And I am on "group/add"
     And I press "Continue"
@@ -24,7 +24,7 @@ Feature: Edit my group as a group manager
     When I click "Test open group" in the "Main content"
     Then I should see "Test open group"
 
-    # As a LU I want to see the information about a group
+    # As a Verified I want to see the information about a group
     When I click "About"
     Then I should see "Description text" in the "Main content"
 
@@ -35,9 +35,15 @@ Feature: Edit my group as a group manager
     And I should see "Test open group" in the "Main content"
     Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
+    And I should see "Stream"
+    And I should see "About"
+    And I should see "Events"
+    And I should see "Topics"
+    And I should not see "Nodes"
+    And I should see "Manage members"
 
   # DS-706 As a Group Manager I want to manage group memberships
-    And I click "Manage members"
+    When I click "Manage members"
     Then I should see "Add members"
     And I should see "Member"
     And I should see "Group Manager One"
@@ -84,7 +90,7 @@ Feature: Edit my group as a group manager
     And I fill in the following:
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     Then I should see "Test group topic"
     Given I logout

@@ -114,6 +114,16 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns the filter query condition.
+   *
+   * @return string
+   *   Returns OR or AND.
+   */
+  public function queryCondition() {
+    return (string) ($this->configFactory->get('social_tagging.settings')->get('use_and_condition') ? 'AND' : 'OR');
+  }
+
+  /**
    * Returns whether using a parent of categories is allowed.
    *
    * @return bool
@@ -233,7 +243,10 @@ class SocialTaggingService {
       // Build the hierarchy.
       foreach ($terms as $current_term) {
         // Must be a valid Term.
-        if (!$current_term instanceof TermInterface) {
+        if (
+          !$current_term instanceof TermInterface ||
+          !$current_term->isPublished()
+        ) {
           continue;
         }
         // Get current terms parents.
@@ -244,7 +257,8 @@ class SocialTaggingService {
         }
         // Or add the parent term itself if it connected to the content.
         else {
-          $category_label = $current_term->getTranslation($langcode)->getName();
+          $category_label = $current_term->hasTranslation($langcode) ? $current_term->getTranslation($langcode)
+            ->getName() : $current_term->getName();
           $parent = $current_term;
         }
         // Prepare the parameter;.
@@ -285,7 +299,9 @@ class SocialTaggingService {
   private function prepareTermOptions(array $terms) {
     $options = [];
     foreach ($terms as $category) {
-      $options[$category->tid] = $category->name;
+      if ((bool) $category->status) {
+        $options[$category->tid] = $category->name;
+      }
     }
 
     return $options;

@@ -26,6 +26,13 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
   protected ?NodeInterface $parent;
 
   /**
+   * The comment bundle.
+   *
+   * @var string|null
+   */
+  protected ?string $bundle;
+
+  /**
    * CommentQueryHelper constructor.
    *
    * @param string $sort_key
@@ -36,10 +43,13 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
    *   The GraphQL entity buffer.
    * @param \Drupal\node\NodeInterface|null $parent
    *   The node for which comments are being fetched.
+   * @param string|null $bundle
+   *   The comment bundle.
    */
-  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, ?NodeInterface $parent) {
+  public function __construct(string $sort_key, EntityTypeManagerInterface $entity_type_manager, EntityBuffer $graphql_entity_buffer, ?NodeInterface $parent, ?string $bundle) {
     parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
     $this->parent = $parent;
+    $this->bundle = $bundle;
   }
 
   /**
@@ -53,6 +63,10 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
 
     if ($this->parent instanceof NodeInterface) {
       $query->condition('entity_id', $this->parent->id());
+    }
+
+    if ($this->bundle) {
+      $query->condition('comment_type', $this->bundle);
     }
 
     return $query;

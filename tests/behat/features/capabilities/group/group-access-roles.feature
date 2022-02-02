@@ -7,7 +7,7 @@ Feature: Group access roles
   Scenario: Successfully access a group I'm not a member of
     Given users:
       | name           | mail                     | status | roles              |
-      | Group User One | group_user_1@example.com | 1      |                    |
+      | Group User One | group_user_1@example.com | 1      | verified           |
       | Group User Two | group_user_2@example.com | 1      | sitemanager        |
   # Create a closed group to test the leaving of a closed group
     When I am logged in as "Group User One"
@@ -21,9 +21,9 @@ Feature: Group access roles
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-    | City | Hengelo |
+    | City           | Hengelo         |
     | Street address | Padangstraat 11 |
-    | Postal code | 7556SP |
+    | Postal code    | 7556SP          |
     And I press "Save"
     Then I should see "Test closed group 3" in the "Main content"
 
@@ -34,7 +34,7 @@ Feature: Group access roles
     And I fill in the following:
       | Title | Test closed group 3 topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     Then I should see "Test closed group 3 topic"
 
@@ -58,7 +58,7 @@ Feature: Group access roles
     When I am on "/all-groups"
     And I click "Test closed group 3"
 
-  # DS-647 As a LU I want to join a group
+  # DS-647 As a Verified I want to join a group
     Then I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test closed group 3"
@@ -94,3 +94,11 @@ Feature: Group access roles
     And I press "Save"
     And I click "Manage members"
     Then I should see "Group Admin"
+
+    # LU should not be able to create groups.
+    Given I disable that the registered users to be verified immediately
+    When I am logged in as an "authenticated user"
+      And I am on "group/add"
+    Then I should see "Access denied"
+      And I should see "You are not authorized to access this page."
+      And I enable that the registered users to be verified immediately

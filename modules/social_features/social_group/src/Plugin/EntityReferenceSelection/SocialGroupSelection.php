@@ -56,11 +56,14 @@ class SocialGroupSelection extends DefaultSelection {
     if ($excluded_group_types) {
       $diff = array_diff($all_group_types, $excluded_group_types);
       if (!empty($diff)) {
-        $query->condition(
-          $this->entityTypeManager->getDefinition($configuration['target_type'])->getKey('bundle'),
-          $diff,
-          'IN'
-        );
+        $bundle = $this->entityTypeManager->getDefinition($configuration['target_type'])->getKey('bundle');
+        if (is_string($bundle)) {
+          $query->condition(
+            $bundle,
+            $diff,
+            'IN'
+          );
+        }
       }
     }
 

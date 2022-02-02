@@ -13,7 +13,6 @@ description: ''
 tag: ''
 base_table: private_message_threads
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -161,29 +160,7 @@ display:
             value: 'You do not have any private messages yet. Click on the button on the right to start a new message.'
             format: basic_html
           plugin_id: text
-      relationships:
-        private_messages_target_id:
-          id: private_messages_target_id
-          table: private_message_thread__private_messages
-          field: private_messages_target_id
-          relationship: none
-          group_type: group
-          admin_label: 'Private Message'
-          required: false
-          entity_type: private_message_thread
-          entity_field: private_messages
-          plugin_id: standard
-        last_delete_time_target_id:
-          id: last_delete_time_target_id
-          table: private_message_thread__last_delete_time
-          field: last_delete_time_target_id
-          relationship: none
-          group_type: group
-          admin_label: 'Private Message Thread Delete Time'
-          required: false
-          entity_type: private_message_thread
-          entity_field: last_delete_time
-          plugin_id: standard
+      relationships: {  }
       arguments:
         members_target_id:
           id: members_target_id

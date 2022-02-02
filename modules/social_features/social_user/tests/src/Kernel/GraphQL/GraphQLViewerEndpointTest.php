@@ -3,6 +3,7 @@
 namespace Drupal\Tests\social_user\Kernel\GraphQL;
 
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * Tests the root viewer endpoint.
@@ -14,10 +15,10 @@ class GraphQLViewerEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
-    // TODO: Possibly untangle this?
+    // @todo Possibly untangle this?
     "role_delegation",
   ];
 
@@ -25,8 +26,8 @@ class GraphQLViewerEndpointTest extends SocialGraphQLTestBase {
    * It loads the current user.
    */
   public function testViewerLoadsCurrentUser() : void {
-    $user = $this->createUser();
-    $this->setCurrentUser($user);
+    $user = $this->setUpCurrentUser();
+    self::assertInstanceOf(UserInterface::class, $user, "Test setup failure: could not create test user.");
 
     $this->assertResults(
       "

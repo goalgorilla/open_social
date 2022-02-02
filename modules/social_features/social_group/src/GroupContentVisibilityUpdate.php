@@ -3,7 +3,6 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\group\Entity\GroupInterface;

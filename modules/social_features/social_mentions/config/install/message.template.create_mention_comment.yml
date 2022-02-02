@@ -12,23 +12,22 @@ third_party_settings:
     activity_destinations:
       notifications: notifications
       email: email
-    activity_create_direct: 0
-    activity_aggregate: 0
+    activity_create_direct: false
+    activity_aggregate: false
     activity_entity_condition: mention_comment
-_core:
-  default_config_hash: GZVjDepT25MvYNlyjH_cmxcCo_h0TGx8CF2DYX5TDto
+    email_subject: 'You have been mentioned'
 template: create_mention_comment
 label: 'Create mention in a comment'
 description: 'A person mentioned me in a comment'
 text:
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> mentioned you in a <a href="[message:field_message_related_object:entity:url:absolute]">comment</a> on [social_mentions:commented_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> mentioned you in a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> on [social_mentions:commented_entity_link_html]</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> mentioned you in a <a href="[message:field_message_related_object:entity:url:absolute]">comment</a> on [social_mentions:commented_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> mentioned you in a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> on [social_mentions:commented_entity_link_html]</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> mentioned you in a <a href="[message:field_message_related_object:entity:url:absolute]">comment</a> on [social_mentions:commented_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> mentioned you in a <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a>&nbsp;made on the [social_mentions:commented_entity_link_html]</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

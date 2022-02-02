@@ -35,6 +35,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "add-form" = "/admin/structure/queue_storage_entity_type/add",
  *     "edit-form" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}/edit",
  *     "collection" = "/admin/structure/queue_storage_entity_type"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label"
  *   }
  * )
  */

@@ -1,16 +1,17 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible @javascript
+@api @group @notifications @TB-6072 @DS-4211 @ECI-632 @stability @stability-1 @group-create-flexible @javascript
 Feature: Create flexible Group
   Benefit: So I can work together with others in a relative small circle
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create flexible Groups
 
+  @email-spool
   Scenario: Successfully create flexible group
     Given I enable the module "social_group_flexible_group"
     Given users:
-      | name           | mail                     | status | roles |
-      | GivenUserOne   | group_user_1@example.com | 1      |       |
-      | GivenUserTwo   | group_user_2@example.com | 1      |       |
-      | GivenUserThree | group_user_3@example.com | 1      |       |
+      | name           | mail                     | status | roles        |
+      | GivenUserOne   | group_user_1@example.com | 1      | verified     |
+      | GivenUserTwo   | group_user_2@example.com | 1      | verified     |
+      | GivenUserThree | group_user_3@example.com | 1      | verified     |
       | SiteManagerOne | site_manager@example.com | 1      | sitemanager  |
     Given "event_types" terms:
       | name     |
@@ -29,10 +30,10 @@ Feature: Create flexible Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Lviv |
+      | City           | Lviv           |
       | Street address | Fedkovycha 60a |
-      | Postal code | 79000 |
-      | Oblast | Lviv oblast |
+      | Postal code    | 79000          |
+      | Oblast         | Lviv oblast    |
     # Needs to happen after waiting for Ajax finish call, the ajax finish resets the states.
     And I click radio button "Open to join" with the id "edit-field-group-allowed-join-method-direct"
     And I press "Save"
@@ -55,6 +56,7 @@ Feature: Create flexible Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     # I can see members from flexible groups with Community visibility as outsider.
     Given I am logged in as "GivenUserTwo"
@@ -87,16 +89,17 @@ Feature: Create flexible Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a flexible group post."
 
+    # Create a event inside the flexible group.
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-0-value-time | 11:00:00   |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-time | 11:00:00 |
-      | Location name | Technopark |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-0-value-time     | 11:00:00         |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | edit-field-event-date-end-0-value-time | 11:00:00         |
+      | Location name                          | Technopark       |
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
@@ -116,7 +119,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group community topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
 
     # Create a topic in the flexible group, visible to group members only.
@@ -127,7 +130,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group private topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Group members" with the id "edit-field-content-visibility-group"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
 
     # Check the topic is shown correctly to author after saving.
@@ -162,7 +165,7 @@ Feature: Create flexible Group
     Then I should not see "Test group community topic" in the "Main content"
     And I should not see "Test group private topic" in the "Main content"
 
-    # Check the topic visibilities as LU not part of the group.
+    # Check the topic visibilities as Verified not part of the group.
     Given I am logged in as "GivenUserThree"
     # all-topics overview.
     And I am at "all-topics"
@@ -176,7 +179,7 @@ Feature: Create flexible Group
     Then I should see "Test group community topic" in the "Main content"
     And I should not see "Test group private topic" in the "Main content"
 
-    # Test flexible group with only public content visibility for LU.
+    # Test flexible group with only public content visibility for Verified.
     Given I am logged in as "GivenUserOne"
     And I am on "group/add"
     Then I click radio button "Flexible group By choosing this option you can customize many group settings to your needs." with the id "edit-group-type-flexible-group"
@@ -195,8 +198,8 @@ Feature: Create flexible Group
     And I should see the link "Events"
     And I should see the link "Topics"
     And I should see the link "Members"
-    # Check this as an user with LU permissions.
-    Given I am logged in as an "authenticated user"
+    # Check this as an user with Verified permissions.
+    Given I am logged in as an "verified"
     When I am on "all-groups"
     And I click "Cheesy test of flexible group"
     Then I should see the link "Stream"
@@ -220,8 +223,8 @@ Feature: Create flexible Group
     Then I am on "all-groups"
     And I should not see "Flexible group - Secret option"
 
-    # Check this as an user with LU permissions.
-    Given I am logged in as an "authenticated user"
+    # Check this as an user with Verified permissions.
+    Given I am logged in as an "verified"
     When I am on "all-groups"
     And I should not see "Flexible group - Secret option"
 
@@ -235,6 +238,7 @@ Feature: Create flexible Group
     And I should see the link "Members"
     And I should see the link "Events"
     And I should see the link "Topics"
+    And I logout
 
     # Test flexible group with community visibility and members only / invite for closed group.
     Given I am logged in as "GivenUserOne"
@@ -254,8 +258,8 @@ Feature: Create flexible Group
     Then I am on "all-groups"
     And I should not see "Flexible group - Closed option"
 
-    # Check this as an user with LU permissions.
-    Given I am logged in as an "authenticated user"
+    # Check this as an user with Verified permissions.
+    Given I am logged in as an "verified"
     When I am on "all-groups"
     And I should see "Flexible group - Closed option"
     And I click "Flexible group - Closed option"
@@ -266,7 +270,35 @@ Feature: Create flexible Group
     And I should not see the link "Topics"
 
     # And a GM receives a notification about the joined user.
-    When I am logged in as "GivenUserOne"
     And I wait for the queue to be empty
+    When I am logged in as "GivenUserOne"
     And I am at "notifications"
     Then I should see text matching "GivenUserTwo joined the Test flexible group"
+    # Notification about the created post.
+    And I should see "GivenUserTwo created a post in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                        |
+      | Hi GivenUserOne                                                |
+      | GivenUserTwo published a post in the Test flexible group group |
+      | This is a flexible group post.                                 |
+    # Notification about the created community topic.
+    And I should see "GivenUserTwo created a topic Test group community topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group community topic                                      |
+    # Notification about the created private topic.
+    And I should see "GivenUserTwo created a topic Test group private topic in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                         |
+      | Hi GivenUserOne                                                 |
+      | GivenUserTwo published a topic in the Test flexible group group |
+      | Test group private topic                                        |
+    # Notification about the created event.
+    And I should see "GivenUserTwo created an event Test group event in the Test flexible group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                          |
+      | Hi GivenUserOne                                                  |
+      | GivenUserTwo published an event in the Test flexible group group |
+      | Test group event                                                 |

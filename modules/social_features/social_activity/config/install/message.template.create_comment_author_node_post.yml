@@ -16,8 +16,7 @@ third_party_settings:
     activity_create_direct: false
     activity_aggregate: false
     activity_entity_condition: comment_not_reply
-_core:
-  default_config_hash: qOUMKHmbm98fQ8Ug1NFOM95XpiHI1BTFd-vNQ6-PEI4
+    email_subject: 'Someone commented on your content'
 template: create_comment_author_node_post
 label: 'Create comment on authors node or post'
 description: 'A person commented on content created or organised by me'
@@ -29,7 +28,7 @@ text:
     value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on your [social_comment:commented_entity_link_html]</p>\r\n"
     format: full_html
   -
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on your [social_comment:commented_entity_link_html]</p>\r\n<table class=\"comments\">\r\n<tr>\r\n<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• [social_comment:comment_date]</small>\r\n<p>[social_comment:comment_text]</p>\r\n</td>\r\n</tr>\r\n</table>\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[social_comment:comment_reply_link_html]\">Reply to this comment </a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on your [social_comment:commented_entity_link_html]</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

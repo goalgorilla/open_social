@@ -141,6 +141,9 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
       }
       $form_state->setValue($field_element, $field_value);
     }
+    else {
+      parent::validateElement($element, $form_state);
+    }
   }
 
 }

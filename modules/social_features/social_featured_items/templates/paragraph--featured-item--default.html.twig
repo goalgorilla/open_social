@@ -15,7 +15,7 @@
 
     {% if (content.field_featured_item_description|render is not empty) %}
       <div class="teaser__info" data-toggle="popover" data-container="body" data-html="true"
-           data-placement="bottom" data-content='{{ content.field_featured_item_description|render|striptags|trim }}'>
+           data-placement="bottom" data-trigger="click" data-title data-content='{{ content.field_featured_item_description|render|striptags|trim }}'>
         <svg x="0px" y="0px" width="510px" height="510px" viewBox="0 0 510 510"
              style="enable-background:new 0 0 510 510;" xml:space="preserve">
           <g>

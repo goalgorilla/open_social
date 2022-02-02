@@ -173,8 +173,8 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             else {
               $this->prepareBatch($data, $recipients);
             }
-            // We split up in batches. We can stop processing this specific queue
-            // item.
+            // We split up in batches. We can stop processing this specific
+            // queue item.
             $this->getLogger('activity_send_email_worker')->notice('The Job was not finished correctly, no error thrown.');
             return JobResult::success('The Job was has been split up in batches.');
           }
@@ -287,6 +287,12 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
+          // If a site manager decides emails should not be sent to users
+          // who have never logged in. We need to verify last accessed time,
+          // so those users are not processed.
+          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
+            continue;
+          }
           // Only for users that have access to related content.
           if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
             // If the website is multilingual, get the body text in

@@ -11,64 +11,48 @@
  * Perform actions related to the installation of social_swiftmail.
  */
 function social_swiftmail_install() {
-  // Get swift and mailsystem config.
-  $swift_settings = \Drupal::configFactory()->getEditable('swiftmailer.message');
-  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+  $config_factory = \Drupal::configFactory();
   // Alter swift settings.
-  $swift_settings->set('format', 'text/html')->save();
-  $swift_settings->set('respect_format', FALSE)->save();
+  $config_factory->getEditable('swiftmailer.message')
+    ->set('format', 'text/html')
+    ->set('respect_format', FALSE)
+    ->save();
   // Alter mailsystem settings.
-  $mailsystem_settings->set('theme', 'default')->save();
-  $mailsystem_settings->set('defaults.sender', 'social_swiftmailer')->save();
-  $mailsystem_settings->set('defaults.formatter', 'social_swiftmailer')->save();
-  $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
-  $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
+  $config_factory->getEditable('mailsystem.settings')
+    ->set('theme', 'default')
+    ->set('defaults.sender', 'social_swiftmailer')
+    ->set('defaults.formatter', 'social_swiftmailer')
+    ->set('modules.swiftmailer.none.sender', 'social_swiftmailer')
+    ->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')
+    ->save();
 
-  // Set some default permissions.
-  _social_swiftmail_set_permissions();
-}
+  // Ensure the sendmail mode matches the PHP.ini configuration.
+  $sendmail_path = ini_get('sendmail_path');
+  $sendmail_mode = ($sendmail_path !== FALSE && str_contains($sendmail_path, '-bs')) ? 'bs' : 't';
+  $config_factory->getEditable('swiftmailer.transport')
+    ->set('sendmail_mode', $sendmail_mode)
+    ->save();
 
-/**
- * Function to set permissions.
- */
-function _social_swiftmail_set_permissions() {
-  $roles = \Drupal::entityQuery('user_role')
-    ->condition('id', 'administrator', '<>')
-    ->execute();
-
-  foreach ($roles as $role) {
-    $permissions = _social_swiftmail_get_permissions($role);
-    user_role_grant_permissions($role, $permissions);
-  }
-}
-
-/**
- * Build the permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_swiftmail_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'use text format mail_html',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'administer social swiftmail',
-  ]);
-
-  return $permissions[$role] ?? [];
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'use text format mail_html',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'use text format mail_html',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'use text format mail_html',
+      'administer social swiftmail',
+    ]
+  );
 }
 
 /**

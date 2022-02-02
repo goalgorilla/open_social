@@ -1,15 +1,16 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
+@api @group @notifications @TB-6072 @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want to create Public Groups
 
+  @email-spool
   Scenario: Successfully create public group
     Given users:
-      | name         | mail                     | status |
-      | GivenUserOne | group_user_1@example.com | 1      |
-      | GivenUserTwo | group_user_2@example.com | 1      |
-      | Outsider     | outsider@example.com     | 1      |
+      | name         | mail                     | status | roles    |
+      | GivenUserOne | group_user_1@example.com | 1      | verified |
+      | GivenUserTwo | group_user_2@example.com | 1      | verified |
+      | Outsider     | outsider@example.com     | 1      | verified |
     Given "event_types" terms:
       | name     |
       | Webinar  |
@@ -25,10 +26,10 @@ Feature: Create Public Group
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Lviv |
+      | City           | Lviv           |
       | Street address | Fedkovycha 60a |
-      | Postal code | 79000 |
-      | Oblast | Lviv oblast |
+      | Postal code    | 79000          |
+      | Oblast         | Lviv oblast    |
     And I press "Save"
     And I should see "Test public group" in the "Main content"
     And I should see "Technopark"
@@ -49,6 +50,7 @@ Feature: Create Public Group
 
     When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
+    And I logout
 
     And I am logged in as "GivenUserTwo"
     And I am on "all-members"
@@ -80,16 +82,30 @@ Feature: Create Public Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public group post."
 
+    # Lets check notifications for public group.
+    And I wait for the queue to be empty
+    Given I am logged in as "GivenUserOne"
+    When I am on "/notifications"
+    Then I should see "GivenUserTwo created a post in the Test public group group"
+    And I should have an email with subject "New content has been added to a group you are in" and in the content:
+      | content                                                      |
+      | Hi GivenUserOne                                              |
+      | GivenUserTwo published a post in the Test public group group |
+
+    Given I am logged in as "GivenUserTwo"
+    Then I am on "all-groups"
+    And I should see "Test public group"
+    And I click "Test public group"
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-0-value-time | 11:00:00   |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-time | 11:00:00 |
-      | Location name | Technopark |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-0-value-time     | 11:00:00         |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | edit-field-event-date-end-0-value-time | 11:00:00         |
+      | Location name                          | Technopark       |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Create event"
     And I should see "Test group event"
@@ -106,7 +122,7 @@ Feature: Create Public Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"

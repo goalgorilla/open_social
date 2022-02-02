@@ -4,11 +4,11 @@ namespace Drupal\Tests\social_graphql\Kernel;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\graphql\Entity\Server;
-use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
+use Drupal\graphql\Entity\ServerInterface;
 use GraphQL\Server\OperationParams;
 
 /**
- * Bass class for Open Social GraphQL tests.
+ * Base class for Open Social GraphQL tests.
  *
  * Provides utility methods for testing Open Social GraphQL endpoints. Ensures
  * the Open Social GraphQL server is loaded and configured.
@@ -18,19 +18,9 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "entity",
     "social_graphql",
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $configSchemaCheckerExclusions = [
-    // This schema isn't actually missing but we don't want any of the other
-    // config from the module during our test so we don't install the module at
-    // all which causes the schema to be missing.
-    'social_core.settings',
   ];
 
   /**
@@ -44,16 +34,9 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     $this->installConfig("social_graphql");
 
     // Set up the schema and use the Open Social GraphQL server in queries.
-    $this->server = Server::load("open_social_graphql");
-
-    // Manually enable query_access checks, until `use_entity_access_api` is no
-    // longer a setting. This is done in the social_graphql_install hook but
-    // doesn't work there without installing social_core so the schema is
-    // present. Installing all the config in `social_core` doesn't work at the
-    // time of writing.
-    $this->config('social_core.settings')
-      ->set('use_entity_access_api', TRUE)
-      ->save(TRUE);
+    $server = Server::load("open_social_graphql");
+    self::assertInstanceOf(ServerInterface::class, $server, "Test set-up failed: 'open_social_graphql' server is not installed.");
+    $this->server = $server;
   }
 
   /**

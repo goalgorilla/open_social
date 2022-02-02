@@ -18,6 +18,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -56,9 +57,12 @@ function social_topic_preprocess_node(array &$variables) {
         $variables['metadata'] = t('in @topic', ['@topic' => $topic->toLink()->toString()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
-        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
-          ->toString();
-        $variables['topic_type'] = $topic_type_link;
+        $label = $topic->label();
+        if (!empty($label)) {
+          $topic_type_link = Link::fromTextAndUrl($label, $topic_type_url)
+            ->toString();
+          $variables['topic_type'] = $topic_type_link;
+        }
 
         if ($topic->hasField('field_topic_type_icon') && !$topic->get('field_topic_type_icon')->isEmpty()) {
           $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;
@@ -107,7 +111,10 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
 
     $current_user = \Drupal::currentUser();
     $membership = FALSE;
-    $group_membership = $group_from_route->getMember($current_user);
+    $group_membership = NULL;
+    if ($group_from_route instanceof GroupInterface) {
+      $group_membership = $group_from_route->getMember($current_user);
+    }
     if ($group_membership) {
       $membership = TRUE;
     }
@@ -169,11 +176,14 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   // You can't place content in a group you are not a member of anyway.
   if ($view->id() == 'group_topics' && $view->getDisplay()->display['id'] == 'page_group_topics') {
     $group_from_route = _social_group_get_current_group();
-    $current_user = \Drupal::currentUser();
     $membership = FALSE;
-    $group_membership = $group_from_route->getMember($current_user);
-    if ($group_membership) {
-      $membership = TRUE;
+
+    if ($group_from_route instanceof GroupInterface) {
+      $current_user = \Drupal::currentUser();
+      $group_membership = $group_from_route->getMember($current_user);
+      if ($group_membership) {
+        $membership = TRUE;
+      }
     }
 
     // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"

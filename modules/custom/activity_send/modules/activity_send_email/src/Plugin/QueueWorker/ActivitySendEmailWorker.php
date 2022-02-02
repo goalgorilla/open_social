@@ -13,6 +13,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\GroupMuteNotify;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -79,6 +81,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $languageManager;
 
   /**
+   * The group mute notifications.
+   *
+   * @var \Drupal\social_group\GroupMuteNotify
+   */
+  protected $groupMuteNotify;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -91,7 +100,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
     QueueFactory $queue_factory,
-    LanguageManager $language_manager
+    LanguageManager $language_manager,
+    GroupMuteNotify $group_mute_notify
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
@@ -101,6 +111,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
+    $this->groupMuteNotify = $group_mute_notify;
   }
 
   /**
@@ -117,7 +128,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
       $container->get('queue'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('social_group.group_mute_notify')
     );
   }
 
@@ -260,13 +272,36 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message']);
     }
 
+    // Get the related entity from the activity.
+    $related_entity = $parameters['activity']->getRelatedEntity();
+
     // We load all the target accounts.
     if ($target_accounts = $user_storage->loadMultiple($parameters['target_recipients'])) {
+      /** @var \Drupal\group\Entity\GroupInterface $group */
+      $group = $this->groupMuteNotify->getGroupByContent($related_entity);
+
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($target_accounts as $target_account) {
+        // Filter out blocked users early in the process.
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
+          // If a site manager decides emails should not be sent to users
+          // who have never logged in. We need to verify last accessed time,
+          // so those users are not processed.
+          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
+            continue;
+          }
+          // Check if we have $group set which means that this content was
+          // posted in a group.
+          if (!empty($group) && $group instanceof GroupInterface) {
+            // Skip the notification for users which have muted the group
+            // notification in which this content was posted.
+            if ($this->groupMuteNotify->groupNotifyIsMuted($group, $target_account)) {
+              continue;
+            }
+          }
+
           // Only for users that have access to related content.
-          if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
+          if ($related_entity->access('view', $target_account)) {
             // If the website is multilingual, get the body text in
             // users preferred language. This will happen when the queue item
             // is not processed in a batch and thus we can't be sure if all

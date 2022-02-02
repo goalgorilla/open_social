@@ -5,12 +5,14 @@
  * The Social Event Enrolments Export module.
  */
 
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
+
 /**
  * Implements hook_file_download().
  */
 function social_event_enrolments_export_file_download($uri) {
-  $scheme = \Drupal::service('file_system')->uriScheme($uri);
-  $target = \Drupal::service('stream_wrapper_manager')->getTarget($uri);
+  $scheme = StreamWrapperManager::getScheme($uri);
+  $target = StreamWrapperManager::getTarget($uri);
   $access = \Drupal::currentUser()->hasPermission('administer users');
 
   if ($scheme === 'private' && preg_match('/^csv\/export-enrollments-([a-f0-9]{12})\.csv$/i', $target) && $access) {

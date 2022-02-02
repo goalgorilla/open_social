@@ -14,31 +14,26 @@ third_party_settings:
     activity_destinations:
       notifications: notifications
       email: email
-    activity_create_direct: 0
-    activity_aggregate: 0
+    activity_create_direct: false
+    activity_aggregate: false
     activity_entity_condition: ''
-_core:
-  default_config_hash: Ec3_5IyNhcMOlY0h_xEJ5CtGv-XWJoRcdEVpnzgtUU4
+    email_subject: 'Someone joined one of your groups'
 template: join_to_group
 label: 'Join to group'
 description: 'A person joins a group I am managing'
 text:
   -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n"
     format: full_html
-    value: '<p><a href="[message:recipient-user:url:absolute]">[message:recipient-user:display-name]</a> joined the <a href="[message:gurl]">[message:gtitle]</a> group</p>'
   -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n"
     format: full_html
-    value: '<p><a href="[message:recipient-user:url:absolute]">[message:recipient-user:display-name]</a> joined the <a href="[message:gurl]">[message:gtitle]</a> group</p>'
   -
+    value: "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> group</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
-    value: '<p><a href="[message:recipient-user:url:absolute]">[message:recipient-user:display-name]</a> joined the <a href="[message:gurl]">[message:gtitle]</a> group</p>'
 settings:
   'token options':
     clear: false
     'token replace': true
   purge_override: false
-  purge:
-    override: false
-    enabled: false
-    quota: null
-    days: null
+  purge_methods: {  }

@@ -30,7 +30,7 @@ const ACTIVITY_STATUS_SEEN = 2;
  * @return array
  *   Return an array of allowed values for status field.
  */
-function activity_creator_field_activity_status_allowed_values() {
+function activity_creator_field_activity_status_allowed_values(): array {
 
   $allowed_values = [
     ACTIVITY_STATUS_RECEIVED => 'Received',
@@ -46,7 +46,7 @@ function activity_creator_field_activity_status_allowed_values() {
  * @return array
  *   Return an array of allowed values for destinations field.
  */
-function activity_creator_field_activity_destinations_allowed_values() {
+function activity_creator_field_activity_destinations_allowed_values(): array {
 
   $allowed_values = [
     'stream_profile' => 'Stream (profile)',
@@ -68,6 +68,17 @@ function activity_creator_message_insert(Message $entity) {
     $mid = $entity->id();
     $message_template_id = $entity->getTemplate()->id();
     $actor = $entity->getOwner()->id();
+
+    // If one field of field_message_context, field_message_destination or
+    // field_message_related_object is empty, don't create activities.
+    if (
+      $entity->get('field_message_context')->isEmpty() ||
+      $entity->get('field_message_destination')->isEmpty() ||
+      $entity->get('field_message_related_object')->isEmpty()
+    ) {
+      return;
+    }
+
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();
     $related_object = $entity->get('field_message_related_object')->getValue();

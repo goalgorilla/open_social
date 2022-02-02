@@ -12,23 +12,22 @@ third_party_settings:
     activity_destinations:
       notifications: notifications
       email: email
-    activity_create_direct: 0
-    activity_aggregate: 0
+    activity_create_direct: false
+    activity_aggregate: false
     activity_entity_condition: ''
-_core:
-  default_config_hash: mhEYhJvbKkGB-A56aWNgx_6_CTv88nIPQ2l2if3JS1s
+    email_subject: 'Your content has been liked'
 template: create_like_node_or_post
 label: 'Create like on node or post'
 description: 'A person likes a post, topic, comment or event created by me'
 text:
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>\r\n"
     format: full_html
   -
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your [social_like:liked_entity_link_html]</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
     format: full_html
 settings:
   'token options':

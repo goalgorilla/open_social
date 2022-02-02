@@ -1,15 +1,15 @@
 @api @DS-1255 @DS-4211 @activity_stream @topic @create @stability @stability-3 @create_topic_event
 Feature: See and get notified when content is created
   Benefit: So I can discover new content on the platform
-  Role: As a LU
+  Role: As a Verified
   Goal/desire: I want see and get notified when content is created
 
   @public
   Scenario: See public topic and event
     Given users:
-      | name       | status | pass        |
-      | CreateUser | 1      | CreateUser  |
-      | SeeUser    | 1      | SeeUser     |
+      | name       | status | pass        | roles    |
+      | CreateUser | 1      | CreateUser  | verified |
+      | SeeUser    | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on the homepage
     Given I am viewing my event:
@@ -62,9 +62,9 @@ Feature: See and get notified when content is created
   @community
   Scenario: See community topic and event
     Given users:
-      | name        | status | pass        |
-      | CreateUser  | 1      | CreateUser  |
-      | SeeUser     | 1      | SeeUser     |
+      | name        | status | pass        | roles    |
+      | CreateUser  | 1      | CreateUser  | verified |
+      | SeeUser     | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on the homepage
     Given I am viewing my event:
@@ -117,9 +117,9 @@ Feature: See and get notified when content is created
     @group
   Scenario: See community event in a group
     Given users:
-      | name        | status | pass        |
-      | CreateUser  | 1      | CreateUser  |
-      | SeeUser     | 1      | SeeUser     |
+      | name        | status | pass        | roles    |
+      | CreateUser  | 1      | CreateUser  | verified |
+      | SeeUser     | 1      | SeeUser     | verified |
     And I am logged in as "CreateUser"
     And I am on "group/add"
     And I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
@@ -133,11 +133,12 @@ Feature: See and get notified when content is created
     When I click "Events"
     And I click "Create Event"
     And I fill in the following:
-      | Title | Test group event |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time  | 11:00:00    |
-      | Location name       | GG HQ |
+      | Title                                  | Test group event |
+      | edit-field-event-date-0-value-date     | 2025-01-01       |
+      | edit-field-event-date-end-0-value-date | 2025-01-01       |
+      | edit-field-event-date-0-value-time     | 11:00:00         |
+      | edit-field-event-date-end-0-value-time | 11:00:00         |
+      | Location name                          | GG HQ            |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
       And I press "Create event"
     Then I should see "Test group event"

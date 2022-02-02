@@ -8,7 +8,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class SocialGroupAdminPeopleConfigOverride.
+ * Configuration override for people admin overview.
  *
  * @package Drupal\social_group
  */
@@ -36,27 +36,6 @@ class SocialGroupAdminPeopleConfigOverride implements ConfigFactoryOverrideInter
    */
   public function loadOverrides($names) {
     $overrides = [];
-
-    $config_name = 'views.view.user_admin_people';
-
-    // Add AddMembersToGroup to VBO Admin people.
-    if (in_array($config_name, $names, TRUE)) {
-      $overrides[$config_name] = [
-        'display' => [
-          'default' => [
-            'display_options' => [
-              'fields' => [
-                'views_bulk_operations_bulk_form' => [
-                  'selected_actions' => [
-                    'social_group_add_members_to_group_action' => 'social_group_add_members_to_group_action',
-                  ],
-                ],
-              ],
-            ],
-          ],
-        ],
-      ];
-    }
 
     $config_name = 'views.view.group_manage_members';
     // Add all available group types on the platform here, so they can all

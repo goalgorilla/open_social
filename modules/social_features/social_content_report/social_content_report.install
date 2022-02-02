@@ -7,7 +7,7 @@
 
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -51,62 +51,51 @@ function social_content_report_install() {
     ->set('reasons_with_text', $default_values)
     ->save();
 
-  // Set permissions.
-  _social_content_report_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'flag report_comment',
+      'flag report_node',
+      'flag report_post',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'flag report_comment',
+      'flag report_node',
+      'flag report_post',
+      'view inappropriate reports',
+      'close inappropriate reports',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'flag report_comment',
+      'flag report_node',
+      'flag report_post',
+      'view inappropriate reports',
+      'close inappropriate reports',
+      'administer social_content_report settings',
+    ]
+  );
 }
 
 /**
- * Function to set permissions.
+ * Update message template "message.template.activity_on_events_im_organizing".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
  */
-function _social_content_report_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_content_report_get_permissions($role->id());
-    if (!empty($permissions)) {
-      user_role_grant_permissions($role->id(), $permissions);
+function social_content_report_update_10301() {
+  $config_file = drupal_get_path('module', 'social_content_report') . '/config/static/message.template.content_reported_10301.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.content_reported');
+      $config->setData($settings)->save(TRUE);
     }
   }
-}
-
-/**
- * Build permissions.
- *
- * @param string $role
- *   The role.
- *
- * @return array
- *   Returns an array containing the permissions.
- */
-function _social_content_report_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = [];
-
-  // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'flag report_comment',
-    'flag report_node',
-    'flag report_post',
-  ]);
-
-  // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-    'view inappropriate reports',
-    'close inappropriate reports',
-  ]);
-
-  // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-    'administer social_content_report settings',
-  ]);
-
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
 }

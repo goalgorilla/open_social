@@ -33,6 +33,13 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
       }
     }
 
+    // See https://www.drupal.org/project/social/issues/3232278
+    $config_name = 'core.entity_form_display.post.photo.group';
+
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'social_x_large';
+    }
+
     return $overrides;
   }
 

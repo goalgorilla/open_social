@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * The Social Group Welcome Message installation file.
+ */
+
+/**
+ * Remove the fieldgroup 'group_welcome_message' from group entity form config.
+ *
+ * Config override that adds the 'group_welcome_message' fieldgroup was removed
+ * in https://www.drupal.org/project/social/issues/3224631
+ * but for some reason this field group still exist in group form configuration.
+ *
+ * @see https://www.drupal.org/project/social/issues/3243539
+ * @see social_group_welcome_message_form_alter
+ */
+function social_group_welcome_message_update_10101(): void {
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+  ];
+
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+  $config_factory = \Drupal::configFactory();
+
+  // Remove the 'group_welcome_message' fieldgroup in every group form display.
+  foreach ($social_group_types as $social_group_type) {
+    $config = $config_factory->getEditable("core.entity_form_display.group.$social_group_type.default");
+    $third_party = $config->get('third_party_settings');
+    if (isset($third_party['field_group']['group_welcome_message'])) {
+      unset($third_party['field_group']['group_welcome_message']);
+      $config->set('third_party_settings', $third_party);
+      $config->save();
+    }
+  }
+}

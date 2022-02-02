@@ -13,6 +13,6 @@ Feature: Profile manager notes
     And I press "Leave remark"
     And I should see "New remark created"
 
-    Given I am logged in as an "authenticated user"
+    Given I am logged in as an "verified"
     And I am on "/user/12/information"
     And I should not see "Site manager remarks"

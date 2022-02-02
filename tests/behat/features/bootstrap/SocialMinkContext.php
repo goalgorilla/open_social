@@ -10,7 +10,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit_Framework_Assert as PHPUnit;
+use PHPUnit\Framework\Assert as PHPUnit;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Behat\Hook\Scope\AfterStepScope;
@@ -81,8 +81,7 @@ class SocialMinkContext extends MinkContext {
   /**
    * @When /^(?:|I )fill in select2 input "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" and select "(?P<entry>(?:[^"]|\\")*)"$/
    */
-  public function iFillInSelectInputWithAndSelect($field, $value, $entry)
-  {
+  public function iFillInSelectInputWithAndSelect($field, $value, $entry) {
     $page = $this->getSession()->getPage();
 
     $inputField = $page->find('css', $field);
@@ -113,6 +112,28 @@ class SocialMinkContext extends MinkContext {
         break;
       }
     }
+  }
+
+
+  /**
+   * @When /^I clear group field$/
+   */
+  public function iClearGroupSelect2Input() {
+    $page = $this->getSession()->getPage();
+
+    $inputField = $page->find('css', '.field--name-groups .select2');
+    if (!$inputField) {
+      throw new \Exception('No field found');
+    }
+
+    $this->getSession()->wait(1000);
+
+    $clearButton = $inputField->find('css', '.select2-selection__clear');
+    if (!$clearButton) {
+      throw new \Exception('No clear button found');
+    }
+
+    $clearButton->click();
   }
 
 

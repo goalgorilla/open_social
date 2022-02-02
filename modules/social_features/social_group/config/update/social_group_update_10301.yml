@@ -1,0 +1,46 @@
+views.view.group_events:
+  expected_config:
+    display:
+      default:
+        display_options:
+          filters:
+            event_date:
+              group_info:
+                group_items:
+                  3:
+                    value: {  }
+              value: {  }
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            filters:
+              event_date:
+                group_info:
+                  group_items:
+                    3:
+                      value: null
+                value: null
+views.view.group_manage_members:
+  expected_config:
+    display:
+      default:
+        display_options:
+          fields:
+            social_views_bulk_operations_bulk_form_group:
+              batch: 1
+              batch_size: '10'
+              buttons: 0
+              clear_on_exposed: 0
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            fields:
+              social_views_bulk_operations_bulk_form_group:
+                batch: true
+                batch_size: 10
+                buttons: false
+                clear_on_exposed: false

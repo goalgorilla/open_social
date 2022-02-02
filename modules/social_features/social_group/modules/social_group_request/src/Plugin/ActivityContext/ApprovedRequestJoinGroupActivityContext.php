@@ -5,6 +5,7 @@ namespace Drupal\social_group_request\Plugin\ActivityContext;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\group\Entity\GroupContentInterface;
 
 /**
  * Provides a 'ApprovedRequestJoinGroupActivityContext' activity context.
@@ -30,17 +31,19 @@ class ApprovedRequestJoinGroupActivityContext extends ActivityContextBase {
       /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
       $group_content = $storage->load($referenced_entity['target_id']);
 
-      $filters = [
-        'entity_id' => $group_content->getEntity()->id(),
-        'grequest_status' => GroupMembershipRequest::REQUEST_ACCEPTED,
-      ];
-      $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
-
-      if (!empty($requests)) {
-        $recipients[] = [
-          'target_type' => 'user',
-          'target_id' => $group_content->getEntity()->id(),
+      if ($group_content instanceof GroupContentInterface) {
+        $filters = [
+          'entity_id' => $group_content->getEntity()->id(),
+          'grequest_status' => GroupMembershipRequest::REQUEST_ACCEPTED,
         ];
+        $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+
+        if (!empty($requests)) {
+          $recipients[] = [
+            'target_type' => 'user',
+            'target_id' => $group_content->getEntity()->id(),
+          ];
+        }
       }
     }
 

@@ -14,6 +14,8 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -21,6 +23,8 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\GroupMembership;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
@@ -55,6 +59,9 @@ function social_group_theme() {
         'join_method' => NULL,
         'allowed_visibility' => NULL,
       ],
+    ],
+    'flag__mute_group_notifications' => [
+      'base hook' => 'flag',
     ],
   ];
 }
@@ -246,6 +253,10 @@ function social_group_preprocess_group(array &$variables) {
 
   $account = \Drupal::currentUser();
 
+  // Prevent access to mute group notifications if a user is not a group member.
+  if (!in_array($variables['view_mode'], ['statistic', 'hero']) || !$group->getMember($account)) {
+    unset($variables['content']['flag_mute_group_notifications']);
+  }
   // Set joined to true for teaser when current logged in
   // user is member of the group.
   if ($group->getMember($account)) {
@@ -325,7 +336,7 @@ function social_group_preprocess_group(array &$variables) {
     // Ensure all groups get the group.type differentiating labels in teasers
     // hero's and full nodes.
     // But also if the allowed join method is there, this should be added.
-    $variables['#cache']['contexts'][] = 'group.type';
+    $variables['#cache']['contexts'][] = 'route.group';
     if ($group->hasField('field_group_allowed_join_method') &&
       !empty($group->getFieldValue('field_group_allowed_join_method', 'value'))) {
       $variables['#cache']['contexts'][] = 'social_group_join_method';
@@ -337,7 +348,7 @@ function social_group_preprocess_group(array &$variables) {
   // Prepare variables for statistic block.
   if ($variables['view_mode'] === 'statistic') {
     // Add context, since we render join / invite only etc links in the block.
-    $variables['#cache']['contexts'][] = 'group';
+    $variables['#cache']['contexts'][] = 'route.group';
     $variables['#cache']['contexts'][] = 'user';
     $about_url = Url::fromRoute('view.group_information.page_group_about', [
       'group' => $group->id(),
@@ -656,21 +667,27 @@ function social_group_allowed_join_method_description($key) {
 
   // Add explanatory descriptive text after the icon.
   switch ($key) {
-    case 'added':
-      $description = '<p><strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
-
     case 'direct':
-      $description = '<p><strong>' . t('Open to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_open"></use></svg></strong>';
+      $description .= '<strong>' . t('Open to join')->render() . '</strong>';
       $description .= ' - ' . t('users can join this group without approval.')->render();
       $description .= '</p>';
       break;
 
     case 'request':
-      $description = '<p><strong>' . t('Request to join')->render() . '</strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-join_close"></use></svg></strong>';
+      $description .= '<strong>' . t('Request to join')->render() . '</strong>';
       $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'added':
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-invite"></use></svg></strong>';
+      $description .= '<strong>' . t('Invite only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
       $description .= '</p>';
       break;
   }
@@ -694,7 +711,7 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
         // Add cache contexts for group type & permissions.
         // We need join / leave for the CTA and also update permissions
         // for the button to edit a group.
-        $build['#cache']['contexts'][] = 'group.type';
+        $build['#cache']['contexts'][] = 'route.group';
         $build['#cache']['contexts'][] = 'user.group_permissions';
         $build['#cache']['tags'][] = 'group_block:' . $entity->id();
         break;
@@ -795,34 +812,30 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
+
   // Change the form when adding members directly in groups.
-  if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
+  if (
+    in_array($form_id, $membership_add_forms, TRUE) &&
+    \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve'
+  ) {
     // Lets add the new select 2 widget to add members to a group.
-    $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name or email address'),
-      '#type' => 'select2',
-      '#multiple' => TRUE,
-      '#tags' => TRUE,
-      '#autocomplete' => TRUE,
-      '#select2' => [
-        'placeholder' => t('Jane Doe'),
-        'tokenSeparators' => [',', ';'],
-      ],
-      '#selection_handler' => 'social',
-      '#target_type' => 'user',
-      '#element_validate' => ['_social_group_unique_members'],
-    ];
+    $form['entity_id']['widget'][0]['target_id'] = $helper->addMemberFormField();
+
     // Group roles and the automated URL alias don't make sense here.
-    if (isset($form['group_roles'])) {
-      unset($form['group_roles']);
-    }
-    if (isset($form['path'])) {
-      unset($form['path']);
+    foreach (['group_roles', 'path'] as $field) {
+      if (isset($form[$field])) {
+        unset($form[$field]);
+      }
     }
   }
 
   // Check if form is group content create form.
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
+    // Add custom validate handler to check if groups field values in node.
+    $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
+
     $group = _social_group_get_current_group();
 
     if (!empty($group)) {
@@ -884,8 +897,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
+      /** @var string $type */
       foreach (array_keys($form['group_type']['widget']['#options']) as $type) {
-        if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
+        if ($helper->getDefaultGroupVisibility($type) === NULL) {
           $form['group_type']['widget'][$type] = [
             '#disabled' => TRUE,
           ];
@@ -958,6 +972,44 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         }
       }
     }
+  }
+
+  // Add custom validation for "group_type" group field.
+  if (!empty($form['#entity_type']) && $form['#entity_type'] === 'group') {
+    if (isset($form['group_type']) && Element::isVisibleElement($form['group_type'])) {
+      $form['group_type']['#element_validate'][] = '_social_group_cross_posting_group_type_validate';
+    }
+  }
+}
+
+/**
+ * Validation callback checking if group can be converted to another group type.
+ *
+ * @param array $element
+ *   Form element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state object.
+ */
+function _social_group_cross_posting_group_type_validate(array $element, FormStateInterface $form_state) {
+  // Cross posting is disabled globally.
+  $group_settings = \Drupal::config('social_group.settings');
+  if (!$group_settings->get('cross_posting.status')) {
+    return;
+  }
+
+  $allowed_group_types = $group_settings->get('cross_posting.group_types');
+
+  $value = $element['widget']['#value'];
+  $previous_value = $element['widget'][$value]['#default_value'];
+  // If the value changed nothing to validate.
+  if ($value === $previous_value) {
+    return;
+  }
+
+  // Allow change "group_type" only for group if the previous and current
+  // group type are using cross-group posting feature.
+  if (in_array($previous_value, $allowed_group_types) && !in_array($value, $allowed_group_types)) {
+    $form_state->setError($element['widget'], t('Cross-group posting for @group_type is disabled', ['@group_type' => $element['widget'][$value]['#title']]));
   }
 }
 
@@ -1121,28 +1173,43 @@ function _social_group_grant_admin_role($uid, $gid) {
 
     // Check what roles are there.
     $roles = [];
-    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
-      $roles[] = $group_role_ref->target_id;
-    }
+    if ($membership instanceof GroupMembership) {
+      foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+        $roles[] = $group_role_ref->target_id;
+      }
 
-    // No admin? Add it.
-    if (!in_array($admin_role, $roles)) {
-      $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
-      $membership->getGroupContent()->save();
+      // No admin? Add it.
+      if (!in_array($admin_role, $roles)) {
+        $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
+        $membership->getGroupContent()->save();
+      }
     }
   }
 }
 
 /**
- * When creating a new group membership.
+ * When creating a new group membership or a node with group reference.
  *
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  *   The group content.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
-  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
-    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
+  if ($group_content->getEntity()->getEntityTypeId() === 'user') {
+    if ($group_content->bundle() === $group_content->getGroup()->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
+    }
+  }
+  // When moving a node from 1 group to the other as SM
+  // it means you as SM are the new owner, instead of the original author.
+  // Which results in wrong activity authors being used.
+  $referenced_entity = $group_content->getEntity();
+  if ($referenced_entity instanceof NodeInterface) {
+    $author = $referenced_entity->getRevisionUser();
+    if ($author->id() !== NULL) {
+      $group_content->setOwnerId((int) $author->id());
+      $group_content->save();
     }
   }
 }
@@ -1185,6 +1252,41 @@ function _social_group_cancel_join_leave_form(array $form, FormStateInterface $f
       'entity.group.canonical',
       ['group' => $group->id(), []]
     );
+  }
+}
+
+/**
+ * Validation callback for group content create form.
+ *
+ * @param array $form
+ *   Group node form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_group_node_form_cross_posting_validate(array $form, FormStateInterface $form_state) {
+  if (empty($form_state->getValue('groups'))) {
+    return;
+  }
+  // Cross posting is disabled globally.
+  $group_settings = \Drupal::config('social_group.settings');
+  if (!$group_settings->get('cross_posting.status')) {
+    return;
+  }
+  // Check if group type enabled for cross-group posting.
+  $allowed_group_types = $group_settings->get('cross_posting.group_types');
+
+  $values = $form_state->getValue('groups');
+  // We need to check only if user try to add a node to multiple groups.
+  if (is_array($values) && count($values) > 1) {
+    $gids = array_column($values, 'target_id');
+    foreach (Group::loadMultiple($gids) as $group) {
+      // If the group type for the group is not allowed - raise the error.
+      if (!in_array($group->getGroupType()->id(), $allowed_group_types)) {
+        $form_state->setErrorByName('groups', t('Cross posting is not allowed for @type group type', [
+          '@type' => $group->getGroupType()->label(),
+        ]));
+      }
+    }
   }
 }
 
@@ -1388,6 +1490,14 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
         }
       }
     }
+  }
+  // We don't want to display the "Nodes" tab on groups anymore. Before, we
+  // just disabled the view on hook update, but sometimes it is back to us,
+  // this is the reason why we want to hide the tab. Also, we don't want to
+  // add custom access to that route since some other developers of Open Social
+  // might use it.
+  if (isset($data['tabs'][0]['views_view:view.group_nodes.page_1'])) {
+    unset($data['tabs'][0]['views_view:view.group_nodes.page_1']);
   }
 }
 
@@ -1599,6 +1709,26 @@ function social_group_preprocess_views_view(&$variables) {
 }
 
 /**
+ * Implements theme_preprocess_menu_local_task().
+ *
+ * Sets an active class on stream tab when viewing group canonical page.
+ */
+function social_group_preprocess_menu_local_task(array &$variables): void {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if ($route_name != 'entity.group.canonical') {
+    return;
+  }
+
+  if (isset($variables['link']['#url'])
+    && $variables['link']['#url'] instanceof Url
+    && $variables['link']['#url']->getRouteName() === 'social_group.stream') {
+    $variables['element']['#active'] = TRUE;
+    $variables['attributes']['class'][] = 'active';
+  }
+
+}
+
+/**
  * Implements hook_block_access().
  *
  * Check if the user is viewing a closed_group, check if the user is a member.
@@ -1740,8 +1870,9 @@ function _social_group_delete_group() {
  * Get all open groups.
  */
 function social_group_get_all_open_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->condition('type', 'open_group');
   return $query->execute();
 }
@@ -1750,57 +1881,11 @@ function social_group_get_all_open_groups() {
  * Get all open groups.
  */
 function social_group_get_all_groups() {
-  $query = Drupal::service('entity.query')
-    ->get('group')
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
     ->sort('type');
   return $query->execute();
-}
-
-/**
- * Get all group memberships for a certain user.
- *
- * @param int $uid
- *   The UID for which we fetch the groups it is member of.
- *
- * @return array
- *   List of group IDs the user is member of.
- *
- * @deprecated in social:8.x-4.2 and is removed from social:8.x-9.6.
- *   This function is moved to the service social_group.helper_service, use
- *   getAllGroupsForUser() instead.
- *
- * @see https://www.drupal.org/node/3026220
- */
-function social_group_get_all_group_members($uid) {
-  @trigger_error(__FUNCTION__ . ' is deprecated in social:8.x-4.2 and is removed from social:8.x-9.6. This function is moved to the service social_group.helper_service, use getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220', E_USER_DEPRECATED);
-
-  $groups = &drupal_static(__FUNCTION__);
-
-  // Get the memberships for the user if they aren't known yet.
-  if (!isset($groups[$uid])) {
-    $group_content_types = GroupContentType::loadByEntityTypeId('user');
-    $group_content_types = array_keys($group_content_types);
-
-    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-    $query->addField('gcfd', 'gid');
-    $query->condition('gcfd.entity_id', $uid);
-    $query->condition('gcfd.type', $group_content_types, 'IN');
-    $query->execute()->fetchAll();
-
-    $group_ids = $query->execute()->fetchAllAssoc('gid');
-    $groups[$uid] = array_keys($group_ids);
-  }
-
-  return $groups[$uid];
-}
-
-/**
- * Implements hook_field_info_alter().
- */
-function social_group_field_info_alter(&$info) {
-  if (isset($info['groups'])) {
-    $info['groups']['default widget'] = 'social_group_selector_widget';
-  }
 }
 
 /**
@@ -1813,8 +1898,9 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
       ->setLabel(t('Group'))
       ->setDescription('')
       ->setSetting('handler', 'social')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('form', [
-        'type' => 'options_select',
+        'type' => 'social_group_selector_widget',
         'settings' => [],
         'weight' => 16,
       ])
@@ -2675,4 +2761,61 @@ function social_group_allowed_visibility_description($key) {
   \Drupal::moduleHandler()->alter('social_group_content_visibility_description', $key, $description);
 
   return $description;
+}
+
+/**
+ * Implements hook_entity_display_build_alter().
+ */
+function social_group_entity_display_build_alter(array &$build, array $context) {
+  // For our nodes, renderd as small_teaser
+  // since thee Group 1.0 update it renders all group details.
+  // As our group types are optional and not a dependency
+  // we cant update our yml files but have to do it like this.
+  if (!$context['entity'] instanceof Node && $context['view_mode'] !== 'small_teaser') {
+    return;
+  }
+  $os_groups = [
+    'groups_type_flexible_group',
+    'groups_type_public_group',
+    'groups_type_open_group',
+    'groups_type_secret_group',
+    'groups_type_closed_group',
+    'groups',
+  ];
+  // For each Open Social group type we check if there are any
+  // group details in the build array, if so unset it.
+  // If it's not an OS group, people likely wanted to add it.
+  foreach ($os_groups as $key) {
+    if (array_key_exists($key, $build)) {
+      unset($build[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function social_group_preprocess_page(array &$variables) {
+  /** @var \Drupal\Core\Routing\AdminContext $admin_context */
+  $admin_context = \Drupal::service('router.admin_context');
+  // Don't add the modal for admin pages.
+  // Only for sky theme.
+  if ($admin_context->isAdminRoute() || theme_get_setting('style') !== 'sky') {
+    return;
+  }
+
+  $route_matches = [
+    'social_group_gvbo.views_bulk_operations.confirm',
+    'views_bulk_operations.confirm',
+    'views_bulk_operations.execute_batch',
+    'social_group_gvbo.views_bulk_operations.execute_configurable',
+  ];
+
+  // Make sure we do the expensive checks only after we see that there's
+  // something in the URL for nodes.
+  foreach ($route_matches as $route_name) {
+    if (\Drupal::routeMatch()->getRouteName() === $route_name) {
+      $variables['page']['complementary_top'] = [];
+    }
+  }
 }

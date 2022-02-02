@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\node\Entity\Node;
+use Drupal\taxonomy\TermInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -63,47 +63,42 @@ function social_event_type_widget_alter(array &$form) {
  * @param array $variables
  *   Array with variables of a node.
  */
-function social_event_type_preprocess_node(array &$variables) {
-  /** @var \Drupal\node\Entity\NodeInterface $node */
+function social_event_type_preprocess_node(array &$variables): void {
+  /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
 
   if ($node->getType() === 'event') {
-    $event_type = $node->get('field_event_type');
-    $event_type_entities = $event_type->referencedEntities();
-    if (count($event_type_entities) === 1) {
-      /** @var \Drupal\node\Entity\Node $event */
-      foreach ($event_type_entities as $event) {
-        if ($event instanceof Node) {
-          $variables['metadata'] = t('in @event', ['@event' => $event->toLink()->toString()]);
-          // Set event type link.
-          $now = strtotime("now");
-          $end = strtotime($node->get('field_event_date_end')->getString());
-          // 1 are upcoming events.
-          // 2 are ones that have started or are finished.
-          $datetype = ($now > $end) ? 2 : 1;
-
-          $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
-            'field_event_date_value' => $datetype,
-            'event_type_id' => $event->id(),
-          ]);
-          $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
-            ->toString();
-          $variables['event_type'] = $event_type_link;
-        }
-
-        if (
-          $event->hasField('field_event_type_icon') &&
-          !$event->get('field_event_type_icon')->isEmpty()
-        ) {
-          $variables['event_type_icon'] = $event->get('field_event_type_icon')->value;
-        }
-
-        $variables['#cache']['tags'][] = $event->getEntityTypeId() . ':' . $event->id();
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $event_type_field */
+    $event_type_field = $node->get('field_event_type');
+    $event_types = $event_type_field->referencedEntities();
+    $variables['metadata'] = NULL;
+    $variables['event_type'] = NULL;
+    $event_type = empty($event_types) ? NULL : reset($event_types);
+    if ($event_type instanceof TermInterface) {
+      $variables['metadata'] = t('in @event', [
+        '@event' => $event_type->toLink()
+          ->toString(),
+      ]);
+      // Set event type link.
+      $now = strtotime("now");
+      $end = strtotime($node->get('field_event_date_end')->getString());
+      // 1 are upcoming events.
+      // 2 are ones that have started or are finished.
+      $datetype = ($now > $end) ? 2 : 1;
+      $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
+        'field_event_date_value' => $datetype,
+        'event_type_id' => $event_type->id(),
+      ]);
+      $event_type_link = Link::fromTextAndUrl($event_type->label() ?? '', $event_type_url)
+        ->toString();
+      $variables['event_type'] = $event_type_link;
+      if (
+        $event_type->hasField('field_event_type_icon') &&
+        !$event_type->get('field_event_type_icon')->isEmpty()
+      ) {
+        $variables['event_type_icon'] = $event_type->get('field_event_type_icon')->getString();
       }
-    }
-    else {
-      $variables['metadata'] = NULL;
-      $variables['event_type'] = NULL;
+      $variables['#cache']['tags'][] = $event_type->getEntityTypeId() . ':' . $event_type->id();
     }
   }
 }

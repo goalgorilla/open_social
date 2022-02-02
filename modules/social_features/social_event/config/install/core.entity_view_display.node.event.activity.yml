@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
-    - field.field.node.event.field_event_enable_enrollment
     - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
@@ -22,8 +21,6 @@ dependencies:
     - image
     - social_core
     - user
-_core:
-  default_config_hash: r8pYWAV1CaGVHSd3VwVdYWqJyiBlHK1MqJOAcTwDnQw
 id: node.event.activity
 targetEntityType: node
 bundle: event
@@ -41,7 +38,7 @@ content:
     label: hidden
     settings:
       num_comments: 2
-      always_show_all_comments: '1'
+      always_show_all_comments: true
     third_party_settings: {  }
     type: comment_node
     region: content
@@ -106,4 +103,4 @@ hidden:
   groups_type_open_group: true
   like_and_dislike: true
   search_api_excerpt: true
-  field_event_enable_enrollment: true
+  field_event_all_day: true

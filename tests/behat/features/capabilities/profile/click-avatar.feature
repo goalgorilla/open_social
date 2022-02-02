@@ -1,14 +1,14 @@
 @api @DS-2936 @click-avatar
   Feature: I want to visit another profile by clicking on their avatar
     Benefit: Better interaction upon viewing other's profiles
-    Role: LU
+    Role: As a Verified
     Goal/desire: I want to visit another profile by clicking on their avatar
 
   Scenario: Click an avatar from the stream, on an activity item, a node and a comment
     Given users:
-      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
-      | user_1   | user_1@example.com | 1      | Albert                   | Einstein                |
-      | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  |
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
+      | user_1   | user_1@example.com | 1      | Albert                   | Einstein                | verified |
+      | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  | verified |
     And I am logged in as "user_1"
     And I am on the homepage
 
@@ -58,11 +58,11 @@
     When I fill in the following:
       | Title | This is a test topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
+    And I click radio button "News"
     And I press "Create topic"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
-    And I should see "Discussion" in the "Main content"
+    And I should see "News" in the "Main content"
     And I should see "Body description text" in the "Main content"
     And I should not see "Enrollments"
 

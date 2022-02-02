@@ -5,7 +5,7 @@ namespace Drupal\social_group_secret\EventSubscriber;
 use Drupal\Core\EventSubscriber\HttpExceptionSubscriberBase;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\group\Entity\GroupInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -51,13 +51,13 @@ class SocialGroupSecretSubscriber extends HttpExceptionSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  public function on403(GetResponseEvent $event) {
+  public function on403(ExceptionEvent $event) {
     $group = $this->routeMatch->getParameter('group');
 
     // Show 404 page instead of 403 page for secret groups.
     if ($group instanceof GroupInterface && $group->bundle() === 'secret_group') {
       // Change the exception to show as 404 instead of 403.
-      $event->setException(new NotFoundHttpException());
+      $event->setThrowable(new NotFoundHttpException());
     }
   }
 

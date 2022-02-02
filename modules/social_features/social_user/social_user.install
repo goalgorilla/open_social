@@ -14,8 +14,41 @@ use Drupal\user\RoleInterface;
  * Perform actions related to the installation of social_user.
  */
 function social_user_install() {
-  // Set some default permissions.
-  _social_user_set_permissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'cancel account',
+      'change own username',
+      'select account cancellation method',
+    ]
+  );
+  user_role_grant_permissions(
+    'verified',
+    [
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'access user profiles',
+    ]
+  );
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'access user profiles',
+      'view users',
+      'block users',
+      'administer navigation settings',
+      'administer social_user settings',
+      'assign contentmanager role',
+      'assign sitemanager role',
+      'assign verified role',
+      'view blocked user',
+    ]
+  );
 }
 
 /**
@@ -127,23 +160,6 @@ function social_user_update_8008() {
 }
 
 /**
- * Function to set permissions.
- */
-function _social_user_set_permissions() {
-  $roles = Role::loadMultiple();
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_user_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
-  }
-}
-
-/**
  * Return the permissions per role.
  *
  * @param string $role
@@ -154,18 +170,22 @@ function _social_user_set_permissions() {
  */
 function _social_user_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
-    'access user profiles',
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
     'cancel account',
     'change own username',
     'select account cancellation method',
   ]);
 
+  // Verified.
+  $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
+    'access user profiles',
+  ]);
+
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+  $permissions['contentmanager'] = array_merge($permissions['verified'], []);
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
@@ -175,6 +195,7 @@ function _social_user_get_permissions($role) {
     'administer social_user settings',
     'assign contentmanager role',
     'assign sitemanager role',
+    'assign verified role',
     'view blocked user',
   ]);
 
@@ -205,4 +226,65 @@ function social_user_update_8810() {
   user_role_grant_permissions('sitemanager', [
     'view blocked user',
   ]);
+}
+
+/**
+ * Create the default configuration for the verified immediately site setting.
+ */
+function social_user_update_11001(): void {
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('verified_immediately', TRUE)->save();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_user_update_dependencies(): array {
+  // Run the update hook with the "Grant Profile permissions for the
+  // Authenticated user role" only after an update hook "Reassign permissions
+  // between roles" in social_core.
+  $dependencies['social_user'][11002] = [
+    'social_core' => 11002,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Grant Profile permissions for the Authenticated user role.
+ */
+function social_user_update_11002(): void {
+  // Grant the Authenticated user new permissions.
+  user_role_grant_permissions(
+    RoleInterface::AUTHENTICATED_ID,
+    [
+      'cancel account',
+      'change own username',
+      'select account cancellation method',
+    ]
+  );
+}
+
+/**
+ * Update permissions for the sitemanager role.
+ */
+function social_user_update_11003(): void {
+  // Grant the sitemanagers new permissions.
+  user_role_grant_permissions('sitemanager', [
+    'assign verified role',
+  ]);
+}
+
+/**
+ * Update the views filter to limit operators in admin/people.
+ */
+function social_user_update_11004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_user', 'social_user_update_11004');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

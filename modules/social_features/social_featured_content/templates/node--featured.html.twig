@@ -90,10 +90,17 @@
       {% endblock %}
 
       {% block card_teaser_type %}
-        <a href="{{ url }}">
+        <a href="{{ url }}" aria-hidden="true" title="{{- node.type.0.entity.label() -}}: &nbsp;{{- label|render|striptags|trim -}}">
           <div class="teaser__teaser-type">
-            <svg class="teaser__teaser-type-icon" title="{{- node.type.0.entity.label() -}}">
-              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            <svg class="teaser__teaser-type-icon" aria-labelledby="{{- node.type.0.entity.label() -}}-{{ node.id }}">
+              <title id="{{- node.type.0.entity.label() -}}-{{ node.id }}">{{- node.type.0.entity.label() -}}: &nbsp;{{- label|render|striptags|trim -}}</title>
+              {% if topic_type_icon %}
+                <use xlink:href="#{{- topic_type_icon -}}"></use>
+              {% elseif event_type_icon %}
+                <use xlink:href="#{{- event_type_icon -}}"></use>
+              {% else %}
+                <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+              {% endif %}
             </svg>
           </div>
         </a>
@@ -122,12 +129,13 @@
           {% if display_submitted %}
             {% embed "node--teaser__field.html.twig" %}
               {%- block field_icon -%} account_circle {%- endblock -%}
+              {% block svg_title %} <title>{% trans %} Author name {% endtrans %}</title> {% endblock %}
               {%- block field_value %}
                 <div class="teaser__published">
                   <span class="sr-only">{% trans %}Created on{% endtrans %} </span>
                   <div class="teaser__published-date">{{ date }} <span aria-hidden="true">&bullet;</span></div>
                   <span class="sr-only"> {% trans %}by{% endtrans %} </span>
-                  <div class="teaser__published-author">{{ author_name }}</div>
+                  <div class="teaser__published-author">{{ author }}</div>
                 </div>
               {%- endblock -%}
             {% endembed %}
@@ -135,6 +143,7 @@
             {% if topic_type %}
               {% embed "node--teaser__field.html.twig" %}
                 {%- block field_icon -%} label {%- endblock -%}
+                {% block svg_title %} <title>{% trans %} Topic type: {% endtrans %}</title> {% endblock %}
                 {%- block field_value -%}
                   <span class="sr-only">{% trans %}Topic type:{% endtrans %}</span>
                   {{ topic_type }}
@@ -152,10 +161,10 @@
     {% block card_actionbar %}
 
       {% if visibility_icon and visibility_label %}
-        <div class="badge teaser__badge no-padding"
-             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}">
+        <div class="badge teaser__badge no-padding">
         <span class="badge__container">
           <svg class="badge__icon" aria-hidden="true">
+            <title>{% trans %}Visibility{% endtrans %}</title>
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>
           <span class="sr-only">{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} </span>

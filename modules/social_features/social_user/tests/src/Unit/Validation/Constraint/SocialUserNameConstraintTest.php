@@ -191,7 +191,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    * @param int $number_of_items
    *   Number of items you want to build in the list.
    *
-   * @return ConstraintViolationListInterface
+   * @return array
    *   Mock constraintViolationItems with the count of $number_of_items.
    */
   protected function buildViolationList($number_of_items) {

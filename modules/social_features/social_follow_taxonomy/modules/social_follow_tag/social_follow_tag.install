@@ -77,7 +77,17 @@ function social_follow_tag_update_8803() {
 /**
  * Update template in existing messages.
  */
-function social_follow_tag_update_8804(&$sandbox) {
+function social_follow_tag_update_8804(array &$sandbox): void {
+  _social_follow_tag_update_existing_messages($sandbox);
+}
+
+/**
+ * Helper callback to apply config updates.
+ *
+ * @param array $sandbox
+ *   The update sandbox array.
+ */
+function _social_follow_tag_update_existing_messages(array &$sandbox): void {
   $message_storage = \Drupal::entityTypeManager()->getStorage('message');
   if (!isset($sandbox['total'])) {
     // Get all message IDs than should be updated.
@@ -141,4 +151,58 @@ function social_follow_tag_update_8806() {
   }
   $message_template->set('text', $text);
   $message_template->save();
+}
+
+/**
+ * Update message template "message.template.update_node_following_tag".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_follow_tag_update_10301() {
+  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.update_node_following_tag_10301.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.update_node_following_tag');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update message template "message.template.create_node_following_tag_stream".
+ *
+ * Added new 'preview' and 'cta_button' tokens.
+ */
+function social_follow_tag_update_10302() {
+  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.create_node_following_tag_stream_10302.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('message.template.create_node_following_tag_stream');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Revert "message.template.create_node_following_tag_stream" config.
+ */
+function social_follow_tag_update_10303(array &$sandbox): void {
+  _social_follow_tag_update_existing_messages($sandbox);
+}
+
+/**
+ * Delete "message.template.create_node_following_tag_stream" config.
+ */
+function social_follow_tag_update_10304(array &$sandbox): void {
+  $message_template = \Drupal::entityTypeManager()
+    ->getStorage('message_template')
+    ->load('create_node_following_tag_stream');
+
+  if (!is_null($message_template)) {
+    $message_template->delete();
+  }
 }

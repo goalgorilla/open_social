@@ -5,7 +5,6 @@ namespace Drupal\Tests\social_profile\Kernel;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
-use Drupal\user\Entity\User;
 
 /**
  * Tests the additions made to the user endpoint by this module.
@@ -17,13 +16,15 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
     // @todo Possibly untangle this?
     "role_delegation",
     // Profile is needed for the profile storage.
     "profile",
+    // Required for third party config schema.
+    "field_group",
     // Modules needed for profile fields.
     "file",
     "image",
@@ -31,10 +32,12 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     "taxonomy",
     "telephone",
     "text",
+    "options",
     "filter",
     "lazy",
     "image_widget_crop",
     "crop",
+    // The actual module under test.
     "social_profile",
   ];
 
@@ -42,22 +45,13 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * {@inheritdoc}
    */
   protected static $configSchemaCheckerExclusions = [
-    // The third party settings in this config fail and since the lazy module
-    // doesn't have a schema we can't fix this either.
-    "core.entity_view_display.profile.profile.medium_teaser",
+    // @todo when https://www.drupal.org/project/social/issues/3238713 is fixed.
     "core.entity_form_display.profile.profile.default",
     // We don't need views in the GraphQL API so no sense in enabling the views
     // module or validating the schema.
     "views.view.newest_users",
     "views.view.user_information",
   ];
-
-  /**
-   * An array of test users that serves as test data.
-   *
-   * @var \Drupal\user\Entity\User[]
-   */
-  private $users = [];
 
   /**
    * {@inheritdoc}
@@ -68,22 +62,6 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('profile_type');
     $this->installEntitySchema('profile');
     $this->installConfig('social_profile');
-
-    // Load the existing non-anonymous users as they're part of the dataset that
-    // we want to verify test output against.
-    $this->users = array_values(
-      array_filter(
-        User::loadMultiple(),
-        static function (User $u) {
-          return !$u->isAnonymous();
-        }
-      )
-    );
-    // Create a set of 10 test users that we can query. The data of the users
-    // shouldn't matter.
-    for ($i = 0; $i < 10; ++$i) {
-      $this->users[] = $this->createUser();
-    }
   }
 
   /**
@@ -97,7 +75,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   public function testUserProfileFieldsPresence() : void {
     // Test as the admin users, this allows us to test all the fields that are
     // available in an all-access scenario.
-    $this->setCurrentUser(User::load(1));
+    $this->setUpCurrentUser([], [], TRUE);
     $test_user = $this->createUser();
     $profile = $this->ensureTestProfile($test_user, 'profile');
     $query = "

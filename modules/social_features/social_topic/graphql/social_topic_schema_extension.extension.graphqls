@@ -1,0 +1,60 @@
+extend type Query {
+  """
+  List of all topics on the platform.
+
+  Results are limited to what the current viewer has access to.
+  """
+  topics(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: TopicSortKeys = CREATED_AT
+  ): TopicConnection!
+
+  """
+  List of all topics on the platform filtered by topic type.
+
+  Results are limited to what the current viewer has access to.
+  """
+  topicsByType(
+    """
+    The id of the topic type to load.
+    """
+    type: ID!
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    """Sort the underlying list by the given key."""
+    sortKey: TopicSortKeys = CREATED_AT
+  ): TopicConnection!
+
+  """
+  Fetch data for a specific topic.
+  """
+  topic(
+    """
+    The id of the topic to load.
+    """
+    id: ID!
+  ): Topic
+
+  """
+  List of all topic types on the platform.
+  """
+  topicTypes: [TopicType!]!
+}

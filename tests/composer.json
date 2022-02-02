@@ -1,0 +1,74 @@
+{
+    "name": "goalgorilla/extension_test",
+    "description": "Test project for the Open Social distribution.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {},
+    "require-dev": {
+        "drupal/coder": "^8.3",
+        "drupal/core-dev": "~9.2.10",
+        "drupal/devel": "^4.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "~0.7.1",
+        "phpstan/phpstan": "1.4.4",
+        "mglaman/phpstan-drupal": "1.1.10",
+        "mikey179/vfsstream": "^1.6",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "extra": {
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "html/"
+            }
+        },
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "installer-paths": {
+            "html/core": [
+                "type:drupal-core"
+            ],
+            "html/modules/contrib/{$name}": [
+                "type:drupal-module",
+                "type:drupal-module-custom"
+            ],
+            "html/profiles/contrib/social": [
+                "goalgorilla/open_social"
+            ],
+            "html/profiles/contrib/${name}": [
+                "type:drupal-profile"
+            ],
+            "html/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "scripts/{$name}": [
+                "goalgorilla/open_social_scripts",
+                "goalgorilla/gpi_scripts",
+                "goalgorilla/enterprise_scripts"
+            ],
+            "html/libraries/{$name}": [
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "enable-patching": true
+    }
+}
