@@ -62,11 +62,17 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         $event_enrollment = $storage->load($data['event_enrollment']);
 
         $mail = $event_enrollment->get('field_email')->getString();
+        if (!$event_enrollment->get('field_account')->isEmpty()) {
+          /** @var \Drupal\user\UserInterface $user */
+          $user = \Drupal::entityTypeManager()->getStorage('user')
+            ->load($event_enrollment->get('field_account')->getString());
+          $mail = $user->getEmail();
+        }
         $mail_encoded = str_replace(['+', '/', '='], [
           '-',
           '_',
           '',
-        ], base64_encode($mail));
+        ], base64_encode((string) $mail));
 
         $destination = Url::fromRoute('entity.node.canonical', ['node' => $event->id()])->toString();
 
