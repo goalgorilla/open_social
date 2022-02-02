@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class SocialCommentUploadConfigOverride.
@@ -16,6 +17,7 @@ use Drupal\Core\Config\StorageInterface;
  */
 class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterface {
 
+  use StringTranslationTrait;
   /**
    * The config factory.
    *
@@ -58,7 +60,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
             'weight' => 20,
             'format_type' => 'details',
             'format_settings' => [
-              'label' => t('Add attachment'),
+              'label' => $this->t('Add attachment'),
               'required_fields' => TRUE,
               'id' => '',
               'classes' => 'comment-attachments',
