@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
@@ -144,10 +145,13 @@ class MagicLoginController extends ControllerBase {
     // registered through social login possibilities.
     if (NULL === $user->getPassword()) {
       $message_set_password = $this->t('You need to set your password in order to log in.');
-      if ($this->dataPolicyConsensus() === FALSE) {
+      if ($this->dataPolicyConsensus()) {
         // Set a different text when the user still needs to comply to
         // the data policy.
-        $message_set_password = $this->t('Before you can log in and set your password, you need to agree to the data policy.');
+        $link = Link::createFromRoute($this->t('here'), 'data_policy.data_policy.agreement');
+        $message_set_password = $this->t('We published a new version of the data policy. You can review the data policy @url.', [
+          '@url' => $link->toString(),
+        ]);
       }
       $this->messenger()->addStatus($message_set_password);
       $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
@@ -194,7 +198,7 @@ class MagicLoginController extends ControllerBase {
       return $data_policy_manager->needConsent();
     }
 
-    return TRUE;
+    return FALSE;
   }
 
 }
