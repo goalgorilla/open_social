@@ -11446,8 +11446,13 @@ parameters:
 
 		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
+		  message: "#^Instanceof between string and Drupal\\\\Core\\\\GeneratedUrl will always evaluate to false\\.$#"
+		  count: 2
+		  path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
 		-
 			message: "#^Function _social_group_invite_action_form_submit\\(\\) has no return type specified\\.$#"
