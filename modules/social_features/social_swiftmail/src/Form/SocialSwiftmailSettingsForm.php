@@ -229,9 +229,6 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @return null
-   *   Nothing to return.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $start = $form_state->getValue('timeslot_start');
