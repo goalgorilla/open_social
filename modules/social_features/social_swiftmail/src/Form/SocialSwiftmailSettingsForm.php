@@ -230,6 +230,17 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    $start = $form_state->getValue('timeslot_start');
+      $end = $form_state->getValue('timeslot_end');
+      if ($end <= $start) {
+        $form_state->setErrorByName('timeslot_end', t('Please specify a valid time slot'));
+      }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
