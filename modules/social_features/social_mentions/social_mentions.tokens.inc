@@ -9,6 +9,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\mentions\Entity\Mentions;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
 
@@ -80,83 +81,85 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
+    if ($message instanceof Message) {
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
 
-        case 'mentioned_user':
+          case 'mentioned_user':
 
-          if ($name === 'mentioned_user') {
+            if ($name === 'mentioned_user') {
+              if (!$message->get('field_message_related_object')->isEmpty()) {
+                $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
+                $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+                $mention = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
+
+                if ($mention->getEntityTypeId() == 'mentions') {
+                  $loadUserId = User::load($mention->getMentionedUserID());
+                  $user = $loadUserId->getDisplayName();
+
+                  $replacements[$original] = $user;
+                }
+              }
+            }
+
+            break;
+
+          case 'commented_entity_link_html':
+
             if (!$message->get('field_message_related_object')->isEmpty()) {
               $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
               $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
+              /** @var \Drupal\mentions\Entity\Mentions $mention */
               $mention = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
 
-              if ($mention->getEntityTypeId() == 'mentions') {
-                $loadUserId = User::load($mention->getMentionedUserID());
-                $user = $loadUserId->getDisplayName();
-
-                $replacements[$original] = $user;
+              if ($mention instanceof Mentions && $mentioned_entity = $mention->getMentionedEntity()) {
+                if ($mentioned_entity->getEntityTypeId() === 'comment') {
+                  $entity = $mentioned_entity->getCommentedEntity();
+                }
+                else {
+                  $entity = $mentioned_entity;
+                }
               }
             }
-          }
 
-          break;
+            if (isset($entity)) {
+              switch ($entity->getEntityTypeId()) {
+                case 'node':
+                  // Then get the bundle name.
+                  $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
+                    ->getStorage('node_type')
+                    ->load($entity->bundle())
+                    ->label());
+                  break;
 
-        case 'commented_entity_link_html':
+                case 'post':
+                case 'photo':
+                case 'comment':
+                  $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
+                  break;
 
-          if (!$message->get('field_message_related_object')->isEmpty()) {
-            $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
-            $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
-            /** @var \Drupal\mentions\Entity\Mentions $mention */
-            $mention = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
-              ->load($target_id);
+              }
 
-            if ($mention instanceof Mentions && $mentioned_entity = $mention->getMentionedEntity()) {
-              if ($mentioned_entity->getEntityTypeId() === 'comment') {
-                $entity = $mentioned_entity->getCommentedEntity();
+              $url_options = ['absolute' => TRUE];
+              $link = $entity->toUrl('canonical', $url_options)->toString();
+
+              // We should only use the label of entities who have a label.
+              if ($link_label = $entity->label()) {
+                $entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
               }
               else {
-                $entity = $mentioned_entity;
+                $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
               }
-            }
-          }
 
-          if (isset($entity)) {
-            switch ($entity->getEntityTypeId()) {
-              case 'node':
-                // Then get the bundle name.
-                $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
-                  ->getStorage('node_type')
-                  ->load($entity->bundle())
-                  ->label());
-                break;
-
-              case 'post':
-              case 'photo':
-              case 'comment':
-                $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
-                break;
-
+              $replacements[$original] = Markup::create($entity_link_html);
             }
 
-            $url_options = ['absolute' => TRUE];
-            $link = $entity->toUrl('canonical', $url_options)->toString();
-
-            // We should only use the label of entities who have a label.
-            if ($link_label = $entity->label()) {
-              $entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
-            }
-            else {
-              $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
-            }
-
-            $replacements[$original] = Markup::create($entity_link_html);
-          }
-
-          break;
+            break;
+        }
       }
     }
   }

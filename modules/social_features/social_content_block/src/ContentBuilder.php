@@ -10,11 +10,9 @@ use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -24,74 +22,41 @@ use Drupal\Core\Url;
  *
  * @package Drupal\social_content_block
  */
-class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterface {
+class ContentBuilder implements ContentBuilderInterface {
 
   use StringTranslationTrait;
 
   /**
    * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
-
-  /**
-   * The module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current active database's master connection.
-   *
-   * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected Connection $connection;
 
   /**
    * The content block manager.
-   *
-   * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $contentBlockManager;
+  protected ContentBlockManagerInterface $contentBlockManager;
 
   /**
    * The entity repository.
-   *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
    */
-  protected $entityRepository;
+  protected EntityRepositoryInterface $entityRepository;
 
   /**
    * The time service.
-   *
-   * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $time;
+  protected TimeInterface $time;
 
   /**
-   * ContentBuilder constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Database\Connection $connection
-   *   The current active database's master connection.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler to invoke the alter hook with.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
-   *   The string translation.
-   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
-   *   The content block manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
+   * {@inheritdoc}
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
-    ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
     ContentBlockManagerInterface $content_block_manager,
     EntityRepositoryInterface $entity_repository,
@@ -99,7 +64,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
-    $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
     $this->entityRepository = $entity_repository;
@@ -114,19 +78,9 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   }
 
   /**
-   * Function to get all the entities based on the filters.
-   *
-   * @param string|int $block_id
-   *   The block id where we get the settings from.
-   *
-   * @return array
-   *   Returns the entities found.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * {@inheritdoc}
    */
-  public function getEntities($block_id) {
+  public function getEntities($block_id): array {
     /** @var \Drupal\block_content\BlockContentInterface $block_content */
     $block_content = $this->entityTypeManager->getStorage('block_content')
       ->load($block_id);
@@ -175,6 +129,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
     $table = $entity_type->getDataTable();
     if (!empty($table) && is_string($table)) {
       $query = $this->connection->select($table, 'base_table')
+        ->addTag('social_content_block')
+        ->addMetaData('block_content', $block_content)
         ->fields('base_table', [$entity_type->getKey('id')]);
 
       if (isset($definition['bundle'])) {
@@ -190,9 +146,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         $plugin->query($query, $fields);
       }
 
-      // Allow other modules to change the query to add additions.
-      $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
-
       // Apply our sorting logic.
       $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
 
@@ -200,7 +153,8 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
       $query->range(0, $block_content->field_item_amount->value);
 
       // Execute the query to get the results.
-      $entities = $query->execute()->fetchAllKeyed(0, 0);
+      $result = $query->execute();
+      $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
 
       if ($entities) {
         // Load all the topics so we can give them back.
@@ -236,9 +190,6 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
    *
    * @param \Drupal\block_content\BlockContentInterface $block_content
    *   The block content where we get the settings from.
-   *
-   * @return array
-   *   The read more link render array.
    */
   protected function getLink(BlockContentInterface $block_content) : array {
     $field = $block_content->field_link;
@@ -257,8 +208,12 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   /**
    * {@inheritdoc}
    */
-  public function build($entity_id, $entity_type_id, $entity_bundle) : array {
-    if ($entity_type_id !== 'block_content' || $entity_bundle !== 'custom_content_list') {
+  public function build($entity_id, string $entity_type_id, string $entity_bundle): array {
+    if (
+      $entity_id === NULL ||
+      $entity_type_id !== 'block_content' ||
+      $entity_bundle !== 'custom_content_list'
+    ) {
       return [];
     }
 
@@ -427,9 +382,9 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
   }
 
   /**
-   * Update the sorting field after a plugin choice change.
+   * {@inheritdoc}
    */
-  public function updateFormSortingOptions($form, FormStateInterface $form_state) {
+  public function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
     $parents = ['field_sorting'];
 
     if ($form_state->has('layout_builder__component')) {
@@ -518,6 +473,19 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         }
 
         $sorting_field = $query->addExpression("COUNT($comment_alias.cid)", 'comment_count');
+        break;
+
+      case 'last_commented':
+        if ($is_group) {
+          $post_alias = $query->leftJoin('post__field_recipient_group', 'pfrg', "$base_field = %alias.field_recipient_group_target_id");
+          $group_alias = $query->leftJoin('group_content_field_data', 'gfd', "$base_field = %alias.gid AND %alias.type LIKE '%-group_node-%'");
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$post_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'post' OR $group_alias.entity_id = %alias.entity_id AND %alias.entity_type = 'node'");
+        }
+        else {
+          $comment_alias = $query->leftJoin('comment_field_data', 'cfd', "$base_field = %alias.entity_id AND %alias.entity_type = :entity_type", $arguments);
+        }
+
+        $sorting_field = $query->addExpression("MAX($comment_alias.created)", 'comment_created');
         break;
 
       // Creates a join to select the number of likes for a given entity in a

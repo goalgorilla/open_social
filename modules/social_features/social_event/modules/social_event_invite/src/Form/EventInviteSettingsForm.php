@@ -80,6 +80,13 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#default_value' => $social_event_config->get('email_verification'),
     ];
 
+    $form['invite_by_users'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Event managers are able to allow users send invites'),
+      '#description' => t('If enabled, event managers can allow users to send invitations to event.'),
+      '#default_value' => $social_event_config->get('invite_by_users'),
+    ];
+
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#button_type' => 'primary',
@@ -107,6 +114,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
     $config->set('invite_helper', $form_state->getValue('invite_helper'));
     $config->set('email_verification', $form_state->getValue('email_verification'));
+    $config->set('invite_by_users', $form_state->getValue('invite_by_users'));
     $config->save();
   }
 

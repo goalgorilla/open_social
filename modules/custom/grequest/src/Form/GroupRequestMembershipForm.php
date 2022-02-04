@@ -68,10 +68,10 @@ class GroupRequestMembershipForm extends ConfirmFormBase {
     ]);
     $result = $group_content->save();
     if ($result) {
-      $this->messenger()->addMessage($this->t("Your request is waiting for Group Administrator's approval"));
+      $this->messenger()->addStatus($this->t("Your request is waiting for Group Administrator's approval"));
     }
     else {
-      $this->messenger()->addMessage($this->t("Error creating request"), self::TYPE_ERROR);
+      $this->messenger()->addError($this->t('Error creating request'));
     }
   }
 

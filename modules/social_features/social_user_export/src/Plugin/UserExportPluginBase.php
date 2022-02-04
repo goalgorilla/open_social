@@ -156,7 +156,7 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
     }
 
     try {
-      $value = $user_profile->get($field_name)->value;
+      $value = $user_profile->get($field_name)->value ?? '';
     }
     catch (\Exception $e) {
       $value = '';
