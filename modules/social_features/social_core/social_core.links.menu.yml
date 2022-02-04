@@ -54,25 +54,25 @@ social_core.dashboard.menu_management.footer_menu:
   description: 'Change or add links to the Footer menu.'
   url: 'internal:/admin/structure/menu/manage/footer'
 
-social_core.people_index:
+social_core.dashboard.people:
   title: People
-  route_name: social_core.people_index
+  route_name: social_core.dashboard.people
   parent: social_core.dashboard
   position: left
   weight: -18
-social_core.people_index.account_settings:
+social_core.dashboard.people.account_settings:
   title: 'Account settings'
-  parent: social_core.people_index
+  parent: social_core.dashboard.people
   description: 'Who can register on your platform and adjust the contents of automatic emails sent by your platform.'
   route_name: entity.user.admin_form
-social_core.people_index.people_overview:
+social_core.dashboard.people.people_overview:
   title: 'People overview'
-  parent: social_core.people_index
+  parent: social_core.dashboard.people
   description: 'Administration of all the people registered on the site.'
   route_name: view.user_admin_people.page_1
-social_core.people_index.add_new_user:
+social_core.dashboard.people.add_new_user:
   title: 'Add new user'
-  parent: social_core.people_index
+  parent: social_core.dashboard.people
   description: 'Add new user.'
   route_name: user.admin_create
 
