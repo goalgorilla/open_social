@@ -61,7 +61,7 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
 
     // Count the download.
     $ip = Drupal::request()->getClientIp();
-    $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : t('Direct download');
+    $referrer = $_SERVER['HTTP_REFERER'] ?? t('Direct download');
     // Get the entity type and entity id of file parent.
     $file_usage_data = \Drupal::database()->select('file_usage', 'fu')
       ->fields('fu', ['id', 'type'])
