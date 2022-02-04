@@ -76,34 +76,34 @@ social_core.dashboard.people.add_new_user:
   description: 'Add new user.'
   route_name: user.admin_create
 
-social_core.configuration_index:
+social_core.dashboard.configuration:
   title: Configuration
-  route_name: social_core.configuration_index
+  route_name: social_core.dashboard.configuration
   parent: social_core.dashboard
   position: right
   weight: -20
-social_core.configuration_index.basic_site_settings:
+social_core.dashboard.configuration.basic_site_settings:
   title: 'Basic Site Settings'
-  parent: social_core.configuration_index
+  parent: social_core.dashboard.configuration
   description: 'Change the name and email address of your site.'
   route_name: system.site_information_settings
-social_core.configuration_index.taxonomy_settings:
+social_core.dashboard.configuration.taxonomy_settings:
   title: 'Taxonomy settings'
-  parent: social_core.configuration_index
+  parent: social_core.dashboard.configuration
   description: 'Topic types, Event types, Profile tags, Organization tags, Expertise and Interests can be added, removed or changed here.'
   url: 'internal:/admin/structure/taxonomy'
-social_core.configuration_index.regional_settings:
+social_core.dashboard.configuration.regional_settings:
   title: 'Regional Settings'
-  parent: social_core.configuration_index
+  parent: social_core.dashboard.configuration
   description: 'Configure the locale and timezone settings.'
   route_name: system.regional_settings
-social_core.configuration_index.date_and_time_formats:
+social_core.dashboard.configuration.date_and_time_formats:
   title: 'Date and time formats'
-  parent: social_core.configuration_index
+  parent: social_core.dashboard.configuration
   description: 'Configure how dates and times are displayed.'
   route_name: entity.date_format.collection
-social_core.configuration_index.public_visibility_settings:
+social_core.dashboard.configuration.public_visibility_settings:
   title: 'Public visibility settings'
-  parent: social_core.configuration_index
+  parent: social_core.dashboard.configuration
   route_name: entity_access_by_field.settings
 
