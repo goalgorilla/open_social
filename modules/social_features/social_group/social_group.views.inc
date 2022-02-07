@@ -43,14 +43,4 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'social_group_membership_count',
     ],
   ];
-
-  // Filter groups based on access.
-  $data['groups_field_data']['group_access'] = [
-    'title' => t('Filter groups on access'),
-    'filter' => [
-      'title' => t('Filter groups on access'),
-      'help' => t('Filter groups on access'),
-      'id' => 'group_access',
-    ],
-  ];
 }

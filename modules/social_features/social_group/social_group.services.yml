@@ -51,8 +51,3 @@ services:
     arguments: []
     tags:
       - { name: cache.context }
-  social_group.config_override:
-    class: Drupal\social_group\SocialGroupConfigOverride
-    arguments: [ '@config.factory' ]
-    tags:
-      - { name: config.factory.override, priority: 10 }
