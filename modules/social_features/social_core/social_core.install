@@ -36,7 +36,7 @@ function social_core_requirements($phase) {
     case 'runtime':
       if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
         $requirements['social_file_private_module_check'] = [
-          'title' => 'Social Private Files',
+          'title' => t('Social Private Files'),
           'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
           'severity' => REQUIREMENT_WARNING,
           'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
@@ -1033,7 +1033,7 @@ function social_core_update_8806(&$sandbox) {
         'field_name' => 'field_basic_link',
         'entity_type' => 'block_content',
         'bundle' => 'basic',
-        'label' => 'Read more link',
+        'label' => t('Read more link'),
         'description' => '',
         'required' => FALSE,
         'translatable' => TRUE,
@@ -1050,7 +1050,7 @@ function social_core_update_8806(&$sandbox) {
         'field_name' => 'field_text_block',
         'entity_type' => 'block_content',
         'bundle' => 'basic',
-        'label' => 'Text block',
+        'label' => t('Text block'),
         'description' => '',
         'required' => FALSE,
         'translatable' => TRUE,
@@ -1451,7 +1451,7 @@ function social_core_update_10300() {
 function social_core_update_11001(): void {
   Role::create([
     'id' => 'verified',
-    'label' => 'Verified User',
+    'label' => t('Verified User'),
     'weight' => 5,
     'is_admin' => NULL,
     'permissions' => [],
