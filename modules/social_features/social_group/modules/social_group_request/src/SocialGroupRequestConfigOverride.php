@@ -13,6 +13,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * Social Group request configuration override.
  */
 class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface {
+
   use StringTranslationTrait;
 
   /**
@@ -316,7 +317,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Message',
+                  'label' => $this->t('Message'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -450,7 +451,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Parent group',
+                  'label' => $this->t('Parent group'),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -516,7 +517,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'ID',
+                  'label' => $this->t('ID'),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => FALSE,

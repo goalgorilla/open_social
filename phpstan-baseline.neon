@@ -1616,51 +1616,6 @@ parameters:
 			path: modules/custom/activity_viewer/src/Plugin/views/row/ActivityRow.php
 
 		-
-			message: "#^Function alternative_frontpage_install\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/alternative_frontpage.install
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php
-
-		-
-			message: "#^Method Drupal\\\\alternative_frontpage\\\\EventSubscriber\\\\RedirectHomepageSubscriber\\:\\:checkForHomepageRedirect\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php
-
-		-
-			message: "#^Property Drupal\\\\alternative_frontpage\\\\EventSubscriber\\\\RedirectHomepageSubscriber\\:\\:\\$alternativeFrontpageSettings \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ImmutableConfig\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php
-
-		-
-			message: "#^Property Drupal\\\\alternative_frontpage\\\\EventSubscriber\\\\RedirectHomepageSubscriber\\:\\:\\$siteSettings \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ImmutableConfig\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and Drupal\\\\Core\\\\Config\\\\ImmutableConfig will always evaluate to false\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/EventSubscriber/RedirectHomepageSubscriber.php
-
-		-
-			message: "#^Method Drupal\\\\alternative_frontpage\\\\Form\\\\AlternativeFrontpageSettings\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageSettings.php
-
-		-
-			message: "#^Method Drupal\\\\alternative_frontpage\\\\Form\\\\AlternativeFrontpageSettings\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageSettings.php
-
-		-
-			message: "#^Method Drupal\\\\alternative_frontpage\\\\Form\\\\AlternativeFrontpageSettings\\:\\:validateForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageSettings.php
-
-		-
 			message: "#^Function download_count_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/download_count/download_count.install
@@ -3854,11 +3809,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/social_magic_login/social_magic_login.module
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\data_policy\\\\DataPolicyConsentManager\\:\\:hasGivenConsent\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
 
 		-
 			message: "#^Method Drupal\\\\social_magic_login\\\\Controller\\\\MagicLoginController\\:\\:create\\(\\) has no return type specified\\.$#"
@@ -11491,8 +11441,13 @@ parameters:
 
 		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
+		  message: "#^Instanceof between string and Drupal\\\\Core\\\\GeneratedUrl will always evaluate to false\\.$#"
+		  count: 2
+		  path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
 		-
 			message: "#^Function _social_group_invite_action_form_submit\\(\\) has no return type specified\\.$#"
@@ -16955,11 +16910,6 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php
 
 		-
-			message: "#^Cannot call method get\\(\\) on Drupal\\\\profile\\\\Entity\\\\ProfileInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyHelper.php
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.install
@@ -19110,21 +19060,6 @@ parameters:
 			path: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getEmail\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getUsername\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:isActive\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
-
-		-
 			message: "#^Class Drupal\\\\social_user\\\\Form\\\\SocialUserPasswordForm extends @internal class Drupal\\\\user\\\\Form\\\\UserPasswordForm\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
@@ -19136,11 +19071,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserPasswordForm\\:\\:validateForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$account of function _user_mail_notify expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
 
