@@ -2161,6 +2161,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
       // and remove them from showing in the view.
       $ids = array_diff(array_keys($hidden_groups), $my_groups);
       if ($ids) {
+        /** @var \Drupal\views\Plugin\views\query\Sql $query */
         $query->addWhere('group_membership', 'groups_field_data.id', $ids, 'NOT IN');
       }
     }
