@@ -12,7 +12,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -47,7 +46,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\views\Views;
 use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
@@ -110,7 +108,7 @@ function social_group_group_type_permission_check() {
   // group type, we need to have a visibility in order to update group content.
   // please see hook_social_group_default_visibility_alter.
   if (\Drupal::service('social_group.helper_service')
-      ->getDefaultGroupVisibility($group->getGroupType()->id()) === NULL) {
+    ->getDefaultGroupVisibility($group->getGroupType()->id()) === NULL) {
     return FALSE;
   }
 
@@ -263,9 +261,9 @@ function social_group_preprocess_group(array &$variables) {
 
   // Prevent access to mute group notifications if a user is not a group member.
   if (!in_array($variables['view_mode'], [
-      'statistic',
-      'hero',
-    ]) || !$group->getMember($account)) {
+    'statistic',
+    'hero',
+  ]) || !$group->getMember($account)) {
     unset($variables['content']['flag_mute_group_notifications']);
   }
   // Set joined to true for teaser when current logged in
@@ -826,7 +824,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   if (in_array($form_id, $membership_forms) && Drupal::currentUser()
-      ->id() != 1) {
+    ->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
@@ -1072,7 +1070,7 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
     $group instanceof GroupInterface &&
     !empty($form['group_type']) &&
     (\Drupal::service('social_group.helper_service')
-        ->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+      ->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
   ) {
     $default_type = $form['group_type']['widget']['#default_value'];
     $new_type = $form_state->getValue('group_type')[0]['value'];
@@ -1223,9 +1221,9 @@ function _social_group_grant_admin_role($uid, $gid) {
 function social_group_group_content_insert(GroupContentInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() === 'user') {
     if ($group_content->bundle() === $group_content->getGroup()
-        ->bundle() . '-group_membership') {
+      ->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()
-        ->id(), $group_content->getGroup()->id());
+      ->id(), $group_content->getGroup()->id());
     }
   }
   // When moving a node from 1 group to the other as SM
@@ -1796,7 +1794,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
   $user = Drupal::currentUser();
   // Check if there is a group set and if its an closed group.
   if ($group && $group->getGroupType()
-      ->id() == 'closed_group' && $account->id() != 1) {
+    ->id() == 'closed_group' && $account->id() != 1) {
     if ($account->hasPermission('manage all groups')) {
       return AccessResult::neutral();
     }
@@ -2146,7 +2144,6 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     return;
   }
   $account = \Drupal::currentUser()->getAccount();
-
   if ($account->isAuthenticated()) {
     // Get all groups for LU.
     /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $group_helper */
@@ -2168,8 +2165,6 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
       }
     }
   }
-
-
 }
 
 /**
@@ -2202,13 +2197,13 @@ function social_group_social_user_account_header_create_links($context) {
 
   return [
     'add_group' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('Create New Group'),
-        ],
-        '#title' => new TranslatableMarkup('New Group'),
-        '#weight' => 500,
-      ] + $route_add_group->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Group'),
+      ],
+      '#title' => new TranslatableMarkup('New Group'),
+      '#weight' => 500,
+    ] + $route_add_group->toRenderArray(),
   ];
 }
 
@@ -2220,7 +2215,7 @@ function social_group_social_user_account_header_create_links($context) {
  */
 function social_group_social_user_account_header_items(array $context) {
   if (\Drupal::config('social_user.navigation.settings')
-      ->get('display_my_groups_icon') !== TRUE) {
+    ->get('display_my_groups_icon') !== TRUE) {
     return [];
   }
 
@@ -2258,15 +2253,15 @@ function social_group_social_user_account_header_account_links(array $context) {
 
   return [
     'my_groups' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('View my groups'),
-        ],
-        '#title' => new TranslatableMarkup('My groups'),
-        '#weight' => 800,
-      ] + Url::fromRoute('view.groups.page_user_groups', [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my groups'),
+      ],
+      '#title' => new TranslatableMarkup('My groups'),
+      '#weight' => 800,
+    ] + Url::fromRoute('view.groups.page_user_groups', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
   ];
 }
 
