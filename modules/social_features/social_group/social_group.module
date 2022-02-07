@@ -1223,7 +1223,7 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
     if ($group_content->bundle() === $group_content->getGroup()
       ->bundle() . '-group_membership') {
       _social_group_grant_admin_role($group_content->getEntity()
-      ->id(), $group_content->getGroup()->id());
+        ->id(), $group_content->getGroup()->id());
     }
   }
   // When moving a node from 1 group to the other as SM
@@ -2192,7 +2192,7 @@ function social_group_social_user_account_header_create_links($context) {
     /** @var \Drupal\Core\Session\AccountInterface $user */
     $account = $context['user'];
     $route_add_group = \Drupal::service('social_group.helper_service')
-        ->getGroupsToAddUrl($account) ?? $route_add_group;
+      ->getGroupsToAddUrl($account) ?? $route_add_group;
   }
 
   return [
