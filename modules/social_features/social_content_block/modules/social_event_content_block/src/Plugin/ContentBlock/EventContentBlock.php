@@ -5,6 +5,7 @@ namespace Drupal\social_event_content_block\Plugin\ContentBlock;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\social_content_block\ContentBlockBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,6 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class EventContentBlock extends ContentBlockBase implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The module handler.
@@ -173,10 +176,10 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function supportedSortOptions() : array {
+  public function supportedSortOptions(): array {
     return parent::supportedSortOptions() + [
       'event_date' => [
-        'label' => 'Event date',
+        'label' => $this->t('Event date'),
         'limit' => FALSE,
       ],
     ];

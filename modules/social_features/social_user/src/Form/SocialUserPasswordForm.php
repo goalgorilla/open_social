@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\user\Form\UserPasswordForm;
+use Drupal\user\UserInterface;
 
 /**
  * Class SocialUserPasswordForm.
@@ -68,8 +69,14 @@ class SocialUserPasswordForm extends UserPasswordForm {
       // No success, try to load by name.
       $users = $this->userStorage->loadByProperties(['name' => $name]);
     }
+
+    /** @var \Drupal\user\UserInterface $account */
     $account = reset($users);
-    if ($account && $account->id() && $account->isActive()) {
+    if (
+      $account instanceof UserInterface &&
+      $account->id() &&
+      $account->isActive()
+    ) {
       $langcode = $this->languageManager->getCurrentLanguage()->getId();
 
       // Mail one time login URL and instructions using current language.
@@ -77,7 +84,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
       if (!empty($mail)) {
         $this->logger('user')
           ->notice('Password reset instructions mailed to %name at %email.', [
-            '%name' => $account->getUsername(),
+            '%name' => $account->getAccountName(),
             '%email' => $account->getEmail(),
           ]);
       }
