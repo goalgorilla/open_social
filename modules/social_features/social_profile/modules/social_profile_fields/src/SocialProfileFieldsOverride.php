@@ -5,6 +5,7 @@ namespace Drupal\social_profile_fields;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class SocialProfileFieldsConfigOverride.
@@ -14,6 +15,8 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_profile_fields
  */
 class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Returns config overrides.
@@ -38,7 +41,8 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       ];
 
       // If there is a profile names and image field_group we move the field.
-      $third_party = $config_factory->getEditable($config_name)->get('third_party_settings');
+      $third_party = $config_factory->getEditable($config_name)
+        ->get('third_party_settings');
       if (isset($third_party['field_group']['group_profile_names_image'])) {
         $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children']['field_profile_nick_name'] = 'field_profile_nick_name';
       }
@@ -62,7 +66,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
           ],
           'field_settings' => [
             'field_profile_nick_name' => [
-              'label' => 'Nickname',
+              'label' => $this->t('Nickname'),
               'datasource_id' => 'entity:profile',
               'property_path' => 'field_profile_nick_name',
               'type' => 'text',
@@ -84,7 +88,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
           $processor_settings = [];
         }
         $enabled_processors = array_intersect(
-          // We want to configure the following processors if they're enabled.
+        // We want to configure the following processors if they're enabled.
           ['ignorecase', 'tokenizer', 'transliteration'],
           array_keys($processor_settings)
         );
