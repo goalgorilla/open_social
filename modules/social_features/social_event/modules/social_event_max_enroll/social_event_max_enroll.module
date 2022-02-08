@@ -17,7 +17,12 @@ use Drupal\views\ViewExecutable;
  * Alter "Event enrollments" views. Add number of spots left.
  */
 function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->current_display === 'event_enrollments' && $view->id() === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
+  if (
+    $view->current_display === 'event_enrollments' &&
+    $view->id() === 'event_enrollments' &&
+    isset($output['#rows']) &&
+    !empty($view->args[0])
+  ) {
     $nid = $view->args[0];
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
@@ -71,7 +76,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           ];
         }
 
-        // Add an details element to status.
+        // Add a details element to status.
         // Also hide checkbox if feature is disabled globally.
         $form['field_event_max_enroll_wrapper'] = [
           '#type' => 'details',
