@@ -563,7 +563,7 @@ function social_group_invite_preprocess_group(&$variables) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter() for "social_group_form".
  */
 function social_group_invite_form_social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $invite_config = \Drupal::config('social_group.settings')
@@ -589,10 +589,29 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     '#default_value' => $invite_config['invite_message'] ?? $default_message,
     '#required' => TRUE,
   ];
+
+  // Allow SM to override invite message for resending invites.
+  $form['group_invite']['override_resend'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Override invite message when resend invites'),
+    '#description' => t('If checked you will be prompted to define a message users will receive on resending invites.'),
+    '#default_value' => $invite_config['override_resend'] ?? FALSE,
+  ];
+  $form['group_invite']['invite_resend_message'] = [
+    '#type' => 'textarea',
+    '#placeholder' => t('Type a message on resending invites'),
+    '#default_value' => $invite_config['invite_resend_message'] ?? '',
+    '#states' => [
+      'visible' => [
+        ':input[name="override_resend"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
   $form['group_invite']['email_verification'] = [
     '#type' => 'checkbox',
     '#title' => t('Allow invited user to skip email verification'),
-    '#default_value' => !empty($invite_config['email_verification']) ?? '',
+    '#default_value' => !empty($invite_config['email_verification']) ?? FALSE,
   ];
   $form['group_invite']['invite_by_members'] = [
     '#type' => 'checkbox',
@@ -611,6 +630,11 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
   \Drupal::configFactory()->getEditable('social_group.settings')
     ->set('group_invite.invite_subject', $form_state->getValue('invite_subject'))
     ->set('group_invite.invite_message', $form_state->getValue('invite_message'))
+    ->set('group_invite.override_resend', $form_state->getValue('override_resend'))
+    ->set('group_invite.invite_resend_message', (bool) $form_state->getValue('override_resend')
+      ? $form_state->getValue('invite_resend_message')
+      : ''
+    )
     ->set('group_invite.email_verification', $form_state->getValue('email_verification'))
     ->set('group_invite.invite_by_members', $form_state->getValue('invite_by_members'))
     ->save();
