@@ -9,6 +9,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileUrlGenerator;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -40,6 +42,13 @@ class SocialAlbumController extends ControllerBase {
   protected $gcContentEnabler;
 
   /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected FileUrlGeneratorInterface $fileUrlGenerator;
+
+  /**
    * SocialAlbumController constructor.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
@@ -56,6 +65,8 @@ class SocialAlbumController extends ControllerBase {
    *   The configuration factory service.
    * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_enabler
    *   The group content manager.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    */
   public function __construct(
     TranslationInterface $translation,
@@ -64,7 +75,8 @@ class SocialAlbumController extends ControllerBase {
     EntityFormBuilderInterface $entity_form_builder,
     AccountInterface $current_user,
     ConfigFactoryInterface $config_factory,
-    GroupContentEnablerManagerInterface $gc_enabler
+    GroupContentEnablerManagerInterface $gc_enabler,
+    FileUrlGenerator $file_url_generator
   ) {
     $this->setStringTranslation($translation);
     $this->database = $database;
@@ -73,6 +85,7 @@ class SocialAlbumController extends ControllerBase {
     $this->currentUser = $current_user;
     $this->configFactory = $config_factory;
     $this->gcContentEnabler = $gc_enabler;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -86,7 +99,8 @@ class SocialAlbumController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('plugin.manager.group_content_enabler')
+      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -144,7 +158,7 @@ class SocialAlbumController extends ControllerBase {
       $file = $storage->load($file_id);
 
       $items[$found][] = [
-        'url' => Url::fromUri(file_create_url($file->getFileUri()))->setAbsolute()->toString(),
+        'url' => Url::fromUri($this->fileUrlGenerator->generateString($file->getFileUri()))->setAbsolute()->toString(),
         'pid' => $post_id,
       ];
     }

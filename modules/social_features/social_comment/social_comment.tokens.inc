@@ -212,7 +212,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
                   else {
                     if ($entity instanceof NodeInterface) {
-                      $commented_content_type = strtolower($entity->type->entity->label());
+                      $commented_content_type = strtolower($entity->getType());
                     }
                     else {
                       $commented_content_type = $entity->bundle();
@@ -317,7 +317,7 @@ function _social_comment_get_summary($text) {
   $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
   $max_length = 280;
 
-  if (mb_strlen($summary) > $max_length) {
+  if (is_string($summary) && (mb_strlen($summary) > $max_length)) {
     $summary = FieldPluginBase::trimText([
       'max_length' => $max_length,
       'word_boundary' => TRUE,

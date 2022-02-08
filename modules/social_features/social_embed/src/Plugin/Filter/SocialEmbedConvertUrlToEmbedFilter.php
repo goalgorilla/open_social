@@ -123,7 +123,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       // optional for all protocols.
       // @see \Drupal\Component\Utility\UrlHelper::stripDangerousProtocols()
       $protocols = \Drupal::getContainer()->getParameter('filter_protocols');
-      $protocols = implode(':(?://)?|', $protocols) . ':(?://)?';
+      $protocols = is_array($protocols) ? implode(':(?://)?|', $protocols) . ':(?://)?' : $protocols;
 
       $valid_url_path_characters = "[\p{L}\p{M}\p{N}!\*\';:=\+,\.\$\/%#\[\]\-_~@&]";
 

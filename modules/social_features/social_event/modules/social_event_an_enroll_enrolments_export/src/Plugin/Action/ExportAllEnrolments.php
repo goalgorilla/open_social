@@ -4,8 +4,12 @@ namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\FileUrlGenerator;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\file\FileRepository;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_enrolments_export\Plugin\Action\ExportEnrolments;
@@ -41,6 +45,27 @@ class ExportAllEnrolments extends ExportEnrolments {
   protected $socialEventAnEnrollManager;
 
   /**
+   * File repository services.
+   *
+   * @var \Drupal\file\FileRepository
+   */
+  protected FileRepository $fileRepository;
+
+  /**
+   * File system services.
+   *
+   * @var \Drupal\Core\File\FileSystem
+   */
+  protected FileSystem $fileSystem;
+
+  /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected FileUrlGeneratorInterface $fileUrlGenerator;
+
+  /**
    * Constructs a ExportAllEnrolments object.
    *
    * @param array $configuration
@@ -59,6 +84,12 @@ class ExportAllEnrolments extends ExportEnrolments {
    *   Config factory for the export plugin access.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
+   * @param \Drupal\file\FileRepository $file_repository
+   *   The file repository service.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    */
   public function __construct(
     array $configuration,
@@ -68,12 +99,24 @@ class ExportAllEnrolments extends ExportEnrolments {
     LoggerInterface $logger,
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $social_event_an_enroll_manager,
+    FileRepository $file_repository,
+    FileSystem $file_system,
+    FileUrlGenerator $file_url_generator
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $userExportPlugin, $logger, $currentUser, $configFactory);
-
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $userExportPlugin,
+      $logger,
+      $currentUser,
+      $configFactory,
+      $file_repository,
+      $file_system,
+      $file_url_generator
+    );
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
-
     $parents = [];
 
     foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {

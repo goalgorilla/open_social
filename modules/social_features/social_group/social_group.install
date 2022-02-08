@@ -637,7 +637,7 @@ function social_group_update_8801() {
  * Update helper did not update all fields correctly.
  */
 function social_group_update_8802() {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/update/social_group_update_8802.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -803,7 +803,7 @@ function social_group_update_10303() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -855,7 +855,7 @@ function social_group_update_10306() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -903,7 +903,7 @@ function social_group_update_10308() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static';
   $source = new FileStorage($config_path);
 
   foreach ($config_files as $origin_name => $update_name) {
@@ -933,7 +933,7 @@ function social_group_update_11001(): string {
  * Update 'views.view.group_manage_members' after VBO module updates.
  */
 function social_group_update_11002(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/static/views.view.group_manage_members_11002.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/views.view.group_manage_members_11002.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));

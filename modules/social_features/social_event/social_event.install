@@ -1450,7 +1450,7 @@ function social_event_update_8805(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
 
   $parts = explode('.', $name);
@@ -1520,7 +1520,7 @@ function social_event_update_8807() {
  * Update helper did not update all fields correctly.
  */
 function social_event_update_8808() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8808.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/update/social_event_update_8808.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1539,7 +1539,7 @@ function social_event_update_8808() {
  * Update helper did not update all fields correctly.
  */
 function social_event_update_8809() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8809.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/update/social_event_update_8809.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1580,8 +1580,8 @@ function social_event_update_8901() {
  */
 function social_event_update_8902() {
   $config_files = [
-    'block.block.eventrequestsnotification' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_8901.yml',
-    'block.block.eventrequestsnotification_2' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_2_8901.yml',
+    'block.block.eventrequestsnotification' => \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/block.block.eventrequestsnotification_8901.yml',
+    'block.block.eventrequestsnotification_2' => \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/block.block.eventrequestsnotification_2_8901.yml',
   ];
 
   foreach ($config_files as $key => $config_file) {
@@ -1642,7 +1642,7 @@ function social_event_update_8906() {
  * Add image file extensions to be added as attachments.
  */
 function social_event_update_8907() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/static/field.field.node.event.field_files_8907.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/field.field.node.event.field_files_8907.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1788,7 +1788,7 @@ function social_event_update_8914() {
  * Show thumbnail on File fields when attachment is an image.
  */
 function social_event_update_8915() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/static/core.entity_view_display.node.event.default_8915.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/core.entity_view_display.node.event.default_8915.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1805,7 +1805,7 @@ function social_event_update_8915() {
  * Add the 'enable event enrolment' field.
  */
 function social_event_update_8916() {
-  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -2024,7 +2024,7 @@ function social_event_update_10308() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_event_update_10309() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/static/message.template.activity_on_events_im_organizing_10309.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/message.template.activity_on_events_im_organizing_10309.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
@@ -2039,7 +2039,7 @@ function social_event_update_10309() {
  * Create a new 'All day' field for events.
  */
 function social_event_update_10310(): void {
-  $config_path = drupal_get_path('module', 'social_event') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 

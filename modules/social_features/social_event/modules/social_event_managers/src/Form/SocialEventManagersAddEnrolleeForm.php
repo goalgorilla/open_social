@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_managers\Form;
 
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -49,24 +50,32 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
+
+  /**
+   * File URL Generator service.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
 
   /**
    * Constructs a new GroupContentController.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, ConfigFactoryInterface $config_factory, Token $token) {
+  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, ConfigFactoryInterface $config_factory, Token $token, FileUrlGenerator $file_url_generator) {
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
     $this->configFactory = $config_factory;
     $this->token = $token;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -78,7 +87,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('renderer'),
       $container->get('config.factory'),
-      $container->get('token')
+      $container->get('token'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -109,7 +119,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       // Create a new enrollment for the event.
       foreach ($enroll_uid as $uid => $target_id) {
         $enrollment = EventEnrollment::create([
-          'user_id' => \Drupal::currentUser()->id(),
+          'user_id' => $this->currentUser()->id(),
           'field_event' => $event,
           'field_enrollment_status' => '1',
           'field_account' => $uid,
@@ -126,7 +136,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
         if (social_event_manager_or_organizer(NULL, TRUE)) {
           $message = $this->formatPlural($count, '@count new member is enrolled to your event.', '@count new members are enrolled to your event.');
         }
-        \Drupal::messenger()->addMessage($message, 'status');
+        $this->messenger()->addMessage($message, 'status');
       }
 
       // Redirect to management overview.
@@ -237,7 +247,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = file_create_url($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateString($file->getFileUri());
       }
     }
 

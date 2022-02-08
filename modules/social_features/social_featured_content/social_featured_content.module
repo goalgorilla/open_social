@@ -40,6 +40,6 @@ function social_featured_content_theme() {
  */
 function social_featured_content_preprocess_node(&$variables) {
   if ($variables['view_mode'] === 'featured') {
-    $variables['label'] = render($variables['label']);
+    $variables['label'] = \Drupal::service('renderer')->render($variables['label']);
   }
 }

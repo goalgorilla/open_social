@@ -4,6 +4,7 @@ namespace Drupal\download_count\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
@@ -30,14 +31,21 @@ class FieldDownloadCount extends GenericFileFormatter {
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  private $currentUser;
+  private AccountProxyInterface $currentUser;
 
   /**
    * The theme manager.
    *
    * @var \Drupal\Core\Theme\ThemeManagerInterface
    */
-  private $themeManager;
+  private ThemeManagerInterface $themeManager;
+
+  /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  private FileUrlGenerator $fileUrlGenerator;
 
   /**
    * FieldDownloadCount constructor.
@@ -60,12 +68,15 @@ class FieldDownloadCount extends GenericFileFormatter {
    *   The current user.
    * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
    *   The theme manager.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    */
-  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager) {
+  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager, FileUrlGenerator $file_url_generator) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
     $this->currentUser = $current_user;
     $this->themeManager = $theme_manager;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -81,7 +92,8 @@ class FieldDownloadCount extends GenericFileFormatter {
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('current_user'),
-      $container->get('theme.manager')
+      $container->get('theme.manager'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -109,7 +121,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         $file->download = (int) $download;
       }
 
-      $link_url = file_create_url($file->getFileUri());
+      $link_url = $this->fileUrlGenerator->generateString($file->getFileUri());
       $file_size = $file->getSize();
 
       $options = [

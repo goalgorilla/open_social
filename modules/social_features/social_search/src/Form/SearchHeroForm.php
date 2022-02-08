@@ -93,29 +93,31 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_route = $this->routeMatch->getRouteName();
-    $route_parts = explode('.', $current_route);
+    if (is_string($current_route)) {
+      $route_parts = explode('.', $current_route);
 
-    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
-    $options = ['query' => $query];
-    $parameters = [];
+      $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
+      $options = ['query' => $query];
+      $parameters = [];
 
-    if (empty($form_state->getValue('search_input'))) {
-      // Redirect to the search page with empty search values.
-      $new_route = "view.{$route_parts[1]}.page_no_value";
+      if (empty($form_state->getValue('search_input'))) {
+        // Redirect to the search page with empty search values.
+        $new_route = "view.{$route_parts[1]}.page_no_value";
+      }
+      else {
+        // Redirect to the search page with filters in the GET parameters.
+        $search_input = Xss::filter($form_state->getValue('search_input'));
+        $search_input = preg_replace('/[\/]+/', ' ', $search_input);
+        $search_input = str_replace('&amp;', '&', $search_input);
+        $parameters['keys'] = $search_input;
+
+        $new_route = "view.{$route_parts[1]}.page";
+      }
+
+      $redirect = Url::fromRoute($new_route, $parameters, $options);
+
+      $form_state->setRedirectUrl($redirect);
     }
-    else {
-      // Redirect to the search page with filters in the GET parameters.
-      $search_input = Xss::filter($form_state->getValue('search_input'));
-      $search_input = preg_replace('/[\/]+/', ' ', $search_input);
-      $search_input = str_replace('&amp;', '&', $search_input);
-      $parameters['keys'] = $search_input;
-
-      $new_route = "view.{$route_parts[1]}.page";
-    }
-
-    $redirect = Url::fromRoute($new_route, $parameters, $options);
-
-    $form_state->setRedirectUrl($redirect);
   }
 
 }

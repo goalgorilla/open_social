@@ -4,6 +4,8 @@ namespace Drupal\social_footer\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ExtensionList;
+use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -39,6 +41,20 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
   protected $storage;
 
   /**
+   * The extension service.
+   *
+   * @var \Drupal\Core\Extension\ExtensionList
+   */
+  protected ExtensionList $extensionList;
+
+  /**
+   * The file system service.
+   *
+   * @var \Drupal\Core\File\FileSystem
+   */
+  protected FileSystem $fileSystem;
+
+  /**
    * Creates a SocialFooterPoweredByBlock instance.
    *
    * @param array $configuration
@@ -51,18 +67,26 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
    *   The configuration factory.
    * @param \Drupal\file\FileStorageInterface $storage
    *   The file storage.
+   * @param \Drupal\Core\Extension\ExtensionList $extension_list
+   *   The extension service.
+   * @param \Drupal\Core\File\FileSystem $file_system
+   *   The file system service.
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
     ConfigFactoryInterface $config_factory,
-    FileStorageInterface $storage
+    FileStorageInterface $storage,
+    ExtensionList $extension_list,
+    FileSystem $file_system
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->configFactory = $config_factory;
     $this->storage = $storage;
+    $this->extensionList = $extension_list;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -74,7 +98,9 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       $plugin_id,
       $plugin_definition,
       $container->get('config.factory'),
-      $container->get('entity_type.manager')->getStorage('file')
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('extension.list.module'),
+      $container->get('file_system')
     );
   }
 
@@ -185,9 +211,8 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       ->get('default') === 'socialblue') {
       // Add default image.
       // Only when socialblue is default we continue.
-      $file_path = drupal_get_path('module', 'social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
-      $file_system = \Drupal::service('file_system');
-      $uri = $file_system->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
+      $file_path = $this->extensionList->getPath('social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
+      $uri = $this->fileSystem->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
 
       // Create a file media.
       /** @var \Drupal\file\FileInterface $file */

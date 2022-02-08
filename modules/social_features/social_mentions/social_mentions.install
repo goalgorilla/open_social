@@ -75,7 +75,7 @@ function _social_mentions_set_default_config() {
  */
 function social_mentions_update_10301() {
   // Prepare the path.
-  $path = drupal_get_path('module', 'social_mentions') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_mentions') . '/config/static/';
 
   $message_templates = [
     'message.template.create_comment_reply_mention' => $path . 'message.template.create_comment_reply_mention_10301.yml',

@@ -29,7 +29,7 @@ function social_follow_tag_update_8801() {
   ];
 
   foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_follow_tag') . '/config/install/' . $config_file . '.yml';
+    $config = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/install/' . $config_file . '.yml';
 
     if (is_file($config)) {
       $settings = Yaml::parse(file_get_contents($config));
@@ -47,7 +47,7 @@ function social_follow_tag_update_8801() {
  * Update followtag block.
  */
 function social_follow_tag_update_8802() {
-  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/optional';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/optional';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
@@ -58,7 +58,7 @@ function social_follow_tag_update_8802() {
  * Use enforced social_follow_tag module for configuration.
  */
 function social_follow_tag_update_8803() {
-  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/install';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/install';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
@@ -159,7 +159,7 @@ function social_follow_tag_update_8806() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_follow_tag_update_10301() {
-  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.update_node_following_tag_10301.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/static/message.template.update_node_following_tag_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
@@ -176,7 +176,7 @@ function social_follow_tag_update_10301() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_follow_tag_update_10302() {
-  $config_file = drupal_get_path('module', 'social_follow_tag') . '/config/static/message.template.create_node_following_tag_stream_10302.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/static/message.template.create_node_following_tag_stream_10302.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
