@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Default theme implementation for main invite_to_event_by_user theme.
+ *
+ * Available variables:
+ * - url: Url that should be copied.
+ * - link: \Drupal\Core\Link.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('social_event_invite/share-event-link') }}
+
+{% if url %}
+  {{ 'Copy URL'|t }}
+  <div class="input-group" id="event-link-share">
+    <input type="text" value="{{ url }}" class="form-control" readonly>
+    <div class="input-group-addon">
+      <span class="far fa-copy"></span>
+    </div>
+  </div>
+{% endif %}
+{{ link }}
