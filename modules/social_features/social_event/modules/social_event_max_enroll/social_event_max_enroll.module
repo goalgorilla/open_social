@@ -106,6 +106,14 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
       $node = \Drupal::routeMatch()->getParameter('node');
 
+      // If there is node ID instead of an object then load node with NID.
+      if (!$node instanceof NodeInterface && !is_null($node)) {
+        /** @var \Drupal\node\NodeStorageInterface $node_storage */
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        /** @var \Drupal\node\NodeInterface $node */
+        $node = $node_storage->load((int) $node);
+      }
+
       if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
         // Count how many spots are left.
         $left = $event_max_enroll_service->getEnrollmentsLeft($node);
