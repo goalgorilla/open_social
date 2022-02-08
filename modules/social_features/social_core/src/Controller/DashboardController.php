@@ -41,7 +41,7 @@ class DashboardController extends ControllerBase {
   /**
    * Redirect users to current active theme.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Redirect user to current active theme.
    */
   public function getActiveTheme(): RedirectResponse {
@@ -49,4 +49,5 @@ class DashboardController extends ControllerBase {
 
     return new RedirectResponse(Url::fromUserInput('/admin/appearance/settings/' . $theme)->toString(), 302);
   }
+
 }
