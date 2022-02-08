@@ -8,7 +8,7 @@ social_core.dashboard:
   route_name: social_core.dashboard
   parent: system.admin
   description: 'Administer Open Social settings.'
-  weight: 99
+  weight: -99
 
 social_core.dashboard.content_management:
   title: Content management
@@ -134,3 +134,15 @@ social_core.dashboard.data_collection_usage.user_conscent:
   url: 'internal:/admin/reports/data-policy-agreements'
   weight: -100
 
+social_core.dashboard.appearance:
+  title: Appearance
+  route_name: social_core.dashboard.appearance
+  parent: social_core.dashboard
+  position: left
+  weight: -15
+social_core.dashboard.appearance.change_colors_and_styling:
+  title: 'Change colors and styling'
+  parent: social_core.dashboard.appearance
+  description: 'Determine the look and feel of your site.'
+  route_name: social_core.dashboard.appearance.active_theme
+  weight: -100
