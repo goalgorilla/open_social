@@ -14,7 +14,7 @@ addons:
 language: php
 
 php:
-  - 7.4
+  - 8.1
 
 env:
   global:
@@ -48,7 +48,7 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 3.1.0 https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 'dev-issue/3260861-php8-support' https://github.com/goalgorilla/drupal_social.git install; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 2.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST

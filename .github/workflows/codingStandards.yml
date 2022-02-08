@@ -11,8 +11,8 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP8.1
+        run: sudo update-alternatives --set php /usr/bin/php8.1
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,8 +27,8 @@ jobs:
     name: PHPCS
     runs-on: ubuntu-latest
     steps:
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP8.1
+        run: sudo update-alternatives --set php /usr/bin/php8.1
 
       - name: Checkout code
         uses: actions/checkout@v2
