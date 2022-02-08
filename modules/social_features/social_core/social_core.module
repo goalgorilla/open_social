@@ -1121,3 +1121,23 @@ function social_core_preprocess_status_messages(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ */
+function social_core_menu_links_discovered_alter(array &$links): void {
+
+  /** @var \Drupal\block_content\Entity\BlockContent $block */
+  $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['type' => 'hero_call_to_action_block']);
+  $block = reset($block);
+
+  if ($block) {
+    $links['social_core.dashboard.appearance.active_homepage_configuration'] = [
+      'title' => new TranslatableMarkup('Customize home page'),
+      'url' => "internal:/block/{$block->id()}",
+      'description' => new TranslatableMarkup('Change the image and text on the home page.'),
+      'parent' => 'social_core.dashboard.appearance',
+      'weight' => '-90',
+    ];
+  }
+}
