@@ -247,7 +247,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = $this->fileUrlGenerator->generateString($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }
 

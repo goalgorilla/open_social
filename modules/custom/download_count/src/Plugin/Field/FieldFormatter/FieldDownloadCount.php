@@ -121,7 +121,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         $file->download = (int) $download;
       }
 
-      $link_url = $this->fileUrlGenerator->generateString($file->getFileUri());
+      $link_url = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       $file_size = $file->getSize();
 
       $options = [

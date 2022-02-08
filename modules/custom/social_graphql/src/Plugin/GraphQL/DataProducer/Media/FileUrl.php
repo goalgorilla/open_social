@@ -72,7 +72,7 @@ class FileUrl extends DataProducerPluginBase implements ContainerFactoryPluginIn
    *   The file URL.
    */
   public function resolve($uri, RefinableCacheableDependencyInterface $metadata) {
-    return $this->fileUrlGenerator->generateString($uri);
+    return $this->fileUrlGenerator->generateAbsoluteString($uri);
   }
 
 }

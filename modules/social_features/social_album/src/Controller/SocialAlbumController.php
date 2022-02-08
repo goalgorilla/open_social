@@ -158,7 +158,7 @@ class SocialAlbumController extends ControllerBase {
       $file = $storage->load($file_id);
 
       $items[$found][] = [
-        'url' => Url::fromUri($this->fileUrlGenerator->generateString($file->getFileUri()))->setAbsolute()->toString(),
+        'url' => Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()))->setAbsolute()->toString(),
         'pid' => $post_id,
       ];
     }

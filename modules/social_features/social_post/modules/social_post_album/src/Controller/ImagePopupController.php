@@ -70,7 +70,7 @@ class ImagePopupController extends ControllerBase {
       /** @var \Drupal\file\FileInterface $file */
       $file = $storage->load($file['target_id']);
 
-      $items[$found][] = Url::fromUri($this->fileUrlGenerator->generateString($file->getFileUri()))->setAbsolute()->toString();
+      $items[$found][] = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($file->getFileUri()))->setAbsolute()->toString();
     }
 
     return [

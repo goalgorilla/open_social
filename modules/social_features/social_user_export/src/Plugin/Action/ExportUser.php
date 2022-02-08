@@ -216,7 +216,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
         $path = 'private://csv';
         if ($this->fileSystem->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
           $this->fileRepository->writeData($data, $path . '/' . $name);
-          $url = Url::fromUri($this->fileUrlGenerator->generateString($path . '/' . $name));
+          $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
           $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
           $this->messenger()->addMessage($this->t('Export is complete. @link', [
