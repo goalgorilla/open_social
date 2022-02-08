@@ -107,7 +107,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
 
     // Generate options based on available plugins as a content type.
     $options = [
-      'all' => t('All'),
+      'all' => $this->t('All'),
     ];
     foreach ($this->getMultipleContentDefinitions() as $definition) {
       $options[$definition['id']] = $definition['label'];
@@ -159,7 +159,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
       '#required' => TRUE,
       '#options' => [
         'changed' => $this->t('Last updated'),
-        'created' => $this->t('Most resent'),
+        'created' => $this->t('Most recent'),
       ],
       '#default_value' => $config['sorting'],
     ];
@@ -233,7 +233,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
    * Returns list of entities as a renderable array.
    */
   protected function renderEntities(): array {
-    $entities = $entities_data = $types = [];
+    $entities = $entities_data = $types = $storages = [];
 
     // Prepare list of content types for a query to get all available entities.
     foreach ($this->getMultipleContentDefinitions() as $definition) {
@@ -252,9 +252,13 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     }
 
     // Select all entities from multiple content types.
+    /**
+     * @var string $type
+     * @var string[]|null $bundles
+     */
     foreach ($types as $type => $bundles) {
-      $entities_data = array_merge($entities_data, $this->getEntitiesByDefinitions((string) $type, $bundles));
-      ${$type . '_storage'} = $this->entityTypeManager->getStorage($type);
+      $entities_data = array_merge($entities_data, $this->getEntitiesByDefinitions($type, $bundles));
+      $storages[$type] = $this->entityTypeManager->getStorage($type);
     }
 
     // Sort the list of provided entities.
@@ -266,7 +270,9 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
         break;
       }
       $keys = explode('__', $key);
-      $entity = ${$keys[0] . '_storage'}->load($keys[1]);
+
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $storages[$keys[0]]->load($keys[1]);
 
       // Skip if user cannot view provided entity.
       if (!$entity->access('view', $this->currentUser)) {
@@ -292,7 +298,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
    * @return array
    *   List of entities for render.
    */
-  protected function getEntitiesByDefinitions(string $type, array $bundles = NULL): array {
+  protected function getEntitiesByDefinitions(string $type, ?array $bundles): array {
     $sorting = $this->getSelectedSorting();
     /** @var \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type */
     $entity_type = $this->entityTypeManager->getDefinition($type);
@@ -324,7 +330,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
       }
     }
 
-    // Sor by provided sorting field.
+    // Sort by provided sorting field.
     $query->orderBy($sorting, 'DESC');
 
     // Select only specific number of items provided by block configuration.
