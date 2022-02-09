@@ -47,13 +47,13 @@ class OwnerActivityContext extends ActivityContextBase {
    *   The group mute notifications.
    */
   public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    QueryFactory $entity_query,
+    array                      $configuration,
+                               $plugin_id,
+                               $plugin_definition,
+    QueryFactory               $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
-    ActivityFactory $activity_factory,
-    GroupMuteNotify $group_mute_notify
+    ActivityFactory            $activity_factory,
+    GroupMuteNotify            $group_mute_notify
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
@@ -146,12 +146,11 @@ class OwnerActivityContext extends ActivityContextBase {
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
-        // Skip the notification for users which have muted the group
-        // notification in which this content was posted.
-        if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
-          return $recipients;
-        }
+      // Skip the notification for users which have muted the group
+      // notification in which this content was posted.
+      if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
+        return $recipients;
+
       }
     }
 
