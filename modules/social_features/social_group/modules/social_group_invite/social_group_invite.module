@@ -10,7 +10,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Link;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Session\AccountInterface;
@@ -680,9 +679,6 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       in_array($group->bundle(), ['closed_group', 'secret_group'])
     ) {
       $url = Url::fromRoute('social_core.my_invites')->toString();
-      if ($url instanceof GeneratedUrl) {
-        $url = $url->getGeneratedUrl();
-      }
       $destination = 'destination=' . $url;
     }
     // Attach destination to accept invite. So, after sign up/sign step the
@@ -701,9 +697,6 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     ) {
       // For existing users for my_invitations_link token.
       $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
-      if ($group_invitations_link instanceof GeneratedUrl) {
-        $group_invitations_link = $group_invitations_link->getGeneratedUrl();
-      }
       $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
     }
   }
