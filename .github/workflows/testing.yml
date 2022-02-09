@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/PHP7.4
+      - name: Set default php7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
 
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
@@ -60,8 +60,8 @@ phpunit8:
   runs-on: ubuntu-latest
   steps:
 
-    - name: Set default PHP8.0
-      run: sudo update-alternatives --set php /usr/bin/PHP8.0
+    - name: Set default php8.0
+      run: sudo update-alternatives --set php /usr/bin/php8.0
 
     # We checkout the code in a separate folder since we want to use the
     # result of the merge rather than the pre-merged code.
