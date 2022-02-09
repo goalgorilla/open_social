@@ -309,6 +309,19 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
 }
 
 /**
+ * Implements hook_theme().
+ */
+function social_profile_theme(): array {
+  return [
+    'profile__profile__name' => [
+      'template' => 'profile--profile--name',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+}
+
+/**
  * Prepares variables for profile templates.
  *
  * Default template: profile.html.twig.

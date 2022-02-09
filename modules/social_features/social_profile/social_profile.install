@@ -544,3 +544,20 @@ function social_profile_update_11002(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Install 'name' view mode.
+ */
+function social_profile_update_11003(array &$sandbox): void {
+  $module_path = drupal_get_path('module', 'social_profile');
+  $content = file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml');
+  if ($content) {
+    $yml = Yaml::parse($content);
+    EntityViewMode::create($yml)->save();
+    $content = file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml');
+    if ($content) {
+      $yml = Yaml::parse($content);
+      EntityViewDisplay::create($yml)->save();
+    }
+  }
+}
