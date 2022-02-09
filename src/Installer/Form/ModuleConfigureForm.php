@@ -155,7 +155,7 @@ class ModuleConfigureForm extends ConfigFormBase {
       !empty($build_info['args'][0]['profile_info']['install'])
     ) {
       $install_modules = array_merge(
-        $build_info['args'][0]['profile_info']['install'] ?? [],
+        $build_info['args'][0]['profile_info']['install'],
         $optional_modules
       );
 
