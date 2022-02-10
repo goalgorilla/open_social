@@ -81,9 +81,8 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             if ($content_type === 'node') {
               // Then get the bundle name.
               $label = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle())->label();
-              if (is_string($label) || $label instanceof TranslatableMarkup) {
-                $content_type_label = mb_strtolower($label);
-              }
+              $label = $label instanceof TranslatableMarkup ? $label->render() : $label;
+              $content_type_label = $label !== NULL ? mb_strtolower($label) : '';
             }
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
               $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
