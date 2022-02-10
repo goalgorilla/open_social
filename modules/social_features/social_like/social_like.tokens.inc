@@ -111,7 +111,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                   // We should only use the label of entities who have a label.
                   if ($ref_link_label = $commented_entity->label()) {
                     if ($commented_entity instanceof Node) {
-                      $commented_content_type = strtolower($commented_entity->getType());
+                      $commented_content_type = strtolower($commented_entity->getEntityType()->getLabel());
                     }
                     else {
                       $commented_content_type = $commented_entity->bundle();

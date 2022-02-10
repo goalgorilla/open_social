@@ -229,6 +229,7 @@ class EmailTokenServices {
   public function getGroupPreview(Group $group) {
     // Add the group preview.
     $group_type_label = $group->getGroupType()->label() instanceof TranslatableMarkup ? $group->getGroupType()->label()->render() : $group->getGroupType()->label();
+    $group_type_label = $group_type_label ?? '';
     return [
       '#theme' => 'message_group_preview',
       '#group_title' => $group->label(),

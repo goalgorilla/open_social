@@ -285,6 +285,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   ])) {
     // Add a readmore link.
     $label = $entity->label() instanceof TranslatableMarkup ? $entity->label()->render() : $entity->label();
+    $label = $label ?? '';
     $node_title_stripped = strip_tags($label);
     $links['node']['#links']['node-readmore'] = [
       'title' => t('Read more<span class="visually-hidden"> about @title</span>', [
