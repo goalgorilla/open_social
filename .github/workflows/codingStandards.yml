@@ -1,4 +1,4 @@
-name: Coding Standards
+name: Coding Standards (PHPStan, PHPCS)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   phpstan7:
-    name: PHPStan
+    name: PHPStan on PHP 7.4
     runs-on: ubuntu-latest
     steps:
       - name: Set default php7.4
@@ -24,7 +24,7 @@ jobs:
         run: vendor/bin/phpstan analyse -c phpstan.neon
 
   phpcs7:
-    name: PHPCS
+    name: PHPCS on PHP 7.4
     runs-on: ubuntu-latest
     steps:
       - name: Set default php7.4
@@ -43,7 +43,7 @@ jobs:
           enable_warnings: true
 
   phpstan8:
-    name: PHPStan
+    name: PHPStan on PHP 8.0
     runs-on: ubuntu-latest
     steps:
       - name: Set default php8.0
@@ -59,7 +59,7 @@ jobs:
         run: vendor/bin/phpstan analyse -c phpstan.neon
 
   phpcs8:
-    name: PHPCS
+    name: PHPCS on PHP 8.0
     runs-on: ubuntu-latest
     steps:
       - name: Set default php7.4
