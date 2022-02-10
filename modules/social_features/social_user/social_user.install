@@ -7,6 +7,7 @@
 
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -55,9 +56,13 @@ function social_user_install() {
  */
 function social_user_update_8001(&$sandbox) {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_default */
-  $conf_default = \Drupal::getContainer()->get('config.factory')->getEditable('core.entity_view_display.user.user.default');
+  $conf_default = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('core.entity_view_display.user.user.default');
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_full */
-  $conf_full = \Drupal::getContainer()->get('config.factory')->getEditable('core.entity_view_display.user.user.full');
+  $conf_full = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('core.entity_view_display.user.user.full');
 
   /*
    * For both these displays, the content is empty.
@@ -75,7 +80,9 @@ function social_user_update_8001(&$sandbox) {
  */
 function social_user_update_8002() {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
+  $config = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('social_user_navigation.settings');
   $config->set('display_social_private_message_icon', TRUE)->save();
   $config->set('display_my_groups_icon', TRUE)->save();
 }
@@ -92,8 +99,12 @@ function social_user_update_8003() {
  * Migrate navigation settings into the correct format.
  */
 function social_user_update_8004() {
-  $old_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
-  $new_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
+  $old_config = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('social_user_navigation.settings');
+  $new_config = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('social_user.navigation.settings');
   // Store the values.
   $new_config->setData($old_config->getRawData());
   // Remove the old config altogether.
@@ -147,8 +158,11 @@ function social_user_update_8007() {
  */
 function social_user_update_8008() {
   // Create the default configuration for the social_user default landing page.
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
-  $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
+  $config = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('social_user.settings');
+  $config->set('social_user_profile_landingpage', 'entity.user.canonical')
+    ->save();
 
   // Add permissions for sitemanager to administer social user settings.
   $role = Role::load('sitemanager');
@@ -230,7 +244,9 @@ function social_user_update_8810() {
  * Create the default configuration for the verified immediately site setting.
  */
 function social_user_update_11001(): void {
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config = \Drupal::getContainer()
+    ->get('config.factory')
+    ->getEditable('social_user.settings');
   $config->set('verified_immediately', TRUE)->save();
 }
 
@@ -287,10 +303,27 @@ function social_user_update_11004(): string {
 }
 
 /**
- * Revoke the permission select account cancellation method.
+ * Revoke the permission select account cancellation method .
  */
 function social_user_update_11005(): void {
   user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
     'select account cancellation method',
   ]);
+}
+
+/**
+ * Update 'views.view.user_admin_people'.
+ */
+function social_user_update_11006(array &$sandbox): void {
+  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11006.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse((string) file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.user_admin_people');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }
