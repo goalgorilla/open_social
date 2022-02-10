@@ -303,10 +303,19 @@ function social_user_update_11004(): string {
 }
 
 /**
+ * Revoke the permission select account cancellation method .
+ */
+function social_user_update_11005(): void {
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
+    'select account cancellation method',
+  ]);
+}
+
+/**
  * Update 'views.view.user_admin_people'.
  */
-function social_user_update_11005(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11005.yml';
+function social_user_update_11006(array &$sandbox): void {
+  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11006.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));
@@ -317,13 +326,4 @@ function social_user_update_11005(array &$sandbox): void {
       $config->setData($settings)->save(TRUE);
     }
   }
-}
-
-/**
- * Revoke the permission select account cancellation method .
- */
-function social_user_update_11006(): void {
-  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, [
-    'select account cancellation method',
-  ]);
 }
