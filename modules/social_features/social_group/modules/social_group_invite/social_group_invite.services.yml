@@ -9,7 +9,7 @@ services:
     tags:
       - { name: event_subscriber }
   social_group_invite.override:
-    class: \Drupal\social_group_invite\SocialGroupInviteConfigOverride
+    class: Drupal\social_group_invite\SocialGroupInviteConfigOverride
     arguments:
       - '@request_stack'
       - '@email.validator'
@@ -17,3 +17,8 @@ services:
       - '@config.factory'
     tags:
       - { name: config.factory.override, priority: 10}
+  social_group_invite.views_bulk_operations.access:
+    class: Drupal\social_group_invite\Access\SocialGroupInviteVBOAccess
+    arguments: ['@tempstore.private']
+    tags:
+      - { name: access_check, applies_to: _social_group_invite_views_bulk_operation_access }
