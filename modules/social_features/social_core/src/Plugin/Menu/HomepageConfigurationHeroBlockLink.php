@@ -85,28 +85,6 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getTitle() {
-    if ($this->getHomePageheroBlockid() !== NULL) {
-      return 'Customize home page';
-    }
-
-    return 'Create home page hero block';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDescription() {
-    if ($this->getHomePageheroBlockid() !== NULL) {
-      return 'Change the image and text on the home page.';
-    }
-
-    return 'Creates a new hero block and redirect to block layout page. Home page hero blocks must be placed on hero region.';
-  }
-
-  /**
    * Get the homepage block.
    *
    * @return null|int
@@ -140,13 +118,24 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
   /**
    * {@inheritdoc}
    */
+  public function isEnabled() {
+    if ($this->getHomePageheroBlockid() !== NULL) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheTags() {
     $hero_block_settings = $this->getHeroBlockSettings();
     if ($hero_block_settings !== NULL) {
       return ["config:block.block.{$hero_block_settings['block_id']}"];
     }
 
-    return [];
+    return ['config:block.block.*'];
   }
 
   /**
