@@ -146,3 +146,8 @@ social_core.dashboard.appearance.change_colors_and_styling:
   description: 'Determine the look and feel of your site.'
   route_name: social_core.dashboard.appearance.active_theme
   weight: -100
+social_core.dashboard.appearance.active_homepage_configuration:
+  weight: -90
+  parent: social_core.dashboard.appearance
+  url: 'internal:/block/add/hero_call_to_action_block?destination=/admin/structure/block'
+  class: Drupal\social_core\Plugin\Menu\HomepageConfigurationHeroBlockLink
