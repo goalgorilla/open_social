@@ -311,22 +311,8 @@ function social_group_preprocess_group(array &$variables) {
     $image_style = ImageStyle::load($original_image_style);
 
     if ($image_style instanceof ImageStyle) {
-
       $variables['group_hero_styled_image_url'] = $image_style->buildUrl($group->get('field_group_image')->entity->getFileUri());
-      // Check if this style is considered small.
-      $overridden_image_style = Drupal::getContainer()
-        ->get('social_group.hero_image')
-        ->getGroupHeroImageStyle();
-
-      if ($overridden_image_style !== $original_image_style) {
-        $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
-          ->buildUrl($group->get('field_group_image')->entity->getFileUri());
-      }
     }
-  }
-  // This should be determined regardless if there's an image or not.
-  if (Drupal::getContainer()->get('social_group.hero_image')->isSmall()) {
-    $variables['group_hero_small'] = TRUE;
   }
 
   // Add group edit url for management.
@@ -831,6 +817,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
+
   // Change the form when adding members directly in groups.
   if (
     in_array($form_id, $membership_add_forms, TRUE) &&
@@ -838,26 +827,13 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       ->getRouteName() !== 'grequest.group_request_membership_approve'
   ) {
     // Lets add the new select 2 widget to add members to a group.
-    $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name or email address'),
-      '#type' => 'select2',
-      '#multiple' => TRUE,
-      '#tags' => TRUE,
-      '#autocomplete' => TRUE,
-      '#select2' => [
-        'placeholder' => t('Jane Doe'),
-        'tokenSeparators' => [',', ';'],
-      ],
-      '#selection_handler' => 'social',
-      '#target_type' => 'user',
-      '#element_validate' => ['_social_group_unique_members'],
-    ];
+    $form['entity_id']['widget'][0]['target_id'] = $helper->addMemberFormField();
+
     // Group roles and the automated URL alias don't make sense here.
-    if (isset($form['group_roles'])) {
-      unset($form['group_roles']);
-    }
-    if (isset($form['path'])) {
-      unset($form['path']);
+    foreach (['group_roles', 'path'] as $field) {
+      if (isset($form[$field])) {
+        unset($form[$field]);
+      }
     }
   }
 
@@ -928,8 +904,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
+      /** @var string $type */
       foreach (array_keys($form['group_type']['widget']['#options']) as $type) {
-        if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
+        if ($helper->getDefaultGroupVisibility($type) === NULL) {
           $form['group_type']['widget'][$type] = [
             '#disabled' => TRUE,
           ];
@@ -1751,28 +1728,19 @@ function social_group_preprocess_views_view(&$variables) {
  *
  * Sets an active class on stream tab when viewing group canonical page.
  */
-function social_group_preprocess_menu_local_task(&$variables) {
+function social_group_preprocess_menu_local_task(array &$variables): void {
   $route_name = \Drupal::routeMatch()->getRouteName();
   if ($route_name != 'entity.group.canonical') {
     return;
   }
 
-  /** @var array $link */
-  $link = $variables['link'] ?? NULL;
-  if (!$link) {
-    return;
-  }
-
-  /** @var \Drupal\Core\Url $menu_url */
-  $menu_url = $link['#url'] ?? NULL;
-  if (!$menu_url) {
-    return;
-  }
-
-  if ($menu_url->getRouteName() === 'social_group.stream') {
+  if (isset($variables['link']['#url'])
+    && $variables['link']['#url'] instanceof Url
+    && $variables['link']['#url']->getRouteName() === 'social_group.stream') {
     $variables['element']['#active'] = TRUE;
     $variables['attributes']['class'][] = 'active';
   }
+
 }
 
 /**
