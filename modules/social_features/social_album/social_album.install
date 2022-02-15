@@ -162,8 +162,9 @@ function _social_album_set_group_permissions() {
 
   /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
   $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
-
-  foreach (\Drupal::entityQuery('group_type')->execute() as $type_id) {
+  /** @var array $type_ids */
+  $type_ids = \Drupal::entityQuery('group_type')->execute();
+  foreach ($type_ids as $type_id) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $type */
     $type = $type_storage->load($type_id);
 

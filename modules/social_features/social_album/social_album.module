@@ -73,13 +73,13 @@ function social_album_social_user_account_header_create_links($context) {
   // Lets add the new create album button to the + dropdown.
   return [
     'add_personal_album' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup('Create New Album'),
-      ],
-      '#title' => new TranslatableMarkup('New Album'),
-      '#weight' => 400,
-    ] + Url::fromRoute('node.add', ['node_type' => 'album'])->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup('Create New Album'),
+        ],
+        '#title' => new TranslatableMarkup('New Album'),
+        '#weight' => 400,
+      ] + Url::fromRoute('node.add', ['node_type' => 'album'])->toRenderArray(),
   ];
 }
 
@@ -202,7 +202,8 @@ function social_album_post_insert(EntityInterface $entity) {
 function social_album_node_create_access(AccountInterface $account, array $context, $entity_bundle) {
   if (
     $entity_bundle === 'album' &&
-    \Drupal::routeMatch()->getRouteName() === 'view.albums.page_albums_overview' &&
+    \Drupal::routeMatch()
+      ->getRouteName() === 'view.albums.page_albums_overview' &&
     \Drupal::routeMatch()->getRawParameter('user') !== $account->id()
   ) {
     return AccessResult::forbidden();
@@ -323,7 +324,9 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
       /** @var \Drupal\node\NodeInterface $album */
       $album = $post->field_album->entity;
 
-      if ($album->toUrl()->setAbsolute()->toString() === \Drupal::request()->headers->get('referer')) {
+      if ($album->toUrl()
+          ->setAbsolute()
+          ->toString() === \Drupal::request()->headers->get('referer')) {
         $allow = TRUE;
       }
     }
@@ -410,7 +413,10 @@ function social_album_field_group_form_process_alter(array &$element, &$group, &
  */
 function social_album_views_data() {
   return [
-    \Drupal::entityTypeManager()->getStorage('post')->getEntityType()->getBaseTable() => [
+    \Drupal::entityTypeManager()
+      ->getStorage('post')
+      ->getEntityType()
+      ->getBaseTable() => [
       'post_operations' => [
         'field' => [
           'title' => t('Post operations links'),
@@ -467,10 +473,6 @@ function _social_album_create_post(array $form, FormStateInterface $form_state) 
  *   The current state of the form.
  */
 function _social_album_post_submit(array $form, FormStateInterface $form_state) {
-  if ($form_state->hasValue('field_album')) {
-    return;
-  }
-
   $input = $form_state->getUserInput()['field_album'];
 
   /** @var \Drupal\social_post\Entity\PostInterface $post */
@@ -483,7 +485,11 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
     // Add default content visibility based on post visibility.
     if ($form_state->hasValue('field_visibility')) {
-      $post_visibility = $form_state->getValue(['field_visibility', 0, 'value']);
+      $post_visibility = $form_state->getValue([
+        'field_visibility',
+        0,
+        'value',
+      ]);
       $default_visibility = SocialAlbumOptionsSelectWidget::VISIBILITY_MAPPING[$post_visibility];
     }
     else {
@@ -498,15 +504,37 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
     $node->save();
 
-    \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+    \Drupal::service('social_group.set_groups_for_node_service')
+      ->addGroupContent($node, $post->field_recipient_group->entity);
 
     $post->set('field_album', $node->id());
   }
   elseif ($input['value'] !== '_none') {
     $post->set('field_album', $input['value']);
+    /** @var \Drupal\social_node\Entity\Node $album */
+    $album = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->load($input['value']);
+    $visibility = $album->get('field_content_visibility')->value;
+    /** @var \Drupal\social_group\Entity\Group $group */
+    $group = $post->field_recipient_group->entity;
+    $post_visibility = array_search($visibility, SocialAlbumOptionsSelectWidget::VISIBILITY_MAPPING);
+    if ($group) {
+      $type = $group->getGroupType()->id();
+      if ($type == 'open_group') {
+        $post_visibility = array_search('community', SocialAlbumOptionsSelectWidget::VISIBILITY_MAPPING);
+      }
+      if ($type == 'public_group') {
+        $post_visibility = array_search('public', SocialAlbumOptionsSelectWidget::VISIBILITY_MAPPING);
+      }
+    }
+    //TODO depending on the group you want to set the visibility different, so the post doesn't get 'Group members' as visibility on a public group --> is this needed, or should we limit the albums based on groups?
+
+    $post->set('field_visibility', $post_visibility);
   }
 
   $post->save();
+
 }
 
 /**
@@ -522,15 +550,15 @@ function social_album_social_user_account_header_account_links(array $context) {
 
   return [
     'my_albums' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup('View my albums'),
-      ],
-      '#title' => new TranslatableMarkup('My albums'),
-      '#weight' => 550,
-    ] + Url::fromRoute('view.albums.page_albums_overview', [
-      'user' => $context['user']->id(),
-    ])->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup('View my albums'),
+        ],
+        '#title' => new TranslatableMarkup('My albums'),
+        '#weight' => 550,
+      ] + Url::fromRoute('view.albums.page_albums_overview', [
+        'user' => $context['user']->id(),
+      ])->toRenderArray(),
   ];
 }
 
