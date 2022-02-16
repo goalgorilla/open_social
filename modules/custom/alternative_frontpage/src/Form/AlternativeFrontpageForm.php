@@ -131,7 +131,38 @@ class AlternativeFrontpageForm extends EntityForm {
       elseif (!$this->isAllowedPath($path)) {
         $form_state->setErrorByName('path', $this->t('The path for the frontpage is not allowed.'));
       }
+      // Check access to the provided path for anonymous users.
+      elseif ($role === 'anonymous' && !$this->isPathPublicContent($path)) {
+        $form_state->setErrorByName('path', $this->t('The path for the frontpage is not allowed for anonymous users.'));
+      }
     }
+  }
+
+  /**
+   * Checks if a content path has public visibility.
+   *
+   * @param string $path
+   *   Path to check.
+   *
+   * @return bool
+   *   Returns true when content path has public visibility.
+   */
+  private function isPathPublicContent($path) {
+    /** @var \Drupal\Core\Url $url */
+    $url = $this->pathValidator->getUrlIfValid($path);
+    $params = $url->getRouteParameters();
+    $entity_type = key($params);
+
+    if ($entity_type === 'node') {
+      /** @var \Drupal\node\Entity\Node $node */
+      $node = $this->entityTypeManager->getStorage($entity_type)
+        ->load($params[$entity_type]);
+
+      if ($node->hasField('field_content_visibility') && $node->get('field_content_visibility')->getString() !== 'public') {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   /**
