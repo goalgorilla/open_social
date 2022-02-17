@@ -327,7 +327,7 @@ class ActivityFactory extends ControllerBase {
           $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('isAggregatable', TRUE);
           $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
           $activity_ids = $activity_query->execute();
-          if (!empty($activity_ids)) {
+          if (!empty($activity_ids) && is_array($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
           }
         }

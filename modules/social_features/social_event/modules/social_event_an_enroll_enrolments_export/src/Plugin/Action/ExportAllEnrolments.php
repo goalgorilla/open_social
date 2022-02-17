@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileUrlGenerator;
-use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileRepository;
@@ -42,28 +41,7 @@ class ExportAllEnrolments extends ExportEnrolments {
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
    */
-  protected $socialEventAnEnrollManager;
-
-  /**
-   * File repository services.
-   *
-   * @var \Drupal\file\FileRepository
-   */
-  protected FileRepository $fileRepository;
-
-  /**
-   * File system services.
-   *
-   * @var \Drupal\Core\File\FileSystem
-   */
-  protected FileSystem $fileSystem;
-
-  /**
-   * File URL Generator services.
-   *
-   * @var \Drupal\Core\File\FileUrlGeneratorInterface
-   */
-  protected FileUrlGeneratorInterface $fileUrlGenerator;
+  protected EventAnEnrollManager $socialEventAnEnrollManager;
 
   /**
    * Constructs a ExportAllEnrolments object.
@@ -82,14 +60,14 @@ class ExportAllEnrolments extends ExportEnrolments {
    *   The current user account.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory for the export plugin access.
-   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
-   *   The event an enroll manager.
    * @param \Drupal\file\FileRepository $file_repository
    *   The file repository service.
    * @param \Drupal\Core\File\FileSystem $file_system
    *   The file system service.
    * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
    *   The file url generator service.
+   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
+   *   The event an enroll manager.
    */
   public function __construct(
     array $configuration,
@@ -99,10 +77,10 @@ class ExportAllEnrolments extends ExportEnrolments {
     LoggerInterface $logger,
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
-    EventAnEnrollManager $social_event_an_enroll_manager,
     FileRepository $file_repository,
     FileSystem $file_system,
-    FileUrlGenerator $file_url_generator
+    FileUrlGenerator $file_url_generator,
+    EventAnEnrollManager $social_event_an_enroll_manager
   ) {
     parent::__construct(
       $configuration,
@@ -143,6 +121,9 @@ class ExportAllEnrolments extends ExportEnrolments {
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
       $container->get('config.factory'),
+      $container->get('file.repository'),
+      $container->get('file_system'),
+      $container->get('file_url_generator'),
       $container->get('social_event_an_enroll.manager')
     );
   }

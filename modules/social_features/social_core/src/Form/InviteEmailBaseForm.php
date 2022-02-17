@@ -13,52 +13,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class InviteBaseForm.
  */
 class InviteEmailBaseForm extends FormBase {
-  /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
-
-  /**
-   * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $loggerFactory;
-
-  /**
-   * The current group from route.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $group;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constructs a new BulkGroupInvitation Form.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     RouteMatchInterface $route_match,
-    EntityTypeManagerInterface $entity_type_manager,
-    LoggerChannelFactoryInterface $logger_factory
+    LoggerChannelFactoryInterface $logger_factory,
+    EntityTypeManagerInterface $entity_type_manager
   ) {
     $this->routeMatch = $route_match;
-    $this->entityTypeManager = $entity_type_manager;
     $this->loggerFactory = $logger_factory;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -67,8 +47,8 @@ class InviteEmailBaseForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity_type.manager'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('entity_type.manager')
     );
   }
 

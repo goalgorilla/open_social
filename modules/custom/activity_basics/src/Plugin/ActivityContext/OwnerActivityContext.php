@@ -146,7 +146,7 @@ class OwnerActivityContext extends ActivityContextBase {
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
+      if ($group instanceof GroupInterface) {
         // Skip the notification for users which have muted the group
         // notification in which this content was posted.
         if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {

@@ -144,7 +144,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   }
 
   /**
-   * {@inheritdoc}
+   * Returns default user account.
    */
   public function getAccount() {
     return $this->get('field_account')->target_id;

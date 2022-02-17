@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -41,7 +42,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
    */
-  protected $userExportPlugin;
+  protected UserExportPluginManager $userExportPlugin;
 
   /**
    * User export plugin definitions.
@@ -55,21 +56,21 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *
    * @var \Psr\Log\LoggerInterface
    */
-  protected $logger;
+  protected LoggerInterface $logger;
 
   /**
    * The current user account.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The user export plugin config object.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $config;
+  protected ImmutableConfig $config;
 
   /**
    * File repository services.
@@ -116,18 +117,18 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
    *   The file url generator service.
    */
-  public function __construct(array $configuration,
-  $plugin_id,
-  $plugin_definition,
-  UserExportPluginManager $userExportPlugin,
-  LoggerInterface $logger,
-  AccountProxyInterface $currentUser,
-  ConfigFactoryInterface $configFactory,
-  FileRepository $file_repository,
-  FileSystem $file_system,
-  FileUrlGenerator $file_url_generator) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    UserExportPluginManager $userExportPlugin,
+    LoggerInterface $logger,
+    AccountProxyInterface $currentUser,
+    ConfigFactoryInterface $configFactory,
+    FileRepository $file_repository,
+    FileSystem $file_system,
+    FileUrlGenerator $file_url_generator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
     $this->userExportPlugin = $userExportPlugin;
     $this->logger = $logger;
     $this->currentUser = $currentUser;

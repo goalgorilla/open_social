@@ -3,7 +3,7 @@
 namespace Drupal\social_event_invite\Form;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -16,49 +16,41 @@ use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class EnrollInviteForm.
+ * Form for event enrollment invite settings.
  */
 class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
   /**
    * The node storage for event enrollments.
    *
-   * @var \Drupal\Core\entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $entityStorage;
+  protected EntityStorageInterface $entityStorage;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private $tempStoreFactory;
-
-  /**
-   * The Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The social event enroll.
    *
    * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
    */
-  protected $eventEnrollService;
+  protected SocialEventEnrollServiceInterface $eventEnrollService;
 
   /**
    * File URL Generator services.
@@ -79,19 +71,16 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    */
   public function __construct(
     RouteMatchInterface $route_match,
-    EntityTypeManagerInterface $entity_type_manager,
     LoggerChannelFactoryInterface $logger_factory,
-    EntityStorageInterface $entity_storage,
+    EntityTypeManagerInterface $entity_type_manager,
     PrivateTempStoreFactory $tempStoreFactory,
-    ConfigFactoryInterface $config_factory,
     Token $token,
     SocialEventEnrollServiceInterface $event_enroll_service,
     FileUrlGenerator $file_url_generator
   ) {
-    parent::__construct($route_match, $entity_type_manager, $logger_factory);
-    $this->entityStorage = $entity_storage;
+    parent::__construct($route_match, $logger_factory, $entity_type_manager);
+    $this->entityStorage = $this->entityTypeManager->getStorage('event_enrollment');
     $this->tempStoreFactory = $tempStoreFactory;
-    $this->configFactory = $config_factory;
     $this->token = $token;
     $this->eventEnrollService = $event_enroll_service;
     $this->fileUrlGenerator = $file_url_generator;
@@ -103,11 +92,9 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity_type.manager'),
       $container->get('logger.factory'),
-      $container->get('entity_type.manager')->getStorage('event_enrollment'),
+      $container->get('entity_type.manager'),
       $container->get('tempstore.private'),
-      $container->get('config.factory'),
       $container->get('token'),
       $container->get('social_event.enroll'),
       $container->get('file_url_generator')
@@ -128,14 +115,14 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     ];
 
     // Load event invite configuration.
-    $invite_config = $this->configFactory->get('social_event_invite.settings');
+    $invite_config = $this->configFactory()->get('social_event_invite.settings');
 
     // Cleanup message body and replace any links on invite preview page.
     $body = $this->token->replace($invite_config->get('invite_message'), $params);
     $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
 
     // Get default logo image and replace if it overridden with email settings.
-    $theme_id = $this->configFactory->get('system.theme')->get('default');
+    $theme_id = $this->configFactory()->get('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
     $email_logo = theme_get_setting('email_logo', $theme_id);
 
