@@ -254,7 +254,8 @@ function improved_theme_settings_get_setting($setting, $themename) {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename));
   // In this case '' is something different than 0.
-  if ($themevar !== trim($themevar)) {
+  // @see: https://github.com/goalgorilla/open_social/pull/2748#discussion_r808805646
+  if (($themevar !== trim((string) (int) $themevar)) === is_numeric($themevar)) {
     return FALSE;
   }
   return $themevar;

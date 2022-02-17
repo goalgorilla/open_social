@@ -35,7 +35,8 @@ class QueueStorageEntityListBuilder extends EntityListBuilder {
     $row['owner'] = $entity->getOwner()->getDisplayName();
 
     // Add a description.
-    $row_description = $entity->label() instanceof TranslatableMarkup ? $entity->label()->render() : '';
+    $entity_label = $entity->label();
+    $row_description = $entity_label instanceof TranslatableMarkup ? $entity_label->render() : '';
     if ($entity->bundle() === 'email') {
       // When bundle is email, display the email subject.
       $row_description = $entity->get('field_subject')->value;
