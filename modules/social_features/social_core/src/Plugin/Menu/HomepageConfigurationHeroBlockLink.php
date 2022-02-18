@@ -20,21 +20,21 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The home page hero block id.
    *
    * @var null|int
    */
-  private $homePageHeroBlockId = NULL;
+  private ?int $homePageHeroBlockId = NULL;
 
   /**
    * Constructs a new SignupMenuLink.
@@ -67,6 +67,12 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
 
     if ($this->getHomePageheroBlockid() !== NULL) {
       $this->pluginDefinition['url'] = "internal:/block/{$this->getHomePageheroBlockid()}";
+      $this->pluginDefinition['title'] = $this->t('Customize home page');
+      $this->pluginDefinition['description'] = $this->t('Change the image and text on the home page.');
+    }
+    else {
+      // Disable the link.
+      $this->pluginDefinition['enabled'] = FALSE;
     }
   }
 
@@ -118,18 +124,7 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
   /**
    * {@inheritdoc}
    */
-  public function isEnabled() {
-    if ($this->getHomePageheroBlockid() !== NULL) {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
+  public function getCacheTags(): array {
     $hero_block_settings = $this->getHeroBlockSettings();
     if ($hero_block_settings !== NULL) {
       return ["config:block.block.{$hero_block_settings['block_id']}"];
