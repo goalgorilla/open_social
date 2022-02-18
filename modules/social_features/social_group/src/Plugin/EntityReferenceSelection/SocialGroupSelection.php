@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 
 /**
@@ -42,27 +43,31 @@ class SocialGroupSelection extends DefaultSelection {
       $all_group_types = $storage->getQuery()->execute();
     }
 
-    $excluded_group_types = [];
+    if (is_array($all_group_types)) {
+      $excluded_group_types = [];
+      foreach ($all_group_types as $group_type_id) {
+        /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+        $group_type = $storage->load($group_type_id);
 
-    foreach ($all_group_types as $group_type_id) {
-      /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-      $group_type = $storage->load($group_type_id);
-
-      if (!$group_type->hasContentPlugin($plugin_id)) {
-        $excluded_group_types[] = $group_type_id;
+        if (!$group_type->hasContentPlugin($plugin_id)) {
+          $excluded_group_types[] = $group_type_id;
+        }
       }
-    }
 
-    if ($excluded_group_types) {
-      $diff = array_diff($all_group_types, $excluded_group_types);
-      if (!empty($diff)) {
-        $bundle = $this->entityTypeManager->getDefinition($configuration['target_type'])->getKey('bundle');
-        if (is_string($bundle)) {
-          $query->condition(
-            $bundle,
-            $diff,
-            'IN'
-          );
+      if ($excluded_group_types) {
+        $diff = array_diff($all_group_types, $excluded_group_types);
+        if (!empty($diff)) {
+          $entity_type = $this->entityTypeManager->getDefinition($configuration['target_type']);
+          if ($entity_type instanceof EntityInterface) {
+            $bundle = $entity_type->getKey('bundle');
+            if (is_string($bundle)) {
+              $query->condition(
+                $bundle,
+                $diff,
+                'IN'
+              );
+            }
+          }
         }
       }
     }

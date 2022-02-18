@@ -106,17 +106,20 @@ function social_path_manager_batch_alter(&$batch) {
  * @throws \Exception
  */
 function _social_path_manager_update_group_tab_aliases($id, $action) {
-  $group_ids = array_keys(\Drupal::entityQuery('group')->execute());
-  $created = 0;
+  $query = \Drupal::entityQuery('group')->execute();
+  if (is_array($query)) {
+    $group_ids = array_keys($query);
+    $created = 0;
 
-  $groups = Group::loadMultiple($group_ids);
-  foreach ($groups as $group) {
-    _social_path_manager_update_alias($group, $action, TRUE);
-    $created++;
+    $groups = Group::loadMultiple($group_ids);
+    foreach ($groups as $group) {
+      _social_path_manager_update_alias($group, $action, TRUE);
+      $created++;
+    }
+
+    \Drupal::service('messenger')->addMessage(\Drupal::translation()
+      ->formatPlural($created, 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
   }
-
-  \Drupal::service('messenger')->addMessage(\Drupal::translation()
-    ->formatPlural($created, 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
 }
 
 /**

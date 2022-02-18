@@ -28,7 +28,7 @@ function social_swiftmail_install() {
 
   // Ensure the sendmail mode matches the PHP.ini configuration.
   $sendmail_path = ini_get('sendmail_path');
-  $sendmail_mode = ($sendmail_path !== FALSE && str_contains($sendmail_path, '-bs')) ? 'bs' : 't';
+  $sendmail_mode = ($sendmail_path !== FALSE && strpos($sendmail_path, '-bs')) ? 'bs' : 't';
   $config_factory->getEditable('swiftmailer.transport')
     ->set('sendmail_mode', $sendmail_mode)
     ->save();

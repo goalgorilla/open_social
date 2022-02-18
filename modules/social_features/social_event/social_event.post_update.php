@@ -5,6 +5,8 @@
  * Post update functions for the Social event module.
  */
 
+use Drupal\node\NodeInterface;
+
 /**
  * Empty post update hook.
  */
@@ -21,13 +23,13 @@ function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
 
   if (!isset($sandbox['total'])) {
     // Get all event ids.
-    $sandbox['ids'] = $node_storage
+    $query = $node_storage
       ->getQuery()
       ->accessCheck(FALSE)
-      ->condition('type', 'event')
-      ->execute();
+      ->condition('type', 'event');
+    $sandbox['ids'] = $query->execute();
     // Write total of entities need to be processed to $sandbox.
-    $sandbox['total'] = count($sandbox['ids']);
+    $sandbox['total'] = $query->count()->execute();
 
     // Initiate default value for current processing № of element.
     $sandbox['current'] = 0;
@@ -42,9 +44,9 @@ function social_event_post_update_10301_enable_event_enrollment(&$sandbox) {
   // Try to update 25 events at a time.
   $ids = array_slice($sandbox['ids'], $sandbox['current'], 25);
 
-  /** @var \Drupal\node\NodeInterface $event */
   foreach ($node_storage->loadMultiple($ids) as $event) {
-    if ($event->hasField('field_event_enable_enrollment')) {
+    if ($event instanceof NodeInterface
+      && $event->hasField('field_event_enable_enrollment')) {
       $event->set('field_event_enable_enrollment', '1');
       $event->save();
     }
