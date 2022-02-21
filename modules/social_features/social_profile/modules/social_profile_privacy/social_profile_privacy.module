@@ -227,6 +227,15 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
   $helper = \Drupal::service('social_profile_privacy.helper');
 
   foreach ($helper->getFieldOptions($account) as $field => $options) {
+    // If module social_profile_fields is enabled and the field is deselected in
+    // settings then we should not show it on profile settings.
+    if (
+      \Drupal::moduleHandler()->moduleExists('social_profile_fields') &&
+      !\Drupal::config('social_profile_fields.settings')->get("profile_profile_{$field}")
+    ) {
+      continue;
+    }
+
     $state = $global_states[$field] ?? SocialProfilePrivacyHelperInterface::SHOW;
     $value = $status = TRUE;
 
