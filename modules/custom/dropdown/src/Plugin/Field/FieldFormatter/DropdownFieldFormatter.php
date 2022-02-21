@@ -3,7 +3,6 @@
 namespace Drupal\dropdown\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 
@@ -26,7 +25,10 @@ class DropdownFieldFormatter extends FormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
-      $elements[$delta] = ['#markup' => $this->viewValue($item)];
+      /** @var \Drupal\Core\Field\FieldItemListInterface $item */
+      $elements[$delta] = [
+        '#markup' => $this->viewValue($item),
+      ];
     }
 
     return $elements;
@@ -35,13 +37,13 @@ class DropdownFieldFormatter extends FormatterBase {
   /**
    * Generate the output appropriate for one field item.
    *
-   * @param \Drupal\Core\Field\FieldItemInterface $item
+   * @param \Drupal\Core\Field\FieldItemListInterface $item
    *   One field item.
    *
    * @return string
    *   The textual output generated.
    */
-  protected function viewValue(FieldItemInterface $item) {
+  protected function viewValue(FieldItemListInterface $item) {
 
     // The text value has no text format assigned to it, so the user input
     // should equal the output, including newlines.

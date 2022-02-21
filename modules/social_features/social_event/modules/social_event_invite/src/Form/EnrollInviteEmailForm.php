@@ -115,14 +115,15 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     ];
 
     // Load event invite configuration.
-    $invite_config = $this->configFactory()->get('social_event_invite.settings');
+    $config_factory = $this->configFactory();
+    $invite_config = $config_factory->get('social_event_invite.settings');
 
     // Cleanup message body and replace any links on invite preview page.
     $body = $this->token->replace($invite_config->get('invite_message'), $params);
     $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
 
     // Get default logo image and replace if it overridden with email settings.
-    $theme_id = $this->configFactory()->get('system.theme')->get('default');
+    $theme_id = $config_factory->get('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
     $email_logo = theme_get_setting('email_logo', $theme_id);
 

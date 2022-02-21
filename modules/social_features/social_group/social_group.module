@@ -1176,15 +1176,13 @@ function _social_group_grant_admin_role($uid, $gid) {
     }
     // Check if the user is already a member in the group
     // (could be in update mode here).
-    /** @var \Drupal\group\GroupMembership $membership */
-    $admin_role = $group->bundle() . '-group_admin';
     $membership = $group->getMember($account);
-
     // Check what roles are there.
     $roles = [];
     if ($membership instanceof GroupMembership) {
-      foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
-        $roles[] = $group_role_ref->target_id;
+      $admin_role = $group->bundle() . '-group_admin';
+      foreach ($membership->getRoles() as $group_role_ref) {
+        $roles[] = $group_role_ref->id();
       }
 
       // No admin? Add it.

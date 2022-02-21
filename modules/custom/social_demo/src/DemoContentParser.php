@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\Extension\ModuleExtensionList;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -12,13 +13,30 @@ use Symfony\Component\Yaml\Yaml;
 class DemoContentParser extends Yaml implements DemoContentParserInterface {
 
   /**
+   * Module list services.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected ModuleExtensionList $moduleExtensionList;
+
+  /**
+   * Constructor for Demo content parser.
+   *
+   * @param \Drupal\Core\Extension\ModuleExtensionList $module_extension_list
+   *   Module list services.
+   */
+  public function __construct(ModuleExtensionList $module_extension_list) {
+    $this->moduleExtensionList = $module_extension_list;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getPath($file, $module, $profile) {
     if ($profile != '' && strpos($profile, DIRECTORY_SEPARATOR) === FALSE) {
       $profile .= DIRECTORY_SEPARATOR;
     }
-    return \Drupal::service('extension.list.module')->getPath($module) . DIRECTORY_SEPARATOR . $profile . $file;
+    return $this->moduleExtensionList->getPath($module) . DIRECTORY_SEPARATOR . $profile . $file;
   }
 
   /**

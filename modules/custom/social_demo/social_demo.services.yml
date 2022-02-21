@@ -1,7 +1,7 @@
 services:
   social_demo.yaml_parser:
     class: \Drupal\social_demo\DemoContentParser
-    arguments: ~
+    arguments: ['@extension.list.module']
   plugin.manager.demo_content:
     class: \Drupal\social_demo\DemoContentManager
     parent: default_plugin_manager
