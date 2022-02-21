@@ -1,1 +1,1 @@
-{% if render_link == true %}<a href="{{ link }}" class="mentions mentions-{{ mention_id }}">{{ render_value|raw }}</a>{% else %}{{ link }}{% endif %}
+{% if render_link == true and render_plain == false %}<a href="{{ link }}" class="mentions mentions-{{ mention_id }}">{{ render_value|raw }}</a>{% elseif render_plain == true %}{{ render_value|raw }}{% else %}{{ link }}{% endif %}
