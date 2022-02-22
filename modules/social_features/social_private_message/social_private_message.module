@@ -14,6 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
@@ -677,6 +678,25 @@ function social_private_message_private_message_view_alter(array &$build, Entity
     if (!empty($wrapper_class)) {
       $build['#prefix'] = '<div class="' . $wrapper_class . '">';
       $build['#suffix'] = '</div>';
+    }
+  }
+}
+
+/**
+ * Implements hook_private_message_notify_exclude().
+ */
+function social_private_message_private_message_notify_exclude(PrivateMessageInterface $privateMessage, PrivateMessageThreadInterface $thread, array &$exclude): void {
+  // Get all members of this thread.
+  /** @var \Drupal\private_message\Entity\PrivateMessageThreadInterface $members */
+  $members = $thread->getMembers();
+
+  /** @var \Drupal\user\UserInterface $member */
+  foreach ($members as $member) {
+    if (
+      $member instanceof UserInterface &&
+      !$member->hasPermission('use private messaging system')
+    ) {
+      $exclude[] = $member->id();
     }
   }
 }
