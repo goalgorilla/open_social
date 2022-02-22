@@ -5,6 +5,7 @@
  * The Social Follow User module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -40,4 +41,20 @@ function social_follow_user_flag_action_access(string $action, FlagInterface $fl
   }
 
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_profile(array &$variables): void {
+  if ($variables['view_mode'] === 'compact_notification') {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['profile'];
+
+    if ($profile->access('view')) {
+      $variables['attributes']['id'] = Html::getUniqueId('preview');
+      $variables['attributes']['class'][] = 'preview';
+      $variables['#attached']['library'][] = 'social_follow_user/preview';
+    }
+  }
 }
