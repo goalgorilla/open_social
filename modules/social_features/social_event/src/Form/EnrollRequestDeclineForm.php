@@ -41,7 +41,9 @@ class EnrollRequestDeclineForm extends FormBase {
   protected $currentUser;
 
   /**
-   * @var EntityTypeManagerInterface
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -123,7 +125,7 @@ class EnrollRequestDeclineForm extends FormBase {
         ->loadByProperties([
           'uid' => $this->eventEnrollment->getAccount(),
         ]);
-      foreach ($user_profiles as $user_profile){
+      foreach ($user_profiles as $user_profile) {
         $this->fullName = $user_profile->profile_name->value;
       }
     }
