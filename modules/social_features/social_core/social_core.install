@@ -155,6 +155,17 @@ function social_core_update_dependencies() {
     'profile' => 8001,
   ];
 
+  // Convert the configuration of existing views to the new schema only after
+  // VariationCache is installed. In another case, it will lead to update
+  // database error:
+  // > [notice] Update started: views_bulk_operations_update_8034
+  // > [error]  The "VariationCache" module is not installed. Please run the
+  // update script to install it properly.
+  // > [error]  Update failed: views_bulk_operations_update_8034.
+  $dependencies['views_bulk_operations'][8034] = [
+    'group' => 8020,
+  ];
+
   return $dependencies;
 }
 
