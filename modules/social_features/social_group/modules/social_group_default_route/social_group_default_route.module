@@ -21,11 +21,11 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
     $forms[] = 'group_' . $type . '_add_form';
   }
 
-  // Fetch the tabs.
-  $group_tabs = _social_group_default_route_group_tabs();
-
   // Check if this group type is supported.
   if (in_array($form_id, $forms, TRUE)) {
+
+    // Fetch the tabs.
+    $group_tabs = _social_group_default_route_group_tabs();
 
     // Get the form entity.
     /** @var \Drupal\group\Entity\Group $group */
