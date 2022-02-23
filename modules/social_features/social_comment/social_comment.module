@@ -392,3 +392,55 @@ function social_comment_preprocess_pager(&$variables) {
     $items['pages'][$key]['href'] = preg_replace($pattern, '', $item['href']);
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_comment_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state): void {
+  $view = $form_state->get('view');
+  if ($view && $view->id() === 'comment') {
+    $form['content_type']['#type'] = 'select2';
+    $form['content_type']['#select2'] = [
+      'closeOnSelect' => FALSE,
+      'placeholder' => t('- Any -'),
+    ];
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_comment_views_data_alter(array &$data): void {
+  // This is needed for the correct installation of the social_comment module.
+  // The main problem was in the configuration of a new view for the comment
+  // overview page. Now it contains filtration by content type and, because of
+  // that, has relations to nodes.  However, relationship configuration does not
+  // exist when the social_comment installing because of the condition in
+  // \Drupal\comment\CommentViewsData::getViewsData(). It checks for every
+  // entity type if it contains any comment field. In our case, we do not have
+  // nodes with the comment fields as topics, events, etc. provided by separate
+  // modules which have a dependency on the social_comment module, and we can
+  // not use them as dependencies for this module.
+  if (!isset($data['comment_field_data']['node'])) {
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $node_type */
+    $node_type = \Drupal::entityTypeManager()->getDefinition('node');
+    $data['comment_field_data']['node'] = [
+      'relationship' => [
+        'title' => $node_type->getLabel(),
+        'help' => t('The @entity_type to which the comment is a reply to.', ['@entity_type' => $node_type->getLabel()]),
+        'base' => $node_type->getDataTable() ?: $node_type->getBaseTable(),
+        'base field' => $node_type->getKey('id'),
+        'relationship field' => 'entity_id',
+        'id' => 'standard',
+        'label' => $node_type->getLabel(),
+        'extra' => [
+          [
+            'field' => 'entity_type',
+            'value' => 'node',
+            'table' => 'comment_field_data',
+          ],
+        ],
+      ],
+    ];
+  }
+}
