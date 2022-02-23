@@ -137,10 +137,12 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
     // Load the profile fields and check if at least one of them can be changed.
     // Load the profile fields and check if at least one of them can be changed.
-    $profile_fields = \Drupal::entityTypeManager()->getStorage('field_config')->loadByProperties([
-      'entity_type' => 'profile',
-      'bundle' => 'profile',
-    ]);
+    $profile_fields = \Drupal::entityTypeManager()
+      ->getStorage('field_config')
+      ->loadByProperties([
+        'entity_type' => 'profile',
+        'bundle' => 'profile',
+      ]);
 
     if ($profile_fields) {
       $empty_profile = TRUE;
@@ -309,6 +311,19 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
 }
 
 /**
+ * Implements hook_theme().
+ */
+function social_profile_theme(): array {
+  return [
+    'profile__profile__name' => [
+      'template' => 'profile--profile--name',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+}
+
+/**
  * Prepares variables for profile templates.
  *
  * Default template: profile.html.twig.
@@ -341,7 +356,8 @@ function social_profile_preprocess_profile(array &$variables) {
     $current_user->id() != $profile->getOwnerId() &&
     $current_user->hasPermission('use private messaging system') &&
     $current_user->hasPermission('create private messages thread') &&
-    User::load($profile->getOwnerId())->hasPermission('use private messaging system')
+    User::load($profile->getOwnerId())
+      ->hasPermission('use private messaging system')
   ) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
@@ -392,7 +408,8 @@ function social_profile_preprocess_profile(array &$variables) {
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')->countGroupMembershipsForUser($user->id());
+    $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
+      ->countGroupMembershipsForUser($user->id());
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
@@ -430,7 +447,8 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       }
 
       // Prepare some variables for checking on the email field.
-      $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+      $global_show_email = \Drupal::config('social_profile.settings')
+        ->get('social_profile_show_email');
       $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : NULL;
 
       // If the current user doesn't have the above permission, perform
@@ -448,8 +466,10 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       }
 
       // Prepare some variables for checking on the language access.
-      $global_show_lang = \Drupal::config('social_profile.settings')->get('social_profile_show_language');
-      $profile_show_lang = \Drupal::service('user.data')->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? NULL;
+      $global_show_lang = \Drupal::config('social_profile.settings')
+        ->get('social_profile_show_language');
+      $profile_show_lang = \Drupal::service('user.data')
+        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? NULL;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
@@ -476,7 +496,8 @@ function _social_profile_get_contact_url(User $account) {
     $current_user = \Drupal::currentUser();
     if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
       $members = [$current_user, $account];
-      $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
+      $thread_id = \Drupal::service('private_message.mapper')
+        ->getThreadIdForMembers($members);
       if ($thread_id) {
         $url = Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
         if ($url->access($current_user)) {
@@ -510,10 +531,12 @@ function social_profile_user_insert(UserInterface $account) {
 
       // Get all field instances for the profile entity and check if the address
       // field exists.
-      $instances = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', $profile_type->id());
+      $instances = \Drupal::service('entity_field.manager')
+        ->getFieldDefinitions('profile', $profile_type->id());
       if (array_key_exists('field_profile_address', $instances)) {
         // Set the users default country to the site default country.
-        $default_values['field_profile_address'][0]['country_code'] = \Drupal::config('system.date')->get('country.default');
+        $default_values['field_profile_address'][0]['country_code'] = \Drupal::config('system.date')
+          ->get('country.default');
       }
 
       // Create a profile.
@@ -716,7 +739,9 @@ function social_profile_get_default_image() {
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
   // Load by uuid.
-  $files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uuid' => $default_image['uuid']]);
+  $files = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadByProperties(['uuid' => $default_image['uuid']]);
   // Pop it.
   $file = array_pop($files);
   // Set in an array.
@@ -735,7 +760,7 @@ function social_profile_get_default_image() {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_social_user_name_display_suggestions(AccountInterface $account) : array {
+function social_profile_social_user_name_display_suggestions(AccountInterface $account): array {
   $suggestions = [];
 
   $entityTypeManager = \Drupal::entityTypeManager();
