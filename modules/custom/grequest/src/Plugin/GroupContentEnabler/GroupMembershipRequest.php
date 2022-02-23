@@ -76,7 +76,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
 
     // Add extra permissions specific to membership group content entities.
     $permissions['request group membership'] = [
-      'title' => 'Request group membership',
+      'title' => $this->t('Request group membership'),
       'allowed for' => ['outsider'],
     ];
 

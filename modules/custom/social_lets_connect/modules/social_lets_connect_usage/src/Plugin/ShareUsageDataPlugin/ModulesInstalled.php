@@ -50,20 +50,14 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
    * @return array
    *   Returns an array of projects with safe values.
    */
-  private function getExtensionsInfo(array $projects) {
+  private function getExtensionsInfo(array $projects): array {
     $value = [];
     uasort($projects, 'system_sort_modules_by_info_name');
-    /** @var \Drupal\Core\Extension\Extension $project */
     foreach ($projects as $project) {
       $name = $project->getName();
-      $info = $project->info;
-      unset($info['dependencies']);
       $value[$name] = [
         'type' => $project->getType(),
         'name' => $name,
-        'status' => $project->status,
-        'origin' => $project->origin,
-        'info' => $info,
       ];
     }
     return $value;

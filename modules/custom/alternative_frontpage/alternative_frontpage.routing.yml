@@ -1,9 +1,36 @@
-alternative_frontpage.settings:
+entity.alternative_frontpage.collection:
   path: '/admin/config/alternative_frontpage'
   defaults:
-    _form: '\Drupal\alternative_frontpage\Form\AlternativeFrontpageSettings'
+    _entity_list: alternative_frontpage
     _title: 'Alternative Frontpage Settings'
   requirements:
     _permission: 'administer alternative frontpage settings'
   options:
     _admin_route: TRUE
+
+entity.alternative_frontpage.add_form:
+  path: '/admin/config/alternative_frontpage/add'
+  defaults:
+    _title: 'Add Frontpage Setting'
+    _entity_form: alternative_frontpage.add
+  requirements:
+    _entity_create_access: alternative_frontpage
+    _permission: 'add alternative frontpage settings'
+
+entity.alternative_frontpage.edit_form:
+  path: '/admin/config/alternative_frontpage/manage/{alternative_frontpage}'
+  defaults:
+    _title: 'Edit Frontpage Setting'
+    _entity_form: alternative_frontpage.edit
+  requirements:
+    _entity_access: alternative_frontpage.update
+    _permission: 'edit alternative frontpage settings'
+
+entity.alternative_frontpage.delete_form:
+  path: '/admin/config/alternative_frontpage/manage/{alternative_frontpage}/delete'
+  defaults:
+    _title: 'Delete Frontpage Setting'
+    _entity_form: alternative_frontpage.delete
+  requirements:
+    _entity_access: alternative_frontpage.delete
+    _permission: 'delete alternative frontpage settings'

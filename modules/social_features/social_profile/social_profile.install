@@ -86,7 +86,8 @@ function _social_profile_add_default_profile_image() {
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
 
-  $uri = Drupal::service('file_system')->copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
+  $uri = Drupal::service('file_system')
+    ->copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'uri' => $uri,
@@ -101,7 +102,8 @@ function _social_profile_add_default_profile_image() {
   $default_image['height'] = 200;
   $default_image['width'] = 200;
 
-  $field_image_config->set('settings.default_image', $default_image)->save(TRUE);
+  $field_image_config->set('settings.default_image', $default_image)
+    ->save(TRUE);
   drupal_flush_all_caches();
 }
 
@@ -120,7 +122,7 @@ function _social_profile_create_menu_links() {
 
   if (!is_null($parent)) {
     MenuLinkContent::create([
-      'title' => 'All members',
+      'title' => t('All members'),
       'link' => ['uri' => 'internal:/all-members'],
       'menu_name' => 'main',
       'expanded' => FALSE,
@@ -238,7 +240,8 @@ function social_profile_update_8006(&$sandbox) {
       ->execute());
     $sandbox['user_count'] = count($sandbox['uids']);
 
-    \Drupal::logger('social_profile')->info('Checking profile status for @count users', ['@count' => $sandbox['user_count']]);
+    \Drupal::logger('social_profile')
+      ->info('Checking profile status for @count users', ['@count' => $sandbox['user_count']]);
   }
 
   // Try to do 5 each cycle. Never do more than are available.
@@ -253,7 +256,9 @@ function social_profile_update_8006(&$sandbox) {
       continue;
     }
     // Check if the user has a profile already.
-    $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
+    $profile = \Drupal::entityTypeManager()
+      ->getStorage('profile')
+      ->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
     if (!$profile) {
       try {
         Profile::create([
@@ -263,7 +268,8 @@ function social_profile_update_8006(&$sandbox) {
         $sandbox['profiles_created']++;
       }
       catch (Exception $e) {
-        \Drupal::logger('social_profile')->error('Could not create profile for @user_id', ['@user_id' => $uid]);
+        \Drupal::logger('social_profile')
+          ->error('Could not create profile for @user_id', ['@user_id' => $uid]);
       }
     }
   }
@@ -543,4 +549,21 @@ function social_profile_update_11002(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Install 'name' view mode.
+ */
+function social_profile_update_11006(array &$sandbox): void {
+  $module_path = drupal_get_path('module', 'social_profile');
+  $content = file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml');
+  if ($content) {
+    $yml = Yaml::parse($content);
+    EntityViewMode::create($yml)->save();
+    $content = file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml');
+    if ($content) {
+      $yml = Yaml::parse($content);
+      EntityViewDisplay::create($yml)->save();
+    }
+  }
 }

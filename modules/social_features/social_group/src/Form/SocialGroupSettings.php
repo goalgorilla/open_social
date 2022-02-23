@@ -118,15 +118,6 @@ class SocialGroupSettings extends ConfigFormBase {
       }
     }
 
-    $form['default_hero'] = [
-      '#type' => 'radios',
-      '#title' => $this->t('Default group hero size'),
-      '#description' => $this->t('The default hero size used on this platform. Only applicable when logged-in users cannot choose a different hero size on each group.'),
-      '#default_value' => $config->get('default_hero'),
-      '#options' => $this->getCropTypes(),
-      '#weight' => 20,
-    ];
-
     // Cross-posting settings.
     $form['cross_posting'] = [
       '#type' => 'details',
@@ -182,9 +173,9 @@ class SocialGroupSettings extends ConfigFormBase {
       $form['social_group_type_required'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Require group types'),
-        '#description' => $this->t('When checked, a new option will appear on 
-          the flexible group form which requires group creators to select a 
-          group type, this allows for a better categorisation of groups in your 
+        '#description' => $this->t('When checked, a new option will appear on
+          the flexible group form which requires group creators to select a
+          group type, this allows for a better categorisation of groups in your
           community. You can add or edit the available group types @link', [
             '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
           ]),
@@ -238,7 +229,6 @@ class SocialGroupSettings extends ConfigFormBase {
       ]))
       : []
     );
-    $config->set('default_hero', $form_state->getValue('default_hero'));
     $config->set('social_group_type_required', $form_state->getValue('social_group_type_required'));
     $config->save();
 
