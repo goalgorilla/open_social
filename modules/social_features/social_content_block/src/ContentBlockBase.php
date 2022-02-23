@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Defines a base content block implementation.
@@ -14,35 +15,41 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class ContentBlockBase extends PluginBase implements ContentBlockPluginInterface {
 
+  use StringTranslationTrait;
+
   /**
    * {@inheritdoc}
    */
-  public function supportedSortOptions() : array {
+  public function supportedSortOptions(): array {
     return [
       'created' => [
-        'label' => 'Most recent',
+        'label' => $this->t('Most recent'),
         'description' => 'Show the newest posts first.',
         'limit' => FALSE,
       ],
       'changed' => [
-        'label' => 'Last updated',
+        'label' => $this->t('Last updated'),
         'limit' => FALSE,
       ],
       'most_commented' => [
-        'label' => 'Most commented',
+        'label' => $this->t('Most commented'),
         'description' => 'See posts with the most comments first.',
       ],
+      'last_commented' => [
+        'label' => 'Last commented',
+        'description' => 'See the last commented nodes first.',
+      ],
       'most_liked' => [
-        'label' => 'Most liked',
+        'label' => $this->t('Most liked'),
         'description' => 'See posts with the most likes first.',
       ],
       'last_interacted' => [
-        'label' => 'Trending',
+        'label' => $this->t('Trending'),
         'description' => 'See the posts people are currently interacting with first.',
         'limit' => FALSE,
       ],
       'trending' => [
-        'label' => 'Most popular',
+        'label' => $this->t('Most popular'),
         'description' => 'Show posts with the highest comments and likes first.',
       ],
     ];

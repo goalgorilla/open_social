@@ -8,7 +8,10 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\Url;
@@ -19,7 +22,6 @@ use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -33,6 +35,20 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
   if (isset($local_actions['ginvite.invite_member'])) {
     unset($local_actions['ginvite.invite_member']);
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_group_invite_theme(): array {
+  return [
+    'invite_to_group_by_member' => [
+      'variables' => [
+        'url' => NULL,
+        'link' => NULL,
+      ],
+    ],
+  ];
 }
 
 /**
@@ -347,6 +363,41 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function social_group_invite_form_group_form_alter(array &$form, FormStateInterface $form_state): void {
+  if (!isset($form['field_group_invite_by_member'])) {
+    return;
+  }
+
+  // Wrapper for the sharing/invitation group settings field.
+  $form['group_sharing'] = [
+    '#type' => 'container',
+    '#weight' => 120,
+    'label' => [
+      '#type' => 'html_tag',
+      '#tag' => 'label',
+      '#value' => t('Sharing Options'),
+      '#attributes' => [
+        'class' => [
+          'control-label',
+        ],
+      ],
+    ],
+    'field_group_invite_by_member' => $form['field_group_invite_by_member'],
+  ];
+
+  // Remove default field as it was added to the wrapper and to remove
+  // duplicates on the form.
+  unset($form['field_group_invite_by_member']);
+
+  // Add wrapper for the sharing/invitation to the specific field group.
+  if (isset($form['#fieldgroups']['group_access_permissions'])) {
+    $form['#fieldgroups']['group_access_permissions']->children[] = 'group_sharing';
+  }
+}
+
+/**
  * Form submit for group invite join form.
  */
 function _social_group_invite_action_form_submit($form, FormStateInterface $form_state) {
@@ -441,6 +492,36 @@ function social_group_invite_preprocess_group(&$variables) {
   $group_type = $group->getGroupType();
   $variables['user_is_invited'] = FALSE;
 
+  if ($variables['view_mode'] === 'statistic') {
+    $url = Url::fromRoute('ginvite.invitation.bulk', ['group' => $group->id()]);
+    $group_url = Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()], ['absolute' => TRUE]);
+    // For groups that only group members have access to, we should not show the
+    // share link functionality.
+    if (
+      ($group->hasField('field_flexible_group_visibility') &&
+        !$group->get('field_flexible_group_visibility')->isEmpty() &&
+        $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
+      in_array($group->bundle(), ['closed_group', 'secret_group'])
+    ) {
+      $group_url = NULL;
+    }
+
+    $group_settings = \Drupal::config('social_group.settings');
+    // Show share/invite button only if member is allowed to do that.
+    if (
+      (bool) $group_settings->get('group_invite.invite_by_members') &&
+      $url->access(\Drupal::currentUser())
+    ) {
+      $variables['members_allowed_to_invite'] = TRUE;
+      $variables['invite_content'] = [
+        '#theme' => 'invite_to_group_by_member',
+        '#url' => $group_url,
+        '#link' => Link::fromTextAndUrl(t('Invite via email'), $url)
+          ->toRenderable(),
+      ];
+    }
+  }
+
   // Only for groups that have invites enabled.
   if (!$group_type->hasContentPlugin('group_invitation')) {
     return;
@@ -513,6 +594,12 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     '#title' => t('Allow invited user to skip email verification'),
     '#default_value' => !empty($invite_config['email_verification']) ?? '',
   ];
+  $form['group_invite']['invite_by_members'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Group managers are able to allow members send invites'),
+    '#description' => t('If enabled, group managers can allow group members to send invitations to their group.'),
+    '#default_value' => !empty($invite_config['invite_by_members']) ?? FALSE,
+  ];
 
   $form['#submit'][] = '_social_group_invite_settings_submit';
 }
@@ -525,6 +612,7 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
     ->set('group_invite.invite_subject', $form_state->getValue('invite_subject'))
     ->set('group_invite.invite_message', $form_state->getValue('invite_message'))
     ->set('group_invite.email_verification', $form_state->getValue('email_verification'))
+    ->set('group_invite.invite_by_members', $form_state->getValue('invite_by_members'))
     ->save();
 }
 
@@ -576,10 +664,23 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     isset($context["data"]["group"]) &&
     $context["type"] === 'group_content'
   ) {
+    /** @var \Drupal\group\Entity\GroupContentInterface|mixed[] $group_content */
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
     $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
 
+    // For groups that only group members have access to, we should change the
+    // destination to the user's invites page.
+    $group = $group_content->getGroup();
+    if (
+      ($group->hasField('field_flexible_group_visibility') &&
+      !$group->get('field_flexible_group_visibility')->isEmpty() &&
+      $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
+      in_array($group->bundle(), ['closed_group', 'secret_group'])
+    ) {
+      $url = Url::fromRoute('social_core.my_invites')->toString();
+      $destination = 'destination=' . $url;
+    }
     // Attach destination to accept invite. So, after sign up/sign step the
     // invite will be accepted and user  will be redirected to the invited page.
     if (
@@ -598,5 +699,32 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
       $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
     }
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_group_invite_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if ($form_display->id() !== 'group.flexible_group.default') {
+    return;
+  }
+  $group_settings = \Drupal::config('social_group.settings');
+
+  // The Group manager is able to allow members to share group or invite to it
+  // only if SM+ is enabled this feature.
+  if (
+    !$form_display->getComponent('field_group_invite_by_member') &&
+    (bool) $group_settings->get('group_invite.invite_by_members')
+  ) {
+    $form_display->setComponent('field_group_invite_by_member', [
+      'type' => 'boolean_checkbox',
+      'region' => 'content',
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+      'weight' => 99,
+      'third_party_settings' => [],
+    ]);
   }
 }

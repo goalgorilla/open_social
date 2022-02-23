@@ -13,6 +13,7 @@ Feature: Create Mention in a Post
     And I am logged in as "user_1"
     And I am on the homepage
     And I fill in "Say something to the Community" with "Hello [~user_2], [~user_3]!"
+    And I select post visibility "Public"
     And I press "Post"
     Then I should see "Albert Einstein posted"
     And I should see "Hello user_2, user_3!"
@@ -25,3 +26,9 @@ Feature: Create Mention in a Post
     And I wait for the queue to be empty
     And I am at "notifications"
     Then I should see text matching "Albert Einstein mentioned you in a post"
+
+    When I logout
+    And I am on the homepage
+    And I should not see the link "user_2"
+    And I should not see the link "user_3"
+    Then I should see "Hello user_2, user_3!"
