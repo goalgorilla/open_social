@@ -2,16 +2,21 @@
   Drupal.behaviors.socialFollowUser = {
     attach: function attach(context) {
       var timeouts = [], dialogs = [], profiles = [];
+      var delay = 200;
 
       $(context).find('img[id^="profile-preview"]')
         .on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
 
+          if (timeouts[selector] !== undefined) {
+            window.clearTimeout(timeouts[selector]);
+          }
+
           timeouts[selector] = window.setTimeout(function () {
             var identifier = $element.data('profile');
 
-            var dialog = function () {
+            function dialog() {
               dialogs[selector] = Drupal.dialog(
                 '<div>'.concat(profiles[identifier], '</div>'),
                 {
@@ -23,10 +28,16 @@
                     of: '#' + selector
                   },
                   create: function () {
-                    $(this)
-                      .closest('.ui-dialog')
-                      .find('.ui-dialog-titlebar-close')
-                      .remove();
+                    $(this).closest('.ui-dialog')
+                      .on('mouseover', function () {
+                        window.clearTimeout(timeouts[selector]);
+                      })
+                      .on('mouseleave', function () {
+                        timeouts[selector] = window.setTimeout(function () {
+                          dialogs[selector].close();
+                        }, delay);
+                      })
+                      .find('.ui-dialog-titlebar-close').remove();
                   },
                   open: function () {
                     $('.ui-widget-overlay').addClass('hide');
@@ -35,7 +46,7 @@
               );
 
               dialogs[selector].showModal();
-            };
+            }
 
             if (dialogs[selector] !== undefined) {
               dialogs[selector].showModal();
@@ -58,16 +69,18 @@
 
               ajax.execute();
             }
-          }, 200);
+          }, delay);
         })
         .on('mouseout', function () {
           var selector = $(this).attr('id');
 
           window.clearTimeout(timeouts[selector]);
 
-          if (dialogs[selector] !== undefined && dialogs[selector].open) {
-            dialogs[selector].close();
-          }
+          timeouts[selector] = window.setTimeout(function () {
+            if (dialogs[selector] !== undefined && dialogs[selector].open) {
+              dialogs[selector].close();
+            }
+          }, delay);
         });
     }
   };
