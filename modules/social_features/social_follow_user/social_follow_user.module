@@ -65,7 +65,7 @@ function social_follow_user_preprocess_field__field_profile_image(array &$variab
     if ($profile->access('view')) {
       $attributes = &$variables['items'][0]['content']['#item_attributes'];
       $attributes['id'] = Html::getUniqueId('profile-preview');
-      $attributes['data-profile'] = $profile->getOwnerId();
+      $attributes['data-profile'] = $profile->id();
       $variables['#attached']['library'][] = 'social_follow_user/preview';
     }
   }
