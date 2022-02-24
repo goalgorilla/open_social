@@ -6,6 +6,7 @@ namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer;
 use Drupal\graphql\GraphQL\Buffers\EntityUuidBuffer;
@@ -44,6 +45,13 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
   protected $graphqlEntityRevisionBuffer;
 
   /**
+   * The Drupal renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected RendererInterface $renderer;
+
+  /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
@@ -56,7 +64,8 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
       $container->get('entity_type.manager'),
       $container->get('graphql.buffer.entity'),
       $container->get('graphql.buffer.entity_uuid'),
-      $container->get('graphql.buffer.entity_revision')
+      $container->get('graphql.buffer.entity_revision'),
+      $container->get('renderer')
     );
   }
 
@@ -77,6 +86,8 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
    *   The GraphQL entity uuid buffer.
    * @param \Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer $graphqlEntityRevisionBuffer
    *   The GraphQL entity revision buffer.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
    *
    * @codeCoverageIgnore
    */
@@ -87,13 +98,15 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
     EntityTypeManagerInterface $entityTypeManager,
     EntityBuffer $graphqlEntityBuffer,
     EntityUuidBuffer $graphqlEntityUuidBuffer,
-    EntityRevisionBuffer $graphqlEntityRevisionBuffer
+    EntityRevisionBuffer $graphqlEntityRevisionBuffer,
+    RendererInterface $renderer
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityTypeManager = $entityTypeManager;
     $this->graphqlEntityBuffer = $graphqlEntityBuffer;
     $this->graphqlEntityUuidBuffer = $graphqlEntityUuidBuffer;
     $this->graphqlEntityRevisionBuffer = $graphqlEntityRevisionBuffer;
+    $this->renderer = $renderer;
   }
 
 }

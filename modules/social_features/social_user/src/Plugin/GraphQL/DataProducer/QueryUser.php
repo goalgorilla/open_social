@@ -5,6 +5,7 @@ namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer;
@@ -78,6 +79,7 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
       $container->get('graphql.buffer.entity'),
       $container->get('graphql.buffer.entity_uuid'),
       $container->get('graphql.buffer.entity_revision'),
+      $container->get('renderer'),
       $container->get('current_user')
     );
   }
@@ -99,6 +101,8 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
    *   The GraphQL entity uuid buffer.
    * @param \Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer $graphqlEntityRevisionBuffer
    *   The GraphQL entity revision buffer.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer services.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    *
@@ -112,9 +116,10 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
     EntityBuffer $graphqlEntityBuffer,
     EntityUuidBuffer $graphqlEntityUuidBuffer,
     EntityRevisionBuffer $graphqlEntityRevisionBuffer,
+    RendererInterface $renderer,
     AccountInterface $current_user
   ) {
-    parent::__construct($configuration, $pluginId, $pluginDefinition, $entityTypeManager, $graphqlEntityBuffer, $graphqlEntityUuidBuffer, $graphqlEntityRevisionBuffer);
+    parent::__construct($configuration, $pluginId, $pluginDefinition, $entityTypeManager, $graphqlEntityBuffer, $graphqlEntityUuidBuffer, $graphqlEntityRevisionBuffer, $renderer);
     $this->currentUser = $current_user;
   }
 
@@ -149,10 +154,10 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
       return new EmptyEntityConnection();
     }
 
-    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
+    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer);
     $metadata->addCacheableDependency($query_helper);
 
-    $connection = new EntityConnection($query_helper);
+    $connection = new EntityConnection($query_helper, $this->renderer);
     $connection->setPagination($first, $after, $last, $before, $reverse);
     return $connection;
   }

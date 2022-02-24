@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\GraphQL;
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Render\RenderContext;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\social_graphql\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -56,13 +59,37 @@ class EntityConnection implements ConnectionInterface {
   protected ?SyncPromise $result;
 
   /**
+   * The metadata.
+   *
+   * @var \Drupal\Core\Cache\CacheableMetadata|null
+   */
+  private ?CacheableMetadata $metadata = NULL;
+
+  /**
+   * The status of metadata retrieval.
+   *
+   * @var bool
+   */
+  private bool $metadataRetrieved = FALSE;
+
+  /**
+   * The Drupal renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected RendererInterface $renderer;
+
+  /**
    * Create a new PaginatedEntityQuery.
    *
    * @param \Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface $query_helper
    *   The query helper that knows how to fetch the data for this connection.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
    */
-  public function __construct(ConnectionQueryHelperInterface $query_helper) {
+  public function __construct(ConnectionQueryHelperInterface $query_helper, RendererInterface $renderer) {
     $this->queryHelper = $query_helper;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -297,8 +324,24 @@ class EntityConnection implements ConnectionInterface {
       }
     }
 
-    // Fetch the result for the query.
-    $result = $query->execute();
+    // We need to add the cache metadata to our query.
+    // @see https://github.com/goalgorilla/open_social/pull/2522#issuecomment-986829018
+    $render_context = new RenderContext();
+
+    // Fetch the result for the query which is executed in render context.
+    $result = $this->renderer->executeInRenderContext($render_context, function () use ($query) {
+      return $query->execute();
+    });
+
+    // Set the metadata variable.
+    if (!$render_context->isEmpty()) {
+      $this->metadata = $render_context->offsetGet(0);
+    }
+    else {
+      // Otherwise, we initialize a new object as it will depict that
+      // cache won't change throughout the lifecycle of request.
+      $this->metadata = new CacheableMetadata();
+    }
 
     return $this->queryHelper->getLoaderPromise($result);
   }
@@ -348,6 +391,32 @@ class EntityConnection implements ConnectionInterface {
     }
     if ($last > $limit) {
       throw new UserError("first may not be larger than " . $limit);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getMetaData(): CacheableMetadata {
+    // We want to make sure that metadata is set before it is fetched.
+    // This makes sure that proper cachability actions can be performed.
+    if ($this->metadata === NULL) {
+      // @todo Create a custom exception.
+      throw new \Exception("Metadata must be fetched only after data is retrieved from the EntityConnection. Otherwise metadata may not be complete.");
+    }
+    $this->metadataRetrieved = TRUE;
+    return $this->metadata;
+  }
+
+  /**
+   * Destructs EntityConnection object.
+   *
+   * @throws \Exception
+   */
+  public function __destruct() {
+    if ($this->metadataRetrieved === FALSE) {
+      // @todo Create a custom exception.
+      throw new \Exception("The EntityConnection produces lazy metadata which should be added to the resolver using the EntityConnection result. This exception means a developer forget to call `EntityConnection::getMetadata`");
     }
   }
 

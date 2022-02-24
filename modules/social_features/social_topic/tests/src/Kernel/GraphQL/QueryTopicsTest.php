@@ -157,7 +157,11 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       $this->defaultCacheMetaData()
         ->setCacheMaxAge(0)
         ->addCacheableDependency($public_topic)
-        ->addCacheContexts(['languages:language_interface'])
+        // In Open Social, we calculate node grants on basis of value of
+        // field_content_visibility on a node. This why we need to add
+        // user.node_grants:view context in order match the expected results.
+        // @see entity_access_by_field_node_grants.
+        ->addCacheContexts(['languages:language_interface', 'user.node_grants:view'])
     );
   }
 
@@ -198,7 +202,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       $this->defaultCacheMetaData()
         ->setCacheMaxAge(0)
         ->addCacheableDependency($published_topic)
-        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheContexts(['languages:language_interface', 'user.node_grants:view'])
     );
   }
 
@@ -236,7 +240,7 @@ class QueryTopicsTest extends SocialGraphQLTestBase {
       ],
       $this->defaultCacheMetaData()
         ->setCacheMaxAge(0)
-        ->addCacheContexts(['languages:language_interface'])
+        ->addCacheContexts(['languages:language_interface', 'user.node_grants:view'])
     );
   }
 

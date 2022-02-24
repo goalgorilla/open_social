@@ -81,7 +81,7 @@ class EventManagers extends EntityDataProducerPluginBase {
     $query_helper = new EventManagersQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $event);
     $metadata->addCacheableDependency($query_helper);
 
-    $connection = new EntityConnection($query_helper);
+    $connection = new EntityConnection($query_helper, $this->renderer);
     $connection->setPagination($first, $after, $last, $before, $reverse);
     return $connection;
   }
