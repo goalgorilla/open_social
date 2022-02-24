@@ -3,6 +3,7 @@
 namespace Drupal\social_graphql\GraphQL\Exception;
 
 /**
- * Exception thrown when an DataProducer is missing cacheability metadata.
+ * Exception thrown when a DataProducer using a connection does not handle
+ * metadata correctly.
  */
 class ConnectionImplementationException extends \Exception {}
