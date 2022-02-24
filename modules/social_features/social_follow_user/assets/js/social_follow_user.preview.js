@@ -15,7 +15,7 @@
               dialogs[selector] = Drupal.dialog(
                 '<div>'.concat(profiles[identifier], '</div>'),
                 {
-                  title: $element.attr('alt'),
+                  dialogClass: 'social-dialog',
                   width: '50%',
                   position: {
                     my: 'left top',
@@ -23,11 +23,13 @@
                     of: '#' + selector
                   },
                   create: function () {
-                    $(this).closest('.ui-dialog')
-                      .on('mouseleave', function () {
-                        dialogs[selector].close();
-                      })
-                      .find('.ui-dialog-titlebar-close').remove();
+                    $(this)
+                      .closest('.ui-dialog')
+                      .find('.ui-dialog-titlebar-close')
+                      .remove();
+                  },
+                  open: function () {
+                    $('.ui-widget-overlay').addClass('hide');
                   }
                 }
               );
@@ -59,7 +61,13 @@
           }, 200);
         })
         .on('mouseout', function () {
-          window.clearTimeout(timeouts[$(this).attr('id')]);
+          var selector = $(this).attr('id');
+
+          window.clearTimeout(timeouts[selector]);
+
+          if (dialogs[selector] !== undefined && dialogs[selector].open) {
+            dialogs[selector].close();
+          }
         });
     }
   };
