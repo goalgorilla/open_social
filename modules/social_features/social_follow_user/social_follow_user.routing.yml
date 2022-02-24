@@ -1,0 +1,12 @@
+social_follow_user.preview:
+  path: '/profile/{profile}/preview'
+  defaults:
+    _entity_view: 'profile.teaser'
+    _title: 'Profile preview'
+  requirements:
+    _entity_access: 'profile.view'
+    profile: \d+
+  options:
+    parameters:
+      profile:
+        type: 'entity:profile'
