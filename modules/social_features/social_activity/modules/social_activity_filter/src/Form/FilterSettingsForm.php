@@ -200,6 +200,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    *   Mapped array of views displays.
    */
   public function getDisplayBlocks($views_id) {
+    /** @var \Drupal\views\Entity\View $view */
     $view = $this->entityTypeManager->getStorage('view')->load($views_id);
 
     $blocks = [];

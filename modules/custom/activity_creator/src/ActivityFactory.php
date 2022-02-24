@@ -310,6 +310,7 @@ class ActivityFactory extends ControllerBase {
       if ($related_object['target_type'] === 'comment') {
         // Get commented entity.
         $comment_storage = $this->entityTypeManager->getStorage('comment');
+        /** @var \Drupal\social_comment\Entity\Comment $comment */
         $comment = $comment_storage->load($related_object['target_id']);
         $commented_entity = $comment->getCommentedEntity();
         // Get all comments of commented entity.

@@ -130,10 +130,11 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               switch ($entity->getEntityTypeId()) {
                 case 'node':
                   // Then get the bundle name.
-                  $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
+                  /** @var \Drupal\node\Entity\NodeType $content_type_storage */
+                  $content_type_storage = mb_strtolower(\Drupal::entityTypeManager()
                     ->getStorage('node_type')
-                    ->load($entity->bundle())
-                    ->label());
+                    ->load($entity->bundle()));
+                  $content_type_label = $content_type_storage->label();
                   break;
 
                 case 'post':

@@ -150,12 +150,10 @@ class FollowContentActivityContext extends ActivityContextBase {
 
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
-        // Skip the notification for users which have muted the group
-        // notification in which this content was posted.
-        if ($this->groupMuteNotify->groupNotifyIsMuted($group, $recipient)) {
-          continue;
-        }
+      // Skip the notification for users which have muted the group
+      // notification in which this content was posted.
+      if ($this->groupMuteNotify->groupNotifyIsMuted($group, $recipient)) {
+        continue;
       }
 
       if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {

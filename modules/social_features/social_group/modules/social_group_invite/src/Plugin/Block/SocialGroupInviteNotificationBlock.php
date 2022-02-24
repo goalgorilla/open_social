@@ -133,10 +133,9 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
    * {@inheritdoc}
    */
   public function access(AccountInterface $account, $return_as_object = FALSE) {
-    $is_group_page = isset($this->group);
     $is_logged_in = $account->isAuthenticated();
 
-    return AccessResult::allowedIf($is_group_page && $is_logged_in);
+    return AccessResult::allowedIf($is_logged_in);
   }
 
   /**

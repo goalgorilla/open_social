@@ -22,7 +22,7 @@ class UserSelection extends UserSelectionBase {
    * {@inheritdoc}
    */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
-    /** @var \Drupal\user\RoleStorageInterface $r_storage */
+    /** @var \Drupal\user\RoleStorageInterface $role_storage */
     $role_storage = $this->entityTypeManager->getStorage('user_role');
 
     // Continue if authenticated users has permission to view private messages.

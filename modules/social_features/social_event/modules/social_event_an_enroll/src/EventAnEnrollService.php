@@ -114,7 +114,7 @@ class EventAnEnrollService {
     $node = $this->currentRouteMatch->getParameter('node');
 
     // If some data is missing we can already return FALSE.
-    if (!empty($token) || !empty($node)) {
+    if (!$token || !$node) {
       return FALSE;
     }
 

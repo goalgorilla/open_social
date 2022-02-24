@@ -612,10 +612,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
       }
     }
 
-    // Add Submit function only when the data is actually editable.
-    if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
-      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
-    }
+    $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
   }
 
   $form['#pre_render'][] = [SocialProfileUserFormAlter::class, 'preRender'];
@@ -743,6 +740,7 @@ function social_profile_get_default_image() {
     ->getStorage('file')
     ->loadByProperties(['uuid' => $default_image['uuid']]);
   // Pop it.
+  /** @var \Drupal\file\FileInterface $file */
   $file = array_pop($files);
   // Set in an array.
   $data = [

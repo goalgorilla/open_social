@@ -1751,7 +1751,7 @@ function social_group_preprocess_views_view(&$variables) {
  *
  * Sets an active class on stream tab when viewing group canonical page.
  */
-function social_group_preprocess_menu_local_task(&$variables) {
+function social_group_preprocess_menu_local_task(array &$variables): void {
   $route_name = \Drupal::routeMatch()->getRouteName();
   if ($route_name != 'entity.group.canonical') {
     return;
@@ -1765,9 +1765,6 @@ function social_group_preprocess_menu_local_task(&$variables) {
 
   /** @var \Drupal\Core\Url $menu_url */
   $menu_url = $link['#url'] ?? NULL;
-  if (!$menu_url) {
-    return;
-  }
 
   if ($menu_url->getRouteName() === 'social_group.stream') {
     $variables['element']['#active'] = TRUE;
@@ -2164,7 +2161,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   $account = \Drupal::currentUser()->getAccount();
   if ($account->isAuthenticated()) {
     // Get all groups for LU.
-    /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $group_helper */
+    /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
     $group_helper = \Drupal::service('social_group.helper_service');
     $my_groups = $group_helper->getAllGroupsForUser($account->id());
     // Get all hidden groups.

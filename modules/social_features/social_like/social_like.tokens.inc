@@ -79,10 +79,11 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             // Check if the content type is node.
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
+              /** @var \Drupal\node\Entity\NodeType $content_type_storage */
+              $content_type_storage = mb_strtolower(\Drupal::entityTypeManager()
                 ->getStorage('node_type')
-                ->load($entity->bundle())
-                ->label());
+                ->load($entity->bundle()));
+              $content_type_label = $content_type_storage->label();
             }
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
               $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());

@@ -84,6 +84,7 @@ class SocialGroupHelperService {
     // Special cases for comments.
     // Returns the entity to which the comment is attached.
     if ($entity['target_type'] === 'comment') {
+      /** @var \Drupal\social_comment\Entity\Comment $comment */
       $comment = \Drupal::entityTypeManager()
         ->getStorage('comment')
         ->load($entity['target_id']);

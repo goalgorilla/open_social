@@ -313,6 +313,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update the field storage settings.
   $field_storage_id = "{$entity}.$field_name";
+  /** @var \Drupal\field\Entity\FieldStorageConfig $field_storage */
   $field_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config')->load($field_storage_id);
 
   // Since the usual workflow for field storages do not allow changing the
@@ -329,6 +330,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update the field settings.
   $field_id = "{$entity}.{$bundle}.$field_name";
+  /** @var \Drupal\field\Entity\FieldConfig $field */
   $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($field_id);
   $new_field = $field->toArray();
   $new_field['field_type'] = 'text_long';
@@ -340,6 +342,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update entity view display.
   $display_id = "{$entity}.{$bundle}.$display_mode";
+  /** @var \Drupal\Core\Entity\Entity\EntityViewDisplay $view_display */
   $view_display = \Drupal::service('entity_type.manager')->getStorage('entity_view_display')->load($display_id);
   if ($component = $view_display->getComponent($field_name)) {
     $view_display->setComponent($field_name, [
@@ -350,6 +353,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update entity form display.
   $form_display_name = 'group.open_group.default';
+  /** @var \Drupal\Core\Entity\Entity\EntityFormDisplay $form_display */
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load($form_display_name);
   if (($component = $form_display->getComponent($field_name)) && $component['type'] == 'string_textarea') {
     $form_display->setComponent($field_name, [

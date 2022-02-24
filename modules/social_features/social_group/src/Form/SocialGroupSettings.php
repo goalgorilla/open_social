@@ -299,6 +299,7 @@ class SocialGroupSettings extends ConfigFormBase {
     foreach ($content_types as $bundle) {
       $plugin_id = 'group_node:' . $bundle;
       if (in_array($plugin_id, $group_content_types)) {
+        /** @var \Drupal\node\Entity\NodeType $node_type */
         $node_type = $this->entityTypeManager->getStorage('node_type')->load($bundle);
         $options[$bundle] = $node_type->label();
       }
