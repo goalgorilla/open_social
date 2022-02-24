@@ -34,7 +34,7 @@ class PayloadClientMutationId extends DataProducerPluginBase implements DataProd
    * @return null|string
    *   The client mutation identifier.
    */
-  public function resolve(RelayMutationPayloadInterface $payload) {
+  public function resolve(RelayMutationPayloadInterface $payload): ?string {
     return $payload->getClientMutationId();
   }
 

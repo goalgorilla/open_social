@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Field;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -39,8 +40,8 @@ class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPl
    *
    * @codeCoverageIgnore
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) : self {
-    return new self(
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
@@ -93,7 +94,7 @@ class FieldRenderer extends DataProducerPluginBase implements ContainerFactoryPl
 
     $render_context = new RenderContext();
     /** @var \Drupal\Component\Render\MarkupInterface $markup */
-    $markup = $this->renderer->executeInRenderContext($render_context, function () use (&$render_array) {
+    $markup = $this->renderer->executeInRenderContext($render_context, function () use (&$render_array): MarkupInterface {
       return $this->renderer->render($render_array);
     });
 

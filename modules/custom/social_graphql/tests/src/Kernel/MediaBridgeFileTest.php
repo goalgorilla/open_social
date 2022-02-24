@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
@@ -59,8 +60,10 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
     // Give anonymous users permission to access content, so they can view and
     // download public files.
     $anonymous_role = Role::load(Role::ANONYMOUS_ID);
-    $anonymous_role->grantPermission('access content');
-    $anonymous_role->save();
+    if ($anonymous_role instanceof RoleInterface) {
+      $anonymous_role->grantPermission('access content');
+      $anonymous_role->save();
+    }
 
     $this->installEntitySchema('file');
     $this->installSchema('file', ['file_usage']);
@@ -93,7 +96,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
   /**
    * Tests that the MediaBridge class works for Image fields.
    */
-  public function testImageField() {
+  public function testImageField(): void {
     // Create an instance of our data producer.
     /** @var \Drupal\social_graphql\Plugin\GraphQL\DataProducer\MediaBridge $data_producer */
     $data_producer = $this->dataProducerPluginManager->createInstance('media_bridge');

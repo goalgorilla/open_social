@@ -2056,6 +2056,11 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/Plugin/search_api/processor/EntityAccessByField.php
 
 		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
+
+		-
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:get\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
@@ -2084,11 +2089,6 @@ parameters:
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:id\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-		  message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
-		  count: 3
-		  path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testAllowedAccess\\(\\) has no return type specified\\.$#"
@@ -3386,54 +3386,14 @@ parameters:
 			path: modules/custom/social_gdpr/social_gdpr.module
 
 		-
-			message: "#^Function social_graphql_install\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/social_graphql.install
-
-		-
-			message: "#^Function social_graphql_update_10101\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/social_graphql.install
-
-		-
-			message: "#^Function social_graphql_update_dependencies\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/social_graphql.install
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\Query\\\\QueryInterface\\:\\:sortAggregate\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/src/GraphQL/EntityConnection.php
-
-		-
-			message: "#^Method Drupal\\\\social_graphql\\\\GraphQL\\\\EntityConnection\\:\\:getResult\\(\\) should return GraphQL\\\\Executor\\\\Promise\\\\Adapter\\\\SyncPromise but returns GraphQL\\\\Executor\\\\Promise\\\\Adapter\\\\SyncPromise\\|null\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/src/GraphQL/EntityConnection.php
-
-		-
-			message: "#^Parameter \\#1 \\$result of method Drupal\\\\social_graphql\\\\GraphQL\\\\ConnectionQueryHelperInterface\\:\\:getLoaderPromise\\(\\) expects array, array\\|int given\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/src/GraphQL/EntityConnection.php
-
-		-
-			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Payload\\\\PayloadViolations\\:\\:resolve\\(\\) should return array\\<Drupal\\\\social_graphql\\\\GraphQL\\\\ViolationInterface\\>\\|null but returns array\\|null\\.$#"
+			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Payload\\\\PayloadViolations\\:\\:resolve\\(\\) should return Drupal\\\\social_graphql\\\\GraphQL\\\\ViolationInterface\\|null but returns array\\|null\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php
 
 		-
-			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\Schema\\\\OpenSocialBaseSchema\\:\\:getBaseSchema\\(\\) has no return type specified\\.$#"
+			message: "#^PHPDoc tag @return with type array\\<Drupal\\\\social_graphql\\\\GraphQL\\\\ViolationInterface\\>\\|null is not subtype of native type Drupal\\\\social_graphql\\\\GraphQL\\\\ViolationInterface\\|null\\.$#"
 			count: 1
-			path: modules/custom/social_graphql/src/Plugin/GraphQL/Schema/OpenSocialBaseSchema.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of function array_map expects array, array\\<int, string\\>\\|false given\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/src/Plugin/GraphQL/SchemaExtension/SchemaExtensionPluginBase.php
-
-		-
-			message: "#^Property Drupal\\\\Core\\\\TypedData\\\\ComplexDataDefinitionBase\\:\\:\\$propertyDefinitions \\(array\\<Drupal\\\\Core\\\\TypedData\\\\DataDefinitionInterface\\>\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/src/TypedData/Definition/PageInfoDefinition.php
+			path: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php
 
 		-
 			message: "#^Method Drupal\\\\social_graphql\\\\Wrappers\\\\Edge\\:\\:getNode\\(\\) has no return type specified\\.$#"
@@ -3444,11 +3404,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_graphql\\\\Wrappers\\\\EdgeInterface\\:\\:getNode\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/src/Wrappers/EdgeInterface.php
-
-		-
-			message: "#^Property Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:\\$server \\(Drupal\\\\graphql\\\\Entity\\\\ServerInterface\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/GraphQLTestBase.php
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$alt\\.$#"
@@ -3481,21 +3436,6 @@ parameters:
 			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
 
 		-
-			message: "#^Cannot call method grantPermission\\(\\) on Drupal\\\\user\\\\Entity\\\\Role\\|null\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
-
-		-
-			message: "#^Cannot call method save\\(\\) on Drupal\\\\user\\\\Entity\\\\Role\\|null\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
-
-		-
-			message: "#^Method Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\MediaBridgeFileTest\\:\\:testImageField\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
-
-		-
 			message: "#^Property Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\MediaBridgeFileTest\\:\\:\\$image \\(Drupal\\\\media\\\\Plugin\\\\media\\\\Source\\\\Image\\) does not accept Drupal\\\\file\\\\Entity\\\\File\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeFileTest.php
@@ -3507,11 +3447,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method uuid\\(\\) on Drupal\\\\media\\\\Entity\\\\Media\\|null\\.$#"
-			count: 1
-			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeMediaTest.php
-
-		-
-			message: "#^Method Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\MediaBridgeMediaTest\\:\\:testMediaSource\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/tests/src/Kernel/MediaBridgeMediaTest.php
 
@@ -5651,16 +5586,6 @@ parameters:
 			path: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php
 
 		-
-			message: "#^Parameter \\#4 \\$parent of class Drupal\\\\social_comment\\\\Plugin\\\\GraphQL\\\\QueryHelper\\\\CommentQueryHelper constructor expects Drupal\\\\node\\\\NodeInterface\\|null, Drupal\\\\node\\\\Entity\\\\Node\\|false\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/QueryComments.php
-
-		-
-			message: "#^Method Drupal\\\\social_graphql\\\\Plugin\\\\GraphQL\\\\DataProducer\\\\Entity\\\\EntityDataProducerPluginBase\\:\\:__construct\\(\\) invoked with 4 parameters, 7 required\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/SocialCommentAttachments.php
-
-		-
 			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/src/Plugin/GraphQL/QueryHelper/CommentAttachmentsQueryHelper.php
@@ -5787,11 +5712,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\Tests\\\\social_comment\\\\Kernel\\\\GraphQL\\\\QueryCommentsTest\\:\\:testUserRequiresAccessCommentsPermission\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/tests/src/Kernel/GraphQL/QueryCommentsTest.php
-
-		-
-			message: "#^Property Drupal\\\\Tests\\\\social_comment\\\\Kernel\\\\GraphQL\\\\QueryCommentsTest\\:\\:\\$comments is never read, only written\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/tests/src/Kernel/GraphQL/QueryCommentsTest.php
 

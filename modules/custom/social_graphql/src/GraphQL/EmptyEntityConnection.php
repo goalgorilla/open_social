@@ -27,7 +27,7 @@ class EmptyEntityConnection implements ConnectionInterface {
    */
   public function pageInfo(): SyncPromise {
     return new Deferred(
-      fn () => [
+      fn (): array => [
         'hasNextPage' => FALSE,
         'hasPreviousPage' => FALSE,
         'startCursor' => NULL,
@@ -40,14 +40,14 @@ class EmptyEntityConnection implements ConnectionInterface {
    * {@inheritdoc}
    */
   public function edges(): SyncPromise {
-    return new Deferred(fn () => []);
+    return new Deferred(fn (): array => []);
   }
 
   /**
    * {@inheritdoc}
    */
   public function nodes(): SyncPromise {
-    return new Deferred(fn () => []);
+    return new Deferred(fn (): array => []);
   }
 
   /**

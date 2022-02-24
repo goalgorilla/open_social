@@ -31,10 +31,10 @@ class EdgeCursor extends DataProducerPluginBase implements DataProducerPluginCac
    * @param \Drupal\social_graphql\Wrappers\EdgeInterface $edge
    *   The edge to return the cursor for.
    *
-   * @return mixed
+   * @return string
    *   The cursor for this edge.
    */
-  public function resolve(EdgeInterface $edge) {
+  public function resolve(EdgeInterface $edge): string {
     return $edge->getCursor();
   }
 

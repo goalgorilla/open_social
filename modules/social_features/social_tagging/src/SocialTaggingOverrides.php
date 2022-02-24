@@ -389,7 +389,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     // So for Drupal versions before 8.9.0 we'll have to invalidate on any term
     // addition and for anything above 8.9.0 we can enjoy a performance
     // increase.
-    if (version_compare(\Drupal::VERSION, '8.9', '<')) {
+    if (version_compare(\Drupal::VERSION, '8.9') == -1) {
       $metadata->addCacheTags(['taxonomy_term_list']);
     }
     else {

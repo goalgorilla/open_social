@@ -35,7 +35,7 @@ class FileUrl extends DataProducerPluginBase {
    * @return string
    *   The file URL.
    */
-  public function resolve($uri, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(string $uri, RefinableCacheableDependencyInterface $metadata): string {
     return file_create_url($uri);
   }
 

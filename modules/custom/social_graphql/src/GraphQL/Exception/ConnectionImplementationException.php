@@ -3,7 +3,8 @@
 namespace Drupal\social_graphql\GraphQL\Exception;
 
 /**
- * Exception thrown when a DataProducer using a connection does not handle
- * metadata correctly.
+ * Exception for DataProducer.
+ *
+ * It is thrown when it uses a connection & does not handle metadata correctly.
  */
 class ConnectionImplementationException extends \Exception {}

@@ -57,7 +57,7 @@ class EntityConnection implements ConnectionInterface {
   /**
    * The result-set of this connection.
    */
-  protected ?SyncPromise $result;
+  protected ?SyncPromise $result = NULL;
 
   /**
    * The metadata.
@@ -168,7 +168,7 @@ class EntityConnection implements ConnectionInterface {
     // QueryHelper's and apply the edges in ::getEdges.
     return $this->getOrderedResult()
       ->then(
-        static fn ($edges) => array_map(
+        static fn ($edges): array => array_map(
           static fn (EdgeInterface $edge) => $edge->getNode(),
           $edges
         )
@@ -182,6 +182,9 @@ class EntityConnection implements ConnectionInterface {
    * returning edges or nodes, this needs to be compensated in the same way.
    * This function removes the overfetching and ensures the results are in the
    * requested order.
+   *
+   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise
+   *   The edges.
    */
   protected function getOrderedResult() : SyncPromise {
     return $this->getResult()->then(function ($edges) {
@@ -234,10 +237,10 @@ class EntityConnection implements ConnectionInterface {
    *   The result for this connection's query.
    */
   protected function getResult() : SyncPromise {
-    if (!$this->hasResult()) {
-      $this->result = $this->execute();
+    if ($this->result instanceof SyncPromise) {
+      return $this->result;
     }
-    return $this->result;
+    return $this->execute();
   }
 
   /**
@@ -247,6 +250,7 @@ class EntityConnection implements ConnectionInterface {
    *   A promise that resolves to the edges of this connection.
    */
   protected function execute() : SyncPromise {
+    /** @var \Drupal\Core\Entity\Query\QueryBase $query */
     $query = $this->queryHelper->getQuery();
 
     $sort_field = $this->queryHelper->getSortField();
@@ -330,9 +334,7 @@ class EntityConnection implements ConnectionInterface {
     $render_context = new RenderContext();
 
     // Fetch the result for the query which is executed in render context.
-    $result = $this->renderer->executeInRenderContext($render_context, function () use ($query) {
-      return $query->execute();
-    });
+    $result = $this->renderer->executeInRenderContext($render_context, fn() => $query->execute());
 
     // Set the metadata variable.
     if (!$render_context->isEmpty()) {

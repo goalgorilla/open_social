@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 
@@ -47,7 +48,7 @@ class EntityUrl extends DataProducerPluginBase {
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function resolve(EntityInterface $entity, ?array $options) {
+  public function resolve(EntityInterface $entity, ?array $options): Url {
     return $entity->toUrl('canonical', $options ?? []);
   }
 

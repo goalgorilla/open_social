@@ -54,7 +54,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *
    * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
    */
-  protected $entityBuffer;
+  protected EntityBuffer $entityBuffer;
 
   /**
    * {@inheritdoc}
@@ -102,10 +102,10 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    * @param string $field
    *   The name of the data to return.
    *
-   * @return \GraphQL\Deferred|null
+   * @return mixed
    *   The resolved value for a File Item.
    */
-  public function resolve($value, $field) {
+  public function resolve($value, string $field) {
     // To make consuming fields easier we convert field item lists to field
     // items.
     if ($value instanceof FieldItemListInterface) {
@@ -134,7 +134,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    * @return mixed
    *   The resolved value for a File Item.
    */
-  protected function resolveFileItem(FileItem $file, $field) {
+  protected function resolveFileItem(FileItem $file, string $field) {
     switch ($field) {
       case 'id':
         if ($file->isEmpty()) {
@@ -143,7 +143,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         $entity_id = $file->get('target_id')->getValue();
         $target_type = $file->getFieldDefinition()->getSetting('target_type');
         $resolver = $this->entityBuffer->add($target_type, $entity_id);
-        return new Deferred(function () use ($resolver) {
+        return new Deferred(function () use ($resolver): ?string {
           /** @var \Drupal\file\Entity\File $file_entity */
           $file_entity = $resolver();
           return $file_entity->uuid();
@@ -156,7 +156,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
         $entity_id = $file->get('target_id')->getValue();
         $target_type = $file->getFieldDefinition()->getSetting('target_type');
         $resolver = $this->entityBuffer->add($target_type, $entity_id);
-        return new Deferred(function () use ($resolver) {
+        return new Deferred(function () use ($resolver): string {
           /** @var \Drupal\file\Entity\File $file_entity */
           $file_entity = $resolver();
           return $file_entity->createFileUrl(FALSE);
@@ -186,7 +186,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *
    * @todo https://www.drupal.org/project/social/issues/3191642
    */
-  protected function resolveMediaEntity(MediaInterface $value, $field) {
+  protected function resolveMediaEntity(MediaInterface $value, string $field) {
     switch ($field) {
       case 'id':
         return $value->uuid();

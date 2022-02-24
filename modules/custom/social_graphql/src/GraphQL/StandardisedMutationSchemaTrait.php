@@ -37,20 +37,23 @@ trait StandardisedMutationSchemaTrait {
    *   IDs of the used data producers.
    */
   protected function registerMutationResolver(ResolverRegistryInterface $registry, ResolverBuilder $builder, string $field_name) : void {
-    $words = array_map(
-      'strtolower',
-      preg_split('/(?=[A-Z])/', $field_name, -1, PREG_SPLIT_NO_EMPTY)
-    );
-    $data_producer = implode("_", $words);
+    $result = preg_split('/(?=[A-Z])/', $field_name, -1, PREG_SPLIT_NO_EMPTY);
+    if (is_array($result)) {
+      $words = array_map(
+        'strtolower',
+        $result
+      );
+      $data_producer = implode("_", $words);
 
-    $registry->addFieldResolver('Mutation', $field_name,
-      $builder->compose(
-        $builder->produce($data_producer . "_input")
-          ->map('input', $builder->fromArgument('input')),
-        $builder->produce($data_producer)
-          ->map('input', $builder->fromParent())
-      )
-    );
+      $registry->addFieldResolver('Mutation', $field_name,
+        $builder->compose(
+          $builder->produce($data_producer . "_input")
+            ->map('input', $builder->fromArgument('input')),
+          $builder->produce($data_producer)
+            ->map('input', $builder->fromParent())
+        )
+      );
+    }
   }
 
 }

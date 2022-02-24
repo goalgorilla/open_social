@@ -28,21 +28,21 @@ class EntityDataProducerPluginBase extends DataProducerPluginBase implements Con
    *
    * @var \Drupal\graphql\GraphQL\Buffers\EntityBuffer
    */
-  protected $graphqlEntityBuffer;
+  protected EntityBuffer $graphqlEntityBuffer;
 
   /**
    * The GraphQL entity UUID buffer.
    *
    * @var \Drupal\graphql\GraphQL\Buffers\EntityUuidBuffer
    */
-  protected $graphqlEntityUuidBuffer;
+  protected EntityUuidBuffer $graphqlEntityUuidBuffer;
 
   /**
    * The GraphQL entity revision buffer.
    *
    * @var \Drupal\graphql\GraphQL\Buffers\EntityRevisionBuffer
    */
-  protected $graphqlEntityRevisionBuffer;
+  protected EntityRevisionBuffer $graphqlEntityRevisionBuffer;
 
   /**
    * The Drupal renderer.

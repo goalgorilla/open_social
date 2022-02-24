@@ -3,6 +3,7 @@
 namespace Drupal\social_topic\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\social_graphql\GraphQL\ConnectionInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 use Drupal\social_topic\Plugin\GraphQL\QueryHelper\TopicQueryHelper;
@@ -70,8 +71,8 @@ class QueryTopic extends EntityDataProducerPluginBase {
    * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    */
-  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $query_helper = new TopicQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer);
+  public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): ConnectionInterface {
+    $query_helper = new TopicQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper, $this->renderer);
