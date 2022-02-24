@@ -71,10 +71,10 @@ class QueryEvent extends EntityDataProducerPluginBase {
    *   An entity connection with results and data about the paginated results.
    */
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $query_helper = new EventQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
+    $query_helper = new EventQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer);
     $metadata->addCacheableDependency($query_helper);
 
-    $connection = new EntityConnection($query_helper);
+    $connection = new EntityConnection($query_helper, $this->renderer);
     $connection->setPagination($first, $after, $last, $before, $reverse);
     return $connection;
   }

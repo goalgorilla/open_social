@@ -45,7 +45,6 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
     NodeInterface $event
   ) {
     parent::__construct($sort_key, $entity_type_manager, $graphql_entity_buffer);
-
     $this->event = $event;
   }
 
@@ -131,8 +130,8 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
     // ensure the entities for this query are only loaded once. Even if the
     // results are used multiple times.
     else {
-      $buffer = \Drupal::service('graphql.buffer.entity');
-      $callback = $buffer->add('user', array_values($result));
+
+      $callback = $this->graphqlEntityBuffer->add('user', array_values($result));
     }
 
     return new Deferred(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\GraphQL;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use GraphQL\Deferred;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
@@ -47,6 +48,13 @@ class EmptyEntityConnection implements ConnectionInterface {
    */
   public function nodes(): SyncPromise {
     return new Deferred(fn () => []);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getMetadata(): CacheableMetadata {
+    return new CacheableMetadata();
   }
 
 }

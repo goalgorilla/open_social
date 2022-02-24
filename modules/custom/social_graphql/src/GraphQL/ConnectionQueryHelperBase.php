@@ -3,6 +3,7 @@
 namespace Drupal\social_graphql\GraphQL;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 
 /**
@@ -26,6 +27,13 @@ abstract class ConnectionQueryHelperBase implements ConnectionQueryHelperInterfa
    * The GraphQL entity buffer.
    */
   protected EntityBuffer $graphqlEntityBuffer;
+
+  /**
+   * The renderer services.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected RendererInterface $renderer;
 
   /**
    * Create a new connection query helper.

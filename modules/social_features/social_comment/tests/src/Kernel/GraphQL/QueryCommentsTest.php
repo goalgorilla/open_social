@@ -131,8 +131,10 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     $node = $this->createNode();
     // A user to create some other comments with.
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+
     // Unpublished comment.
     $this->createComment($node);
+
     // Published comment.
     $published_comment = $this->createComment($node, NULL, ['status' => 1]);
 
@@ -141,6 +143,8 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     // may be unpublished as moderation action (and LU in Open Social have the
     // `bypass moderation` permission).
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
+
+    // Unpublished comment.
     $this->createComment($node);
 
     $this->assertResults('

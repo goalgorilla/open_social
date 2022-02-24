@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\GraphQL;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
@@ -47,7 +48,7 @@ interface ConnectionInterface {
   public function edges() : SyncPromise;
 
   /**
-   * Get hte nodes for this connection.
+   * Get the nodes for this connection.
    *
    * This allows bypassing of the edges in case edge information isn't needed.
    *
@@ -55,5 +56,15 @@ interface ConnectionInterface {
    *   A promise that resolves to an array of entities.
    */
   public function nodes() : SyncPromise;
+
+  /**
+   * Returns the metadata of current results.
+   *
+   * @return \Drupal\Core\Cache\CacheableMetadata
+   *   The metadata itself.
+   *
+   * @throws \Exception
+   */
+  public function getMetadata() : CacheableMetadata;
 
 }
