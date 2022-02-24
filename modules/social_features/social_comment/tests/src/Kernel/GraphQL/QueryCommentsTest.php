@@ -144,7 +144,6 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     // `bypass moderation` permission).
     $this->setUpCurrentUser([], array_merge(['access comments'], $this->userPermissions()));
 
-    // Unpublished comment.
     $this->createComment($node);
 
     $this->assertResults('
