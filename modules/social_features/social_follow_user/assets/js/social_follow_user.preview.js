@@ -56,7 +56,7 @@
             }
             else {
               var ajax = Drupal.ajax({
-                url: Drupal.url('user/' + $element.data('profile') + '/information')
+                url: Drupal.url('profile/' + identifier + '/preview')
               });
 
               ajax.commands.insert = function (ajax, response, status) {
