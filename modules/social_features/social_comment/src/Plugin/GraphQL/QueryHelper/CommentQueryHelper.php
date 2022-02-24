@@ -115,8 +115,8 @@ class CommentQueryHelper extends ConnectionQueryHelperBase {
     // ensure the entities for this query are only loaded once. Even if the
     // results are used multiple times.
     else {
-
-      $callback = $this->graphqlEntityBuffer->add('comment', array_values($result));
+      $buffer = \Drupal::service('graphql.buffer.entity');
+      $callback = $buffer->add('comment', array_values($result));
     }
 
     return new Deferred(

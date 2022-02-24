@@ -34,7 +34,7 @@ class DateToTimestamp extends DataProducerPluginBase {
    * @return int|null
    *   An event start or end day timestamp.
    */
-  public function resolve(DateTimeFieldItemList $field): ?int {
+  public function resolve(DateTimeFieldItemList $field) {
     if ($field->isEmpty()) {
       return NULL;
     }
