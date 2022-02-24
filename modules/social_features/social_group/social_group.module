@@ -1183,13 +1183,14 @@ function _social_group_grant_admin_role($uid, $gid) {
     // Check what roles are there.
     $roles = [];
     if ($membership instanceof GroupMembership) {
-      foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
-        $roles[] = $group_role_ref->target_id;
+      foreach ($membership->getGroupContent()->get('group_roles') as $group_role_ref) {
+        /** @var \Drupal\Core\Field\EntityReferenceFieldItemList $group_role_ref */
+        $roles[] = $group_role_ref->getValue();
       }
 
       // No admin? Add it.
       if (!in_array($admin_role, $roles)) {
-        $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
+        $membership->getGroupContent()->set('group_roles', ['target_id' => $admin_role]);
         $membership->getGroupContent()->save();
       }
     }
