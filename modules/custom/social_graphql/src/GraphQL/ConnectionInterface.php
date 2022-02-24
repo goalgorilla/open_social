@@ -3,6 +3,7 @@
 namespace Drupal\social_graphql\GraphQL;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\social_graphql\GraphQL\Exception\ConnectionImplementationException;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
@@ -63,7 +64,7 @@ interface ConnectionInterface {
    * @return \Drupal\Core\Cache\CacheableMetadata
    *   The metadata itself.
    *
-   * @throws \Exception
+   * @throws ConnectionImplementationException
    */
   public function getMetadata() : CacheableMetadata;
 
