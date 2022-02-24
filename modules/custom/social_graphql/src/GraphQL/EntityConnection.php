@@ -7,6 +7,7 @@ namespace Drupal\social_graphql\GraphQL;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_graphql\GraphQL\Exception\ConnectionImplementationException;
 use Drupal\social_graphql\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -401,8 +402,7 @@ class EntityConnection implements ConnectionInterface {
     // We want to make sure that metadata is set before it is fetched.
     // This makes sure that proper cachability actions can be performed.
     if ($this->metadata === NULL) {
-      // @todo Create a custom exception.
-      throw new \Exception("Metadata must be fetched only after data is retrieved from the EntityConnection. Otherwise metadata may not be complete.");
+      throw new ConnectionImplementationException("Metadata must be fetched only after data is retrieved from the EntityConnection. Otherwise metadata may not be complete.");
     }
     $this->metadataRetrieved = TRUE;
     return $this->metadata;
@@ -416,7 +416,7 @@ class EntityConnection implements ConnectionInterface {
   public function __destruct() {
     if ($this->metadataRetrieved === FALSE) {
       // @todo Create a custom exception.
-      throw new \Exception("The EntityConnection produces lazy metadata which should be added to the resolver using the EntityConnection result. This exception means a developer forget to call `EntityConnection::getMetadata`");
+      throw new ConnectionImplementationException("The EntityConnection produces lazy metadata which should be added to the resolver using the EntityConnection result. This exception means a developer forget to call `EntityConnection::getMetadata`");
     }
   }
 
