@@ -28,7 +28,7 @@ class ContentBlockSortingWidget extends OptionsSelectWidget {
    *
    * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $manager;
+  protected ContentBlockManagerInterface $manager;
 
   /**
    * Constructs a ContentBlockSortingWidget object.

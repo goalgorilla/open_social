@@ -11,8 +11,8 @@ use Drupal\Core\Render\Renderer;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Plugin\Field\FieldFormatter\PrivateMessageThreadMemberFormatter;
-use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the private message member field formatter.
@@ -107,7 +107,7 @@ class SocialPrivateMessageThreadMemberFormatter extends PrivateMessageThreadMemb
     foreach ($items as $delta => $item) {
       /** @var \Drupal\Core\Field\FieldItemListInterface $item */
       $user = $item->getEntity();
-      if ($user instanceof User) {
+      if ($user instanceof UserInterface) {
         if ($this->getSetting('display_type') == 'label') {
           if ($access_profiles) {
             $url = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);

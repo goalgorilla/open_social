@@ -2,7 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
-use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -132,9 +132,9 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
 
           // Only for users that have access to related content.
           if (
-            ($activity instanceof Activity) &&
-            ($activity->getRelatedEntity() !== NULL) &&
-            ($activity->getRelatedEntity()->access('view', $target) === FALSE)
+            !($activity instanceof ActivityInterface) ||
+            ($related_entity = $activity->getRelatedEntity()) === NULL ||
+            !$related_entity->access('view', $target)
           ) {
             continue;
           }

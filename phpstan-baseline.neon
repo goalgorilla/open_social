@@ -1796,16 +1796,6 @@ parameters:
 			path: modules/custom/dropdown/src/Element/Dropdown.php
 
 		-
-			message: "#^Method Drupal\\\\dropdown\\\\Plugin\\\\Field\\\\FieldFormatter\\\\DropdownFieldFormatter\\:\\:getLabelForValue\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/dropdown/src/Plugin/Field/FieldFormatter/DropdownFieldFormatter.php
-
-		-
-			message: "#^Method Drupal\\\\dropdown\\\\Plugin\\\\Field\\\\FieldFormatter\\\\DropdownFieldFormatter\\:\\:getLabelForValue\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: modules/custom/dropdown/src/Plugin/Field/FieldFormatter/DropdownFieldFormatter.php
-
-		-
 			message: "#^Method Drupal\\\\dropdown\\\\Plugin\\\\Field\\\\FieldType\\\\Dropdown\\:\\:allowedValuesDescription\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php
@@ -2049,6 +2039,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$item of method Drupal\\\\search_api\\\\Plugin\\\\search_api\\\\processor\\\\ContentAccess\\:\\:getNode\\(\\) expects Drupal\\\\Core\\\\TypedData\\\\ComplexDataInterface, Drupal\\\\Core\\\\TypedData\\\\ComplexDataInterface\\|null given\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/src/Plugin/search_api/processor/EntityAccessByField.php
+
+		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:get\\(\\)\\.$#"

@@ -73,6 +73,12 @@ function social_private_message_update_dependencies() {
     'social_core' => 8802,
   ];
 
+  // Make sure that we run the update of the private message template only after
+  // the submodule private_message_notify is enabled.
+  $dependencies['social_private_message'][11007] = [
+    'private_message' => 8007,
+  ];
+
   return $dependencies;
 }
 
@@ -327,9 +333,14 @@ function social_private_message_update_11003(): string {
  * Disable the default message template provided by private_message.
  */
 function social_private_message_update_11004(): void {
-  \Drupal::configFactory()->getEditable('message.template.private_message_notification')
-    ->set('status', FALSE)
-    ->save();
+  // Removed hook and moved code to the social_private_message_update_11007 due
+  // to database update error that appears after moving the notification feature
+  // to an optional submodule for private message.
+  // @see https://www.drupal.org/project/social/issues/3264287
+  // Configuration message.template.private_message_notification was moved to
+  // that submodule and during enable it we receive error that configuration
+  // objects (message.template.private_message_notification) provided by
+  // private_message_notify already exist in active configuration.
 }
 
 /**
@@ -342,4 +353,34 @@ function social_private_message_update_11005(): void {
     ->set('enable_notifications', FALSE)
     ->set('notify_by_default', FALSE)
     ->save();
+}
+
+/**
+ * Delete the default message template provided by private_message.
+ */
+function social_private_message_update_11006(): void {
+  // We have to delete this config provided by private_message since it was
+  // moved to an optional submodule that will be enabled and this will make
+  // error:
+  // Configuration objects (message.template.private_message_notification)
+  // provided by private_message_notify already exist in active configuration.
+  $config = \Drupal::configFactory()->getEditable('message.template.private_message_notification');
+  if (!$config->isNew()) {
+    $config->delete();
+  }
+}
+
+/**
+ * Disable the default message template provided by private_message.
+ */
+function social_private_message_update_11007(): void {
+  $config = \Drupal::configFactory()->getEditable('message.template.private_message_notification');
+
+  // Check if the config that we want to update already exists in the active
+  // configuration.
+  if (!$config->isNew()) {
+    $config
+      ->set('status', FALSE)
+      ->save();
+  }
 }

@@ -2,12 +2,12 @@
 
 namespace Drupal\activity_send_email\Plugin\EmailFrequency;
 
-use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\message\Entity\Message;
+use Drupal\message\MessageInterface;
 use Drupal\user\Entity\User;
 
 /**
@@ -25,9 +25,9 @@ class Immediately extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
+  public function processItem(ActivityInterface $activity, MessageInterface $message, User $target, $body_text = NULL) {
     // If the user is blocked, we don't want to process this item further.
-    if ($target->isBlocked()) {
+    if ($target->isBlocked() || $activity->getRelatedEntity() === NULL) {
       return;
     }
 
