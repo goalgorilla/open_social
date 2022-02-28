@@ -2194,8 +2194,10 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     // Get all hidden groups that the current user is not a member of
     // and remove them from showing in the view.
     $ids = array_diff(array_keys($hidden_groups), $my_groups);
-    /** @var \Drupal\views\Plugin\views\query\Sql $query */
-    $query->addWhere('group_membership', 'groups_field_data.id', $ids, 'NOT IN');
+    if ($ids) {
+      /** @var \Drupal\views\Plugin\views\query\Sql $query */
+      $query->addWhere('group_membership', 'groups_field_data.id', $ids, 'NOT IN');
+    }
   }
 }
 
