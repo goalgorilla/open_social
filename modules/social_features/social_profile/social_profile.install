@@ -587,7 +587,7 @@ function social_profile_update_11006(array &$sandbox): void {
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function social_profile_update_11007(array &$sandbox): void {
-  $module_path = drupal_get_path('module', 'social_profile');
+  $module_path = \Drupal::service('extension.list.module')->getPath('social_profile');
   $view_mode = EntityViewMode::load('profile.name');
 
   // Check if the view mode exists, so we don't try to create it again.
@@ -599,20 +599,20 @@ function social_profile_update_11007(array &$sandbox): void {
     $yml = Yaml::parse($content);
     try {
       EntityViewMode::create($yml)->save();
+      $view_display = EntityViewDisplay::load('profile.profile.name');
+
+      // Check if the view display exists, so we don't try to create it again.
+      if ($view_display instanceof EntityInterface) {
+        return;
+      }
+      $content = file_get_contents($module_path . '/config/static/core.entity_view_display.profile.profile.name_11007.yml');
+      if (is_string($content)) {
+        $yml = Yaml::parse($content);
+        EntityViewDisplay::create($yml)->save();
+      }
     }
     catch (EntityStorageException $e) {
-      throw new EntityStorageException($e->getMessage());
-    }
-    $view_display = EntityViewDisplay::load('profile.profile.name');
-
-    // Check if the view display exists, so we don't try to create it again.
-    if ($view_display instanceof EntityInterface) {
-      return;
-    }
-    $content = file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name_11007.yml');
-    if (is_string($content)) {
-      $yml = Yaml::parse($content);
-      EntityViewDisplay::create($yml)->save();
+      \Drupal::logger('social_profile')->error($e->getMessage());
     }
   }
 }
