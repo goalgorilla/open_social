@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
@@ -552,18 +554,65 @@ function social_profile_update_11002(): string {
 }
 
 /**
- * Install 'name' view mode.
+ * Empty hook update.
+ *
+ * @see https://github.com/goalgorilla/open_social/pull/2783
  */
 function social_profile_update_11003(array &$sandbox): void {
-  $module_path = drupal_get_path('module', 'social_profile');
-  $content = file_get_contents($module_path . '/config/install/core.entity_view_mode.profile.name.yml');
-  if ($content) {
+  // This update hook was a part of release in Open Social 11.0.3.
+  // @see https://github.com/goalgorilla/open_social/blob/11.0.3/modules/social_features/social_profile/social_profile.install#L557
+  // But this update hook accidentally had hook number 11006 in
+  // Open Social 11.1.0-rc1, due to an accidental commit.
+  // @see https://github.com/goalgorilla/open_social/blob/11.1.0-rc1/modules/social_features/social_profile/social_profile.install#L557
+  // So, we removed code in update hook 11003 in favor of
+  // social_profile_update_11007().
+  // This is the reason why we don't have update hook number 11004 and 11005.
+}
+
+/**
+ * Empty hook update.
+ *
+ * @see https://github.com/goalgorilla/open_social/pull/2783
+ */
+function social_profile_update_11006(array &$sandbox): void {
+  // We moved code to social_profile_update_11007().
+  // We had to rewrite this code in order to use 'static' or unchangeable
+  // representation of config file instead of file from config/install which
+  // could be changed in the future.
+}
+
+/**
+ * Install 'name' view mode on profile.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_profile_update_11007(array &$sandbox): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('social_profile');
+  $view_mode = EntityViewMode::load('profile.name');
+
+  // Check if the view mode exists, so we don't try to create it again.
+  if ($view_mode) {
+    return;
+  }
+  $content = file_get_contents($module_path . '/config/static/core.entity_view_mode.profile.name_11007.yml');
+  if (is_string($content)) {
     $yml = Yaml::parse($content);
-    EntityViewMode::create($yml)->save();
-    $content = file_get_contents($module_path . '/config/install/core.entity_view_display.profile.profile.name.yml');
-    if ($content) {
-      $yml = Yaml::parse($content);
-      EntityViewDisplay::create($yml)->save();
+    try {
+      EntityViewMode::create($yml)->save();
+      $view_display = EntityViewDisplay::load('profile.profile.name');
+
+      // Check if the view display exists, so we don't try to create it again.
+      if ($view_display instanceof EntityInterface) {
+        return;
+      }
+      $content = file_get_contents($module_path . '/config/static/core.entity_view_display.profile.profile.name_11007.yml');
+      if (is_string($content)) {
+        $yml = Yaml::parse($content);
+        EntityViewDisplay::create($yml)->save();
+      }
+    }
+    catch (EntityStorageException $e) {
+      \Drupal::logger('social_profile')->error($e->getMessage());
     }
   }
 }
