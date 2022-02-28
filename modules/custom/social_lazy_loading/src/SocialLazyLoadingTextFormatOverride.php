@@ -54,14 +54,6 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
       }
     }
 
-    // Set lazy loading settings.
-    if (in_array('lazy.settings', $names, FALSE)) {
-      $overrides['lazy.settings']['alter_tag'] = [
-        'img' => 'img',
-        'iframe' => 'iframe',
-      ];
-    }
-
     return $overrides;
   }
 
@@ -85,7 +77,10 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
         'provider' => 'lazy',
         'status' => TRUE,
         'weight' => 999,
-        'settings' => [],
+        'settings' => [
+          'image' => TRUE,
+          'iframe' => TRUE,
+        ],
       ];
     }
   }
