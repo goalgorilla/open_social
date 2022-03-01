@@ -19,7 +19,7 @@ use Drupal\profile\Entity\ProfileInterface;
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
   // Follow button appears on listed profile display modes.
-  $allowed_display_modes = ['default', 'teaser', 'statistic'];
+  $allowed_display_modes = ['default', 'teaser', 'statistic', 'preview'];
 
   // Allow other modules to change the list.
   \Drupal::moduleHandler()->alter('social_follow_user_profile_modes', $allowed_display_modes);
@@ -74,7 +74,7 @@ function social_follow_user_preprocess_profile(array &$variables): void {
 
       $attributes
         ->setAttribute('id', Html::getUniqueId('profile-preview'))
-        ->setAttribute('data-profile', $profile->id());
+        ->setAttribute('data-profile', (string) $profile->id());
 
       $variables['#attached']['library'][] = 'social_follow_user/preview';
     }
