@@ -15,4 +15,6 @@ use Drupal\social_follow_user\SocialFollowUserHelper;
 function social_follow_user_install(): void {
   // Set default permissions.
   SocialFollowUserHelper::setPermissions();
+
+  module_set_weight('social_follow_user', 5);
 }
