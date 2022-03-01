@@ -4,7 +4,7 @@
       var timeouts = [], dialogs = [], profiles = [];
       var delay = 200;
 
-      $(context).find('img[id^="profile-preview"]')
+      $(context).find('[id^="profile-preview"]')
         .on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
