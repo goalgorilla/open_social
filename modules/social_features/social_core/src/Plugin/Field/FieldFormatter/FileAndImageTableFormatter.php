@@ -2,9 +2,14 @@
 
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 use Drupal\file\FileInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'file_image_default' formatter.
@@ -19,6 +24,81 @@ use Drupal\file\FileInterface;
  * )
  */
 class FileAndImageTableFormatter extends ImageFormatter {
+
+  /**
+   * Provides a factory for image objects.
+   *
+   * @var \Drupal\Core\Image\ImageFactory
+   */
+  protected ImageFactory $imageFactory;
+
+  /**
+   * Constructs an ImageFormatter object.
+   *
+   * @param string $plugin_id
+   *   The plugin_id for the formatter.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the formatter is associated.
+   * @param array $settings
+   *   The formatter settings.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $image_style_storage
+   *   The image style storage.
+   * @param \Drupal\Core\Image\ImageFactory $image_factory
+   *   Provides a factory for image objects.
+   */
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    AccountInterface $current_user,
+    EntityStorageInterface $image_style_storage,
+    ImageFactory $image_factory
+  ) {
+    parent::__construct(
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $label,
+      $view_mode,
+      $third_party_settings,
+      $current_user,
+      $image_style_storage
+    );
+    $this->imageFactory = $image_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('current_user'),
+      $container->get('entity_type.manager')->getStorage('image_style'),
+      $container->get('image.factory'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -91,9 +171,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
    */
   private function getImage(FileInterface $file) {
     // Make sure we deal with a file.
-    $image_factory = \Drupal::service('image.factory');
-
-    return $image_factory->get($file->getFileUri());
+    return $this->imageFactory->get($file->getFileUri());
   }
 
 }

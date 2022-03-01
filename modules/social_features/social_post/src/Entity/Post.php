@@ -172,7 +172,7 @@ class Post extends ContentEntityBase implements PostInterface {
     $allowed_values = $this->getPostVisibilityAllowedValues();
 
     if ($this->hasField('field_visibility')) {
-      foreach ($allowed_values as $key => $allowed_value) {
+      foreach ($allowed_values as $allowed_value) {
         if ($this->field_visibility->value == $allowed_value['value']) {
           // Default visibility options.
           $visibility = $this->getDefaultVisibilityByLabel($allowed_value['label']);

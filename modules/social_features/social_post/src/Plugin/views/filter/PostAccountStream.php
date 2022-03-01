@@ -54,7 +54,10 @@ class PostAccountStream extends FilterPluginBase {
     // Or posted by the user to the community.
     $public_community_condition = new Condition('AND');
     $public_community_condition->condition('post_field_data.user_id', $account_profile->id(), '=');
-    $public_community_condition->condition('post__field_visibility.field_visibility_value', ['1', '2'], 'IN');
+    $public_community_condition->condition('post__field_visibility.field_visibility_value',
+      ['1', '2'],
+      'IN'
+    );
     $or_condition->condition($public_community_condition);
 
     // Or posted to the user by the community.

@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group\EventSubscriber;
 
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,6 +16,33 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @package Drupal\social_group\EventSubscriber
  */
 class RedirectSubscriber implements EventSubscriberInterface {
+
+  /**
+   * Retrieves the currently active route match object.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected RouteMatchInterface $routeMatch;
+
+  /**
+   * The current active user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
+   * Constructs redirect subscriber oject.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $current_route_match
+   *   The currently active route match object.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current active user.
+   */
+  public function __construct(RouteMatchInterface $current_route_match, AccountProxyInterface $current_user) {
+    $this->routeMatch = $current_route_match;
+    $this->currentUser = $current_user;
+  }
 
   /**
    * Get the request events.
@@ -37,7 +66,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     $group = _social_group_get_current_group();
 
     // Get the current route name for the checks being performed below.
-    $routeMatch = \Drupal::routeMatch()->getRouteName();
+    $routeMatch = $this->routeMatch->getRouteName();
 
     // Redirect the group content collection index to the group canonical URL.
     if ($routeMatch === 'entity.group_content.collection') {
@@ -45,8 +74,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
         ->toString()));
     }
 
-    // Get the current user.
-    $user = \Drupal::currentUser();
     // The array of forbidden routes.
     $routes = [
       'entity.group.canonical',
@@ -56,12 +83,12 @@ class RedirectSubscriber implements EventSubscriberInterface {
     ];
     // If a group is set, and the type is closed_group.
     if ($group && $group->getGroupType()->id() == 'closed_group') {
-      if ($user->id() != 1) {
-        if ($user->hasPermission('manage all groups')) {
+      if ($this->currentUser->id() != 1) {
+        if ($this->currentUser->hasPermission('manage all groups')) {
           return;
         }
         // If the user is not an member of this group.
-        elseif (!$group->getMember($user) && in_array($routeMatch, $routes)) {
+        elseif (!$group->getMember($this->currentUser) && in_array($routeMatch, $routes)) {
           $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
             ->toString()));
         }

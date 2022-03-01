@@ -2,11 +2,13 @@
 
 namespace Drupal\social_group_default_route\EventSubscriber;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
-use Drupal\user\Entity\User;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -24,14 +26,21 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxy
    */
-  protected $currentUser;
+  protected AccountProxy $currentUser;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected UserStorageInterface $userStorage;
 
   /**
    * Redirectsubscriber construct.
@@ -40,10 +49,17 @@ class RedirectSubscriber implements EventSubscriberInterface {
    *   The current route.
    * @param \Drupal\Core\Session\AccountProxy $current_user
    *   The current user.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user) {
+  public function __construct(
+    CurrentRouteMatch $route_match,
+    AccountProxy $current_user,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     $this->currentRoute = $route_match;
     $this->currentUser = $current_user;
+    $this->userStorage = $entity_type_manager->getStorage('user');
   }
 
   /**
@@ -91,14 +107,16 @@ class RedirectSubscriber implements EventSubscriberInterface {
     $route = $group->getFieldValue('default_route', 'value');
 
     // Check if current user is a member.
-    if ($group->getMember(User::load($this->currentUser->id())) === FALSE) {
-      $route = $group->getFieldValue('default_route_an', 'value');
-      // If you're not a member and the group type is closed.
-      if ($route === NULL) {
-        $route = ($group->getGroupType()->id() === 'closed_group') ? $defaultClosedRoute : $defaultRoute;
+    $user = $this->userStorage->load($this->currentUser->id());
+    if ($user instanceof AccountInterface) {
+      if ($group->getMember($user) === FALSE) {
+        $route = $group->getFieldValue('default_route_an', 'value');
+        // If you're not a member and the group type is closed.
+        if ($route === NULL) {
+          $route = ($group->getGroupType()->id() === 'closed_group') ? $defaultClosedRoute : $defaultRoute;
+        }
       }
     }
-
     // Still no route here? Then we use the normal default.
     if ($route === NULL) {
       $route = $defaultRoute;

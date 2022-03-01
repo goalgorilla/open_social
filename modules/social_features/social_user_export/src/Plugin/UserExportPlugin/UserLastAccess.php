@@ -31,7 +31,7 @@ class UserLastAccess extends UserExportPluginBase {
       $last_access = $this->dateFormatter->format($last_access_time, 'short');
     }
     else {
-      $last_access = t('never');
+      $last_access = $this->t('never');
     }
     return $last_access;
   }

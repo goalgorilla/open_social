@@ -27,14 +27,14 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * GroupAddBookBlock constructor.
@@ -132,7 +132,7 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
       ];
       $url->setOptions($link_options);
 
-      $build['content'] = Link::fromTextAndUrl(t('Create book page'), $url)->toRenderable();
+      $build['content'] = Link::fromTextAndUrl($this->t('Create book page'), $url)->toRenderable();
 
       // Cache.
       $build['#cache']['contexts'][] = 'url.path';

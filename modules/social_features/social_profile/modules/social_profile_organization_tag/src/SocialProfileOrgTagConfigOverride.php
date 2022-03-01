@@ -3,8 +3,10 @@
 namespace Drupal\social_profile_organization_tag;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class SocialProfileOrgTagConfigOverride.
@@ -12,18 +14,35 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_profile_organization_tag
  */
 class SocialProfileOrgTagConfigOverride implements ConfigFactoryOverrideInterface {
+  use StringTranslationTrait;
+
+  /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Load overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Override profile form display.
     $config_name = 'core.entity_form_display.profile.profile.default';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
 
       $children = $config->get('third_party_settings.field_group.group_profile_self_intro.children');
       $children[] = 'field_profile_organization_tag';
@@ -51,10 +70,10 @@ class SocialProfileOrgTagConfigOverride implements ConfigFactoryOverrideInterfac
               ],
               'parent_name' => '',
               'weight' => 99,
-              'label' => t('Tags')->render(),
+              'label' => $this->t('Tags')->render(),
               'format_type' => 'fieldset',
               'format_settings' => [
-                'label' => t('Tags')->render(),
+                'label' => $this->t('Tags')->render(),
                 'required_fields' => FALSE,
                 'id' => 'group_tags',
                 'classes' => 'scrollspy',

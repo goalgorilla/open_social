@@ -4,8 +4,6 @@ namespace Drupal\social_topic\Controller;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,36 +19,16 @@ class SocialTopicController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The Module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
+  protected RequestStack $requestStack;
 
   /**
    * SocialTopicController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *   The module handler.
    */
-  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(RequestStack $requestStack) {
     $this->requestStack = $requestStack;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -58,9 +36,7 @@ class SocialTopicController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack'),
-      $container->get('entity_type.manager'),
-      $container->get('module_handler')
+      $container->get('request_stack')
     );
   }
 
@@ -88,7 +64,7 @@ class SocialTopicController extends ControllerBase {
       }
     }
     // Call hook_topic_type_title_alter().
-    $this->moduleHandler->alter('topic_type_title', $title, $term);
+    $this->moduleHandler()->alter('topic_type_title', $title, $term);
 
     return $title;
   }
@@ -109,12 +85,12 @@ class SocialTopicController extends ControllerBase {
     // If we don't have a user in the request, assume it's my own profile.
     if (is_null($user)) {
       // Usecase is the user menu, which is generated on all LU pages.
-      $user = User::load($account->id());
+      $user = $this->entityTypeManager()->getStorage('user')->load($account->id());
     }
 
     // If not a user then just return neutral.
     if (!$user instanceof User) {
-      $user = User::load($user);
+      $user = $this->entityTypeManager()->getStorage('user')->load($user);
 
       if (!$user instanceof User) {
         return AccessResult::neutral();

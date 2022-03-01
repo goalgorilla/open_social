@@ -25,7 +25,7 @@ class InviteEmailBaseForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The logger factory.
@@ -33,13 +33,6 @@ class InviteEmailBaseForm extends FormBase {
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected $loggerFactory;
-
-  /**
-   * The current group from route.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $group;
 
   /**
    * Constructs a new BulkGroupInvitation Form.
@@ -107,7 +100,7 @@ class InviteEmailBaseForm extends FormBase {
       '#target_type' => 'user',
       '#select2' => [
         'tags' => TRUE,
-        'placeholder' => t('Jane Doe, johndoe@example.com'),
+        'placeholder' => $this->t('Jane Doe, johndoe@example.com'),
         'tokenSeparators' => [',', ';'],
         'autocomplete' => FALSE,
       ],

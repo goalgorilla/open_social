@@ -110,8 +110,6 @@ function social_content_report_tokens_alter(array &$replacements, array $context
                 // Load the flagged entity.
                 $entity = $flagging->getFlaggable();
                 $entity_type = $entity->getEntityTypeId();
-
-                $summary = '';
                 $preview_info = [];
 
                 switch ($entity_type) {

@@ -26,37 +26,30 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * The node storage for event enrollments.
    *
-   * @var \Drupal\Core\entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  protected $entityStorage;
+  protected EntityStorageInterface $entityStorage;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private $tempStoreFactory;
-
-  /**
-   * The Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
+  private PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The social event enroll.
    *
    * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
    */
-  protected $eventEnrollService;
+  protected SocialEventEnrollServiceInterface $eventEnrollService;
 
   /**
    * {@inheritdoc}
@@ -139,7 +132,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       '#type' => 'fieldset',
       '#title' => [
         'text' => [
-          '#markup' => t('Preview your email invite'),
+          '#markup' => $this->t('Preview your email invite'),
         ],
         'icon' => [
           '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
@@ -272,8 +265,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       batch_set($batch);
     }
     catch (\Exception $error) {
-      $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));
-      $this->messenger->addWarning(t('Unable to proceed, please try again.'));
+      $this->loggerFactory->get('event_invite_form_values')->alert($this->t('@err', ['@err' => $error]));
+      $this->messenger->addWarning($this->t('Unable to proceed, please try again.'));
     }
   }
 

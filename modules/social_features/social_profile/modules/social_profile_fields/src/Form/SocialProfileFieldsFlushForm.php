@@ -23,7 +23,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    *
    * @var \Drupal\profile\ProfileStorage
    */
-  protected $profileStorage;
+  protected ProfileStorage $profileStorage;
 
   /**
    * Configstorage.
@@ -34,11 +34,11 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
 
   /**
-   * Fiekdconfigstorage.
+   * FieldConfigStorage.
    *
    * @var \Drupal\field\FieldConfigStorage
    */
-  protected $fieldStorage;
+  protected FieldConfigStorage $fieldStorage;
 
   /**
    * Constructs a new ExportUserConfirm.
@@ -106,7 +106,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
     $fields = $this->getUnselectedFields();
 
     $batch = [
-      'title' => t('Flushing profiles.'),
+      'title' => $this->t('Flushing profiles.'),
       'operations' => [
         [
           '\Drupal\social_profile_fields\SocialProfileFieldsBatch::performFlush',
@@ -138,7 +138,10 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    *   An array of field names.
    */
   protected function getUnselectedFields() {
-    $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile']);
+    $profile_fields = $this->fieldStorage->loadByProperties([
+      'entity_type' => 'profile',
+      'bundle' => 'profile',
+    ]);
     $settings = $this->configFactory->get('social_profile_fields.settings');
     $empty = [];
 

@@ -261,7 +261,9 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     $memberships = $this->groupHelperService->getAllGroupsForUser($recipient->id());
     if (count($memberships) > 0) {
       $access_by_group = $or->andConditionGroup();
-      $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
+      $access_by_group->condition('nfcv.field_content_visibility_value',
+        ['group', 'community', 'public'],
+        'IN');
       $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
       $access_by_group->condition('gcfd.gid', $memberships, 'IN');
       $or->condition($access_by_group);

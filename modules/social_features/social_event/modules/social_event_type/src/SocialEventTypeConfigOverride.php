@@ -3,8 +3,10 @@
 namespace Drupal\social_event_type;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class SocialEventTypeConfigOverride.
@@ -15,17 +17,35 @@ use Drupal\Core\Config\StorageInterface;
  */
 class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
 
+  use StringTranslationTrait;
+
+  /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
   /**
    * Load overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Override event form display.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
 
       $children = $config->get('third_party_settings.field_group.group_title_image.children');
       $children[] = 'field_event_type';
@@ -58,7 +78,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($view_modes as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
 
         $content = $config->get('content');
         $content['field_event_type'] = [
@@ -105,7 +125,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
                     'exposed' => TRUE,
                     'expose' => [
                       'operator_id' => 'field_event_type_target_id_op',
-                      'label' => t('What type of events do you want to see?'),
+                      'label' => $this->t('What type of events do you want to see?'),
                       'description' => '',
                       'use_operator' => FALSE,
                       'operator' => 'field_event_type_target_id_op',

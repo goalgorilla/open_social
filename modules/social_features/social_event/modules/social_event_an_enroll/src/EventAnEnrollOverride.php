@@ -3,6 +3,7 @@
 namespace Drupal\social_event_an_enroll;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -16,16 +17,32 @@ use Drupal\Core\Config\StorageInterface;
 class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
+  /**
    * Returns config overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Add field_event_an_enroll to event form.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
 
       $children = $config->get('third_party_settings.field_group.group_enrollment_methods.children');
       $children[] = 'field_event_an_enroll';

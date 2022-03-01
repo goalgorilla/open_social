@@ -25,7 +25,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.
@@ -82,13 +82,13 @@ class UpdateEnrollRequestController extends ControllerBase {
       if ($approve === '1') {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_APPROVED;
         $event_enrollment->field_enrollment_status->value = '1';
-        $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
+        $this->messenger()->addStatus($this->t('The event enrollment request has been approved.'));
       }
       // When the user declined,
       // we set the field_request_or_invite_status to decline.
       elseif ($approve === '0') {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-        $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
+        $this->messenger()->addStatus($this->t('The event enrollment request has been declined.'));
       }
 
       // In order for the notifications to be sent correctly we're updating the

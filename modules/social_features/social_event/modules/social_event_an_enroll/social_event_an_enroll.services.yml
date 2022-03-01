@@ -3,6 +3,7 @@ services:
     class: \Drupal\social_event_an_enroll\EventAnEnrollManager
   social_event_an_enroll.overrider:
     class: \Drupal\social_event_an_enroll\EventAnEnrollOverride
+    arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
   social_event_an_enroll.service:

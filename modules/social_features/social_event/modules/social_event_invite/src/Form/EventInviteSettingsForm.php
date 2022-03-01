@@ -76,14 +76,14 @@ class EventInviteSettingsForm extends ConfigFormBase {
 
     $form['email_verification'] = [
       '#type' => 'checkbox',
-      '#title' => t('Allow invited user to skip email verification'),
+      '#title' => $this->t('Allow invited user to skip email verification'),
       '#default_value' => $social_event_config->get('email_verification'),
     ];
 
     $form['invite_by_users'] = [
       '#type' => 'checkbox',
-      '#title' => t('Event managers are able to allow users send invites'),
-      '#description' => t('If enabled, event managers can allow users to send invitations to event.'),
+      '#title' => $this->t('Event managers are able to allow users send invites'),
+      '#description' => $this->t('If enabled, event managers can allow users to send invitations to event.'),
       '#default_value' => $social_event_config->get('invite_by_users'),
     ];
 

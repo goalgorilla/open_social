@@ -6,6 +6,7 @@ use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\message\MessageInterface;
 use Drupal\user\Entity\User;
@@ -21,6 +22,8 @@ use Drupal\user\Entity\User;
  * )
  */
 class Immediately extends EmailFrequencyBase {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -71,15 +74,15 @@ class Immediately extends EmailFrequencyBase {
     $params = [];
     // Translating frequency instance in the language of the user.
     // @codingStandardsIgnoreStart
-    $frequency_translated = t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
+    $frequency_translated = $this->t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
     // @codingStandardsIgnoreEnd
 
     // Construct the render array.
     $notification = [
       '#theme' => 'directmail',
       '#notification' => $body_text,
-      '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
-        '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
+      '#notification_settings' => $this->t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
+        '@settings' => Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
       ['langcode' => $langcode]),
@@ -90,7 +93,7 @@ class Immediately extends EmailFrequencyBase {
     if ($subject !== '') {
       // We don't support tokens in our subject at the moment, if needs be
       // we can check out how the ActivityFactory processTokens method does it.
-      $params['subject'] = t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
+      $params['subject'] = $this->t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
     }
 
     // Send the email.

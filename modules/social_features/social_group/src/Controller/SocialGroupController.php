@@ -4,6 +4,7 @@ namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\group\Entity\Group;
@@ -11,6 +12,7 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\Entity\User;
+use Drupal\user\UserStorageInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,14 +30,14 @@ class SocialGroupController extends ControllerBase {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * Views Bulk Operations action processor.
    *
    * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
    */
-  protected $actionProcessor;
+  protected ViewsBulkOperationsActionProcessorInterface $actionProcessor;
 
 
   /**
@@ -43,7 +45,21 @@ class SocialGroupController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
+
+  /**
+   * Retrieves the currently active route match object.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected RouteMatchInterface $routeMatch;
+
+  /**
+   * The user object.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected UserStorageInterface $user;
 
   /**
    * SocialGroupController constructor.
@@ -54,11 +70,20 @@ class SocialGroupController extends ControllerBase {
    *   Private temporary storage factory.
    * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
    *   Views Bulk Operations action processor.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $current_route_match
+   *   The currently active route match object.
    */
-  public function __construct(RequestStack $requestStack, PrivateTempStoreFactory $tempStoreFactory, ViewsBulkOperationsActionProcessorInterface $actionProcessor) {
+  public function __construct(
+    RequestStack $requestStack,
+    PrivateTempStoreFactory $tempStoreFactory,
+    ViewsBulkOperationsActionProcessorInterface $actionProcessor,
+    RouteMatchInterface $current_route_match
+  ) {
     $this->requestStack = $requestStack;
     $this->tempStoreFactory = $tempStoreFactory;
     $this->actionProcessor = $actionProcessor;
+    $this->routeMatch = $current_route_match;
+    $this->user = $this->entityTypeManager()->getStorage('user');
   }
 
   /**
@@ -68,7 +93,8 @@ class SocialGroupController extends ControllerBase {
     return new static(
       $container->get('request_stack'),
       $container->get('tempstore.private'),
-      $container->get('views_bulk_operations.processor')
+      $container->get('views_bulk_operations.processor'),
+      $container->get('current_route_match')
     );
   }
 
@@ -122,8 +148,8 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupAddMemberTitle() {
-    $group_content = \Drupal::routeMatch()->getParameter('group_content');
-    $group = \Drupal::routeMatch()->getParameter('group');
+    $group_content = $this->routeMatch->getParameter('group_content');
+    $group = $this->routeMatch->getParameter('group');
     if ($group_content instanceof GroupContent &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
       if ($group instanceof GroupInterface) {
@@ -145,10 +171,10 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupRemoveContentTitle($group) {
-    $group_content = \Drupal::routeMatch()->getParameter('group_content');
+    $group_content = $this->routeMatch->getParameter('group_content');
     if ($group_content instanceof GroupContent &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
-      $group = \Drupal::routeMatch()->getParameter('group');
+      $group = $this->routeMatch->getParameter('group');
       if ($group instanceof GroupInterface) {
         return $this->t('Remove invitee from group: @group_name', ['@group_name' => $group->label()]);
       }
@@ -172,12 +198,12 @@ class SocialGroupController extends ControllerBase {
     // If we don't have a user in the request, assume it's my own profile.
     if (is_null($user)) {
       // Usecase is the user menu, which is generated on all LU pages.
-      $user = User::load($account->id());
+      $user = $this->user->load($account->id());
     }
 
     // If not a user then just return neutral.
     if (!$user instanceof User) {
-      $user = User::load($user);
+      $user = $this->user->load($user);
 
       if (!$user instanceof User) {
         return AccessResult::neutral();
@@ -239,7 +265,7 @@ class SocialGroupController extends ControllerBase {
     ];
 
     // Make sure extensions can change this as well.
-    \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
+    $this->moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
 
     if ($group_content_type !== NULL && array_key_exists($group_content_type->label(), $node_types)) {
       return $this->t('Create @article @name', [

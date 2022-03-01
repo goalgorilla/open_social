@@ -5,6 +5,8 @@ namespace Drupal\social\Installer\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\social\Installer\OptionalModuleManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,13 +14,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides the site configuration form.
  */
 class ModuleConfigureForm extends ConfigFormBase {
+  use StringTranslationTrait;
 
   /**
    * The module extension list.
    *
    * @var \Drupal\social\Installer\OptionalModuleManager
    */
-  protected $optionalModuleManager;
+  protected OptionalModuleManager $optionalModuleManager;
+
+  /**
+   * Returns the state storage service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected StateInterface $state;
 
   /**
    * Constructs a ModuleConfigureForm object.
@@ -27,10 +37,13 @@ class ModuleConfigureForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\social\Installer\OptionalModuleManager $optional_module_manager
    *   The module extension list.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, OptionalModuleManager $optional_module_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, OptionalModuleManager $optional_module_manager, StateInterface $state) {
     parent::__construct($config_factory);
     $this->optionalModuleManager = $optional_module_manager;
+    $this->state = $state;
   }
 
   /**
@@ -41,7 +54,8 @@ class ModuleConfigureForm extends ConfigFormBase {
       $container->get('config.factory'),
       // Create the OptionalModuleManager ourselves because it can not be
       // available as a service yet.
-      OptionalModuleManager::create($container)
+      OptionalModuleManager::create($container),
+      $container->get('state')
     );
   }
 
@@ -102,7 +116,7 @@ class ModuleConfigureForm extends ConfigFormBase {
     // Checkboxes to enable Optional modules.
     $form['install_modules']['optional_modules'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Enable additional features'),
+      '#title' => $this->t('Enable additional features'),
       '#options' => $feature_options,
       '#default_value' => $default_features,
     ];
@@ -113,8 +127,8 @@ class ModuleConfigureForm extends ConfigFormBase {
 
     $form['install_demo']['demo_content'] = [
       '#type' => 'checkbox',
-      '#title' => t('Generate demo content and users'),
-      '#description' => t('Will generate files, users, groups, events, topics, comments and posts.'),
+      '#title' => $this->t('Generate demo content and users'),
+      '#description' => $this->t('Will generate files, users, groups, events, topics, comments and posts.'),
     ];
 
     $form['actions'] = ['#type' => 'actions'];
@@ -164,7 +178,7 @@ class ModuleConfigureForm extends ConfigFormBase {
     }
 
     // Store whether we need to set up demo content.
-    \Drupal::state()->set('social_install_demo_content', $form_state->getValue('demo_content'));
+    $this->state->set('social_install_demo_content', $form_state->getValue('demo_content'));
   }
 
 }

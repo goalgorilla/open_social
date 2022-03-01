@@ -2,11 +2,12 @@
 
 namespace Drupal\alternative_frontpage\Form;
 
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\user\Entity\Role;
 
 /**
  * Form handler for the AlternativeFrontpage add and edit forms.
@@ -18,14 +19,14 @@ class AlternativeFrontpageForm extends EntityForm {
    *
    * @var \Drupal\Core\Config\TypedConfigManagerInterface
    */
-  protected $typedConfigManager;
+  protected TypedConfigManagerInterface $typedConfigManager;
 
   /**
    * Path validator.
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $pathValidator;
+  protected PathValidatorInterface $pathValidator;
 
   /**
    * The config factory to perform operations on the configs.
@@ -58,7 +59,7 @@ class AlternativeFrontpageForm extends EntityForm {
     $ignored_roles = ['administrator'];
     $options = [];
 
-    foreach (Role::loadMultiple() as $role) {
+    foreach ($this->entityTypeManager->getStorage('user_role')->loadMultiple() as $role) {
       if (in_array($role->id(), $ignored_roles, TRUE)) {
         continue;
       }

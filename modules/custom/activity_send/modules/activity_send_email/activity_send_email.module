@@ -6,18 +6,11 @@
  */
 
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-
-/**
- * Email frequencies.
- */
-const FREQUENCY_DAILY = 'daily';
-const FREQUENCY_IMMEDIATELY = 'immediately';
-const FREQUENCY_NONE = 'none';
-const FREQUENCY_WEEKLY = 'weekly';
 
 /**
  * Implements hook_cron().
@@ -188,7 +181,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     $template_frequencies = $mail_configs->get('template_frequencies') ?: [];
 
     foreach ($item['templates'] as $template) {
-      $default_frequency = $template_frequencies[$template] ?? FREQUENCY_IMMEDIATELY;
+      $default_frequency = $template_frequencies[$template] ?? EmailFrequencyManager::FREQUENCY_IMMEDIATELY;
       $form['email_notifications'][$item_id][$template] = [
         '#type' => 'select',
         '#title' => $email_message_templates[$template],

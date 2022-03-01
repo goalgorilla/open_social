@@ -2056,6 +2056,11 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/Plugin/search_api/processor/EntityAccessByField.php
 
 		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
+
+		-
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:get\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
@@ -2084,11 +2089,6 @@ parameters:
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:id\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-		  message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
-		  count: 3
-		  path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testAllowedAccess\\(\\) has no return type specified\\.$#"
@@ -2229,16 +2229,6 @@ parameters:
 			message: "#^Method Drupal\\\\ginvite\\\\EventSubscriber\\\\GinviteSubscriber\\:\\:notifyAboutPendingInvitations\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/ginvite/src/EventSubscriber/GinviteSubscriber.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:\\$groupInvitationLoader\\.$#"
-			count: 2
-			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:\\$groupMembershipLoader\\.$#"
-			count: 2
-			path: modules/custom/ginvite/src/Form/BulkGroupInvitation.php
 
 		-
 			message: "#^Method Drupal\\\\ginvite\\\\Form\\\\BulkGroupInvitation\\:\\:cancelForm\\(\\) has no return type specified\\.$#"
@@ -3246,11 +3236,6 @@ parameters:
 			path: modules/custom/social_file_private/src/SocialFilePrivateFieldsConfigOverride.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/custom/social_file_private/src/SocialFilePrivateFieldsConfigOverride.php
-
-		-
 			message: "#^Method Drupal\\\\social_file_private\\\\SocialFilePrivateTextEditorConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/custom/social_file_private/src/SocialFilePrivateTextEditorConfigOverride.php
@@ -3676,11 +3661,6 @@ parameters:
 			path: modules/custom/social_language/src/SocialLanguageConfigOverride.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/custom/social_language/src/SocialLanguageConfigOverride.php
-
-		-
 			message: "#^Method Drupal\\\\social_language\\\\SocialLanguageServiceProvider\\:\\:alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/social_language/src/SocialLanguageServiceProvider.php
@@ -3836,13 +3816,8 @@ parameters:
 			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
-			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
 			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
 
 		-
@@ -3853,11 +3828,6 @@ parameters:
 		-
 			message: "#^Variable \\$destination in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
-			path: modules/custom/social_magic_login/src/Service/MagicUrl.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
 			path: modules/custom/social_magic_login/src/Service/MagicUrl.php
 
 		-
@@ -4676,11 +4646,6 @@ parameters:
 			path: modules/social_features/social_activity/src/EmailTokenServices.php
 
 		-
-			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_activity/src/EmailTokenServices.php
-
-		-
 			message: "#^Parameter \\#1 \\$str of function strtoupper expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/src/EmailTokenServices.php
@@ -5207,11 +5172,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_album\\\\SocialAlbumConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_album/src/SocialAlbumConfigOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_album/src/SocialAlbumConfigOverride.php
 
@@ -6171,23 +6131,8 @@ parameters:
 			path: modules/social_features/social_content_block/src/Routing/RouteSubscriber.php
 
 		-
-			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/SocialContentBlockOverride.php
-
-		-
 			message: "#^Method Drupal\\\\social_content_block\\\\SocialContentBlockOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
-			path: modules/social_features/social_content_block/src/SocialContentBlockOverride.php
-
-		-
-			message: "#^Property Drupal\\\\social_content_block\\\\SocialContentBlockOverride\\:\\:\\$definitions \\(array\\) does not accept default value of type null\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/SocialContentBlockOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
 			path: modules/social_features/social_content_block/src/SocialContentBlockOverride.php
 
 		-
@@ -7151,11 +7096,6 @@ parameters:
 			path: modules/social_features/social_core/src/Controller/SocialCoreController.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/social_features/social_core/src/Controller/SocialCoreController.php
-
-		-
 			message: "#^Method Drupal\\\\social_core\\\\Entity\\\\Element\\\\EntityAutocomplete\\:\\:getEntityLabels\\(\\) has parameter \\$hide_id with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Entity/Element/EntityAutocomplete.php
@@ -7244,16 +7184,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_core\\\\Form\\\\InviteUserBaseForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Form/InviteUserBaseForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$user of method Drupal\\\\social_event\\\\EventEnrollmentStatusHelper\\:\\:getAllUserEventEnrollments\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/InviteService.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 4
-			path: modules/social_features/social_core/src/InviteService.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\social_tagging\\\\SocialTaggingService\\:\\:getCurrentRequest\\(\\)\\.$#"
@@ -7361,11 +7291,6 @@ parameters:
 			path: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/FileAndImageTableFormatter.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/FileAndImageTableFormatter.php
-
-		-
 			message: "#^Method Drupal\\\\social_core\\\\Routing\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Routing/RouteSubscriber.php
@@ -7374,16 +7299,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_core/src/Service/LayoutService.php
-
-		-
-			message: "#^Cannot access offset 'layout_builder' on array\\|bool\\|float\\|int\\|string\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
-
-		-
-			message: "#^Cannot access offset 'select2' on array\\|bool\\|float\\|int\\|string\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/SocialCoreServiceProvider.php
 
 		-
 			message: "#^Method Drupal\\\\social_core\\\\SocialCoreServiceProvider\\:\\:alter\\(\\) has no return type specified\\.$#"
@@ -7761,11 +7676,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_an_enroll\\\\EventAnEnrollOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollOverride.php
 
@@ -8200,11 +8110,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php
 
 		-
-			message: "#^Interface Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface referenced with incorrect case\\: Drupal\\\\Core\\\\entity\\\\EntityStorageInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EnrollInviteEmailForm\\:\\:cancelForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
@@ -8221,11 +8126,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EnrollInviteEmailForm\\:\\:validateForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
-
-		-
-			message: "#^Property Drupal\\\\social_event_invite\\\\Form\\\\EnrollInviteEmailForm\\:\\:\\$configFactory \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
 
@@ -8785,16 +8685,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php
 
 		-
-			message: "#^Property Drupal\\\\social_event_managers\\\\Form\\\\SocialEventManagersAddEnrolleeForm\\:\\:\\$configFactory \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 3
-			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_managers\\\\Form\\\\SocialEventManagersSettings\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersSettings.php
@@ -8936,11 +8826,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_managers\\\\SocialEventManagersConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/SocialEventManagersConfigOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/SocialEventManagersConfigOverride.php
 
@@ -9176,11 +9061,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_type\\\\SocialEventTypeConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php
 
@@ -10040,11 +9920,6 @@ parameters:
 			path: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_event\\\\Form\\\\EnrollRequestDeclineForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php
@@ -10095,11 +9970,6 @@ parameters:
 			path: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 3
-			path: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php
-
-		-
 			message: "#^Class Drupal\\\\social_event\\\\Form\\\\EventEnrollmentDeleteForm extends @internal class Drupal\\\\Core\\\\Entity\\\\ContentEntityDeleteForm\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EventEnrollmentDeleteForm.php
@@ -10136,11 +10006,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event\\\\Plugin\\\\Block\\\\EnrollActionBlock\\:\\:getGroups\\(\\) has parameter \\$node with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php
 
@@ -10276,11 +10141,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event\\\\Routing\\\\EnrollRequestsOverviewSubscriber\\:\\:checkAccessToEnrollRequestsOverview\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Routing/EnrollRequestsOverviewSubscriber.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_event/src/Routing/EnrollRequestsOverviewSubscriber.php
 
@@ -10935,11 +10795,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
 
 		-
-			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\Group\\:\\:getMember\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
-
-		-
 			message: "#^Method Drupal\\\\social_group_default_route\\\\RouteSubscriber\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
@@ -11400,11 +11255,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Subscriber/Route.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Subscriber/Route.php
-
-		-
 			message: "#^Cannot call method setDefault\\(\\) on Symfony\\\\Component\\\\Routing\\\\Route\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_gvbo/src/Access/SocialGroupViewsBulkOperationsAccess.php
@@ -11750,21 +11600,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
 
 		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$configFactory \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$groupInvitationLoader \\(Drupal\\\\ginvite\\\\GroupInvitationLoader\\) does not accept Drupal\\\\group\\\\GroupMembershipLoaderInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$groupMembershipLoader \\(Drupal\\\\group\\\\GroupMembershipLoaderInterface\\) does not accept Drupal\\\\ginvite\\\\GroupInvitationLoader\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php
@@ -12097,11 +11932,6 @@ parameters:
 		-
 			message: "#^Method Drupal\\\\social_group_request\\\\Controller\\\\GroupRequestController\\:\\:requestMembership\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
 			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
 
 		-
@@ -13475,11 +13305,6 @@ parameters:
 			path: modules/social_features/social_group/src/Controller/SocialGroupController.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 5
-			path: modules/social_features/social_group/src/Controller/SocialGroupController.php
-
-		-
 			message: "#^Method Drupal\\\\social_group\\\\Controller\\\\SocialGroupListBuilder\\:\\:getEntityIds\\(\\) should return array but returns array\\|int\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php
@@ -13545,11 +13370,6 @@ parameters:
 			path: modules/social_features/social_group/src/EventSubscriber/RedirectSubscriber.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/social_features/social_group/src/EventSubscriber/RedirectSubscriber.php
-
-		-
 			message: "#^Cannot call method getListCacheTags\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
@@ -13566,11 +13386,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$entity_bundle of method Drupal\\\\Core\\\\Entity\\\\EntityAccessControlHandlerInterface\\:\\:createAccess\\(\\) expects string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
 
@@ -13596,11 +13411,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\social_group\\\\Form\\\\SocialGroupSettings\\:\\:hasPermission\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
 
@@ -13693,26 +13503,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\Action\\\\SocialSendEmail\\:\\:execute\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupAddTopicBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Block/GroupHeroBlock.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/social_features/social_group/src/Plugin/Block/GroupStatisticBlock.php
 
 		-
 			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
@@ -13896,11 +13686,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_group\\\\SocialGroupSelectorWidgetConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SocialGroupSelectorWidgetConfigOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupSelectorWidgetConfigOverride.php
 
@@ -14108,11 +13893,6 @@ parameters:
 			message: "#^Function social_landing_page_theme\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_landing_page/social_landing_page.module
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_landing_page/src/ContentTranslationDefaultsConfigOverride.php
 
 		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
@@ -14715,11 +14495,6 @@ parameters:
 			path: modules/social_features/social_mentions/src/SocialMentionsConfigOverride.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_mentions/src/SocialMentionsConfigOverride.php
-
-		-
 			message: "#^Function social_node_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_node/social_node.install
@@ -14868,11 +14643,6 @@ parameters:
 			message: "#^Function social_page_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_page/social_page.module
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_page/src/ContentTranslationDefaultsConfigOverride.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
@@ -15163,11 +14933,6 @@ parameters:
 			message: "#^Offset 'settings' does not exist on array\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_post/modules/social_post_photo/social_post_photo.module
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_post/modules/social_post_photo/src/SocialPostPhotoConfigOverride.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
@@ -15542,11 +15307,6 @@ parameters:
 		-
 			message: "#^Variable \\$display in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
-			path: modules/social_features/social_post/src/Form/PostForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
 			path: modules/social_features/social_post/src/Form/PostForm.php
 
 		-
@@ -16585,16 +16345,6 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
 
 		-
-			message: "#^Variable \\$field_config in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$field$#"
-			count: 2
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$notUnique\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Plugin/Validation/Constraint/UniqueNicknameValidator.php
@@ -16666,11 +16416,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsOverride.php
 
@@ -16796,11 +16541,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_profile_organization_tag\\\\SocialProfileOrgTagConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php
 
@@ -18335,11 +18075,6 @@ parameters:
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
-			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
-
-		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingService.php
@@ -19200,13 +18935,13 @@ parameters:
 			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
 
 		-
-			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserSettingsForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 2
+			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php
 
 		-
@@ -19691,11 +19426,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social\\\\Installer\\\\Form\\\\ModuleConfigureForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Installer/Form/ModuleConfigureForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: src/Installer/Form/ModuleConfigureForm.php
 

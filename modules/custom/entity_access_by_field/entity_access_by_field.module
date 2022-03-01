@@ -20,11 +20,6 @@ use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
- * Here we define a constant for our node access grant ID.
- */
-const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
-
-/**
  * Implements hook_node_access().
  */
 function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account) {
@@ -46,7 +41,7 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op): arr
     if (!empty($permissions)) {
       foreach ($permissions as $realm => $permission) {
         if ($account->hasPermission($permission)) {
-          $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
+          $grants[$realm][] = EntityAccessHelper::ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
         }
         $grants[$realm . '_author'] = [$account->id()];
       }
@@ -78,7 +73,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node): array 
             if ($node->isPublished()) {
               $grants[] = [
                 'realm' => $realm,
-                'gid' => ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM,
+                'gid' => EntityAccessHelper::ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM,
                 'grant_view' => 1,
                 'grant_update' => 0,
                 'grant_delete' => 0,

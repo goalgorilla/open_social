@@ -46,7 +46,6 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
 
       // Used to ensure that we don't need to alter the submit handler too much.
       $element['#checkbox_categories'] = [];
-      $field_name = $this->fieldDefinition->getName();
 
       foreach ($grouped_options as $tid => $option) {
         // If this is a top level element without children then we just treat it

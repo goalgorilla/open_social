@@ -11,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
@@ -29,40 +30,42 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFactoryPluginInterface {
 
+  use StringTranslationTrait;
+
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The email frequency manager.
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $emailFrequencyManager;
+  protected EmailFrequencyManager $emailFrequencyManager;
 
   /**
    * The mail manager.
    *
    * @var \Drupal\Core\Mail\MailManagerInterface
    */
-  protected $mailManager;
+  protected MailManagerInterface $mailManager;
 
   /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The translation service.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
-  protected $translation;
+  protected TranslationInterface $translation;
 
   /**
    * {@inheritdoc}
@@ -181,7 +184,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>',
             [
               '@settings' => Link::fromTextAndUrl(
-                t('email notification settings'),
+                $this->t('email notification settings'),
                 Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
               ':frequency' => $frequency_translated,
             ],

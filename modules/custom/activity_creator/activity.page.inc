@@ -7,6 +7,7 @@
  * Page callback for Activity entities.
  */
 
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
@@ -128,11 +129,11 @@ function template_preprocess_activity(array &$variables) {
   $status = $activity_notification_service->getActivityStatus($activity, \Drupal::currentUser());
   // Add bg classes according to notification status.
   switch ($status) {
-    case ACTIVITY_STATUS_RECEIVED:
+    case ActivityNotifications::ACTIVITY_STATUS_RECEIVED:
       $status_class = 'bg-gray-lightest';
 
       if (\Drupal::routeMatch()->getRouteName() === 'view.activity_stream_notifications.page_1') {
-        $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ACTIVITY_STATUS_SEEN);
+        $activity_notification_service->changeStatusOfActivity([$activity->id()], \Drupal::currentUser(), ActivityNotifications::ACTIVITY_STATUS_SEEN);
 
         // In case when a notification is unread then it should not be cached
         // because when a page will be opened the second time then a styling of

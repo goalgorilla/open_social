@@ -111,7 +111,7 @@ function social_activity_filter_update_8003() {
   $referenced_blocks = $query->execute()->fetchAll();
 
   foreach ($referenced_blocks as $referenced_block) {
-    $settings = unserialize($referenced_block->field_block_reference_settings);
+    $settings = \Drupal::service('PhpSerialize')->decode($referenced_block->field_block_reference_settings);
     $settings['delta'] = $referenced_block->delta;
 
     $connection->update('paragraph__field_block_reference')

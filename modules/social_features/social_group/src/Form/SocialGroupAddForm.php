@@ -23,14 +23,14 @@ class SocialGroupAddForm extends FormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * Constructs a new GroupContentController.
@@ -122,7 +122,7 @@ class SocialGroupAddForm extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getGroupTypeElement($container = FALSE) {
-    $user = \Drupal::currentUser();
+    $user = $this->currentUser();
     $element = [
       '#type' => 'radios',
       '#title' => $this->t('Group type'),
@@ -136,7 +136,7 @@ class SocialGroupAddForm extends FormBase {
 
     // Add help text if the user can't edit group types.
     if (!$user->hasPermission('edit group types')) {
-      $element['#description'] = $this->t('In order to change the group type, 
+      $element['#description'] = $this->t('In order to change the group type,
         please contact the content or site managers.');
     }
 
@@ -174,7 +174,7 @@ class SocialGroupAddForm extends FormBase {
         ],
         'widget' => [
           '#title' => $this->t('Group type'),
-          '#description' => $this->t('In order to change the group type, 
+          '#description' => $this->t('In order to change the group type,
           please contact the content or site managers.'),
           '#field_parents' => [],
           '#required' => TRUE,

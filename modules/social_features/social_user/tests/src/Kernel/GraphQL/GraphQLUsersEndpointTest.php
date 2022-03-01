@@ -40,7 +40,11 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
 
     // We must include the current user in the test data because it'll also be
     // listed.
-    $users[] = $this->setUpCurrentUser([], ['administer users', 'access content', 'bypass graphql access']);
+    $users[] = $this->setUpCurrentUser([], [
+      'administer users',
+      'access content',
+      'bypass graphql access',
+    ]);
     $this->assertEndpointSupportsPagination(
       'users',
       array_map(static fn (UserInterface $user) => $user->uuid(), $users)

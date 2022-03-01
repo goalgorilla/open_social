@@ -27,21 +27,21 @@ class SocialGroupSettings extends ConfigFormBase {
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $groupContentPluginManager;
+  protected GroupContentEnablerManagerInterface $groupContentPluginManager;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructs a \Drupal\system\ConfigFormBase object.
@@ -169,7 +169,7 @@ class SocialGroupSettings extends ConfigFormBase {
 
     // Add an option for site manager to enable/disable option to choose group
     // type on page to add flexible groups.
-    if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    if ($this->moduleHandler->moduleExists('social_group_flexible_group')) {
       $form['social_group_type_required'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Require group types'),

@@ -15,6 +15,11 @@ use Drupal\social_event\EventEnrollmentInterface;
 class EntityAccessHelper {
 
   /**
+   * Here we define a constant for our node access grant ID.
+   */
+  const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
+
+  /**
    * Neutral status.
    */
   const NEUTRAL = 0;

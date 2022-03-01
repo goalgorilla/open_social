@@ -82,7 +82,17 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    ConfigFactoryInterface $configFactory,
+    AccountProxyInterface $currentUser,
+    ModuleHandler $moduleHandler,
+    GroupContentEnablerManager $pluginManager,
+    EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
@@ -281,28 +291,50 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $selected_visibility = $selected_visibility['0']['value'];
     }
     if ($selected_groups = $form_state->getValue('groups')) {
-      $allowed_visibility_options = self::getVisibilityOptionsforMultipleGroups(array_column($selected_groups, 'target_id'), $entity);
+      $allowed_visibility_options = self::getVisibilityOptionsforMultipleGroups(
+        array_column($selected_groups, 'target_id'),
+        $entity
+      );
     }
     else {
       $default_visibility = $form_state->getValue('default_visibility');
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', [
+        'checked',
+        'checked',
+      ])
+      );
     }
 
     foreach ($allowed_visibility_options as $visibility => $allowed) {
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', [
+        'js--animate-enabled-form-control',
+      ]));
       if ($allowed === TRUE) {
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', [
+          'disabled',
+        ])
+        );
         if (empty($default_visibility) || $visibility === $default_visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', [
+            'checked',
+            'checked',
+          ])
+          );
         }
       }
       else {
         if ($selected_visibility && $selected_visibility === $visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', [
+            'checked',
+          ]));
         }
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', [
+          'disabled',
+          'disabled',
+        ])
+        );
       }
 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));

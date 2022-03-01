@@ -25,10 +25,12 @@ services:
       - { name: event_subscriber }
   social_group.redirect_subscriber:
     class: Drupal\social_group\EventSubscriber\RedirectSubscriber
+    arguments: ['@current_route_match', '@current_user']
     tags:
       - { name: event_subscriber }
   social_group.overrider:
     class: Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
+    arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 10}
   social_group.admin_people_override:

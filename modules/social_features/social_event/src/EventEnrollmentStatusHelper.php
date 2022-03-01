@@ -6,12 +6,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
- * Class EventEnrollmentStatusHelper.
- *
  * Providers service to get the enrollments for a user.
  */
 class EventEnrollmentStatusHelper {
@@ -21,28 +18,28 @@ class EventEnrollmentStatusHelper {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * EventInvitesAccess constructor.
@@ -100,7 +97,7 @@ class EventEnrollmentStatusHelper {
       ];
 
       /** @var \Drupal\user\Entity\User $user */
-      $account = User::load($user);
+      $account = $this->entityTypeManager->getStorage('user')->load($user);
       if ($account instanceof UserInterface) {
         $conditions = [
           'field_account' => $account->id(),

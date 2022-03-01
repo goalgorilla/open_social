@@ -5,6 +5,7 @@ namespace Drupal\social_event_managers\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,6 +18,23 @@ use Symfony\Component\Routing\Route;
  * Determines access to routes based on manage everything enrollments.
  */
 class AddEnrolleeAccessCheck implements AccessInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * FlagAccessCheck constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
 
   /**
    * Checks access.
@@ -48,7 +66,7 @@ class AddEnrolleeAccessCheck implements AccessInterface {
     // Don't interfere if the group isn't a real group.
     $node = $parameters->get('node');
     if (!is_null($node) && (!$node instanceof Node)) {
-      $node = Node::load($node);
+      $node = $this->entityTypeManager->getStorage('node')->load($node);
     }
 
     if (!$node instanceof NodeInterface) {

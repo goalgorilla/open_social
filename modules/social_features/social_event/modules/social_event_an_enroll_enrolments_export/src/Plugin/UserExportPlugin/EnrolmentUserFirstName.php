@@ -21,10 +21,10 @@ class EnrolmentUserFirstName extends UserFirstName {
    */
   public function getValue(UserInterface $entity) {
     if ($entity->isAnonymous()) {
-      $entity = &$this->configuration['entity'];
+      $configuration_entity = &$this->configuration['entity'];
 
-      if (!$entity->field_first_name->isEmpty()) {
-        return $entity->field_first_name->value;
+      if (!$configuration_entity->field_first_name->isEmpty()) {
+        return $configuration_entity->field_first_name->value;
       }
 
       return '';

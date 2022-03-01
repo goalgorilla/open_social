@@ -48,17 +48,17 @@ trait SocialProfileTrait {
    *   An array of account IDs for accounts whose account names begin with the
    *   given string.
    */
-  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+  public function getUserIdsFromName($name, $count, $suggestion_format = SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $query = $this->startQuery();
     $name = '%' . ltrim($query->escapeLike($name)) . '%';
 
     switch ($suggestion_format) {
-      case SOCIAL_PROFILE_SUGGESTIONS_USERNAME:
+      case SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_USERNAME:
         $query->condition('uf.name', $name, 'LIKE');
         break;
 
-      case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
-      case SOCIAL_PROFILE_SUGGESTIONS_ALL:
+      case SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
+      case SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_ALL:
         if ($this->useFullName()) {
           $strings = explode(' ', $name);
 
@@ -88,7 +88,7 @@ trait SocialProfileTrait {
         }
 
         // Add name only when needed.
-        if ($suggestion_format === SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+        if ($suggestion_format === SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_ALL) {
           $or_query->condition('uf.name', $name, 'LIKE');
         }
 
@@ -155,7 +155,7 @@ trait SocialProfileTrait {
    *   The select query.
    */
   private function sortQuery(SelectInterface $query, $name, $suggestion_format) {
-    if ($suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME && $this->useFullName()) {
+    if ($suggestion_format !== SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_USERNAME && $this->useFullName()) {
       // Delete percent symbol on the beginning of the phrase for search from
       // the start of field values.
       $name = substr($name, 1);

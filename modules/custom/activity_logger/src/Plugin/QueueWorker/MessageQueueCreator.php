@@ -3,9 +3,9 @@
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
 use Drupal\activity_creator\Plugin\ActivityActionManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,7 +26,14 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
    *
    * @var \Drupal\activity_creator\Plugin\ActivityActionManager
    */
-  protected $actionManager;
+  protected ActivityActionManager $actionManager;
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * MessageQueueCreator constructor.
@@ -41,10 +48,13 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
    *   The queue.
    * @param \Drupal\activity_creator\Plugin\ActivityActionManager $actionManager
    *   The action manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $queue);
     $this->actionManager = $actionManager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -56,7 +66,8 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
       $plugin_id,
       $plugin_definition,
       $container->get('queue'),
-      $container->get('plugin.manager.activity_action.processor')
+      $container->get('plugin.manager.activity_action.processor'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -64,9 +75,8 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
    * {@inheritdoc}
    */
   public function processItem($data) {
-
     // First make sure it's an actual entity.
-    if ($entity = Node::load($data['entity_id'])) {
+    if ($entity = $this->entityTypeManager->getStorage('node')->load($data['entity_id'])) {
       // Check if it's created more than 20 seconds ago.
       $timestamp = $entity->getCreatedTime();
       // Current time.

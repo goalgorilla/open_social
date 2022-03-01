@@ -6,6 +6,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\node\NodeTypeInterface;
+use Drupal\social_core\InviteService;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,14 +25,21 @@ class SocialCoreController extends ControllerBase {
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * Views Bulk Operations action processor.
    *
    * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
    */
-  protected $actionProcessor;
+  protected ViewsBulkOperationsActionProcessorInterface $actionProcessor;
+
+  /**
+   * Invite service.
+   *
+   * @var \Drupal\social_core\InviteService
+   */
+  protected InviteService $inviteService;
 
   /**
    * SocialGroupController constructor.
@@ -40,10 +48,17 @@ class SocialCoreController extends ControllerBase {
    *   Private temporary storage factory.
    * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
    *   Views Bulk Operations action processor.
+   * @param \Drupal\social_core\InviteService $invite_service
+   *   Invite service.
    */
-  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ViewsBulkOperationsActionProcessorInterface $actionProcessor) {
+  public function __construct(
+    PrivateTempStoreFactory $tempStoreFactory,
+    ViewsBulkOperationsActionProcessorInterface $actionProcessor,
+    InviteService $invite_service
+  ) {
     $this->tempStoreFactory = $tempStoreFactory;
     $this->actionProcessor = $actionProcessor;
+    $this->inviteService = $invite_service;
   }
 
   /**
@@ -52,7 +67,8 @@ class SocialCoreController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('tempstore.private'),
-      $container->get('views_bulk_operations.processor')
+      $container->get('views_bulk_operations.processor'),
+      $container->get('social_core.invite'),
     );
   }
 
@@ -184,11 +200,9 @@ class SocialCoreController extends ControllerBase {
    *   Returns a redirect to the events of the currently logged in user.
    */
   public function myInvitesUserPage() {
-    /** @var \Drupal\social_core\InviteService $core_invites */
-    $core_invites = \Drupal::service('social_core.invite');
     // Only when there are actual Invite plugins enabled.
-    if (!empty($core_invites->getInviteData('name'))) {
-      return $this->redirect($core_invites->getInviteData('name'), [
+    if (!empty($this->inviteService->getInviteData('name'))) {
+      return $this->redirect($this->inviteService->getInviteData('name'), [
         'user' => $this->currentUser()->id(),
       ]);
     }
@@ -216,7 +230,7 @@ class SocialCoreController extends ControllerBase {
     ];
 
     // Make sure extensions can change this as well.
-    \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
+    $this->moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
 
     if ($node_type !== NULL && array_key_exists($node_type->id(), $node_types)) {
       return $this->t('Create @article @name', [

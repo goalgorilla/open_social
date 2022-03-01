@@ -25,7 +25,7 @@ class CancelEnrollInviteController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The current user.
@@ -75,7 +75,7 @@ class CancelEnrollInviteController extends ControllerBase {
     if ($node instanceof Node && !empty($event_enrollment)) {
       // When the event owner/organizer cancelled the invite, simply remove the
       // whole event enrollment.
-      $this->messenger()->addStatus(t('The invite has been removed.'));
+      $this->messenger()->addStatus($this->t('The invite has been removed.'));
       $event_enrollment->delete();
     }
 

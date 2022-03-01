@@ -127,8 +127,8 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       $form_state->setRedirect('social_event_invite.confirm_invite', ['node' => $form_state->getValue('event')]);
     }
     catch (\Exception $error) {
-      $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));
-      $this->messenger->addWarning(t('Unable to proceed, please try again.'));
+      $this->loggerFactory->get('event_invite_form_values')->alert($this->t('@err', ['@err' => $error]));
+      $this->messenger->addWarning($this->t('Unable to proceed, please try again.'));
     }
   }
 

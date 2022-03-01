@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="drupal">
-    <description>PHP CodeSniffer configuration for Drupal coding standards in Open Social.</description>
-    <file>./modules/custom</file>
-    <file>./modules/social_features</file>
-    <file>./social.profile</file>
-    <file>./social.install</file>
-    <config name="ignore_errors_on_exit" value="0"/>
-    <config name="ignore_warnings_on_exit" value="0"/>
-    <config name="default_standard" value="Drupal"/>
+<ruleset name="open_social">
+  <description>PHP CodeSniffer configuration for Drupal coding standards in Open Social.</description>
+  <file>./html/profiles/contrib/social</file>
+  <config name="ignore_errors_on_exit" value="0" />
+  <config name="ignore_warnings_on_exit" value="0" />
+  <config name="default_standard" value="Drupal,DrupalPractice" />
 
-    <arg name="extensions" value="php,module,inc,install,test,profile,theme" />
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme,info,yml" />
 
-    <exclude-pattern>*/node_modules/*</exclude-pattern>
-    <exclude-pattern>*.css</exclude-pattern>
-    <exclude-pattern>*/assets/*</exclude-pattern>
-    <exclude-pattern>*/components/*</exclude-pattern>
-    <exclude-pattern>social.info.yml</exclude-pattern>
-    <exclude-pattern>*.md</exclude-pattern>
-    <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
+  <!--  Exclude third party code.  -->
+  <exclude-pattern>*/assets/*</exclude-pattern>
+  <!--  Exclude folders used by common frontend tools. These folders match the file_scan_ignore_directories setting in default.settings.php  -->
+  <exclude-pattern>*.css</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/components/*</exclude-pattern>
+  <!--  Exclude our readme templates.  -->
+  <exclude-pattern>*.md</exclude-pattern>
+  <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
+  <!--  Exclude our translations folder.  -->
+  <exclude-pattern>*/translations/*</exclude-pattern>
 
-    <config name="drupal_core_version" value="9" />
+  <config name="drupal_core_version" value="9" />
+  <rule ref="Drupal">
     <!--  Include all Drupal related rules but exclude some so we can gradually fix these. -->
-    <rule ref="Drupal">
-        <exclude name="Drupal.Commenting.ClassComment.Short"/>
-        <exclude name="Drupal.Commenting.Deprecated.IncorrectTextLayout"/>
-        <exclude name="Drupal.Commenting.Deprecated.DeprecatedPeriodAfterSeeUrl"/>
-        <exclude name="Drupal.Commenting.Deprecated.DeprecatedWrongSeeUrlFormat"/>
-        <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
-    </rule>
-
+    <exclude name="Drupal.Commenting.ClassComment.Short"/>
+    <!--  We add some keys like version, project key in our info files. -->
+    <exclude name="Drupal.InfoFiles.AutoAddedKeys"/>
+  </rule>
+  <rule ref="DrupalPractice" >
+    <!--  We use 'social:' as dependency key, not 'drupal:' in our info files. -->
+    <exclude name="DrupalPractice.InfoFiles.NamespacedDependency"/>
+    <!--  We have _access: 'TRUE' & _permission: 'access administration pages' in our routing files. This needs to improved in longer run. -->
+    <exclude name="DrupalPractice.Yaml.RoutingAccess"/>
+  </rule>
 </ruleset>

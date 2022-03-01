@@ -10,6 +10,7 @@ use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\JobResult;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -39,49 +40,49 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    *
    * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $frequencyManager;
+  protected EmailFrequencyManager $frequencyManager;
 
   /**
    * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The activity notification service.
    *
    * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $activityNotifications;
+  protected ActivityNotifications $activityNotifications;
 
   /**
    * Social mail settings.
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $swiftmailSettings;
+  protected ImmutableConfig $swiftmailSettings;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The queue service.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  protected $queueFactory;
+  protected QueueFactory $queueFactory;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManager
    */
-  protected $languageManager;
+  protected LanguageManager $languageManager;
 
   /**
    * {@inheritdoc}
@@ -239,7 +240,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             // Grab the platform default "Email notification frequencies".
             $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
             // Determine email frequency to use, defaults to immediately.
-            $parameters['frequency'] = $template_frequencies[$message_template_id] ?? FREQUENCY_IMMEDIATELY;
+            $parameters['frequency'] = $template_frequencies[$message_template_id] ?? $this->frequencyManager::FREQUENCY_IMMEDIATELY;
             $parameters['target_recipients'] = $remaining_users;
             $this->sendToFrequencyManager($parameters);
           }
@@ -330,7 +331,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $batches = array_chunk($user_ids_per_language, 50);
 
     // Create items for this queue again for further processing.
-    foreach ($batches as $key => $batch_recipients) {
+    foreach ($batches as $batch_recipients) {
       // Create same queue item, but with IDs of just 50 users.
       $batch_data = [
         'entity_id' => $data['entity_id'],

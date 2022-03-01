@@ -3,6 +3,7 @@
 namespace Drupal\dropdown\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,6 +21,8 @@ use Drupal\Core\Form\FormStateInterface;
  * )
  */
 class Dropdown extends FieldItemBase {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -67,7 +70,7 @@ class Dropdown extends FieldItemBase {
 
     $element['allowed_values'] = [
       '#type' => 'textarea',
-      '#title' => t('Allowed values list'),
+      '#title' => $this->t('Allowed values list'),
       '#default_value' => $this->allowedValuesString($allowed_values),
       '#rows' => 10,
       '#access' => TRUE,
@@ -174,7 +177,7 @@ class Dropdown extends FieldItemBase {
     $list = array_map('trim', $list);
     $list = array_filter($list, 'strlen');
 
-    foreach ($list as $position => $text) {
+    foreach ($list as $text) {
       // Check for an explicit key.
       $matches = [];
       // @todo Explicit key is necessary !
@@ -216,9 +219,9 @@ class Dropdown extends FieldItemBase {
    * {@inheritdoc}
    */
   protected function allowedValuesDescription() {
-    $description = '<p>' . t('The possible values this field can contain. Enter one value per line, in the format value|label|description.');
-    $description .= '<br/>' . t('The value is the stored value. The label and description will be used in displayed values and edit forms.');
-    $description .= '<br/>' . t('The description is optional: if a line contains value|label a description will not be shown.');
+    $description = '<p>' . $this->t('The possible values this field can contain. Enter one value per line, in the format value|label|description.');
+    $description .= '<br/>' . $this->t('The value is the stored value. The label and description will be used in displayed values and edit forms.');
+    $description .= '<br/>' . $this->t('The description is optional: if a line contains value|label a description will not be shown.');
     $description .= '</p>';
     return $description;
   }

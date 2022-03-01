@@ -13,6 +13,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile_fields\SocialProfileFieldsHelper;
+use Drupal\social_user_export\Plugin\UserExportPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,42 +26,49 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *
    * @var \Drupal\social_profile_fields\SocialProfileFieldsHelper
    */
-  protected $profileFieldsHelper;
+  protected SocialProfileFieldsHelper $profileFieldsHelper;
 
   /**
    * The database.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * Cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidator
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidator $cacheTagsInvalidator;
 
   /**
    * Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
-  protected $moduleHandler;
+  protected ModuleHandler $moduleHandler;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Entity field manager.
    *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
+
+  /**
+   * Provides the User export plugin plugin manager.
+   *
+   * @var \Drupal\social_user_export\Plugin\UserExportPluginManager
+   */
+  protected UserExportPluginManager $userExportPluginManager;
 
   /**
    * SocialProfileSettingsForm constructor.
@@ -79,6 +87,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   Entity type manager for clearing cached definitions.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   Entity field manager for clearing cached field definitions.
+   * @param \Drupal\social_user_export\Plugin\UserExportPluginManager $user_export_plugin_manager
+   *   Provides the User export plugin plugin manager.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
@@ -87,7 +97,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     CacheTagsInvalidator $cache_tags_invalidator,
     ModuleHandler $module_handler,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityFieldManagerInterface $entity_field_manager
+    EntityFieldManagerInterface $entity_field_manager,
+    UserExportPluginManager $user_export_plugin_manager
   ) {
     parent::__construct($config_factory);
     $this->profileFieldsHelper = $profile_fields_helper;
@@ -96,6 +107,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;
     $this->entityFieldManager = $entity_field_manager;
+    $this->userExportPluginManager = $user_export_plugin_manager;
   }
 
   /**
@@ -109,7 +121,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       $container->get('cache_tags.invalidator'),
       $container->get('module_handler'),
       $container->get('entity_type.manager'),
-      $container->get('entity_field.manager')
+      $container->get('entity_field.manager'),
+      $container->get('plugin.manager.user_export_plugin'),
     );
   }
 
@@ -156,7 +169,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         '#open' => TRUE,
       ];
 
-      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
@@ -250,7 +262,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     foreach (ProfileType::loadMultiple() as $profile_type) {
       $type = $profile_type->id();
 
-      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
@@ -295,8 +306,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
 
     // If the user export module is on, clear the cached definitions.
     if ($this->moduleHandler->moduleExists('social_user_export')) {
-      $user_export_manager = \Drupal::service('plugin.manager.user_export_plugin');
-      $user_export_manager->clearCachedDefinitions();
+      $this->userExportPluginManager->clearCachedDefinitions();
     }
   }
 

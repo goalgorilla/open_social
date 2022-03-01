@@ -2,8 +2,12 @@
 
 namespace Drupal\social_user\Form;
 
+use Drupal\Core\Cache\CacheTagsInvalidator;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\ProxyClass\Routing\RouteBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SocialUserSettingsForm.
@@ -11,6 +15,51 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\social_user\Form
  */
 class SocialUserSettingsForm extends ConfigFormBase {
+
+  /**
+   * Provides a proxy class for \Drupal\Core\Routing\RouteBuilder.
+   *
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
+   */
+  protected RouteBuilder $routeBuilder;
+
+  /**
+   * Passes cache tag events to classes that wish to respond to them.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidator
+   */
+  protected CacheTagsInvalidator $cacheTagsInvalidator;
+
+  /**
+   * Constructs a \Drupal\system\ConfigFormBase object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\ProxyClass\Routing\RouteBuilder $route_builder
+   *   Provides a proxy class for \Drupal\Core\Routing\RouteBuilder.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidator $cache_tags_invalidator
+   *   Passes cache tag events to classes that wish to respond to them.
+   */
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    RouteBuilder $route_builder,
+    CacheTagsInvalidator $cache_tags_invalidator
+  ) {
+    parent::__construct($config_factory);
+    $this->routeBuilder = $route_builder;
+    $this->cacheTagsInvalidator = $cache_tags_invalidator;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('router.builder'),
+      $container->get('cache_tags.invalidator')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -36,11 +85,11 @@ class SocialUserSettingsForm extends ConfigFormBase {
 
     $form['social_user_profile_landingpage'] = [
       '#type' => 'select',
-      '#title' => t('Choose a default landing page'),
-      '#description' => t('When visiting a profile the user will end up at this page first'),
+      '#title' => $this->t('Choose a default landing page'),
+      '#description' => $this->t('When visiting a profile the user will end up at this page first'),
       '#options' => [
-        'social_user.stream' => t('Stream'),
-        'view.user_information.user_information' => t('Information'),
+        'social_user.stream' => $this->t('Stream'),
+        'view.user_information.user_information' => $this->t('Information'),
       ],
       '#default_value' => $config->get('social_user_profile_landingpage'),
     ];
@@ -57,11 +106,10 @@ class SocialUserSettingsForm extends ConfigFormBase {
       ->save();
 
     // Rebuild the router cache.
-    \Drupal::service('router.builder')->rebuild();
+    $this->routeBuilder->rebuild();
 
-    /** @var \Drupal\Core\Cache\CacheTagsInvalidator $cti */
-    $cti = \Drupal::service('cache_tags.invalidator');
-    $cti->invalidateTags(['rendered']);
+    // Invalidate cache tags.
+    $this->cacheTagsInvalidator->invalidateTags(['rendered']);
   }
 
 }

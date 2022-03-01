@@ -8,9 +8,9 @@ use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
@@ -31,7 +31,14 @@ class GroupRequestController extends ControllerBase {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
+
+  /**
+   * Retrieves the currently active route match object.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * GroupRequestController constructor.
@@ -46,10 +53,10 @@ class GroupRequestController extends ControllerBase {
    *   The cache tags invalidator.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $current_route_match
+   *   The currently active route match object.
    */
   public function __construct(
     FormBuilderInterface $form_builder,
@@ -57,16 +64,16 @@ class GroupRequestController extends ControllerBase {
     MessengerInterface $messenger,
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
     TranslationInterface $string_translation,
-    EntityTypeManagerInterface $entity_type_manager,
-    AccountInterface $current_user
+    AccountInterface $current_user,
+    RouteMatchInterface $current_route_match
   ) {
     $this->formBuilder = $form_builder;
     $this->entityFormBuilder = $entity_form_builder;
     $this->setMessenger($messenger);
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->setStringTranslation($string_translation);
-    $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;
+    $this->routeMatch = $current_route_match;
   }
 
   /**
@@ -80,7 +87,8 @@ class GroupRequestController extends ControllerBase {
       $container->get('cache_tags.invalidator'),
       $container->get('string_translation'),
       $container->get('entity_type.manager'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('current_route_match')
     );
   }
 
@@ -206,10 +214,10 @@ class GroupRequestController extends ControllerBase {
     }
     $group = _social_group_get_current_group();
     if (!$group instanceof Group) {
-      $group_id = \Drupal::routeMatch()->getParameter('group');
+      $group_id = $this->routeMatch->getParameter('group');
       // Views upcasting is lame.
       if (!isset($group_id)) {
-        $group_id = \Drupal::routeMatch()->getParameter('arg_0');
+        $group_id = $this->routeMatch->getParameter('arg_0');
       }
       $group = Group::load($group_id);
     }

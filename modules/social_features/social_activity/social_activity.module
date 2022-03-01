@@ -5,6 +5,7 @@
  * The Social activity module.
  */
 
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
@@ -246,7 +247,7 @@ function social_activity_theme($existing, $type, $theme, $path) {
  *
  * @see \Drupal\activity_creator\ActivityNotifications
  */
-function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
+function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ActivityNotifications::ACTIVITY_STATUS_RECEIVED]) {
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
 
   return count($account_notifications->getNotifications($account, $status)) ?? 0;

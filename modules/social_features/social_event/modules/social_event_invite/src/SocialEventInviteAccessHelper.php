@@ -7,10 +7,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\SocialGroupHelperService;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
@@ -25,28 +23,28 @@ class SocialEventInviteAccessHelper {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * Configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $groupHelperService;
+  protected SocialGroupHelperService $groupHelperService;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The current user.
@@ -97,7 +95,7 @@ class SocialEventInviteAccessHelper {
 
     // Get the group of this node.
     $node = $this->routeMatch->getRawParameter('node');
-    $node = Node::load($node);
+    $node = $this->entityTypeManager->getStorage('node')->load($node);
     if ($node instanceof NodeInterface) {
       $node = $node->id();
     }
@@ -161,7 +159,7 @@ class SocialEventInviteAccessHelper {
     // Get the user.
     $account = $this->routeMatch->getRawParameter('user');
     if (!empty($account)) {
-      $account = User::load($account);
+      $account = $this->entityTypeManager->getStorage('user')->load($account);
       if ($account instanceof UserInterface) {
         return AccessResult::allowedIf($account->id() === $this->currentUser->id());
       }

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_an_enroll\Controller;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
@@ -11,7 +10,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class EventAnEnrollController.
@@ -25,38 +23,16 @@ class EventAnEnrollController extends ControllerBase {
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * SocialTopicController constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match object.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *   The config factory.
    */
-  public function __construct(RouteMatchInterface $routeMatch,
-                              EntityTypeManagerInterface $entityTypeManager,
-                              ConfigFactoryInterface $configFactory) {
+  public function __construct(RouteMatchInterface $routeMatch) {
     $this->routeMatch = $routeMatch;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->configFactory = $configFactory;
   }
 
   /**
@@ -64,9 +40,7 @@ class EventAnEnrollController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('current_route_match'),
-      $container->get('entity_type.manager'),
-      $container->get('config.factory')
+      $container->get('current_route_match')
     );
   }
 
@@ -162,7 +136,7 @@ class EventAnEnrollController extends ControllerBase {
       /** @var \Drupal\node\Entity\Node $node */
       $node = $this->routeMatch->getParameter('node');
       if (!is_null($node) && (!is_object($node))) {
-        $node = $this->entityTypeManager
+        $node = $this->entityTypeManager()
           ->getStorage('node')
           ->load($node);
       }

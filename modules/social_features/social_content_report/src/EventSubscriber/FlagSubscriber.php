@@ -32,21 +32,21 @@ class FlagSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $messenger;
+  protected MessengerInterface $messenger;
 
   /**
    * The Cache tags invalidator service.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheInvalidator;
 
   /**
    * The content report service.
    *
    * @var \Drupal\social_content_report\ContentReportServiceInterface
    */
-  protected $socialContentReport;
+  protected ContentReportServiceInterface $socialContentReport;
 
   /**
    * Creates a DiffFormatter to render diffs in a table.
@@ -113,7 +113,7 @@ class FlagSubscriber implements EventSubscriberInterface {
       }
       catch (EntityStorageException $exception) {
         $this->getLogger('social_content_report')
-          ->error(t('@entity_type @entity_id could not be unpublished after a user reported it.', [
+          ->error($this->t('@entity_type @entity_id could not be unpublished after a user reported it.', [
             '@entity_type' => $entity_type,
             '@entity_id' => $entity_id,
           ]));

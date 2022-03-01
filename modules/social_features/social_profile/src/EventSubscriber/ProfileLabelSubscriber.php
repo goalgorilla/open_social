@@ -2,10 +2,13 @@
 
 namespace Drupal\social_profile\EventSubscriber;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Event\ProfileEvents;
 use Drupal\profile\Event\ProfileLabelEvent;
 use Drupal\user\Entity\User;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -14,6 +17,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @package Drupal\social_profile\EventSubscriber
  */
 class ProfileLabelSubscriber implements EventSubscriberInterface {
+  use StringTranslationTrait;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected UserStorageInterface $userStorage;
+
+  /**
+   * ProfileLabelSubscriber construct.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->userStorage = $entity_type_manager->getStorage('user');
+  }
 
   /**
    * Get the label event.
@@ -36,9 +57,12 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
     $profile = $event->getProfile();
 
     if ($profile instanceof Profile) {
-      $account = User::load($profile->getOwnerId());
+      $account = $this->userStorage->load($profile->getOwnerId());
       if ($account instanceof User) {
-        $label = t('Profile of @name', ['@name' => $account->getDisplayName()]);
+        $label = $this->t('Profile of @name', [
+          '@name' => $account->getDisplayName(),
+        ]
+        );
         $event->setLabel($label);
       }
     }

@@ -2,9 +2,9 @@
 
 namespace Drupal\social_demo\Commands;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_demo\DemoContentManager;
-use Drupal\user\Entity\User;
 use Drush\Commands\DrushCommands;
 use Drush\Utils\StringUtils;
 
@@ -38,19 +38,30 @@ class SocialDemoDrushCommands extends DrushCommands {
   private DemoContentManager $demoContentManager;
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
    * Constructs a new UpdateVideosStatsController object.
    *
    * @param \Drupal\Core\Session\AccountProxyInterface $accountProxy
    *   Current user service.
    * @param \Drupal\social_demo\DemoContentManager $demoContentManager
    *   Demo content plugin manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity manager.
    */
   public function __construct(
     AccountProxyInterface $accountProxy,
-    DemoContentManager $demoContentManager
+    DemoContentManager $demoContentManager,
+    EntityTypeManagerInterface $entityTypeManager
   ) {
     $this->currentUser = $accountProxy;
     $this->demoContentManager = $demoContentManager;
+    $this->entityTypeManager = $entityTypeManager;
     parent::__construct();
   }
 
@@ -73,7 +84,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    */
   public function addDemoContent(array $content_types, array $options = ['profile' => '']) {
     $content_types = StringUtils::csvToArray($content_types);
-    $this->currentUser->setAccount(User::load(1));
+    $this->currentUser->setAccount($this->entityTypeManager->getStorage('user')->load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
 
     /** @var \Drupal\social_demo\DemoContentInterface $plugin */
@@ -106,7 +117,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    */
   public function removeDemoContent(array $content_types, array $options = ['profile' => '']) {
     $content_types = StringUtils::csvToArray($content_types);
-    $this->currentUser->setAccount(User::load(1));
+    $this->currentUser->setAccount($this->entityTypeManager->getStorage('user')->load(1));
     $plugins = $this->demoContentManager->createInstances($content_types);
 
     /** @var \Drupal\social_demo\DemoContentInterface $plugin */
@@ -135,7 +146,7 @@ class SocialDemoDrushCommands extends DrushCommands {
    */
   public function generateBulkDemoContent(array $input_args) {
     $input_args = StringUtils::csvToArray($input_args);
-    $this->currentUser->setAccount(User::load(1));
+    $this->currentUser->setAccount($this->entityTypeManager->getStorage('user')->load(1));
 
     $content_types = [];
 

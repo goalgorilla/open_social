@@ -21,10 +21,10 @@ class EnrolmentUserRegistration extends UserRegistration {
    */
   public function getValue(UserInterface $entity) {
     if ($entity->isAnonymous()) {
-      $entity = &$this->configuration['entity'];
+      $configuration_entity = &$this->configuration['entity'];
+      return $this->format($configuration_entity);
     }
-
-    return $this->format($entity);
+    return parent::getValue($entity);
   }
 
 }

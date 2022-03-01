@@ -5,6 +5,7 @@ services:
       - { name: event_subscriber }
   social_event.enroll_request_overview_subscriber:
     class: Drupal\social_event\Routing\EnrollRequestsOverviewSubscriber
+    arguments: ['@current_route_match']
     tags:
       - { name: event_subscriber }
   social_event.status_helper:

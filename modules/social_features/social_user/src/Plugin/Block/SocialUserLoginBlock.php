@@ -35,7 +35,10 @@ class SocialUserLoginBlock extends UserLoginBlock {
     // See UserLoginBlock::build() for the logic behind this.
     $placeholder = 'form_action_p_4r8ITd22yaUvXM6SzwrSe9rnQWe48hz9k1Sxto3pBvE';
     $form['#attached']['placeholders'][$placeholder] = [
-      '#lazy_builder' => ['\Drupal\user\Plugin\Block\UserLoginBlock::renderPlaceholderFormAction', []],
+      '#lazy_builder' => [
+        '\Drupal\user\Plugin\Block\UserLoginBlock::renderPlaceholderFormAction',
+        [],
+      ],
     ];
     $form['#action'] = $placeholder;
 

@@ -31,7 +31,7 @@ class UserLastLogin extends UserExportPluginBase {
       $last_login = $this->dateFormatter->format($last_login_time, 'short');
     }
     else {
-      $last_login = t('never');
+      $last_login = $this->t('never');
     }
     return $last_login;
   }

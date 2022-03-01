@@ -10,6 +10,7 @@
  */
 
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
@@ -17,12 +18,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\search_api\Task\TaskInterface;
-
-/**
- * Activity statuses.
- */
-const ACTIVITY_STATUS_RECEIVED = 1;
-const ACTIVITY_STATUS_SEEN = 2;
 
 /**
  * Returns the allowed values for the activity status field.
@@ -33,8 +28,8 @@ const ACTIVITY_STATUS_SEEN = 2;
 function activity_creator_field_activity_status_allowed_values(): array {
 
   $allowed_values = [
-    ACTIVITY_STATUS_RECEIVED => 'Received',
-    ACTIVITY_STATUS_SEEN => 'Seen',
+    ActivityNotifications::ACTIVITY_STATUS_RECEIVED => 'Received',
+    ActivityNotifications::ACTIVITY_STATUS_SEEN => 'Seen',
   ];
 
   return $allowed_values;
@@ -181,7 +176,10 @@ function activity_creator_activity_insert(ActivityInterface $activity) {
       if (!empty($uids)) {
         // If we have users, we insert a status for each user for the activity.
         $connection = \Drupal::database();
-        $query = $connection->insert('activity_notification_status')->fields(['uid', 'aid']);
+        $query = $connection->insert('activity_notification_status')->fields([
+          'uid',
+          'aid',
+        ]);
         foreach ($uids as $uid) {
           $query->values([
             'uid' => $uid,

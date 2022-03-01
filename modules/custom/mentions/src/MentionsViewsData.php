@@ -14,30 +14,30 @@ class MentionsViewsData extends EntityViewsData {
    */
   public function getViewsData() {
     $data = parent::getViewsData();
-    $data['mentions_field_data']['table']['base']['help'] = t('Mentions entry');
+    $data['mentions_field_data']['table']['base']['help'] = $this->t('Mentions entry');
 
     $data['mentions_field_data']['table']['wizard_id'] = 'mention';
     $data['mentions_field_data']['mid']['field']['id'] = 'mid';
 
-    $data['mentions_field_data']['table']['group'] = t('Mentions');
+    $data['mentions_field_data']['table']['group'] = $this->t('Mentions');
     $data['mentions_field_data']['table']['entity type'] = 'mentions';
 
-    $data['mentions_field_data']['table']['base']['title'] = t('Mentions');
+    $data['mentions_field_data']['table']['base']['title'] = $this->t('Mentions');
 
     $data['mentions_field_data']['table']['base']['weight'] = 1;
     $data['mentions_field_data']['table']['base']['defaults']['field'] = 'mid';
 
     $data['mentions_field_data']['mid'] = [
-      'title' => t('Mention ID'),
-      'help' => t('Mention ID'),
+      'title' => $this->t('Mention ID'),
+      'help' => $this->t('Mention ID'),
       'field' => [
         'id' => 'numeric',
       ],
     ];
 
     $data['mentions_field_data']['entity_type'] = [
-      'title' => t('Entity type'),
-      'help' => t('Entity type of entity that contains mention'),
+      'title' => $this->t('Entity type'),
+      'help' => $this->t('Entity type of entity that contains mention'),
       'field' => [
         'id' => 'standard',
       ],
@@ -47,8 +47,8 @@ class MentionsViewsData extends EntityViewsData {
     ];
 
     $data['mentions_field_data']['title'] = [
-      'title' => t('Title'),
-      'help' => t('Title of entity containing mention'),
+      'title' => $this->t('Title'),
+      'help' => $this->t('Title of entity containing mention'),
       'real field' => 'mid',
       'field' => [
         'id' => 'mentions_title',
@@ -57,16 +57,16 @@ class MentionsViewsData extends EntityViewsData {
         'base' => 'node_field_data',
         'base field' => 'title',
         'relationship field' => 'nid',
-        'title' => t('Mention Title'),
-        'help' => t('Mention Title'),
+        'title' => $this->t('Mention Title'),
+        'help' => $this->t('Mention Title'),
         'id' => 'standard',
-        'label' => t('Mention Title'),
+        'label' => $this->t('Mention Title'),
       ],
     ];
 
     $data['mentions_field_data']['auid'] = [
-      'title' => t('Author user id'),
-      'help' => t('Author user id'),
+      'title' => $this->t('Author user id'),
+      'help' => $this->t('Author user id'),
       'filter' => [
         'id' => 'standard',
       ],
@@ -78,22 +78,22 @@ class MentionsViewsData extends EntityViewsData {
       ],
       'relationship' => [
         'base' => 'users',
-        'title' => t('User'),
-        'help' => t('The user that authored the mention'),
+        'title' => $this->t('User'),
+        'help' => $this->t('The user that authored the mention'),
         'id' => 'standard',
-        'label' => t('Mentions user'),
+        'label' => $this->t('Mentions user'),
       ],
     ];
 
     $data['mentions_field_data']['uid'] = [
-      'title' => t('Mentioned user uid'),
-      'help' => t('The user that is mentioned'),
+      'title' => $this->t('Mentioned user uid'),
+      'help' => $this->t('The user that is mentioned'),
       'relationship' => [
         'base' => 'users',
-        'title' => t('User'),
-        'help' => t('The user that is mentioned'),
+        'title' => $this->t('User'),
+        'help' => $this->t('The user that is mentioned'),
         'id' => 'standard',
-        'label' => t('Mentions user'),
+        'label' => $this->t('Mentions user'),
       ],
       'filter' => [
         'id' => 'standard',
@@ -107,8 +107,8 @@ class MentionsViewsData extends EntityViewsData {
     ];
 
     $data['mentions_field_data']['created'] = [
-      'title' => t('Date'),
-      'help' => t('Date'),
+      'title' => $this->t('Date'),
+      'help' => $this->t('Date'),
       'field' => [
         'id' => 'date',
       ],
@@ -121,8 +121,8 @@ class MentionsViewsData extends EntityViewsData {
     ];
 
     $data['mentions_field_data']['entity_id'] = [
-      'title' => t('Entity id'),
-      'help' => t('The unique ID of the object that contains mention'),
+      'title' => $this->t('Entity id'),
+      'help' => $this->t('The unique ID of the object that contains mention'),
       'field' => [
         'id' => 'standard',
       ],
@@ -135,9 +135,9 @@ class MentionsViewsData extends EntityViewsData {
     ];
 
     $data['mentions_field_data']['link'] = [
-      'title' => t('Link'),
+      'title' => $this->t('Link'),
       'real field' => 'mid',
-      'help' => t('Link to entity that contains mention'),
+      'help' => $this->t('Link to entity that contains mention'),
       'field' => [
         'id' => 'mentions_link',
       ],

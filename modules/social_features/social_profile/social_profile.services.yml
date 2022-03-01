@@ -1,6 +1,7 @@
 services:
   social_profile.profilelabel_subscriber:
     class: Drupal\social_profile\EventSubscriber\ProfileLabelSubscriber
+    arguments: ['@entity_type.manager']
     tags:
       - { name: event_subscriber }
   social_profile.user_statistics:

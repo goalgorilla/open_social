@@ -3,6 +3,7 @@
 namespace Drupal\social_event_managers;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -16,13 +17,30 @@ use Drupal\Core\Config\StorageInterface;
 class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
+  /**
    * Load overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
-      $config = \Drupal::service('config.factory')->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
       // Add a field group.
       if ($group_attachment = $config->get('third_party_settings.field_group.group_attachments')) {
         $group_attachment['children'][] = 'field_event_managers';

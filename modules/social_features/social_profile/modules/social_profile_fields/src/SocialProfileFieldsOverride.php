@@ -3,6 +3,7 @@
 namespace Drupal\social_profile_fields;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -19,11 +20,27 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
   use StringTranslationTrait;
 
   /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
+  /**
    * Returns config overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Add field_group and field_comment_files.
     $config_name = 'core.entity_form_display.profile.profile.default';
@@ -41,7 +58,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       ];
 
       // If there is a profile names and image field_group we move the field.
-      $third_party = $config_factory->getEditable($config_name)
+      $third_party = $this->configFactory->getEditable($config_name)
         ->get('third_party_settings');
       if (isset($third_party['field_group']['group_profile_names_image'])) {
         $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children']['field_profile_nick_name'] = 'field_profile_nick_name';
@@ -80,7 +97,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
         ];
 
         // Configure the relevant processors for our field.
-        $processor_settings = $config_factory->getEditable($config_name)
+        $processor_settings = $this->configFactory->getEditable($config_name)
           ->get('processor_settings');
         // In some scenarios (e.g. site install) this setting may not exist and
         // be a NULL value.

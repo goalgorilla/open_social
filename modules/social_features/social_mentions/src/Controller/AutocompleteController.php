@@ -6,10 +6,10 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\social_profile\SocialProfileNameService;
 use Drupal\social_profile\SocialProfileTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,7 +35,7 @@ class AutocompleteController extends ControllerBase {
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * The entity type manager.
@@ -87,7 +87,7 @@ class AutocompleteController extends ControllerBase {
     $suggestion_amount = $config->get('suggestions_amount');
     $result = $this->getUserIdsFromName($name, $suggestion_amount, $suggestion_format);
     $response = [];
-    $accounts = User::loadMultiple($result);
+    $accounts = $this->entityTypeManager->getStorage('user')->loadMultiple($result);
     $storage = $this->entityTypeManager->getStorage('profile');
     $view_builder = $this->entityTypeManager->getViewBuilder('profile');
 
@@ -101,7 +101,7 @@ class AutocompleteController extends ControllerBase {
         'profile_id' => '',
       ];
 
-      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE)) && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
+      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE)) && $suggestion_format != SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
         $build = $view_builder->view($profile, 'autocomplete_item');
         $item['html_item'] = render($build);
         $item['profile_id'] = $profile->id();

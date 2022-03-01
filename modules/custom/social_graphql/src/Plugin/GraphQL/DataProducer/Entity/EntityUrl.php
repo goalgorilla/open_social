@@ -28,7 +28,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  * )
  *
  * @internal
- * @deprecated remove when upgrading graphql module to a version that
+ * @todo remove when upgrading graphql module to a version that
  * includes the options dataproducer setting.
  * @see https://github.com/drupal-graphql/graphql/pull/1220
  */

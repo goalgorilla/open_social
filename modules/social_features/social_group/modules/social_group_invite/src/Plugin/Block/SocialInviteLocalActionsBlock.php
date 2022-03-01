@@ -27,14 +27,14 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The route match.
    *
    * @var \Drupal\ginvite\GroupInvitationLoaderInterface
    */
-  protected $inviteService;
+  protected GroupInvitationLoaderInterface $inviteService;
 
   /**
    * EventAddBlock constructor.
@@ -138,15 +138,22 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
         '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
-            'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),
+            'url' => Url::fromRoute('entity.group_content.add_form', [
+              'plugin_id' => 'group_membership',
+              'group' => $group->id(),
+            ]),
           ],
           'invite_by_mail' => [
             'title' => $this->t('Invite users'),
-            'url' => Url::fromRoute('ginvite.invitation.bulk', ['group' => $group->id()]),
+            'url' => Url::fromRoute('ginvite.invitation.bulk', [
+              'group' => $group->id(),
+            ]),
           ],
           'view_invites' => [
             'title' => $this->t('View invites'),
-            'url' => Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]),
+            'url' => Url::fromRoute('view.social_group_invitations.page_1', [
+              'group' => $group->id(),
+            ]),
           ],
         ],
       ];

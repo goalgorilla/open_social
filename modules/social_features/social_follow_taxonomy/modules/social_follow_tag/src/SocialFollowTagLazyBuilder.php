@@ -11,6 +11,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\flag\FlagLinkBuilderInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provide service for lazy rendering.
@@ -26,49 +27,56 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The route match.
    *
    * @var \Drupal\social_tagging\SocialTaggingService
    */
-  protected $tagService;
+  protected SocialTaggingService $tagService;
 
   /**
    * Flag service.
    *
    * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The builder for flag links.
    *
    * @var \Drupal\flag\FlagLinkBuilderInterface
    */
-  protected $flagLinkBuilder;
+  protected FlagLinkBuilderInterface $flagLinkBuilder;
 
   /**
    * The Current User object.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
+
+  /**
+   * Forward-compatibility shim for Symfony's RequestStack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected RequestStack $requestStack;
 
   /**
    * SocialFollowTagLazyBuilder constructor.
@@ -87,6 +95,8 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    *   The builder for flag links.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   Forward-compatibility shim for Symfony's RequestStack.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -95,7 +105,8 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     FlagServiceInterface $flag_service,
     RendererInterface $renderer,
     FlagLinkBuilderInterface $flag_link_builder,
-    AccountInterface $current_user
+    AccountInterface $current_user,
+    RequestStack $request_stack
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->formBuilder = $formBuilder;
@@ -104,6 +115,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     $this->renderer = $renderer;
     $this->flagLinkBuilder = $flag_link_builder;
     $this->currentUser = $current_user;
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -128,8 +140,9 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     // Get term id from url parameters.
     $term_ids = [];
     foreach ($identifiers as $identifier) {
-      if (isset($_GET[$identifier])) {
-        $term_ids = array_merge($term_ids, $_GET[$identifier]);
+      if ($this->requestStack->getCurrentRequest() !== NULL
+          && $this->requestStack->getCurrentRequest()->query->get($identifier) !== NULL) {
+        $term_ids = array_merge($term_ids, $this->requestStack->getCurrentRequest()->query->get($identifier));
       }
     }
 

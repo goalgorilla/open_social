@@ -25,14 +25,14 @@ class GroupContentVisibilityUpdate {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
@@ -63,7 +63,7 @@ class GroupContentVisibilityUpdate {
     $entities = $group->getContentEntities();
 
     $posts = self::getPostsFromGroup($group);
-    foreach ($posts as $pid => $post) {
+    foreach ($posts as $post) {
       $entities[] = $post;
     }
     $memberships = $group->getMembers();
@@ -143,7 +143,7 @@ class GroupContentVisibilityUpdate {
     $context['results'][] = $entity;
 
     // Optional message displayed under the progressbar.
-    $context['message'] = t('Updating group content (@id)', ['@id' => $entity->id()]);
+    $context['message'] = $this->t('Updating group content (@id)', ['@id' => $entity->id()]);
   }
 
   /**

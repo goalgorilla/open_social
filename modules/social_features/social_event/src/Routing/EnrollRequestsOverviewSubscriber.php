@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event\Routing;
 
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,6 +16,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @package Drupal\social_event\Routing
  */
 class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
+
+  /**
+   * The current route.
+   *
+   * @var \Drupal\Core\Routing\CurrentRouteMatch
+   */
+  protected CurrentRouteMatch $currentRoute;
+
+  /**
+   * EnrollRequestsOverviewSubscriber construct.
+   *
+   * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
+   *   The current route.
+   */
+  public function __construct(CurrentRouteMatch $route_match) {
+    $this->currentRoute = $route_match;
+  }
 
   /**
    * Get the request events.
@@ -33,7 +51,7 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
    *   The event.
    */
   public function checkAccessToEnrollRequestsOverview(RequestEvent $event) {
-    $current_route = \Drupal::routeMatch()->getRouteName();
+    $current_route = $this->currentRoute->getRouteName();
     // First, lets check if the route matches.
     if ($current_route === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
       // Now lets get some stuff we need to perform some checks on.

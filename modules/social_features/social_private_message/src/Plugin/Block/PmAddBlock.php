@@ -52,7 +52,7 @@ class PmAddBlock extends BlockBase {
     ];
     $url->setOptions($link_options);
 
-    $build['content'] = Link::fromTextAndUrl(t('New message'), $url)
+    $build['content'] = Link::fromTextAndUrl($this->t('New message'), $url)
       ->toRenderable();
 
     return $build;

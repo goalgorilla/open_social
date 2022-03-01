@@ -10,8 +10,10 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\ginvite\GroupInvitationLoader;
+use Drupal\group\Entity\Group;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -32,14 +34,14 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The tempstore factory.
    *
    * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The logger factory.
@@ -61,7 +63,21 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    *
    * @var \Drupal\group\Entity\Group
    */
-  protected $group;
+  protected Group $group;
+
+  /**
+   * The group membership loader.
+   *
+   * @var \Drupal\group\GroupMembershipLoaderInterface
+   */
+  protected GroupMembershipLoaderInterface $groupMembershipLoader;
+
+  /**
+   * Group invitations loader.
+   *
+   * @var \Drupal\ginvite\GroupInvitationLoader
+   */
+  protected GroupInvitationLoader $groupInvitationLoader;
 
   /**
    * Constructs a new BulkGroupInvitation Form.
@@ -159,7 +175,11 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
    *   The current state of the form.
    */
   public function cancelForm(array &$form, FormStateInterface $form_state) {
-    $form_state->setRedirect('entity.group.canonical', ['group' => $this->group->id(), []]);
+    $form_state->setRedirect('entity.group.canonical',
+      [
+        'group' => $this->group->id(),
+        [],
+      ]);
   }
 
   /**
@@ -248,7 +268,9 @@ class BulkGroupInvitation extends FormBase implements ContainerInjectionInterfac
     $invalid_emails = [];
     foreach ($this->getSubmittedEmails($form_state) as $line => $email) {
       if ($user = user_load_by_mail($email)) {
-        $membership = $this->groupMembershipLoader->load($this->group, $user);
+        if ($user instanceof AccountInterface) {
+          $membership = $this->groupMembershipLoader->load($this->group, $user);
+        }
         if (!empty($membership)) {
           $invalid_emails[$line + 1] = $email;
         }

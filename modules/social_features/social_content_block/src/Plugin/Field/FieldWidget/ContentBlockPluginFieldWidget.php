@@ -31,7 +31,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    *
    * @var array
    */
-  protected $fieldConfigs;
+  protected array $fieldConfigs;
 
   /**
    * Constructs a ContentBlockPluginFieldWidget object.
@@ -101,7 +101,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
         '#title' => $element['value']['#title'],
         '#description' => $element['value']['#description'],
         '#empty_value' => 'all',
-        '#empty_option' => t('All'),
+        '#empty_option' => $this->t('All'),
         '#weight' => -1,
         '#states' => [
           'visible' => [

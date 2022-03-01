@@ -14,18 +14,33 @@ use Drupal\profile\Entity\ProfileInterface;
 class SocialProfileNameService {
 
   /**
+   * Profile suggestions username.
+   */
+  const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
+
+  /**
+   * Profile suggestions full name.
+   */
+  const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
+
+  /**
+   * Profile suggestions all.
+   */
+  const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
+
+  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialProfileNameService constructor.
@@ -58,7 +73,8 @@ class SocialProfileNameService {
       return FALSE;
     }
 
-    $profile_name_fields = SocialProfileNameService::getProfileNameFields();
+    $profile_name_fields = $this->getProfileNameFields();
+    ;
 
     /** @var \Drupal\Core\Entity\ContentEntityBase $original */
     $original = $profile->original ?? NULL;
@@ -132,7 +148,7 @@ class SocialProfileNameService {
       $private_fields_list = social_profile_privacy_private_fields_list($uid);
     }
 
-    $account_name_fields = SocialProfileNameService::getProfileNameFields();
+    $account_name_fields = $this->getProfileNameFields();
 
     // We do nothing further if all fields of the Profile name are hidden.
     if (count(array_intersect($private_fields_list, $account_name_fields)) == count($account_name_fields)) {

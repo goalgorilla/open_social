@@ -3,4 +3,4 @@ services:
     class: \Drupal\social_demo\Commands\SocialDemoDrushCommands
     tags:
       - { name: drush.command }
-    arguments: ['@current_user', '@plugin.manager.demo_content']
+    arguments: ['@current_user', '@plugin.manager.demo_content', '@entity_type.manager']

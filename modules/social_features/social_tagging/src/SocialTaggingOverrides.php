@@ -3,6 +3,7 @@
 namespace Drupal\social_tagging;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -13,6 +14,33 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
   use StringTranslationTrait;
+
+  /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Custom tagging service.
+   *
+   * @var \Drupal\social_tagging\SocialTaggingService
+   */
+  protected SocialTaggingService $socialTagginService;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   * @param \Drupal\social_tagging\SocialTaggingService $social_tagging_service
+   *   Custom tagging service.
+   */
+  public function __construct(ConfigFactory $config_factory, SocialTaggingService $social_tagging_service) {
+    $this->configFactory = $config_factory;
+    $this->socialTagginService = $social_tagging_service;
+  }
 
   /**
    * Whether this config override should apply to the provided configurations.
@@ -67,11 +95,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     $overrides = [];
 
-    /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-    $tag_service = \Drupal::service('social_tagging.tag_service');
-
     // Check if tagging is active.
-    if (!($tag_service->active() && $tag_service->hasContent())) {
+    if (!($this->socialTagginService->active() && $this->socialTagginService->hasContent())) {
       return $overrides;
     }
 
@@ -79,16 +104,16 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $config_search = [
       'search_api.index.social_content' => 'node',
     ];
-    if ($tag_service->groupActive()) {
+    if ($this->socialTagginService->groupActive()) {
       $config_search['search_api.index.social_groups'] = 'group';
     }
-    if ($tag_service->profileActive()) {
+    if ($this->socialTagginService->profileActive()) {
       $config_search['search_api.index.social_users'] = 'profile';
     }
 
     foreach ($config_search as $config_name => $type) {
       if (in_array($config_name, $names)) {
-        $field_settings = \Drupal::configFactory()->getEditable($config_name)
+        $field_settings = $this->configFactory->getEditable($config_name)
           ->get('field_settings');
 
         $field_settings['social_tagging'] = [
@@ -107,17 +132,17 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'label' => $this->t('Tags'),
     ];
 
-    if ($tag_service->allowSplit()) {
+    if ($this->socialTagginService->allowSplit()) {
       $fields = [];
-      foreach ($tag_service->getCategories() as $tid => $value) {
-        if (!empty($tag_service->getChildren($tid))) {
+      foreach ($this->socialTagginService->getCategories() as $tid => $value) {
+        if (!empty($this->socialTagginService->getChildren($tid))) {
           $fields['social_tagging_' . $tid] = [
             'identifier' => social_tagging_to_machine_name($value),
             'label' => $value,
           ];
         }
         // Display parent of tags.
-        elseif ($tag_service->useCategoryParent()) {
+        elseif ($this->socialTagginService->useCategoryParent()) {
           $fields['social_tagging_' . $tid] = [
             'identifier' => social_tagging_to_machine_name($value),
             'label' => $value,
@@ -130,10 +155,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $config_views = [
       'views.view.search_content' => 'search_api_index_social_content',
     ];
-    if ($tag_service->groupActive()) {
+    if ($this->socialTagginService->groupActive()) {
       $config_views['views.view.search_groups'] = 'search_api_index_social_groups';
     }
-    if ($tag_service->profileActive()) {
+    if ($this->socialTagginService->profileActive()) {
       $config_views['views.view.search_users'] = 'search_api_index_social_users';
     }
 
@@ -218,10 +243,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'label' => $this->t('Tags'),
     ];
 
-    if ($tag_service->allowSplit()) {
+    if ($this->socialTagginService->allowSplit()) {
       $fields = [];
-      foreach ($tag_service->getCategories() as $tid => $value) {
-        if (!empty($tag_service->getChildren($tid))) {
+      foreach ($this->socialTagginService->getCategories() as $tid => $value) {
+        if (!empty($this->socialTagginService->getChildren($tid))) {
           $fields['social_tagging_target_id_' . $tid] = [
             'identifier' => social_tagging_to_machine_name($value),
             'label' => $value,
@@ -241,7 +266,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
-    if ($tag_service->profileActive()) {
+    if ($this->socialTagginService->profileActive()) {
       $config_overviews['views.view.newest_users'] = 'default';
     }
 

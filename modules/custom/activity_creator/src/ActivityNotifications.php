@@ -17,11 +17,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityNotifications extends ControllerBase {
 
   /**
+   * Activity status for received notifications.
+   */
+  const ACTIVITY_STATUS_RECEIVED = 1;
+
+  /**
+   * Activity status for read notifications.
+   */
+  const ACTIVITY_STATUS_SEEN = 2;
+
+  /**
    * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $database;
+  protected Connection $database;
 
   /**
    * ActivityNotifications constructor.
@@ -53,7 +63,7 @@ class ActivityNotifications extends ControllerBase {
    * @return array
    *   Return array of notification ids.
    */
-  public function getNotifications(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]): array {
+  public function getNotifications(AccountInterface $account, array $status = [self::ACTIVITY_STATUS_RECEIVED]): array {
     return $this->getNotificationIds($account, $status);
   }
 
@@ -71,7 +81,7 @@ class ActivityNotifications extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getNotificationsActivities(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]): array {
+  public function getNotificationsActivities(AccountInterface $account, array $status = [self::ACTIVITY_STATUS_RECEIVED]): array {
     if (!empty($ids = $this->getNotificationIds($account, $status))) {
       return $this->entityTypeManager()->getStorage('activity')->loadMultiple($ids);
     }
@@ -105,7 +115,6 @@ class ActivityNotifications extends ControllerBase {
 
       case 'group_content':
         /** @var \Drupal\group\Entity\GroupContent $entity */
-        $group_content = $entity;
         $linked_entity = $entity->getEntity();
         $group = $entity->getGroup();
         if ($linked_entity && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
@@ -141,7 +150,7 @@ class ActivityNotifications extends ControllerBase {
    */
   public function markAllNotificationsAsSeen(AccountInterface $account): bool {
     // Retrieve all the activities referring this entity for this account.
-    if (!empty($ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]))) {
+    if (!empty($ids = $this->getNotificationIds($account, [self::ACTIVITY_STATUS_RECEIVED]))) {
       return $this->changeStatusOfActivity($ids, $account, ACTIVITY_STATUS_SEEN);
     }
 
@@ -161,7 +170,7 @@ class ActivityNotifications extends ControllerBase {
    * @return bool
    *   Status of update query.
    */
-  public function changeStatusOfActivity(array $ids, AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED): bool {
+  public function changeStatusOfActivity(array $ids, AccountInterface $account, $status = self::ACTIVITY_STATUS_RECEIVED): bool {
     if (!empty($ids)) {
       // The transaction opens here.
       $txn = $this->database->startTransaction();

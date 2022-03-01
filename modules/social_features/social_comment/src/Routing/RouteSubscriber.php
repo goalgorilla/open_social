@@ -4,6 +4,7 @@ namespace Drupal\social_comment\Routing;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -11,12 +12,14 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class RouteSubscriber extends RouteSubscriberBase {
 
+  use StringTranslationTrait;
+
   /**
    * Config Factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs a new RouteSubscriber.
@@ -47,7 +50,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     // @todo For some reason this doesn't work.
     if ($route = $collection->get('comment.reply')) {
       $defaults = $route->getDefaults();
-      $defaults['_title'] = t('Add new reply')->render();
+      $defaults['_title'] = $this->t('Add new reply')->render();
       $route->setDefaults($defaults);
     }
 

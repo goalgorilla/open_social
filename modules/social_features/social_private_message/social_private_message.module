@@ -77,7 +77,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form_is_edit_form = $form_state->has('thread_members');
 
   // There's an alternative submit. We need to change its value.
-  foreach ($form['actions'] as $key => &$actions) {
+  foreach ($form['actions'] as &$actions) {
     // Must be pretty sure it's a submit button.
     if (!(is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit']))) {
       continue;

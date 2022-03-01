@@ -138,9 +138,6 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
   // Update the batch variables to track our progress.
   $sandbox['progress'] = $range_end;
 
-  // We can calculate our current progress via a mathematical fraction.
-  $progress_fraction = $sandbox['progress'] / $sandbox['count'];
-
   // Drupal’s Batch API will stop executing our update hook as soon as
   // $sandbox['#finished'] == 1 (viz., it evaluates to TRUE).
   $sandbox['#finished'] = empty($sandbox['activities_id']) ? 1 : ($sandbox['count'] - count($sandbox['activities_id'])) / $sandbox['count'];
@@ -212,9 +209,6 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
 
   // Update the batch variables to track our progress.
   $sandbox['progress'] = $range_end;
-
-  // We can calculate our current progress via a mathematical fraction.
-  $progress_fraction = $sandbox['progress'] / $sandbox['count'];
 
   // Tell the Batch API about status of this process.
   $sandbox['#finished'] = empty($sandbox['activities_id']) ? 1 : ($sandbox['count'] - count($sandbox['activities_id'])) / $sandbox['count'];

@@ -410,7 +410,7 @@ function _social_group_render_group_settings_hero(GroupInterface $group) {
     // Wrap our chosen description in a container.
     $description .= '<span class="title">' . t('Group visibility') . '</span>';
     $description .= '<div class="group-visibility-details container-background">';
-    foreach ($group_visibility_option as $key => $group_visibility_string) {
+    foreach ($group_visibility_option as $group_visibility_string) {
       $description .= $group_visibility_string;
     }
     $description .= '</div>';
@@ -420,7 +420,7 @@ function _social_group_render_group_settings_hero(GroupInterface $group) {
     // Wrap our chosen description in a container.
     $description .= '<span class="title">' . t('Group content visibility') . '</span>';
     $description .= '<div class="group-visibility-details container-background">';
-    foreach ($allowed_visibility_option as $key => $allowed_visibility_string) {
+    foreach ($allowed_visibility_option as $allowed_visibility_string) {
       $description .= $allowed_visibility_string;
     }
     $description .= '</div>';
@@ -430,7 +430,7 @@ function _social_group_render_group_settings_hero(GroupInterface $group) {
     // Wrap our chosen description in a container.
     $description .= '<span class="title">' . t('Join method') . '</span>';
     $description .= '<div class="group-visibility-details container-background">';
-    foreach ($join_methods_option as $key => $join_methods_string) {
+    foreach ($join_methods_option as $join_methods_string) {
       $description .= $join_methods_string;
     }
     $description .= '</div>';
@@ -1126,7 +1126,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
         $count = 0;
         if (!empty($form_state->getValue('entity_id_new'))) {
           // For multiple Group Members that are valid we add multiple entities.
-          foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
+          foreach ($form_state->getValue('entity_id_new') as $uid) {
             $group->addMember(User::load($uid['target_id']), $values);
             $count++;
           }
@@ -2004,7 +2004,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
-  foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
+  foreach ($form_state->getValue('groups') as $new_group) {
     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
   }
   // The node already exist so lets also change the logic accordingly,
@@ -2012,7 +2012,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   if (!empty($form['groups']['widget']['#default_value']) &&
     $form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
     $original_groups = $form['groups']['widget']['#default_value'];
-    foreach ($original_groups as $original_group_key => $original_group) {
+    foreach ($original_groups as $original_group) {
       if (!in_array($original_group, $groups_to_add)) {
         $groups_to_remove[$original_group] = $original_group;
       }

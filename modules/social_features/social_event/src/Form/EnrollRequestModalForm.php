@@ -26,7 +26,7 @@ class EnrollRequestModalForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $options = NULL) {
-    $node = \Drupal::routeMatch()->getParameter('node');
+    $node = $this->routeMatch->getParameter('node');
     $nid = $node->id();
 
     $form['#prefix'] = '<div id="request_enrollment">';
@@ -97,8 +97,7 @@ class EnrollRequestModalForm extends FormBase {
     // Refactor this into a service or helper.
     $message = $form_state->getValue('message');
 
-    $current_user = \Drupal::currentUser();
-    $uid = $current_user->id();
+    $uid = $this->currentUser()->id();
 
     $nid = $form_state->getValue('event');
 
@@ -117,7 +116,7 @@ class EnrollRequestModalForm extends FormBase {
     $enrollment->save();
 
     // On success leave a message and reload the page.
-    \Drupal::messenger()->addStatus(t('Your request has been sent successfully'));
+    $this->messenger->addStatus($this->t('Your request has been sent successfully'));
     return $response->addCommand(new CloseDialogCommand());
   }
 

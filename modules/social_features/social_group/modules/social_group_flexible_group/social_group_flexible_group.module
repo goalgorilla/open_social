@@ -417,7 +417,7 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
   // If there was a visibility that we don't have anymore after editting
   // all the content that was inside the group with this visibility
   // will get the lowest visibility that is still checked.
-  foreach ($default_visibility as $key => $option) {
+  foreach ($default_visibility as $option) {
     if (array_search($option, array_column($new_visibility, 'value')) === FALSE) {
       $changed_visibility[] = $option;
     }

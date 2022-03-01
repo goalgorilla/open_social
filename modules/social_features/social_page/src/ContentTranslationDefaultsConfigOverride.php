@@ -2,6 +2,7 @@
 
 namespace Drupal\social_page;
 
+use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
@@ -10,6 +11,23 @@ use Drupal\social_core\ContentTranslationConfigOverrideBase;
  * @package Drupal\social_page
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
+
+  /**
+   * The string translation service.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager
+   */
+  protected TranslationManager $translationManager;
+
+  /**
+   * Constructs for ContentTranslationDefaultsConfigOverride class.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationManager $translation_manager
+   *   The string translation service.
+   */
+  public function __construct(TranslationManager $translation_manager) {
+    $this->translationManager = $translation_manager;
+  }
 
   /**
    * {@inheritdoc}
@@ -24,7 +42,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
   protected function getDisplayName() {
     // We can't use dependency injection here because it causes a circular
     // dependency for the configuration override.
-    return \Drupal::translation()->translate('Pages');
+    return $this->translationManager->translate('Pages');
   }
 
   /**

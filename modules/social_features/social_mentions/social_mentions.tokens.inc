@@ -10,6 +10,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\mentions\Entity\Mentions;
 use Drupal\message\Entity\Message;
+use Drupal\social_profile\SocialProfileNameService;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
 
@@ -62,8 +63,8 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 
           $config = \Drupal::config('mentions.settings');
           switch ($config->get('suggestions_format')) {
-            case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
-            case SOCIAL_PROFILE_SUGGESTIONS_ALL:
+            case SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
+            case SocialProfileNameService::SOCIAL_PROFILE_SUGGESTIONS_ALL:
               $user_name = $profile->getOwner()->getDisplayName();
           }
           if (empty($user_name)) {

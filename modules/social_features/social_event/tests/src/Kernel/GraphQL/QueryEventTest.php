@@ -215,8 +215,16 @@ class QueryEventTest extends SocialGraphQLTestBase {
         ->addCacheableDependency($event)
         ->addCacheableDependency($event->getOwner())
         ->addCacheableDependency($event_manager)
-        ->addCacheTags(['config:filter.format.plain_text', 'config:filter.settings', 'comment:1'])
-        ->addCacheContexts(['languages:language_interface', 'user.node_grants:view', 'url.site'])
+        ->addCacheTags([
+          'config:filter.format.plain_text',
+          'config:filter.settings',
+          'comment:1',
+        ])
+        ->addCacheContexts([
+          'languages:language_interface',
+          'user.node_grants:view',
+          'url.site',
+        ])
     );
   }
 

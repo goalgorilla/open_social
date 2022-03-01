@@ -5,12 +5,15 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ultimate_cron\Entity\CronJob;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
 
 class EmailContext implements Context {
+
+  use StringTranslationTrait;
 
   /**
    * We need to enable the spool directory.
@@ -62,7 +65,7 @@ class EmailContext implements Context {
       $finder->files()->in($spoolDir);
       return $finder;
     }
-    catch (InvalidArgumentException $exception) {
+    catch (\Exception $exception) {
       return NULL;
     }
   }
@@ -184,7 +187,7 @@ class EmailContext implements Context {
 
       /** @var CronJob $job */
       foreach($jobs as $job) {
-        $job->run(t('Launched by drush'));
+        $job->run($this->t('Launched by drush'));
       }
     }
   }

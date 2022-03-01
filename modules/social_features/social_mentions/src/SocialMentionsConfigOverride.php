@@ -3,6 +3,7 @@
 namespace Drupal\social_mentions;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -16,6 +17,23 @@ use Drupal\Core\Config\StorageInterface;
 class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
+  /**
    * Returns config overrides.
    */
   public function loadOverrides($names) {
@@ -23,7 +41,7 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
     // Add mentions filter to Basic HTML text format.
     $config_name = 'filter.format.basic_html';
     if (in_array($config_name, $names)) {
-      $config = \Drupal::service('config.factory')->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
       $dependencies = $config->getOriginal('dependencies.module');
       $overrides[$config_name]['dependencies']['module'] = $dependencies;
       $overrides[$config_name]['dependencies']['module'][] = 'mentions';

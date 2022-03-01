@@ -22,7 +22,7 @@ class EnrollRequestAnonymousForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $options = NULL) {
-    $node = \Drupal::routeMatch()->getParameter('node');
+    $node = $this->routeMatch->getParameter('node');
     $nid = $node->id();
     $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
 

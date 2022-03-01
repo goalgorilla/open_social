@@ -2,6 +2,8 @@
 
 namespace Drupal\social_magic_login\Service;
 
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
@@ -16,16 +18,40 @@ class MagicUrl implements MagicUrlInterface {
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $pathValidator;
+  protected PathValidatorInterface $pathValidator;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected TimeInterface $time;
+
+  /**
+   * The language manager service.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * MagicUrlCreate constructor.
    *
    * @param \Drupal\Core\Path\PathValidatorInterface $pathValidator
    *   The path validator.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager service.
    */
-  public function __construct(PathValidatorInterface $pathValidator) {
+  public function __construct(
+    PathValidatorInterface $pathValidator,
+    TimeInterface $time,
+    LanguageManagerInterface $language_manager
+  ) {
     $this->pathValidator = $pathValidator;
+    $this->time = $time;
+    $this->languageManager = $language_manager;
   }
 
   /**
@@ -42,11 +68,11 @@ class MagicUrl implements MagicUrlInterface {
     }
 
     // Get url options and prerequisites.
-    $timestamp = \Drupal::time()->getRequestTime();
+    $timestamp = $this->time->getRequestTime();
     $lang_code = $options['langcode'] ?? $account->getPreferredLangcode();
     $url_options = [
       'absolute' => TRUE,
-      'language' => \Drupal::languageManager()->getLanguage($lang_code),
+      'language' => $this->languageManager->getLanguage($lang_code),
     ];
 
     // Create url from route with the destination if it's set.

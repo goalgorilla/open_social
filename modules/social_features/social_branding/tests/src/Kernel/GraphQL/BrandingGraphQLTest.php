@@ -397,7 +397,6 @@ class BrandingGraphQLTest extends SocialGraphQLTestBase {
    * Test that the preferred features can return an empty array.
    */
   public function testPreferredFeaturesReturnEmptyArray(): void {
-    $system_theme = $this->config('system.theme');
     // Set anonymous user.
     $this->setUpCurrentUser();
     // Uninstall social_branding_test to clean the provided preferred features.

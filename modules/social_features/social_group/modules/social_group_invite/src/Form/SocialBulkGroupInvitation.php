@@ -3,7 +3,6 @@
 namespace Drupal\social_group_invite\Form;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -31,82 +30,32 @@ use Drupal\Component\Render\FormattableMarkup;
 class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
   /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The tempstore factory.
-   *
-   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
-   */
-  protected $tempStoreFactory;
-
-  /**
-   * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $loggerFactory;
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-
-  /**
-   * Group.
-   *
-   * @var \Drupal\group\Entity\Group
-   */
-  protected $group;
-
-  /**
-   * The Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
-
-  /**
    * The Membership Loader.
    *
    * @var \Drupal\group\GroupMembershipLoaderInterface
    */
-  protected $groupMembershipLoader;
+  protected GroupMembershipLoaderInterface $groupMembershipLoader;
 
   /**
    * The Config factory.
    *
    * @var \Drupal\ginvite\GroupInvitationLoader
    */
-  protected $groupInvitationLoader;
+  protected GroupInvitationLoader $groupInvitationLoader;
 
   /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The group content plugin manager.
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
-  protected $pluginManager;
+  protected GroupContentEnablerManagerInterface $groupContentEnablerManager;
 
   /**
    * Constructs a new BulkGroupInvitation Form.
@@ -125,10 +74,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   The group membership loader.
    * @param \Drupal\ginvite\GroupInvitationLoader $invitation_loader
    *   Invitations loader service.
-   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
-   *   The group content enabler manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_enabler_manager
+   *   Group content enabler managers.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
@@ -140,17 +87,15 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     MessengerInterface $messenger,
     GroupMembershipLoaderInterface $group_membership_loader,
     GroupInvitationLoader $invitation_loader,
-    GroupContentEnablerManagerInterface $plugin_manager,
-    ConfigFactoryInterface $config_factory,
+    GroupContentEnablerManagerInterface $group_content_enabler_manager,
     Token $token
   ) {
     parent::__construct($route_match, $entity_type_manager, $temp_store_factory, $logger_factory, $messenger, $group_membership_loader, $invitation_loader);
     $this->group = $this->routeMatch->getParameter('group');
-    $this->pluginManager = $plugin_manager;
-    $this->configFactory = $config_factory;
+    $this->groupContentEnablerManager = $group_content_enabler_manager;
     $this->token = $token;
-    $this->groupInvitationLoader = $group_membership_loader;
-    $this->groupMembershipLoader = $invitation_loader;
+    $this->groupInvitationLoader = $invitation_loader;
+    $this->groupMembershipLoader = $group_membership_loader;
   }
 
   /**
@@ -166,7 +111,6 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       $container->get('group.membership_loader'),
       $container->get('ginvite.invitation_loader'),
       $container->get('plugin.manager.group_content_enabler'),
-      $container->get('config.factory'),
       $container->get('token')
     );
   }
@@ -218,7 +162,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       '#target_type' => 'user',
       '#select2' => [
         'tags' => TRUE,
-        'placeholder' => t('Jane Doe, johndoe@example.com'),
+        'placeholder' => $this->t('Jane Doe, johndoe@example.com'),
         'tokenSeparators' => [',', ';'],
         'autocomplete' => FALSE,
       ],
@@ -227,7 +171,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     ];
 
     // Load plugin configuration.
-    $group_plugin_collection = $this->pluginManager->getInstalled($group->getGroupType());
+    $group_plugin_collection = $this->groupContentEnablerManager->getInstalled($group->getGroupType());
     $group_invite_config = $group_plugin_collection->getConfiguration()['group_invitation'];
 
     // Get invite settings.
@@ -261,7 +205,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       '#type' => 'fieldset',
       '#title' => [
         'text' => [
-          '#markup' => t('Preview your email invite'),
+          '#markup' => $this->t('Preview your email invite'),
         ],
         'icon' => [
           '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
@@ -463,7 +407,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           'invitee_mail' => $email,
           'entity_id' => 0,
         ];
-        $batch['operations'][] = ['\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite', [$values]];
+        $batch['operations'][] = [
+          '\Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchCreateInvite',
+          [$values],
+        ];
       }
     }
 
@@ -502,9 +449,9 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         $params = $tempstore->get('params')['gid'];
         // BulkGroupInvitationConfirm sends us to
         // $destination = new Url('view.group_invitations.page_1',
-        // ['group' => $tempstore->get('params')['gid']]);
+        // ['group' => $params]);
         // however we want to go to the group canonical.
-        $destination = new Url('entity.group.canonical', ['group' => $tempstore->get('params')['gid']]);
+        $destination = new Url('entity.group.canonical', ['group' => $params]);
         $redirect = new RedirectResponse($destination->toString());
         $tempstore->delete('params');
         $redirect->send();
@@ -541,7 +488,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * Returns access to the invite page.
    *
-   * @param \Drupal\group\Entity\GroupInterface|mixed[] $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The group entity.
    *
    * @return \Drupal\Core\Access\AccessResultInterface

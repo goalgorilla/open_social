@@ -3,6 +3,7 @@
 namespace Drupal\social_post_photo;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -10,6 +11,23 @@ use Drupal\Core\Config\StorageInterface;
  * Example configuration override.
  */
 class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Returns config overrides.
@@ -25,7 +43,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     // @codingStandardsIgnoreEnd
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
     // Override postblocks on activity streams.
     $config_names = [
@@ -50,7 +67,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
 
         $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
         // Only override if the configuration for posts exist.
@@ -71,7 +88,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     // Override like and dislike settings.
     $config_name = 'like_and_dislike.settings';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
+      $config = $this->configFactory->getEditable($config_name);
       // Get enabled post bundles.
       $post_types = $config->get('enabled_types.post');
       $post_types['photo'] = 'photo';

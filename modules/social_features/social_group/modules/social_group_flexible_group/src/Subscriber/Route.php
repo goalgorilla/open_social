@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_flexible_group\Subscriber;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -11,6 +12,20 @@ use Symfony\Component\Routing\RouteCollection;
  * @package Drupal\social_group_flexible_group\Subscriber
  */
 class Route extends RouteSubscriberBase {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * Constructs the route class object.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler) {
+    $this->moduleHandler = $module_handler;
+  }
 
   /**
    * {@inheritdoc}
@@ -45,7 +60,7 @@ class Route extends RouteSubscriberBase {
     // Invoke implementations of
     // hook_social_group_flexible_group_content_routes_alter().
     // This to ensure extensions can also add their content tabs.
-    \Drupal::moduleHandler()
+    $this->moduleHandler
       ->alter('social_group_flexible_group_content_routes', $content_routes);
 
     foreach ($content_routes as $name) {

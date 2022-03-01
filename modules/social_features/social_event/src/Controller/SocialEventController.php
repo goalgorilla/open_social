@@ -69,12 +69,12 @@ class SocialEventController extends ControllerBase {
     // If we don't have a user in the request, assume it's my own profile.
     if (is_null($user)) {
       // Usecase is the user menu, which is generated on all LU pages.
-      $user = User::load($account->id());
+      $user = $this->entityTypeManager()->getStorage('user')->load($account->id());
     }
 
     // If not a user then just return neutral.
     if (!$user instanceof User) {
-      $user = User::load($user);
+      $user = $this->entityTypeManager()->getStorage('user')->load($user);
 
       if (!$user instanceof User) {
         return AccessResult::neutral();

@@ -8,6 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -30,14 +31,21 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected AccountProxyInterface $currentUser;
 
   /**
    * Creates a GroupHeroBlock instance.
@@ -52,11 +60,21 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
    *   The route match.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    RouteMatchInterface $route_match,
+    EntityTypeManagerInterface $entityTypeManager,
+    AccountProxyInterface $current_user
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entityTypeManager;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -68,7 +86,8 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       $plugin_id,
       $plugin_definition,
       $container->get('current_route_match'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('current_user')
     );
   }
 
@@ -116,9 +135,10 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       return parent::getCacheContexts();
     }
 
+    $current_user_id = $this->currentUser->id();
     return Cache::mergeTags(parent::getCacheTags(), [
-      'group_content_list:entity:' . \Drupal::currentUser()->id(),
-      'group_content_list:plugin:group_invitation:entity:' . \Drupal::currentUser()->id(),
+      'group_content_list:entity:' . $current_user_id,
+      'group_content_list:plugin:group_invitation:entity:' . $current_user_id,
       'group:' . $group->id(),
     ]);
   }

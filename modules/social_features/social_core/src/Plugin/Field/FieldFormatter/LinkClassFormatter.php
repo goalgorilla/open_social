@@ -3,6 +3,7 @@
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\link\LinkItemInterface;
 use Drupal\link\Plugin\Field\FieldFormatter\LinkFormatter;
 
@@ -18,6 +19,8 @@ use Drupal\link\Plugin\Field\FieldFormatter\LinkFormatter;
  * )
  */
 class LinkClassFormatter extends LinkFormatter {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -36,7 +39,7 @@ class LinkClassFormatter extends LinkFormatter {
 
     $elements['class'] = [
       '#type' => 'textfield',
-      '#title' => t('Class on Link'),
+      '#title' => $this->t('Class on Link'),
       '#default_value' => $this->getSetting('class'),
     ];
 
@@ -53,7 +56,7 @@ class LinkClassFormatter extends LinkFormatter {
     $settings = $this->getSettings();
 
     if (!empty($settings['class'])) {
-      $summary[] = t('Class(es) on button = "@classes"', ['@classes' => $settings['class']]);
+      $summary[] = $this->t('Class(es) on button = "@classes"', ['@classes' => $settings['class']]);
     }
 
     return $summary;

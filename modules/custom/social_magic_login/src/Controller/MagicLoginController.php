@@ -2,14 +2,13 @@
 
 namespace Drupal\social_magic_login\Controller;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Crypt;
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\data_policy\DataPolicyConsentManager;
 use Drupal\user\UserStorageInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -24,39 +23,39 @@ class MagicLoginController extends ControllerBase {
    *
    * @var \Drupal\user\UserStorageInterface
    */
-  protected $userStorage;
+  protected UserStorageInterface $userStorage;
 
   /**
-   * The logger service.
+   * The time service.
    *
-   * @var \Psr\Log\LoggerInterface
+   * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $logger;
+  protected TimeInterface $time;
 
   /**
-   * The config.
+   * Data Policy Consent Manager service.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\data_policy\DataPolicyConsentManager|null
    */
-  public $config;
+  protected ?DataPolicyConsentManager $dataPolicyConsentManager = NULL;
 
   /**
    * MagicLoginController constructor.
    *
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   *   The user storage.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   The logger service.
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
-   *   The module handler service.
-   * @param \Drupal\Core\Config\ConfigFactory $config
-   *   The configuration.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\data_policy\DataPolicyConsentManager|null $data_policy_consent_manager
+   *   Data Policy Consent Manager service.
    */
-  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, ModuleHandler $module_handler, ConfigFactory $config) {
-    $this->userStorage = $user_storage;
-    $this->logger = $logger;
-    $this->moduleHandler = $module_handler;
-    $this->config = $config;
+  public function __construct(
+    TimeInterface $time,
+    DataPolicyConsentManager $data_policy_consent_manager = NULL
+  ) {
+    $this->userStorage = $this->entityTypeManager()->getStorage('user');
+    $this->time = $time;
+    if ($data_policy_consent_manager instanceof DataPolicyConsentManager) {
+      $this->dataPolicyConsentManager = $data_policy_consent_manager;
+    }
   }
 
   /**
@@ -64,10 +63,8 @@ class MagicLoginController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')->getStorage('user'),
-      $container->get('logger.factory')->get('user'),
-      $container->get('module_handler'),
-      $container->get('config.factory')
+      $container->get('datetime.time'),
+      $container->has('data_policy.manager') ? $container->get('data_policy.manager') : NULL,
     );
   }
 
@@ -113,7 +110,7 @@ class MagicLoginController extends ControllerBase {
     $destination = base64_decode($destination);
 
     // The current user is not logged in, so check the parameters.
-    $currentTime = \Drupal::time()->getRequestTime();
+    $currentTime = $this->time->getRequestTime();
 
     // Time out, in seconds, until login URL expires.
     $timeout = $this->config('user.settings')->get('password_reset_timeout');
@@ -132,7 +129,9 @@ class MagicLoginController extends ControllerBase {
     if (!hash_equals($hash, user_pass_rehash($user, $timestamp))) {
       $this->messenger()->addError($this->t('You have tried to use a one-time link that is invalid.'));
 
-      return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
+      return $this->redirect('user.login', [], [
+        'query' => ['destination' => $destination],
+      ]);
     }
 
     // It's safe to finalize the login now.
@@ -143,7 +142,7 @@ class MagicLoginController extends ControllerBase {
     // When the user hasn't set a password, redirect the user to
     // the set passwords page. This now includes users that have
     // registered through social login possibilities.
-    if (NULL === $user->getPassword()) {
+    if (NULL == $user->getPassword()) {
       $message_set_password = $this->t('You need to set your password in order to log in.');
       if ($this->dataPolicyConsensus()) {
         // Set a different text when the user still needs to comply to
@@ -154,7 +153,10 @@ class MagicLoginController extends ControllerBase {
         ]);
       }
       $this->messenger()->addStatus($message_set_password);
-      $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+      $this->loggerFactory->get('user')->notice('User %name used magic login link at time %timestamp but needs to set a password.', [
+        '%name' => $user->getDisplayName(),
+        '%timestamp' => $timestamp,
+      ]);
 
       // This mirrors the UserController::resetPassLogin redirect which
       // allows a user to set a password without the current password check.
@@ -173,8 +175,11 @@ class MagicLoginController extends ControllerBase {
       );
     }
 
-    $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-    $config = $this->config->get('social_magic_login.settings');
+    $this->loggerFactory->get('user')->notice('User %name used one-time login link at time %timestamp.', [
+      '%name' => $user->getDisplayName(),
+      '%timestamp' => $timestamp,
+    ]);
+    $config = $this->configFactory->get('social_magic_login.settings');
 
     if ($config->get('show_used_message') === TRUE) {
       $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
@@ -191,11 +196,10 @@ class MagicLoginController extends ControllerBase {
    */
   protected function dataPolicyConsensus(): bool {
     // Check if the Data Policy module is enabled.
-    if ($this->moduleHandler->moduleExists('data_policy')) {
+    if ($this->dataPolicyConsentManager !== NULL) {
       // When it's enabled, load the data policy manager service and check
       // if consent is (still) needed.
-      $data_policy_manager = \Drupal::service('data_policy.manager');
-      return $data_policy_manager->needConsent();
+      return $this->dataPolicyConsentManager->needConsent();
     }
 
     return FALSE;

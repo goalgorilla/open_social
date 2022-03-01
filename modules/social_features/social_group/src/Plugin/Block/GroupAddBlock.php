@@ -31,21 +31,21 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The social group helper service.
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  protected $socialGroupHelper;
+  protected SocialGroupHelperService $socialGroupHelper;
 
   /**
    * Constructs a GroupAddBlock object.
@@ -140,7 +140,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
     ];
     $url->setOptions($link_options);
 
-    $build['content'] = Link::fromTextAndUrl(t('Add a group'), $url)
+    $build['content'] = Link::fromTextAndUrl($this->t('Add a group'), $url)
       ->toRenderable();
 
     return $build;

@@ -136,7 +136,7 @@ class ActivityFactory extends ControllerBase {
       'field_activity_recipient_group' => $this->getFieldRecipientGroup($data),
       'field_activity_recipient_user' => $this->getFieldRecipientUser($data),
       // Default activity status.
-      'field_activity_status' => ACTIVITY_STATUS_RECEIVED,
+      'field_activity_status' => ActivityNotifications::ACTIVITY_STATUS_RECEIVED,
       'user_id' => $this->getActor($data),
     ];
 

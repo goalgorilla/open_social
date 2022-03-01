@@ -8,9 +8,7 @@ use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
-use Drupal\image\Entity\ImageStyle;
 use Drupal\message\Entity\Message;
 use Drupal\node\Entity\Node;
 use Drupal\social_group\GroupStatistics;
@@ -193,14 +191,15 @@ class EmailTokenServices {
     $profile = $profile_storage->loadByUser($user, 'profile');
     // Add the profile image.
     /** @var \Drupal\image\Entity\ImageStyle $image_style */
-    $image_style = ImageStyle::load('social_medium');
+    $image_style = $this->entityTypeManager->getStorage('image_style')->load('social_medium');
     if (!empty($profile->field_profile_image->entity)) {
       $image_url = $image_style->buildUrl($profile->field_profile_image->entity->getFileUri());
     }
     elseif ($default_image = social_profile_get_default_image()) {
       // Add default image.
       if (!empty($default_image['id'])) {
-        $file = File::load($default_image['id']);
+        /** @var \Drupal\file\Entity\File $file */
+        $file = $this->entityTypeManager->getStorage('file')->load($default_image['id']);
         $image_url = $image_style->buildUrl($file->getFileUri());
       }
     }

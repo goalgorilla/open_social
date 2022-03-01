@@ -12,7 +12,6 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\mentions\MentionsPluginManager;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Class FilterMentions.
@@ -165,7 +164,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
     if ($this->checkMentionTypes()) {
       return TRUE;
     }
-    elseif ($this->textFormat && ($format = FilterFormat::load($this->textFormat))) {
+    elseif ($this->textFormat && ($format = $this->entityManager->getStorage('filter_format')->load($this->textFormat))) {
       $filters = $format->get('filters');
 
       if (!empty($filters['filter_mentions']['status'])) {

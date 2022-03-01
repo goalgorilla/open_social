@@ -3,15 +3,33 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialGroupSelectorWidgetConfigOverride.
+ * Adds override for group selector widget.
  *
  * @package Drupal\social_group
  */
 class SocialGroupSelectorWidgetConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The config factory object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected ConfigFactory $configFactory;
+
+  /**
+   * Constructs for SocialGroupSelectorWidgetConfigOverride class.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory object.
+   */
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Load overrides.
@@ -24,7 +42,7 @@ class SocialGroupSelectorWidgetConfigOverride implements ConfigFactoryOverrideIn
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
         // Add the field to the content.
         $content = $config->get('content');
         $content['groups'] = [];

@@ -4,6 +4,7 @@ namespace Drupal\social_event\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -26,14 +27,21 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The form builder.
    *
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * EnrollActionBlock constructor.
@@ -48,11 +56,14 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The route match.
    * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
    *   The form builder.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, FormBuilderInterface $formBuilder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, FormBuilderInterface $formBuilder, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
     $this->formBuilder = $formBuilder;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -64,7 +75,8 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $container->get('current_route_match'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -83,7 +95,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
     if (in_array($route_name, $routes_to_check)) {
       $node = $this->routeMatch->getParameter('node');
       if (!is_null($node) && !is_object($node)) {
-        $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
+        $node = $this->entityTypeManager->getStorage('node')->load($node);
       }
 
       if (is_object($node) && $node->getType() === 'event') {

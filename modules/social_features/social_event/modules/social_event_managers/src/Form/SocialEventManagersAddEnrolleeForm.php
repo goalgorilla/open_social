@@ -23,43 +23,41 @@ use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
  */
 class SocialEventManagersAddEnrolleeForm extends FormBase {
 
-  /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
-   * The Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
 
   /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * Constructs a new GroupContentController.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Route match service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager service.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Renderer service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory service.
+   * @param \Drupal\Core\Utility\Token $token
+   *   Token service.
    */
   public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, ConfigFactoryInterface $config_factory, Token $token) {
     $this->routeMatch = $route_match;
@@ -109,7 +107,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       // Create a new enrollment for the event.
       foreach ($enroll_uid as $uid => $target_id) {
         $enrollment = EventEnrollment::create([
-          'user_id' => \Drupal::currentUser()->id(),
+          'user_id' => $this->currentUser()->id(),
           'field_event' => $event,
           'field_enrollment_status' => '1',
           'field_account' => $uid,
@@ -126,7 +124,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
         if (social_event_manager_or_organizer(NULL, TRUE)) {
           $message = $this->formatPlural($count, '@count new member is enrolled to your event.', '@count new members are enrolled to your event.');
         }
-        \Drupal::messenger()->addMessage($message, 'status');
+        $this->messenger->addMessage($message, 'status');
       }
 
       // Redirect to management overview.
@@ -192,7 +190,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
       '#select2' => [
-        'placeholder' => t('Jane Doe'),
+        'placeholder' => $this->t('Jane Doe'),
         'tokenSeparators' => [',', ';'],
       ],
       '#selection_handler' => 'social',
@@ -212,7 +210,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     ];
 
     $variables = [
-      '%site_name' => \Drupal::config('system.site')->get('name'),
+      '%site_name' => $this->config('system.site')->get('name'),
     ];
 
     // Load event invite configuration.
@@ -234,7 +232,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $email_logo = theme_get_setting('email_logo', $theme_id);
 
     if (is_array($email_logo) && !empty($email_logo)) {
-      $file = File::load(reset($email_logo));
+      $file = $this->entityTypeManager->getStorage('file')->load(reset($email_logo));
 
       if ($file instanceof File) {
         $logo = file_create_url($file->getFileUri());
@@ -245,7 +243,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#type' => 'fieldset',
       '#title' => [
         'text' => [
-          '#markup' => t('Preview your email'),
+          '#markup' => $this->t('Preview your email'),
         ],
         'icon' => [
           '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
@@ -274,7 +272,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
 
     $form['actions']['cancel'] = [
       '#type' => 'link',
-      '#title' => t('Cancel'),
+      '#title' => $this->t('Cancel'),
       '#url' => Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $nid]),
     ];
 

@@ -2,11 +2,11 @@
 
 namespace Drupal\social_content_block;
 
-use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class SocialContentBlockOverride.
@@ -22,26 +22,38 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The content block plugin definitions.
    *
-   * @var array
+   * @var array|null
    */
-  protected $definitions = NULL;
+  protected ?array $definitions = NULL;
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
+   * @param \Drupal\social_content_block\ContentBlockManager|null $content_block_manager
+   *   The content block manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, ContentBlockManager $content_block_manager = NULL) {
     $this->configFactory = $config_factory;
+    $this->entityTypeManager = $entity_type_manager;
 
-    if (\Drupal::hasService('plugin.manager.content_block')) {
-      $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
+    if ($content_block_manager !== NULL) {
+      $this->definitions = $content_block_manager->getDefinitions();
     }
   }
 
@@ -63,10 +75,12 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
         ->condition('type', 'custom_content_list');
       $ids = $query->execute();
 
-      foreach ($ids as $id) {
-        $block = BlockContent::load($id);
-        if ($block) {
-          $plugin_ids[] = 'block_content:' . $block->uuid();
+      if (is_array($ids)) {
+        foreach ($ids as $id) {
+          $block = $this->entityTypeManager->getStorage('block_content')->load($id);
+          if ($block) {
+            $plugin_ids[] = 'block_content:' . $block->uuid();
+          }
         }
       }
 

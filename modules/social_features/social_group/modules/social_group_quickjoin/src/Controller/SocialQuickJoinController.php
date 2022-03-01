@@ -8,8 +8,8 @@ use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -27,7 +27,7 @@ class SocialQuickJoinController extends ControllerBase {
    *
    * @var \Drupal\Core\Routing\CurrentRouteMatch
    */
-  protected $currentRoute;
+  protected CurrentRouteMatch $currentRoute;
 
   /**
    * The config factory.
@@ -35,6 +35,13 @@ class SocialQuickJoinController extends ControllerBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * The user object.
+   *
+   * @var \Drupal\user\UserStorageInterface
+   */
+  protected UserStorageInterface $user;
 
   /**
    * SocialEventController constructor.
@@ -47,6 +54,7 @@ class SocialQuickJoinController extends ControllerBase {
   public function __construct(CurrentRouteMatch $currentRoute, ConfigFactoryInterface $configFactory) {
     $this->currentRoute = $currentRoute;
     $this->configFactory = $configFactory;
+    $this->user = $this->entityTypeManager()->getStorage('user');
   }
 
   /**
@@ -98,7 +106,7 @@ class SocialQuickJoinController extends ControllerBase {
     }
 
     // Fetch the user from the accountproxy.
-    $account = User::load($this->currentUser()->id());
+    $account = $this->user->load($this->currentUser()->id());
     if ($account instanceof UserInterface) {
       // Extra exceptions based on groupmembership rules.
       if ($group->hasPermission('join group', $account) === FALSE) {

@@ -4,7 +4,6 @@ namespace Drupal\social_post\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -124,7 +123,7 @@ class PostForm extends ContentEntityForm {
       $view_mode = $this->postViewGroup;
     }
 
-    $display = EntityFormDisplay::load($view_mode);
+    $display = $this->entityTypeManager->getStorage('entity_form_display')->load($view_mode);
     $this->setFormDisplay($display, $form_state);
   }
 
@@ -266,11 +265,11 @@ class PostForm extends ContentEntityForm {
     if ($this->entity->isNew()) {
       if (isset($display) && ($display_id = $display->get('id'))) {
         if ($display_id === $this->postViewProfile) {
-          $account_profile = \Drupal::routeMatch()->getParameter('user');
+          $account_profile = $this->routeMatch->getParameter('user');
           $this->entity->get('field_recipient_user')->setValue($account_profile);
         }
         elseif ($display_id === $this->postViewGroup) {
-          $group = \Drupal::routeMatch()->getParameter('group');
+          $group = $this->routeMatch->getParameter('group');
           $this->entity->get('field_recipient_group')->setValue($group);
         }
       }

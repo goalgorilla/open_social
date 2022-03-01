@@ -1,7 +1,7 @@
 services:
   social_group_default_route.redirect_subscriber:
     class: Drupal\social_group_default_route\EventSubscriber\RedirectSubscriber
-    arguments: ['@current_route_match', '@current_user']
+    arguments: ['@current_route_match', '@current_user', '@entity_type.manager']
     tags:
       - { name: event_subscriber }
   social_group_default_route.route_subscriber:

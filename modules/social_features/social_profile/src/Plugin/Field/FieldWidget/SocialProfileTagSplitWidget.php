@@ -27,7 +27,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
    *
    * @var \Drupal\social_profile\SocialProfileTagServiceInterface
    */
-  protected $profileTagService;
+  protected SocialProfileTagServiceInterface $profileTagService;
 
   /**
    * {@inheritdoc}
@@ -133,7 +133,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
       $field_value = [];
       // Get the main categories.
       $categories = $profile_tag_service->getCategories();
-      foreach ($categories as $tid => $category) {
+      foreach ($categories as $category) {
         $field_name = 'profile_tagging_' . $profile_tag_service->tagLabelToMachineName($category);
         if (isset($value[$field_name])) {
           $field_value += $value[$field_name];

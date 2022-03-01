@@ -227,8 +227,9 @@ function ginvite_tokens($type, $tokens, array $data, array $options, BubbleableM
  * Implements hook_form_FORM_ID_alter().
  */
 function ginvite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($_GET["invitee_mail"])) {
-    $invitee_mail = $_GET["invitee_mail"];
+  $current_request = \Drupal::requestStack()->getCurrentRequest();
+  $invitee_mail = $current_request !== NULL ? $current_request->query->get("invitee_mail") : NULL;
+  if ($invitee_mail !== NULL) {
     $invitee_mail = base64_decode(str_replace(['-', '_'], ['+', '/'], $invitee_mail));
     if (\Drupal::service('email.validator')->isValid($invitee_mail)) {
       $form["account"]["mail"]["#default_value"] = $invitee_mail;

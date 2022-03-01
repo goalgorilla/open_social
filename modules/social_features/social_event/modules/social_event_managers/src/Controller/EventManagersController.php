@@ -4,7 +4,6 @@ namespace Drupal\social_event_managers\Controller;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
@@ -17,23 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\social_event_managers\Controller
  */
 class EventManagersController extends ControllerBase {
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * SocialTopicController constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
-   */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
-    $this->entityTypeManager = $entityTypeManager;
-  }
 
   /**
    * {@inheritdoc}
@@ -69,7 +51,7 @@ class EventManagersController extends ControllerBase {
       $node = $route_match->getParameter('node');
 
       if (!$node instanceof NodeInterface) {
-        $node = $this->entityTypeManager->getStorage('node')->load($node);
+        $node = $this->entityTypeManager()->getStorage('node')->load($node);
       }
 
       if ($node instanceof NodeInterface && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {

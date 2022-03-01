@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\RouteCollection;
  * Listens to the dynamic route events.
  */
 class RouteSubscriber extends RouteSubscriberBase {
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -21,17 +23,17 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('user.login')) {
       $route->setDefaults([
         '_form' => '\Drupal\social_user\Form\SocialUserLoginForm',
-        '_title' => t('Log in')->render(),
+        '_title' => $this->t('Log in')->render(),
       ]);
     }
     if ($route = $collection->get('user.pass')) {
       $route->setDefaults([
         '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
-        '_title' => t('Reset your password')->render(),
+        '_title' => $this->t('Reset your password')->render(),
       ]);
     }
     if ($route = $collection->get('user.reset.form')) {
-      $route->setDefault('_title', t('Set your password')->render());
+      $route->setDefault('_title', $this->t('Set your password')->render());
     }
     // Route the user view page to user/{uid}/timeline.
     if ($route = $collection->get('entity.user.canonical')) {

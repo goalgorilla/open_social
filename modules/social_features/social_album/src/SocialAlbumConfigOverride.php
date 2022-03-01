@@ -30,7 +30,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * Constructs the configuration override.
@@ -151,7 +151,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
         // Add the field to the content.
         $content = $config->get('content');
         $content['groups'] = [];
