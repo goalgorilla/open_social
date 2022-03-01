@@ -21,7 +21,7 @@
                 '<div>'.concat(profiles[identifier], '</div>'),
                 {
                   dialogClass: 'social-dialog',
-                  width: '50%',
+                  width: '384px',
                   position: {
                     my: 'left top',
                     at: 'right top',
