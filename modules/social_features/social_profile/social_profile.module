@@ -5,6 +5,7 @@
  * The Social profile module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -19,6 +20,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
@@ -27,10 +29,9 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
+use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
-use Drupal\social_profile\SocialProfileUserFormAlter;
-use Drupal\block\Entity\Block;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
 const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
@@ -410,6 +411,9 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
+  }
+  elseif ($variables['elements']['#view_mode'] === 'small_teaser') {
+    $variables['link_attributes'] = new Attribute();
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
