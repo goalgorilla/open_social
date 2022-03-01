@@ -85,7 +85,7 @@ function social_follow_user_preprocess_profile(array &$variables): void {
 
       $attributes
         ->setAttribute('id', Html::getUniqueId('profile-preview'))
-        ->setAttribute('data-profile', $profile->id());
+        ->setAttribute('data-profile', (string) $profile->id());
 
       $variables['#attached']['library'][] = 'social_follow_user/preview';
     }
