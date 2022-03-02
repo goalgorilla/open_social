@@ -57,6 +57,8 @@ before_install:
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
   # Pull Open Social from GitHub instead of Drupal's Packagist so all our dev branches are available.
   - composer config repositories.social git https://github.com/goalgorilla/open_social.git
+  # Remove roave/security-advisories depdendency as it conflicts with drupal/core:~8.9.9 requirements in our update branch. See: https://github.com/Roave/SecurityAdvisories/commit/5bd8c4f672d819d073ca8de1922fdb6898d0df3a
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer remove roave/security-advisories --no-update; fi
   # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldnt release but helps us with testing our update path.
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
   # For Pull Requests that are not from Open Social's own repo we must overwrite the repository we set earlier so we can pull in the work done by the external contributor.
