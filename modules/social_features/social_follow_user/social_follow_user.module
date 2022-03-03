@@ -12,7 +12,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserFormatter;
+use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserImageFormatter;
+use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserStringFormatter;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -83,7 +84,8 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
  * Implements hook_field_formatter_info_alter().
  */
 function social_follow_user_field_formatter_info_alter(array &$info): void {
-  $info['string']['class'] = SocialFollowUserFormatter::class;
+  $info['image']['class'] = SocialFollowUserImageFormatter::class;
+  $info['string']['class'] = SocialFollowUserStringFormatter::class;
 }
 
 /**
