@@ -210,16 +210,13 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
       if (
         $node instanceof NodeInterface &&
-        $event_max_enroll_service->isEnabled($node)
+        $event_max_enroll_service->isEnabled($node) &&
+        $event_max_enroll_service->getEnrollmentsLeft($node) === 0
       ) {
-        // If there are no spots left, disable button and add the button title
-        // with appropriate notice.
-        if ($event_max_enroll_service->getEnrollmentsLeft($node) === 0) {
-          $form['actions']['submit']['#attributes'] = [
-            'disabled' => 'disabled',
-            'title' => $this->t('There are no spots left'),
-          ];
-        }
+        $form['actions']['submit']['#attributes'] = [
+          'disabled' => 'disabled',
+          'title' => $this->t('There are no spots left'),
+        ];
       }
     }
 

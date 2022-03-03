@@ -279,8 +279,18 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       $selected_actions = $this->options['selected_actions'];
       // Grab all the actions that are available.
       foreach (Element::children($this->actions) as $action) {
+
+        // Combine both arrays elements.
+        $array_combine = (array) array_combine(
+          array_keys($selected_actions),
+          array_column($selected_actions, 'action_id')
+        );
+
+        // Get the action key.
+        $action_key = array_search($action, array_filter($array_combine));
+
         // If the option is not in our selected options, next.
-        if (($action_key = array_search($action, array_filter((array) array_combine(array_keys($selected_actions), array_column($selected_actions, 'action_id'))))) === FALSE) {
+        if ($action_key === FALSE) {
           continue;
         }
 

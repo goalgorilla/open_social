@@ -112,10 +112,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       $node = \Drupal::routeMatch()->getParameter('node');
 
       // If there is node ID instead of an object then load node with NID.
-      if (
-        !($node instanceof NodeInterface) &&
-        !is_null($node)
-      ) {
+      if (!is_object($node) && $node !== NULL) {
         /** @var \Drupal\node\NodeStorageInterface $node_storage */
         $node_storage = \Drupal::entityTypeManager()->getStorage('node');
         /** @var \Drupal\node\NodeInterface $node */

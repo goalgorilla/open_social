@@ -4,7 +4,6 @@ namespace Drupal\social_event_max_enroll\Controller;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_invite\Controller\UserEnrollInviteController;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
@@ -63,7 +62,7 @@ class UserEnrollInviteControllerAlter extends UserEnrollInviteController {
       $node = $this->entityTypeManager()->getStorage('node')->load($event_id);
 
       if (
-        $node instanceof NodeInterface &&
+        $node !== NULL &&
         $this->eventMaxEnrollService->isEnabled($node)
       ) {
         // If there are no spots left then we should prevent approving
