@@ -41,7 +41,7 @@ trait SocialFollowUserFormatterTrait {
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $text
    *   The message shows that the link to the author is enabled.
    */
-  public function alterOwnerSummary(array $summary, TranslatableMarkup $text) {
+  public function alterOwnerSummary(array $summary, TranslatableMarkup $text): array {
     if ($this->isOwnerReady()) {
       $summary[] = $text;
     }
