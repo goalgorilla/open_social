@@ -18,6 +18,10 @@ jobs:
   behat:
     name: Running tests with '@stability-1' tag.
     runs-on: ubuntu-latest
+    # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
+    # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Set default PHP7.4
         run: sudo update-alternatives --set php /usr/bin/php7.4
@@ -36,7 +40,7 @@ jobs:
 
       # Install the version of Open Social under test.
       - name: Composer require current branch
-        run: composer require goalgorilla/open_social:dev-${{ github.head_ref }}
+        run: composer require goalgorilla/open_social:dev-${{ BRANCH_NAME }}
 
       - name: Install Docker CI
         run: |
