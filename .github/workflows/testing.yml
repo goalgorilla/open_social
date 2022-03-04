@@ -16,22 +16,25 @@ jobs:
   # This workflow contains a single job called "phpunit"
   phpunit:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
 
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP${{ matrix.php }}
+        run: sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
 
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
       # A separate path is used to keep our working directory clean.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: ${{ github.workspace }}/tmp/repository
           # Since composer must clone from this we require all the history.
           fetch-depth: 0
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.json') }}

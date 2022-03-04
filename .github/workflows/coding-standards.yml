@@ -16,12 +16,15 @@ jobs:
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP${{ matrix.php }}
+        run: sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -32,12 +35,15 @@ jobs:
   phpcs:
     name: PHPCS
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP${{ matrix.php }}
+        run: sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
