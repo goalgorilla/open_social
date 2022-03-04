@@ -1,0 +1,44 @@
+name: 'Behat Stability 1'
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+  pull_request: { }
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "behat"
+  behat:
+    name: Running tests with '@stability-1' tag.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default PHP7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      # We checkout the code in a separate folder since we want to use the
+      # result of the merge rather than the pre-merged code.
+      # A separate path is used to keep our working directory clean.
+      - uses: actions/checkout@v2
+        with:
+          repository: 'goalgorilla/drupal_social'
+          ref: '3.2.0'
+
+      # Set up composer with our desired PHP version.
+      - name: Composer Config
+        run: composer config repositories.social git https://github.com/goalgorilla/open_social.git
+
+      # Install the version of Open Social under test.
+      - name: Composer require current branch
+        run: composer require goalgorilla/open_social:dev-${{ github.head_ref }}
+
+      - name: Install Docker CI
+        run: |
+          sh scripts/social/ci/install-docker.sh
+          docker-compose -f docker-compose-ci.yml up -d
+          docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional --localsettings
+
+      - name: Run Integration tests
+        run: |
+          docker exec -i social_ci_behat bash /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"

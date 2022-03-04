@@ -1,0 +1,69 @@
+name: Behat Update path
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+  pull_request: { }
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "behat"
+  behat:
+    name: Running tests with '@stability-1' tag.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default PHP7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      # We checkout the code in a separate folder since we want to use the
+      # result of the merge rather than the pre-merged code.
+      # A separate path is used to keep our working directory clean.
+      - uses: actions/checkout@v2
+        with:
+          repository: 'goalgorilla/drupal_social'
+          ref: '2.0.0'
+          fetch-depth: 0
+
+      # Set up composer with our desired PHP version.
+      - name: Composer Config
+        run: composer config repositories.social git https://github.com/goalgorilla/open_social.git
+
+      # Install the version of Open Social under test.
+      - name: Composer Install update branch of Open Social
+        run: |
+          composer remove roave/security-advisories --no-update
+          composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist
+
+      # Reset the entire branch, so we can checkout goalgorilla/drupal_social:3.2.0 and we don't get issues with dev dependencies from 8.x related Open Social versions.
+      - name: Prepare repository for upgrade
+        run: |
+          git stash
+          rm -rf vendor/ composer.lock
+          git checkout 3.2.0
+          bash scripts/social/ci/restore-permissions.sh
+
+      # Set php memory limit to -1 so composer update will not fail
+      # Enforce throwing an error and stopping package installation/update immediately
+      - name: Set composer configurations
+        run: |
+          export COMPOSER_MEMORY_LIMIT=-1
+          COMPOSER_EXIT_ON_PATCH_FAILURE=1
+
+      - name: Composer require current branch
+        run: composer require goalgorilla/open_social:dev-${{ github.head_ref }} --update-with-all-dependencies
+
+     # Install the docker containers.
+      - name: Install Docker CI
+        run: |
+          sh scripts/social/ci/install-docker.sh
+          docker-compose -f docker-compose-ci.yml up -d
+          docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh
+
+      # Run the upgrade path behat tests
+      - name: Run Integration tests
+        env:
+          TEST_SUITE: ${{ matrix.test_suite }}
+        run: |
+          docker exec -i social_ci_behat bash /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"

@@ -1,21 +1,27 @@
 name: Coding Standards
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request: { }
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  phpstan7:
-    name: PHPStan on PHP 7.4
+  # This workflow contains a single job called "phpstan"
+  phpstan:
+    name: PHPStan
     runs-on: ubuntu-latest
     steps:
-      - name: Set default php7.4
+      - name: Set default PHP7.4
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -27,11 +33,11 @@ jobs:
     name: PHPCS
     runs-on: ubuntu-latest
     steps:
-      - name: Set default php7.4
+      - name: Set default PHP7.4
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -41,19 +47,3 @@ jobs:
         with:
           phpcs_bin_path: './vendor/bin/phpcs'
           enable_warnings: true
-
-  phpstan8:
-    name: PHPStan on PHP 8.0
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set default php8.0
-        run: sudo update-alternatives --set php /usr/bin/php8.0
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-      - name: PHP Stan
-        run: vendor/bin/phpstan analyse -c phpstan.neon
