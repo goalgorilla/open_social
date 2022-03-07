@@ -101,3 +101,47 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     }
   }
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_follow_user_profile_view_alter(
+  array &$build,
+  EntityInterface $entity,
+  EntityViewDisplayInterface $display
+): void {
+  if (
+    $build['#view_mode'] === 'preview' &&
+    $entity->bundle() === 'profile' &&
+    $display->getComponent('private_message_link') !== NULL
+  ) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $entity;
+
+    if ($profile->getOwner()->hasPermission('use private messaging system')) {
+      $element = &$build['private_message_link'];
+
+      $element['#title'] = t('Message');
+
+      /** @var \Drupal\Core\Url $url */
+      $url = $element['#url'];
+
+      $url->mergeOptions([
+        'attributes' => [
+          'class' => [
+            'btn',
+            'btn-default',
+            'btn-sm',
+            'waves-effect',
+            'waves-btn',
+          ],
+        ],
+      ]);
+
+      unset($element['#prefix'], $element['#suffix']);
+    }
+    else {
+      unset($build['private_message_link']);
+    }
+  }
+}
