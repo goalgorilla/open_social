@@ -139,7 +139,7 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
       if (!empty($this->options['hierarchy']) && $this->options['limit']) {
         foreach ($vocabulary_ids as $vid) {
           /** @var \Drupal\taxonomy\TermInterface[] $tree */
-          $tree = $this->termStorage->loadTree($vid, 0, NULL, TRUE);
+          $tree = $this->termStorage->loadTree((string) $vid, 0, NULL, TRUE);
 
           if ($tree) {
             foreach ($tree as $term) {
