@@ -1,0 +1,107 @@
+body {
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+h1 {
+  padding: 0 10px;
+  text-align: center;
+}
+
+p {
+  padding: 20px;
+}
+
+.github-banner {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+emoji-picker {
+  margin: 0 auto;
+}
+
+pre {
+  border: 1px solid #ededed;
+  padding: 10px;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+a, a:visited {
+  color: royalblue;
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex > * {
+  flex: 1;
+}
+
+.flex > :last-child {
+  margin-left: 20px;
+}
+
+@media (max-width: 767px) {
+  html {
+    padding-top: 50px;
+  }
+  .flex {
+    flex-direction: column;
+  }
+  .flex > :last-child {
+    margin-left: 0;
+  }
+  h1 {
+    padding: 0 50px;
+  }
+}
+
+/* iPhone 6/7/8/X */
+@media screen and (max-width: 375px) {
+  h1 {
+    font-size: 1.125rem;
+  }
+}
+
+/* iPhone 6/7/8/X */
+@media screen and (max-width: 375px) {
+  emoji-picker.has-custom {
+    --num-columns: 6;
+    --emoji-padding: 0.25rem;
+    --input-padding: 0.125rem;
+  }
+}
+
+/* Nexus 5 */
+@media screen and (max-width: 360px) {
+  emoji-picker {
+    --num-columns: 6;
+    --emoji-padding: 0.25rem;
+    --input-padding: 0.125rem;
+  }
+}
+
+/* JioPhone 2 */
+@media screen and (max-width: 240px) {
+  emoji-picker {
+    height: 80vh;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background: #222;
+    color: #efefef;
+  }
+  a, a:visited {
+    color: #7294f5;
+  }
+}
+

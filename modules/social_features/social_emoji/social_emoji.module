@@ -7,12 +7,12 @@
 
 use Drupal\Core\Form\FormStateInterface;
 
-/**
- * Implements hook_form_FORM_ID_alter().
- *
- * Add emoji-button to the comment form.
- */
-function social_emoji_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['#attached']['library'][] = 'social_emoji/emoji-picker-element';
-  $form['field_comment_body']['widget']['0']['#prefix'] = '<emoji-picker></emoji-picker>';
+function social_emoji_field_widget_single_element_text_textarea_form_alter(&$element, &$form_state, $context) {
+  $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
+  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+}
+
+function social_emoji_field_widget_single_element_text_textarea_with_summary_form_alter(&$element, &$form_state, $context) {
+  $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
+  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
 }
