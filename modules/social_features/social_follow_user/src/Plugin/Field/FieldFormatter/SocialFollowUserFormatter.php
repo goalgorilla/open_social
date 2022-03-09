@@ -6,17 +6,13 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'image' formatter.
  */
-class SocialFollowUserImageFormatter extends ImageFormatter {
-
-  use SocialFollowUserFormatterTrait;
-
-  public const OWNER_KEY = 'image_link';
-  public const OWNER_VALUE = 'owner';
+class SocialFollowUserFormatter extends ImageFormatter {
 
   /**
    * The entity type manager.
@@ -57,8 +53,18 @@ class SocialFollowUserImageFormatter extends ImageFormatter {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-    if ($this->isOwnerForm()) {
-      $form[self::OWNER_KEY]['#options'][self::OWNER_VALUE] = $this->t('Owner');
+    $entity_type_id = $this->fieldDefinition->getTargetEntityTypeId();
+
+    if ($entity_type_id !== 'user') {
+      $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+
+      if (
+        $entity_type !== NULL &&
+        is_subclass_of($entity_type->getClass(), EntityOwnerInterface::class) &&
+        $entity_type->hasKey('owner')
+      ) {
+        $form['image_link']['#options']['owner'] = $this->t('Owner');
+      }
     }
 
     $form['avatar'] = [
@@ -74,10 +80,11 @@ class SocialFollowUserImageFormatter extends ImageFormatter {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = $this->alterOwnerSummary(
-      parent::settingsSummary(),
-      $this->t('Linked to owner'),
-    );
+    $summary = parent::settingsSummary();
+
+    if ($this->getSetting('image_link') === 'owner') {
+      $summary[] = $this->t('Linked to owner');
+    }
 
     if ($this->getSetting('avatar')) {
       $summary[] = $this->t('Avatar');
@@ -92,17 +99,23 @@ class SocialFollowUserImageFormatter extends ImageFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = parent::viewElements($items, $langcode);
 
-    if ($url = $this->getOwnerUrl($items)) {
-      if ($this->getSetting('avatar')) {
-        $url->mergeOptions([
-          'attributes' => [
-            'class' => ['avatar'],
-          ],
-        ]);
-      }
+    if (!$items->isEmpty() && $this->getSetting('image_link') === 'owner') {
+      $entity = $items->getEntity();
 
-      foreach ($elements as &$element) {
-        $element['#url'] = $url;
+      if (!$entity->isNew() && $entity instanceof EntityOwnerInterface) {
+        $url = $entity->getOwner()->toUrl();
+
+        if ($this->getSetting('avatar')) {
+          $url->mergeOptions([
+            'attributes' => [
+              'class' => ['avatar'],
+            ],
+          ]);
+        }
+
+        foreach ($elements as &$element) {
+          $element['#url'] = $url;
+        }
       }
     }
 
