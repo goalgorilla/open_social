@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_follow_user\Plugin\Field\FieldFormatter;
+namespace Drupal\social_profile\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Plugin implementation of the 'image' formatter.
  */
-class SocialFollowUserFormatter extends ImageFormatter {
+class SocialProfileFormatter extends ImageFormatter {
 
   /**
    * The entity type manager.
@@ -99,7 +99,7 @@ class SocialFollowUserFormatter extends ImageFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = parent::viewElements($items, $langcode);
 
-    if (!$items->isEmpty() && $this->getSetting('image_link') === 'owner') {
+    if (!empty($elements) && $this->getSetting('image_link') === 'owner') {
       $entity = $items->getEntity();
 
       if (!$entity->isNew() && $entity instanceof EntityOwnerInterface) {
