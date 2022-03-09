@@ -78,8 +78,8 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::nodeAccessCheck for Forbidden Access.
    */
   public function testForbiddenAccess() {
-
     $node = $this->prophesize(NodeInterface::class);
+    $node->bundle()->willReturn('article');
 
     $this->fieldValue = 'public';
     $this->fieldType = 'entity_access_field';
@@ -88,9 +88,9 @@ class EntityAccessTest extends UnitTestCase {
     $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
-      ->method('id')
-      ->willReturn('node.article.field_content_visibility');
+    $fieldDefinitionInterface->expects($this->once())
+      ->method('getName')
+      ->willReturn('field_content_visibility');
 
     $fieldItemListInterface = $this->createMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())
@@ -121,8 +121,8 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::nodeAccessCheck for Allowed Access.
    */
   public function testAllowedAccess() {
-
     $node = $this->prophesize(NodeInterface::class);
+    $node->bundle()->willReturn('article');
 
     $this->fieldId = 'node.article.field_content_visibility';
     $this->fieldValue = 'public';
@@ -134,9 +134,9 @@ class EntityAccessTest extends UnitTestCase {
     $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
-      ->method('id')
-      ->willReturn($this->fieldId);
+    $fieldDefinitionInterface->expects($this->once())
+      ->method('getName')
+      ->willReturn('field_content_visibility');
 
     $fieldItemListInterface = $this->createMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())
@@ -167,8 +167,8 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::nodeAccessCheck for Author Access Allowed.
    */
   public function testAuthorAccessAllowed() {
-
     $node = $this->prophesize(NodeInterface::class);
+    $node->bundle()->willReturn('article');
 
     $this->fieldValue = 'nonexistant';
     $this->fieldType = 'entity_access_field';
@@ -178,9 +178,9 @@ class EntityAccessTest extends UnitTestCase {
     $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
-      ->method('id')
-      ->willReturn($this->fieldId);
+    $fieldDefinitionInterface->expects($this->once())
+      ->method('getName')
+      ->willReturn('field_content_visibility');
 
     $fieldItemListInterface = $this->createMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())

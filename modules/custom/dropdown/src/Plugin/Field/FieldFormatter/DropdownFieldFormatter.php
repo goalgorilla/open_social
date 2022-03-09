@@ -26,6 +26,7 @@ class DropdownFieldFormatter extends FormatterBase {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
+      /** @var \Drupal\Core\Field\FieldItemInterface $item */
       $elements[$delta] = ['#markup' => $this->viewValue($item)];
     }
 
@@ -41,17 +42,23 @@ class DropdownFieldFormatter extends FormatterBase {
    * @return string
    *   The textual output generated.
    */
-  protected function viewValue(FieldItemInterface $item) {
+  protected function viewValue(FieldItemInterface $item): string {
 
     // The text value has no text format assigned to it, so the user input
     // should equal the output, including newlines.
-    return $this->getLabelForValue($item->value);
+    return $this->getLabelForValue($item->getString());
   }
 
   /**
    * Display dropdown labels.
+   *
+   * @param string $value
+   *   The value of item.
+   *
+   * @return string
+   *   Returns the actual label as per allowed values.
    */
-  public function getLabelForValue($value) {
+  public function getLabelForValue(string $value): string {
     $settings = $this->getFieldSettings();
     $allowed_values = $settings['allowed_values'];
 
@@ -61,6 +68,7 @@ class DropdownFieldFormatter extends FormatterBase {
         return Html::escape($label);
       }
     }
+    return $value;
   }
 
 }

@@ -2,14 +2,15 @@
 
 namespace Drupal\social_event_managers\Form;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -24,13 +25,6 @@ use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
 class SocialEventManagersAddEnrolleeForm extends FormBase {
 
   /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
    * The Config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
@@ -42,31 +36,53 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    *
    * @var \Drupal\Core\Utility\Token
    */
-  protected $token;
+  protected Token $token;
 
   /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * The event maximum enroll service.
+   *
+   * @var \Drupal\social_event_max_enroll\Service\EventMaxEnrollService
+   */
+  protected EventMaxEnrollService $eventMaxEnrollService;
 
   /**
    * Constructs a new GroupContentController.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer, ConfigFactoryInterface $config_factory, Token $token) {
-    $this->routeMatch = $route_match;
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    RendererInterface $renderer,
+    ConfigFactoryInterface $config_factory,
+    Token $token,
+    ModuleHandlerInterface $module_handler,
+    EventMaxEnrollService $eventMaxEnrollService
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
     $this->configFactory = $config_factory;
     $this->token = $token;
+    $this->moduleHandler = $module_handler;
+    $this->eventMaxEnrollService = $eventMaxEnrollService;
   }
 
   /**
@@ -74,11 +90,12 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('current_route_match'),
       $container->get('entity_type.manager'),
       $container->get('renderer'),
       $container->get('config.factory'),
-      $container->get('token')
+      $container->get('token'),
+      $container->get('module_handler'),
+      $container->get('social_event_max_enroll.service')
     );
   }
 
@@ -151,10 +168,10 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'form--default';
-    $nid = $this->routeMatch->getRawParameter('node');
+    $nid = $this->getRouteMatch()->getRawParameter('node');
 
     if (empty($nid)) {
-      $node = $this->routeMatch->getParameter('node');
+      $node = $this->getRouteMatch()->getParameter('node');
       if ($node instanceof NodeInterface) {
         // You can get nid and anything else you need from the node object.
         $nid = $node->id();
@@ -291,6 +308,29 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
 
     $form['#cache']['contexts'][] = 'user';
+
+    // We should prevent add enrollments directly if social_event_max_enroll is
+    // enabled and there are no left spots.
+    if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
+      $event_max_enroll_service = $this->eventMaxEnrollService;
+
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = $this->entityTypeManager->getStorage('node')->load($nid);
+
+      if (
+        $node instanceof NodeInterface &&
+        $event_max_enroll_service->isEnabled($node)
+      ) {
+        // If there are no spots left, disable button and add the button title
+        // with appropriate notice.
+        if ($event_max_enroll_service->getEnrollmentsLeft($node) === 0) {
+          $form['actions']['submit']['#attributes'] = [
+            'disabled' => 'disabled',
+            'title' => $this->t('There are no spots left'),
+          ];
+        }
+      }
+    }
 
     return $form;
   }

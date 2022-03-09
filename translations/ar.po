@@ -1499,11 +1499,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-02-17 11:03+0000\n"
-"PO-Revision-Date: 2021-12-24 01:18+0000\n"
+"POT-Creation-Date: 2022-03-08 00:18+0000\n"
+"PO-Revision-Date: 2022-03-08 04:37+0000\n"
 "Last-Translator: Alconost Arabic <alpha+ar@alconost.com>\n"
-"Language-Team: Arabic <https://translate.getopensocial.com/projects/open-"
-"social/distribution/ar/>\n"
+"Language-Team: Arabic <https://translate.getopensocial.com/projects/"
+"open-social/distribution/ar/>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1590,7 +1590,7 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:29;199
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:34;212
 msgid "(1 spot left)"
 msgid_plural "(@count spots left)"
 msgstr[0] "(يوجد مكان واحد متبقٍ)"
@@ -1794,12 +1794,12 @@ msgstr[5] ""
 #: modules/social_features/social_activity/templates/message-group-preview.html.twig:9
 msgid "1 member"
 msgid_plural "@count members"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "عضو"
+msgstr[1] "عضو"
+msgstr[2] "عضو"
+msgstr[3] "أعضاء"
+msgstr[4] "عضو"
+msgstr[5] "عضو"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:314
 msgid "1 membership invite for group: @group_name"
@@ -1953,7 +1953,7 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:218
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:219
 msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> enrollees</b> are selected"
@@ -1972,7 +1972,7 @@ msgstr "<b>@action</b>"
 msgid "<b>@action</b> of selected members"
 msgstr "<b>@action</b>من الأعضاء المختارين"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:126
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:127
 msgid "<b>@action</b> selected enrollees"
 msgstr "<b>@action</b> المسجلين المختارين"
 
@@ -2503,6 +2503,14 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> رد على<a href=\"[message:field_message_related_object:entity:url:"
+"absolute]\">تعليقك</a>على&nbsp;[social_comment:commented_entity_link_html]</"
+"p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid ""
@@ -2787,6 +2795,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p>لقد استلمت <a href=\"[message:pmt-url]\">رسالة</a> من<a href=\"[message:"
+"author:url:absolute]\">[message:author:display-name]</a></p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
@@ -2843,7 +2857,7 @@ msgid ""
 "@count activities data has been migrated to activity_notification_table."
 msgstr "@count تم ترحيل بينات النشاطات الى جدول  activity_notification_table."
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:124
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:141
 msgid "@count new member is enrolled to this event."
 msgid_plural "@count new members are enrolled to this event."
 msgstr[0] "@count أعضاء جدد سجلّوا في هذا الحدث"
@@ -2853,7 +2867,7 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:127
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:144
 msgid "@count new member is enrolled to your event."
 msgid_plural "@count new members are enrolled to your event."
 msgstr[0] "@count أعضاء جدد سجلّوا في حدثك."
@@ -2880,7 +2894,7 @@ msgstr "@entity_type  تعذر الغاء نشر @entity_id بعدما ابلغ 
 
 #: modules/custom/ginvite/src/Form/BulkGroupInvitation.php:201
 #: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php:179
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:275
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:317
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:130
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:513
 #, fuzzy
@@ -2927,7 +2941,7 @@ msgstr "@total الأعضاء"
 msgid "@total people have enrolled"
 msgstr "@total من الناس تم تسجيلهم"
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:204
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:217
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
 msgstr[0] "@total شخص  قام بالتسجيل  @spots_left"
@@ -3303,6 +3317,10 @@ msgstr "تم الرفض"
 msgid "Access Open Social Connect"
 msgstr "الوصول إلى Open Social Connect"
 
+#: modules/social_features/social_core/social_core.permissions.yml:0
+msgid "Access administration dashboard"
+msgstr ""
+
 #: modules/social_features/social_search/social_search.permissions.yml:0
 msgid "Access content search"
 msgstr "الوصول إلى البحث عن المحتوى"
@@ -3324,7 +3342,7 @@ msgstr "الوصول لمديري المجموعة فقط."
 msgid "Access group search"
 msgstr "البحث عن مجموعة الوصول"
 
-#: modules/social_features/social_group/social_group.module:439;1958;2617;2623
+#: modules/social_features/social_group/social_group.module:439;1962;2619;2625
 msgid "Access permissions"
 msgstr "أذونات الوصول"
 
@@ -3414,6 +3432,10 @@ msgstr "معرّف الحساب"
 msgid "Account information"
 msgstr "معلومات الحساب"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Account settings"
+msgstr ""
+
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
 msgid "AccountInterface instance"
 msgstr "حالة واجهة الحساب"
@@ -3442,7 +3464,7 @@ msgstr ""
 msgid "Action that is triggered when a entity is updated"
 msgstr "الإجراء الذي يتم تشغيله عند تحديث الكيان"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:247
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:248
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:173
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
@@ -3458,6 +3480,10 @@ msgstr "الإجراءات"
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
 msgid "Active"
 msgstr "نشط"
+
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Active theme"
+msgstr ""
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:15
 #: modules/custom/activity_creator/src/Entity/ActivityViewsData.php:21
@@ -3723,6 +3749,14 @@ msgstr "أضف تعليقا جديدا"
 msgid "Add new reply"
 msgstr "أضف رد جديد"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Add new user"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Add new user."
+msgstr ""
+
 #: modules/social_features/social_post/social_post.links.action.yml:0
 msgid "Add post"
 msgstr "اضافة منشور"
@@ -3749,7 +3783,7 @@ msgstr "اضف لأجندة"
 msgid "Add to Group"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.links.menu.yml:0
+#: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.links.menu.yml:0;0
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.routing.yml:0
 msgid "Add to calendar settings"
 msgstr "أضف إلى إعدادات التقويم"
@@ -3946,6 +3980,10 @@ msgstr "إدارة كيانات الخط"
 msgid "Administer Navigation Settings"
 msgstr "إدارة إعدادات التنقل"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Administer Open Social settings."
+msgstr ""
+
 #: modules/social_features/social_post/social_post.permissions.yml:0
 msgid "Administer Post entities"
 msgstr "إدارة كيانات المنشور"
@@ -3977,6 +4015,10 @@ msgstr "إدارة إعدادات الصفحة الأولى البديلة"
 #: modules/custom/group_core_comments/group_core_comments.group.permissions.yml:0
 msgid "Administer comments"
 msgstr "إدارة التعليقات"
+
+#: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
+msgid "Administer data policy settings"
+msgstr ""
 
 #: modules/custom/improved_theme_settings/improved_theme_settings.permissions.yml:0
 msgid "Administer improved theme settings"
@@ -4017,6 +4059,14 @@ msgstr "إدارة إعدادات مشاركة بيانات الاستخدام"
 #: modules/custom/entity_access_by_field/entity_access_by_field.permissions.yml:0
 msgid "Administer visiblility settings"
 msgstr "إدارة إعدادات الرؤية"
+
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.links.menu.yml:0
+msgid "Administer which profile fields are enabled."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Administration of all the people registered on the site."
+msgstr ""
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAddressAdministrative.php:23;8
 msgid "Administrative address"
@@ -4181,7 +4231,7 @@ msgstr "جميع الأحداث"
 msgid "All groups"
 msgstr "جميع المجموعات"
 
-#: modules/social_features/social_profile/social_profile.install:125
+#: modules/social_features/social_profile/social_profile.install:127
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 msgid "All members"
@@ -4488,6 +4538,10 @@ msgstr "يسمح بالوصول لتغيير إعدادات مشاركة بيا�
 msgid "Allows access to the Content Moderation settings form."
 msgstr "يسمح بالوصول إلى نموذج إعدادات الإشراف على المحتوى."
 
+#: modules/social_features/social_core/social_core.permissions.yml:0
+msgid "Allows access to the administration dashboard."
+msgstr ""
+
 #: modules/custom/social_lets_connect/social_lets_connect.permissions.yml:0
 msgid "Allows access to the menu of Open Social Connect"
 msgstr "يسمح بالوصول إلى قائمة Open Social Connect"
@@ -4526,7 +4580,7 @@ msgstr ""
 msgid "Alternative Frontpage"
 msgstr "صفحة الواجهة البديلة"
 
-#: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0
+#: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0;0
 #: modules/custom/alternative_frontpage/alternative_frontpage.routing.yml:0
 msgid "Alternative Frontpage Settings"
 msgstr "اعدادات صفحة الواجهة البديلة"
@@ -4584,7 +4638,7 @@ msgstr "حدث خطأ أثناء معالجة @operation  باستخدام ال�
 msgid "Anonymous"
 msgstr "مجهول"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.links.menu.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.links.menu.yml:0;0
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.routing.yml:0
 msgid "Anonymous event enrollment settings"
 msgstr "إعدادات تسجيل حدث مجهول"
@@ -4598,6 +4652,11 @@ msgstr ""
 "تم تسجيل دخول مستخدم آخر (%other_user) إلى الموقع على هذا الكمبيوتر ، لكنك "
 "حاولت استخدام ارتباط لمرة واحدة للمستخدم%resetting_user. الرجاء <a href=\":"
 "logout\">تسجيل الخروج</a> وحاول استخدام الرابط مرة أخرى."
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Appearance"
+msgstr ""
 
 #: modules/custom/ginvite/config/optional/views.view.group_invitations.yml:0
 #: modules/custom/ginvite/config/optional/views.view.my_invitations.yml:0
@@ -4908,7 +4967,7 @@ msgstr "رؤية المحتوى المتاح"
 
 #: modules/social_features/social_event/social_event.module:919
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:165
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:176
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:201
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
 msgid "Back to event"
 msgstr "العودة إلى الحدث"
@@ -4958,6 +5017,10 @@ msgstr "أساسي"
 #: modules/social_features/social_editor/config/install/filter.format.basic_html.yml:0
 msgid "Basic HTML"
 msgstr "HTML الأساسي"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Basic Site Settings"
+msgstr ""
 
 #: modules/social_features/social_core/config/install/block_content.type.basic.yml:0
 msgid "Basic block"
@@ -5165,7 +5228,7 @@ msgid "Can not send e-mail for %entity"
 msgstr "لا يمكن إرسال بريد إلكتروني لـ   %enti"
 
 #: modules/social_features/social_core/social_core.module:963
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:277
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:294
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:128
 #: modules/social_features/social_group/social_group.module:804;928
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:130
@@ -5195,6 +5258,14 @@ msgstr "الفئات والمصطلحات المستخدمة لوضع علامة
 msgid "Categorized check boxes/radio buttons"
 msgstr "مربعات الاختيار / أزرار الاختيار مصنفة"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Change colors and styling"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.menu.yml:0
+msgid "Change event organiser settings."
+msgstr "تغيير إعدادات منظم الحدث."
+
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:16
 msgid "Change group membership role"
 msgstr "تغيير دور عضوية المجموعة"
@@ -5204,6 +5275,18 @@ msgstr "تغيير دور عضوية المجموعة"
 msgid "Change input widget"
 msgstr "تغيير عنصر واجهة الإدخال"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Change or add links to the Footer menu."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Change or add links to the Main menu."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_type/social_event_type.links.menu.yml:0
+msgid "Change requirement and widget settings for event types."
+msgstr "تغيير المتطلبات وإعدادات عنصر واجهة المستخدم لأنواع الأحداث."
+
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:174
 msgid "Change role"
 msgstr "تغيير الدور"
@@ -5211,6 +5294,14 @@ msgstr "تغيير الدور"
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:117
 msgid "Change roles"
 msgstr "تغيير الأدوار"
+
+#: modules/social_features/social_core/src/Plugin/Menu/HomepageConfigurationHeroBlockLink.php:71
+msgid "Change the image and text on the home page."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Change the name and email address of your site."
+msgstr ""
 
 #: translations.php:131
 msgid "Change the role"
@@ -5254,7 +5345,7 @@ msgstr ""
 "لا يُسمح بتغيير المجموعات وإمكانية الرؤية للألبومات حتى الآن ، ففكر في إنشاء "
 "ألبوم جديد بدلاً من ذلك."
 
-#: modules/social_features/social_group/social_group.module:1949
+#: modules/social_features/social_group/social_group.module:1953
 msgid "Changing groups is disabled when translating."
 msgstr ""
 
@@ -5272,7 +5363,7 @@ msgid ""
 "strong>."
 msgstr "قد يكون لتغيير المجموعة تأثير على <strong>إعدادات الرؤية</strong> ."
 
-#: modules/social_features/social_group/social_group.module:1947
+#: modules/social_features/social_group/social_group.module:1951
 msgid "Changing visibility is disabled when translating."
 msgstr ""
 
@@ -5288,13 +5379,19 @@ msgstr ""
 msgid "Check the reported contents"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.install:244
+#: modules/social_features/social_profile/social_profile.install:246
 msgid "Checking profile status for @count users"
 msgstr "التحقق من حالة الملف الشخصي ل @count من المستخدمي"
 
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:39
 msgid "Choose a default landing page"
 msgstr "اختر صفحة مقصودة افتراضية"
+
+#: modules/social_features/social_user/social_user.links.menu.yml:0
+msgid ""
+"Choose a page that users will land on when visiting another users profile (e."
+"g., stream or about page)."
+msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_allowed_join_method.yml:0
 msgid "Choose how people can join this group."
@@ -5303,6 +5400,12 @@ msgstr "اختر كيف يمكن للأشخاص الانضمام إلى هذه �
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_allowed_visibility.yml:0
 msgid "Choose the allowed visibility settings for the group content."
 msgstr "اختر إعدادات الرؤية المسموح بها لمحتوى المجموعة."
+
+#: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0
+msgid ""
+"Choose the desired frontpage for the site. You can set an alternative "
+"frontpage for logged-in users."
+msgstr ""
 
 #: translations.php:108
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:117
@@ -5332,7 +5435,7 @@ msgstr "الفئة(Class) في الرابط"
 msgid "Class(es) on button = \"@classes\""
 msgstr "فئة (فئات) على الزر = \"@classes\""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:240
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:241
 msgid "Clear all selected enrollees"
 msgstr "مسح كافة المسجلين المختارين"
 
@@ -5499,8 +5602,12 @@ msgstr "التعليقات"
 msgid "Comments created"
 msgstr "تم إنشاء التعليقات"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Comments overview"
+msgstr ""
+
 #: modules/social_features/social_activity/social_activity.install:38
-#: modules/social_features/social_group/social_group.module:632;2733
+#: modules/social_features/social_group/social_group.module:632;2735
 #: modules/social_features/social_post/social_post.module:143
 #: modules/social_features/social_post/src/Entity/Post.php:219
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_flexible_group_visibility.yml:0
@@ -5604,9 +5711,22 @@ msgstr "استكمال تيار النشاط المجتمعي"
 msgid "Complete community activity stream (with post form)"
 msgstr "استكمال تدفق النشاط المجتمعي (مع نموذج آخر)"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Configuration"
+msgstr ""
+
 #: modules/custom/activity_creator/activity_creator.links.menu.yml:0
 msgid "Configure Activity entities"
 msgstr "تكوين كيانات النشاط"
+
+#: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
+msgid "Configure E-mails being send from your platform."
+msgstr "تكوين رسائل البريد الإلكتروني التي يتم إرسالها من المنصة الخاصة بك."
+
+#: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
+msgid "Configure Email settings"
+msgstr ""
 
 #: modules/social_features/social_event/social_event.links.menu.yml:0
 msgid "Configure Event enrollment entities"
@@ -5624,9 +5744,39 @@ msgstr ""
 msgid "Configure action"
 msgstr "ضبط اجراء"
 
-#: modules/social_features/social_comment_upload/social_comment_upload.links.menu.yml:0
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Configure how dates and times are displayed."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.links.menu.yml:0
+msgid "Configure if anonymous visitors can enroll to an event."
+msgstr "تكوين ما إذا كان يمكن للزوار المجهولين التسجيل في حدث ما."
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
+msgid ""
+"Configure if event organisers are allowed to set maximum amount of "
+"enrollments to event."
+msgstr ""
+"التكوين في حالة السماح لمنظمي الأحداث بتعيين الحد الأقصى للالتحاق بالحدث."
+
+#: modules/social_features/social_comment_upload/social_comment_upload.links.menu.yml:0;0
 msgid "Configure if people can attach files to comments."
 msgstr "قم بالتكوين إذا كان بإمكان الأشخاص إرفاق ملفات بالتعليقات."
+
+#: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.links.menu.yml:0
+msgid ""
+"Configure if users can add events to calendars like Google, Yahoo, Outlook "
+"etc."
+msgstr ""
+"تكوين ما إذا كان بإمكان المستخدمين إضافة أحداث إلى التقويمات مثل Google، "
+"وYahoo، وOutlook، إلخ."
+
+#: modules/social_features/social_event/social_event.links.menu.yml:0
+msgid ""
+"Configure if users can join a group by attending an event from that group."
+msgstr ""
+"تكوين ما إذا كان بإمكان المستخدمين الانضمام إلى مجموعة من خلال حضور حدث من "
+"تلك المجموعة."
 
 #: modules/social_features/social_activity/modules/social_activity_filter/social_activity_filter.links.menu.yml:0
 msgid ""
@@ -5663,6 +5813,14 @@ msgstr[2] "تهيئة البريد الإلكتروني الذي تريد إرس
 msgstr[3] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
 msgstr[4] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
 msgstr[5] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
+
+#: modules/social_features/social_footer/social_footer.links.menu.yml:0
+msgid "Configure the footer branding block."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Configure the locale and timezone settings."
+msgstr ""
 
 #: modules/custom/social_tour/social_tour.links.menu.yml:0
 #: modules/custom/social_tour/social_tour.permissions.yml:0
@@ -5730,6 +5888,10 @@ msgstr "المحتوى الذي أتبعه"
 msgid "Content Reporting"
 msgstr "الإبلاغ عن المحتوى"
 
+#: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
+msgid "Content Reporting Settings"
+msgstr ""
+
 #: modules/social_features/social_content_report/social_content_report.routing.yml:0
 msgid "Content Reporting settings"
 msgstr "إعدادات الإبلاغ عن المحتوى"
@@ -5760,6 +5922,11 @@ msgstr "محتوى مجموعة المحتوى"
 msgid "Content in my group activity context"
 msgstr "المحتوى في سياق نشاط مجموعتي"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Content management"
+msgstr ""
+
 #: modules/social_features/social_core/config/install/user.role.contentmanager.yml:0
 #: modules/social_features/social_group/config/install/group.role.closed_group-83776d798.yml:0
 #: modules/social_features/social_group/config/install/group.role.open_group-83776d798.yml:0
@@ -5768,6 +5935,10 @@ msgstr "المحتوى في سياق نشاط مجموعتي"
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-83776d798.yml:0
 msgid "Content manager"
 msgstr "مدير محتوى"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Content overview"
+msgstr ""
 
 #: modules/social_features/social_content_report/src/Plugin/ActivityContext/ContentReportActivityContext.php:7
 msgid "Content report activity context"
@@ -5854,11 +6025,11 @@ msgstr ""
 msgid "Copy URL"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.install:272
+#: modules/social_features/social_profile/social_profile.install:274
 msgid "Could not create profile for @user_id"
 msgstr "تعذر إنشاء ملف تعريف لـ @user_id"
 
-#: modules/social_features/social_core/social_core.install:1340
+#: modules/social_features/social_core/social_core.install:1353
 msgid ""
 "Could not install Content Entity forms as Open Social please do so manually "
 "in the Socialblue settings."
@@ -5916,7 +6087,7 @@ msgstr "إنشاء محتوى جديد"
 msgid "Create New Event"
 msgstr "إنشاء حدث جديد"
 
-#: modules/social_features/social_group/social_group.module:2189
+#: modules/social_features/social_group/social_group.module:2191
 msgid "Create New Group"
 msgstr "إنشاء مجموعة جديدة"
 
@@ -6076,6 +6247,14 @@ msgstr "إنشاء حساب جديد"
 msgid "Create new album"
 msgstr "إنشاء ألبوم جديد"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Create new content"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Create new content."
+msgstr ""
+
 #: modules/social_features/social_post/social_post.group.permissions.yml:0
 msgid "Create new posts in group"
 msgstr "إنشاء مشاركات جديدة في المجموعة"
@@ -6159,7 +6338,7 @@ msgstr "تاريخ الإنشاء"
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
-#: modules/social_features/social_profile/social_profile.install:281
+#: modules/social_features/social_profile/social_profile.install:283
 msgid "Created profiles for @count users"
 msgstr "تم إنشاء ملفات تعريف لمستخدمي ل @count من المستخدمين"
 
@@ -6224,7 +6403,7 @@ msgstr "صورة مصغرة للاقتصاص"
 msgid "Crop your image to select which part of your image to show on display."
 msgstr "قم بقص صورتك لتحديد أي جزء من صورتك ستظهر على الشاشة."
 
-#: modules/social_features/social_group/social_group.module:1296
+#: modules/social_features/social_group/social_group.module:1297
 msgid "Cross posting is not allowed for @type group type"
 msgstr ""
 
@@ -6261,9 +6440,18 @@ msgstr "صندوق قائمة المحتوى المخصص"
 msgid "Custom dynamic entity reference formatter for activities"
 msgstr "منسق مرجع الكيان الديناميكي المخصص للأنشطة"
 
+#: modules/social_features/social_core/src/Plugin/Menu/HomepageConfigurationHeroBlockLink.php:70
+msgid "Customize home page"
+msgstr ""
+
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Daily.php:7
 msgid "Daily"
 msgstr "يومي"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Dashboard"
+msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserFromWrapper.php:9
 msgid "Data"
@@ -6273,9 +6461,22 @@ msgstr "البيانات"
 msgid "Data available for users to export"
 msgstr "البيانات المتاحة للمستخدمين للتصدير"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Data collection and usage"
+msgstr ""
+
+#: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
+msgid "Data policy"
+msgstr "سياسة البيانات"
+
 #: modules/custom/social_gdpr/social_gdpr.module:61;64
 msgid "Data policy agreement"
 msgstr "اتفاقية سياسة البيانات"
+
+#: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
+msgid "Data policy settings"
+msgstr ""
 
 #: modules/custom/mentions/src/MentionsViewsData.php:110;111
 #: modules/social_features/social_user/social_user.module:100;110;126
@@ -6289,6 +6490,10 @@ msgstr "التاريخ/الوقت"
 #: modules/social_features/social_search/social_search.module:177;179;189
 msgid "Date Filter by Open Social"
 msgstr "تاريخ الإنشاء تصفية حسب Open Social"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Date and time formats"
+msgstr ""
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Date exposed"
@@ -6375,6 +6580,10 @@ msgstr "صورة الملف الشخصي الافتراضية"
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Default style"
 msgstr "أسلوب إفتراضي"
+
+#: modules/social_features/social_user/social_user.links.menu.yml:0
+msgid "Default user profile page"
+msgstr "الصفحة الافتراضية للملف الشخصي الخاص بالمستخدم"
 
 #: modules/social_features/social_search/config/install/search_api.index.social_users.yml:0
 msgid "Default users index created for the Social distribution."
@@ -6473,7 +6682,7 @@ msgstr "حذف كيانات محتوى المجموعة المحددة"
 msgid "Delete the selected comments"
 msgstr "احذف التعليقات المحددة"
 
-#: modules/social_features/social_private_message/social_private_message.module:381
+#: modules/social_features/social_private_message/social_private_message.module:382
 msgid "Delete thread"
 msgstr "حذف موضوع"
 
@@ -6481,16 +6690,16 @@ msgstr "حذف موضوع"
 msgid "Delete your account and anonymize all other content."
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:461
+#: modules/social_features/social_private_message/social_private_message.module:462
 msgid ""
 "Delete your account, delete private messages, and anonymize all other "
 "content."
 msgstr ""
 "احذف حسابك ، واحذف الرسائل الخاصة ، وقم بإخفاء هوية جميع المحتويات الأخرى."
 
-#: modules/social_features/social_private_message/social_private_message.module:284;302
+#: modules/social_features/social_private_message/social_private_message.module:285;303
 #: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageOwnerFormatter.php:29
-#: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageThreadMemberFormatter.php:55
+#: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageThreadMemberFormatter.php:56
 msgid "Deleted user"
 msgstr "مستخدم محذوف"
 
@@ -6498,7 +6707,7 @@ msgstr "مستخدم محذوف"
 msgid "Deleting @type's"
 msgstr "حذف @type"
 
-#: modules/social_features/social_group/social_group.module:1871
+#: modules/social_features/social_group/social_group.module:1875
 msgid "Deleting the group and all the content within the group..."
 msgstr "جارٍ حذف المجموعة وكل المحتويات داخل المجموعة ..."
 
@@ -6593,6 +6802,10 @@ msgstr "المناطق"
 msgid "Details"
 msgstr "تفاصيل"
 
+#: modules/social_features/social_tagging/social_tagging.links.menu.yml:0
+msgid "Determine how and if users can use tags."
+msgstr ""
+
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:140
 msgid ""
 "Determine if the main categories of the vocabulary will be used as separate "
@@ -6612,6 +6825,10 @@ msgstr ""
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:132
 msgid "Determine if the parent of categories will be used with children tags."
 msgstr "حدد ما إذا كان سيتم استخدام أصل الفئات مع علامات الفروع."
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Determine the look and feel of your site."
+msgstr ""
 
 #: translations.php:38
 msgid "Determine wether users can upload documents to comments."
@@ -6801,7 +7018,7 @@ msgstr "يعرض أحدث الموضوعات في المجتمع"
 msgid "Do not count downloads for users with this role."
 msgstr "لا تحسب التنزيلات للمستخدمين بهذا الدور."
 
-#: modules/social_features/social_private_message/social_private_message.module:593
+#: modules/social_features/social_private_message/social_private_message.module:594
 msgid "Do not show threads a user deleted."
 msgstr "لا تظهر المواضيع التي حذفها المستخدم."
 
@@ -6915,7 +7132,7 @@ msgstr "الحواف"
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:214
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:2323
+#: modules/social_features/social_group/social_group.module:2325
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:227
 msgid "Edit"
@@ -7333,7 +7550,7 @@ msgstr "مسجل"
 msgid "Enrollee"
 msgstr "المسجل"
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:78
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:83
 msgid "Enrollment limit"
 msgstr "حد التسجيل"
 
@@ -7528,23 +7745,23 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.module:351;353
 msgid "Event enrolled or created"
-msgstr "تم تسجيل أو إنشاء الفعالية"
+msgstr "تم تسجيل أو إنشاء الحدث"
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/EventEnrollment.php:7
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:135
 #: modules/social_features/social_event/src/Entity/EventEnrollment.php:15
 #: modules/social_features/social_event/src/Entity/EventEnrollmentViewsData.php:21
 msgid "Event enrollment"
-msgstr "التسجيل في الفعالية"
+msgstr "التسجيل في الحدث"
 
 #: modules/social_features/social_event/src/EventEnrollmentListBuilder.php:22
 msgid "Event enrollment ID"
-msgstr "معرف تسجيل الفعالية"
+msgstr "معرف تسجيل الحدث"
 
-#: modules/social_features/social_event/social_event.links.menu.yml:0
+#: modules/social_features/social_event/social_event.links.menu.yml:0;0
 #: modules/social_features/social_event/src/Form/EventSettingsForm.php:132
 msgid "Event enrollment settings"
-msgstr "إعدادات التسجيل في الفعالية"
+msgstr "إعدادات التسجيل في الحدث"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventEnrollments.php:23;8
 msgid "Event enrollments"
@@ -7554,16 +7771,16 @@ msgstr "تسجيلات الحدث"
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:82
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:249
 msgid "Event has passed"
-msgstr "لقد انتهت الفعالية"
+msgstr "لقد انتهت الحدث"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/ActivityContext/EventInviteActivityContext.php:13
 msgid "Event invite activity context"
-msgstr "سياق نشاط دعوة الفعالية"
+msgstr "سياق نشاط دعوة الحدث"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.links.menu.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.routing.yml:0
 msgid "Event invite settings"
-msgstr "إعدادات دعوة الفعالية"
+msgstr "إعدادات دعوة الحدث"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Menu/LocalTask/EventInviteLocalTask.php:69
 msgid "Event invites"
@@ -7593,6 +7810,7 @@ msgstr ""
 msgid "Event managers settings"
 msgstr "إعدادات مديري الأحداث"
 
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.menu.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml:0
 msgid "Event organiser settings"
 msgstr "إعدادات منظم الحدث"
@@ -7609,12 +7827,12 @@ msgstr "سياق نشاط طلب الحدث"
 #: modules/social_features/social_event/config/optional/block.block.eventrequestsnotification.yml:0
 #: modules/social_features/social_event/config/optional/block.block.eventrequestsnotification_2.yml:0
 msgid "Event requests notification"
-msgstr "اشعارات طلبات الفعالية"
+msgstr "اشعارات طلبات الحدث"
 
 #: modules/social_features/social_event/social_event.links.menu.yml:0;0
 #: modules/social_features/social_event/social_event.routing.yml:0
 msgid "Event settings"
-msgstr "إعدادات الفعالية"
+msgstr "إعدادات الحدث"
 
 #: modules/social_features/social_event/social_event.module:369
 msgid "Event sorting (passed and upcoming)"
@@ -7628,7 +7846,7 @@ msgstr "وقت الحدث"
 msgid "Event type"
 msgstr "نوع الفاعلية"
 
-#: modules/social_features/social_event/modules/social_event_type/social_event_type.links.menu.yml:0
+#: modules/social_features/social_event/modules/social_event_type/social_event_type.links.menu.yml:0;0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.routing.yml:0
 msgid "Event type settings"
 msgstr "إعدادات نوع الحدث"
@@ -7685,7 +7903,7 @@ msgstr "تنفيذ العمل"
 msgid "Expertise"
 msgstr "مجالات الممارسة"
 
-#: modules/social_features/social_core/social_core.install:332
+#: modules/social_features/social_core/social_core.install:345
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 msgid "Explore"
 msgstr "اكتشف"
@@ -7882,7 +8100,7 @@ msgstr "تصفية الأنشطة لصفحة الاستكشاف"
 msgid "Filter activities for personalised homepage"
 msgstr "تصفية الأنشطة للصفحة الرئيسية الشخصية"
 
-#: modules/social_features/social_private_message/social_private_message.module:590;592
+#: modules/social_features/social_private_message/social_private_message.module:591;593
 msgid "Filter deleted threads"
 msgstr "تصفية المواضيع المحذوفة"
 
@@ -7936,7 +8154,7 @@ msgid "Find people by name"
 msgstr "ابحث عن الأشخاص بالاسم"
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:100
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:189
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:206
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:211
 #: modules/social_features/social_group/src/SocialGroupHelperService.php:312
 msgid "Find people by name or email address"
@@ -8121,9 +8339,17 @@ msgstr "الفوتر"
 msgid "Footer block settings"
 msgstr "إعدادات صندوق التذييل \"الفوتر\""
 
+#: modules/social_features/social_footer/social_footer.links.menu.yml:0
+msgid "Footer branding configuration"
+msgstr ""
+
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
 msgid "Footer markup"
 msgstr "ترميز التذييل \"الفوتر\""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Footer menu"
+msgstr ""
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:56
 msgid "Footer region"
@@ -8265,7 +8491,7 @@ msgstr ""
 #: modules/custom/gvbo/gvbo.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
 #: modules/social_features/social_featured_content/templates/group--featured.html.twig:50
-#: modules/social_features/social_group/social_group.module:1914
+#: modules/social_features/social_group/social_group.module:1918
 #: modules/social_features/social_group/social_group.routing.yml:0
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:145
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:155
@@ -8343,6 +8569,10 @@ msgstr "أعضاء المجموعة"
 #: modules/custom/social_tour/config/install/tour.tour.social_group_overview.yml:0
 msgid "Group Overview functionality."
 msgstr "نظرة عامة على وظائف المجموعة."
+
+#: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.links.menu.yml:0
+msgid "Group Quick Join settings"
+msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.links.menu.yml:0
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.routing.yml:0
@@ -8479,7 +8709,7 @@ msgstr "دعوات المجموعة"
 msgid "Group invites (@count)"
 msgstr "دعوات الفعاليات (@counts)"
 
-#: modules/social_features/social_group/social_group.module:1701
+#: modules/social_features/social_group/social_group.module:1705
 msgid "Group manager"
 msgstr "مدير مجموعة"
 
@@ -8507,7 +8737,7 @@ msgstr "أعضاء المجموعة"
 msgid "Group members landing tab"
 msgstr "علامة التبويب وصول أعضاء المجموعة"
 
-#: modules/social_features/social_group/social_group.module:2743
+#: modules/social_features/social_group/social_group.module:2745
 msgid "Group members only"
 msgstr "أعضاء المجموعة فقط"
 
@@ -8539,9 +8769,13 @@ msgstr "عضويات المجموعة (محدد)"
 msgid "Group node events"
 msgstr ""
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Group overview"
+msgstr ""
+
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0;0
 msgid "Group pending members"
-msgstr ""
+msgstr "أعضاء المجموعة أصحاب الطلبات المعلقة"
 
 #: modules/social_features/social_group/src/Form/SocialGroupSettings.php:106
 msgid "Group permissions"
@@ -8560,7 +8794,7 @@ msgstr "أدوار المجموعة"
 msgid "Group selection"
 msgstr "اختيار المجموعة"
 
-#: modules/social_features/social_group/social_group.links.menu.yml:0
+#: modules/social_features/social_group/social_group.links.menu.yml:0;0
 #: modules/social_features/social_group/social_group.routing.yml:0
 msgid "Group settings"
 msgstr "إعدادات المجموعة"
@@ -8794,7 +9028,7 @@ msgstr ""
 "\t</tbody>\r\n"
 "</table>"
 
-#: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:258
+#: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:267
 msgid "Hide"
 msgstr "إخفاء"
 
@@ -8803,7 +9037,7 @@ msgid "Hide for others"
 msgstr "إخفاء للآخرين"
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:58;59
-#: modules/social_features/social_core/social_core.install:323
+#: modules/social_features/social_core/social_core.install:336
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:57
 msgid "Home"
 msgstr "الرئيسية"
@@ -8996,7 +9230,7 @@ msgstr "لإرسال طلبك ، يرجى التسجيل أولاً أو تسج�
 msgid "Inappropriate content reported"
 msgstr "تم الإبلاغ عن محتوى غير لائق"
 
-#: modules/social_features/social_private_message/social_private_message.module:500;503;542;1
+#: modules/social_features/social_private_message/social_private_message.module:501;504;543;1
 #: modules/social_features/social_private_message/social_private_message.routing.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0;0
 msgid "Inbox"
@@ -9030,14 +9264,14 @@ msgstr "تثبيت المحتوى التجريبي"
 msgid "Install optional modules"
 msgstr "قم بتثبيت وحدات اختيارية"
 
-#: modules/social_features/social_core/social_core.install:583
+#: modules/social_features/social_core/social_core.install:596
 msgid ""
 "Installed socialblue theme and made this the default. Please check release "
 "notes."
 msgstr ""
 "ثبّت سمة Socialblue وجعلها الخيار الافتراضي. يرجى مراجعة ملاحظات الإصدار."
 
-#: modules/social_features/social_core/social_core.install:684
+#: modules/social_features/social_core/social_core.install:697
 msgid ""
 "Installed the social_file_private module. Make sure to read: https://www."
 "drupal.org/docs/8/distributions/open-social/private-files"
@@ -9323,7 +9557,7 @@ msgstr "مواد لكل صفحة"
 msgid "JS Location"
 msgstr "موقع JS"
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:195
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:212
 #: modules/social_features/social_group/src/SocialGroupHelperService.php:318
 msgid "Jane Doe"
 msgstr "جين دو"
@@ -9549,7 +9783,7 @@ msgstr "اترك تعليقا"
 msgid "Leave a message to @name"
 msgstr "اترك رسالة إلى  @name"
 
-#: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.module:31
+#: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.module:34
 msgid "Leave remark"
 msgstr "اترك ملاحظة"
 
@@ -9694,7 +9928,7 @@ msgstr "تسجيل الدخول نص تعليمات"
 msgid "Log in with <b>username</b> or <b>email</b>"
 msgstr "تسجيل الدخول باسم <b>المستخدم</b> أو <b>البريد الإلكتروني</b>"
 
-#: modules/social_features/social_core/social_core.install:308
+#: modules/social_features/social_core/social_core.install:321
 #: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11
 msgid "Login"
 msgstr "تسجيل الدخول"
@@ -9739,6 +9973,10 @@ msgstr "بريد HTML"
 #: modules/social_features/social_tagging/social_tagging.module:70
 msgid "Main category"
 msgstr "الفئة الرئيسية"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Main menu"
+msgstr ""
 
 #: modules/social_features/social_core/config/optional/block.block.mainnavigation.yml:0
 #: modules/social_features/social_core/config/optional/block.block.socialblue_mainnavigation.yml:0
@@ -9804,6 +10042,10 @@ msgstr "إدارة كل المجموعات"
 msgid "Manage by organizers only"
 msgstr "إدارة من قبل المنظمين فقط"
 
+#: modules/custom/social_gdpr/social_gdpr.links.menu.yml:0
+msgid "Manage data policy entities and settings."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/views/access/ManageEnrollmentAccess.php:9
 msgid "Manage enrollment access"
 msgstr "إدارة الوصول إلى التسجيل"
@@ -9834,7 +10076,7 @@ msgstr "إدارة طلبات التسجيل في الحدث"
 msgid "Manage form and displays settings of posts"
 msgstr "إدارة النموذج وعرض إعدادات المشاركات"
 
-#: modules/social_features/social_group/social_group.module:1466
+#: modules/social_features/social_group/social_group.module:1470
 msgid "Manage members"
 msgstr "إدارة الأعضاء"
 
@@ -9905,15 +10147,16 @@ msgstr "رئيس"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
 msgid "Maximum Event Enrollment"
-msgstr "الحد الأقصى لتسجيل الفعالية"
+msgstr "الحد الأقصى لتسجيل الحدث"
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.routing.yml:0
 msgid "Maximum Event Enrollment settings"
-msgstr "الحد الأقصى لإعدادات تسجيل الفعالية"
+msgstr "الحد الأقصى لإعدادات تسجيل الحدث"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:44
 msgid "Maximum event enrollments field is required"
-msgstr "مطلوب حقل الحد الأقصى لتسجيلات الفعالية"
+msgstr "مطلوب حقل الحد الأقصى لتسجيلات الحدث"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll_num.yml:0
 msgid "Maximum number of enrollees"
@@ -9935,7 +10178,7 @@ msgstr "الوسائط"
 msgid "Media bridge"
 msgstr "جسر الوسائط"
 
-#: modules/social_features/social_profile/social_profile.install:345
+#: modules/social_features/social_profile/social_profile.install:347
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.medium_teaser.yml:0
 msgid "Medium Teaser"
 msgstr "إعلان تشويقي متوسط"
@@ -10101,7 +10344,7 @@ msgstr "يذكر في تعليق"
 msgid "Mentions settings"
 msgstr "اعدادت الاشارات والذكر"
 
-#: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php:309
+#: modules/custom/mentions/src/Plugin/Filter/MentionsFilter.php:310
 msgid "Mentions types"
 msgstr "انواع الاشارات"
 
@@ -10118,9 +10361,14 @@ msgstr "MentionsTypeForm"
 msgid "Menu link"
 msgstr "رابط القائمة"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
+msgid "Menu management"
+msgstr ""
+
 #: modules/social_features/social_event/social_event.install:783
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:64
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:268
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:285
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:54
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:588
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:34
@@ -10210,7 +10458,7 @@ msgstr ""
 msgid "Muted groups"
 msgstr "مجموعات صامتة"
 
-#: modules/social_features/social_group/social_group.module:2220;2225
+#: modules/social_features/social_group/social_group.module:2222;2227
 msgid "My Groups"
 msgstr "مجموعاتي"
 
@@ -10235,7 +10483,7 @@ msgstr "فعالياتي"
 msgid "My group membership request is approved"
 msgstr "تمت الموافقة على طلب عضوية مجموعتي"
 
-#: modules/social_features/social_group/social_group.module:2247
+#: modules/social_features/social_group/social_group.module:2249
 msgid "My groups"
 msgstr "مجموعاتي"
 
@@ -10292,7 +10540,7 @@ msgstr ""
 msgid "Nationality"
 msgstr "الجنسية"
 
-#: modules/social_features/social_user/social_user.links.menu.yml:0
+#: modules/social_features/social_user/social_user.links.menu.yml:0;0
 #: modules/social_features/social_user/social_user.routing.yml:0
 msgid "Navigation Settings"
 msgstr "إعدادات التنقل"
@@ -10317,7 +10565,7 @@ msgstr "محتوى جديد"
 msgid "New Event"
 msgstr "حدث جديد"
 
-#: modules/social_features/social_group/social_group.module:2191
+#: modules/social_features/social_group/social_group.module:2193
 msgid "New Group"
 msgstr "مجموعة جديدة"
 
@@ -10501,7 +10749,7 @@ msgstr "لا يوجد أعضاء في هذه المجموعة"
 
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0
 msgid "No membership requests available."
-msgstr ""
+msgstr "لا توجد طلبات عضوية متاحة."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "No one has been invited for this event yet."
@@ -10535,9 +10783,13 @@ msgstr "لا توجد تقارير متاحة."
 msgid "No results found."
 msgstr "لا توجد نتائج."
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:137;143
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:150;156;267
 msgid "No spots left"
 msgstr "لم يتبق أي مقعد شاغر"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/src/Controller/UserEnrollInviteControllerAlter.php:73
+msgid "No spots left."
+msgstr ""
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "No topics found"
@@ -10611,7 +10863,7 @@ msgid "Notification archive"
 msgstr "أرشيف الإخطار"
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:280
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:270
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:287
 msgid "Notification from %site_name"
 msgstr "إشعار من  %site_name"
 
@@ -11064,6 +11316,22 @@ msgstr "تجاوز إعدادات الرؤية العامة المعطلة"
 msgid "Overview"
 msgstr "نظرة عامة"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Overview of all the comments on the platform."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Overview of all the content on the platform."
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Overview of all the groups on the platform."
+msgstr ""
+
+#: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
+msgid "Overview of all the reported content."
+msgstr ""
+
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:22
 msgid "Owner"
 msgstr "المالك"
@@ -11216,6 +11484,8 @@ msgstr "قيد الانتظار"
 msgid "Pending reply"
 msgstr "الرد معلق"
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+#: modules/social_features/social_core/social_core.routing.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0;0
 msgid "People"
 msgstr "أشخاص"
@@ -11223,6 +11493,10 @@ msgstr "أشخاص"
 #: modules/social_features/social_user/src/Plugin/views/access/PeopleAccess.php:9
 msgid "People access"
 msgstr "وصول الناس"
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "People overview"
+msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php:140
 msgid ""
@@ -11276,8 +11550,7 @@ msgstr "صندوق مقدمة النظام الأساسي ، مخصصة للاس
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:410
 msgid ""
 "Please @log_in or @create_account_link so that you can enroll to the event."
-msgstr ""
-"من فضلك @log_in  أو @create_account_link حتى تتمكن من التسجيل في الفعالية."
+msgstr "من فضلك @log_in  أو @create_account_link حتى تتمكن من التسجيل في الحدث."
 
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:275
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:147
@@ -11286,7 +11559,7 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:418
 msgid "Please @log_in so that you can enroll to the event."
-msgstr "من فضلك  @log_in حتى تتمكن من التسجيل في الفعالية."
+msgstr "من فضلك @log_in حتى تتمكن من التسجيل في الفعالية."
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:50
 msgid ""
@@ -11324,7 +11597,7 @@ msgstr "يرجى ملاحظة: ملاحظات مدير المجتمع أدناه
 msgid "Please select"
 msgstr "يرجى الإختيار"
 
-#: modules/social_features/social_private_message/social_private_message.module:73
+#: modules/social_features/social_private_message/social_private_message.module:74
 msgid "Please select an item in the list."
 msgstr "الرجاء تحديد عنصر في القائمة."
 
@@ -11506,12 +11779,12 @@ msgstr "البادئة"
 msgid "Preliminary configuration array"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1872
+#: modules/social_features/social_group/social_group.module:1876
 msgid ""
 "Preparing to delete the group and all it's topic's, event's and post's..."
 msgstr "جاري التحضير لحذف المجموعة وكل مواضيعها وأحداثها ومنشوراتها ..."
 
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:263
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:305
 msgid "Preparing to send invites..."
 msgstr "جاري التحضير لإرسال الدعوات ..."
 
@@ -11528,11 +11801,11 @@ msgstr "معاينة"
 msgid "Preview of the related entity."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:248
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:265
 msgid "Preview your email"
 msgstr "معاينة البريد الإلكتروني الخاص بك"
 
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:142
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:167
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:264
 msgid "Preview your email invite"
 msgstr "معاينة دعوة البريد الإلكتروني الخاص بك"
@@ -11669,6 +11942,10 @@ msgid "Profile entity sortable"
 msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.links.menu.yml:0
+msgid "Profile fields"
+msgstr ""
+
+#: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.links.menu.yml:0
 #: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.links.task.yml:0
 msgid "Profile fields settings"
 msgstr "إعدادات حقول الملف الشخصي"
@@ -11700,7 +11977,7 @@ msgid "Profile medium"
 msgstr "وسط الملف الشخصي"
 
 #: modules/social_features/social_profile/social_profile.module:999
-#: modules/social_features/social_profile/social_profile.install:481
+#: modules/social_features/social_profile/social_profile.install:483
 msgid "Profile name"
 msgstr ""
 
@@ -11729,9 +12006,9 @@ msgstr "وظيفة تيار صفحة الملف الشخصي."
 msgid "Profile privacy data has been processed for the following users: @list"
 msgstr "تمت معالجة بيانات خصوصية الملف الشخصي للمستخدمين التاليين:  @list"
 
-#: modules/social_features/social_profile/social_profile.links.menu.yml:0
+#: modules/social_features/social_profile/social_profile.links.menu.yml:0;0
 msgid "Profile settings"
-msgstr ""
+msgstr "إعدادات الملف الشخصي"
 
 #: modules/social_features/social_core/config/install/crop.type.profile_small.yml:0
 msgid "Profile small"
@@ -12014,7 +12291,7 @@ msgstr ""
 msgid "Provides user profiles."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:624;2723
+#: modules/social_features/social_group/social_group.module:624;2725
 #: modules/social_features/social_post/social_post.module:133
 #: modules/social_features/social_post/src/Entity/Post.php:223
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_flexible_group_visibility.yml:0
@@ -12030,7 +12307,7 @@ msgstr ""
 
 #: modules/social_features/social_group/config/install/group.type.public_group.yml:0
 msgid "Public group"
-msgstr ""
+msgstr "مجموعة عامة"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0
 msgid "Public group: Group Invitation"
@@ -12042,6 +12319,10 @@ msgstr ""
 
 #: modules/social_features/social_album/config/install/group.content_type.public_group-group_node-album.yml:0
 msgid "Public group: Group node (Album)"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Public visibility settings"
 msgstr ""
 
 #: modules/social_features/social_core/social_core.module:865
@@ -12140,7 +12421,7 @@ msgstr ""
 msgid "Read more about this"
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:1036
+#: modules/social_features/social_core/social_core.install:1049
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_link.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.basic.field_basic_link.yml:0
 msgid "Read more link"
@@ -12161,13 +12442,13 @@ msgstr "السبب"
 msgid "Reason term for which an additional textfield is displayed."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2161
+#: modules/social_features/social_group/social_group.module:2163
 msgid "Reassign your groups to the super administrator."
-msgstr ""
+msgstr "إعادة تعيين مجموعاتك إلى المسؤول المتميز."
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0
 msgid "Recently created topics"
-msgstr ""
+msgstr "المواضيه التي تم إنشاؤها مؤخرًا"
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 msgid "Recently joined groups"
@@ -12240,6 +12521,10 @@ msgstr ""
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/config/schema/social_lets_connect_usage.schema.yml:0
 msgid "Refresh interval in seconds"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Regional Settings"
 msgstr ""
 
 #: modules/custom/ginvite/ginvite.module:183
@@ -12319,7 +12604,7 @@ msgstr ""
 
 #: translations.php:129
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:362
-#: modules/social_features/social_group/social_group.module:774;2324
+#: modules/social_features/social_group/social_group.module:774;2326
 msgid "Remove"
 msgstr "إزالة"
 
@@ -12337,7 +12622,7 @@ msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/Action/SocialRemoveRoleUser.php:14
 msgid "Remove a role from the selected users"
-msgstr ""
+msgstr "إزالة دور من المستخدمين المحددين"
 
 #: modules/social_features/social_post/modules/social_post_album/templates/image-widget--album.html.twig:49
 msgid "Remove image"
@@ -12395,7 +12680,7 @@ msgstr ""
 #: modules/social_features/social_comment/social_comment.module:55;56
 #: modules/social_features/social_mentions/social_mentions.module:137
 msgid "Reply"
-msgstr ""
+msgstr "رد"
 
 #: modules/custom/activity_basics/src/Plugin/ActivityEntityCondition/CommentReplyActivityEntityCondition.php:7
 msgid "Reply comment"
@@ -12462,11 +12747,15 @@ msgstr ""
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reported"
+msgstr "تم الإبلاغ عنه"
+
+#: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
+msgid "Reported content overview"
 msgstr ""
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reporter"
-msgstr ""
+msgstr "مٌقدم الإبلاغ"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reports"
@@ -12707,7 +12996,7 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Role"
-msgstr ""
+msgstr "الدور"
 
 #: modules/custom/alternative_frontpage/config/schema/alternative_frontpage.schema.yml:0
 msgid "Role TargetId"
@@ -12727,7 +13016,7 @@ msgid "Roles"
 msgstr "الأدوار"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:88
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:283
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:300
 #: modules/social_features/social_group/social_group.module:873
 msgid "Save"
 msgstr "حفظ"
@@ -12901,7 +13190,7 @@ msgstr ""
 msgid "See all organisers"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:235
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:236
 msgid "See excluded enrollees on other pages"
 msgstr ""
 
@@ -12910,7 +13199,7 @@ msgstr ""
 msgid "See related content"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:235
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:236
 msgid "See selected enrollees on other pages"
 msgstr ""
 
@@ -12922,7 +13211,7 @@ msgstr ""
 msgid "See the event"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:203
+#: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:204
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:116
 msgid "Select / unselect all @count members across all the pages"
 msgstr "تحديد / إلغاء تحديد كل @count عضو عبر جميع الصفحات"
@@ -13057,6 +13346,11 @@ msgstr ""
 msgid "Select the type of content which will be shown in this block"
 msgstr "حدد نوع المحتوى الذي سيظهر في هذه الكتلة"
 
+#: modules/social_features/social_user/social_user.links.menu.yml:0
+msgid "Select which icons to show or hide in the main (top) navigation bar."
+msgstr ""
+"حدد الأيفونات التي تريد إظهارها أو إخفاؤها في شريط التنقل الرئيسي (العلوي)."
+
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:69
 msgid ""
 "Select which icons you want to show or hide in the main (top) navigation bar."
@@ -13097,7 +13391,7 @@ msgstr "التعريف بنفسك"
 msgid "Self introduction, expertise and interests"
 msgstr "التعريف بنفسك، والخبرة ، والاهتمامات"
 
-#: modules/social_features/social_private_message/social_private_message.module:85;120
+#: modules/social_features/social_private_message/social_private_message.module:86;121
 msgid "Send"
 msgstr "إرسال"
 
@@ -13111,7 +13405,7 @@ msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:273;20
 msgid "Send email"
-msgstr ""
+msgstr "إرسال بريد إلكتروني"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/SocialEventManagersSendEmail.php:19
 msgid "Send email to event enrollment users"
@@ -13160,7 +13454,7 @@ msgstr "إرسال دعوتك (دعواتك) عن طريق البريد الإل
 msgid "Sending Invites"
 msgstr "جارٍ إرسال الدعوات"
 
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:262
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:304
 msgid "Sending invites..."
 msgstr "جارٍ إرسال الدعوات..."
 
@@ -13310,7 +13604,7 @@ msgstr ""
 #: modules/social_features/social_sharing/config/optional/block.block.shariffsharebuttons.yml:0
 #: modules/social_features/social_sharing/config/optional/block.block.shariffsharebuttons_2.yml:0
 msgid "Share this page"
-msgstr ""
+msgstr "مشاركة هذه الصفحة"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/social_lets_connect_usage.info.yml:0
 msgid ""
@@ -13327,7 +13621,7 @@ msgstr ""
 msgid "Sharing Options"
 msgstr ""
 
-#: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:257
+#: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:266
 msgid "Show"
 msgstr "إظهار"
 
@@ -13335,7 +13629,7 @@ msgstr "إظهار"
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:143
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:83
 msgid "Show all :num_comments comments"
-msgstr ""
+msgstr "إظهار الكل:num_comments تعليق"
 
 #: modules/social_features/social_embed/src/Service/SocialEmbedHelper.php:5
 msgid "Show content"
@@ -13347,7 +13641,7 @@ msgstr ""
 
 #: modules/social_features/social_user/social_user.module:621
 msgid "Show email address in help messages"
-msgstr ""
+msgstr "إظهار عنوان البريد الإلكتروني في رسائل المساعدة"
 
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:88
 msgid "Show email on all user profiles"
@@ -13370,6 +13664,8 @@ msgid ""
 "Show site email address in help messages after failed login, signup or "
 "password reset."
 msgstr ""
+"إظهار عنوان البريد الإلكتروني للموقع في رسائل المساعدة بعد فشل تسجيل الدخول، "
+"أو التسجيل، أو إعادة تعيين كلمة المرور."
 
 #: modules/custom/social_tour/social_tour.module:33
 msgid "Show tips on how to use the community"
@@ -13393,9 +13689,9 @@ msgstr ""
 
 #: modules/social_features/social_user/social_user.module:575
 msgid "Sign Up"
-msgstr ""
+msgstr "التسجيل"
 
-#: modules/social_features/social_core/social_core.install:304
+#: modules/social_features/social_core/social_core.install:317
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:38
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:82
 #: modules/social_features/social_user/social_user.links.menu.yml:0
@@ -13432,7 +13728,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-ba5854c29.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-ba5854c29.yml:0
 msgid "Site manager"
-msgstr ""
+msgstr "مدير الموقع"
 
 #: modules/social_features/social_profile/modules/social_profile_manager_notes/config/install/field.field.profile.profile.field_manager_notes.yml:0
 msgid "Site manager remarks"
@@ -13476,11 +13772,11 @@ msgstr ""
 msgid "Skip not Verified users"
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:586
+#: modules/social_features/social_core/social_core.install:599
 msgid "Skipped installing socialblue theme. Please check release notes."
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:687
+#: modules/social_features/social_core/social_core.install:700
 msgid ""
 "Skipped installing the social_file_private module because your Private file "
 "system is not set. This could have some security implications. More info: "
@@ -13493,7 +13789,7 @@ msgstr "صغير"
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.small.yml:0
 msgid "Small Avatar"
-msgstr ""
+msgstr "صورة رمزية صغيرة"
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.small_teaser.yml:0
 msgid "Small Teaser"
@@ -13677,6 +13973,10 @@ msgstr ""
 
 #: modules/social_features/social_comment_upload/config/schema/social_comment_upload.schema.yml:0
 msgid "Social Comment Upload Settings"
+msgstr ""
+
+#: modules/social_features/social_comment_upload/social_comment_upload.links.menu.yml:0
+msgid "Social Comment upload settings"
 msgstr ""
 
 #: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/QueryComments.php:11
@@ -14047,7 +14347,7 @@ msgstr ""
 msgid "Social Private Message Owner"
 msgstr ""
 
-#: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageThreadMemberFormatter.php:10
+#: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageThreadMemberFormatter.php:11
 msgid "Social Private Message Thread Members"
 msgstr ""
 
@@ -14125,6 +14425,10 @@ msgstr ""
 
 #: modules/social_features/social_swiftmail/social_swiftmail.info.yml:0
 msgid "Social Swiftmailer implementation"
+msgstr ""
+
+#: modules/social_features/social_tagging/social_tagging.links.menu.yml:0
+msgid "Social Tag Settings"
 msgstr ""
 
 #: modules/social_features/social_tagging/social_tagging.info.yml:0
@@ -14272,12 +14576,12 @@ msgstr ""
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
 msgid "Sort"
-msgstr "فرز"
+msgstr "ترتيب"
 
 #: modules/social_features/social_search/config/optional/block.block.exposed_form_search_content_page_sidebar.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_exposed_form_search_content_page_sidebar.yml:0
 msgid "Sort and Filter"
-msgstr "فرز وتصفية"
+msgstr "ترتيبوتصفية"
 
 #: config/install/views.view.content.yml:0
 #: modules/custom/ginvite/config/optional/views.view.group_invitations.yml:0
@@ -14333,7 +14637,7 @@ msgstr ""
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0
 msgid "Sort by publish date"
-msgstr ""
+msgstr "ترتيب حسب التاريخ"
 
 #: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/QueryComments.php:11
 #: modules/social_features/social_comment/src/Plugin/GraphQL/DataProducer/SocialCommentAttachments.php:14
@@ -14379,7 +14683,7 @@ msgstr "الحالة"
 #: modules/social_features/social_core/config/optional/block.block.socialbase_messages.yml:0
 #: modules/social_features/social_core/config/optional/block.block.socialblue_messages.yml:0
 msgid "Status messages"
-msgstr ""
+msgstr "رسائل الحالة"
 
 #: modules/social_features/social_embed/config/schema/social_embed.schema.yml:0
 msgid "Status of embedded content settings for AN"
@@ -14502,7 +14806,7 @@ msgstr "علامة تبويب الإدارة"
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.table.yml:0
 msgid "Table"
-msgstr ""
+msgstr "الجدول"
 
 #: modules/social_features/social_book/config/optional/block.block.booknavigation.yml:0
 #: modules/social_features/social_book/config/optional/block.block.booknavigation_2.yml:0
@@ -14550,11 +14854,11 @@ msgstr ""
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/config/install/field.field.block_content.follow_tags.field_tags.yml:0
 #: modules/social_features/social_tagging/config/optional/block.block.socialtagsblock.yml:0
 msgid "Tags"
-msgstr "علامات"
+msgstr "الإشارات"
 
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0;0
 msgid "Tags I follow"
-msgstr "علامات أتابعها"
+msgstr "إشارات أتابعها"
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:36
 msgid "Taxonomy I follow."
@@ -14562,6 +14866,10 @@ msgstr ""
 
 #: modules/social_features/social_activity/modules/social_activity_filter/config/schema/social_activity_filter.settings.yml:0
 msgid "Taxonomy fields"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "Taxonomy settings"
 msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:37
@@ -14609,7 +14917,7 @@ msgstr ""
 msgid "Text"
 msgstr "نص"
 
-#: modules/social_features/social_core/social_core.install:1053
+#: modules/social_features/social_core/social_core.install:1066
 #: modules/social_features/social_core/config/install/field.field.block_content.basic.field_text_block.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_text_block.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.platform_intro.field_text_block.yml:0
@@ -14906,8 +15214,7 @@ msgstr ""
 #: modules/social_features/social_event/social_event.module:644
 msgid ""
 "The event date and time are set based on your timezone. @change_timezone."
-msgstr ""
-"يتم تعيين تاريخ الفعالية ووقتها بناءً على منطقتك الزمنية. @change_timezone"
+msgstr "يتم تعيين تاريخ الحدث ووقته بناءً على منطقتك الزمنية. @change_timezone"
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:85
 msgid "The event enrollment request has been approved."
@@ -15014,7 +15321,7 @@ msgstr ""
 msgid "The machine name of the feature."
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:67
+#: modules/social_features/social_private_message/social_private_message.module:68
 msgid ""
 "The member(s) of the private message thread. Add multiple members by "
 "seperating them with a comma."
@@ -15085,7 +15392,7 @@ msgstr ""
 msgid "The primary identifier for a mention."
 msgstr ""
 
-#: modules/custom/entity_access_by_field/entity_access_by_field.module:221
+#: modules/custom/entity_access_by_field/entity_access_by_field.module:225
 msgid ""
 "The public visibility setting has been disabled. In order to change the "
 "visibility to public, please contact a site manager."
@@ -15342,6 +15649,11 @@ msgstr "لا توجد مجموعات حتى الآن."
 msgid "There are no members yet."
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:218
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:329
+msgid "There are no spots left"
+msgstr ""
+
 #: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageForm.php:121
 msgid "There is already a setting created for this role."
 msgstr ""
@@ -15371,6 +15683,8 @@ msgid ""
 "These fields allow you to configure various help texts that are shown to "
 "users during signup and login"
 msgstr ""
+"تتيح لك هذه الحقول تكوين نصوص تعليمات متنوعة تظهر للمستخدمين أثناء التسجيل "
+"وتسجيل الدخول"
 
 #: modules/social_features/social_core/social_core.module:856
 msgid "This description will be displayed when hovering over the menu link."
@@ -15447,7 +15761,7 @@ msgid ""
 "It can be overriden in the above E-mail setting"
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:414
+#: modules/social_features/social_private_message/social_private_message.module:415
 msgid "This message was deleted together with the user’s account."
 msgstr ""
 
@@ -15689,6 +16003,14 @@ msgstr ""
 msgid "Topic types"
 msgstr ""
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid ""
+"Topic types, Event types, Profile tags, Organization tags, Expertise and "
+"Interests can be added, removed or changed here."
+msgstr ""
+"يمكن إضافة أنواع الموضوعات، وأنواع الأحداث، والإشارة إلى الملف الشخصي، "
+"والإشارة إلى المنظمة، والخبرة، والاهتمامات، أو تغييرها هنا."
+
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_topic/social_topic.links.task.yml:0
 #: modules/social_features/social_topic/src/ContentTranslationDefaultsConfigOverride.php:28
@@ -15703,7 +16025,7 @@ msgstr "تم إنشاء المواضيع"
 
 #: modules/social_features/social_topic/src/Controller/SocialTopicController.php:86
 msgid "Topics of type @type"
-msgstr ""
+msgstr "مواضيع من نوع @type"
 
 #: modules/custom/social_tour/social_tour.links.menu.yml:0
 #: modules/custom/social_tour/social_tour.routing.yml:0
@@ -15729,11 +16051,11 @@ msgstr "ترجمة"
 
 #: modules/custom/social_language/social_language.permissions.yml:0
 msgid "Translate account settings"
-msgstr ""
+msgstr "إعدادات ترجمة الحساب"
 
 #: modules/custom/social_language/social_language.permissions.yml:0
 msgid "Translate system information"
-msgstr ""
+msgstr "معلومات ترجم النظام"
 
 #: modules/social_features/social_content_block/src/ContentBlockBase.php:47
 msgid "Trending"
@@ -15823,7 +16145,7 @@ msgstr ""
 
 #: modules/custom/ginvite/src/Form/BulkGroupInvitation.php:202
 #: modules/custom/ginvite/src/Form/BulkGroupInvitationConfirm.php:75
-#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:276
+#: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:318
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:131
 msgid "Unable to proceed, please try again."
 msgstr "غير قادر على المتابعة، يرجى المحاولة مرة أخرى."
@@ -15982,6 +16304,7 @@ msgstr ""
 #: modules/social_features/social_page/config/install/node.type.page.yml:0
 msgid "Use basic pages for your static content, such as an 'About us' page."
 msgstr ""
+"استخدام الصفحات الأساسية للمحتوى الثابت الخاص بك، مثل صفحة \"نبذة عنا\"."
 
 #: modules/social_features/social_page/social_page.module:22
 msgid "Use basic pages for your static content, such as an about page."
@@ -15989,7 +16312,7 @@ msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/node.type.landing_page.yml:0
 msgid "Use landing pages for your dynamic content, such as a home page."
-msgstr ""
+msgstr "استخدم صفحات الوصول للمحتوى الديناميكي الخاص بك، مثل الصفحة الرئيسية."
 
 #: modules/custom/mentions/mentions.permissions.yml:0
 msgid "Use mentions"
@@ -16096,6 +16419,10 @@ msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:18
 msgid "User connection"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "User consent overview"
 msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/AdvancedQueue/JobType/UserMailQueueJob.php:19
@@ -16218,7 +16545,7 @@ msgstr "القيمة"
 msgid "Value (Media source or FileItem)"
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:1454
+#: modules/social_features/social_core/social_core.install:1467
 msgid "Verified User"
 msgstr ""
 
@@ -16235,12 +16562,12 @@ msgstr ""
 #: modules/custom/social_queue_storage/social_queue_storage.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:210
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:2325
+#: modules/social_features/social_group/social_group.module:2327
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr "عرض"
 
-#: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php:88
+#: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php:96
 msgid "View @label content"
 msgstr ""
 
@@ -16282,7 +16609,7 @@ msgstr ""
 
 #: modules/custom/group_core_comments/group_core_comments.group.permissions.yml:0
 msgid "View comments"
-msgstr ""
+msgstr "عرض التعليقات"
 
 #: modules/social_features/social_post/social_post.permissions.yml:0
 msgid "View community Posts"
@@ -16344,13 +16671,13 @@ msgstr "عرض ألبوماتي"
 msgid "View my events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2245
+#: modules/social_features/social_group/social_group.module:2247
 msgid "View my groups"
 msgstr ""
 
 #: modules/social_features/social_profile/social_profile.module:836
 msgid "View my profile"
-msgstr ""
+msgstr "عرض ملفي الشخصي"
 
 #: modules/social_features/social_topic/social_topic.module:234
 msgid "View my topics"
@@ -16446,6 +16773,10 @@ msgstr ""
 msgid "View unpublished Queue storage entity entities"
 msgstr ""
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid "View user consents per data policy."
+msgstr ""
+
 #: modules/social_features/social_user/social_user.permissions.yml:0
 msgid "View users"
 msgstr ""
@@ -16467,7 +16798,7 @@ msgid "Violations"
 msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:167
-#: modules/social_features/social_group/social_group.module:2695
+#: modules/social_features/social_group/social_group.module:2697
 #: modules/social_features/social_album/config/install/field.field.node.album.field_content_visibility.yml:0
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_content_visibility.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_content_visibility.yml:0
@@ -16732,6 +17063,12 @@ msgstr ""
 msgid "Which roles should it apply to"
 msgstr ""
 
+#: modules/social_features/social_core/social_core.links.menu.yml:0
+msgid ""
+"Who can register on your platform and adjust the contents of automatic "
+"emails sent by your platform."
+msgstr ""
+
 #: translations.php:106
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_flexible_group_visibility.yml:0
 msgid "Who can see the group."
@@ -16763,7 +17100,7 @@ msgstr "نعم"
 msgid "Yes, continue"
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:359
+#: modules/social_features/social_private_message/social_private_message.module:360
 msgid "You"
 msgstr ""
 
@@ -16972,6 +17309,8 @@ msgid ""
 "event, which means you will receive notifications when a new comment is "
 "placed."
 msgstr ""
+"لقد قمت بالتسجيل بنجاح في هذا الحدث. أنت الآن تتابع الحدث، مما يعني أنك "
+"ستتلقى إشعارات عند وضع تعليق جديد."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:135
 msgid ""
@@ -17078,13 +17417,13 @@ msgstr ""
 
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:50
 msgid "Your group and all of its topics, events and posts have been deleted."
-msgstr ""
+msgstr "تم حذف مجموعتك وكل مواضيعها، وأحداثها، ومنشوراتها."
 
-#: modules/social_features/social_private_message/social_private_message.module:195
+#: modules/social_features/social_private_message/social_private_message.module:196
 msgid "Your message has been created."
 msgstr "تم إنشاء رسالتك."
 
-#: modules/social_features/social_private_message/social_private_message.module:147
+#: modules/social_features/social_private_message/social_private_message.module:148
 msgid "Your message has been deleted."
 msgstr ""
 
@@ -17187,6 +17526,11 @@ msgstr ""
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_address:address_line1]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
 msgid "[node:field_event_address:country_name]"
 msgstr ""
 
@@ -17198,11 +17542,6 @@ msgstr ""
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
 msgid "[node:field_event_address:postal_code]"
-msgstr ""
-
-#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
-#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-msgid "[node:field_event_addressaddress_line1]"
 msgstr ""
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
@@ -17448,7 +17787,7 @@ msgstr "لهذا المستخدم"
 
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.module:99
 msgid "from @org"
-msgstr ""
+msgstr "من @org"
 
 #: modules/social_features/social_featured_content/templates/group--featured.html.twig:104
 msgid "group members"
@@ -17469,7 +17808,7 @@ msgstr "المجموعات"
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "has the publish status of"
-msgstr ""
+msgstr "حالة النشر"
 
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 msgid "header_postblock"
@@ -17580,11 +17919,11 @@ msgstr ""
 msgid "on the"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2734
+#: modules/social_features/social_group/social_group.module:2736
 msgid "only visible to all logged-in users."
 msgstr "مرئي فقط لجميع المستخدمين الذين قاموا بتسجيل الدخول."
 
-#: modules/social_features/social_group/social_group.module:2744
+#: modules/social_features/social_group/social_group.module:2746
 msgid "only visible to logged-in group members."
 msgstr "مرئي فقط لأعضاء المجموعة الذين قاموا بتسجيل الدخول."
 
@@ -17637,7 +17976,7 @@ msgstr ""
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:273
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:145
 msgid "sign up"
-msgstr ""
+msgstr "التسجيل"
 
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:95;95
 msgid "site administrator"
@@ -17744,7 +18083,7 @@ msgstr "الموضوعات"
 #: modules/social_features/social_landing_page/templates/node--landing-page.html.twig:93
 #: modules/social_features/social_post/src/PostListBuilder.php:43
 msgid "unpublished"
-msgstr ""
+msgstr "غير منشور"
 
 #: social.profile:123
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:190
@@ -17792,9 +18131,9 @@ msgstr ""
 msgid "view download counts"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2724
+#: modules/social_features/social_group/social_group.module:2726
 msgid "visible to all visitors to the platform."
-msgstr "ظاهر لكل زائري المنصة."
+msgstr "مرئي لكل زائري المنصة."
 
 #: modules/custom/ginvite/config/optional/views.view.group_invitations.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
@@ -18383,9 +18722,6 @@ msgstr "››"
 
 #~ msgid "Create demo content."
 #~ msgstr "إنشاء محتوى تجريبي."
-
-#~ msgid "Data policy"
-#~ msgstr "سياسة البيانات"
 
 #~ msgid "Default group hero size"
 #~ msgstr "الحجم الافتراضي لبطل المجموعة"
