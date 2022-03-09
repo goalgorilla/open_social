@@ -567,3 +567,17 @@ function social_profile_update_11006(array &$sandbox): void {
     }
   }
 }
+
+/**
+ * Make the user picture clickable and rounded in a compact profile.
+ */
+function social_profile_update_11201(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
