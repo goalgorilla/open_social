@@ -12,6 +12,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
@@ -78,9 +79,11 @@ function social_follow_user_flag_action_access(string $action, FlagInterface $fl
  * Implements hook_preprocess_HOOK().
  */
 function social_follow_user_preprocess_field__field_profile_image(array &$variables): void {
-  if ($variables['element']['#view_mode'] === 'compact_notification') {
+  $element = $variables['element'];
+
+  if (in_array($element['#view_mode'], ['compact', 'compact_notification'])) {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $variables['element']['#object'];
+    $profile = $element['#object'];
 
     if ($profile->access('view')) {
       $attributes = &$variables['items'][0]['content']['#item_attributes'];
@@ -151,28 +154,30 @@ function social_follow_user_profile_view_alter(
     if ($profile->getOwner()->hasPermission('use private messaging system')) {
       $element = &$build['private_message_link'];
 
-      $element['#title'] = t('Message');
-
-      /** @var \Drupal\Core\Url $url */
       $url = $element['#url'];
 
-      $url->mergeOptions([
-        'attributes' => [
-          'class' => [
-            'btn',
-            'btn-default',
-            'btn-sm',
-            'waves-effect',
-            'waves-btn',
+      if ($url instanceof Url) {
+        $url->mergeOptions([
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-default',
+              'btn-sm',
+              'waves-effect',
+              'waves-btn',
+            ],
           ],
-        ],
-      ]);
+        ]);
 
-      unset($element['#prefix'], $element['#suffix']);
+        $element['#title'] = t('Message');
+
+        unset($element['#prefix'], $element['#suffix']);
+
+        return;
+      }
     }
-    else {
-      unset($build['private_message_link']);
-    }
+
+    unset($build['private_message_link']);
   }
 }
 
