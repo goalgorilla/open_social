@@ -18,3 +18,17 @@ function social_featured_content_update_10300() {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Update exposed filter button name.
+ */
+function social_featured_content_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_featured_content', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
