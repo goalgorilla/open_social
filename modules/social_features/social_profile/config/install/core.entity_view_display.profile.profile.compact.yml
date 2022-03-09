@@ -19,6 +19,9 @@ dependencies:
     - field.field.profile.profile.field_profile_summary
     - image.style.social_medium
     - profile.type.profile
+  enforced:
+    module:
+      - social_profile
   module:
     - image
 id: profile.profile.compact
@@ -27,11 +30,12 @@ bundle: profile
 mode: compact
 content:
   field_profile_image:
-    weight: 7
+    weight: 0
     label: hidden
     settings:
       image_style: social_medium
-      image_link: ''
+      image_link: owner
+      avatar: '1'
     third_party_settings: {  }
     type: image
     region: content
