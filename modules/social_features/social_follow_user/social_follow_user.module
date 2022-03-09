@@ -17,6 +17,26 @@ use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserImageF
 use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserStringFormatter;
 
 /**
+ * Implements hook_entity_extra_field_info().
+ */
+function social_follow_user_entity_extra_field_info(): array {
+  return [
+    'profile' => [
+      'profile' => [
+        'display' => [
+          'social_follow_user' => [
+            'label' => t('Followers'),
+            'description' => t('The number of users who are followed.'),
+            'weight' => 20,
+            'visible' => FALSE,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_entity_view_display_alter().
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
@@ -103,6 +123,26 @@ function social_follow_user_preprocess_profile(array &$variables): void {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_follow_user_profile_view(
+  array &$build,
+  EntityInterface $entity,
+  EntityViewDisplayInterface $display,
+  string $view_mode
+): void {
+  if (
+    $entity->bundle() === 'profile' &&
+    $display->getComponent('social_follow_user') !== NULL
+  ) {
+    $build['social_follow_user'] = [
+      '#theme' => 'followers',
+      '#flaggable' => $entity,
+    ];
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_follow_user_profile_view_alter(
@@ -144,4 +184,19 @@ function social_follow_user_profile_view_alter(
       unset($build['private_message_link']);
     }
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_user_theme(): array {
+  return [
+    'followers' => [
+      'variables' => [
+        'flag' => NULL,
+        'flaggable' => NULL,
+      ],
+      'file' => 'social_follow_user.theme.inc',
+    ],
+  ];
 }
