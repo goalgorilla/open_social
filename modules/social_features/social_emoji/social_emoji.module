@@ -5,11 +5,21 @@
  * The social_emoji module.
  */
 
+/**
+ * Implement hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
+ *
+ * Add emoji trigger element to posts and comments.
+ */
 function social_emoji_field_widget_single_element_text_textarea_form_alter(&$element, &$form_state, $context) {
   $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
   $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
 }
 
+/**
+ * Implement hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
+ *
+ * Add emoji trigger element to CKEditor.
+ */
 function social_emoji_field_widget_single_element_text_textarea_with_summary_form_alter(&$element, &$form_state, $context) {
   $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
   $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
