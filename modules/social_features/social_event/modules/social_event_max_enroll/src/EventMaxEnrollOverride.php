@@ -53,7 +53,7 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     $overrides = [];
 
-    // Add field_event_max_enroll to event form.
+    // Add field_event_max_enroll to the event form.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
       if ($this->socialEventAnEnrollOverrider instanceof ConfigFactoryOverrideInterface) {
