@@ -10,11 +10,21 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserImageFormatter;
-use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserStringFormatter;
+use Drupal\social_follow_user\Plugin\Field\FieldFormatter\SocialFollowUserFormatter;
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_follow_user_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type): void {
+  if ($entity_type->id() === 'profile') {
+    /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
+    $fields['uid']->setDisplayConfigurable('view', TRUE);
+  }
+}
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -69,8 +79,7 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
  * Implements hook_field_formatter_info_alter().
  */
 function social_follow_user_field_formatter_info_alter(array &$info): void {
-  $info['image']['class'] = SocialFollowUserImageFormatter::class;
-  $info['string']['class'] = SocialFollowUserStringFormatter::class;
+  $info['image']['class'] = SocialFollowUserFormatter::class;
 }
 
 /**
