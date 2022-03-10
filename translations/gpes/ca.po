@@ -1499,7 +1499,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-03-08 00:18+0000\n"
+"POT-Creation-Date: 2022-03-10 11:02+0000\n"
 "PO-Revision-Date: 2021-06-02 00:14+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -1597,6 +1597,7 @@ msgstr "(descendent)"
 #: modules/custom/ginvite/config/optional/views.view.my_invitations.yml:0;0;0;0;0
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0;0;0;0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0;0;0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0;0;0;0;0;0;0;0;0;0;0;0;0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0;0;0;0;0;0;0;0;0;0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0;0;0;0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
@@ -1633,6 +1634,7 @@ msgstr ", "
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -1668,6 +1670,8 @@ msgstr ", "
 msgid "- All -"
 msgstr "- Tot -"
 
+#: modules/social_features/social_comment/social_comment.module:405
+#: modules/social_features/social_group/src/Plugin/views/filter/FilterByGroup.php:74
 #: modules/social_features/social_search/social_search.module:76
 #: modules/social_features/social_tagging/social_tagging.module:514;537
 #: modules/social_features/social_user/social_user.module:142
@@ -3268,6 +3272,7 @@ msgstr ""
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:141
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:691
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
 msgid "Action"
@@ -4680,6 +4685,7 @@ msgstr[1] "Vols enviar el teu correu electrònic als següents %count membres?"
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -4752,6 +4758,7 @@ msgstr ""
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:155
 #: modules/social_features/social_post/src/PostListBuilder.php:22
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Author"
 msgstr "Autor/a"
@@ -4765,6 +4772,7 @@ msgid "Author as event organiser"
 msgstr "Autor/a com a persona organitzadora de l'esdeveniment"
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:132
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 msgid "Author name"
 msgstr ""
 
@@ -5419,6 +5427,7 @@ msgstr "Configuració de la pujada de comentaris"
 
 #: modules/social_features/social_album/config/install/field.field.node.album.field_album_comments.yml:0
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_comments.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0;0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_comments.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_comments.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_comments.yml:0
@@ -5431,6 +5440,14 @@ msgstr "Comentaris creats"
 
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Comments overview"
+msgstr ""
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "Comments published"
+msgstr ""
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "Comments unapproved"
 msgstr ""
 
 #: modules/social_features/social_activity/social_activity.install:38
@@ -5698,6 +5715,7 @@ msgstr ""
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
 #: modules/social_features/social_topic/social_topic.install:107
 #: config/install/views.view.content.yml:0;0;0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
@@ -5739,6 +5757,7 @@ msgid "Content block sorting"
 msgstr ""
 
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Content group content"
 msgstr "Contingut del contingut del grup"
@@ -5786,6 +5805,7 @@ msgstr "Mòdul d'etiquetatge del contingut"
 msgid "Content tags"
 msgstr ""
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0;0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Content type"
@@ -6374,6 +6394,10 @@ msgstr ""
 msgid "Declined"
 msgstr ""
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "Default"
+msgstr ""
+
 #: modules/social_features/social_comment/config/install/comment.type.comment.yml:0
 msgid "Default comment type."
 msgstr "Tipus de comentari per defecte."
@@ -6551,6 +6575,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -7892,6 +7917,7 @@ msgstr "Fitxers"
 
 #: modules/social_features/social_search/social_search.module:138
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 #: modules/social_features/social_event/config/optional/block.block.exposedformeventsevents_overview.yml:0
@@ -7939,6 +7965,11 @@ msgstr ""
 msgid "Filter activities for personalised homepage"
 msgstr "Filtra les activitats per pàgina d'inici personalitzada"
 
+#: modules/social_features/social_comment/config/schema/social_comment.schema.yml:0
+#: modules/social_features/social_group/social_group.views.inc:49;51
+msgid "Filter by group"
+msgstr ""
+
 #: modules/social_features/social_private_message/social_private_message.module:591;593
 msgid "Filter deleted threads"
 msgstr "Filtra els fils de conversa eliminats"
@@ -7975,6 +8006,10 @@ msgstr "Filtres"
 #: modules/social_features/social_search/social_search.module:180;190
 msgid "Filters for date used in Open Social"
 msgstr "Filtres per la data utilitzada a l'Open Social"
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "Find and manage comments."
+msgstr ""
 
 #: config/install/views.view.content.yml:0
 msgid "Find and manage content"
@@ -8334,6 +8369,7 @@ msgstr ""
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:155
 #: modules/custom/ginvite/config/optional/views.view.my_invitations.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0;0;0;0
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_group.yml:0
 #: modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
@@ -8616,6 +8652,10 @@ msgstr ""
 
 #: modules/social_features/social_group/src/Form/SocialGroupSettings.php:106
 msgid "Group permissions"
+msgstr ""
+
+#: modules/social_features/social_comment/config/schema/social_comment.schema.yml:0
+msgid "Group relationship"
 msgstr ""
 
 #: modules/custom/grequest/grequest.info.yml:0
@@ -9328,6 +9368,7 @@ msgstr "Elements"
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -9446,6 +9487,7 @@ msgstr "Pestanya de destinació pels no membres"
 
 #: modules/custom/social_language/src/Plugin/UserExportPlugin/UserLanguage.php:86;13
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 msgid "Language"
 msgstr "Llengua"
 
@@ -10514,6 +10556,7 @@ msgid "No albums in this group"
 msgstr ""
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:242
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 msgid "No comments available."
 msgstr "No hi ha comentaris disponibles."
 
@@ -10805,6 +10848,7 @@ msgstr "Finestra de fora de línia"
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -11010,6 +11054,7 @@ msgstr "Operació"
 #: modules/custom/ginvite/config/optional/views.view.group_invitations.yml:0
 #: modules/custom/ginvite/config/optional/views.view.my_invitations.yml:0
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -11569,6 +11614,10 @@ msgstr "Accés a la visibilitat de la publicació"
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAddressPostalCode.php:23;8
 msgid "Postal code"
 msgstr "Codi postal"
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
+msgid "Posted in"
+msgstr ""
 
 #: modules/social_features/social_post/social_post.links.menu.yml:0
 msgid "Posts"
@@ -12198,6 +12247,10 @@ msgstr "Publica els comentaris seleccionats"
 msgid "Published"
 msgstr "Publicat"
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "Published comments"
+msgstr ""
+
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 msgid "Published status"
@@ -12732,6 +12785,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -14487,6 +14541,7 @@ msgstr "Ordena i filtre"
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -14847,6 +14902,10 @@ msgstr "L'enllaç (html) per l'entitat creada."
 msgid "The (html) link to the liked entity."
 msgstr "L'enllaç (html) per l'entitat relacionada."
 
+#: modules/social_features/social_comment/social_comment.module:430
+msgid "The @entity_type to which the comment is a reply to."
+msgstr ""
+
 #: modules/custom/activity_creator/src/Entity/ActivityViewsData.php:22
 msgid "The Activity ID."
 msgstr "L'ID de l'activitat."
@@ -14963,6 +15022,10 @@ msgid ""
 msgstr ""
 "La quantitat d’intents d’inici de sessió que es poden realitzar a partir "
 "d’una determinada adreça IP."
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "The approved comments listing."
+msgstr ""
 
 #: modules/custom/mentions/src/Entity/Mentions.php:67
 msgid "The author ID of the mention"
@@ -15472,6 +15535,10 @@ msgstr "El tipus de contingut que s'ha comentat."
 msgid "The type of the content that was liked"
 msgstr "El tipus de contingut que ha agradat"
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "The unapproved comments listing."
+msgstr ""
+
 #: modules/custom/mentions/src/MentionsViewsData.php:125
 msgid "The unique ID of the object that contains mention"
 msgstr "L'ID únic de l'objecte que conté menció"
@@ -15792,6 +15859,7 @@ msgstr ""
 #: modules/social_features/social_footer/src/Form/FooterSettingsForm.php:113
 #: modules/social_features/social_footer/src/Plugin/Block/SocialFooterPoweredByBlock.php:137
 #: config/install/views.view.content.yml:0;0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
@@ -16109,6 +16177,10 @@ msgstr "UUID"
 msgid "Unable to proceed, please try again."
 msgstr ""
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
+msgid "Unapproved comments"
+msgstr ""
+
 #: modules/social_features/social_follow_taxonomy/config/install/flag.flag.follow_term.yml:0
 msgid "Unfollow"
 msgstr ""
@@ -16204,6 +16276,7 @@ msgstr "Actualitza l'informe"
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:165
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Updated"
 msgstr "Actualitzat"
@@ -17647,6 +17720,7 @@ msgid "ascending"
 msgstr "ascendent"
 
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 msgid "author"
 msgstr "autor/a"
 
@@ -17901,6 +17975,10 @@ msgctxt "PHP date format"
 msgid "j M Y"
 msgstr "j M Y"
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "last »"
+msgstr ""
+
 #: social.profile:130
 msgid "likes"
 msgstr "m'agrades"
@@ -17915,6 +17993,7 @@ msgstr ""
 msgid "log in"
 msgstr "inici de sessió"
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "more"
 msgstr "més"
@@ -17923,6 +18002,10 @@ msgstr "més"
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:34
 msgid "never"
 msgstr "mai"
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "next ›"
+msgstr ""
 
 #: translations.php:92
 #: modules/social_features/social_like/social_like.tokens.inc:123
@@ -18220,6 +18303,10 @@ msgstr ""
 msgid "« First"
 msgstr "« Primer"
 
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "« first"
+msgstr ""
+
 #: modules/custom/ginvite/config/optional/views.view.group_invitations.yml:0
 #: modules/custom/ginvite/config/optional/views.view.my_invitations.yml:0
 msgid "Â« First"
@@ -18256,6 +18343,10 @@ msgstr ""
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "‹ Previous"
 msgstr "‹ Anterior"
+
+#: modules/social_features/social_comment/config/install/views.view.comment.yml:0
+msgid "‹ previous"
+msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
