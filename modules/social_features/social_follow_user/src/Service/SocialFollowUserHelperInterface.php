@@ -10,6 +10,8 @@ use Drupal\profile\Entity\ProfileInterface;
 interface SocialFollowUserHelperInterface {
 
   /**
+   * Connect profile previewer to a specific element.
+   *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
    *   The profile entity object.
    * @param array $variables
