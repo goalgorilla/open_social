@@ -96,12 +96,14 @@ function social_follow_user_preprocess_field__field_profile_image(array &$variab
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $element['#object'];
 
-    if ($profile->access('view')) {
-      $attributes = &$variables['items'][0]['content']['#item_attributes'];
-      $attributes['id'] = Html::getUniqueId('profile-preview');
-      $attributes['data-profile'] = $profile->id();
-      $variables['#attached']['library'][] = 'social_follow_user/preview';
-    }
+    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
+    $helper = \Drupal::service('social_follow_user.helper');
+
+    $helper->preview(
+      $profile,
+      $variables,
+      ['items', 0, 'content', '#item_attributes'],
+    );
   }
 }
 
@@ -123,6 +125,24 @@ function social_follow_user_preprocess_profile(array &$variables): void {
 
       $variables['#attached']['library'][] = 'social_follow_user/preview';
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_username(array &$variables): void {
+  /** @var \Drupal\user\UserInterface $account */
+  $account = $variables['account'];
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
+    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
+    $helper = \Drupal::service('social_follow_user.helper');
+
+    $helper->preview($profile, $variables);
   }
 }
 
