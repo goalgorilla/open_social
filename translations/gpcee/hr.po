@@ -1559,7 +1559,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2022-03-10 11:02+0000\n"
-"PO-Revision-Date: 2022-03-08 22:03+0000\n"
+"PO-Revision-Date: 2022-03-10 22:03+0000\n"
 "Last-Translator: Maja <maja.stanisic+1@gmail.com>\n"
 "Language-Team: Croatian <https://translate.getopensocial.com/projects/gpcee/"
 "distribution/hr/>\n"
@@ -1931,7 +1931,7 @@ msgstr ""
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">See all enrollments</a>"
 msgstr ""
-"<a href=\"/čvor/{{ raw_arguments.nid }}/enrollments\">Vidi sve prijave</a>"
+"<a href=\"/unos/{{ raw_arguments.nid }}/enrollments\">Vidi sve prijave</a>"
 
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
 msgid ""
@@ -1940,10 +1940,10 @@ msgid ""
 "\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
 "\"}'>{{ field_post_image }}</a>"
 msgstr ""
-"<a href=\"/čvor/{{ raw_arguments.nid }}/image/{{ id }}/"
-"{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
-"\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
-"\"}'>{{ field_post_image }}</a>"
+"<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ "
+"field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type=\"modal"
+"\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post\"}'>{{ "
+"field_post_image }}</a>"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:175
 msgid "<b><em class=\"placeholder\">1</em> Member</b> is selected"
@@ -2199,6 +2199,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentirao/la je [social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> kojeg pratiš</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -2207,6 +2220,11 @@ msgid ""
 "commented_content_type] <a href=\"[message:field_message_related_object:"
 "entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentirao/la je [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> kojeg pratiš</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -2285,6 +2303,10 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group [message:count_groups_per_node]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kreirao/la [social_group:created_entity_link_html] u <a href=\""
+"[message:gurl]\">[message:gtitle]</a> grupi "
+"[message:count_groups_per_node]</p>\n"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.create_node_following_tag.yml:0;0
 msgid ""
@@ -2312,6 +2334,9 @@ msgid ""
 "a> created a topic in <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "[message:count_groups_per_node]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kreirao/la je temu u <a href=\"[message:gurl]\">[message:gtitle]</a> "
+"[message:count_groups_per_node]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_gc.yml:0
 msgid ""
@@ -2335,6 +2360,9 @@ msgid ""
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "[message:count_groups_per_node]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kreirao/la je događaj u <a href=\"[message:gurl]\">[message:gtitle]</a> "
+"[message:count_groups_per_node]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_gc.yml:0
 msgid ""
@@ -2773,6 +2801,11 @@ msgid ""
 "also possible that some of the options below are disabled by the managers of "
 "this site.</p>\r\n"
 msgstr ""
+"<strong>Obrati pažnju:</strong>\n"
+"<p>Drugi ljudi će te i dalje moći pronaći kada traže vrijednost nekog od "
+"ovih polja (npr. Amsterdam za polje grada). Informacije koje odlučiš sakriti "
+"i dalje će biti vidljive upraviteljima ove stranice. Također je moguće da su "
+"neke od opcija u nastavku onemogućili upravitelji ove stranice.</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -2852,7 +2885,7 @@ msgstr "@name polje je obvezno."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:88
 msgid "@node"
-msgstr "@čvor"
+msgstr "@unos"
 
 #: modules/custom/activity_creator/activity.page.inc:51
 msgid "@time ago"
@@ -2968,7 +3001,7 @@ msgid ""
 "A list of featured content that can have a title, link, group/node/profile, "
 "and description."
 msgstr ""
-"Popis prikazanog sadržaja koji može imati naslov, poveznicu, grupu/čvor/"
+"Popis prikazanog sadržaja koji može imati naslov, poveznicu, grupu/unos/"
 "profil ili opis."
 
 #: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
@@ -3357,7 +3390,7 @@ msgstr "Identifikator računa"
 
 #: translations.php:77
 msgid "Account information"
-msgstr "Informacije o računu"
+msgstr "Informacije o korisničkom računu"
 
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Account settings"
@@ -5438,7 +5471,7 @@ msgstr "Zatvorena grupa: Zahtjev za članstvom u grupi"
 
 #: modules/social_features/social_album/config/install/group.content_type.closed_group-group_node-album.yml:0
 msgid "Closed group: Group node (Album)"
-msgstr "Zatvorena grupa: Grupni čvor (Album)"
+msgstr "Zatvorena grupa: Grupni unos (Album)"
 
 #: translations.php:102
 msgid "Collaboration Settings"
@@ -5512,7 +5545,7 @@ msgstr "Komentiraj sadržaj grupe"
 #: modules/social_features/social_core/config/schema/social_core.schema.yml:0
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:15
 msgid "Comment on node list"
-msgstr "Popis komentara na čvorove"
+msgstr "Popis komentara na unose"
 
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:15
 msgid "Comment on post list"
@@ -5780,7 +5813,7 @@ msgstr "Rubovi veze"
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
 msgid "Connection nodes"
-msgstr "Čvorovi veze"
+msgstr "Unosi veze"
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
 msgid "Connection page info"
@@ -6142,7 +6175,7 @@ msgstr ""
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0
 msgid "Create like on node or post"
-msgstr "Kreiraj lajk na čvor ili objavu"
+msgstr "Kreiraj lajk na unos ili objavu"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0
 msgid "Create mention in a comment"
@@ -6814,19 +6847,19 @@ msgstr "Određuje je li označavanje sadržaja omogućeno za korisnike."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the book node type has tagging enabled."
-msgstr ""
+msgstr "Određuje ima li tip unosa omogućeno označavanje."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the event node type has tagging enabled."
-msgstr ""
+msgstr "Određuje ima li tip unosa omogućeno označavanje."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the landing page node type has tagging enabled."
-msgstr "Određuje ima li tip čvora odredišne stranice omogućeno označavanje."
+msgstr "Određuje ima li tip unosa odredišne stranice omogućeno označavanje."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the page node type has tagging enabled."
-msgstr ""
+msgstr "Određuje ima li tip unosa omogućeno označavanje."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid ""
@@ -6838,7 +6871,7 @@ msgstr ""
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the topic node type has tagging enabled."
-msgstr ""
+msgstr "Određuje ima li tip unosa omogućeno označavanje."
 
 #: modules/social_features/social_topic/social_topic.install:111
 msgid "Dialog"
@@ -6960,7 +6993,7 @@ msgstr "Prikazuje broj članova u grupi."
 
 #: modules/social_features/social_content_report/social_content_report.views.inc:27
 msgid "Displays the entity type or the bundle type for Nodes."
-msgstr "Prikazuje vrstu entiteta ili vrstu skupa za čvorove."
+msgstr "Prikazuje vrstu entiteta ili vrstu skupa za unose."
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Displays the newest topics in the community"
@@ -7066,7 +7099,7 @@ msgstr "Rubni pokazivač"
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
 msgid "Edge node"
-msgstr "Rubni čvor"
+msgstr "Rubni unos"
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeCursor.php:9
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
@@ -7263,7 +7296,7 @@ msgstr "Omogući kalendare za koje korisnicima želiš dopustiti pregled"
 
 #: modules/social_features/social_group/src/Form/SocialGroupSettings.php:140
 msgid "Enable cross-group posting for node types"
-msgstr ""
+msgstr "Omogući objavljivanje među grupama za vrste unosa"
 
 #: modules/social_features/social_group/src/Form/SocialGroupSettings.php:132
 msgid "Enable cross-posting"
@@ -8069,8 +8102,7 @@ msgstr "Filtriraj događaje prema datumu početka i datumu završetka"
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:45;47;48
 msgid ""
 "Filter nodes, with visibility group, placed in group you are not a member of."
-msgstr ""
-"Čvorovi filtra, s grupom vidljivosti, smješteni u grupu koje nisi član."
+msgstr "Filteri unosa, s grupom vidljivosti, smješteni u grupu koje nisi član."
 
 #: modules/custom/activity_viewer/activity_viewer.module:16
 msgid "Filter on activities for personalised homepage."
@@ -8179,7 +8211,7 @@ msgstr "Fleksibilna grupa: zahtjev za članstvom u grupi"
 
 #: modules/social_features/social_album/config/optional/group.content_type.flexible_group-group_node-album.yml:0
 msgid "Flexible group: Group node (Album)"
-msgstr "Fleksibilna grupa: Grupni čvor (Album)"
+msgstr "Fleksibilna grupa: Grupni unos (Album)"
 
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:47
 msgid "Flood Control Settings"
@@ -10866,7 +10898,7 @@ msgstr "Broj članova grupe"
 
 #: modules/social_features/social_activity/social_activity.tokens.inc:37
 msgid "Number of groups where node is added."
-msgstr ""
+msgstr "Broj grupa gdje je unos dodan."
 
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_item_amount.yml:0
 msgid "Number of items"
@@ -11112,7 +11144,7 @@ msgstr "Otvorena grupa: članstvo u grupi"
 
 #: modules/social_features/social_album/config/install/group.content_type.open_group-group_node-album.yml:0
 msgid "Open group: Group node (Album)"
-msgstr "Otvorena grupa: čvor grupe (Album)"
+msgstr "Otvorena grupa: unos grupe (Album)"
 
 #: modules/social_features/social_event/social_event.module:103;1120
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
@@ -11360,7 +11392,7 @@ msgstr "Naslovnica za upise"
 #: modules/social_features/social_core/config/optional/block.block.socialbase_pagetitleblock.yml:0
 #: modules/social_features/social_core/config/optional/block.block.socialblue_pagetitleblock.yml:0
 msgid "Page title for nodes"
-msgstr "Naslovnica za čvorove"
+msgstr "Naslovnica za unose"
 
 #: modules/social_features/social_landing_page/social_landing_page.install:278;559
 #: modules/social_features/social_featured_content/config/install/core.entity_form_display.block_content.featured.default.yml:0
@@ -12194,7 +12226,7 @@ msgstr "Omogućava osnovne komponente potrebne za druge značajke."
 
 #: modules/social_features/social_node/social_node.info.yml:0
 msgid "Provides core functionality around Nodes."
-msgstr "Omogućava osnovnu funkcionalnost oko čvorova."
+msgstr "Omogućava osnovnu funkcionalnost oko unosa."
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
 msgid "Provides data about image fields and media sources."
@@ -12304,7 +12336,7 @@ msgstr "Javna grupa: članstvo u grupi"
 
 #: modules/social_features/social_album/config/install/group.content_type.public_group-group_node-album.yml:0
 msgid "Public group: Group node (Album)"
-msgstr "Javna grupa: čvor grupe (Album)"
+msgstr "Javna grupa: unos grupe (Album)"
 
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Public visibility settings"
@@ -12713,7 +12745,7 @@ msgstr "Prijavi neprikladan komentar"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 msgid "Report inappropriate nodes"
-msgstr "Prijavi neprikladne čvorove"
+msgstr "Prijavi neprikladne unose"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 msgid "Report inappropriate post"
@@ -12947,7 +12979,7 @@ msgstr "Vraća čvor povezan s rubom."
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
 msgid "Returns the nodes of a connection."
-msgstr "Vraća čvorove veze."
+msgstr "Vraća unose veze."
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
 msgid "Returns the page info of a connection."
@@ -13153,7 +13185,7 @@ msgstr "Tajna grupa: članstvo u grupi"
 
 #: modules/social_features/social_album/config/optional/group.content_type.secret_group-group_node-album.yml:0
 msgid "Secret group: Group node (Album)"
-msgstr "Tajna grupa: čvor grupe (Album)"
+msgstr "Tajna grupa: unos grupe (Album)"
 
 #: modules/social_features/social_landing_page/config/install/core.entity_form_display.node.landing_page.default.yml:0
 #: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.section.default.yml:0
@@ -14312,7 +14344,7 @@ msgstr "Social Metatag"
 
 #: modules/social_features/social_node/social_node.info.yml:0
 msgid "Social Node"
-msgstr "Social Čvor"
+msgstr "Social Unos"
 
 #: modules/social_features/social_page/social_page.info.yml:0
 msgid "Social Page"
@@ -15342,20 +15374,20 @@ msgstr "Poveznica (gumb) za odgovor na komentar uključivat će sirovi HTML."
 msgid ""
 "The link to the commented entity, can be post or node, will include raw HTML."
 msgstr ""
-"Poveznica na komentirani entitet, što može biti objava ili čvor, uključivat "
+"Poveznica na komentirani entitet, što može biti objava ili unos, uključivat "
 "će sirovi HTML."
 
 #: modules/social_features/social_group/social_group.tokens.inc:38
 msgid ""
 "The link to the created entity, can be post or node, will include raw HTML."
 msgstr ""
-"Poveznica na kreirani entitet, što može biti objava ili čvor, uključivat će "
+"Poveznica na kreirani entitet, što može biti objava ili unos, uključivat će "
 "sirovi HTML."
 
 #: modules/social_features/social_like/social_like.tokens.inc:39
 msgid "The link to the entity, can be post or node, will include raw HTML."
 msgstr ""
-"Poveznica na entitet, što može biti objava ili čvor, uključivat će sirovi "
+"Poveznica na entitet, što može biti objava ili unos, uključivat će sirovi "
 "HTML."
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:27
@@ -15473,7 +15505,7 @@ msgstr "URL povezane grupe."
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:29
 msgid "The related node title."
-msgstr "Naziv povezanog čvora."
+msgstr "Naziv povezanog unosa."
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0
 msgid "The request to enroll to an enrollment is approved"
@@ -15574,7 +15606,7 @@ msgstr "Vrijeme kada je spominjanje kreirano."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/GroupContentEnabler/GroupEventNode.php:7
 msgid "The title of the node to add to the group"
-msgstr ""
+msgstr "Naslov unosa za dodavanje u grupu"
 
 #: modules/custom/social_tour/social_tour.info.yml:0
 msgid "The tour specific feature settings for Open Social."
@@ -15853,7 +15885,7 @@ msgstr ""
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid "This permission grants access to add node to multiple groups."
-msgstr ""
+msgstr "Ovo dopuštenje daje pristup za dodavanje unosa u više grupa."
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid ""
@@ -16315,7 +16347,7 @@ msgstr "Ažuriraj"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.update_node_following_tag.yml:0
 msgid "Update node with following tag"
-msgstr ""
+msgstr "Ažuriraj unos sa sljedećom oznakom"
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:126
 msgid "Update options"
@@ -17661,7 +17693,7 @@ msgstr "[node:body]"
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
 msgid "[node:field_event_address:address_line1]"
-msgstr ""
+msgstr "[node:field_event_address:address_line1]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
