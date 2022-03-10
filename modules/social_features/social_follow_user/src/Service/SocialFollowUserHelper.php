@@ -1,15 +1,16 @@
 <?php
 
-namespace Drupal\social_follow_user;
+namespace Drupal\social_follow_user\Service;
 
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\RoleInterface;
 
 /**
- * Defines a helper class, sets permissions.
- *
- * @package Drupal\social_follow_user
+ * Defines the helper service.
  */
-class SocialFollowUserHelper {
+class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
 
   /**
    * Set default permissions.
@@ -44,6 +45,22 @@ class SocialFollowUserHelper {
     $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
     return $permissions[$role] ?? [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview(
+    ProfileInterface $profile,
+    array &$variables,
+    $path = 'attributes'
+  ): void {
+    if ($profile->access('view')) {
+      $attributes = &NestedArray::getValue($variables, (array) $path);
+      $attributes['id'] = Html::getUniqueId('profile-preview');
+      $attributes['data-profile'] = $profile->id();
+      $variables['#attached']['library'][] = 'social_follow_user/preview';
+    }
   }
 
 }
