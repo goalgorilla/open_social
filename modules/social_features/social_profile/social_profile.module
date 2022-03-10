@@ -430,8 +430,14 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
   }
-  elseif ($variables['elements']['#view_mode'] === 'small_teaser') {
-    $variables['link_attributes'] = new Attribute();
+  elseif (
+    $variables['elements']['#view_mode'] === 'small_teaser' &&
+    (
+      !isset($variables['link_attributes']) ||
+      !$variables['link_attributes'] instanceof Attribute
+    )
+  ) {
+    $variables['link_attributes'] = new Attribute($variables['link_attributes'] ?? []);
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */

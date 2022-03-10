@@ -5,7 +5,6 @@
  * The Social Follow User module.
  */
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -115,16 +114,10 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $variables['profile'];
 
-    if ($profile->access('view')) {
-      /** @var \Drupal\Core\Template\Attribute $attributes */
-      $attributes = $variables['link_attributes'];
+    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
+    $helper = \Drupal::service('social_follow_user.helper');
 
-      $attributes
-        ->setAttribute('id', Html::getUniqueId('profile-preview'))
-        ->setAttribute('data-profile', (string) $profile->id());
-
-      $variables['#attached']['library'][] = 'social_follow_user/preview';
-    }
+    $helper->preview($profile, $variables, 'link_attributes');
   }
 }
 
