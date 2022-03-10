@@ -56,9 +56,15 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
     $path = 'attributes'
   ): void {
     if ($profile->access('view')) {
-      $attributes = &NestedArray::getValue($variables, (array) $path);
+      if (!NestedArray::keyExists($variables, $path = (array) $path)) {
+        NestedArray::setValue($variables, $path, []);
+      }
+
+      $attributes = &NestedArray::getValue($variables, $path);
+
       $attributes['id'] = Html::getUniqueId('profile-preview');
       $attributes['data-profile'] = $profile->id();
+
       $variables['#attached']['library'][] = 'social_follow_user/preview';
     }
   }
