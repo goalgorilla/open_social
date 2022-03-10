@@ -28,7 +28,6 @@ use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
-use Drupal\social_profile\Plugin\Field\FieldFormatter\SocialProfileFormatter;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\User;
@@ -37,13 +36,6 @@ use Drupal\user\UserInterface;
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
 const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
 const SOCIAL_PROFILE_SUGGESTIONS_ALL = 'all';
-
-/**
- * Implements hook_field_formatter_info_alter().
- */
-function social_profile_field_formatter_info_alter(array &$info): void {
-  $info['image']['class'] = SocialProfileFormatter::class;
-}
 
 /**
  * Implements hook_field_widget_form_alter().
