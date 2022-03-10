@@ -10,9 +10,17 @@ use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'image' formatter.
+ * Plugin implementation of the 'social_profile_avatar' formatter.
+ *
+ * @FieldFormatter(
+ *   id = "social_profile_avatar",
+ *   label = @Translation("Avatar"),
+ *   field_types = {
+ *     "image"
+ *   }
+ * )
  */
-class SocialProfileFormatter extends ImageFormatter {
+class SocialProfileAvatarFormatter extends ImageFormatter {
 
   /**
    * The entity type manager.
@@ -43,13 +51,6 @@ class SocialProfileFormatter extends ImageFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
-    return parent::defaultSettings() + ['avatar' => FALSE];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
@@ -67,12 +68,6 @@ class SocialProfileFormatter extends ImageFormatter {
       }
     }
 
-    $form['avatar'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Avatar'),
-      '#default_value' => $this->getSetting('avatar'),
-    ];
-
     return $form;
   }
 
@@ -84,10 +79,6 @@ class SocialProfileFormatter extends ImageFormatter {
 
     if ($this->getSetting('image_link') === 'owner') {
       $summary[] = $this->t('Linked to owner');
-    }
-
-    if ($this->getSetting('avatar')) {
-      $summary[] = $this->t('Avatar');
     }
 
     return $summary;
@@ -103,15 +94,11 @@ class SocialProfileFormatter extends ImageFormatter {
       $entity = $items->getEntity();
 
       if (!$entity->isNew() && $entity instanceof EntityOwnerInterface) {
-        $url = $entity->getOwner()->toUrl();
-
-        if ($this->getSetting('avatar')) {
-          $url->mergeOptions([
-            'attributes' => [
-              'class' => ['avatar'],
-            ],
-          ]);
-        }
+        $url = $entity->getOwner()->toUrl()->mergeOptions([
+          'attributes' => [
+            'class' => ['avatar'],
+          ],
+        ]);
 
         foreach ($elements as &$element) {
           $element['#url'] = $url;
