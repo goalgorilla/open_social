@@ -17,8 +17,3 @@ services:
       - '@config.factory'
     tags:
       - { name: config.factory.override, priority: 10}
-  social_group_invite.views_bulk_operations.access:
-    class: Drupal\social_group_invite\Access\SocialGroupInviteVBOAccess
-    arguments: ['@tempstore.private']
-    tags:
-      - { name: access_check, applies_to: _social_group_invite_views_bulk_operation_access }
