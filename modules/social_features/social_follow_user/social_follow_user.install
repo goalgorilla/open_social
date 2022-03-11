@@ -5,7 +5,6 @@
  * Install, update and uninstall functions for the social_follow_user module.
  */
 
-use Drupal\social_follow_user\Service\SocialFollowUserHelper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -14,8 +13,30 @@ use Symfony\Component\Yaml\Yaml;
  * Perform actions related to the installation of social_follow_user.
  */
 function social_follow_user_install(): void {
-  // Set default permissions.
-  SocialFollowUserHelper::setPermissions();
+  // Grant the default permissions for this feature.
+  user_role_grant_permissions(
+    'verified',
+    [
+      'flag follow_user',
+      'unflag follow_user',
+    ]
+  );
+
+  user_role_grant_permissions(
+    'contentmanager',
+    [
+      'flag follow_user',
+      'unflag follow_user',
+    ]
+  );
+
+  user_role_grant_permissions(
+    'sitemanager',
+    [
+      'flag follow_user',
+      'unflag follow_user',
+    ]
+  );
 }
 
 /**
