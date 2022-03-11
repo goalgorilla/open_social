@@ -6,6 +6,7 @@
  * Available variables:
  * - flag: The flag object.
  * - flaggable: The flaggable entity.
+ * - url: The url of the followers page.
  *
  * @see template_preprocess_followers()
  *
@@ -16,9 +17,11 @@
 {% set count = flagcount(flag, flaggable) %}
 
 <span class="badge__container">
-  <span class="badge__label">{{ count }}</span>
-  &nbsp;
-  <span class="badge__label badge__label--description">
-    {% trans %}follower{% plural count %}followers{% endtrans %}
-  </span>
+  <a href="{{ url }}">
+    <span class="badge__label">{{ count }}</span>
+    &nbsp;
+    <span class="badge__label badge__label--description">
+      {% trans %}follower{% plural count %}followers{% endtrans %}</a>
+    </span>
+  </a>
 </span>

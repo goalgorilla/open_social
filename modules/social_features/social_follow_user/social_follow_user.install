@@ -17,4 +17,21 @@ function social_follow_user_install(): void {
   SocialFollowUserHelper::setPermissions();
 
   module_set_weight('social_follow_user', 5);
+
+  // Display hero & statistic block on the following users/followers pages.
+  $config_names = [
+    'block.block.socialblue_profile_hero_block',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
+
+    if (!empty($config->getRawData())) {
+      $pages = $config->get('visibility.request_path.pages');
+      $pages .= "\r\n/user/*/following-users";
+      $pages .= "\r\n/user/*/followers";
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
 }

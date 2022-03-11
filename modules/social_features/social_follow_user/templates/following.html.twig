@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Default theme implementation of following counter.
+ *
+ * Available variables:
+ * - count: The number of the following users.
+ * - url: The url of the following users page.
+ *
+ * @see template_preprocess_following()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<span class="badge__container">
+  <a href="{{ url }}">
+    <span class="badge__label">{{ count }}</span>
+    &nbsp;
+    <span class="badge__label badge__label--description">
+      {% trans %}following{% endtrans %}
+    </span>
+  </a>
+</span>

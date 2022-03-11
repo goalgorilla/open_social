@@ -152,6 +152,10 @@ function social_follow_user_profile_view(
       '#theme' => 'followers',
       '#flaggable' => $entity,
     ];
+    $build['social_following_user'] = [
+      '#theme' => 'following',
+      '#flaggable' => $entity,
+    ];
   }
 }
 
@@ -210,6 +214,15 @@ function social_follow_user_theme(): array {
       'variables' => [
         'flag' => NULL,
         'flaggable' => NULL,
+        'url' => NULL,
+      ],
+      'file' => 'social_follow_user.theme.inc',
+    ],
+    'following' => [
+      'variables' => [
+        'flaggable' => NULL,
+        'count' => NULL,
+        'url' => NULL,
       ],
       'file' => 'social_follow_user.theme.inc',
     ],
