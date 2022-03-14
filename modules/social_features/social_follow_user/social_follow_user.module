@@ -50,13 +50,17 @@ function social_follow_user_entity_extra_field_info(): array {
  * Implements hook_entity_view_display_alter().
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
+  if ($context['entity_type'] !== 'profile') {
+    return;
+  }
+
   // Follow button appears on listed profile display modes.
   $allowed_display_modes = ['statistic', 'preview'];
 
   // Allow other modules to change the list.
   \Drupal::moduleHandler()->alter('social_follow_user_profile_modes', $allowed_display_modes);
 
-  if ($context['entity_type'] === 'profile' && !in_array($context['view_mode'], $allowed_display_modes)) {
+  if (!in_array($context['view_mode'], $allowed_display_modes)) {
     // By default, flag module add flags to all entity view display modes.
     // We want hide "Follow" button for the list of display modes.
     $display->removeComponent('flag_follow_user');
@@ -67,12 +71,11 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
  * Implements hook_follow_user_flag_action_access().
  */
 function social_follow_user_flag_action_access(string $action, FlagInterface $flag, AccountInterface $account, EntityInterface $flaggable = NULL): AccessResultInterface {
-  if ($flaggable instanceof ProfileInterface) {
-    // User should not be able to follow own profile.
-    return AccessResult::forbiddenIf($flaggable->getOwnerId() === $account->id());
-  }
-
-  return AccessResult::neutral();
+  return AccessResult::forbiddenIf(
+    $flaggable instanceof ProfileInterface &&
+    $flaggable->getOwnerId() === $account->id(),
+    'User should not be able to follow own profile.',
+  );
 }
 
 /**
@@ -247,6 +250,10 @@ function social_follow_user_theme(): array {
         'flaggable' => NULL,
       ],
       'file' => 'social_follow_user.theme.inc',
+    ],
+    'profile__profile__preview' => [
+      'render element' => 'elements',
+      'base hook' => 'profile',
     ],
   ];
 }
