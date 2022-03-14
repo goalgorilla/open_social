@@ -32,5 +32,16 @@
         <a{{ primary.attributes.addClass('btn', 'btn-block') }}>{{ primary.label }}</a>
       {% endif %}
     </div>
+
+    {% if invite_widget %}
+      <div class="btn-group">
+        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-block dropdown-toggle">
+          {% trans %}Invite{% endtrans %}<span class="caret"></span>
+        </button>
+        <div class="dropdown-menu dropdown-menu--invite">
+          {{ invite_widget }}
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endif %}

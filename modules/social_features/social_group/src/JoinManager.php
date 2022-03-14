@@ -158,6 +158,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
           '#theme' => 'join',
           '#primary' => array_shift($items),
           '#secondaries' => $items,
+          '#entity' => $entity,
         ];
 
         break;
