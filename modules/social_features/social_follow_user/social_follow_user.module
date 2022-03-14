@@ -21,6 +21,14 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
     return;
   }
 
+  // Remove field from display modes if "follow user" feature is disabled.
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    if ($display->getComponent('flag_follow_user')) {
+      $display->removeComponent('flag_follow_user');
+      return;
+    }
+  }
+
   // Follow button appears on listed profile display modes.
   $allowed_display_modes = ['statistic'];
 
