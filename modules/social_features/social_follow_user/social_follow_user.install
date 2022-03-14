@@ -2,10 +2,8 @@
 
 /**
  * @file
- * Lifecycle functions for the "Social Follow User" module.
+ * Install, update and uninstall functions for the social_follow_user module.
  */
-
-use Drupal\social_follow_user\SocialFollowUserHelper;
 
 /**
  * Implements hook_install().
@@ -13,6 +11,14 @@ use Drupal\social_follow_user\SocialFollowUserHelper;
  * Perform actions related to the installation of social_follow_user.
  */
 function social_follow_user_install(): void {
-  // Set default permissions.
-  SocialFollowUserHelper::setPermissions();
+  // Grant the default permissions for this feature.
+  foreach (['verified', 'contentmanager', 'sitemanager'] as $role_id) {
+    user_role_grant_permissions(
+      $role_id,
+      [
+        'flag follow_user',
+        'unflag follow_user',
+      ]
+    );
+  }
 }
