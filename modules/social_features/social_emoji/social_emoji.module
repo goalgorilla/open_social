@@ -11,7 +11,7 @@
  * Add emoji trigger element to posts and comments.
  */
 function social_emoji_field_widget_single_element_text_textarea_form_alter(&$element, &$form_state, $context) {
-  $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
+  $element['#suffix'] = "<div class='emoji-trigger'>" . t("Emoji") . "</div>";
   $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
 }
 
@@ -21,6 +21,6 @@ function social_emoji_field_widget_single_element_text_textarea_form_alter(&$ele
  * Add emoji trigger element to CKEditor.
  */
 function social_emoji_field_widget_single_element_text_textarea_with_summary_form_alter(&$element, &$form_state, $context) {
-  $element['#suffix'] = "<p class='emoji-trigger'>emoji</p>";
+  $element['#suffix'] = "<div class='emoji-trigger'>" . t("Emoji") . "</div>";
   $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
 }
