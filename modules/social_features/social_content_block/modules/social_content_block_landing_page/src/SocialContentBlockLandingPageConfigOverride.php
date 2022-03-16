@@ -52,11 +52,16 @@ class SocialContentBlockLandingPageConfigOverride implements ConfigFactoryOverri
           'handler_settings' => [
             'target_bundles' => [
               'custom_content_list' => 'custom_content_list',
+              'custom_multiple_content_list' => 'custom_multiple_content_list',
             ],
             'target_bundles_drag_drop' => [
               'custom_content_list' => [
                 'enabled' => TRUE,
                 'weight' => 17,
+              ],
+              'custom_multiple_content_list' => [
+                'enabled' => TRUE,
+                'weight' => 18,
               ],
             ],
           ],
