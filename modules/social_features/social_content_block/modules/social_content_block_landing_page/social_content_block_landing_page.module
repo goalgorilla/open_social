@@ -8,7 +8,7 @@
 /**
  * Implements hook_preprocess().
  */
-function social_content_block_landing_page_preprocess(&$variables, $hook) {
+function social_content_block_landing_page_preprocess(array &$variables): void {
   if (isset($variables['elements']['#custom_content_list_section'])) {
     $variables['attributes']['class'][] = 'card';
     $variables['attributes']['class'][] = 'teaser';
@@ -18,13 +18,32 @@ function social_content_block_landing_page_preprocess(&$variables, $hook) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_content_block_landing_page_preprocess_field(&$variables) {
+function social_content_block_landing_page_preprocess_field(array &$variables): void {
+  if ($variables['entity_type'] !== 'paragraph') {
+    return;
+  }
+
+  $paragraph_types = [
+    'custom_content_list',
+    'custom_multiple_content_list',
+  ];
+
+  $field_names = [
+    'field_custom_content_list',
+    'field_multiple_content_block',
+  ];
+
   if (
-    $variables['entity_type'] === 'paragraph' &&
+    in_array($variables['element']['#bundle'], $paragraph_types) &&
+    in_array($variables['field_name'], $field_names)
+  ) {
+    $variables['attributes']['class'][] = 'container';
+  }
+
+  if (
     $variables['element']['#bundle'] === 'custom_content_list' &&
     $variables['field_name'] === 'field_custom_content_list'
   ) {
-    $variables['attributes']['class'][] = 'container';
     $variables['items'][0]['content']['social_content_block']['#lazy_builder'][0] = 'social_content_block_landing_page.content_builder:build';
   }
 }
@@ -32,8 +51,13 @@ function social_content_block_landing_page_preprocess_field(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_content_block_landing_page_preprocess_paragraph(&$variables) {
-  if ($variables['paragraph']->bundle() === 'custom_content_list') {
+function social_content_block_landing_page_preprocess_paragraph(array &$variables): void {
+  $paragraph_types = [
+    'custom_content_list',
+    'custom_multiple_content_list',
+  ];
+
+  if (in_array($variables['paragraph']->bundle(), $paragraph_types)) {
     $variables['#attached']['library'][] = 'social_featured_content/featured';
     $variables['#attached']['library'][] = 'social_content_block_landing_page/social_content_block_landing_page';
     $variables['attributes']['class'][] = 'paragraph--featured';

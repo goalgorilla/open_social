@@ -6,6 +6,7 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Url;
 use Drupal\private_message\Plugin\Field\FieldFormatter\PrivateMessageThreadMemberFormatter;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the private message member field formatter.
@@ -30,10 +31,10 @@ class SocialPrivateMessageThreadMemberFormatter extends PrivateMessageThreadMemb
     $view_builder = $this->entityTypeManager->getViewBuilder('user');
 
     foreach ($items as $delta => $item) {
-      /** @var \Drupal\user\UserInterface $user */
+      /** @var \Drupal\Core\Field\FieldItemList $item */
       $user = $item->entity;
 
-      if ($user) {
+      if ($user instanceof UserInterface) {
         if ($this->getSetting('display_type') == 'label') {
           if ($access_profiles) {
             $url = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);

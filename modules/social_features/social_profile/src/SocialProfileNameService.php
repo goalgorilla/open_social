@@ -102,7 +102,7 @@ class SocialProfileNameService {
    * @param \Drupal\profile\Entity\ProfileInterface|null $profile
    *   The profile.
    *
-   * @return string|void
+   * @return string
    *   The generated profile name value.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -110,7 +110,7 @@ class SocialProfileNameService {
    */
   public function getProfileName(ProfileInterface $profile = NULL) {
     // Do nothing if no profile.
-    if ($profile == NULL) {
+    if ($profile === NULL) {
       return '';
     }
 

@@ -10,3 +10,7 @@ services:
       - '@entity_type.manager'
       - '@config.factory'
       - '@social_event.enroll'
+  social_event_invite.route_subscriber:
+    class: Drupal\social_event_max_enroll\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
