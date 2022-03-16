@@ -14453,6 +14453,11 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_privacy/src/RestrictedNameProcessorOverride.php
 
 		-
+			message: "#^Call to method getProfileName\\(\\) on an unknown class Drupal\\\\social_profile\\\\SocialProfileNameService\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php
+
+		-
 			message: "#^Method Drupal\\\\social_profile_privacy\\\\Service\\\\SocialProfilePrivacyBatchHelper\\:\\:bulkUpdateProfileNames\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php
@@ -14469,6 +14474,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_profile_privacy\\\\Service\\\\SocialProfilePrivacyBatchHelper\\:\\:updateProfileName\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$profile_name_service contains unknown class Drupal\\\\social_profile\\\\SocialProfileNameService\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_privacy/src/Service/SocialProfilePrivacyBatchHelper.php
 
@@ -14951,16 +14961,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
-
-		-
-			message: "#^Expression in empty\\(\\) is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/src/SocialProfileNameService.php
-
-		-
-			message: "#^Parameter \\#1 \\$uid of function social_profile_privacy_private_fields_list expects int, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/src/SocialProfileNameService.php
 
 		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorageInterface\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"

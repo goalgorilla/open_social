@@ -8,11 +8,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
-use Drupal\social_profile\SocialProfileNameService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -65,13 +63,6 @@ class EnrollRequestDeclineForm extends FormBase {
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
-   * The Social Profile name service.
-   *
-   * @var \Drupal\social_profile\SocialProfileNameService
-   */
-  protected SocialProfileNameService $socialProfileNameService;
-
-  /**
    * EnrollRequestDeclineForm constructor.
    *
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
@@ -82,21 +73,17 @@ class EnrollRequestDeclineForm extends FormBase {
    *   The enrollment status helper.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager.
-   * @param \Drupal\social_profile\SocialProfileNameService $social_profile_name_service
-   *   The Social Profile name service.
    */
   public function __construct(
     RedirectDestinationInterface $redirect_destination,
     AccountInterface $current_user,
     EventEnrollmentStatusHelper $enrollmentStatusHelper,
-    EntityTypeManagerInterface $entity_type_manager,
-    SocialProfileNameService $social_profile_name_service
+    EntityTypeManagerInterface $entity_type_manager
   ) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
     $this->entityTypeManager = $entity_type_manager;
-    $this->socialProfileNameService = $social_profile_name_service;
   }
 
   /**
@@ -107,8 +94,7 @@ class EnrollRequestDeclineForm extends FormBase {
       $container->get('redirect.destination'),
       $container->get('current_user'),
       $container->get('social_event.status_helper'),
-      $container->get('entity_type.manager'),
-      $container->get('social_profile.name_service')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -133,17 +119,11 @@ class EnrollRequestDeclineForm extends FormBase {
     // Get the event_enrollment from the request.
     $this->eventEnrollment = $this->getRequest()->get('event_enrollment');
 
-    // Load the user profile to format a nice name.
+    // Format the name if we have an actual event enrolment. This code was
+    // previously written in this way, though I have no clue how this form can
+    // work without actually having an event enrollment.
     if (!empty($this->eventEnrollment)) {
-      /** @var \Drupal\profile\Entity\ProfileInterface[] $user_profiles */
-      $user_profiles = $this->entityTypeManager
-        ->getStorage('profile')
-        ->loadByProperties(['uid' => $this->eventEnrollment->getAccount()]);
-
-      $user_profile = reset($user_profiles);
-      if ($user_profile instanceof ProfileInterface) {
-        $this->fullName = $this->socialProfileNameService->getProfileName($user_profile);
-      }
+      $this->fullName = $this->eventEnrollment->getAccount()->getDisplayName();
     }
 
     $form['#attributes']['class'][] = 'form--default';
