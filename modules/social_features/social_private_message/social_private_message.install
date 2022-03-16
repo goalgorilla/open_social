@@ -73,10 +73,10 @@ function social_private_message_update_dependencies() {
     'social_core' => 8802,
   ];
 
-  // Make sure that we run the update of the private message template only after
-  // the submodule private_message_notify is enabled.
-  $dependencies['social_private_message'][11007] = [
-    'private_message' => 8007,
+  // Make sure that we delete/update private_message configurations before
+  // private_message_notify will be enabled in the private_message module.
+  $dependencies['private_message'][8007] = [
+    'social_private_message' => 11008,
   ];
 
   return $dependencies;
@@ -359,21 +359,120 @@ function social_private_message_update_11005(): void {
  * Delete the default message template provided by private_message.
  */
 function social_private_message_update_11006(): void {
-  // We have to delete this config provided by private_message since it was
-  // moved to an optional submodule that will be enabled and this will make
-  // error:
-  // Configuration objects (message.template.private_message_notification)
-  // provided by private_message_notify already exist in active configuration.
-  $config = \Drupal::configFactory()->getEditable('message.template.private_message_notification');
-  if (!$config->isNew()) {
-    $config->delete();
-  }
+  // Removed hook due to database update error.
+  // @see https://www.drupal.org/project/social/issues/3266049
 }
 
 /**
  * Disable the default message template provided by private_message.
  */
 function social_private_message_update_11007(): void {
+  // Removed hook due to database update error and moved code to
+  // social_private_message_update_11011.
+  // @see https://www.drupal.org/project/social/issues/3266049
+}
+
+/**
+ * Delete the configs that will be migrated to private_message_notify.
+ */
+function social_private_message_update_11008(): void {
+  // Only delete configurations if private_message_notify is not installed
+  // already.
+  if (\Drupal::moduleHandler()->moduleExists('private_message_notify')) {
+    return;
+  }
+
+  // We should delete configurations that will be migrated to
+  // private_message_notify to prevent database update errors.
+  $configs = [
+    'core.entity_form_display.message.private_message_notification.default',
+    'core.entity_view_display.message.private_message_notification.default',
+    'core.entity_view_display.message.private_message_notification.mail_body',
+    'core.entity_view_display.message.private_message_notification.mail_subject',
+    'field.field.message.private_message_notification.field_message_pm_thread',
+    'field.field.message.private_message_notification.field_message_private_message',
+    'field.storage.message.field_message_pm_thread',
+    'field.storage.message.field_message_private_message',
+    'message.template.private_message_notification',
+  ];
+
+  $config_factory = \Drupal::configFactory();
+
+  // Some users could edit the configuration, so we need to save it temporarily
+  // and update after private_message_notify will be enabled.
+  // @see social_private_message_update_11010
+  foreach ($configs as $name) {
+    $config = $config_factory->getEditable($name);
+    if ($config->isNew()) {
+      continue;
+    }
+
+    // Set config data to a new temporary config.
+    $config_tmp = $config_factory->getEditable("{$name}.tmp");
+    $config_tmp->setData($config->getRawData())->save();
+
+    // Delete config.
+    $config->delete();
+  }
+}
+
+/**
+ * Enable notifications submodule.
+ */
+function social_private_message_update_11009(): void {
+  $module = 'private_message_notify';
+  if (!\Drupal::moduleHandler()->moduleExists($module)) {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+    $installer = \Drupal::service('module_installer');
+    $installer->install([$module]);
+  }
+}
+
+/**
+ * Update the configs that were migrated to private_message_notify.
+ */
+function social_private_message_update_11010(): void {
+  $configs = [
+    'core.entity_form_display.message.private_message_notification.default',
+    'core.entity_view_display.message.private_message_notification.default',
+    'core.entity_view_display.message.private_message_notification.mail_body',
+    'core.entity_view_display.message.private_message_notification.mail_subject',
+    'field.field.message.private_message_notification.field_message_pm_thread',
+    'field.field.message.private_message_notification.field_message_private_message',
+    'field.storage.message.field_message_pm_thread',
+    'field.storage.message.field_message_private_message',
+    'message.template.private_message_notification',
+  ];
+
+  try {
+    $config_factory = \Drupal::configFactory();
+
+    foreach ($configs as $name) {
+      // Load temporary config.
+      $config_tmp = $config_factory->getEditable("{$name}.tmp");
+
+      // If there is not exist a temporary config, do nothing.
+      if ($config_tmp->isNew()) {
+        continue;
+      }
+
+      // Load temporary config and update original one.
+      $config = $config_factory->getEditable($name);
+      $config->setData($config_tmp->getRawData())->save();
+
+      // Delete temporary config.
+      $config_tmp->delete();
+    }
+  }
+  catch (Exception $e) {
+    \Drupal::logger('social_private_message')->error($e->getMessage());
+  }
+}
+
+/**
+ * Disable the default message template provided by private_message.
+ */
+function social_private_message_update_11011(): void {
   $config = \Drupal::configFactory()->getEditable('message.template.private_message_notification');
 
   // Check if the config that we want to update already exists in the active
