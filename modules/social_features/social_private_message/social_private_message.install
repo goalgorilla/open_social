@@ -79,6 +79,14 @@ function social_private_message_update_dependencies() {
     'social_private_message' => 11008,
   ];
 
+  // > [notice] Update started: social_private_message_update_11002
+  // > [error]  The "VariationCache" module is not installed.
+  // Please run the update script to install it properly.
+  // > [error]  Update failed: social_private_message_update_11002
+  $dependencies['social_private_message'][11002] = [
+    'group' => 8020,
+  ];
+
   return $dependencies;
 }
 
