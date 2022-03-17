@@ -1499,7 +1499,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-03-10 11:02+0000\n"
+"POT-Creation-Date: 2022-03-17 00:17+0000\n"
 "PO-Revision-Date: 2021-06-02 00:14+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -3304,6 +3304,8 @@ msgstr "Accions"
 
 #: modules/social_features/social_album/config/schema/social_album.schema.yml:0
 #: modules/social_features/social_album/src/Form/SocialAlbumSettingsForm.php:35
+#: modules/social_features/social_follow_user/config/schema/social_follow_user.schema.yml:0
+#: modules/social_features/social_follow_user/src/Form/SocialFollowUserSettingsForm.php:35
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserStatus.php:30
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_comment.field_status.yml:0
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_node.field_status.yml:0
@@ -3798,6 +3800,10 @@ msgstr "Administrar la configuració d’esdeveniments"
 msgid "Administer Event enrollment entities"
 msgstr "Administrar entitats d’inscripció d’esdeveniments"
 
+#: modules/social_features/social_follow_user/social_follow_user.permissions.yml:0
+msgid "Administer Follow User Settings"
+msgstr ""
+
 #: modules/custom/social_font/social_font.permissions.yml:0
 msgid "Administer Font entities"
 msgstr "Administrar les entitats del tipus de lletra"
@@ -3985,6 +3991,7 @@ msgstr ""
 msgid "Albums Overview Page"
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:110
 #: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:104
 #: modules/social_features/social_event/social_event.install:1234
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
@@ -4128,6 +4135,10 @@ msgid ""
 msgstr ""
 "Permet accedir al formulari de configuració d’esdeveniments per configurar "
 "les opcions d’esdeveniments generals."
+
+#: modules/social_features/social_follow_user/social_follow_user.permissions.yml:0
+msgid "Allow access to the follow user settings form."
+msgstr ""
 
 #: modules/social_features/social_topic/social_topic.permissions.yml:0
 msgid ""
@@ -4622,7 +4633,7 @@ msgstr ""
 msgid "Are you sure you want to approve the membership request for @name?"
 msgstr ""
 
-#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:117
+#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:154
 msgid "Are you sure you want to decline the enrollment request for @name?"
 msgstr ""
 
@@ -4867,6 +4878,10 @@ msgstr "Bàsic"
 msgid "Basic HTML"
 msgstr "HTML bàsic"
 
+#: modules/social_features/social_content_block/modules/social_page_content_block/src/Plugin/MultipleContentBlock/PageContent.php:7
+msgid "Basic Page"
+msgstr ""
+
 #: modules/social_features/social_core/social_core.links.menu.yml:0
 msgid "Basic Site Settings"
 msgstr ""
@@ -4927,6 +4942,7 @@ msgstr "Entre"
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_content_block/modules/social_content_block_landing_page/config/install/field.field.paragraph.custom_content_list.field_custom_content_list.yml:0
+#: modules/social_features/social_content_block/modules/social_content_block_landing_page/config/install/field.field.paragraph.custom_multiple_content_list.field_multiple_content_block.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
@@ -5074,7 +5090,7 @@ msgstr "No es pot enviar el correu electrònic per %entity"
 
 #: modules/social_features/social_core/social_core.module:963
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:294
-#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:128
+#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:165
 #: modules/social_features/social_group/social_group.module:804;928
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:130
 #: modules/social_features/social_profile/social_profile.module:199
@@ -5316,6 +5332,10 @@ msgstr "Tanca informes per contingut inapropiat"
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_post.field_status.yml:0
 msgid "Closed"
 msgstr "Tancat"
+
+#: modules/social_features/social_content_block/modules/social_group_content_block/src/Plugin/MultipleContentBlock/ClosedGroupContent.php:7
+msgid "Closed Group"
+msgstr ""
 
 #: modules/social_features/social_featured_content/templates/group--featured.html.twig:40
 #: modules/social_features/social_group/config/install/group.type.closed_group.yml:0
@@ -5711,7 +5731,12 @@ msgstr ""
 msgid "Contain the \"Custom content list block\" custom block."
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_content_block_landing_page/config/install/paragraphs.paragraphs_type.custom_multiple_content_list.yml:0
+msgid "Contain the \"Custom multiple content list block\" custom block."
+msgstr ""
+
 #: modules/social_features/social_content_block/social_content_block.install:164;170
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:105
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
 #: modules/social_features/social_topic/social_topic.install:107
 #: config/install/views.view.content.yml:0;0;0;0
@@ -5756,6 +5781,10 @@ msgstr ""
 msgid "Content block sorting"
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:10
+msgid "Content blocks"
+msgstr ""
+
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
 #: modules/social_features/social_comment/config/install/views.view.comment.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
@@ -5798,6 +5827,7 @@ msgstr ""
 msgid "Content tagging module"
 msgstr "Mòdul d'etiquetatge del contingut"
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:132
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_content_tags.yml:0
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_content_tag.yml:0
 #: modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_content_tag.yml:0
@@ -6284,6 +6314,14 @@ msgstr ""
 msgid "Custom dynamic entity reference formatter for activities"
 msgstr ""
 "Format de referència d'entitats dinàmiques personalitzades per a activitats"
+
+#: modules/social_features/social_content_block/modules/social_content_block_landing_page/config/install/paragraphs.paragraphs_type.custom_multiple_content_list.yml:0
+msgid "Custom multiple content list"
+msgstr ""
+
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:10
+msgid "Custom multiple content list block"
+msgstr ""
 
 #: modules/social_features/social_core/src/Plugin/Menu/HomepageConfigurationHeroBlockLink.php:70
 msgid "Customize home page"
@@ -7436,6 +7474,10 @@ msgstr "Inscripcions"
 msgid "Enrollments Block"
 msgstr "Bloc d'inscripcions"
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:133
+msgid "Enter a comma separated list of content tags."
+msgstr ""
+
 #: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:171
 msgid "Enter information you want to show in the email notifications footer"
 msgstr ""
@@ -7570,6 +7612,7 @@ msgstr "S'ha produït un error en unir-se al grup."
 
 #: translations.php:96
 #: modules/custom/social_demo/src/Plugin/DemoContent/Event.php:8
+#: modules/social_features/social_content_block/modules/social_event_content_block/src/Plugin/MultipleContentBlock/EventContent.php:7
 #: modules/social_features/social_event/src/Plugin/GraphQL/DataProducer/EventManagers.php:11
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_event.yml:0
 #: modules/social_features/social_event/config/install/node.type.event.yml:0
@@ -8071,6 +8114,10 @@ msgstr "Banderes"
 msgid "Flat style"
 msgstr "Estil pla"
 
+#: modules/social_features/social_content_block/modules/social_group_content_block/src/Plugin/MultipleContentBlock/FlexibleGroupContent.php:7
+msgid "Flexible Group"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/src/ContentTranslationDefaultsConfigOverride.php:30
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.type.flexible_group.yml:0
 msgid "Flexible group"
@@ -8125,6 +8172,7 @@ msgid "Flushing profiles."
 msgstr "Descarregant els perfils."
 
 #: modules/social_features/social_follow_taxonomy/config/install/flag.flag.follow_term.yml:0
+#: modules/social_features/social_follow_user/config/install/flag.flag.follow_user.yml:0
 msgid "Follow"
 msgstr ""
 
@@ -8156,6 +8204,14 @@ msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/config/install/flag.flag.follow_term.yml:0
 msgid "Follow term"
+msgstr ""
+
+#: modules/social_features/social_follow_user/config/install/flag.flag.follow_user.yml:0
+msgid "Follow user"
+msgstr ""
+
+#: modules/social_features/social_follow_user/social_follow_user.routing.yml:0
+msgid "Follow user settings"
 msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
@@ -9092,6 +9148,7 @@ msgid "Individual address field settings"
 msgstr ""
 
 #: modules/social_features/social_content_block/social_content_block.install:187
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:93
 #: modules/social_features/social_profile/social_profile.links.task.yml:0
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:43
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0;0
@@ -9562,6 +9619,7 @@ msgid "Last two comments on post"
 msgstr "Últims dos comentaris a la publicació"
 
 #: modules/social_features/social_content_block/src/ContentBlockBase.php:31
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:161
 msgid "Last updated"
 msgstr ""
 
@@ -10297,6 +10355,7 @@ msgid "Most popular"
 msgstr ""
 
 #: modules/social_features/social_content_block/src/ContentBlockBase.php:26
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:162
 msgid "Most recent"
 msgstr ""
 
@@ -10774,6 +10833,7 @@ msgstr ""
 msgid "Number of groups where node is added."
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:144
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_item_amount.yml:0
 msgid "Number of items"
 msgstr ""
@@ -10960,6 +11020,10 @@ msgstr ""
 #: modules/social_features/social_mentions/social_mentions.module:183
 msgid "Only username"
 msgstr "Només nom de perfil"
+
+#: modules/social_features/social_content_block/modules/social_group_content_block/src/Plugin/MultipleContentBlock/OpenGroupContent.php:7
+msgid "Open Group"
+msgstr ""
 
 #: social.info.yml:0
 #: modules/custom/social_lets_connect/social_lets_connect.links.menu.yml:0
@@ -11976,6 +12040,10 @@ msgstr ""
 msgid "Provides \"Follow Term\" flag type and related functionality."
 msgstr ""
 
+#: modules/social_features/social_follow_user/social_follow_user.info.yml:0
+msgid "Provides \"Follow User\" flag type and related functionality."
+msgstr ""
+
 #: modules/social_features/social_album/social_album.info.yml:0
 msgid "Provides Album content type and related configuration."
 msgstr ""
@@ -12209,6 +12277,10 @@ msgstr "Públic"
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:50
 msgid "Public - visible to everyone including people who are not a member"
 msgstr "Públic - Visible per a tothom inclús visitants sense registre"
+
+#: modules/social_features/social_content_block/modules/social_group_content_block/src/Plugin/MultipleContentBlock/PublicGroupContent.php:7
+msgid "Public Group"
+msgstr ""
 
 #: modules/social_features/social_group/config/install/group.type.public_group.yml:0
 msgid "Public group"
@@ -13270,6 +13342,10 @@ msgstr ""
 msgid "Select the type of content which will be shown in this block"
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:118
+msgid "Select the type(s) of content which will be shown in this block."
+msgstr ""
+
 #: modules/social_features/social_user/social_user.links.menu.yml:0
 msgid "Select which icons to show or hide in the main (top) navigation bar."
 msgstr ""
@@ -13834,6 +13910,7 @@ msgstr "Social"
 
 #: modules/custom/social_graphql/social_graphql.info.yml:0
 #: modules/social_features/social_branding/social_branding.info.yml:0
+#: modules/social_features/social_follow_user/social_follow_user.info.yml:0
 msgid "Social (Experimental)"
 msgstr ""
 
@@ -14098,6 +14175,14 @@ msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.info.yml:0
 msgid "Social Follow Taxonomy Term"
+msgstr ""
+
+#: modules/social_features/social_follow_user/social_follow_user.info.yml:0
+msgid "Social Follow User"
+msgstr ""
+
+#: modules/social_features/social_follow_user/config/schema/social_follow_user.schema.yml:0
+msgid "Social Follow User Settings"
 msgstr ""
 
 #: modules/custom/social_font/social_font.info.yml:0
@@ -14600,6 +14685,7 @@ msgid "Sort key"
 msgstr ""
 
 #: modules/social_features/social_content_block/social_content_block.install:146;152
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:153;158
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_sorting.yml:0
 msgid "Sorting"
 msgstr ""
@@ -14705,6 +14791,7 @@ msgstr ""
 msgid "Submit"
 msgstr "Envia"
 
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:98
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_subtitle.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_subtitle.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_subtitle.yml:0
@@ -15146,7 +15233,7 @@ msgstr ""
 "El(s) correu(s) electrònic(s) s'enviaran en segon pla. Se't notificarà un "
 "cop completats."
 
-#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:160
+#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:197
 msgid "The enrollment request of @name has been declined."
 msgstr ""
 
@@ -15991,6 +16078,7 @@ msgstr ""
 
 #: translations.php:95
 #: modules/custom/social_demo/src/Plugin/DemoContent/Topic.php:7
+#: modules/social_features/social_content_block/src/Plugin/MultipleContentBlock/TopicContent.php:7
 #: modules/social_features/social_topic/config/install/node.type.topic.yml:0
 msgid "Topic"
 msgstr "Tema"
@@ -16114,6 +16202,7 @@ msgid "Type configuration"
 msgstr "Configuració del tipus"
 
 #: modules/social_features/social_content_block/social_content_block.install:94
+#: modules/social_features/social_content_block/src/Plugin/Block/MultipleContentBlock.php:117
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml:0
 msgid "Type of content"
 msgstr ""
@@ -16182,6 +16271,7 @@ msgid "Unapproved comments"
 msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/config/install/flag.flag.follow_term.yml:0
+#: modules/social_features/social_follow_user/config/install/flag.flag.follow_user.yml:0
 msgid "Unfollow"
 msgstr ""
 
@@ -17175,7 +17265,7 @@ msgstr ""
 msgid "Yahoo"
 msgstr ""
 
-#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:144
+#: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:181
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:273
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:146
 msgid "Yes"
