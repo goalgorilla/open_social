@@ -297,8 +297,6 @@ function social_profile_preprocess_form_element_label(&$variables) {
 function social_profile_preprocess_field__field_profile_image(array &$variables): void {
   if ($variables['element']['#view_mode'] === 'compact') {
     $element = &$variables['items'][0]['content'];
-
-    /** @var \Drupal\Core\Url $url */
     $url = $element['#url'];
 
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
@@ -306,9 +304,11 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
 
     $name = $profile->getOwner()->getDisplayName();
 
-    $url->mergeOptions([
-      'attributes' => ['title' => $name],
-    ]);
+    if ($url instanceof Url) {
+      $url->mergeOptions([
+        'attributes' => ['title' => $name],
+      ]);
+    }
 
     $element['#item_attributes']['alt'] = $name;
   }
