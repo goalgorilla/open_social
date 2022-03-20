@@ -131,7 +131,7 @@ Feature: Create Open Group
     When I fill in the following:
       | Title |Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "News"
+    And I check the box "News"
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
     And I press "Create topic"
     And I should see "Test group topic"

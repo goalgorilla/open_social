@@ -15,7 +15,7 @@ Feature: Private files
 
     # Create a topic with one attachment.
     Given I am on "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     When I fill in the following:
       | Title | Private: topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Private: topic text"
@@ -68,7 +68,7 @@ Feature: Private files
     And I am logged in as "wysiwyg_private_user_1"
 
     Given I am on "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     When I fill in the following:
       | Title | Private WYSIWYG: topic |
     And I click on the image icon in the WYSIWYG editor

@@ -13,7 +13,7 @@ Feature: Follow Content
     When I fill in the following:
       | Title | This is a follow topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     And I should see "Topic This is a follow topic has been created."
     And I should see "This is a follow topic" in the "Hero block"
@@ -44,7 +44,7 @@ Feature: Follow Content
       And I fill in the following:
         | Title | This is a follow topic |
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-      And I click radio button "News"
+      And I check the box "News"
       And I press "Create topic"
     Then I should see "Topic This is a follow topic has been created."
       And I should see "This is a follow topic" in the "Hero block"

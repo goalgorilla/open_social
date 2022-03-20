@@ -90,7 +90,7 @@ Feature: Edit my group as a group manager
     And I fill in the following:
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     Then I should see "Test group topic"
     Given I logout
