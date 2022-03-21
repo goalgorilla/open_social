@@ -20,7 +20,7 @@
               dialogs[selector] = Drupal.dialog(
                 '<div>'.concat(profiles[identifier], '</div>'),
                 {
-                  dialogClass: 'social-dialog',
+                  dialogClass: 'social-dialog social-dialog--user-preview',
                   width: '384px',
                   position: {
                     my: 'left top',
