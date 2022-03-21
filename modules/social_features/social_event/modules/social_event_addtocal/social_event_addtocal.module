@@ -16,7 +16,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
 function social_event_addtocal_entity_extra_field_info() {
   // Add the 'Add to Calendar' field.
   $extra['node']['event']['display']['field_event_addtocal'] = [
-    'label' => t('Add to Calendar'),
+    'label' => t('Add to calendar'),
     'description' => t('Allow users to add the event to the calendar'),
     'weight' => 100,
     'visible' => FALSE,
@@ -58,7 +58,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
     // Split links if there is more than one.
     if (count($links) > 1) {
       $build['field_event_addtocal']['#attributes']['no-split'] = [
-        'title' => t('Add to Calendar'),
+        'title' => t('Add to calendar'),
         'alignment' => 'right',
       ];
     }
@@ -69,7 +69,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
  * Implements hook_preprocess_HOOK() for "input--button--split.html.twig".
  */
 function social_event_addtocal_preprocess_input__button__split(array &$variables): void {
-  if (!empty($variables['element']['#value']) && $variables['element']['#value'] == 'Add to Calendar') {
+  if (!empty($variables['element']['#value']) && $variables['element']['#value'] == 'Add to calendar') {
     if ($variables['split_button_attributes'] instanceof Attribute) {
       $variables['split_button_attributes']->removeClass('btn-default');
     }
@@ -123,8 +123,9 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
     }
     // Change title if only one calendar enabled.
     if (count($links) === 1) {
-      $links[0]['title'] = t('Add to Calendar');
+      $links[0]['title'] = t('Add to calendar');
     }
   }
+
   return $links;
 }
