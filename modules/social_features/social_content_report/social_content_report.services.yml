@@ -15,3 +15,8 @@ services:
     class: Drupal\social_content_report\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_content_report.translation_defaults:
+    class: Drupal\social_content_report\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }
