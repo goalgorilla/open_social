@@ -67,6 +67,7 @@ Feature: View filtered users as site manager
     When I select "Behat Group 2" from "Group"
     And I additionally select "Behat Group 3" from "Group"
     And I press "Filter"
+    And I wait for "3" seconds
     Then I should see "Behat Member 1"
     And I should see "Behat Member 2"
     And I should not see "Behat Member 3"
