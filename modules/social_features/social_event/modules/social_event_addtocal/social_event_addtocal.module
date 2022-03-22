@@ -72,9 +72,8 @@ function social_event_addtocal_preprocess_input__button__split(array &$variables
   if (!empty($variables['element']['#value']) && $variables['element']['#value'] == 'Add to calendar') {
     if ($variables['split_button_attributes'] instanceof Attribute) {
       $variables['split_button_attributes']->removeClass('btn-default');
+      $variables['split_button_attributes']->addClass('btn-link');
     }
-
-    $variables['button_type'] = 'flat';
   }
 }
 
