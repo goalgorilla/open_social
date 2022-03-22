@@ -144,3 +144,25 @@ function social_group_invite_update_11001(): void {
     $field_config_storage->create($data)->save();
   }
 }
+
+/**
+ * Add views bulk operations to "manage invites" page.
+ */
+function social_group_invite_update_11002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
+
+  // Reorder displayed fields.
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('views.view.social_group_invitations');
+  $fields = $config->get('display.default.display_options.fields');
+  $fields = ['social_views_bulk_operations_bulk_form_invites' => $fields['social_views_bulk_operations_bulk_form_invites']] + $fields;
+  $config->set('display.default.display_options.fields', $fields);
+  $config->save();
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
