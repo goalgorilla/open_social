@@ -9,7 +9,7 @@ services:
     tags:
       - { name: event_subscriber }
   social_group_invite.override:
-    class: \Drupal\social_group_invite\SocialGroupInviteConfigOverride
+    class: Drupal\social_group_invite\SocialGroupInviteConfigOverride
     arguments:
       - '@request_stack'
       - '@email.validator'

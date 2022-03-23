@@ -17,7 +17,7 @@ Feature: Create topic like
     When I fill in the following:
       | Title | Topic for likes |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-     And I click radio button "News"
+     And I check the box "News"
      And I press "Create topic"
     Then I should see "Topic for likes has been created."
 

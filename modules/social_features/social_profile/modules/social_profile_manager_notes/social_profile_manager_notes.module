@@ -11,6 +11,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\Profile;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 
 /**
  * Implements hook_form_alter().
@@ -83,4 +86,35 @@ function social_profile_manager_notes_theme($existing, $type, $theme, $path) {
     ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_profile_manager_notes_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
+  if ($context['entity_type'] === 'profile'
+    && $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE) {
+    $display->setComponent('field_manager_notes', [
+      'weight' => 6,
+      'settings' => [],
+      'third_party_settings' => [],
+      'type' => 'comment_default',
+      'region' => 'content',
+      'label' => 'visually_hidden',
+    ]);
+  }
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_profile_manager_notes_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if ($context['entity_type'] === 'profile') {
+    if (in_array($context['form_mode'], [
+      EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE,
+      'edit',
+    ])) {
+      $form_display->removeComponent('field_manager_notes');
+    }
+  }
 }

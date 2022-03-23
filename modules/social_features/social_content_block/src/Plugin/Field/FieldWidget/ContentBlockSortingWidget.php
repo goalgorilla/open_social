@@ -28,7 +28,7 @@ class ContentBlockSortingWidget extends OptionsSelectWidget {
    *
    * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $manager;
+  protected ContentBlockManagerInterface $manager;
 
   /**
    * Constructs a ContentBlockSortingWidget object.
@@ -94,20 +94,22 @@ class ContentBlockSortingWidget extends OptionsSelectWidget {
   /**
    * Returns the form for a single field widget.
    *
-   * @param \Drupal\Core\Field\FieldItemListInterface|mixed[] $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   Array of default values for this field.
    * @param int $delta
    *   The order of this item in the array of sub-elements (0, 1, 2, etc.).
-   * @param mixed[] $element
+   * @param array $element
    *   A form element array containing basic properties for the widget.
-   * @param mixed[] $form
+   * @param array $form
    *   The form structure where widgets are being attached to. This might be a
    *   full form structure, or a sub-element of a larger form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
-   * @return mixed[]
+   * @return array
    *   The form elements for a single widget for this field.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);

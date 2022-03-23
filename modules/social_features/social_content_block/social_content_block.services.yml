@@ -3,6 +3,12 @@ services:
     class: Drupal\social_content_block\ContentBlockManager
     parent: default_plugin_manager
 
+  plugin.manager.multiple_content_block:
+    class: Drupal\social_content_block\Services\MultipleContentBlockManager
+    parent: default_plugin_manager
+    arguments:
+      - '@entity_type.manager'
+
   social_content_block.override:
     class: Drupal\social_content_block\SocialContentBlockOverride
     arguments: ['@config.factory']

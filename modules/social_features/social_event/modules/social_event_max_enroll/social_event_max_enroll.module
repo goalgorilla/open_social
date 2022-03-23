@@ -17,7 +17,12 @@ use Drupal\views\ViewExecutable;
  * Alter "Event enrollments" views. Add number of spots left.
  */
 function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->current_display === 'event_enrollments' && $view->id() === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
+  if (
+    $view->current_display === 'event_enrollments' &&
+    $view->id() === 'event_enrollments' &&
+    isset($output['#rows']) &&
+    !empty($view->args[0])
+  ) {
     $nid = $view->args[0];
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
@@ -71,7 +76,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           ];
         }
 
-        // Add an details element to status.
+        // Add a details element to status.
         // Also hide checkbox if feature is disabled globally.
         $form['field_event_max_enroll_wrapper'] = [
           '#type' => 'details',
@@ -105,6 +110,14 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       // We can't use dependency injection, because service is optional.
       $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
       $node = \Drupal::routeMatch()->getParameter('node');
+
+      // If there is node ID instead of an object then load node with NID.
+      if (!is_object($node) && $node !== NULL) {
+        /** @var \Drupal\node\NodeStorageInterface $node_storage */
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        /** @var \Drupal\node\NodeInterface $node */
+        $node = $node_storage->load((int) $node);
+      }
 
       if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
         // Count how many spots are left.
@@ -208,5 +221,52 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
           '@spots_left' => $spots_left,
         ]
       );
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_event_max_enroll_entity_operation_alter(array &$operations, EntityInterface $entity): void {
+  // Do nothing if module social_event_invite is not enabled.
+  if (!\Drupal::moduleHandler()->moduleExists('social_event_invite')) {
+    return;
+  }
+
+  // Check if the entity type is event_enrollment.
+  if ($entity->getEntityTypeId() !== 'event_enrollment') {
+    return;
+  }
+
+  // Get the route name.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  // Check if we're on the correct view and appropriate operation exists.
+  // Otherwise, it would update all actions across the platform.
+  if (
+    $route_name === 'view.user_event_invites.page_user_event_invites' &&
+    !empty($operations['accept'])
+  ) {
+    $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+
+    /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+    $event_id = $entity->getFieldValue('field_event', 'target_id');
+
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($event_id);
+
+    if (
+      $node instanceof NodeInterface &&
+      $event_max_enroll_service->isEnabled($node)
+    ) {
+      // If there are no spots left, disable the Accept invite button and add
+      // the button title with appropriate notice.
+      if ($event_max_enroll_service->getEnrollmentsLeft($node) === 0) {
+        $operations['accept']['attributes'] = [
+          'disabled' => 'disabled',
+          'title' => t('No spots left'),
+        ];
+      }
+    }
   }
 }
