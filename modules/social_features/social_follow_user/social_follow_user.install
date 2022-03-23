@@ -5,7 +5,7 @@
  * Install, update and uninstall functions for the social_follow_user module.
  */
 
-use Drupal\social_follow_user\Service\SocialFollowUserHelper;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -13,10 +13,19 @@ use Drupal\social_follow_user\Service\SocialFollowUserHelper;
  * Perform actions related to the installation of social_follow_user.
  */
 function social_follow_user_install(): void {
-  // Set default permissions.
-  SocialFollowUserHelper::setPermissions();
+  // Grant the default permissions for this feature.
+  $permissions = [
+    'flag follow_user',
+    'unflag follow_user',
+  ];
 
-  module_set_weight('social_follow_user', 5);
+  foreach (['verified', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, $permissions);
+  }
+
+  // Allow SM to configure visibility for Social Follow User feature.
+  $permissions[] = 'administer social_follow_user settings';
+  user_role_grant_permissions('sitemanager', $permissions);
 
   // Display hero & statistic block on the following users/followers pages.
   $config_names = [
@@ -32,6 +41,27 @@ function social_follow_user_install(): void {
       $pages .= "\r\n/user/*/followers";
       $config->set('visibility.request_path.pages', $pages);
       $config->save();
+    }
+  }
+}
+
+/**
+ * Create a new view display for profile preview.
+ */
+function social_follow_user_update_11201(): void {
+  $config_names = [
+    'core.entity_view_display.profile.profile.preview',
+    'core.entity_view_mode.profile.preview',
+  ];
+
+  $path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
+
+  foreach ($config_names as $config_name) {
+    $config_file = $path . $config_name . '_11201.yml';
+
+    if (is_array($settings = Yaml::parseFile($config_file))) {
+      \Drupal::configFactory()->getEditable($config_name)
+        ->setData($settings)->save(TRUE);
     }
   }
 }

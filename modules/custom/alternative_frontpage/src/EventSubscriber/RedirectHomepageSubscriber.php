@@ -16,6 +16,7 @@ use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Drupal\Core\Url;
 
 /**
  * The RedirectHomepageSubscriber class.
@@ -169,8 +170,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $user_role = $current_user_data['role'] ?? '';
     $user_page = $current_user_data['page'] ?? '';
 
-    $active_language = $this->languageManager->getCurrentLanguage()->getId();
-    $default_language = $this->languageManager->getDefaultLanguage()->getId();
+    $active_language = $this->languageManager->getCurrentLanguage();
 
     // Do nothing if the current user does not have a custom front page.
     if (empty($user_page)) {
@@ -184,20 +184,16 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     }
 
     // We only proceed if the user requests the home page.
-    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
+    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language->getId())) {
       // The home page for the user is the same as in the site configuration,
       // and we are not redirecting, otherwise there will be an endless loop.
       if ($user_page === $site_settings_frontpage) {
         return;
       }
 
-      $redirect_path = $user_page;
-
-      // The custom user page is different from the home page from
-      // the site settings.
-      if ($active_language !== $default_language) {
-        $redirect_path = '/' . $active_language . $user_page;
-      }
+      $redirect_path = Url::fromUserInput('/' . ltrim($user_page, '/'), [
+        'language' => $active_language,
+      ])->toString();
 
       $this->doRedirect($event, $user_role, $redirect_path);
     }

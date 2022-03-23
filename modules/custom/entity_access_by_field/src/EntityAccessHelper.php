@@ -72,7 +72,7 @@ class EntityAccessHelper {
                   return EntityAccessHelper::NEUTRAL;
                 }
 
-                $permission_label = $field_definition->id() . ':' . $field_value['value'];
+                $permission_label = "node.{$node->bundle()}.{$field_definition->getName()}:{$field_value['value']}";
 
                 // When content is posted in a group and the account does not
                 // have permission we return Access::ignore.

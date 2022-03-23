@@ -5,13 +5,13 @@
  * The Social Follow User module.
  */
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
@@ -50,15 +50,37 @@ function social_follow_user_entity_extra_field_info(): array {
  * Implements hook_entity_view_display_alter().
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
-  // Follow button appears on listed profile display modes.
-  $allowed_display_modes = ['default', 'teaser', 'statistic', 'preview'];
+  if (
+    $context['entity_type'] !== 'profile' &&
+    $display->getComponent('flag_follow_user') !== NULL
+  ) {
+    return;
+  }
 
-  // Allow other modules to change the list.
-  \Drupal::moduleHandler()->alter('social_follow_user_profile_modes', $allowed_display_modes);
+  $remove = FALSE;
 
-  if ($context['entity_type'] === 'profile' && !in_array($context['view_mode'], $allowed_display_modes)) {
-    // By default, flag module add flags to all entity view display modes.
-    // We want hide "Follow" button for the list of display modes.
+  // Remove field from display modes if "follow user" feature is disabled.
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    $remove = TRUE;
+  }
+  else {
+    // Follow button appears on listed profile display modes.
+    $allowed_display_modes = ['statistic', 'preview'];
+
+    // Allow other modules to change the list.
+    \Drupal::moduleHandler()->alter(
+      'social_follow_user_profile_modes',
+      $allowed_display_modes,
+    );
+
+    if (!in_array($context['view_mode'], $allowed_display_modes)) {
+      // By default, flag module add flags to all entity view display modes.
+      // We want hide "Follow" button for the list of display modes.
+      $remove = TRUE;
+    }
+  }
+
+  if ($remove) {
     $display->removeComponent('flag_follow_user');
   }
 }
@@ -67,12 +89,52 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
  * Implements hook_follow_user_flag_action_access().
  */
 function social_follow_user_flag_action_access(string $action, FlagInterface $flag, AccountInterface $account, EntityInterface $flaggable = NULL): AccessResultInterface {
-  if ($flaggable instanceof ProfileInterface) {
-    // User should not be able to follow own profile.
-    return AccessResult::forbiddenIf($flaggable->getOwnerId() === $account->id());
-  }
+  return AccessResult::forbiddenIf(
+    $flaggable instanceof ProfileInterface &&
+    $flaggable->getOwnerId() === $account->id(),
+    'User should not be able to follow own profile.',
+  );
+}
 
-  return AccessResult::neutral();
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_field__field_activity_output_text(array &$variables): void {
+  /** @var \Drupal\activity_creator\ActivityInterface $activity */
+  $activity = $variables['element']['#object'];
+
+  $account = $activity->getOwner();
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
+    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
+    $helper = \Drupal::service('social_follow_user.helper');
+
+    $helper->preview($profile, $variables, 'temp_attributes');
+
+    if (isset($variables['temp_attributes'])) {
+      $url = $account->toUrl()->setAbsolute()->toString();
+      $old_markup = ($prefix = '<a href="' . $url . '"') . ($suffix = '>');
+      $new_markup = $prefix . (new Attribute($variables['temp_attributes'])) . $suffix;
+
+      unset($variables['temp_attributes']);
+
+      /** @var \Drupal\Core\Render\RendererInterface $renderer */
+      $renderer = \Drupal::service('renderer');
+
+      foreach ($variables['items'] as &$item) {
+        $item['content'] = [
+          '#markup' => str_replace(
+            $old_markup,
+            $new_markup,
+            $renderer->render($item['content']),
+          ),
+        ];
+      }
+    }
+  }
 }
 
 /**
@@ -99,21 +161,29 @@ function social_follow_user_preprocess_field__field_profile_image(array &$variab
 /**
  * Implements hook_preprocess_HOOK().
  */
+function social_follow_user_preprocess_flag(array &$variables): void {
+  if (\Drupal::routeMatch()->getRouteName() === 'social_follow_user.preview') {
+    $variables['attributes']['class'][] = 'btn-primary';
+    $classes = &$variables['attributes']['class'];
+
+    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
+      unset($classes[$delta]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function social_follow_user_preprocess_profile(array &$variables): void {
   if ($variables['elements']['#view_mode'] === 'small_teaser') {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $variables['profile'];
 
-    if ($profile->access('view')) {
-      /** @var \Drupal\Core\Template\Attribute $attributes */
-      $attributes = $variables['link_attributes'];
+    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
+    $helper = \Drupal::service('social_follow_user.helper');
 
-      $attributes
-        ->setAttribute('id', Html::getUniqueId('profile-preview'))
-        ->setAttribute('data-profile', (string) $profile->id());
-
-      $variables['#attached']['library'][] = 'social_follow_user/preview';
-    }
+    $helper->preview($profile, $variables, 'link_attributes');
   }
 }
 
@@ -225,6 +295,10 @@ function social_follow_user_theme(): array {
         'url' => NULL,
       ],
       'file' => 'social_follow_user.theme.inc',
+    ],
+    'profile__profile__preview' => [
+      'render element' => 'elements',
+      'base hook' => 'profile',
     ],
   ];
 }

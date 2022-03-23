@@ -20,7 +20,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   /**
    * {@inheritdoc}
    */
-  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, string $accept_decline) {
     // Just some sanity checks.
     if (!empty($event_enrollment)) {
       // When the user accepted the invite,

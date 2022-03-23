@@ -43,4 +43,14 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'social_group_membership_count',
     ],
   ];
+
+  // Group filtration by a name.
+  $data['groups_field_data']['filter_by_group'] = [
+    'title' => t('Filter by group'),
+    'filter' => [
+      'title' => t('Filter by group'),
+      'field' => 'id',
+      'id' => 'filter_by_group',
+    ],
+  ];
 }
