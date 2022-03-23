@@ -2,7 +2,6 @@
 
 namespace Drupal\social_follow_user\Service;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\profile\Entity\ProfileInterface;
 
@@ -26,7 +25,7 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
 
       $attributes = &NestedArray::getValue($variables, $path);
 
-      $attributes['id'] = Html::getUniqueId('profile-preview');
+      $attributes['class'][] = 'profile-preview';
       $attributes['data-profile'] = $profile->id();
 
       $variables['#attached']['library'][] = 'social_follow_user/preview';
