@@ -9,6 +9,7 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -22,6 +23,7 @@ use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\social_group_invite\Plugin\Action\SocialGroupInviteResend;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -563,7 +565,7 @@ function social_group_invite_preprocess_group(&$variables) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter() for "social_group_form".
  */
 function social_group_invite_form_social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $invite_config = \Drupal::config('social_group.settings')
@@ -589,10 +591,29 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     '#default_value' => $invite_config['invite_message'] ?? $default_message,
     '#required' => TRUE,
   ];
+
+  // Allow SM to override invite message for resending invites.
+  $form['group_invite']['override_resend'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Override invite message when resend invites'),
+    '#description' => t('If checked you will be prompted to define a message users will receive on resending invites.'),
+    '#default_value' => !empty($invite_config['invite_resend_message']),
+  ];
+  $form['group_invite']['invite_resend_message'] = [
+    '#type' => 'textarea',
+    '#placeholder' => t('Type a message on resending invites'),
+    '#default_value' => $invite_config['invite_resend_message'] ?? '',
+    '#states' => [
+      'visible' => [
+        ':input[name="override_resend"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
   $form['group_invite']['email_verification'] = [
     '#type' => 'checkbox',
     '#title' => t('Allow invited user to skip email verification'),
-    '#default_value' => !empty($invite_config['email_verification']) ?? '',
+    '#default_value' => !empty($invite_config['email_verification']) ?? FALSE,
   ];
   $form['group_invite']['invite_by_members'] = [
     '#type' => 'checkbox',
@@ -611,6 +632,10 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
   \Drupal::configFactory()->getEditable('social_group.settings')
     ->set('group_invite.invite_subject', $form_state->getValue('invite_subject'))
     ->set('group_invite.invite_message', $form_state->getValue('invite_message'))
+    ->set('group_invite.invite_resend_message', (bool) $form_state->getValue('override_resend')
+      ? $form_state->getValue('invite_resend_message')
+      : ''
+    )
     ->set('group_invite.email_verification', $form_state->getValue('email_verification'))
     ->set('group_invite.invite_by_members', $form_state->getValue('invite_by_members'))
     ->save();
@@ -640,8 +665,28 @@ function social_group_invite_mail_alter(&$message) {
       !is_null($invite_settings) &&
       isset($invite_settings['invite_subject'], $invite_settings['invite_message'])
     ) {
+      // Check if the invitation is resent and site managers decided to change
+      // the invitation email text.
+      if ($invite_settings['invite_resend_message']) {
+        $tempstore = \Drupal::service('tempstore.shared')->get('social_group_invite');
+        $resent_invites = (array) $tempstore->get(SocialGroupInviteResend::TEMP_STORE_ID);
+        if (!empty($resent_invites)) {
+          // The mail params list should contain group content entity.
+          /* @see ginvite_group_content_insert() */
+          if (
+            ($params['group_content'] instanceof GroupContentInterface) &&
+            in_array($params['group_content']->uuid(), $resent_invites)
+          ) {
+            $overridden_body = $invite_settings['invite_resend_message'];
+            // Remove handled resent invite from list.
+            unset($resent_invites[$params['group_content']->uuid()]);
+            $tempstore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
+          }
+        }
+      }
+
       $invitation_subject = $invite_settings['invite_subject'];
-      $invitation_body = $invite_settings['invite_message'];
+      $invitation_body = $overridden_body ?? $invite_settings['invite_message'];
 
       unset($params['existing_user']);
 
@@ -726,5 +771,52 @@ function social_group_invite_entity_form_display_alter(EntityFormDisplayInterfac
       'weight' => 99,
       'third_party_settings' => [],
     ]);
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_group_invite_entity_operation_alter(array &$operations, EntityInterface $entity): void {
+  if (\Drupal::routeMatch()->getRouteName() !== 'view.social_group_invitations.page_1') {
+    return;
+  }
+
+  /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+  if ($entity->getEntityTypeId() !== 'group_content') {
+    return;
+  }
+
+  if ($entity->getContentPlugin()->getPluginId() === 'group_invitation') {
+    // Hide "view" operation as a redundant on this page.
+    unset($operations['view']);
+    // Rename default operation.
+    if (!empty($operations['delete'])) {
+      $operations['delete']['title'] = t('Remove invitation');
+    }
+    // Add a new "resend invite" operation.
+    $operations['resend-invite'] = [
+      'title' => t('Send reminder'),
+      'weight' => 1,
+      'url' => Url::fromRoute('social_group_invite.resend_invite',
+        [
+          'group' => $entity->getGroup()->id(),
+          'group_content' => $entity->id(),
+        ]
+      ),
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for "page".
+ */
+function social_group_invite_preprocess_page(array &$variables): void {
+  if (in_array(\Drupal::routeMatch()->getRouteName(), [
+    'social_group_invite.resend_invite',
+    'social_group_invite.views_bulk_operations.confirm',
+  ])) {
+    // Hide redundant region on the page.
+    $variables['page']['complementary_top'] = [];
   }
 }
