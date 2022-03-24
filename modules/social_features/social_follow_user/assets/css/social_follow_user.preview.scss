@@ -3,6 +3,10 @@
   margin-bottom: 0;
   transform: none;
   animation: dialog_opacity 0.5s ease-out;
+
+  @media(max-width: 1024px) {
+    display: none !important;
+  }
 }
 
 .teaser-profile-preview {
@@ -19,6 +23,10 @@
 
   .media-left {
     padding-right: 1rem;
+
+    a {
+      display: block;
+    }
   }
 
   .media-body {
@@ -66,8 +74,15 @@
     font-size: .875rem;
   }
 
-  .badge__label:not(.badge__label--description) {
-    font-weight: bold;
+  .badge__label {
+    &:not(.badge__label--description) {
+      font-weight: bold;
+      color: #4d4d4d;
+    }
+
+    &.badge__label--description {
+      color: #777876;
+    }
   }
 }
 

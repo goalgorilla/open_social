@@ -3,8 +3,14 @@
     attach: function attach(context) {
       var timeouts = [], dialogs = [], profiles = [];
       var delay = 200;
+      var delta = 0;
 
-      $(context).find('[id^="profile-preview"]')
+      $(context).find('.profile-preview')
+        .each(function () {
+          if ($(this).attr('id') === undefined) {
+            $(this).attr('id', 'profile-preview-' + delta++);
+          }
+        })
         .on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
