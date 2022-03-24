@@ -214,18 +214,20 @@ function social_follow_user_profile_view(
   EntityViewDisplayInterface $display,
   string $view_mode
 ): void {
-  if (
-    $entity->bundle() === 'profile' &&
-    $display->getComponent('social_follow_user') !== NULL
-  ) {
-    $build['social_follow_user'] = [
-      '#theme' => 'followers',
-      '#flaggable' => $entity,
-    ];
-    $build['social_following_user'] = [
-      '#theme' => 'following',
-      '#flaggable' => $entity,
-    ];
+  if ($entity->bundle() === 'profile') {
+
+    if ($display->getComponent('social_follow_user') !== NULL) {
+      $build['social_follow_user'] = [
+        '#theme' => 'followers',
+        '#flaggable' => $entity,
+      ];
+    }
+    if ($display->getComponent('social_following_user') !== NULL) {
+      $build['social_following_user'] = [
+        '#theme' => 'following',
+        '#flaggable' => $entity,
+      ];
+    }
   }
 }
 
