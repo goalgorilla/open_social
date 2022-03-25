@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_user\Entity\User;
 use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
@@ -149,19 +150,8 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 /**
  * Returns array with titles of all groups, ordered by their label.
  */
-function _social_user_get_groups() {
-  $data = &drupal_static(__FUNCTION__);
-
-  if (empty($data)) {
-    $data = \Drupal::database()
-      ->select('groups_field_data', 'gfd')
-      ->fields('gfd', ['id', 'label'])
-      ->orderBy('label')
-      ->execute()
-      ->fetchAllKeyed(0, 1);
-  }
-
-  return $data;
+function _social_user_get_groups(): array {
+  return call_user_func([SocialGroupHelperService::class, 'getGroups']);
 }
 
 /**
