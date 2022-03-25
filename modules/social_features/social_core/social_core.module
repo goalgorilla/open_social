@@ -1144,17 +1144,22 @@ function _social_core_default_main_menu_links() {
     ->loadByProperties(['menu_name' => 'main']);
 
   $links = [];
+
+  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $link */
   foreach ($menu_links as $link) {
-    if (!in_array($link->title->value, array_keys($default_os_links))) {
+    if (!in_array($link->getTitle(), array_keys($default_os_links))) {
       continue;
     }
 
-    $os_link = $default_os_links[$link->title->value];
-    if ($link->link->uri !== $os_link['link']) {
+    $os_link = $default_os_links[$link->getTitle()];
+    $link_uri = $link->get('link')->getValue();
+    $link_uri = end($link_uri);
+    $link_uri = $link_uri['uri'];
+    if ($link_uri !== $os_link['link']) {
       continue;
     }
 
-    if ($link->menu_name->value !== $os_link['menu_name']) {
+    if ($link->getMenuName() !== $os_link['menu_name']) {
       continue;
     }
 
