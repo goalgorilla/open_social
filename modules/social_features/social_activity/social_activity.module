@@ -343,3 +343,18 @@ function social_activity_preprocess_block(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_social_core_default_main_menu_links_alter().
+ */
+function social_activity_social_core_default_main_menu_links_alter(array &$links) {
+  $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties([
+      'title' => 'Community',
+      'menu_name' => 'main',
+      'link' => 'internal:/explore',
+    ]);
+  $link = end($link);
+
+  $links[] = $link;
+}
