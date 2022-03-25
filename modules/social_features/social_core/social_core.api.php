@@ -126,7 +126,7 @@ function hook_social_core_compatible_content_forms(array &$compatible_content_ty
  */
 
 /**
- * Hooks to alter the visibility of blocks by denying access.
+ * Hooks to alter the default main menu links that ships with Open Social.
  *
  * @defaultmainmenulinks hooks
  * @{
