@@ -1181,7 +1181,7 @@ function _social_core_default_main_menu_links() {
  *
  * Forbid access to edit/delete form for default Open Social menu links.
  */
-function social_core_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_core_entity_access(EntityInterface $entity, string $operation, AccountInterface $account) {
   $entity_type = $entity->getEntityTypeId();
 
   if ($entity_type !== 'menu_link_content') {
@@ -1192,12 +1192,19 @@ function social_core_entity_access(EntityInterface $entity, $operation, AccountI
     return;
   }
 
-  $name = $entity->title->value;
-  $link = $entity->link->uri;
+  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
+  $name = $entity->getTitle();
+  $link = $entity->get('link')->getValue();
+  $link = end($link);
 
   $default_os_links = _social_core_default_main_menu_links();
+
+  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $os_link */
   foreach ($default_os_links as $os_link) {
-    if ($name === $os_link->title->value && $link === $os_link->link->uri) {
+    $os_link_title = $os_link->getTitle();
+    $os_link_uri = $entity->get('link')->getValue();
+    $os_link_uri = end($os_link_uri)['uri'];
+    if ($name === $os_link_title && $link['uri'] === $os_link_uri) {
       return AccessResult::forbidden();
     }
   }
@@ -1208,7 +1215,7 @@ function social_core_entity_access(EntityInterface $entity, $operation, AccountI
  *
  * Remove operation links for main menu form for all default Open Social links.
  */
-function social_core_form_menu_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface $form_state) {
   $menu = $form_state->getFormObject()->getEntity();
   if ($menu->id() !== 'main') {
     return;
