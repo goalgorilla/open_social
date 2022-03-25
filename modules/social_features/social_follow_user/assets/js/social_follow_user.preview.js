@@ -31,7 +31,7 @@
                   position: {
                     my: 'left top',
                     at: 'right top',
-                    of: '#' + selector
+                    of: $element
                   },
                   create: function () {
                     $(this).closest('.ui-dialog')
