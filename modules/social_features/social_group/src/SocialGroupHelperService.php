@@ -334,8 +334,8 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
    *   Array of group ids and group labels.
    */
   public static function getGroups(bool $split = FALSE): array {
-    $split_lower = strtolower((string) $split);
-    if (!empty($data = &drupal_static("_social_user_get_groups_{$split_lower}", []))) {
+    $split_cache_key = $split ? '_split_result' : '';
+    if (!empty($data = &drupal_static("_social_group_helper_service_get_groups{$split_cache_key}", []))) {
       return $data;
     }
 
