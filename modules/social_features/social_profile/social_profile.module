@@ -293,6 +293,9 @@ function social_profile_preprocess_form_element_label(&$variables) {
 
 /**
  * Implements hook_preprocess_HOOK().
+ *
+ * Allows modifying link attributes by modules instead of using hardcoded
+ * attributes in the theme template.
  */
 function social_profile_preprocess_field__field_profile_image(array &$variables): void {
   if ($variables['element']['#view_mode'] === 'compact') {

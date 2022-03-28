@@ -1,0 +1,12 @@
+social_profile_preview.canonical:
+  path: '/profile/{profile}/preview'
+  defaults:
+    _entity_view: 'profile.preview'
+    _title: 'Profile preview'
+  requirements:
+    _entity_access: 'profile.view'
+    profile: \d+
+  options:
+    parameters:
+      profile:
+        type: 'entity:profile'
