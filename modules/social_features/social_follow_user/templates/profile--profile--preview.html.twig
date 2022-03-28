@@ -57,5 +57,10 @@
     </div>
   </div>
 
-  {{ content|without('field_profile_image', 'uid', 'flag_follow_user', 'private_message_link') }}
+  {{ content|without('field_profile_image', 'uid', 'flag_follow_user', 'private_message_link', 'social_follow_user', 'social_following_user') }}
+
+  <div class='follow-user--counter'>
+    {{ content.social_follow_user }}
+    {{ content.social_following_user }}
+  </div>
 </div>
