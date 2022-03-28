@@ -1,5 +1,5 @@
 (function ($, Drupal, window) {
-  Drupal.behaviors.socialFollowUser = {
+  Drupal.behaviors.socialProfilePreview = {
     attach: function attach(context) {
       var timeouts = [], dialogs = [], profiles = [];
       var delay = 200;

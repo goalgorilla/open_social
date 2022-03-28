@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\social_follow_user\Service;
+namespace Drupal\social_profile_preview\Service;
 
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Defines the helper service interface.
  */
-interface SocialFollowUserHelperInterface {
+interface SocialProfilePreviewHelperInterface {
 
   /**
    * Connect profile previewer to a specific element.
@@ -20,7 +20,7 @@ interface SocialFollowUserHelperInterface {
    *   (optional) The list of keys to the location of the attributes in
    *   preprocessing variables. Defaults to 'attributes'.
    */
-  public function preview(
+  public function alter(
     ProfileInterface $profile,
     array &$variables,
     $path = 'attributes'
