@@ -1,19 +1,20 @@
 <?php
 
-namespace Drupal\social_follow_user\Service;
+namespace Drupal\social_profile_preview\Service;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Defines the helper service.
  */
-class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
+class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface {
 
   /**
    * {@inheritdoc}
    */
-  public function preview(
+  public function alter(
     ProfileInterface $profile,
     array &$variables,
     $path = 'attributes'
@@ -25,10 +26,18 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
 
       $attributes = &NestedArray::getValue($variables, $path);
 
+      if ($is_object = $attributes instanceof Attribute) {
+        $attributes = $attributes->toArray();
+      }
+
       $attributes['class'][] = 'profile-preview';
       $attributes['data-profile'] = $profile->id();
 
-      $variables['#attached']['library'][] = 'social_follow_user/preview';
+      if ($is_object) {
+        $attributes = new Attribute($attributes);
+      }
+
+      $variables['#attached']['library'][] = 'social_profile_preview/base';
     }
   }
 
