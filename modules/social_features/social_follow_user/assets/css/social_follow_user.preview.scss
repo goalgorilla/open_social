@@ -7,6 +7,11 @@
   @media(max-width: 1024px) {
     display: none !important;
   }
+
+  > .ui-dialog-content {
+    font-family: 'montserrat', sans-serif;
+    padding: 1rem 1.5rem;
+  }
 }
 
 .teaser-profile-preview {
@@ -38,6 +43,7 @@
       > .btn {
         margin: 0 5px;
         padding: 6px 15px !important;
+        font-weight: 500;
         color: #1f1c38;
       }
     }
@@ -66,7 +72,24 @@
 
       > p {
         font-size: 1.125rem;
+        font-weight: 400;
       }
+    }
+  }
+
+  .badge {
+    font-size: .875rem;
+  }
+
+  .badge__label {
+    &:not(.badge__label--description) {
+      font-weight: bold;
+      color: #4d4d4d;
+    }
+
+    &.badge__label--description {
+      font-weight: 500;
+      color: #777876;
     }
   }
 }
