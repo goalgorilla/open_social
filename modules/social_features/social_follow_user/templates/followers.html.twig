@@ -14,12 +14,13 @@
  */
 #}
 
+{{ attach_library('social_follow_user/follow_user_counter') }}
+
 {% set count = flagcount(flag, flaggable) %}
 
 <span class="badge__container">
   <a href="{{ url }}">
     <span class="badge__label">{{ count }}</span>
-    &nbsp;
     <span class="badge__label badge__label--description">
       {% trans %}follower{% plural count %}followers{% endtrans %}</a>
     </span>
