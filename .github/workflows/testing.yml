@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.json') }}
