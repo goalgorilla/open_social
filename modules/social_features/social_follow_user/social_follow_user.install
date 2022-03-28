@@ -45,9 +45,6 @@ function social_follow_user_install(): void {
   }
 
   // Update statistic profile view mode.
-  $config = \Drupal::service('config.factory')
-    ->getEditable('core.entity_view_display.profile.profile.statistic');
-
   $data = [
     'weight' => 5,
     'region' => 'content',
@@ -55,9 +52,14 @@ function social_follow_user_install(): void {
     'third_party_settings' => [],
   ];
 
-  $config->set('content.social_follow_user', $data);
-  $config->set('content.social_following_user', $data);
-  $config->save();
+  foreach (['statistic', 'teaser'] as $display_id) {
+    $config = \Drupal::service('config.factory')
+      ->getEditable('core.entity_view_display.profile.profile.' . $display_id);
+
+    $config->set('content.social_follow_user', $data);
+    $config->set('content.social_following_user', $data);
+    $config->save();
+  }
 }
 
 /**
