@@ -179,7 +179,7 @@ function social_follow_user_preprocess_profile(array &$variables): void {
   if ($variables['elements']['#view_mode'] === 'teaser') {
     // Display related teaser tag for each user follow list.
     switch (\Drupal::routeMatch()->getRouteName()){
-      case 'view.following_users.page_user_followers':
+      case 'view.followers_user.page_user_followers':
         $variables['social_follower'] = TRUE;
         break;
       case 'view.following_users.page_following_users':

@@ -1,4 +1,4 @@
-uuid: 63fbd122-f85e-4ea0-ba59-83a5b427e35b
+uuid: 78c53577-135a-4061-97b2-f73bc63d8cb9
 langcode: en
 status: true
 dependencies:
@@ -11,14 +11,14 @@ dependencies:
     - profile
     - user
 _core:
-  default_config_hash: 20nEuWEYl2zdWNr9QHK3WJ1Hq7wFNF1iS8Y2YOgJ49g
-id: following_users
-label: 'Users I follow'
+  default_config_hash: CQTmDzlBNWbNHShFNzftPF18gkK5qG_-aiF3EHRTdYU
+id: followers_user
+label: Followers
 module: views
-description: 'List of people that user follow'
+description: ''
 tag: ''
-base_table: flagging
-base_field: id
+base_table: users_field_data
+base_field: uid
 display:
   default:
     display_plugin: default
@@ -78,11 +78,11 @@ display:
       row:
         type: fields
       fields:
-        rendered_entity_1:
-          id: rendered_entity_1
+        rendered_entity:
+          id: rendered_entity
           table: profile
           field: rendered_entity
-          relationship: flag_follow_user
+          relationship: profile_1
           group_type: group
           admin_label: ''
           label: ''
@@ -130,35 +130,36 @@ display:
           entity_type: profile
           plugin_id: rendered_entity
       filters:
-        flag_id:
-          id: flag_id
-          table: flagging
-          field: flag_id
-          value:
-            follow_user: follow_user
-          entity_type: flagging
-          entity_field: flag_id
-          plugin_id: bundle
+        status:
+          value: '1'
+          table: users_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: user
+          entity_field: status
+          id: status
           expose:
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
+          group: 1
       sorts:
         created:
           id: created
-          table: flagging
+          table: users_field_data
           field: created
+          order: DESC
+          entity_type: user
+          entity_field: created
+          plugin_id: date
           relationship: none
           group_type: group
           admin_label: ''
-          order: DESC
           exposed: false
           expose:
             label: ''
           granularity: second
-          entity_type: flagging
-          entity_field: created
-          plugin_id: date
-      title: ''
+      title: Followers
       header: {  }
       footer: {  }
       empty:
@@ -171,23 +172,66 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'No followed users yet'
+          content: 'No followers yet'
           plugin_id: text_custom
       relationships:
+        profile:
+          id: profile
+          table: users_field_data
+          field: profile
+          relationship: none
+          group_type: group
+          admin_label: 'Profile flag'
+          required: true
+          entity_type: user
+          plugin_id: standard
+        flag_relationship:
+          id: flag_relationship
+          table: profile
+          field: flag_relationship
+          relationship: profile
+          group_type: group
+          admin_label: Flags
+          required: true
+          flag: follow_user
+          user_scope: any
+          entity_type: profile
+          plugin_id: flag_relationship
         flag_follow_user:
           id: flag_follow_user
           table: flagging
           field: flag_follow_user
-          relationship: none
+          relationship: flag_relationship
           group_type: group
-          admin_label: Profile
+          admin_label: 'Profile flagging'
           required: true
           entity_type: flagging
+          plugin_id: standard
+        uid:
+          id: uid
+          table: flagging
+          field: uid
+          relationship: flag_relationship
+          group_type: group
+          admin_label: User
+          required: true
+          entity_type: flagging
+          entity_field: uid
+          plugin_id: standard
+        profile_1:
+          id: profile_1
+          table: users_field_data
+          field: profile
+          relationship: uid
+          group_type: group
+          admin_label: 'Profile user'
+          required: true
+          entity_type: user
           plugin_id: standard
       arguments:
         uid:
           id: uid
-          table: flagging
+          table: users_field_data
           field: uid
           relationship: none
           group_type: group
@@ -219,9 +263,9 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
-          entity_type: flagging
+          entity_type: user
           entity_field: uid
-          plugin_id: numeric
+          plugin_id: user_uid
       display_extenders: {  }
     cache_metadata:
       max-age: -1
@@ -231,36 +275,36 @@ display:
         - url.query_args
         - user.roles
       tags:
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:social_tagging.settings'
+        - 'taxonomy_term_list:social_tagging'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.statistic'
+        - 'config:core.entity_view_display.profile.profile.teaser'
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
         - 'config:core.entity_view_display.profile.profile.compact_notification'
         - 'config:core.entity_view_display.profile.profile.compact_private_message'
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
-        - 'config:social_tagging.settings'
-        - 'taxonomy_term_list:social_tagging'
         - 'config:core.entity_view_display.profile.profile.featured'
-        - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.medium_teaser'
         - 'config:core.entity_view_display.profile.profile.moderator_small_teaser'
         - 'config:core.entity_view_display.profile.profile.moderator_teaser'
         - 'config:core.entity_view_display.profile.profile.name'
         - 'config:core.entity_view_display.profile.profile.preview'
         - 'config:core.entity_view_display.profile.profile.search_index'
-        - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.small_teaser'
-        - 'config:core.entity_view_display.profile.profile.statistic'
         - 'config:core.entity_view_display.profile.profile.statistics'
         - 'config:core.entity_view_display.profile.profile.table'
-        - 'config:core.entity_view_display.profile.profile.teaser'
-  page_following_users:
+  page_user_followers:
     display_plugin: page
-    id: page_following_users
-    display_title: 'Users I follow'
+    id: page_user_followers
+    display_title: Followers
     position: 1
     display_options:
       display_extenders: {  }
-      path: user/%user/following-users
+      path: user/%user/followers
       display_description: ''
     cache_metadata:
       max-age: -1
