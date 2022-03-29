@@ -178,8 +178,14 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
    */
   public function supportedSortOptions(): array {
     return parent::supportedSortOptions() + [
+      // Sort in "ASC" order.
       'event_date' => [
-        'label' => $this->t('Event date'),
+        'label' => $this->t('Oldest -> Newest'),
+        'limit' => FALSE,
+      ],
+      // Sort in "DESC" order.
+      'event_date_desc' => [
+        'label' => $this->t('Newest -> Oldest'),
         'limit' => FALSE,
       ],
     ];

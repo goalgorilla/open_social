@@ -8,11 +8,12 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\search_api\Item\Field;
 
 /**
  * Install the module.
  */
-function social_tagging_install() {
+function social_tagging_install(): void {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'sitemanager',
@@ -22,6 +23,9 @@ function social_tagging_install() {
       'edit terms in social_tagging',
     ]
   );
+
+  // Add the new search api fields.
+  _social_tagging_add_fields_search_api();
 
   // If the search module is enabled trigger updating of the indexes affected
   // by tagging.
@@ -36,9 +40,95 @@ function social_tagging_install() {
 }
 
 /**
+ * Uninstall the module.
+ */
+function social_tagging_uninstall(): void {
+  // Remove the search api fields.
+  _social_tagging_remove_fields_search_api();
+
+  try {
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_content', 'social_groups']);
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
+}
+
+/**
+ * Add fields to search API.
+ */
+function _social_tagging_search_api_fields(): array {
+  return [
+    'social_content' => 'node',
+    'social_groups' => 'group',
+    'social_users' => 'profile',
+  ];
+}
+
+/**
+ * Add fields to search API.
+ */
+function _social_tagging_add_fields_search_api(): void {
+  $fields = _social_tagging_search_api_fields();
+
+  foreach ($fields as $index => $type) {
+    $index_storage = \Drupal::entityTypeManager()
+      ->getStorage('search_api_index');
+
+    /** @var \Drupal\search_api\IndexInterface $index */
+    $index = $index_storage->load($index);
+
+    $field_intro = new Field($index, 'social_tagging');
+    $field_intro->setType('integer');
+    $field_intro->setPropertyPath('social_tagging');
+    $field_intro->setDatasourceId('entity:' . $type);
+    $field_intro->setLabel('Social Tagging');
+    $index->addField($field_intro);
+
+    $index->save();
+  }
+}
+
+/**
+ * Remove fields from search API.
+ */
+function _social_tagging_remove_fields_search_api(): void {
+  $fields = _social_tagging_search_api_fields();
+
+  foreach ($fields as $index => $type) {
+    $index_storage = \Drupal::entityTypeManager()
+      ->getStorage('search_api_index');
+
+    /** @var \Drupal\search_api\IndexInterface $index */
+    $index = $index_storage->load($index);
+
+    $index->removeField('social_tagging');
+    $index->save();
+  }
+}
+
+/**
+ * Update the field definitions on install, or in an update hook.
+ *
+ * @param string $field
+ *   The field definition you want to update.
+ */
+function _social_profile_field_definitions_update(string $field): void {
+  // Update definitions and schema.
+  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($list[$field])) {
+    foreach ($list[$field] as $item) {
+      \Drupal::entityDefinitionUpdateManager()->updateEntityType($item);
+    }
+  }
+}
+
+/**
  * Exclude landing pages from tagging.
  */
-function social_tagging_update_8001() {
+function social_tagging_update_8001(): void {
   // Set allow to true, since that's the case by default.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
   $config->set('tag_node_type_landing_page', FALSE)->save();
@@ -47,7 +137,7 @@ function social_tagging_update_8001() {
 /**
  * Toggle group index.
  */
-function social_tagging_update_8002() {
+function social_tagging_update_8002(): void {
   // Toggle the index groups.
   try {
     // If the search module is enabled we need to update the group index.
@@ -63,7 +153,7 @@ function social_tagging_update_8002() {
 /**
  * Install Tagging base field to profile entity type.
  */
-function social_tagging_update_8003() {
+function social_tagging_update_8003(): void {
   $field_storage_definition = BaseFieldDefinition::create('entity_reference')
     ->setLabel(t('Tagging'))
     ->setDescription(t('Tagging field.'))
@@ -93,7 +183,30 @@ function social_tagging_update_8003() {
 /**
  * Toggle user index.
  */
-function social_tagging_update_8004() {
+function social_tagging_update_8004(): void {
+  _social_profile_field_definitions_update('social_tagging');
+
+  // Toggle the index users.
+  try {
+    // If the search module is enabled we need to update the group index.
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_users']);
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
+}
+
+/**
+ * Add the search api fields.
+ */
+function social_tagging_update_8005(): void {
+  _social_tagging_add_fields_search_api();
+
+  // Update definitions and schema.
+  _social_profile_field_definitions_update('social_tagging');
+
   // Toggle the index users.
   try {
     // If the search module is enabled we need to update the group index.
