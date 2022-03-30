@@ -118,6 +118,14 @@ function social_group_invite_update_8007() {
  * Add a new field to the flexible group.
  */
 function social_group_invite_update_11001(): void {
+  /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entityTypeBundleInfo */
+  $entityTypeBundleInfo = \Drupal::service('entity_type.bundle.info');
+  $availableGroupBundles = $entityTypeBundleInfo->getBundleInfo('group');
+  $flexibleGroup = $availableGroupBundles['flexible_group'] ?? NULL;
+  if (NULL === $flexibleGroup) {
+    return;
+  }
+
   $config_path = drupal_get_path('module', 'social_group_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
