@@ -1,3 +1,8 @@
 services:
   social_follow_user.helper:
     class: Drupal\social_follow_user\Service\SocialFollowUserHelper
+  social_follow_user.flag_subscriber:
+    class: \Drupal\social_follow_user\EventSubscriber\FlagEvents
+    arguments: [ '@flag', '@state' ]
+    tags:
+      - { name: event_subscriber }

@@ -24,6 +24,7 @@ function template_preprocess_followers(array &$variables): void {
 
   $variables['url'] = Url::fromRoute('view.followers_user.page_user_followers',
     ['user' => $variables['flaggable']->getOwner()->id()]);
+  $variables['#cache']['tags'][] = 'followers_user';
 }
 
 /**
@@ -48,4 +49,5 @@ function template_preprocess_following(array &$variables): void {
     ->getUserFlagFlaggingCount($flag, $profile->getOwner());
   $variables['url'] = Url::fromRoute('view.following_users.page_following_users',
     ['user' => $profile->getOwner()->id()]);
+  $variables['#cache']['tags'][] = 'following_user';
 }
