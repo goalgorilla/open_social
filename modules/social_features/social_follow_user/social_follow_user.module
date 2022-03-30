@@ -9,10 +9,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
@@ -147,10 +144,11 @@ function social_follow_user_theme(): array {
 function social_follow_user_preprocess_profile(array &$variables): void {
   if ($variables['elements']['#view_mode'] === 'teaser') {
     // Display related teaser tag for each user follow list.
-    switch (\Drupal::routeMatch()->getRouteName()){
+    switch (\Drupal::routeMatch()->getRouteName()) {
       case 'view.followers_user.page_user_followers':
         $variables['social_follower'] = TRUE;
         break;
+
       case 'view.following_users.page_following_users':
         $variables['social_following'] = TRUE;
         break;
