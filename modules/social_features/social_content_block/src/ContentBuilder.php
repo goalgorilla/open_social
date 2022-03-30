@@ -558,10 +558,16 @@ class ContentBuilder implements ContentBuilderInterface {
         break;
 
       case 'event_date':
+      case 'event_date_desc':
         $sorting_field = $query->leftJoin('node__field_event_date', 'nfed', "$base_field = %alias.entity_id");
         $sorting_field .= '.field_event_date_value';
         $direction = 'ASC';
         $base_field = NULL;
+
+        // Change sort order for "event_date_desc".
+        if ($sort_by === 'event_date_desc') {
+          $direction = 'DESC';
+        }
         break;
     }
 

@@ -61,24 +61,3 @@ function social_follow_user_install(): void {
     $config->save();
   }
 }
-
-/**
- * Create a new view display for profile preview.
- */
-function social_follow_user_update_11201(): void {
-  $config_names = [
-    'core.entity_view_display.profile.profile.preview',
-    'core.entity_view_mode.profile.preview',
-  ];
-
-  $path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
-
-  foreach ($config_names as $config_name) {
-    $config_file = $path . $config_name . '_11201.yml';
-
-    if (is_array($settings = Yaml::parseFile($config_file))) {
-      \Drupal::configFactory()->getEditable($config_name)
-        ->setData($settings)->save(TRUE);
-    }
-  }
-}

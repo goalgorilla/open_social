@@ -17,16 +17,6 @@ use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
- * Implements hook_entity_base_field_info_alter().
- */
-function social_follow_user_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type): void {
-  if ($entity_type->id() === 'profile') {
-    /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
-    $fields['uid']->setDisplayConfigurable('view', TRUE);
-  }
-}
-
-/**
  * Implements hook_entity_extra_field_info().
  */
 function social_follow_user_entity_extra_field_info(): array {
@@ -51,8 +41,8 @@ function social_follow_user_entity_extra_field_info(): array {
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
   if (
-    $context['entity_type'] !== 'profile' &&
-    $display->getComponent('flag_follow_user') !== NULL
+    $context['entity_type'] !== 'profile' ||
+    $display->getComponent('flag_follow_user') === NULL
   ) {
     return;
   }
@@ -65,7 +55,7 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
   }
   else {
     // Follow button appears on listed profile display modes.
-    $allowed_display_modes = ['statistic', 'preview', 'teaser'];
+    $allowed_display_modes = ['statistic', 'teaser'];
 
     // Allow other modules to change the list.
     \Drupal::moduleHandler()->alter(
@@ -88,132 +78,17 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
 /**
  * Implements hook_follow_user_flag_action_access().
  */
-function social_follow_user_flag_action_access(string $action, FlagInterface $flag, AccountInterface $account, EntityInterface $flaggable = NULL): AccessResultInterface {
+function social_follow_user_flag_action_access(
+  string $action,
+  FlagInterface $flag,
+  AccountInterface $account,
+  EntityInterface $flaggable = NULL
+): AccessResultInterface {
   return AccessResult::forbiddenIf(
     $flaggable instanceof ProfileInterface &&
     $flaggable->getOwnerId() === $account->id(),
     'User should not be able to follow own profile.',
   );
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_follow_user_preprocess_field__field_activity_output_text(array &$variables): void {
-  /** @var \Drupal\activity_creator\ActivityInterface $activity */
-  $activity = $variables['element']['#object'];
-
-  $account = $activity->getOwner();
-
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
-    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
-    $helper = \Drupal::service('social_follow_user.helper');
-
-    $helper->preview($profile, $variables, 'temp_attributes');
-
-    if (isset($variables['temp_attributes'])) {
-      $url = $account->toUrl()->setAbsolute()->toString();
-      $old_markup = ($prefix = '<a href="' . $url . '"') . ($suffix = '>');
-      $new_markup = $prefix . (new Attribute($variables['temp_attributes'])) . $suffix;
-
-      unset($variables['temp_attributes']);
-
-      /** @var \Drupal\Core\Render\RendererInterface $renderer */
-      $renderer = \Drupal::service('renderer');
-
-      foreach ($variables['items'] as &$item) {
-        $item['content'] = [
-          '#markup' => str_replace(
-            $old_markup,
-            $new_markup,
-            $renderer->render($item['content']),
-          ),
-        ];
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_follow_user_preprocess_field__field_profile_image(array &$variables): void {
-  $element = $variables['element'];
-
-  if (in_array($element['#view_mode'], ['compact', 'compact_notification'])) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $element['#object'];
-
-    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
-    $helper = \Drupal::service('social_follow_user.helper');
-
-    $helper->preview(
-      $profile,
-      $variables,
-      ['items', 0, 'content', '#item_attributes'],
-    );
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_follow_user_preprocess_flag(array &$variables): void {
-  if (\Drupal::routeMatch()->getRouteName() === 'social_follow_user.preview') {
-    $variables['attributes']['class'][] = 'btn-primary';
-    $classes = &$variables['attributes']['class'];
-
-    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
-      unset($classes[$delta]);
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_follow_user_preprocess_profile(array &$variables): void {
-  if ($variables['elements']['#view_mode'] === 'teaser') {
-    // Display related teaser tag for each user follow list.
-    switch (\Drupal::routeMatch()->getRouteName()){
-      case 'view.followers_user.page_user_followers':
-        $variables['social_follower'] = TRUE;
-        break;
-      case 'view.following_users.page_following_users':
-        $variables['social_following'] = TRUE;
-        break;
-    }
-  }
-  if ($variables['elements']['#view_mode'] === 'small_teaser') {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $variables['profile'];
-
-    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
-    $helper = \Drupal::service('social_follow_user.helper');
-
-    $helper->preview($profile, $variables, 'link_attributes');
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_follow_user_preprocess_username(array &$variables): void {
-  /** @var \Drupal\user\UserInterface $account */
-  $account = $variables['account'];
-
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
-    /** @var \Drupal\social_follow_user\Service\SocialFollowUserHelperInterface $helper */
-    $helper = \Drupal::service('social_follow_user.helper');
-
-    $helper->preview($profile, $variables);
-  }
 }
 
 /**
@@ -243,52 +118,6 @@ function social_follow_user_profile_view(
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view_alter().
- */
-function social_follow_user_profile_view_alter(
-  array &$build,
-  EntityInterface $entity,
-  EntityViewDisplayInterface $display
-): void {
-  if (
-    $build['#view_mode'] === 'preview' &&
-    $entity->bundle() === 'profile' &&
-    $display->getComponent('private_message_link') !== NULL
-  ) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $entity;
-
-    if ($profile->getOwner()->hasPermission('use private messaging system')) {
-      $element = &$build['private_message_link'];
-
-      $url = $element['#url'];
-
-      if ($url instanceof Url) {
-        $url->mergeOptions([
-          'attributes' => [
-            'class' => [
-              'btn',
-              'btn-default',
-              'btn-sm',
-              'waves-effect',
-              'waves-btn',
-            ],
-          ],
-        ]);
-
-        $element['#title'] = t('Message');
-
-        unset($element['#prefix'], $element['#suffix']);
-
-        return;
-      }
-    }
-
-    unset($build['private_message_link']);
-  }
-}
-
-/**
  * Implements hook_theme().
  */
 function social_follow_user_theme(): array {
@@ -309,9 +138,22 @@ function social_follow_user_theme(): array {
       ],
       'file' => 'social_follow_user.theme.inc',
     ],
-    'profile__profile__preview' => [
-      'render element' => 'elements',
-      'base hook' => 'profile',
-    ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_profile(array &$variables): void {
+  if ($variables['elements']['#view_mode'] === 'teaser') {
+    // Display related teaser tag for each user follow list.
+    switch (\Drupal::routeMatch()->getRouteName()){
+      case 'view.followers_user.page_user_followers':
+        $variables['social_follower'] = TRUE;
+        break;
+      case 'view.following_users.page_following_users':
+        $variables['social_following'] = TRUE;
+        break;
+    }
+  }
 }
