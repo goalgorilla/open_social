@@ -16,13 +16,14 @@ dependencies:
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
+    - field.field.profile.profile.field_profile_summary
     - image.style.social_large
     - profile.type.profile
   enforced:
     module:
       - social_profile_preview
   module:
-    - image
+    - social_profile
     - text
 id: profile.profile.preview
 targetEntityType: profile
@@ -39,12 +40,21 @@ content:
       image_link: owner
     third_party_settings: {  }
   field_profile_self_introduction:
-    weight: 4
+    weight: 3
     label: visually_hidden
-    settings: {  }
+    settings:
+      trim_length: 140
     third_party_settings: {  }
-    type: text_default
+    type: text_trimmed
     region: content
+  field_profile_summary:
+    type: string
+    weight: 2
+    region: content
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   flag_follow_user:
     weight: 2
     region: content
