@@ -164,7 +164,7 @@ function social_follow_user_preprocess_flag(array &$variables): void {
   $profile = $variables['flaggable'];
 
   if ($profile instanceof ProfileInterface) {
-    $variables['attributes']['class'][] = 'btn-primary';
+    $variables['attributes']['class'][] = 'btn-accent';
     $classes = &$variables['attributes']['class'];
 
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {
