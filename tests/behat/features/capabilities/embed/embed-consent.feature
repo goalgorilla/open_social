@@ -25,7 +25,7 @@ Feature: Embed
     And I check the box "Enforce consent for all embedded content"
     And I press "Save"
     Given I am on "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     When I fill in the following:
       | Title | Embed consent |
     And I click on the embed icon in the WYSIWYG editor
@@ -67,7 +67,7 @@ Feature: Embed
 
     # Create a topic with embedded content.
     Given I am on "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     And I click radio button "Public"
     When I fill in the following:
       | Title | Embed consent (AN) |

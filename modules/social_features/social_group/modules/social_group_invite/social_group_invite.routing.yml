@@ -9,3 +9,29 @@ social_group_invite.invitation.accept:
     parameters:
       group_content:
         type: entity:group_content
+
+social_group_invite.resend_invite:
+  path: '/group/{group}/invite/{group_content}/resend'
+  defaults:
+    _form: '\Drupal\social_group_invite\Form\SocialGroupInviteResendConfirmForm'
+    _title: 'Resend invite'
+  requirements:
+    _custom_access: '\Drupal\social_group\Controller\GroupManagersController::access'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      group_content:
+        type: entity:group_content
+
+social_group_invite.views_bulk_operations.confirm:
+  path: '/group/{group}/invites/confirm-action'
+  defaults:
+    _form: '\Drupal\social_group_invite\Form\SocialGroupInviteVBOConfirmAction'
+    _title: 'Confirm action'
+  requirements:
+    _custom_access: '\Drupal\social_group\Controller\GroupManagersController::access'
+  options:
+    parameters:
+      group:
+        type: entity:group

@@ -171,7 +171,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Open User"
@@ -313,7 +313,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Open User"
@@ -453,7 +453,7 @@ Feature: I want to restrict full name visibility when nickname is used
     When I fill in the following:
       | Title | Ressinel's Topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     Then I should see "Ressinel's Topic has been created."
     Then I should see "Hide my name"

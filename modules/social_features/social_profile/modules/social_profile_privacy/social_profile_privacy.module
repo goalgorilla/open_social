@@ -362,22 +362,25 @@ function social_profile_privacy_private_fields_list($uid) {
   $user_visibility = (array) $user_data->get('social_profile_privacy', $uid, 'fields');
 
   foreach ($display->getThirdPartySettings('field_group') as $field_group) {
-    foreach ($field_group['children'] as $field) {
-      if (!isset($global_visibility[$field])) {
-        continue;
-      }
 
-      $visibility = $global_visibility[$field];
+    if (isset($field_group['children'])) {
+      foreach ($field_group['children'] as $field) {
+        if (!isset($global_visibility[$field])) {
+          continue;
+        }
 
-      if (
-        $visibility === SocialProfilePrivacyHelperInterface::HIDE ||
-        (
-          $visibility === SocialProfilePrivacyHelperInterface::CONFIGURABLE &&
-          isset($user_visibility[$field]) &&
-          !$user_visibility[$field]
-        )
-      ) {
-        $fields[$uid][] = $field;
+        $visibility = $global_visibility[$field];
+
+        if (
+          $visibility === SocialProfilePrivacyHelperInterface::HIDE ||
+          (
+            $visibility === SocialProfilePrivacyHelperInterface::CONFIGURABLE &&
+            isset($user_visibility[$field]) &&
+            !$user_visibility[$field]
+          )
+        ) {
+          $fields[$uid][] = $field;
+        }
       }
     }
   }

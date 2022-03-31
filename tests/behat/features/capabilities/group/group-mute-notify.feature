@@ -77,7 +77,7 @@ Feature: Mute/Unmute group notifications
       And I fill in the following:
         | Title | Topic for unmute notify |
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-      And I click radio button "News"
+      And I check the box "News"
       And I press "Create topic"
     Then I should see "Topic for unmute notify has been created."
       And I wait for the queue to be empty
@@ -131,7 +131,7 @@ Feature: Mute/Unmute group notifications
       And I fill in the following:
         | Title | Topic for mute notify |
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-      And I click radio button "News"
+      And I check the box "News"
       And I press "Create topic"
     Then I should see "Topic for mute notify has been created."
       And I wait for the queue to be empty

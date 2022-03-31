@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the social_content_block_landing_page module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Create a new paragraph type.
+ */
+function social_content_block_landing_page_update_11001(): void {
+  $config_path = drupal_get_path('module', 'social_content_block_landing_page') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $config_storage = \Drupal::service('config.storage');
+
+  // Create a new paragraph type.
+  $data = $source->read('paragraphs.paragraphs_type.custom_multiple_content_list_11001');
+  if (is_array($data)) {
+    $config_storage->write('paragraphs.paragraphs_type.custom_multiple_content_list', $data);
+  }
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.paragraph.field_multiple_content_block_11001');
+  if (is_array($data)) {
+    /** @var \Drupal\Core\Field\FieldItemInterface $class */
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
+  }
+
+  // Create field settings.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $data = $source->read('field.field.paragraph.custom_multiple_content_list.field_multiple_content_block_11001');
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
+
+  // Create form and view displays.
+  $displays = [
+    'core.entity_form_display.paragraph.custom_multiple_content_list.default',
+    'core.entity_view_display.paragraph.custom_multiple_content_list.default',
+  ];
+
+  foreach ($displays as $display) {
+    $data = $source->read("{$display}_11001");
+    if (is_array($data)) {
+      $config_storage->write($display, $data);
+    }
+  }
+}
