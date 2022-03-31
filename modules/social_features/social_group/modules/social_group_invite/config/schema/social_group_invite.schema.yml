@@ -5,3 +5,11 @@ social_group_invite.settings:
     invite_helper:
       type: text
       label: 'The invite helper text.'
+
+# Extend schema with additional fields.
+social_group.settings:
+  type: config_object
+  mapping:
+    invite_resend_message:
+      type: text
+      label: 'Invite resend message'

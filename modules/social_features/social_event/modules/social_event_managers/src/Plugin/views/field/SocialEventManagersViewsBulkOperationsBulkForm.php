@@ -6,6 +6,7 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -275,8 +276,24 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
+      $selected_actions = $this->options['selected_actions'];
       // Grab all the actions that are available.
-      foreach ($this->options['selected_actions'] as $action_key => $action) {
+      foreach (Element::children($this->actions) as $action) {
+
+        // Combine both arrays elements.
+        $array_combine = (array) array_combine(
+          array_keys($selected_actions),
+          array_column($selected_actions, 'action_id')
+        );
+
+        // Get the action key.
+        $action_key = array_search($action, array_filter($array_combine));
+
+        // If the option is not in our selected options, next.
+        if ($action_key === FALSE) {
+          continue;
+        }
+
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
         $label = $available_options[$action_key];
 
@@ -347,20 +364,22 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = reset($profiles);
 
-    // It must be a Guest so we pick the name values we can get.
+    // It must be a Guest, so we pick the name values we can get.
     if (!$profile) {
       $name = '';
-      $first_name = $entity->get('field_first_name')->getValue()[0]['value'];
-      $last_name = $entity->get('field_last_name')->getValue()[0]['value'];
-      if (!empty($first_name)) {
-        $name .= $first_name;
+      if (!empty($first_name = $entity->get('field_first_name')->getValue())
+        && !empty($first_name[0]['value'])
+      ) {
+        $name .= $first_name[0]['value'];
         $name .= ' ';
       }
-      if (!empty($last_name)) {
-        $name .= $last_name;
+      if (!empty($last_name = $entity->get('field_last_name')->getValue())
+        && !empty($last_name[0]['value'])
+      ) {
+        $name .= $last_name[0]['value'];
       }
 
-      return $name;
+      return trim($name);
     }
 
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */

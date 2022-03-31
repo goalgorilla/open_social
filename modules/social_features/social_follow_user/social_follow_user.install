@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_follow_user module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_user.
+ */
+function social_follow_user_install(): void {
+  // Grant the default permissions for this feature.
+  $permissions = [
+    'flag follow_user',
+    'unflag follow_user',
+  ];
+
+  foreach (['verified', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, $permissions);
+  }
+
+  // Allow SM to configure visibility for Social Follow User feature.
+  user_role_grant_permissions('sitemanager', array_merge($permissions, ['administer social_follow_user settings']));
+}

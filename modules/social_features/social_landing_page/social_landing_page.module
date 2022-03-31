@@ -65,9 +65,9 @@ function social_landing_page_field_widget_block_field_default_form_alter(&$eleme
 
   // Get block settings and label fields.
   $block_settings = $element['settings'];
-  $views_label_checkbox = isset($block_settings['views_label_checkbox']) ? $block_settings['views_label_checkbox'] : FALSE;
-  $views_label_fieldset = isset($block_settings['views_label_fieldset']) ? $block_settings['views_label_fieldset'] : FALSE;
-  $views_label = isset($block_settings['views_label']) ? $block_settings['views_label'] : FALSE;
+  $views_label_checkbox = $block_settings['views_label_checkbox'] ?? FALSE;
+  $views_label_fieldset = $block_settings['views_label_fieldset'] ?? FALSE;
+  $views_label = $block_settings['views_label'] ?? FALSE;
 
   if (!$views_label_checkbox || !$views_label_fieldset || !$views_label) {
     return;
@@ -119,6 +119,9 @@ function social_landing_page_theme() {
     'base hook' => 'node',
   ];
   $theme_templates['node__landing_page__featured'] = [
+    'base hook' => 'node',
+  ];
+  $theme_templates['node__landing_page__featured__sky'] = [
     'base hook' => 'node',
   ];
   // Paragraphs.
@@ -363,18 +366,16 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
     // Get the status code.
     $status_code = $exception->getStatusCode();
     if ($status_code == 404) {
-
       // Get current node.
       /** @var \Drupal\node\NodeInterface $node */
       $node = \Drupal::routeMatch()->getParameter('node');
-      if (!is_object($node)) {
-        $node = \Drupal::service('entity_type.manager')
-          ->getStorage('node')
-          ->load($node);
-      }
+
       // Overrides template for 404 page only if target node has a landing page
       // type.
-      if ($node instanceof NodeInterface && $node->getType() == 'landing_page') {
+      if (
+        $node instanceof NodeInterface &&
+        $node->getType() === 'landing_page'
+      ) {
         $suggestions[] = 'page__node__landing_page';
       }
     }

@@ -25,7 +25,7 @@ class QueryCommentTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // For the comment functionality.
     'social_comment',
     'comment',
@@ -42,6 +42,10 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     'field',
     'text',
     'filter',
+    // Required modules.
+    'views',
+    'group',
+    'variationcache',
   ];
 
 

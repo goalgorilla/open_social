@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - social_follow_user
+  module:
+    - profile
+id: follow_user
+label: 'Follow user'
+bundles: {  }
+entity_type: profile
+global: false
+weight: 0
+flag_short: Follow
+flag_long: ''
+flag_message: ''
+unflag_short: Unfollow
+unflag_long: ''
+unflag_message: ''
+unflag_denied_text: ''
+flag_type: 'entity:profile'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: {  }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions:
+    owner: '0'
+linkTypeConfig: {  }

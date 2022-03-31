@@ -188,12 +188,12 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     $template_frequencies = $mail_configs->get('template_frequencies') ?: [];
 
     foreach ($item['templates'] as $template) {
-      $default_frequency = isset($template_frequencies[$template]) ? $template_frequencies[$template] : FREQUENCY_IMMEDIATELY;
+      $default_frequency = $template_frequencies[$template] ?? FREQUENCY_IMMEDIATELY;
       $form['email_notifications'][$item_id][$template] = [
         '#type' => 'select',
         '#title' => $email_message_templates[$template],
         '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$template]) ? $user_email_settings[$template] : $default_frequency,
+        '#default_value' => $user_email_settings[$template] ?? $default_frequency,
       ];
     }
   }

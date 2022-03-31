@@ -11,7 +11,7 @@ Feature: See newest topics in the community
       | name          |
       | Blog          |
       | News          |
-      | Discussion    |
+      | Article       |
 
     Given I am on "/stream"
     Then I should not see "Behat Topic 1"

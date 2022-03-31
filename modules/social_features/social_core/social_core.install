@@ -36,7 +36,7 @@ function social_core_requirements($phase) {
     case 'runtime':
       if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
         $requirements['social_file_private_module_check'] = [
-          'title' => 'Social Private Files',
+          'title' => t('Social Private Files'),
           'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
           'severity' => REQUIREMENT_WARNING,
           'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
@@ -99,6 +99,7 @@ function social_core_install() {
       'delete all revisions',
       'create url aliases',
       'use text format full_html',
+      'access social_core dashboard',
     ]
   );
   user_role_grant_permissions(
@@ -128,6 +129,7 @@ function social_core_install() {
       'administer themes',
       'administer blocks',
       'access contextual links',
+      'access social_core dashboard',
     ]
   );
   // Create AN Homepage block.
@@ -153,6 +155,17 @@ function social_core_update_dependencies() {
   // Update field schema only after Profile module bug fixed.
   $dependencies['social_core'][8020] = [
     'profile' => 8001,
+  ];
+
+  // Convert the configuration of existing views to the new schema only after
+  // VariationCache is installed. In another case, it will lead to update
+  // database error:
+  // > [notice] Update started: views_bulk_operations_update_8034
+  // > [error]  The "VariationCache" module is not installed. Please run the
+  // update script to install it properly.
+  // > [error]  Update failed: views_bulk_operations_update_8034.
+  $dependencies['views_bulk_operations'][8034] = [
+    'group' => 8020,
   ];
 
   return $dependencies;
@@ -487,7 +500,7 @@ function social_core_update_8005(&$sandbox) {
         // Only crop if this uri is not yet cropped for this crop style already.
         if (!$crops) {
 
-          list($ratio_width, $ratio_height) = explode(':', $crop_type->aspect_ratio);
+          [$ratio_width, $ratio_height] = explode(':', $crop_type->aspect_ratio);
           $ratio = $ratio_width / $ratio_height;
 
           if ($ratio > 1) {
@@ -569,7 +582,7 @@ function social_core_update_8009() {
   if ($system_theme_settings === 'socialbase') {
 
     $themes = ['socialblue'];
-    \Drupal::service('theme_handler')->install($themes);
+    \Drupal::service('theme_installer')->install($themes);
 
     \Drupal::configFactory()
       ->getEditable('system.theme')
@@ -1033,7 +1046,7 @@ function social_core_update_8806(&$sandbox) {
         'field_name' => 'field_basic_link',
         'entity_type' => 'block_content',
         'bundle' => 'basic',
-        'label' => 'Read more link',
+        'label' => t('Read more link'),
         'description' => '',
         'required' => FALSE,
         'translatable' => TRUE,
@@ -1050,7 +1063,7 @@ function social_core_update_8806(&$sandbox) {
         'field_name' => 'field_text_block',
         'entity_type' => 'block_content',
         'bundle' => 'basic',
-        'label' => 'Text block',
+        'label' => t('Text block'),
         'description' => '',
         'required' => FALSE,
         'translatable' => TRUE,
@@ -1451,7 +1464,7 @@ function social_core_update_10300() {
 function social_core_update_11001(): void {
   Role::create([
     'id' => 'verified',
-    'label' => 'Verified User',
+    'label' => t('Verified User'),
     'weight' => 5,
     'is_admin' => NULL,
     'permissions' => [],
@@ -1511,4 +1524,26 @@ function social_core_update_11004(): void {
   if (\Drupal::config('social_core.settings')->get('use_entity_access_api') !== NULL) {
     \Drupal::configFactory()->getEditable('social_core.settings')->delete();
   }
+}
+
+/**
+ * Update image style of social medium.
+ */
+function social_core_update_11005(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_11005');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add dashboard permission to SM/CM.
+ */
+function social_core_update_11006(): void {
+  user_role_grant_permissions('contentmanager', ['access social_core dashboard']);
+  user_role_grant_permissions('sitemanager', ['access social_core dashboard']);
 }

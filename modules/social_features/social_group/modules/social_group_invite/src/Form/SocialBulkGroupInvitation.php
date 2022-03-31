@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_invite\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\ginvite\GroupInvitationLoader;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\user\Entity\User;
@@ -21,6 +23,7 @@ use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\ginvite\Form\BulkGroupInvitation;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Component\Render\FormattableMarkup;
 
 /**
  * Class SocialBulkGroupInvitation.
@@ -315,19 +318,29 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         // Check if the email is already part of the platform.
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);
-          // User is already part of the group, unset it from the list.
-          if (!empty($membership)) {
+          // User is already part of the group, unset it from the list and
+          // show an error.
+          if (!empty($membership) && !$this->validateExistingMembers([$account], $form_state)) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+            return;
           }
         }
         else {
           /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
           $group_content_storage = $this->entityTypeManager->getStorage('group_content');
-          // If the invitation has already been send, unset it from the list.
+          // If the invitation has already been send, unset it from the list
+          // and show an error.
           // For some reason groupInvitationLoader service doesn't work
           // properly.
           if (!empty($group_content_storage->loadByGroup($this->group, 'group_invitation', ['invitee_mail' => $email]))) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+
+            $message_singular = "User with @error_message e-mail has already been invited.";
+            $message_plural = "Users with: @error_message e-mails were already invited.";
+
+            $this->displayErrorMessage([$email], $message_singular, $message_plural, $form_state);
+
+            return;
           }
         }
       }
@@ -337,9 +350,11 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);
-          // User is already part of the group, unset it from the list.
-          if (!empty($membership)) {
+          // User is already part of the group, unset it from the list
+          // and show an error.
+          if (!empty($membership) && !$this->validateExistingMembers([$account], $form_state)) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
+            return;
           }
           else {
             // Change the uservalue to email because the bulk invite for
@@ -350,6 +365,68 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
     }
 
+  }
+
+  /**
+   * Validate if emails belong to existing group member,display an error if so.
+   *
+   * @param array $users
+   *   Array of user entities to validate.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return bool
+   *   Returns TRUE if the user is not part of the group.
+   */
+  private function validateExistingMembers(array $users, FormStateInterface $form_state) {
+    $invalid_emails = [];
+
+    foreach ($users as $user) {
+      $membership = $this->groupMembershipLoader->load($this->group, $user);
+      if (!empty($membership)) {
+        $invalid_emails[] = $user->getEmail();
+      }
+    }
+
+    if (!empty($invalid_emails)) {
+      $message_singular = "User with @error_message e-mail already a member of this group.";
+      $message_plural = "Users with: @error_message e-mails already members of this group.";
+
+      $this->displayErrorMessage($invalid_emails, $message_singular, $message_plural, $form_state);
+
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Prepares form error message if there is invalid emails.
+   *
+   * @param array $invalid_emails
+   *   List of invalid emails.
+   * @param string $message_singular
+   *   Error message for one invalid email.
+   * @param string $message_plural
+   *   Error message for multiple invalid emails.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) : void {
+    $count = count($invalid_emails);
+
+    if ($count > 1) {
+      $error_message = '<ul>';
+      foreach ($invalid_emails as $line => $invalid_email) {
+        $error_message .= "<li>{$invalid_email} on line {$line}</li>";
+      }
+      $error_message .= '</ul>';
+      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => new FormattableMarkup($error_message, [])]));
+    }
+    elseif ($count == 1) {
+      $error_message = reset($invalid_emails);
+      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => $error_message]));
+    }
   }
 
   /**
@@ -459,6 +536,43 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     }
 
     return $matches[0];
+  }
+
+  /**
+   * Returns access to the invite page.
+   *
+   * @param \Drupal\group\Entity\GroupInterface|mixed[] $group
+   *   The group entity.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access results.
+   */
+  public function inviteAccess(GroupInterface $group) {
+    // Allow for Group admin/managers.
+    if ($group->hasPermission('administer members', $this->currentUser())) {
+      return AccessResult::allowed();
+    }
+
+    // Disable access for non-members or invite by members was disabled in the
+    // group settings.
+    $group_settings = $this->config('social_group.settings');
+    if (
+      !(bool) $group_settings->get('group_invite.invite_by_members') ||
+      !$group->getMember($this->currentUser())
+    ) {
+      return AccessResult::forbidden();
+    }
+
+    // Allow sharing/invites for members only if allowed by the group manager.
+    if (
+      $group->hasField('field_group_invite_by_member') &&
+      !$group->get('field_group_invite_by_member')->isEmpty() &&
+      $group->get('field_group_invite_by_member')->getString() === '1'
+    ) {
+      return AccessResult::allowed();
+    }
+
+    return AccessResult::neutral();
   }
 
 }

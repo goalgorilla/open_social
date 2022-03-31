@@ -10,10 +10,93 @@
  *
  * Perform actions related to the installation of Alternative Frontpage.
  */
-function alternative_frontpage_install() {
+function alternative_frontpage_install(): void {
   // Set some default permissions for the site_manager and administrator.
-  $permissions = ['administer alternative frontpage settings'];
+  $permissions = [
+    'administer alternative frontpage settings',
+    'add alternative frontpage settings',
+    'delete alternative frontpage settings',
+    'edit alternative frontpage settings',
+  ];
 
   user_role_grant_permissions('administrator', $permissions);
   user_role_grant_permissions('sitemanager', $permissions);
+
+  alternative_frontpage_change_role_weight();
+}
+
+/**
+ * Convert the old frontpage settings to the new config entity.
+ */
+function alternative_frontpage_update_11101(): void {
+  // Get the settings for authenticated users.
+  $alternative_frontpage = \Drupal::configFactory()->get('alternative_frontpage.settings');
+  $authenticated = $alternative_frontpage->get('frontpage_for_authenticated_user');
+  $storage = \Drupal::entityTypeManager()->getStorage('alternative_frontpage');
+
+  if (!empty($authenticated) && !$storage->load('authenticated')) {
+    // Create the new entry.
+    $storage = $storage->create([
+      'id' => 'authenticated',
+      'label' => 'Authenticated Users',
+      'path' => $authenticated,
+      'roles_target_id' => 'authenticated',
+    ]);
+    $storage->save();
+
+    \Drupal::configFactory()->getEditable('alternative_frontpage.settings')->delete();
+  }
+
+  // Get the settings for anonymous users.
+  $site_config = \Drupal::configFactory()->get('system.site');
+  $anonymous = $site_config->get('page.front');
+
+  if (!empty($anonymous) && !$storage->load('anonymous')) {
+    // Create the new entry.
+    $storage = $storage->create([
+      'id' => 'anonymous',
+      'label' => 'Anonymous Users',
+      'path' => $anonymous,
+      'roles_target_id' => 'anonymous',
+    ]);
+    $storage->save();
+  }
+
+  // Give the new permissions to sitemanager.
+  $permissions = [
+    'add alternative frontpage settings',
+    'delete alternative frontpage settings',
+    'edit alternative frontpage settings',
+  ];
+
+  user_role_grant_permissions('sitemanager', $permissions);
+}
+
+/**
+ * Update contentmanager and sitemanager roles weight.
+ */
+function alternative_frontpage_update_11102(): void {
+  alternative_frontpage_change_role_weight();
+}
+
+/**
+ * Change contentmanager and sitemanager roles weight.
+ *
+ * We want to change the weight for these roles, since if the user has
+ * multiple roles, e.g. sitemanager and any custom role, then we decided to
+ * use the role with the highest weight to get an alternative front page for
+ * this role, and it's logical that sitemanager and content manager should be
+ * more powerful, then any custom role.
+ */
+function alternative_frontpage_change_role_weight(): void {
+  /** @var \Drupal\user\RoleStorageInterface $roles_storage */
+  $roles_storage = \Drupal::entityTypeManager()->getStorage('user_role');
+
+  /** @var \Drupal\user\Entity\Role $content_manager_role */
+  $content_manager_role = $roles_storage->load('contentmanager');
+  $content_manager_role->setWeight(100)->save();
+
+  /** @var \Drupal\user\Entity\Role $site_manager_role */
+  $site_manager_role = $roles_storage->load('sitemanager');
+  $site_manager_role->setWeight(110)->save();
 }

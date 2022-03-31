@@ -3,10 +3,10 @@
 namespace Drupal\entity_access_by_field;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 
 /**
  * EntityAccessByFieldPermissions.
@@ -76,13 +76,21 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
       /** @var \Drupal\field\Entity\FieldConfig $field */
       foreach ($fields as $field) {
         $field_storage = $field->getFieldStorageDefinition();
-        // @todo Add support for allowed_values_function.
-        $allowed_values = $field_storage->getSetting('allowed_values');
+
+        // Gets allowed values from function if exists.
+        $function = $field_storage->getSetting('allowed_values_function');
+        if (!empty($function)) {
+          $allowed_values = $function($field_storage);
+        }
+        else {
+          $allowed_values = $field_storage->getSetting('allowed_values');
+        }
+
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
             if (!in_array($field_key, $this->getIgnoredValues())) {
               // e.g. label = node.article.field_content_visibility:public.
-              $permission_label = $field->id() . ':' . $field_key;
+              $permission_label = "$entity_type.{$bundle->id()}.{$field->getName()}:$field_key";
               $permission = 'view ' . $permission_label . ' content';
               $permissions[$permission] = [
                 'title' => $this->t('View @label content', ['@label' => $permission_label]),
@@ -164,10 +172,8 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
     $fields = [];
     $field_definitions = $this->entityFieldManager->getFieldDefinitions($entity, $bundle->id());
     foreach ($field_definitions as $field_name => $field_definition) {
-      if (!empty($field_definition->getTargetBundle())) {
-        if ($field_definition->getType() === 'entity_access_field') {
-          $fields[$field_name] = $field_definition;
-        }
+      if ($field_definition->getType() === 'entity_access_field') {
+        $fields[$field_name] = $field_definition;
       }
     }
     return $fields;

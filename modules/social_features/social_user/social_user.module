@@ -92,41 +92,49 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       'created',
       'login',
     ];
+    // Remove the #type change for filters when the below issue is fixed.
+    // See: https://www.drupal.org/node/2648950
     foreach ($filters as $filter) {
-      $form[$filter]['#title'] = $form[$filter]['min']['#title'];
-      $form[$filter]['#type'] = 'fieldset';
-      $form[$filter]['#weight'] = 30;
+      // Change for min date.
+      $form[$filter . '_wrapper'][$filter]['min']['#type'] = 'date';
+      $form[$filter . '_wrapper'][$filter]['min']['#title'] = t('Date');
+      $form[$filter . '_wrapper'][$filter]['min']['#states']['visible'] = [];
+      $form[$filter . '_wrapper'][$filter]['min']['#states']['visible'][0][':input[name="' . $filter . '_op"]'] = [
+        'value' => 'between',
+      ];
+      // We don't need size property on date type.
+      unset($form[$filter . '_wrapper'][$filter]['min']['#size']);
 
-      $form[$filter]['min']['#type'] = 'date';
-      $form[$filter]['min']['#title'] = t('Date');
-      $form[$filter]['min']['#states']['visible'] = [];
-      $form[$filter]['min']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+      // Change for max date.
+      $form[$filter . '_wrapper'][$filter]['max']['#type'] = 'date';
+      $form[$filter . '_wrapper'][$filter]['max']['#title'] = t('Date');
+      $form[$filter . '_wrapper'][$filter]['max']['#states']['visible'] = [];
+      $form[$filter . '_wrapper'][$filter]['max']['#states']['visible'][0][':input[name="' . $filter . '_op"]'] = [
         'value' => 'between',
       ];
-      $form[$filter]['max']['#type'] = 'date';
-      $form[$filter]['max']['#title'] = t('Date');
-      $form[$filter]['max']['#states']['visible'] = [];
-      $form[$filter]['max']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
-        'value' => 'between',
-      ];
-      $form[$filter]['value']['#states']['visible'] = [];
-      $form[$filter]['value']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+      unset($form[$filter . '_wrapper'][$filter]['max']['#size']);
+
+      // Change of value element.
+      $form[$filter . '_wrapper'][$filter]['value']['#states']['visible'] = [];
+      $form[$filter . '_wrapper'][$filter]['value']['#states']['visible'][0][':input[name="' . $filter . '_op"]'] = [
         'value' => '<',
       ];
-      $form[$filter]['value']['#states']['visible'][1][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+      $form[$filter . '_wrapper'][$filter]['value']['#states']['visible'][1][':input[name="' . $filter . '_op"]'] = [
         'value' => '>',
       ];
-      $form[$filter]['value']['#type'] = 'date';
-      $form[$filter]['value']['#title'] = t('Date');
+      $form[$filter . '_wrapper'][$filter]['value']['#type'] = 'date';
+      $form[$filter . '_wrapper'][$filter]['value']['#title'] = t('Date');
+      unset($form[$filter . '_wrapper'][$filter]['value']['#size']);
 
-      $form[$filter][$filter . '_op'] = $form[$filter . '_op'];
-      $form[$filter][$filter . '_op']['#weight'] = -5;
-      $form[$filter][$filter . '_op']['#options'] = [];
-      $form[$filter][$filter . '_op']['#options']['between'] = t('Between');
-      $form[$filter][$filter . '_op']['#options']['>'] = t('After');
-      $form[$filter][$filter . '_op']['#options']['<'] = t('Before');
-      unset($form[$filter . '_op']);
+      // Change the labels for operators.
+      $form[$filter . '_wrapper'][$filter . '_op']['#weight'] = -5;
+      $form[$filter . '_wrapper'][$filter . '_op']['#options']['between'] = t('Between');
+      $form[$filter . '_wrapper'][$filter . '_op']['#options']['>'] = t('After');
+      $form[$filter . '_wrapper'][$filter . '_op']['#options']['<'] = t('Before');
+      unset($form[$filter . '_wrapper'][$filter . '_op']['#title_display']);
     }
+
+    // Fill in group filter options.
     if (isset($form['group']) && ($items = _social_user_get_groups())) {
       $form['group'] = array_merge($form['group'], [
         '#type' => 'select',
@@ -136,9 +144,6 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       ]);
     }
   }
-
-  // Add an extra validation option to handle all the form altering.
-  $form['#validate'][] = 'social_user_admin_people_overview_validate';
 }
 
 /**
@@ -157,19 +162,6 @@ function _social_user_get_groups() {
   }
 
   return $data;
-}
-
-/**
- * Validate function for the admin people overview exposed filters.
- */
-function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state) {
-  $filters = [
-    'created',
-    'login',
-  ];
-  foreach ($filters as $filter) {
-    $form_state->setValue($filter . '_op', $form_state->getValue([$filter, $filter . '_op']));
-  }
 }
 
 /**
@@ -340,7 +332,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
  */
 function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
-  $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
+  $submitted_user_id = $storage['uid'] ?? '';
 
   // Only when there is actual user, and the actual user is changing its own
   // account we redirect. When you're editing others you don't want this.
@@ -476,7 +468,10 @@ function template_preprocess_unwrapped_container(array &$variables) {
  */
 function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block) {
   // Add pre render to search content block in the header.
-  $build['#pre_render'][] = [SocialUserSearchContentBlockAlter::class, 'preRender'];
+  $build['#pre_render'][] = [
+    SocialUserSearchContentBlockAlter::class,
+    'preRender',
+  ];
 }
 
 /**

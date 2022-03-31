@@ -176,10 +176,12 @@ class OwnerActivityContext extends ActivityContextBase {
       }
     }
 
-    $recipients[] = [
-      'target_type' => 'user',
-      'target_id' => $entity->getOwnerId(),
-    ];
+    if ($entity instanceof EntityOwnerInterface) {
+      $recipients[] = [
+        'target_type' => 'user',
+        'target_id' => $entity->getOwnerId(),
+      ];
+    }
 
     return $recipients;
   }

@@ -263,31 +263,31 @@ function social_event_update_8805(&$sandbox) {
           'allowed_values' => [
             [
               'value' => 0,
-              'label' => 'Pending',
+              'label' => t('Pending'),
             ],
             [
               'value' => 1,
-              'label' => 'Approved',
+              'label' => t('Approved'),
             ],
             [
               'value' => 2,
-              'label' => 'Declined',
+              'label' => t('Declined'),
             ],
             [
               'value' => 3,
-              'label' => 'Invited',
+              'label' => t('Invited'),
             ],
             [
               'value' => 4,
-              'label' => 'Pending reply',
+              'label' => t('Pending reply'),
             ],
             [
               'value' => 5,
-              'label' => 'Accepted and joined',
+              'label' => t('Accepted and joined'),
             ],
             [
               'value' => 6,
-              'label' => 'Invalid or expired',
+              'label' => t('Invalid or expired'),
             ],
           ],
           'allowed_values_function' => '',
@@ -316,7 +316,7 @@ function social_event_update_8805(&$sandbox) {
         'field_name' => 'field_request_or_invite_status',
         'entity_type' => 'event_enrollment',
         'bundle' => 'event_enrollment',
-        'label' => 'Request or invite status',
+        'label' => t('Request or invite status'),
         'description' => '',
         'required' => FALSE,
         'translatable' => FALSE,
@@ -342,15 +342,15 @@ function social_event_update_8805(&$sandbox) {
           'allowed_values' => [
             0 => [
               'value' => 1,
-              'label' => 'Open to enroll - users can enroll for this event without approval',
+              'label' => t('Open to enroll - users can enroll for this event without approval'),
             ],
             1 => [
               'value' => 2,
-              'label' => 'Request to enroll - users can "request to enroll" for this event which event organisers approve/decline',
+              'label' => t('Request to enroll - users can "request to enroll" for this event which event organisers approve/decline'),
             ],
             2 => [
               'value' => 3,
-              'label' => 'Invite-only - users can only enroll for this event if they are added/invited by event organisers',
+              'label' => t('Invite-only - users can only enroll for this event if they are added/invited by event organisers'),
             ],
           ],
           'allowed_values_function' => '',
@@ -379,7 +379,7 @@ function social_event_update_8805(&$sandbox) {
         'field_name' => 'field_enroll_method',
         'entity_type' => 'node',
         'bundle' => 'event',
-        'label' => 'Enroll Method',
+        'label' => t('Enroll Method'),
         'description' => '',
         'required' => TRUE,
         'translatable' => FALSE,
@@ -427,7 +427,7 @@ function social_event_update_8805(&$sandbox) {
         'field_name' => 'field_event_enroll_outside_group',
         'entity_type' => 'node',
         'bundle' => 'event',
-        'label' => 'Allow non-group members to enroll or request to enroll',
+        'label' => t('Allow non-group members to enroll or request to enroll'),
         'description' => 'To allow users who have not join the group of this event to enroll or send request to enroll',
         'required' => FALSE,
         'translatable' => FALSE,
@@ -481,7 +481,7 @@ function social_event_update_8805(&$sandbox) {
         'field_name' => 'field_request_message',
         'entity_type' => 'event_enrollment',
         'bundle' => 'event_enrollment',
-        'label' => 'Request message',
+        'label' => t('Request message'),
         'description' => 'You can leave a message in your request. Once your request is approved, you will receive a notification via email and notification center.',
         'required' => FALSE,
         'translatable' => FALSE,
@@ -511,7 +511,7 @@ function social_event_update_8805(&$sandbox) {
           ],
         ],
         'id' => 'event_manage_enrollment_requests',
-        'label' => 'Manage event enrollment requests',
+        'label' => t('Manage event enrollment requests'),
         'module' => 'views',
         'description' => '',
         'tag' => '',
@@ -661,7 +661,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'profile',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Enrollee',
+                  'label' => t('Enrollee'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -714,7 +714,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'profile',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Organization',
+                  'label' => t('Organization'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -780,7 +780,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Message',
+                  'label' => t('Message'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -844,7 +844,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Request status',
+                  'label' => t('Request status'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -908,7 +908,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Requested on',
+                  'label' => t('Requested on'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -978,7 +978,7 @@ function social_event_update_8805(&$sandbox) {
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Operation',
+                  'label' => t('Operation'),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -1153,7 +1153,7 @@ function social_event_update_8805(&$sandbox) {
                   'plugin_id' => 'standard',
                 ],
               ],
-              'title' => 'Manage enrollment requests',
+              'title' => t('Manage enrollment requests'),
               'header' => [
                 'area' => [
                   'id' => 'area',
@@ -1231,7 +1231,7 @@ function social_event_update_8805(&$sandbox) {
                   'exception' => [
                     'value' => 'all',
                     'title_enable' => FALSE,
-                    'title' => 'All',
+                    'title' => t('All'),
                   ],
                   'title_enable' => FALSE,
                   'title' => '',
@@ -1303,7 +1303,7 @@ function social_event_update_8805(&$sandbox) {
               'path' => 'node/%node/all-enrollment-requests',
               'menu' => [
                 'type' => 'none',
-                'title' => 'Manage requests',
+                'title' => t('Manage requests'),
                 'description' => '',
                 'expanded' => FALSE,
                 'parent' => '',
@@ -1367,7 +1367,7 @@ function social_event_update_8805(&$sandbox) {
           ],
         ],
         'template' => 'request_event_enrollment',
-        'label' => 'Request event enrollment',
+        'label' => t('Request event enrollment'),
         'description' => 'A user request an enrollment for event',
         'text' => [
           [
@@ -1417,7 +1417,7 @@ function social_event_update_8805(&$sandbox) {
           ],
         ],
         'template' => 'event_request_approved',
-        'label' => 'Request approved event enrollment',
+        'label' => t('Request approved event enrollment'),
         'description' => 'The request to enroll to an enrollment is approved',
         'text' => [
           [

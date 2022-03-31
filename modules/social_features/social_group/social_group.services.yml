@@ -5,7 +5,11 @@ services:
       - { name: event_subscriber, priority: 2 }
   social_group.helper_service:
     class: Drupal\social_group\SocialGroupHelperService
-    arguments: ['@database', '@module_handler']
+    arguments:
+      - '@database'
+      - '@module_handler'
+      - '@string_translation'
+      - '@entity_type.manager'
   social_group.cross_posting:
     class: Drupal\social_group\CrossPostingService
     arguments: ['@entity_type.manager', '@database', '@plugin.manager.group_content_enabler']
@@ -24,17 +28,14 @@ services:
     tags:
       - { name: event_subscriber }
   social_group.overrider:
-    class: \Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
+    class: Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
     tags:
       - {name: config.factory.override, priority: 10}
   social_group.admin_people_override:
-    class: \Drupal\social_group\SocialGroupAdminPeopleConfigOverride
+    class: Drupal\social_group\SocialGroupAdminPeopleConfigOverride
     arguments: ['@module_handler']
     tags:
     - {name: config.factory.override, priority: 10}
-  social_group.hero_image:
-    class: Drupal\social_group\SocialGroupHero
-    arguments: ['@config.factory']
   social_group.group_statistics:
     class: Drupal\social_group\GroupStatistics
     arguments: ['@database']
