@@ -38,6 +38,7 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
       }
 
       $variables['#attached']['library'][] = 'social_profile_preview/base';
+      $variables['#attached']['library'][] = 'social_follow_user/follow_user_counter';
     }
   }
 

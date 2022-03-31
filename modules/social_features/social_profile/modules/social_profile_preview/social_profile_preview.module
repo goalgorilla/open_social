@@ -87,8 +87,8 @@ function social_profile_preview_preprocess_field__field_profile_image(array &$va
  * Implements hook_preprocess_HOOK().
  */
 function social_profile_preview_preprocess_flag(array &$variables): void {
-  if (\Drupal::routeMatch()->getRouteName() === 'social_profile_preview.canonical') {
-    $variables['attributes']['class'][] = 'btn-primary';
+  if (\Drupal::routeMatch()->getRouteName() === 'social_follow_user.preview') {
+    $variables['attributes']['class'][] = 'btn-accent';
     $classes = &$variables['attributes']['class'];
 
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {
