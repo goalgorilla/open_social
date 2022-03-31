@@ -155,3 +155,20 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_flag(array &$variables): void {
+
+  $profile = $variables['flaggable'];
+
+  if ($profile instanceof ProfileInterface) {
+    $variables['attributes']['class'][] = 'btn-primary';
+    $classes = &$variables['attributes']['class'];
+
+    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
+      unset($classes[$delta]);
+    }
+  }
+}
