@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
@@ -42,26 +43,36 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
   if ($addtocal_config->get('enable_add_to_calendar')) {
     // Get calendar links.
     $links = _social_event_addtocal_get_links($node);
+    // Skip if no calendar was selected in settings.
+    if (!empty($links)) {
+      $link = reset($links);
 
-    // Update the 'Add to calendar' field rendering.
-    $build['field_event_addtocal'] = [
-      '#type' => 'dropbutton',
-      '#attributes' => [
-        'class' => ['add-to-calendar'],
-      ],
-      '#links' => $links,
-    ];
+      // Update the 'Add to calendar' field rendering.
+      $calendar_link = Link::fromTextAndUrl(
+        t('@calendar calendar', ['@calendar' => $link['title']]),
+        $link['url']
+      );
+      $build['field_event_addtocal'] = [
+        '#markup' => t('Add to')->__toString() . ' ' . $calendar_link->toString(),
+      ];
+      // Split links if there is more than one.
+      if (count($links) > 1) {
+        $build['field_event_addtocal'] = [
+          '#type' => 'dropbutton',
+          '#attributes' => [
+            'class' => ['add-to-calendar'],
+            'no-split' => [
+              'title' => t('Add to calendar'),
+              'alignment' => 'right',
+            ],
+          ],
+          '#links' => $links,
+        ];
+      }
+    }
 
     // Make sure we clear the cache if the settings is submitted.
     $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
-
-    // Split links if there is more than one.
-    if (count($links) > 1) {
-      $build['field_event_addtocal']['#attributes']['no-split'] = [
-        'title' => t('Add to calendar'),
-        'alignment' => 'right',
-      ];
-    }
   }
 }
 
@@ -119,10 +130,6 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
           'url' => $calendar->generateUrl($node),
         ];
       }
-    }
-    // Change title if only one calendar enabled.
-    if (count($links) === 1) {
-      $links[0]['title'] = t('Add to calendar');
     }
   }
 
