@@ -1960,6 +1960,9 @@ function social_event_update_10306(&$sandbox) {
       ->getQuery()
       ->accessCheck(FALSE)
       ->condition('type', 'event');
+
+    $sandbox['ids'] = $query->execute();
+
     // Write total of entities need to be processed to $sandbox.
     $sandbox['total'] = $query->count()->execute();
 
@@ -1970,7 +1973,6 @@ function social_event_update_10306(&$sandbox) {
       $sandbox['#finished'] = 1;
       return t('No events to be processed.');
     }
-    $sandbox['ids'] = $query->execute();
   }
 
   // Try to update 25 events at a time.
