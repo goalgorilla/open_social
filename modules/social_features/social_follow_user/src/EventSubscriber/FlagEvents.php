@@ -2,6 +2,7 @@
 
 namespace Drupal\social_follow_user\EventSubscriber;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\flag\Event\FlaggingEvent;
 use Drupal\flag\Event\UnflaggingEvent;
@@ -29,16 +30,30 @@ class FlagEvents implements EventSubscriberInterface {
   protected $state;
 
   /**
+   * The cache tags invalidator.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   */
+  protected $cacheTagsInvalidator;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\flag\FlagServiceInterface $flag_service
    *   The flag service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
+   *   The cache tags invalidator.
    */
-  public function __construct(FlagServiceInterface $flag_service, StateInterface $state) {
+  public function __construct(
+    FlagServiceInterface $flag_service,
+    StateInterface $state,
+    CacheTagsInvalidatorInterface $cache_tags_invalidator
+  ) {
     $this->flagService = $flag_service;
     $this->state = $state;
+    $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }
 
   /**
@@ -56,7 +71,7 @@ class FlagEvents implements EventSubscriberInterface {
    * @param \Drupal\flag\Event\FlaggingEvent $event
    *   The flagging event.
    */
-  public function onFlag(FlaggingEvent $event) {
+  public function onFlag(FlaggingEvent $event): void {
     /** @var \Drupal\flag\Entity\Flagging $flag */
     $flag = $event->getFlagging();
 
@@ -71,10 +86,10 @@ class FlagEvents implements EventSubscriberInterface {
    * @param \Drupal\flag\Event\UnflaggingEvent $event
    *   The unflagging event.
    */
-  public function onUnflag(UnflaggingEvent $event) {
-   $flag = $event->getFlaggings();
-   /** @var \Drupal\flag\Entity\Flagging $flag */
-   $flag = reset($flag);
+  public function onUnflag(UnflaggingEvent $event): void {
+    $flag = $event->getFlaggings();
+    /** @var \Drupal\flag\Entity\Flagging $flag */
+    $flag = reset($flag);
 
     if ($flag->getFlagId() === 'follow_user') {
       $this->invalidateCaches();
@@ -84,8 +99,8 @@ class FlagEvents implements EventSubscriberInterface {
   /**
    * Invalidates cache tags.
    */
-  public function invalidateCaches() {
-    \Drupal::service('cache_tags.invalidator')->invalidateTags([
+  public function invalidateCaches(): void {
+    $this->cacheTagsInvalidator->invalidateTags([
       'followers_user',
       'following_user',
     ]);
