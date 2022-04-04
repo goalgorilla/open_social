@@ -88,7 +88,7 @@ function social_profile_preview_preprocess_field__field_profile_image(array &$va
  */
 function social_profile_preview_preprocess_flag(array &$variables): void {
   if (\Drupal::routeMatch()->getRouteName() === 'social_follow_user.preview') {
-    $variables['attributes']['class'][] = 'btn-accent';
+    $variables['attributes']['class'][] = 'btn-accent btn-follow-user';
     $classes = &$variables['attributes']['class'];
 
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {
