@@ -31,7 +31,7 @@
                   position: {
                     my: 'left top',
                     at: 'right top',
-                    of: $element
+                    of: $element,
                   },
                   create: function () {
                     $(this).closest('.ui-dialog')
@@ -46,6 +46,7 @@
                       .find('.ui-dialog-titlebar-close').remove();
                   },
                   open: function () {
+                    $(this).find('a.avatar').blur();
                     $('.ui-widget-overlay').addClass('hide');
                   }
                 }
