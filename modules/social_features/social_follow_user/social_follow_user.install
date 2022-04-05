@@ -35,7 +35,7 @@ function social_follow_user_install(): void {
 
     if (!empty($config->getRawData())) {
       $pages = $config->get('visibility.request_path.pages');
-      $pages .= "\r\n/user/*/following-users";
+      $pages .= "\r\n/user/*/following/users";
       $pages .= "\r\n/user/*/followers";
       $config->set('visibility.request_path.pages', $pages);
       $config->save();

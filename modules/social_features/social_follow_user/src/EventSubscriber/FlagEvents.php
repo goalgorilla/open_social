@@ -23,13 +23,6 @@ class FlagEvents implements EventSubscriberInterface {
   protected FlagServiceInterface $flagService;
 
   /**
-   * The state service.
-   *
-   * @var \Drupal\Core\State\StateInterface
-   */
-  protected $state;
-
-  /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
@@ -41,18 +34,14 @@ class FlagEvents implements EventSubscriberInterface {
    *
    * @param \Drupal\flag\FlagServiceInterface $flag_service
    *   The flag service.
-   * @param \Drupal\Core\State\StateInterface $state
-   *   The state service.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator.
    */
   public function __construct(
     FlagServiceInterface $flag_service,
-    StateInterface $state,
     CacheTagsInvalidatorInterface $cache_tags_invalidator
   ) {
     $this->flagService = $flag_service;
-    $this->state = $state;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }
 
