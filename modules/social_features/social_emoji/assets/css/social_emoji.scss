@@ -1,0 +1,37 @@
+.emoji-trigger {
+  display: block;
+  width: 24px;
+  height: 24px;
+
+  position: absolute;
+  right: .625rem;
+  bottom: .625rem;
+  z-index: 10;
+
+  font-size: 0;
+
+  background: transparent url('../icons/icon-emoji.svg') no-repeat center;
+
+  emoji-picker {
+    position: absolute;
+    top: 100%;
+    right: 0;
+
+    @media(max-width: 599px) {
+      width: 300px;
+    }
+  }
+}
+
+.field--name-field-comment-body {
+  .emoji-trigger {
+    bottom: 1.625rem;
+  }
+}
+
+.field--widget-text-textarea-with-summary,
+.field--name-field-group-description  {
+  .emoji-trigger {
+    bottom: 2.375rem;
+  }
+}
