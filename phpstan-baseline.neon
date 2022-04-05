@@ -56,7 +56,7 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/ContentInMyGroupActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:getOwnerId\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/EventRequestActivityContext.php
 
@@ -66,7 +66,7 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:getOwnerId\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OrganizerActivityContext.php
 
@@ -76,7 +76,7 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:getOwnerId\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
@@ -96,7 +96,7 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:getOwnerId\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/PlatformActivityContext.php
 
@@ -336,7 +336,7 @@ parameters:
 			path: modules/custom/activity_creator/activity_creator.post_update.php
 
 		-
-			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity_creator.tokens.inc
 
@@ -996,27 +996,22 @@ parameters:
 			path: modules/custom/activity_logger/activity_logger.post_update.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_recipient_group\\.$#"
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\:\\:\\$field_recipient_group\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getCommentedEntity\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\:\\:getGroup\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getEntity\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_logger/activity_logger.tokens.inc
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getGroup\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:getCommentedEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
@@ -1046,7 +1041,7 @@ parameters:
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
 		-
-			message: "#^Parameter \\#1 \\$entity of static method Drupal\\\\group\\\\Entity\\\\GroupContent\\:\\:loadByEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			message: "#^Parameter \\#1 \\$entity of static method Drupal\\\\group\\\\Entity\\\\GroupContent\\:\\:loadByEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface, Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface given\\.$#"
 			count: 1
 			path: modules/custom/activity_logger/activity_logger.tokens.inc
 
@@ -2056,6 +2051,11 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/Plugin/search_api/processor/EntityAccessByField.php
 
 		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
+
+		-
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:get\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
@@ -2084,11 +2084,6 @@ parameters:
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:id\\(\\)\\.$#"
 			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-		  message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:bundle\\(\\)\\.$#"
-		  count: 3
-		  path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testAllowedAccess\\(\\) has no return type specified\\.$#"
@@ -2691,7 +2686,7 @@ parameters:
 			path: modules/custom/mentions/mentions.module
 
 		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/custom/mentions/mentions.module
 
@@ -4586,6 +4581,11 @@ parameters:
 			path: modules/social_features/social_activity/social_activity.module
 
 		-
+			message: "#^Function social_activity_social_core_default_main_menu_links_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/social_activity.module
+
+		-
 			message: "#^Function social_activity_preprocess_block\\(\\) has parameter \\$variables with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/social_activity.module
@@ -5506,7 +5506,7 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.module
 
 		-
-			message: "#^Parameter \\#1 \\$comments of method Drupal\\\\comment\\\\CommentStorage\\:\\:getChildCids\\(\\) expects array\\<Drupal\\\\comment\\\\CommentInterface\\>, array\\<int\\|string, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$comments of method Drupal\\\\comment\\\\CommentStorage\\:\\:getChildCids\\(\\) expects array\\<Drupal\\\\comment\\\\CommentInterface\\>, array\\<int\\|string, Drupal\\\\comment\\\\Entity\\\\Comment\\|null\\> given\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -5637,11 +5637,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_comment\\\\Form\\\\SocialCommentAdminOverview\\:\\:validateForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php
-
-		-
-			message: "#^Parameter \\#1 \\$ids of method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadMultiple\\(\\) expects array\\|null, array\\|int given\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php
 
@@ -5886,7 +5881,7 @@ parameters:
 			path: modules/social_features/social_comment_upload/src/SocialCommentUploadConfigOverride.php
 
 		-
-			message: "#^Cannot access property \\$field_subtitle on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot access property \\$field_subtitle on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/modules/social_content_block_landing_page/src/Service/SocialContentBlockLandingPageContentBuilder.php
 
@@ -6096,7 +6091,17 @@ parameters:
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
 
 		-
+			message: "#^Call to function is_array\\(\\) with mixed will always evaluate to false\\.$#"
+			count: 1
+			path: modules/social_features/social_content_block/src/ContentBuilder.php
+
+		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
+			count: 1
+			path: modules/social_features/social_content_block/src/ContentBuilder.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
 
@@ -6121,7 +6126,7 @@ parameters:
 			path: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php
 
 		-
-			message: "#^Cannot call method label\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method label\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php
 
@@ -6251,7 +6256,7 @@ parameters:
 			path: modules/social_features/social_content_report/src/Access/FlagAccessCheck.php
 
 		-
-			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\flag\\\\FlagInterface\\:\\:isFlagged\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\flag\\\\FlagInterface\\:\\:isFlagged\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/src/Access/FlagAccessCheck.php
 
@@ -6304,6 +6309,11 @@ parameters:
 			message: "#^Method Drupal\\\\social_content_report\\\\Routing\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_content_report/src/Routing/RouteSubscriber.php
+
+		-
+			message: "#^Binary operation \"/\" between string and string results in an error\\.$#"
+			count: 1
+			path: modules/social_features/social_core/social_core.install
 
 		-
 			message: "#^Cannot access property \\$field_book_image on Drupal\\\\node\\\\Entity\\\\Node\\|null\\.$#"
@@ -6752,7 +6762,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
-			count: 4
+			count: 5
 			path: modules/social_features/social_core/social_core.module
 
 		-
@@ -7017,6 +7027,21 @@ parameters:
 
 		-
 			message: "#^Function social_core_theme_registry_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_core/social_core.module
+
+		-
+			message: "#^Function _social_core_default_main_menu_links\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_core/social_core.module
+
+		-
+			message: "#^Function social_core_form_menu_edit_form_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_core/social_core.module
+
+		-
+			message: "#^Function social_core_entity_access\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.module
 
@@ -7790,11 +7815,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php
-
-		-
 			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php
@@ -8205,22 +8225,17 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_enrollment_status\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
 			message: "#^Cannot access property \\$field_enroll_method on Drupal\\\\node\\\\Entity\\\\Node\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
 
 		-
 			message: "#^Elseif condition is always true\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
 
@@ -8232,6 +8247,11 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:\\:isEnabled\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\node\\\\Entity\\\\Node\\|null given\\.$#"
 			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value \\(string\\) does not accept int\\.$#"
+			count: 2
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
 
 		-
@@ -9210,6 +9230,11 @@ parameters:
 			path: modules/social_features/social_event/social_event.install
 
 		-
+			message: "#^Function social_event_update_10306\\(\\) has parameter \\$sandbox with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.install
+
+		-
 			message: "#^Function social_event_update_10307\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.install
@@ -9490,6 +9515,11 @@ parameters:
 			path: modules/social_features/social_event/social_event.module
 
 		-
+			message: "#^Function social_event_social_core_default_main_menu_links_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.module
+
+		-
 			message: "#^Function social_event_date_after_build\\(\\) has parameter \\$form with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.module
@@ -9765,11 +9795,6 @@ parameters:
 			path: modules/social_features/social_event/social_event.post_update.php
 
 		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|int given\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.post_update.php
-
-		-
 			message: "#^Function social_event_token_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.tokens.inc
@@ -9920,16 +9945,6 @@ parameters:
 			path: modules/social_features/social_event/src/EventEnrollmentStatusHelper.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_enrollment_status\\.$#"
-			count: 6
-			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
-			count: 4
-			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
-
-		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
@@ -9965,6 +9980,11 @@ parameters:
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
 
 		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_event\\\\Form\\\\EnrollActionForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
@@ -9981,6 +10001,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_event\\\\Form\\\\EnrollActionForm\\:\\:eventHasBeenFinished\\(\\) expects Drupal\\\\node\\\\Entity\\\\Node, Drupal\\\\node\\\\Entity\\\\Node\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
+
+		-
+			message: "#^Property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value \\(string\\) does not accept int\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
 
@@ -10405,12 +10430,17 @@ parameters:
 			path: modules/social_features/social_follow_content/social_follow_content.module
 
 		-
-			message: "#^Cannot call method access\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method access\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
 
 		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
+
+		-
+			message: "#^Instanceof between Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null and Drupal\\\\social_comment\\\\Entity\\\\Comment will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
 
@@ -10575,11 +10605,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
 		-
-			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_term_followed expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorageInterface\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
@@ -10590,12 +10615,12 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method id\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
@@ -10605,7 +10630,7 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: "#^Parameter \\#1 \\$node of function _social_group_get_current_group expects Drupal\\\\node\\\\NodeInterface\\|null, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$node of function _social_group_get_current_group expects Drupal\\\\node\\\\NodeInterface\\|null, Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
@@ -10765,12 +10790,12 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
 		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
 		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method id\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
@@ -10896,6 +10921,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\Group\\:\\:getMember\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
+
+		-
+			message: "#^Variable \\$route in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
 
@@ -11725,6 +11755,21 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
 
 		-
+			message: "#^Method Drupal\\\\social_group_invite\\\\Form\\\\SocialGroupInviteVBOConfirmAction\\:\\:buildForm\\(\\) has parameter \\$display_id with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteVBOConfirmAction.php
+
+		-
+			message: "#^Method Drupal\\\\social_group_invite\\\\Form\\\\SocialGroupInviteVBOConfirmAction\\:\\:buildForm\\(\\) has parameter \\$view_id with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteVBOConfirmAction.php
+
+		-
+			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\Action\\\\SocialGroupInviteResend\\:\\:execute\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Action/SocialGroupInviteResend.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php
@@ -11743,6 +11788,16 @@ parameters:
 			message: "#^Property Drupal\\\\social_group_invite\\\\Plugin\\\\Block\\\\SocialGroupInviteNotificationBlock\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php
+
+		-
+			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\views\\\\field\\\\SocialGroupInviteViewsBulkOperationsBulkForm\\:\\:viewsFormValidate\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$filters of method Drupal\\\\views\\\\ViewExecutable\\:\\:setExposedInput\\(\\) expects array\\<string\\>, array\\<string, true\\> given\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\Routing\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
@@ -12765,6 +12820,11 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
+			message: "#^Function social_group_social_core_default_main_menu_links_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Function _social_group_grant_admin_role\\(\\) has parameter \\$gid with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -13610,7 +13670,7 @@ parameters:
 			path: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php
 
 		-
-			message: "#^Cannot call method getGroupType\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getGroupType\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php
 
@@ -13798,6 +13858,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$filters of method Drupal\\\\views\\\\ViewExecutable\\:\\:setExposedInput\\(\\) expects array\\<string\\>, array\\<string, true\\> given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php
+
+		-
+			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\views\\\\filter\\\\FilterByGroup\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/src/Plugin/views/filter/FilterByGroup.php
 
 		-
 			message: "#^Method Drupal\\\\social_group\\\\Routing\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
@@ -14195,7 +14260,7 @@ parameters:
 			path: modules/social_features/social_like/social_like.install
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:isPublished\\(\\)\\.$#"
+			message: "#^Call to an undefined method Drupal\\\\aggregator\\\\Entity\\\\Feed\\:\\:isPublished\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.module
 
@@ -14245,27 +14310,27 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method bundle\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method bundle\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method getCommentedEntity\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getCommentedEntity\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method getEntityType\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getEntityType\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method label\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method label\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
@@ -14275,12 +14340,12 @@ parameters:
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method toUrl\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method toUrl\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
 		-
-			message: "#^Cannot call method toUrl\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
+			message: "#^Cannot call method toUrl\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/social_like.tokens.inc
 
@@ -14535,12 +14600,12 @@ parameters:
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
 		-
-			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
 		-
-			message: "#^Cannot call method getMentionedUserID\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method getMentionedUserID\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
 
@@ -14625,12 +14690,12 @@ parameters:
 			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
 
 		-
-			message: "#^Cannot call method access\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			message: "#^Cannot call method access\\(\\) on Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
 
 		-
-			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_mentions\\\\Plugin\\\\ActivityContext\\\\MentionActivityContext\\:\\:getMentionsFromRelatedEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_mentions\\\\Plugin\\\\ActivityContext\\\\MentionActivityContext\\:\\:getMentionsFromRelatedEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
 
@@ -15020,7 +15085,7 @@ parameters:
 			path: modules/social_features/social_post/modules/social_post_album/src/Element/SocialPostAlbumManagedFile.php
 
 		-
-			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\Core\\\\Entity\\\\EntityViewBuilderInterface\\:\\:view\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\Core\\\\Entity\\\\EntityViewBuilderInterface\\:\\:view\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\aggregator\\\\Entity\\\\Feed\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_post/modules/social_post_album/src/LazyRenderer.php
 
@@ -16505,6 +16570,16 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
 
 		-
+			message: "#^Parameter \\#1 \\$key of method Drupal\\\\Core\\\\Config\\\\Config\\:\\:get\\(\\) expects string, array\\|string given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, int given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
@@ -17311,6 +17386,11 @@ parameters:
 
 		-
 			message: "#^Function social_profile_form_user_form_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/social_profile.module
+
+		-
+			message: "#^Function social_profile_social_core_default_main_menu_links_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
 
@@ -18425,6 +18505,11 @@ parameters:
 			path: modules/social_features/social_topic/social_topic.module
 
 		-
+			message: "#^Function social_topic_social_core_default_main_menu_links_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_topic/social_topic.module
+
+		-
 			message: "#^Function social_topic_allowed_values_function\\(\\) has parameter \\$cacheable with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_topic/social_topic.module
@@ -18985,6 +19070,11 @@ parameters:
 			path: modules/social_features/social_user/social_user.module
 
 		-
+			message: "#^Binary operation \"/\" between int and array\\<int, int\\<0, max\\>\\|string\\>\\|int\\<0, max\\>\\|string results in an error\\.$#"
+			count: 1
+			path: modules/social_features/social_user/social_user.post_update.php
+
+		-
 			message: "#^Function social_user_post_update_convert_navigation_settings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.post_update.php
@@ -19045,14 +19135,14 @@ parameters:
 			path: modules/social_features/social_user/src/EventSubscriber/RedirectSubscriber.php
 
 		-
+			message: "#^Variable \\$route in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: modules/social_features/social_user/src/EventSubscriber/RedirectSubscriber.php
+
+		-
 			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserFloodForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserFloodForm.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getAccountName\\(\\)\\.$#"
-			count: 2
-			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
 
 		-
 			message: "#^Class Drupal\\\\social_user\\\\Form\\\\SocialUserLoginForm extends @internal class Drupal\\\\user\\\\Form\\\\UserLoginForm\\.$#"
@@ -19085,7 +19175,7 @@ parameters:
 			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$account of function user_login_finalize expects Drupal\\\\user\\\\UserInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$account of function user_login_finalize expects Drupal\\\\user\\\\UserInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserLoginForm.php
 
@@ -19638,34 +19728,4 @@ parameters:
 			message: "#^Parameter \\#1 \\$raw of static method Drupal\\\\Component\\\\Serialization\\\\Yaml\\:\\:decode\\(\\) expects string, string\\|false given\\.$#"
 			count: 2
 			path: src/Installer/OptionalModuleManager.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\views\\\\filter\\\\FilterByGroup\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/views/filter/FilterByGroup.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_invite\\\\Form\\\\SocialGroupInviteVBOConfirmAction\\:\\:buildForm\\(\\) has parameter \\$display_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteVBOConfirmAction.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_invite\\\\Form\\\\SocialGroupInviteVBOConfirmAction\\:\\:buildForm\\(\\) has parameter \\$view_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteVBOConfirmAction.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\Action\\\\SocialGroupInviteResend\\:\\:execute\\(\\) has parameter \\$entity with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Action/SocialGroupInviteResend.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\views\\\\field\\\\SocialGroupInviteViewsBulkOperationsBulkForm\\:\\:viewsFormValidate\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$filters of method Drupal\\\\views\\\\ViewExecutable\\:\\:setExposedInput\\(\\) expects array\\<string\\>, array\\<string, true\\> given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
 

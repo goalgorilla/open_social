@@ -80,14 +80,17 @@ function _social_tagging_add_fields_search_api(): void {
     /** @var \Drupal\search_api\IndexInterface $index */
     $index = $index_storage->load($index);
 
-    $field_intro = new Field($index, 'social_tagging');
-    $field_intro->setType('integer');
-    $field_intro->setPropertyPath('social_tagging');
-    $field_intro->setDatasourceId('entity:' . $type);
-    $field_intro->setLabel('Social Tagging');
-    $index->addField($field_intro);
+    // Only add the field if it doesn't exist yet.
+    if (!$index->getField('social_tagging')) {
+      $field_intro = new Field($index, 'social_tagging');
+      $field_intro->setType('integer');
+      $field_intro->setPropertyPath('social_tagging');
+      $field_intro->setDatasourceId('entity:' . $type);
+      $field_intro->setLabel('Social Tagging');
+      $index->addField($field_intro);
 
-    $index->save();
+      $index->save();
+    }
   }
 }
 
