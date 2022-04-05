@@ -45,7 +45,7 @@ function template_preprocess_following(array &$variables): void {
   /** @var \Drupal\flag\FlagInterface $flag */
   $flag = \Drupal::entityTypeManager()->getStorage('flag')->load('follow_user');
 
-  /** @var \Drupal\profile\ProfileInterface $profile */
+  /** @var \Drupal\profile\Entity\ProfileInterface $profile */
   $profile = $variables['flaggable'];
 
   $variables['count'] = \Drupal::service('flag.count')

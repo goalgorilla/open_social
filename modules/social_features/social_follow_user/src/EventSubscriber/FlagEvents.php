@@ -3,7 +3,6 @@
 namespace Drupal\social_follow_user\EventSubscriber;
 
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
-use Drupal\Core\State\StateInterface;
 use Drupal\flag\Event\FlaggingEvent;
 use Drupal\flag\Event\UnflaggingEvent;
 use Drupal\flag\FlagServiceInterface;
