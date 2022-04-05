@@ -59,10 +59,73 @@
       }
     }
   }
+
+  &.dropdown-menu {
+    top: 100%;
+
+    li {
+      margin-bottom: 0;
+
+      a {
+        padding-top: .5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .calendar-link {
+        padding-left: 46px;
+
+        &:before {
+          left: 1rem;
+        }
+      }
+    }
+  }
 }
 
 .addtocal-title {
   margin-bottom: 1.5rem;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.add-to-calendar.dropdown {
+  margin-bottom: 0;
+}
+
+.meta-addtocal {
+  .add-to-calendar {
+    .btn {
+      padding: 0;
+      border-radius: 0 !important;
+
+      .waves-ripple {
+        background: transparent;
+      }
+    }
+
+    .btn,
+    &.open > .btn,
+    .btn:focus,
+    .btn:hover {
+      color: #4d4d4d;
+    }
+  }
+
+  .addtocal--one-link {
+    font-size: 14px;
+
+    &,
+    a {
+      color: #4d4d4d;
+      font-weight: 400;
+    }
+
+    a {
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
 }

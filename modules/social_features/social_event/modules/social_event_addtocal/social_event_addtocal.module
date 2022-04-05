@@ -54,7 +54,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
         $link['url']
       );
       $build['field_event_addtocal'] = [
-        '#markup' => t('Add to')->__toString() . ' ' . $calendar_link->toString(),
+        '#markup' => '<span class="addtocal--one-link">' . t('Add to')->__toString() . ' ' . $calendar_link->toString() . '</span>',
       ];
       // Split links if there is more than one.
       if (count($links) > 1) {
@@ -96,7 +96,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
             '#theme' => 'item_list__dropdown',
             '#items' => $items,
             '#context' => [
-              'alignment' => 'right',
+              'alignment' => 'left',
             ],
             '#attributes' => [
               'class' => [
