@@ -21,9 +21,15 @@ function social_follow_user_entity_extra_field_info(): array {
     'profile' => [
       'profile' => [
         'display' => [
-          'social_follow_user' => [
+          'followers' => [
             'label' => t('Followers'),
             'description' => t('The number of users who are followed.'),
+            'weight' => 20,
+            'visible' => FALSE,
+          ],
+          'following' => [
+            'label' => t('Following users'),
+            'description' => t('The number of users that user following.'),
             'weight' => 20,
             'visible' => FALSE,
           ],
@@ -99,14 +105,14 @@ function social_follow_user_profile_view(
 ): void {
   if ($entity->bundle() === 'profile') {
 
-    if ($display->getComponent('social_follow_user') !== NULL) {
-      $build['social_follow_user'] = [
+    if ($display->getComponent('followers') !== NULL) {
+      $build['followers'] = [
         '#theme' => 'followers',
         '#flaggable' => $entity,
       ];
     }
-    if ($display->getComponent('social_following_user') !== NULL) {
-      $build['social_following_user'] = [
+    if ($display->getComponent('following') !== NULL) {
+      $build['following'] = [
         '#theme' => 'following',
         '#flaggable' => $entity,
       ];
@@ -146,7 +152,7 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     // Display related teaser tag for each user follow list.
     switch (\Drupal::routeMatch()->getRouteName()) {
       case 'view.followers_user.page_user_followers':
-        $variables['follower'] = TRUE;
+        $variables['followers'] = TRUE;
         break;
 
       case 'view.following_users.page_following_users':
