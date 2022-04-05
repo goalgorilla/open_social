@@ -13,7 +13,7 @@ Feature: Embed
 
     # Create a topic with one attachment.
     Given I am on "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     When I fill in the following:
       | Title | Embed WYSIWYG |
     And I click on the embed icon in the WYSIWYG editor

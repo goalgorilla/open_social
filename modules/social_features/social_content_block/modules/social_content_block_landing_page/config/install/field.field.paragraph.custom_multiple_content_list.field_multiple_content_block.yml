@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_multiple_content_block
+    - paragraphs.paragraphs_type.custom_multiple_content_list
+  module:
+    - block_field
+id: paragraph.custom_multiple_content_list.field_multiple_content_block
+field_name: field_multiple_content_block
+entity_type: paragraph
+bundle: custom_multiple_content_list
+label: Block
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    plugin_id: multiple_content_block
+    settings: {  }
+default_value_callback: ''
+settings:
+  selection: blocks
+  selection_settings:
+    plugin_ids:
+      multiple_content_block: multiple_content_block
+field_type: block_field

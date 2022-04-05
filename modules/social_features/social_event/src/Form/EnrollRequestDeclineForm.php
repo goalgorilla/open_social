@@ -2,14 +2,17 @@
 
 namespace Drupal\social_event\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
+use Drupal\social_profile\SocialProfileNameService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,7 +27,7 @@ class EnrollRequestDeclineForm extends FormBase {
    *
    * @var \Drupal\social_event\Entity\EventEnrollment
    */
-  protected $eventEnrollment;
+  protected EventEnrollment $eventEnrollment;
 
   /**
    * The redirect destination helper.
@@ -38,21 +41,35 @@ class EnrollRequestDeclineForm extends FormBase {
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * The event invite status helper.
    *
    * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
-  protected $eventInviteStatus;
+  protected EventEnrollmentStatusHelper $eventInviteStatus;
 
   /**
    * The full name of the user.
    *
    * @var string
    */
-  protected $fullName;
+  protected string $fullName;
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The Social Profile name service.
+   *
+   * @var \Drupal\social_profile\SocialProfileNameService
+   */
+  protected SocialProfileNameService $socialProfileNameService;
 
   /**
    * EnrollRequestDeclineForm constructor.
@@ -63,11 +80,23 @@ class EnrollRequestDeclineForm extends FormBase {
    *   The account interface.
    * @param \Drupal\social_event\EventEnrollmentStatusHelper $enrollmentStatusHelper
    *   The enrollment status helper.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
+   * @param \Drupal\social_profile\SocialProfileNameService $social_profile_name_service
+   *   The Social Profile name service.
    */
-  public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper) {
+  public function __construct(
+    RedirectDestinationInterface $redirect_destination,
+    AccountInterface $current_user,
+    EventEnrollmentStatusHelper $enrollmentStatusHelper,
+    EntityTypeManagerInterface $entity_type_manager,
+    SocialProfileNameService $social_profile_name_service
+  ) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->socialProfileNameService = $social_profile_name_service;
   }
 
   /**
@@ -77,7 +106,9 @@ class EnrollRequestDeclineForm extends FormBase {
     return new static(
       $container->get('redirect.destination'),
       $container->get('current_user'),
-      $container->get('social_event.status_helper')
+      $container->get('social_event.status_helper'),
+      $container->get('entity_type.manager'),
+      $container->get('social_profile.name_service')
     );
   }
 
@@ -104,9 +135,15 @@ class EnrollRequestDeclineForm extends FormBase {
 
     // Load the user profile to format a nice name.
     if (!empty($this->eventEnrollment)) {
-      /** @var \Drupal\profile\Entity\Profile $user_profile */
-      $user_profile = Profile::load($this->eventEnrollment->getAccount());
-      $this->fullName = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
+      /** @var \Drupal\profile\Entity\ProfileInterface[] $user_profiles */
+      $user_profiles = $this->entityTypeManager
+        ->getStorage('profile')
+        ->loadByProperties(['uid' => $this->eventEnrollment->getAccount()]);
+
+      $user_profile = reset($user_profiles);
+      if ($user_profile instanceof ProfileInterface) {
+        $this->fullName = $this->socialProfileNameService->getProfileName($user_profile);
+      }
     }
 
     $form['#attributes']['class'][] = 'form--default';

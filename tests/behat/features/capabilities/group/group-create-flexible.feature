@@ -119,7 +119,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group community topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
 
     # Create a topic in the flexible group, visible to group members only.
@@ -130,7 +130,7 @@ Feature: Create flexible Group
     When I fill in "Title" with "Test group private topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Group members" with the id "edit-field-content-visibility-group"
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
 
     # Check the topic is shown correctly to author after saving.

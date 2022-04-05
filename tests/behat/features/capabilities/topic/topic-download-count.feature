@@ -14,7 +14,7 @@ Feature: Download Topic
     When I fill in the following:
       | Title | This is a test topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "News"
+    And I check the box "News"
     And I attach the file "/files/humans.txt" to "Attachments"
     And I wait for AJAX to finish
     And I press "Create topic"

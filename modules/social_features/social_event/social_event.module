@@ -1245,3 +1245,18 @@ function social_event_field_group_form_process_build_alter(array &$element, Form
     $element['group_enrollment']['#access'] = FALSE;
   }
 }
+
+/**
+ * Implements hook_social_core_default_main_menu_links_alter().
+ */
+function social_event_social_core_default_main_menu_links_alter(array &$links) {
+  $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties([
+      'title' => 'All events',
+      'menu_name' => 'main',
+      'link' => 'internal:/community-events',
+    ]);
+  $link = end($link);
+
+  $links[] = $link;
+}

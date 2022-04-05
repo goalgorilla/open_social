@@ -132,7 +132,7 @@ Feature: Receive email notifications and choose frequency
     When I fill in the following:
       | Title | This is a test topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "News"
+    And I check the box "News"
     And I press "Create topic"
     And I should see "Topic This is a test topic has been created."
     And I click "Edit content"

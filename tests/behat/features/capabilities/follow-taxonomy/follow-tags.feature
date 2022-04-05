@@ -30,7 +30,7 @@ Feature: Follow Tags
     # Create topic to work with it later.
     Given I am logged in as "content_creator"
     And I go to "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     And I fill in "Title" with "Simple topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic to check update activity"
     And I click radio button "Community"
@@ -43,7 +43,7 @@ Feature: Follow Tags
 
     # Create topic with tag than user car follow tags.
     Then I go to "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     And I fill in "Title" with "Topic with tags"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for follow tag feature"
     And I click radio button "Community"
@@ -90,7 +90,7 @@ Feature: Follow Tags
     # Create topic with tag to trigger activity
     Given I am logged in as "content_creator"
     And I go to "node/add/topic"
-    And I click radio button "News"
+    And I check the box "News"
     And I fill in "Title" with "Topic with tags second"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic to check create activity"
     And I click radio button "Community"

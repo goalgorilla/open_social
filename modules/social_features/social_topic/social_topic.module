@@ -14,17 +14,18 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_topic\Controller\SocialTopicController;
+use Drupal\taxonomy\TermInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\node\NodeInterface;
 
 /**
  * Prepares variables for node templates.
@@ -45,35 +46,35 @@ function social_topic_preprocess_node(array &$variables) {
   /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'topic') {
-    $topic_type = $node->get('field_topic_type');
-    $topic_type_entities = $topic_type->referencedEntities();
-    if (count($topic_type_entities) === 1) {
-      $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-      /** @var \Drupal\node\NodeInterface $topic */
-      foreach ($topic_type_entities as $topic) {
-        if ($topic->isTranslatable() && $topic->hasTranslation($curr_langcode)) {
-          $topic = $topic->getTranslation($curr_langcode);
-        }
-        $variables['metadata'] = t('in @topic', ['@topic' => $topic->toLink()->toString()]);
-        // Set topic type link.
-        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
-        $label = $topic->label();
-        if (!empty($label)) {
-          $topic_type_link = Link::fromTextAndUrl($label, $topic_type_url)
-            ->toString();
-          $variables['topic_type'] = $topic_type_link;
-        }
-
-        if ($topic->hasField('field_topic_type_icon') && !$topic->get('field_topic_type_icon')->isEmpty()) {
-          $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;
-        }
-
-        $variables['#cache']['tags'][] = $topic->getEntityTypeId() . ':' . $topic->id();
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $topic_type_field */
+    $topic_type_field = $node->get('field_topic_type');
+    $topic_types = $topic_type_field->referencedEntities();
+    $variables['metadata'] = NULL;
+    $variables['topic_type'] = NULL;
+    $topic_type = empty($topic_types) ? NULL : reset($topic_types);
+    if ($topic_type instanceof TermInterface) {
+      $curr_langcode = \Drupal::languageManager()
+        ->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)
+        ->getId();
+      $variables['metadata'] = t('in @topic', [
+        '@topic' => $topic_type->toLink()->toString(),
+      ]);
+      if ($topic_type->isTranslatable() && $topic_type->hasTranslation($curr_langcode)) {
+        $topic_type = $topic_type->getTranslation($curr_langcode);
       }
-    }
-    else {
-      $variables['metadata'] = NULL;
-      $variables['topic_type'] = NULL;
+
+      // Set topic type link.
+      $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic_type->id()]);
+      $topic_type_link = Link::fromTextAndUrl($topic_type->label() ?? '', $topic_type_url)
+        ->toString();
+      $variables['topic_type'] = $topic_type_link;
+      if (
+        $topic_type->hasField('field_topic_type_icon') &&
+        !$topic_type->get('field_topic_type_icon')->isEmpty()
+      ) {
+        $variables['topic_type_icon'] = $topic_type->get('field_topic_type_icon')->getString();
+      }
+      $variables['#cache']['tags'][] = $topic_type->getEntityTypeId() . ':' . $topic_type->id();
     }
   }
 }
@@ -267,7 +268,13 @@ function social_topic_widget_alter(array &$form) {
 
   // Change the widget if more than X.
   if (count($form['field_topic_type']['widget']['#options']) >= $config->get('social_topic_type_select_changer')) {
-    $form['field_topic_type']['widget']['#type'] = 'select';
+    $form['field_topic_type']['widget']['#type'] = 'select2';
+    $form['field_topic_type']['widget']['#multiple'] = FALSE;
+    $topic_field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'topic');
+    if (($topic_type_definition = $topic_field_definitions['field_topic_type']) !== NULL) {
+      /** @var \Drupal\field\FieldConfigInterface $topic_type_definition */
+      $form['field_topic_type']['widget']['#multiple'] = $topic_type_definition->getFieldStorageDefinition()->isMultiple();
+    }
   }
 }
 
@@ -371,4 +378,19 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
   $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
 
   return $response;
+}
+
+/**
+ * Implements hook_social_core_default_main_menu_links_alter().
+ */
+function social_topic_social_core_default_main_menu_links_alter(array &$links) {
+  $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties([
+      'title' => 'All topics',
+      'menu_name' => 'main',
+      'link' => 'internal:/all-topics',
+    ]);
+  $link = end($link);
+
+  $links[] = $link;
 }

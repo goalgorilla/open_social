@@ -124,3 +124,29 @@ function hook_social_core_compatible_content_forms(array &$compatible_content_ty
 /**
  * @} End of "hidedefaultitle hooks".
  */
+
+/**
+ * Hooks to alter the default main menu links that ships with Open Social.
+ *
+ * @defaultmainmenulinks hooks
+ * @{
+ */
+
+/**
+ * Provide a method to alter the list of default main menu links.
+ *
+ * Open Social ships with default main menu links, this links are special and
+ * we don't want users to change them, this hooks enables to alter the
+ * list of default links.
+ *
+ * @param array $links
+ *   Array of menu_link_content entities.
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_core_default_main_menu_links_alter(array &$links) {
+}
+
+/**
+ * @} End of "defaultmainmenulinks hooks".
+ */

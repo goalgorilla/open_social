@@ -130,3 +130,60 @@ function social_comment_update_8901() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update comment views.
+ */
+function social_comment_update_11201(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_comment', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Reorder fields in the comment views.
+ */
+function social_comment_update_11202(): void {
+  $comment_view = \Drupal::configFactory()->getEditable('views.view.comment');
+
+  // View displays where we need reorder fields.
+  $displays = [
+    'display.default',
+    'display.page_unapproved',
+  ];
+
+  // Field for reordering which should be placed before the 'update' column.
+  $fields_to_replace = [
+    'type',
+    'label',
+  ];
+
+  // Reorder fields.
+  foreach ($displays as $display) {
+    $fields_config = "$display.display_options.fields";
+    $fields = $comment_view->get($fields_config);
+
+    // Reorder field in array.
+    foreach ($fields_to_replace as $field) {
+      $update_index = array_search('changed', array_keys($fields));
+      if ($update_index !== FALSE) {
+        $field_data = $fields[$field];
+        unset($fields[$field]);
+        $fields = array_slice($fields, 0, $update_index, TRUE) +
+          [$field => $field_data] +
+          array_slice($fields, $update_index, count($fields) - $update_index, TRUE);
+      }
+    }
+
+    // Set reordered fields.
+    $comment_view->set($fields_config, $fields);
+  }
+
+  // Save updated view configuration.
+  $comment_view->save();
+}
