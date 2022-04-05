@@ -379,3 +379,18 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
 
   return $response;
 }
+
+/**
+ * Implements hook_social_core_default_main_menu_links_alter().
+ */
+function social_topic_social_core_default_main_menu_links_alter(array &$links) {
+  $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties([
+      'title' => 'All topics',
+      'menu_name' => 'main',
+      'link' => 'internal:/all-topics',
+    ]);
+  $link = end($link);
+
+  $links[] = $link;
+}
