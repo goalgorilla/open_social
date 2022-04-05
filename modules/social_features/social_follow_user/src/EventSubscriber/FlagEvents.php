@@ -20,7 +20,7 @@ class FlagEvents implements EventSubscriberInterface {
    *
    * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * The state service.
@@ -34,10 +34,10 @@ class FlagEvents implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheTagsInvalidator;
+  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
-   * Constructor.
+   * FlagEvents constructor.
    *
    * @param \Drupal\flag\FlagServiceInterface $flag_service
    *   The flag service.
@@ -72,10 +72,7 @@ class FlagEvents implements EventSubscriberInterface {
    *   The flagging event.
    */
   public function onFlag(FlaggingEvent $event): void {
-    /** @var \Drupal\flag\Entity\Flagging $flag */
-    $flag = $event->getFlagging();
-
-    if ($flag->getFlagId() === 'follow_user') {
+    if ($event->getFlagging()->getFlagId() === 'follow_user') {
       $this->invalidateCaches();
     }
   }
@@ -88,7 +85,8 @@ class FlagEvents implements EventSubscriberInterface {
    */
   public function onUnflag(UnflaggingEvent $event): void {
     $flag = $event->getFlaggings();
-    /** @var \Drupal\flag\Entity\Flagging $flag */
+
+    /** @var \Drupal\flag\FlaggingInterface $flag */
     $flag = reset($flag);
 
     if ($flag->getFlagId() === 'follow_user') {

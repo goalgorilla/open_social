@@ -146,11 +146,11 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     // Display related teaser tag for each user follow list.
     switch (\Drupal::routeMatch()->getRouteName()) {
       case 'view.followers_user.page_user_followers':
-        $variables['social_follower'] = TRUE;
+        $variables['follower'] = TRUE;
         break;
 
       case 'view.following_users.page_following_users':
-        $variables['social_following'] = TRUE;
+        $variables['following'] = TRUE;
         break;
     }
   }
@@ -164,7 +164,10 @@ function social_follow_user_preprocess_flag(array &$variables): void {
   $profile = $variables['flaggable'];
 
   if ($profile instanceof ProfileInterface) {
-    $variables['attributes']['class'][] = 'btn-accent btn-follow-user';
+    $variables['attributes']['class'] = array_merge(
+      $variables['attributes']['class'] ?? [],
+      ['btn-accent', 'btn-follow-user'],
+    );
     $classes = &$variables['attributes']['class'];
 
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {

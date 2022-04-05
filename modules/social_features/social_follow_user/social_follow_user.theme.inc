@@ -22,8 +22,11 @@ function template_preprocess_followers(array &$variables): void {
   $variables['flag'] = \Drupal::entityTypeManager()->getStorage('flag')
     ->load('follow_user');
 
-  $variables['url'] = Url::fromRoute('view.followers_user.page_user_followers',
-    ['user' => $variables['flaggable']->getOwner()->id()]);
+  $variables['url'] = Url::fromRoute(
+    'view.followers_user.page_user_followers',
+    ['user' => $variables['flaggable']->getOwner()->id()]
+  );
+
   $variables['#cache']['tags'][] = 'followers_user';
 }
 
@@ -42,12 +45,16 @@ function template_preprocess_following(array &$variables): void {
   /** @var \Drupal\flag\FlagInterface $flag */
   $flag = \Drupal::entityTypeManager()->getStorage('flag')->load('follow_user');
 
-  /** @var \Drupal\profile\Entity\Profile $profile */
+  /** @var \Drupal\profile\ProfileInterface $profile */
   $profile = $variables['flaggable'];
 
   $variables['count'] = \Drupal::service('flag.count')
     ->getUserFlagFlaggingCount($flag, $profile->getOwner());
-  $variables['url'] = Url::fromRoute('view.following_users.page_following_users',
-    ['user' => $profile->getOwner()->id()]);
+
+  $variables['url'] = Url::fromRoute(
+    'view.following_users.page_following_users',
+    ['user' => $profile->getOwner()->id()]
+  );
+
   $variables['#cache']['tags'][] = 'following_user';
 }

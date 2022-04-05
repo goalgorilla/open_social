@@ -1,17 +1,16 @@
-uuid: 78c53577-135a-4061-97b2-f73bc63d8cb9
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.teaser
     - flag.flag.follow_user
-    - user.role.authenticated
+  enforced:
+    module:
+      - social_follow_user
   module:
     - flag
     - profile
     - user
-_core:
-  default_config_hash: CQTmDzlBNWbNHShFNzftPF18gkK5qG_-aiF3EHRTdYU
 id: followers_user
 label: Followers
 module: views
@@ -27,10 +26,9 @@ display:
     position: 0
     display_options:
       access:
-        type: role
+        type: perm
         options:
-          role:
-            authenticated: authenticated
+          perm: 'flag follow_user'
       cache:
         type: tag
         options: {  }
@@ -172,7 +170,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'No followers yet'
+          content: 'You do not have any followers.'
           plugin_id: text_custom
       relationships:
         profile:
@@ -273,7 +271,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:social_tagging.settings'
@@ -312,7 +310,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'

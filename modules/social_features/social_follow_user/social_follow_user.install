@@ -31,7 +31,7 @@ function social_follow_user_install(): void {
     'block.block.socialblue_profile_statistic_block',
   ];
   foreach ($config_names as $config_name) {
-    $config = \Drupal::service('config.factory')->getEditable($config_name);
+    $config = \Drupal::configFactory()->getEditable($config_name);
 
     if (!empty($config->getRawData())) {
       $pages = $config->get('visibility.request_path.pages');
@@ -43,19 +43,10 @@ function social_follow_user_install(): void {
   }
 
   // Update statistic profile view mode.
-  $data = [
-    'weight' => 5,
-    'region' => 'content',
-    'settings' => [],
-    'third_party_settings' => [],
-  ];
-
-  foreach (['statistic', 'teaser'] as $display_id) {
-    $config = \Drupal::service('config.factory')
-      ->getEditable('core.entity_view_display.profile.profile.' . $display_id);
-
-    $config->set('content.social_follow_user', $data);
-    $config->set('content.social_following_user', $data);
-    $config->save();
-  }
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11001');
+  // Output logged messages to related channel of update execution.
+  $updateHelper->logger()->output();
 }
