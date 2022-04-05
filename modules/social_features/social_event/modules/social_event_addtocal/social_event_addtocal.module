@@ -5,6 +5,7 @@
  * Contains Social Add To Calendar module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Template\Attribute;
@@ -57,22 +58,61 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
       ];
       // Split links if there is more than one.
       if (count($links) > 1) {
+        $items = [];
+        foreach ($links as $link) {
+          // Update classes in calendar links.
+          /** @var \Drupal\Core\Url $url */
+          $url = $link['url'];
+          $options = $url->getOptions();
+          $options['attributes']['class'][] = 'calendar-link';
+          $options['attributes']['class'][] = 'calendar-' . Html::getId($link['title']);
+          $url->setOptions($options);
+
+          $items[] = [
+            'value' => Link::fromTextAndUrl($link['title'], $url)
+              ->toRenderable(),
+          ];
+        }
         $build['field_event_addtocal'] = [
-          '#type' => 'dropbutton',
+          '#type' => 'container',
           '#attributes' => [
-            'class' => ['add-to-calendar'],
+            'class' => [
+              'add-to-calendar',
+              'btn-group',
+              'dropdown',
+              'btn-group--primary',
+            ],
             'no-split' => [
               'title' => t('Add to calendar'),
               'alignment' => 'right',
             ],
           ],
-          '#links' => $links,
+          'dropdown_button' => [
+            '#type' => 'button',
+            '#value' => t('Add to calendar'),
+            '#split' => TRUE,
+          ],
+          'dropdown_links' => [
+            '#theme' => 'item_list__dropdown',
+            '#items' => $items,
+            '#context' => [
+              'alignment' => 'right',
+            ],
+            '#attributes' => [
+              'class' => [
+                'addtocal-list',
+              ],
+            ],
+          ],
         ];
       }
     }
 
     // Make sure we clear the cache if the settings is submitted.
     $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
+
+    // Add styles for the 'Add to calendar' links.
+    $build['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
   }
 }
 
