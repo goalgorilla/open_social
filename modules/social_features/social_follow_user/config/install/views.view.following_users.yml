@@ -1,17 +1,16 @@
-uuid: 63fbd122-f85e-4ea0-ba59-83a5b427e35b
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.teaser
     - flag.flag.follow_user
-    - user.role.authenticated
+  enforced:
+    module:
+      - social_follow_user
   module:
     - flag
     - profile
     - user
-_core:
-  default_config_hash: 20nEuWEYl2zdWNr9QHK3WJ1Hq7wFNF1iS8Y2YOgJ49g
 id: following_users
 label: 'Users I follow'
 module: views
@@ -27,10 +26,9 @@ display:
     position: 0
     display_options:
       access:
-        type: role
+        type: perm
         options:
-          role:
-            authenticated: authenticated
+          perm: 'flag follow_user'
       cache:
         type: tag
         options: {  }
@@ -171,7 +169,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'No followed users yet'
+          content: 'You do not follow any users.'
           plugin_id: text_custom
       relationships:
         flag_follow_user:
@@ -229,7 +227,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
@@ -260,7 +258,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: user/%user/following-users
+      path: user/%user/following/users
       display_description: ''
     cache_metadata:
       max-age: -1
@@ -268,7 +266,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
