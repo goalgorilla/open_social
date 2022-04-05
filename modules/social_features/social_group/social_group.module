@@ -1925,6 +1925,18 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
         'weight' => 16,
       ])
       ->setDisplayConfigurable('form', TRUE);
+
+    // Remove 'group_type_<group_type>' fields from the node and user entities
+    // as these fields providing issues with cross posting and translations.
+    // Also, we do not use these fields in Open Social, so we can disable them.
+    $entity_types = ['node', 'user'];
+    if (in_array($entity_type->id(), $entity_types)) {
+      /** @var \Drupal\group\Entity\GroupType $group_type */
+      foreach (\Drupal::service('entity_type.manager')->getStorage('group_type')->loadMultiple() as $group_type) {
+        $field_name = 'groups_type_' . $group_type->id();
+        unset($fields[$field_name]);
+      }
+    }
   }
 }
 
