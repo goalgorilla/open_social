@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * The social_emoji module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
+ *
+ * Add emoji trigger element to posts and comments.
+ */
+function social_emoji_field_widget_single_element_text_textarea_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
+  $element['#suffix'] = "<div class='emoji-trigger'>" . t("Emoji") . "</div>";
+  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+}
+
+/**
+ * Implements hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
+ *
+ * Add emoji trigger element to CKEditor.
+ */
+function social_emoji_field_widget_single_element_text_textarea_with_summary_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
+  $element['#suffix'] = "<div class='emoji-trigger'>" . t("Emoji") . "</div>";
+  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+}
