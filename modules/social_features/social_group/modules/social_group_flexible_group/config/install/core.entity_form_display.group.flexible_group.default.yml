@@ -10,6 +10,7 @@ dependencies:
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
     - field.field.group.flexible_group.field_group_type
+    - field.field.group.flexible_group.field_group_posts_enabled
     - group.type.flexible_group
     - image.style.social_x_large
   module:
@@ -41,7 +42,7 @@ third_party_settings:
         - field_group_location
         - field_group_address
       parent_name: ''
-      weight: 2
+      weight: 3
       label: Location
       format_type: fieldset
       format_settings:
@@ -54,7 +55,7 @@ third_party_settings:
       children:
         - path
       parent_name: ''
-      weight: 4
+      weight: 5
       format_type: details
       format_settings:
         id: ''
@@ -78,7 +79,7 @@ third_party_settings:
       label: 'Access permissions'
       parent_name: ''
       region: content
-      weight: 1
+      weight: 2
     group_additional_details:
       children: {  }
       format_settings:
@@ -91,7 +92,20 @@ third_party_settings:
       label: 'Additional information'
       parent_name: ''
       region: content
-      weight: 3
+      weight: 4
+    group_personalisation:
+      children:
+        - field_group_posts_enabled
+      format_settings:
+        classes: ''
+        description: ''
+        id: ''
+        required_fields: true
+      format_type: fieldset
+      label: 'Personalisation'
+      parent_name: ''
+      region: content
+      weight: 1
 id: group.flexible_group.default
 targetEntityType: group
 bundle: flexible_group
@@ -159,6 +173,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: categorized_options_buttons
+    region: content
+  field_group_posts_enabled:
+    weight: 99
+    settings:
+      display_label: true
+    third_party_settings: { }
+    type: boolean_checkbox
     region: content
   label:
     type: string_textfield
