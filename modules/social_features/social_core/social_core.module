@@ -991,7 +991,7 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_core_created_date_validation(array $form, FormStateInterface $form_state) {
+function _social_core_created_date_validation(array $form, FormStateInterface $form_state): void {
   $created = $form_state->getValue('created');
   if (!$created) {
     return;
