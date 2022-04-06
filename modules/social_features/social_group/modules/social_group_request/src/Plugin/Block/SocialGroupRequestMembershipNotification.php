@@ -96,7 +96,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('string_translation'),
-      $container->get('plugin.manager.join'),
+      $container->get('plugin.manager.social_group.join'),
     );
   }
 

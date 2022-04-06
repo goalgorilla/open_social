@@ -18,7 +18,24 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class RedirectSubscriber implements EventSubscriberInterface {
 
+  /**
+   * The route name of the default page of any group type except closed groups.
+   */
   private const DEFAULT_ROUTE = 'social_group.stream';
+
+  /**
+   * The route name of the group default page is provided by the current module.
+   */
+  private const ALTERNATIVE_ROUTE = 'social_group_default.group_home';
+
+  /**
+   * The route name of the default page of any group.
+   */
+  private const DEFAULT_GROUP_ROUTE = 'entity.group.canonical';
+
+  /**
+   * The route name of the default page of closed groups.
+   */
   private const DEFAULT_CLOSED_ROUTE = 'view.group_information.page_group_about';
 
   /**
@@ -36,7 +53,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
   protected $currentUser;
 
   /**
-   * Redirectsubscriber construct.
+   * RedirectSubscriber constructor.
    *
    * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
    *   The current route.
@@ -49,10 +66,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Get the request events.
-   *
-   * @return mixed
-   *   Returns request events.
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = ['groupLandingPage'];
@@ -72,8 +86,8 @@ class RedirectSubscriber implements EventSubscriberInterface {
 
     // Not group canonical, then we leave.
     if (
-      $route_name !== 'entity.group.canonical' &&
-      $route_name !== 'social_group_default.group_home'
+      $route_name !== self::DEFAULT_GROUP_ROUTE &&
+      $route_name !== self::ALTERNATIVE_ROUTE
     ) {
       return;
     }

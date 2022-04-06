@@ -229,10 +229,18 @@ function _social_group_get_group_labels() {
  * Implements hook_preprocess().
  */
 function social_group_preprocess(array &$variables, string $hook): void {
-  /** @var \Drupal\social_group\JoinManagerInterface $manager */
-  $manager = \Drupal::service('plugin.manager.join');
+  if (
+    isset(
+      $variables['elements']['#view_mode'],
+      $variables['elements']['#' . $hook],
+    ) &&
+    in_array($variables['elements']['#view_mode'], ['hero', 'statistic'])
+  ) {
+    /** @var \Drupal\social_group\JoinManagerInterface $manager */
+    $manager = \Drupal::service('plugin.manager.social_group.join');
 
-  $manager->preprocess($variables, $hook);
+    $manager->preprocess($variables, $hook);
+  }
 }
 
 /**
@@ -1028,7 +1036,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     in_array($form_object->getOperation(), ['default', 'add', 'edit'])
   ) {
     /** @var \Drupal\social_group\JoinManagerInterface $manager */
-    $manager = \Drupal::service('plugin.manager.join');
+    $manager = \Drupal::service('plugin.manager.social_group.join');
 
     $found = FALSE;
     $entity_type_id = $entity->getEntityTypeId();
@@ -2920,7 +2928,7 @@ function social_group_preprocess_fieldset(array &$variables): void {
   }
 
   /** @var \Drupal\social_group\JoinManagerInterface $manager */
-  $manager = \Drupal::service('plugin.manager.join');
+  $manager = \Drupal::service('plugin.manager.social_group.join');
 
   $found = FALSE;
 

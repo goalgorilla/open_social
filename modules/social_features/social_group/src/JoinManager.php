@@ -19,7 +19,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
   use ContextAwarePluginManagerTrait;
 
-  private const HOOK = 'social_group_join_method_usage';
+  private const HOOK_JOIN_METHOD_USAGE = 'social_group_join_method_usage';
 
   /**
    * {@inheritdoc}
@@ -45,16 +45,9 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
    * {@inheritdoc}
    */
   public function relations(): array {
-    $items = [];
+    $items = $this->moduleHandler->invokeAll(self::HOOK_JOIN_METHOD_USAGE);
 
-    foreach ($this->moduleHandler->getImplementations(self::HOOK) as $module) {
-      /** @var callable $function */
-      $function = $module . '_' . self::HOOK;
-
-      $items = array_merge($items, $function());
-    }
-
-    $this->moduleHandler->alter(self::HOOK, $items);
+    $this->moduleHandler->alter(self::HOOK_JOIN_METHOD_USAGE, $items);
 
     return $items;
   }
@@ -63,14 +56,6 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, string $hook): void {
-    if (
-      !isset($variables['elements']['#view_mode']) ||
-      !in_array($variables['elements']['#view_mode'], ['hero', 'statistic']) ||
-      !isset($variables['elements']['#' . $hook])
-    ) {
-      return;
-    }
-
     $entity = $variables['elements']['#' . $hook];
 
     if (!$entity instanceof EntityMemberInterface) {
