@@ -618,9 +618,40 @@ function social_profile_update_11007(array &$sandbox): void {
 }
 
 /**
+ * Add a field for a short description.
+ */
+function social_profile_update_11201(array &$sandbox): string {
+  $entity_type_ids = [
+    'field.storage.profile.field_profile_' => 'field_storage_config',
+    'field.field.profile.profile.field_profile_' => 'field_config',
+  ];
+
+  $path = drupal_get_path('module', 'social_profile') . '/config/static/';
+
+  foreach ($entity_type_ids as $prefix => $entity_type_id) {
+    $config_file = $path . $prefix . 'summary_11201.yml';
+    $settings = Yaml::parseFile($config_file);
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($settings)->save();
+  }
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
  * Make the user picture clickable and rounded in a compact profile.
  */
-function social_profile_update_11201(): string {
+function social_profile_update_11202(): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 

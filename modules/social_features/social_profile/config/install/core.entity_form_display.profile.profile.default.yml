@@ -55,6 +55,7 @@ third_party_settings:
         classes: scollspy
     group_profile_self_intro:
       children:
+        - field_profile_summary
         - field_profile_self_introduction
         - field_profile_expertise
         - field_profile_interests
@@ -194,6 +195,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
+    region: content
+  field_profile_summary:
+    weight: 11
+    settings:
+      size: 140
+      placeholder: ''
+    third_party_settings: {  }
+    type: social_profile_string_textarea
     region: content
 hidden:
   field_profile_show_email: true
