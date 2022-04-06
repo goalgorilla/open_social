@@ -118,6 +118,11 @@ function social_group_invite_update_8007() {
  * Add a new field to the flexible group.
  */
 function social_group_invite_update_11001(): void {
+  // Do nothing if the Social Flexible Group module is disabled.
+  if (!\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    return;
+  }
+
   $config_path = drupal_get_path('module', 'social_group_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
