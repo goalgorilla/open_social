@@ -1725,6 +1725,15 @@ function social_group_preprocess_views_view(&$variables) {
       ->getViewBuilder('block')
       ->view($entity);
   }
+
+  if ($view->id() === 'activity_stream_group') {
+    $group = _social_group_get_current_group();
+    if ($group instanceof GroupInterface) {
+      $variables['#cache']['tags'][] = 'group:' . $group->id();
+      $variables['#cache']['contexts'][] = 'route.group';
+      $variables['#cache']['contexts'][] = 'user.group_permissions';
+    }
+  }
 }
 
 /**
