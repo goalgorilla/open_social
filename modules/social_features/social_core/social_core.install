@@ -1547,3 +1547,16 @@ function social_core_update_11006(): void {
   user_role_grant_permissions('contentmanager', ['access social_core dashboard']);
   user_role_grant_permissions('sitemanager', ['access social_core dashboard']);
 }
+
+/**
+ * Update Social Blue theme with new accent text color.
+ */
+function social_core_update_11301(): void {
+  $config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
+  if (!empty($config->getRawData())) {
+    $socialblue_colors = $config->getRawData();
+    $socialblue_colors['palette']['brand-accent-text'] = '#343434';
+    $config->setData($socialblue_colors);
+    $config->save();
+  }
+}
