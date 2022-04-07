@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.profile.compact
+    - core.entity_view_mode.profile.preview
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
@@ -16,28 +16,58 @@ dependencies:
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
-    - field.field.profile.profile.field_profile_summary
-    - image.style.social_medium
+    - image.style.social_large
     - profile.type.profile
   enforced:
     module:
-      - social_profile
+      - social_profile_preview
   module:
     - image
-id: profile.profile.compact
+    - text
+id: profile.profile.preview
 targetEntityType: profile
 bundle: profile
-mode: compact
+mode: preview
 content:
   field_profile_image:
+    type: social_profile_avatar
     weight: 0
-    label: hidden
+    region: content
+    label: visually_hidden
     settings:
-      image_style: social_medium
+      image_style: social_large
       image_link: owner
     third_party_settings: {  }
-    type: social_profile_avatar
+  field_profile_self_introduction:
+    weight: 4
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
+  flag_follow_user:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  private_message_link:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  social_follow_user:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_label
+    weight: 1
+    region: content
+    label: visually_hidden
+    settings:
+      link: true
+    third_party_settings: {  }
 hidden:
   field_profile_address: true
   field_profile_banner_image: true
@@ -49,7 +79,5 @@ hidden:
   field_profile_organization: true
   field_profile_phone_number: true
   field_profile_profile_tag: true
-  field_profile_self_introduction: true
   field_profile_show_email: true
-  field_profile_summary: true
   search_api_excerpt: true

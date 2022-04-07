@@ -22,5 +22,6 @@ function social_follow_user_install(): void {
   }
 
   // Allow SM to configure visibility for Social Follow User feature.
-  user_role_grant_permissions('sitemanager', array_merge($permissions, ['administer social_follow_user settings']));
+  $permissions[] = 'administer social_follow_user settings';
+  user_role_grant_permissions('sitemanager', $permissions);
 }

@@ -1124,6 +1124,19 @@ function social_core_preprocess_status_messages(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Define a type of follow buttons as default here instead of the theme template
+ * to be able to change the type by other modules. E.g., the profile preview
+ * module change type of one from these buttons to primary.
+ *
+ * @see social_profile_preview_preprocess_flag()
+ */
+function social_core_preprocess_flag(array &$variables): void {
+  $variables['attributes']['class'][] = 'btn-default';
+}
+
+/**
  * Get all default main menu links that ships with Open Social.
  */
 function _social_core_default_main_menu_links() {
