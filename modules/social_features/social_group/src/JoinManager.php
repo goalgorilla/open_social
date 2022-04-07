@@ -49,6 +49,69 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
     $this->moduleHandler->alter(self::HOOK_JOIN_METHOD_USAGE, $items);
 
+    if ($this->moduleHandler->moduleExists('social_group_request')) {
+      $old_types = [];
+
+      foreach ($items as $item) {
+        if ($item['entity_type'] === 'group' && isset($item['bundle'])) {
+          $old_types = array_merge($old_types, (array) $item['bundle']);
+        }
+      }
+
+      $old_types = $new_types = array_unique($old_types);
+
+      $this->moduleHandler->alterDeprecated(
+        'Deprecated in social:11.2.0 and is removed from social:12.0.0. Use hook_social_group_join_method_usage instead. See https://www.drupal.org/node/3254715',
+        'social_group_request',
+        $new_types,
+      );
+
+      $added_types = $removed_types = [];
+
+      foreach (array_unique(array_merge($old_types, $new_types)) as $type) {
+        $is_new = in_array($type, $new_types);
+
+        if (in_array($type, $old_types) !== $is_new) {
+          if ($is_new) {
+            $added_types[] = $type;
+          }
+          else {
+            $removed_types[] = $type;
+          }
+        }
+      }
+
+      if (!empty($removed_types)) {
+        foreach ($items as $item_delta => &$item) {
+          if ($item['entity_type'] === 'group' && isset($item['bundle'])) {
+            if (is_array($item['bundle'])) {
+              foreach ($removed_types as $type) {
+                $bundle_delta = array_search($type, $item['bundle']);
+
+                if ($bundle_delta !== FALSE) {
+                  unset($item['bundle'][$bundle_delta]);
+                }
+              }
+
+              if (empty($item['bundle'])) {
+                unset($items[$item_delta]);
+              }
+            }
+            elseif (in_array($item['bundle'], $removed_types)) {
+              unset($items[$item_delta]);
+            }
+          }
+        }
+      }
+
+      if (!empty($added_types)) {
+        $items[] = [
+          'entity_type' => 'group',
+          'bundle' => $added_types,
+        ];
+      }
+    }
+
     return $items;
   }
 
