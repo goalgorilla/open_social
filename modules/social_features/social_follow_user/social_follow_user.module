@@ -9,20 +9,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
-
-/**
- * Implements hook_entity_base_field_info_alter().
- */
-function social_follow_user_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type): void {
-  if ($entity_type->id() === 'profile') {
-    /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
-    $fields['uid']->setDisplayConfigurable('view', TRUE);
-  }
-}
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -189,50 +178,6 @@ function social_follow_user_preprocess_flag(array &$variables): void {
 
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {
       unset($classes[$delta]);
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_view_alter().
- */
-function social_follow_user_profile_view_alter(
-  array &$build,
-  EntityInterface $entity,
-  EntityViewDisplayInterface $display
-): void {
-  if (
-    $build['#view_mode'] === 'preview' &&
-    $entity->bundle() === 'profile' &&
-    $display->getComponent('private_message_link') !== NULL
-  ) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $entity;
-
-    if ($profile->getOwner()->hasPermission('use private messaging system')) {
-      $element = &$build['private_message_link'];
-
-      $element['#title'] = t('Message');
-
-      /** @var \Drupal\Core\Url $url */
-      $url = $element['#url'];
-
-      $url->mergeOptions([
-        'attributes' => [
-          'class' => [
-            'btn',
-            'btn-default',
-            'btn-sm',
-            'waves-effect',
-            'waves-btn',
-          ],
-        ],
-      ]);
-
-      unset($element['#prefix'], $element['#suffix']);
-    }
-    else {
-      unset($build['private_message_link']);
     }
   }
 }
