@@ -14,30 +14,60 @@ use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
+ * Implements hook_entity_extra_field_info().
+ */
+function social_follow_user_entity_extra_field_info(): array {
+  return [
+    'profile' => [
+      'profile' => [
+        'display' => [
+          'social_follow_user' => [
+            'label' => t('Followers'),
+            'description' => t('The number of users who are followed.'),
+            'weight' => 20,
+            'visible' => FALSE,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_entity_view_display_alter().
  */
 function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
-  if ($context['entity_type'] !== 'profile') {
+  if (
+    $context['entity_type'] !== 'profile' ||
+    $display->getComponent('flag_follow_user') === NULL
+  ) {
     return;
   }
 
+  $remove = FALSE;
+
   // Remove field from display modes if "follow user" feature is disabled.
   if (!\Drupal::config('social_follow_user.settings')->get('status')) {
-    if ($display->getComponent('flag_follow_user')) {
-      $display->removeComponent('flag_follow_user');
-      return;
+    $remove = TRUE;
+  }
+  else {
+    // Follow button appears on listed profile display modes.
+    $allowed_display_modes = ['statistic'];
+
+    // Allow other modules to change the list.
+    \Drupal::moduleHandler()->alter(
+      'social_follow_user_profile_modes',
+      $allowed_display_modes,
+    );
+
+    if (!in_array($context['view_mode'], $allowed_display_modes)) {
+      // By default, flag module add flags to all entity view display modes.
+      // We want hide "Follow" button for the list of display modes.
+      $remove = TRUE;
     }
   }
 
-  // Follow button appears on listed profile display modes.
-  $allowed_display_modes = ['statistic'];
-
-  // Allow other modules to change the list.
-  \Drupal::moduleHandler()->alter('social_follow_user_profile_modes', $allowed_display_modes);
-
-  if (!in_array($context['view_mode'], $allowed_display_modes)) {
-    // By default, flag module add flags to all entity view display modes.
-    // We want hide "Follow" button for the list of display modes.
+  if ($remove) {
     $display->removeComponent('flag_follow_user');
   }
 }
@@ -45,10 +75,50 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
 /**
  * Implements hook_follow_user_flag_action_access().
  */
-function social_follow_user_flag_action_access(string $action, FlagInterface $flag, AccountInterface $account, EntityInterface $flaggable = NULL): AccessResultInterface {
+function social_follow_user_flag_action_access(
+  string $action,
+  FlagInterface $flag,
+  AccountInterface $account,
+  EntityInterface $flaggable = NULL
+): AccessResultInterface {
   return AccessResult::forbiddenIf(
     $flaggable instanceof ProfileInterface &&
     $flaggable->getOwnerId() === $account->id(),
     'User should not be able to follow own profile.',
   );
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_follow_user_profile_view(
+  array &$build,
+  EntityInterface $entity,
+  EntityViewDisplayInterface $display,
+  string $view_mode
+): void {
+  if (
+    $entity->bundle() === 'profile' &&
+    $display->getComponent('social_follow_user') !== NULL
+  ) {
+    $build['social_follow_user'] = [
+      '#theme' => 'followers',
+      '#flaggable' => $entity,
+    ];
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_user_theme(): array {
+  return [
+    'followers' => [
+      'variables' => [
+        'flag' => NULL,
+        'flaggable' => NULL,
+      ],
+      'file' => 'social_follow_user.theme.inc',
+    ],
+  ];
 }
