@@ -54,5 +54,15 @@
     </div>
   </div>
 
-  {{ content|without('field_profile_image', 'uid', 'flag_follow_user', 'private_message_link') }}
+  {{ content.field_profile_self_introduction }}
+
+  {% if content.followers or content.following %}
+    <div class='follow-user--counter'>
+      {{ content.followers }}
+      {{ content.following }}
+    </div>
+  {% endif %}
+
+  {{ content|without('field_profile_image', 'uid', 'flag_follow_user', 'private_message_link', 'field_profile_self_introduction', 'followers', 'following') }}
+
 </div>

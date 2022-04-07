@@ -24,4 +24,29 @@ function social_follow_user_install(): void {
   // Allow SM to configure visibility for Social Follow User feature.
   $permissions[] = 'administer social_follow_user settings';
   user_role_grant_permissions('sitemanager', $permissions);
+
+  // Display hero & statistic block on the following users/followers pages.
+  $config_names = [
+    'block.block.socialblue_profile_hero_block',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = \Drupal::configFactory()->getEditable($config_name);
+
+    if (!empty($config->getRawData())) {
+      $pages = $config->get('visibility.request_path.pages');
+      $pages .= "\r\n/user/*/following/users";
+      $pages .= "\r\n/user/*/followers";
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
+
+  // Update statistic profile view mode.
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11001');
+  // Output logged messages to related channel of update execution.
+  $updateHelper->logger()->output();
 }
