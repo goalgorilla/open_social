@@ -104,18 +104,13 @@ function social_follow_user_profile_view(
   string $view_mode
 ): void {
   if ($entity->bundle() === 'profile') {
-
-    if ($display->getComponent('followers') !== NULL) {
-      $build['followers'] = [
-        '#theme' => 'followers',
-        '#flaggable' => $entity,
-      ];
-    }
-    if ($display->getComponent('following') !== NULL) {
-      $build['following'] = [
-        '#theme' => 'following',
-        '#flaggable' => $entity,
-      ];
+    foreach (['followers', 'following'] as $field) {
+      if ($display->getComponent($field) !== NULL) {
+        $build[$field] = [
+          '#theme' => $field,
+          '#flaggable' => $entity,
+        ];
+      }
     }
   }
 }

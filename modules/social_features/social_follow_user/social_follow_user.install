@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_follow_user module.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Implements hook_install().
  *
@@ -24,7 +26,12 @@ function social_follow_user_install(): void {
   // Allow SM to configure visibility for Social Follow User feature.
   $permissions[] = 'administer social_follow_user settings';
   user_role_grant_permissions('sitemanager', $permissions);
+}
 
+/**
+ * Update profile view modes/block visibility rules, create user follow lists.
+ */
+function social_follow_user_update_11201(): void {
   // Display hero & statistic block on the following users/followers pages.
   $config_names = [
     'block.block.socialblue_profile_hero_block',
@@ -42,11 +49,24 @@ function social_follow_user_install(): void {
     }
   }
 
+  // Create follow/following user lists.
+  $configs = [
+    'views.view.followers_user',
+    'views.view.following_users',
+  ];
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, (array) $source->read($config));
+  }
+
   // Update statistic profile view mode.
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11001');
+  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11201');
   // Output logged messages to related channel of update execution.
   $updateHelper->logger()->output();
 }

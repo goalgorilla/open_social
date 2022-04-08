@@ -19,10 +19,10 @@
 {% set count = flagcount(flag, flaggable) %}
 
 <span class="badge__container">
-  <a href="{{ url }}">
+  {% if url %}<a href="{{ url }}">{% endif %}
     <span class="badge__label">{{ count }}</span>
     <span class="badge__label badge__label--description">
       {% trans %}follower{% plural count %}followers{% endtrans %}
     </span>
-  </a>
+  {% if url %}</a>{% endif %}
 </span>

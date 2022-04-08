@@ -13,11 +13,9 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface {
 
   /**
-   * The Drupal module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * The module handler.
    */
-  protected $moduleHandler;
+  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * SocialProfilePreviewHelper constructor.

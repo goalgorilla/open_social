@@ -5,7 +5,6 @@ namespace Drupal\social_follow_user\EventSubscriber;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\flag\Event\FlaggingEvent;
 use Drupal\flag\Event\UnflaggingEvent;
-use Drupal\flag\FlagServiceInterface;
 use Drupal\flag\Event\FlagEvents as Flag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -15,32 +14,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class FlagEvents implements EventSubscriberInterface {
 
   /**
-   * The flag service.
-   *
-   * @var \Drupal\flag\FlagServiceInterface
-   */
-  protected FlagServiceInterface $flagService;
-
-  /**
    * The cache tags invalidator.
-   *
-   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected CacheTagsInvalidatorInterface $cacheTagsInvalidator;
+  private CacheTagsInvalidatorInterface $cacheTagsInvalidator;
 
   /**
    * FlagEvents constructor.
    *
-   * @param \Drupal\flag\FlagServiceInterface $flag_service
-   *   The flag service.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator.
    */
   public function __construct(
-    FlagServiceInterface $flag_service,
     CacheTagsInvalidatorInterface $cache_tags_invalidator
   ) {
-    $this->flagService = $flag_service;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
   }
 
@@ -85,7 +71,7 @@ class FlagEvents implements EventSubscriberInterface {
   /**
    * Invalidates cache tags.
    */
-  public function invalidateCaches(): void {
+  private function invalidateCaches(): void {
     $this->cacheTagsInvalidator->invalidateTags([
       'followers_user',
       'following_user',
