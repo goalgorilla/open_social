@@ -93,7 +93,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   public function getCacheContexts() {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user.group_permissions';
-    $cache_contexts[] = 'route.group';
+    $cache_contexts[] = 'url.path';
     return $cache_contexts;
   }
 
