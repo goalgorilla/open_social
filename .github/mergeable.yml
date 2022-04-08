@@ -1,7 +1,7 @@
 version: 2
 mergeable:
   - when: pull_request.opened # New contributor.
-    validate:
+    filter:
       - do: author
         must_exclude:
           regex: 'dependabot'
