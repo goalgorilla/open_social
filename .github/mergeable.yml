@@ -40,3 +40,22 @@ mergeable:
               - begin with a reference to a Drupal.org issue number in the format of "Issue #issuenumber"
               - begin with Internal: if it's related to an internal ticket
               - begin with Updates: if we are updating one of our dependencies
+      - do: labels
+          add: 'blocked: drupal.org ticket'
+    pass:
+      - do: labels
+          remove: 'blocked: drupal.org ticket'
+
+  - when: pull_request.*
+    name: "Valid milestone"
+    validate:
+      - do: milestone
+        no_empty:
+          enabled: true
+    fail:
+      - do: comment
+        payload:
+          body: >
+            A milestone would be super lovely, this way we can map it against a correct release but also be aware
+            of where to cherry-pick. Don't worry if you're unsure what milestone to pick, our maintainers will be
+            able to assist you with that.
