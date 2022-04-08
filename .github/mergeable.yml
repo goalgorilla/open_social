@@ -1,36 +1,36 @@
 version: 2
 mergeable:
   - when: pull_request.opened # New contributor.
-      validate:
-        - do: author
-          must_exclude:
-            regex: 'dependabot'
-      pass:
-        - do: comment
-          payload:
-            body: >
-              Thanks for contributing towards Open Social! A maintainer from @goalgorilla/maintainers will review your changes shortly. Please don't be discouraged if it takes a while.
-              In the meantime, we have some automated checks running and it might be that you will see me comment with some tips or requests to speed up the review process. :blush:
+    validate:
+      - do: author
+        must_exclude:
+          regex: 'dependabot'
+    pass:
+      - do: comment
+        payload:
+          body: >
+            Thanks for contributing towards Open Social! A maintainer from @goalgorilla/maintainers will review your changes shortly. Please don't be discouraged if it takes a while.
+            In the meantime, we have some automated checks running and it might be that you will see me comment with some tips or requests to speed up the review process. :blush:
 
   - when: pull_request.*
     name: "Valid issue title"
     validate:
       - do: and
         validate:
-        - do: title
-          must_include:
-            regex:
-              - "^Issue #"
-              - "^Internal"
-              - "^Updates:"
-        - do: description
-          no_empty:
-            enabled: false # Cannot be empty when true.
-          must_include:
-            regex:
-              - "^Issue #"
-              - "^Internal"
-              - "^Updates:"
+          - do: title
+            must_include:
+              regex:
+                - "^Issue #"
+                - "^Internal"
+                - "^Updates:"
+          - do: description
+            no_empty:
+              enabled: false # Cannot be empty when true.
+            must_include:
+              regex:
+                - "^Issue #"
+                - "^Internal"
+                - "^Updates:"
     fail:
       - do: comment
         payload:
