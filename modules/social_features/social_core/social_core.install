@@ -1565,9 +1565,9 @@ function social_core_update_11301(): void {
 /**
  * Add a new view mode for nodes - Email card.
  */
-function social_core_update_11302(): void {
+function social_core_update_11401(): void {
   $config_storage = \Drupal::service('config.storage');
   $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
   $source = new FileStorage($config_path);
-  $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11302'));
+  $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11401'));
 }

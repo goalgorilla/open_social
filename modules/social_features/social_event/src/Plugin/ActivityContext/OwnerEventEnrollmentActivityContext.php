@@ -35,7 +35,7 @@ class OwnerEventEnrollmentActivityContext extends ActivityContextBase {
     $recipients = [];
 
     // Event enrollment was created by user itself.
-    if ($enrollment->getOwnerId() == $enrollment->getAccount()) {
+    if ($enrollment->getOwnerId() === $enrollment->getAccount()) {
       $recipients[] = [
         'target_type' => 'user',
         'target_id' => $enrollment->getAccount(),
@@ -49,7 +49,7 @@ class OwnerEventEnrollmentActivityContext extends ActivityContextBase {
    * {@inheritdoc}
    */
   public function isValidEntity(EntityInterface $entity): bool {
-    return (bool) $entity->getEntityTypeId() == 'event_enrollment';
+    return $entity->getEntityTypeId() === 'event_enrollment';
   }
 
 }

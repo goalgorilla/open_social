@@ -146,7 +146,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getAccount(): string {
+  public function getAccount(): ?string {
     return $this->get('field_account')->target_id;
   }
 

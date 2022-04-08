@@ -62,17 +62,20 @@
  */
 #}
 
-<div class='card__node-email'>
-  <div class='card__node-email--header'>
-    <div class='card__node-email--title'>{{ node.type.entity.label() }}</div>
-    <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-  </div>
-  <div class='card__node-email--location'>
-    <div>{{ content.field_event_date }}</div>
-    <div>
-      {{ content.field_event_location }}
-      {{ content.field_event_address }}
+<div {{ attributes }}>
+  <div class='email_card card__node-email'>
+    <div class='card__node-email--header'>
+      <div class='card__node-email--title'>{{ node.type.entity.label() }}</div>
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
     </div>
+    <div class='card__node-email--location'>
+      <div>{{ event_date_advanced }}</div>
+      <div>
+        {{ event_location_address }}
+      </div>
+    </div>
+    {% if content.field_event_addtocal %}
+      <div class='card__node-email--addtocal'>{{ content.field_event_addtocal }}</div>
+    {% endif %}
   </div>
-  <div class='card__node-email--addtocal'>{{ content.field_event_addtocal }}</div>
 </div>

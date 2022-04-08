@@ -142,9 +142,9 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
   /**
    * Gets enroller id.
    *
-   * @return string
+   * @return string|null
    *   The user entity id.
    */
-  public function getAccount(): string;
+  public function getAccount(): ?string;
 
 }

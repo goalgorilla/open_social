@@ -39,6 +39,20 @@ function social_event_theme(): array {
     'node__event__email_card' => [
       'base hook' => 'node',
     ],
+    'event_date_advanced' => [
+      'variables' => [
+        'node' => NULL,
+        'view_mode' => NULL,
+      ],
+      'file' => 'social_event.theme.inc',
+    ],
+    'event_location_address' => [
+      'variables' => [
+        'node' => NULL,
+        'view_mode' => NULL,
+      ],
+      'file' => 'social_event.theme.inc',
+    ],
   ];
 }
 
@@ -338,8 +352,23 @@ function social_event_preprocess_node(array &$variables) {
   $view_mode = $variables['view_mode'];
   $node = $variables['node'];
   if ($node->getType() === 'event') {
+    // Date as a text.
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
     $variables['#cache']['contexts'][] = 'timezone';
+
+    // This variable contains icon as well.
+    $variables['event_date_advanced'] = [
+      '#theme' => 'event_date_advanced',
+      '#node' => $node,
+      '#view_mode' => $view_mode,
+    ];
+
+    // Contains combined with a few fields location information.
+    $variables['event_location_address'] = [
+      '#theme' => 'event_location_address',
+      '#node' => $node,
+      '#view_mode' => $view_mode,
+    ];
 
     if ($view_mode === 'hero') {
       // Add Enroll button.
@@ -353,6 +382,14 @@ function social_event_preprocess_node(array &$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements theme_preprocess_HOOK() for "swiftmailer".
+ */
+function social_event_preprocess_swiftmailer(array &$variables): void {
+  // Add library with styles for event.
+  $variables['#attached']['library'][] = 'social_event/event';
 }
 
 /**
