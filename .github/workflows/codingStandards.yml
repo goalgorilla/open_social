@@ -15,7 +15,7 @@ jobs:
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -31,7 +31,7 @@ jobs:
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
