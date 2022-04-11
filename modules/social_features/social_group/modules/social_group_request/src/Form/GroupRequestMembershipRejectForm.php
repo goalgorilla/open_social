@@ -34,13 +34,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
   protected $groupContent;
 
   /**
-   * The redirect destination helper.
-   *
-   * @var \Drupal\Core\Routing\RedirectDestinationInterface
-   */
-  protected $redirectDestination;
-
-  /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
@@ -57,8 +50,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
   /**
    * GroupRequestMembershipRejectForm constructor.
    *
-   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
-   *   The redirect destination.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
    *   The cache tags invalidator.
    * @param \Drupal\Core\Session\AccountInterface $current_user
@@ -67,12 +58,10 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *   The string translation.
    */
   public function __construct(
-    RedirectDestinationInterface $redirect_destination,
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
     AccountInterface $current_user,
     TranslationInterface $string_translation
   ) {
-    $this->redirectDestination = $redirect_destination;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->currentUser = $current_user;
     $this->setStringTranslation($string_translation);
@@ -83,7 +72,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('redirect.destination'),
       $container->get('cache_tags.invalidator'),
       $container->get('current_user'),
       $container->get('string_translation')
@@ -95,13 +83,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
    */
   public function getFormId() {
     return 'grequest_group_request_membership_reject';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  private function getCancelUrl() {
-    return Url::fromUserInput($this->redirectDestination->get());
   }
 
   /**
@@ -126,8 +107,10 @@ class GroupRequestMembershipRejectForm extends FormBase {
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancel'),
+      '#type' => 'submit',
+      '#value' => $this->t('Cancel'),
+      '#submit' => ['_social_group_cancel_join_leave_form'],
+      '#limit_validation_errors' => [],
       '#attributes' => [
         'class' => [
           'button',
@@ -138,7 +121,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
           'waves-btn',
         ],
       ],
-      '#url' => $this->getCancelUrl(),
     ];
 
     $form['actions']['submit'] = [
