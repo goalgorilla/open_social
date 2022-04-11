@@ -26,6 +26,7 @@ use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\taxonomy\TermInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Prepares variables for node templates.
@@ -308,6 +309,34 @@ function social_topic_block_access(Block $block, $operation, AccountInterface $a
  */
 function social_topic_social_follow_content_types_alter(array &$types) {
   $types[] = 'topic';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_topic_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'node_topic_form' || $form_id == 'node_topic_edit_form') {
+    if (isset($form_state->getUserInput()['created'][0]['value']) && !empty($form_state->getUserInput()['created'][0]['value'])) {
+      $form['#validate'][] = 'author_date_validate_node_topic_form';
+    }
+  }
+}
+
+/**
+ * Validate Authoring date for Topic Contents.
+ *
+ * @param array $form
+ * @param $form_state
+ */
+function author_date_validate_node_topic_form(array $form, FormStateInterface $form_state) {
+  $currentdatetime = new DrupalDateTime();
+  $currentdatetime->setTimezone(new \DateTimeZone('UTC'));
+  $dateinput = $form_state->getUserInput()['created'][0]['value']['date'] . $form_state->getUserInput()['created'][0]['value']['time'];
+  $usersdatetime = new DrupalDateTime($dateinput);
+  $usersdatetime->setTimezone(new \DateTimeZone('UTC'));
+  if ($usersdatetime > $currentdatetime ) {
+    $form_state->setErrorByName('created', t('Authored on date/time cannot be a future date/time.'));
+  }
 }
 
 /**
