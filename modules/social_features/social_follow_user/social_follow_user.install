@@ -26,12 +26,22 @@ function social_follow_user_install(): void {
   // Allow SM to configure visibility for Social Follow User feature.
   $permissions[] = 'administer social_follow_user settings';
   user_role_grant_permissions('sitemanager', $permissions);
+
+  // Add & apply user follow functionality.
+  _social_follow_user_config_update();
 }
 
 /**
- * Update profile view modes/block visibility rules, create user follow lists.
+ * Update profile view modes/block visibility rules.
  */
 function social_follow_user_update_11201(): void {
+  _social_follow_user_config_update();
+}
+
+/**
+ * Helper callback to apply users follow config updates.
+ */
+function _social_follow_user_config_update(): void {
   // Display hero & statistic block on the following users/followers pages.
   $config_names = [
     'block.block.socialblue_profile_hero_block',
@@ -49,7 +59,19 @@ function social_follow_user_update_11201(): void {
     }
   }
 
-  // Create follow/following user lists.
+  // Update statistic profile view mode.
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11201');
+  // Output logged messages to related channel of update execution.
+  $updateHelper->logger()->output();
+}
+
+/**
+ * Create follow/following user lists.
+ */
+function social_follow_user_update_11202(): void {
   $configs = [
     'views.view.followers_user',
     'views.view.following_users',
@@ -61,12 +83,4 @@ function social_follow_user_update_11201(): void {
   foreach ($configs as $config) {
     $config_storage->write($config, (array) $source->read($config));
   }
-
-  // Update statistic profile view mode.
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11201');
-  // Output logged messages to related channel of update execution.
-  $updateHelper->logger()->output();
 }
