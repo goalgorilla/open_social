@@ -26,6 +26,7 @@ use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\taxonomy\TermInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Prepares variables for node templates.
@@ -393,4 +394,41 @@ function social_topic_social_core_default_main_menu_links_alter(array &$links) {
   $link = end($link);
 
   $links[] = $link;
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param array $form
+ *  An array containing form details.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *  An array containing form state details.
+ * @param string $form_id
+ *  Form id info.
+ */
+function social_topic_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
+  if ($form_id == 'node_topic_form' || $form_id == 'node_topic_edit_form') {
+    if (isset($form_state->getUserInput()['created'][0]['value']) && !empty($form_state->getUserInput()['created'][0]['value'])) {
+      $form['#validate'][] = 'author_date_validate_node_topic_form';
+    }
+  }
+}
+
+/**
+ * Validate Authoring date for Topic Contents.
+ *
+ * @param array $form
+ *   An array containing form details.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   An array containing form state details.
+ */
+function author_date_validate_node_topic_form(array $form, FormStateInterface $form_state): void {
+  $currentdatetime = new DrupalDateTime();
+  $currentdatetime->setTimezone(new \DateTimeZone('UTC'));
+  $dateinput = $form_state->getUserInput()['created'][0]['value']['date'] . $form_state->getUserInput()['created'][0]['value']['time'];
+  $usersdatetime = new DrupalDateTime($dateinput);
+  $usersdatetime->setTimezone(new \DateTimeZone('UTC'));
+  if ($usersdatetime > $currentdatetime) {
+    $form_state->setErrorByName('created', t('Authored on date/time cannot be a future date/time.'));
+  }
 }
