@@ -24,6 +24,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\social_group_invite\Plugin\Action\SocialGroupInviteResend;
+use Drupal\social_group_invite\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatterOverrider;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -818,5 +819,20 @@ function social_group_invite_preprocess_page(array &$variables): void {
   ])) {
     // Hide redundant region on the page.
     $variables['page']['complementary_top'] = [];
+  }
+}
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function social_group_invite_field_formatter_info_alter(array &$info): void {
+  // If a user has been invited to the group to which user does not have an
+  // access, the user cannot see the group title on the group invite page.
+  // The problem is default group title rendered through the
+  // "entity_reference_label" field formatter checks access to the entity.
+  // Altered class to skip this check for the group entity on the group invites
+  // page.
+  if (isset($info['entity_reference_label'])) {
+    $info['entity_reference_label']['class'] = EntityReferenceLabelFormatterOverrider::class;
   }
 }
