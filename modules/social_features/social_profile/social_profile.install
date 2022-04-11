@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -660,4 +661,27 @@ function social_profile_update_11202(): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Make profile related vocabularies translatable.
+ */
+function social_profile_update_11203(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_names = [
+    'language.content_settings.taxonomy_term.expertise' => 'language.content_settings.taxonomy_term.expertise_11203',
+    'language.content_settings.taxonomy_term.interests' => 'language.content_settings.taxonomy_term.interests_11203',
+    'language.content_settings.taxonomy_term.profile_tag' => 'language.content_settings.taxonomy_term.profile_tag_11203',
+  ];
+
+  foreach ($config_names as $name => $static) {
+    $config_storage->write($name, (array) $source->read($static));
+  }
 }

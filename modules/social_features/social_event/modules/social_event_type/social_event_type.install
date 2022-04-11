@@ -6,6 +6,7 @@
  */
 
 use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\FieldConfigInterface;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
@@ -127,4 +128,19 @@ function social_event_type_update_8902(&$sandbox) {
 
     $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
   }
+}
+
+/**
+ * Make "Event Types" vocabulary translatable.
+ */
+function social_event_type_update_11201(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_event_type') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.event_types', (array) $source->read('language.content_settings.taxonomy_term.event_types_11201'));
 }

@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_topic module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
@@ -483,4 +484,19 @@ function social_topic_update_11101(): void {
   /** @var \Drupal\field\FieldStorageConfigInterface $topic_type */
   $topic_type = $field_storage_config_storage->load('node.field_topic_type');
   $topic_type->setCardinality(FieldStorageConfig::CARDINALITY_UNLIMITED)->save();
+}
+
+/**
+ * Make "Topic Types" vocabulary translatable.
+ */
+function social_topic_update_11201(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_topic') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.topic_types', (array) $source->read('language.content_settings.taxonomy_term.topic_types_11201'));
 }
