@@ -1547,3 +1547,15 @@ function social_core_update_11006(): void {
   user_role_grant_permissions('contentmanager', ['access social_core dashboard']);
   user_role_grant_permissions('sitemanager', ['access social_core dashboard']);
 }
+
+/**
+ * Install alternative_frontpage module.
+ */
+function social_core_update_11007(): void {
+  // Check if alternative_frontpage module exists.
+  if (\Drupal::service('extension.list.module')
+    ->getName('alternative_frontpage')) {
+    \Drupal::service('module_installer')
+      ->install(['alternative_frontpage'], TRUE);
+  }
+}
