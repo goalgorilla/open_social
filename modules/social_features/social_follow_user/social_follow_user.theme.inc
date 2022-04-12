@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Prepares variables for followers templates.
@@ -51,18 +52,21 @@ function template_preprocess_following(array &$variables): void {
 
   /** @var \Drupal\profile\Entity\ProfileInterface $profile */
   $profile = $variables['flaggable'];
-  $account = $profile->getOwner();
 
-  $variables['count'] = \Drupal::service('flag.count')
-    ->getUserFlagFlaggingCount($flag, $account);
+  if ($profile instanceof ProfileInterface) {
+    $account = $profile->getOwner();
 
-  $url = Url::fromRoute(
-    'view.following_users.page_following_users',
-    ['user' => $account->id()],
-  );
+    $variables['count'] = \Drupal::service('flag.count')
+      ->getUserFlagFlaggingCount($flag, $account);
 
-  if ($url->access()) {
-    $variables['url'] = $url;
+    $url = Url::fromRoute(
+      'view.following_users.page_following_users',
+      ['user' => $account->id()],
+    );
+
+    if ($url->access()) {
+      $variables['url'] = $url;
+    }
   }
   $variables['#cache']['tags'][] = 'following_user';
 }
