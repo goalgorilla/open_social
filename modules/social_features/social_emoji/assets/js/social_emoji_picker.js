@@ -46,7 +46,6 @@
   {
     emojiPickers[i].innerHTML = '<emoji-picker></emoji-picker>';
     emojiTriggers[i].addEventListener('click', emoji_picker);
-    Popper.createPopper(emojiTriggers[i], emojiPickers[i]);
   }
 
 })(Drupal);

@@ -11,11 +11,22 @@
   font-size: 0;
 
   background: transparent url('../icons/icon-emoji.svg') no-repeat center;
+  cursor: pointer;
+}
+
+.emoji-picker.tooltip {
+  right: 0;
+
+  &.shown {
+    opacity: 1;
+
+    emoji-picker {
+      display: block;
+    }
+  }
 
   emoji-picker {
-    position: absolute;
-    top: 100%;
-    right: 0;
+    display: none;
 
     @media(max-width: 599px) {
       width: 300px;
@@ -27,11 +38,19 @@
   .emoji-trigger {
     bottom: 1.625rem;
   }
+
+  .emoji-picker {
+      margin-top: -1rem;
+  }
 }
 
 .field--widget-text-textarea-with-summary,
 .field--name-field-group-description  {
   .emoji-trigger {
     bottom: 2.375rem;
+  }
+
+  .emoji-picker {
+    margin-top: -3.25rem;
   }
 }

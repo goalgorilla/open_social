@@ -8,14 +8,23 @@
   z-index: 10;
   font-size: 0;
   background: transparent url("../icons/icon-emoji.svg") no-repeat center;
+  cursor: pointer;
 }
-.emoji-trigger emoji-picker {
-  position: absolute;
-  top: 100%;
+
+.emoji-picker.tooltip {
   right: 0;
 }
+.emoji-picker.tooltip.shown {
+  opacity: 1;
+}
+.emoji-picker.tooltip.shown emoji-picker {
+  display: block;
+}
+.emoji-picker.tooltip emoji-picker {
+  display: none;
+}
 @media (max-width: 599px) {
-  .emoji-trigger emoji-picker {
+  .emoji-picker.tooltip emoji-picker {
     width: 300px;
   }
 }
@@ -23,13 +32,17 @@
 .field--name-field-comment-body .emoji-trigger {
   bottom: 1.625rem;
 }
+.field--name-field-comment-body .emoji-picker {
+  margin-top: -1rem;
+}
 
 .field--widget-text-textarea-with-summary .emoji-trigger,
 .field--name-field-group-description .emoji-trigger {
   bottom: 2.375rem;
 }
-
-.tooltip:not(.shown) {
-  display: none;
+.field--widget-text-textarea-with-summary .emoji-picker,
+.field--name-field-group-description .emoji-picker {
+  margin-top: -3.25rem;
 }
+
 /*# sourceMappingURL=social_emoji.css.map */
