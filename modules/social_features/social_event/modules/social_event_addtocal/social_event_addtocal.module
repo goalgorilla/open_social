@@ -69,8 +69,10 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
           $url->setOptions($options);
 
           $items[] = [
-            'value' => Link::fromTextAndUrl($link['title'], $url)
-              ->toRenderable(),
+            'value' => Link::fromTextAndUrl(
+              t('@cal calendar', ['@cal' => $link['title']]),
+              $url
+            )->toRenderable(),
           ];
         }
         $build['field_event_addtocal'] = [
