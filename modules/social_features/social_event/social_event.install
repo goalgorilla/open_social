@@ -1975,8 +1975,9 @@ function social_event_update_10306(&$sandbox) {
     }
   }
 
-  // Try to update 25 events at a time.
-  $events_ids = array_slice($sandbox['ids'], $sandbox['current'], Settings::get('entity_update_batch_size'));
+  // Set the batch size equivalent to entity_update_batch_size defined.
+  // @see: https://git.drupalcode.org/project/drupal/-/blob/9.2.16/sites/default/default.settings.php#L764
+  $events_ids = array_slice($sandbox['ids'], $sandbox['current'], Settings::get('entity_update_batch_size') ?? 50);
 
   /** @var \Drupal\node\NodeInterface $event */
   foreach ($node_storage->loadMultiple($events_ids) as $event) {
