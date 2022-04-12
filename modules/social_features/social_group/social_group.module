@@ -1940,30 +1940,34 @@ function social_group_get_all_groups() {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  if ($entity_type->id() === 'node' && isset($fields['groups'])) {
-    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
-    $fields['groups']
-      ->setLabel(t('Group'))
-      ->setDescription('')
-      ->setSetting('handler', 'social')
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-      ->setDisplayOptions('form', [
-        'type' => 'social_group_selector_widget',
-        'settings' => [],
-        'weight' => 16,
-      ])
-      ->setDisplayConfigurable('form', TRUE);
+  if (!isset($fields['groups'])) {
+    return;
+  }
+
+  $entity_types = ['node', 'user'];
+  if (in_array($entity_type->id(), $entity_types)) {
+    if ($entity_type->id() === 'node') {
+      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+      $fields['groups']
+        ->setLabel(t('Group'))
+        ->setDescription('')
+        ->setSetting('handler', 'social')
+        ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+        ->setDisplayOptions('form', [
+          'type' => 'social_group_selector_widget',
+          'settings' => [],
+          'weight' => 16,
+        ])
+        ->setDisplayConfigurable('form', TRUE);
+    }
 
     // Remove 'group_type_<group_type>' fields from the node and user entities
     // as these fields providing issues with cross posting and translations.
     // Also, we do not use these fields in Open Social, so we can disable them.
-    $entity_types = ['node', 'user'];
-    if (in_array($entity_type->id(), $entity_types)) {
-      /** @var \Drupal\group\Entity\GroupType $group_type */
-      foreach (\Drupal::service('entity_type.manager')->getStorage('group_type')->loadMultiple() as $group_type) {
-        $field_name = 'groups_type_' . $group_type->id();
-        unset($fields[$field_name]);
-      }
+    /** @var \Drupal\group\Entity\GroupType $group_type */
+    foreach (\Drupal::service('entity_type.manager')->getStorage('group_type')->loadMultiple() as $group_type) {
+      $field_name = 'groups_type_' . $group_type->id();
+      unset($fields[$field_name]);
     }
   }
 }
