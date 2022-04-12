@@ -11,51 +11,25 @@
     a {
       font-size: .875rem;
       line-height: 21px;
+      padding: 8px 10px;
+      display: block;
+      clear: both;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #555555;
+      text-decoration: none;
 
       &:hover {
         text-decoration: underline;
       }
-    }
 
-    .calendar-link {
-      position: relative;
-      padding-left: 42px;
-
-      &:before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-
-        width: 18px;
-        background-position: center;
-        background-repeat: no-repeat;
+      img {
+        max-height: 21px;
       }
 
-      &.calendar-outlook:before {
-        height: 18px;
-        background-image: url('../icons/outlook.svg');
-      }
-
-      &.calendar-ical:before {
-        height: 22px;
-        background-image: url('../icons/ical.svg');
-      }
-
-      &.calendar-google:before {
-        height: 18px;
-        background-image: url('../icons/google.svg');
-      }
-
-      &.calendar-office-365:before {
-        height: 24px;
-        background-image: url('../icons/office-365.svg');
-      }
-
-      &.calendar-yahoo:before {
-        height: 16px;
-        background-image: url('../icons/yahoo.svg');
+      span {
+        padding-left: .625rem;
       }
     }
   }
@@ -72,7 +46,6 @@
       }
 
       .calendar-link {
-        padding-left: 46px;
 
         &:before {
           left: 1rem;
@@ -127,5 +100,21 @@
         text-decoration: none;
       }
     }
+  }
+}
+
+// Add styles for viewing "Add to calendar" list in email letters.
+.email_card {
+  ul.addtocal-list {
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
+
+    .caret {
+      display: none !important;
+    }
+  }
+
+  .add-to-calendar.dropdown {
+    margin-bottom: 2rem;
   }
 }

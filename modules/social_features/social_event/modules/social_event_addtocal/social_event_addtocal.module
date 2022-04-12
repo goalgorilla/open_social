@@ -68,11 +68,25 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
           $options['attributes']['class'][] = 'calendar-' . Html::getId($link['title']);
           $url->setOptions($options);
 
+          $link_title = [
+            [
+              '#type' => 'html_tag',
+              '#tag' => 'img',
+              '#attributes' => [
+                'src' => $link['icon'],
+                'class' => ['no-b-lazy'],
+              ],
+            ],
+            [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => t('@cal calendar', ['@cal' => $link['title']]),
+            ],
+          ];
+
           $items[] = [
-            'value' => Link::fromTextAndUrl(
-              t('@cal calendar', ['@cal' => $link['title']]),
-              $url
-            )->toRenderable(),
+            'value' => Link::fromTextAndUrl($link_title, $url)
+              ->toRenderable(),
           ];
         }
         $build['field_event_addtocal'] = [
@@ -169,6 +183,7 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
         // Set link for plugin instance.
         $links[] = [
           'title' => $calendar->getName(),
+          'icon' => $calendar->getIcon(),
           'url' => $calendar->generateUrl($node),
         ];
       }
@@ -176,4 +191,13 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
   }
 
   return $links;
+}
+
+/**
+ * Implements theme_preprocess_HOOK() for "swiftmailer".
+ */
+function social_event_addtocal_preprocess_swiftmailer(array &$variables): void {
+  // Add library with styles for event.
+  $variables['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
+  $variables['#attached']['library'][] = 'socialblue/dropdown';
 }
