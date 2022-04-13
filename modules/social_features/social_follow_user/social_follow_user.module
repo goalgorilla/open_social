@@ -104,12 +104,20 @@ function social_follow_user_profile_view(
   string $view_mode
 ): void {
   if ($entity->bundle() === 'profile') {
-    foreach (['followers', 'following'] as $field) {
-      if ($display->getComponent($field) !== NULL) {
-        $build[$field] = [
-          '#theme' => $field,
-          '#flaggable' => $entity,
-        ];
+    // Add cacheable dependency on social_follow_user settings for user profile.
+    $config = \Drupal::config('social_follow_user.settings')->get('status');
+    \Drupal::service('renderer')
+      ->addCacheableDependency($build, (array) $config);
+
+    // Display counters only if follow users option is enabled.
+    if ($display->getComponent('flag_follow_user')) {
+      foreach (['followers', 'following'] as $field) {
+        if ($display->getComponent($field) !== NULL) {
+          $build[$field] = [
+            '#theme' => $field,
+            '#flaggable' => $entity,
+          ];
+        }
       }
     }
   }
