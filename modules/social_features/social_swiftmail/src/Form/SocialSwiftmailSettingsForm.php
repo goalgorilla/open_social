@@ -181,7 +181,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $form['do_not_send_emails_new_users'] = [
       '#type' => 'checkbox',
       '#title' => $this->t("Don't send email notifications to users who have never logged in"),
-      '#description' => $this->t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification centre within the community.'),
+      '#description' => $this->t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification center within the community.'),
       '#default_value' => $config->get('do_not_send_emails_new_users'),
     ];
 

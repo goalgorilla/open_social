@@ -39,7 +39,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#wrapper_attributes' => [
         'class' => ['desktop', 'notification-bell'],
       ],
-      '#title' => new TranslatableMarkup('Notification Centre'),
+      '#title' => new TranslatableMarkup('Notification Center'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
       '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
@@ -47,7 +47,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#weight' => 800,
       'header' => [
         '#wrapper_attributes' => ['class' => 'dropdown-header'],
-        '#markup' => new TranslatableMarkup('Notification Centre'),
+        '#markup' => new TranslatableMarkup('Notification Center'),
       ],
       'header-divider' => [
         '#wrapper_attributes' => ['class' => 'divider'],
@@ -138,11 +138,11 @@ function social_activity_social_user_account_header_account_links(array $context
       '#weight' => 300,
       '#type' => 'link',
       '#attributes' => [
-        'title' => new TranslatableMarkup('Notification Centre'),
+        'title' => new TranslatableMarkup('Notification Center'),
       ],
       '#title' => [
         '#type' => 'inline_template',
-        '#template' => '<span>{% trans %}Notification Centre{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
+        '#template' => '<span>{% trans %}Notification Center{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
         '#context' => [
           'attributes' => new Attribute(['class' => $label_classes]),
           'icon' => (string) $num_notifications,
