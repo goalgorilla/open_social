@@ -98,6 +98,9 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $id = $field->getAttribute('id');
+      if (is_array($id)) {
+        $id = reset($id);
+      }
       $instance = $this->getWysiwygInstance($id);
       $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
@@ -138,6 +141,9 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $iframe_source = $element->getAttribute('src');
+      if (is_array($iframe_source)) {
+        $iframe_source = reset($iframe_source);
+      }
 
       // the sources could contain certain metadata making it hard to test
       // if it matches the given source. So we don't strict check rather
@@ -164,6 +170,9 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $iframe_source = $element->getAttribute('src');
+      if (is_array($iframe_source)) {
+        $iframe_source = reset($iframe_source);
+      }
 
       // the sources could contain certain metadata making it hard to test
       // if it matches the given source. So we don't strict check rather
@@ -210,6 +219,9 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $src = $element->getAttribute('src');
+      if (is_array($src)) {
+        $src = reset($src);
+      }
 
       if (strpos($src, '/system/files/inline-images') === FALSE) {
         throw new \InvalidArgumentException(sprintf('The image does not seem to be uploaded in the private file system: "%s"', $src));
@@ -414,6 +426,9 @@ class FeatureContext extends RawMinkContext implements Context
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
       $value = $radiobutton->getAttribute('value');
+      if (is_array($value)) {
+        $value = reset($value);
+      }
       $labelonpage = $radiobutton->getParent()->getText();
       if ($label !== '' && $label != $labelonpage) {
         throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
@@ -1110,6 +1125,9 @@ class FeatureContext extends RawMinkContext implements Context
       sleep(1); // Wait timeout before sending an AJAX request.
       $this->minkContext->iWaitForAjaxToFinish();
       $id = $element->getAttribute('id');
+      if (is_array($id)) {
+        $id = reset($id);
+      }
       $index = $this->getSession()->evaluateScript('return jQuery(".ui-autocomplete-input").index(jQuery("#' . $id . '"));');
       $autocomplete = $this->getSession()->getPage()->find('xpath', '//ul[contains(@class, "ui-autocomplete")][' . ($index + 1) . ']');
 
@@ -1134,6 +1152,9 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       if (!empty($popup_element_id = $popup_element->getAttribute('id'))) {
+        if (is_array($popup_element_id)) {
+          $popup_element_id = reset($popup_element_id);
+        }
         $this->getSession()->evaluateScript('jQuery("#' . $popup_element_id . '").click();');
       }
       else {
