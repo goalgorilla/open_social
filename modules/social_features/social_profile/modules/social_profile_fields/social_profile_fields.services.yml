@@ -6,3 +6,8 @@ services:
   social_profile_fields.helper:
     class: Drupal\social_profile_fields\SocialProfileFieldsHelper
     arguments: ['@entity_type.manager', '@module_handler']
+  social_profile_fields.translation_defaults:
+    class: Drupal\social_profile_fields\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }
