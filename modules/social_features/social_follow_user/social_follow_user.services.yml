@@ -1,0 +1,6 @@
+services:
+  social_follow_user.flag_subscriber:
+    class: Drupal\social_follow_user\EventSubscriber\FlagEvents
+    arguments: ['@cache_tags.invalidator']
+    tags:
+      - { name: event_subscriber }
