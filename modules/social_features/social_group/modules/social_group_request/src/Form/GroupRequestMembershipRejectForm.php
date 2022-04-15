@@ -5,10 +5,8 @@ namespace Drupal\social_group_request\Form;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -151,7 +149,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $this->group->id()]);
 
-    $form_state->setRedirectUrl($this->getCancelUrl());
+    _social_group_cancel_join_leave_form($form, $form_state);
   }
 
 }
