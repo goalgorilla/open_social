@@ -149,6 +149,14 @@ function ginvite_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function ginvite_user_insert(UserInterface $user) {
+  // If a user is created without e-mail (because the field is optional or
+  // because they are created through SSO) then we can not use the mail to check
+  // for pending invites so we exit early.
+  // TODO: Fix automatic group joining for invites leading to SSO registration.
+  if ($user->get('mail')->isEmpty()) {
+    return;
+  }
+
   $properties = [
     'invitee_mail' => $user->getEmail(),
     'invitation_status' => GroupInvitation::INVITATION_PENDING,
