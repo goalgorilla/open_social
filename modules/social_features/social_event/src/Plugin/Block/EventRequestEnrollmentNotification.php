@@ -131,6 +131,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
     // At this point we try to get the amount of pending requests.
     try {
       $requests = $this->entityTypeManager->getStorage('event_enrollment')->getQuery()
+        ->accessCheck()
         ->condition('field_event.target_id', $this->event->id())
         ->condition('field_request_or_invite_status.value', EventEnrollmentInterface::REQUEST_PENDING)
         ->condition('field_enrollment_status.value', '0')

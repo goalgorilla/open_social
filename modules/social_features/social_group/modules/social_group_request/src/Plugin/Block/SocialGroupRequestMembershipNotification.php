@@ -142,6 +142,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       ->getContentTypeConfigId();
 
     $requests = $this->entityTypeManager->getStorage('group_content')->getQuery()
+      ->accessCheck()
       ->condition('type', $contentTypeConfigId)
       ->condition('gid', $this->group->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)

@@ -129,6 +129,7 @@ class GroupRequestController extends ControllerBase {
       ->getContentTypeConfigId();
 
     $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
+      ->accessCheck()
       ->condition('type', $contentTypeConfigId)
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser()->id())

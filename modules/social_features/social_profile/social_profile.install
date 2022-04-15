@@ -240,6 +240,7 @@ function social_profile_update_8006(&$sandbox) {
     // We use array_values to get the entity_ids.
     // Not interested in the revisions.
     $sandbox['uids'] = array_values(\Drupal::entityQuery('user')
+      ->accessCheck()
       ->execute());
     $sandbox['user_count'] = count($sandbox['uids']);
 

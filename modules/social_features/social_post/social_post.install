@@ -113,6 +113,7 @@ function social_post_update_8801() {
 function social_post_update_8802(&$sandbox) {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('user_role')
+      ->accessCheck()
       ->condition('id', 'administrator', '<>')
       ->count()
       ->execute();
@@ -123,6 +124,7 @@ function social_post_update_8802(&$sandbox) {
   }
 
   $role_ids = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', 'administrator', '<>')
     ->range($sandbox['processed'], $sandbox['limit'])
     ->execute();

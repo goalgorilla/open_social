@@ -39,6 +39,7 @@ class UserSelection extends UserSelectionBase {
 
     // Gets users IDs that have permission to view private messages.
     $uids = $this->entityTypeManager->getStorage('user')->getQuery()
+      ->accessCheck()
       ->condition('roles', $rids, 'IN')
       ->condition('uid', $this->currentUser->id(), '<>')
       ->execute();

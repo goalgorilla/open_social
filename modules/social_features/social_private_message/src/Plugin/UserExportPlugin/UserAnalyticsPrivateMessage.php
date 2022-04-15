@@ -34,6 +34,7 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
       $storage = $this->entityTypeManager->getStorage('private_message');
       if ($storage instanceof ContentEntityStorageInterface) {
         $value = (int) $storage->getQuery()
+          ->accessCheck()
           ->condition('owner', $entity->id())
           ->count()
           ->execute();

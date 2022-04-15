@@ -21,6 +21,7 @@ class ContentReportActivityContext extends ActivityContextBase {
     $recipients = [];
 
     $ids = $this->entityTypeManager->getStorage('user')->getQuery()
+      ->accessCheck()
       ->condition('status', 1)
       ->condition('roles', $this->getRolesWithPermission(), 'IN')
       ->execute();

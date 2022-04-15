@@ -79,6 +79,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
       // of replies for that comment.
       if (($node = $comment->getCommentedEntity()) instanceof NodeInterface) {
         $reply_count = \Drupal::entityQuery('comment')
+          ->accessCheck()
           ->condition('entity_type', $comment->getCommentedEntityTypeId())
           ->condition('entity_id', $comment->getCommentedEntityId())
           ->condition('pid', $comment->id())

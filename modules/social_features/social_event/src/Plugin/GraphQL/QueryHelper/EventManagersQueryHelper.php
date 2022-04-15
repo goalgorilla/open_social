@@ -77,7 +77,7 @@ class EventManagersQueryHelper extends ConnectionQueryHelperBase {
 
     return $this->entityTypeManager->getStorage('user')
       ->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('uid', $uids ?: NULL, 'IN');
   }
 

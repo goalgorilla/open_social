@@ -184,6 +184,7 @@ function social_core_update_8001() {
  */
 function _social_core_set_permissions() {
   $roles = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', 'administrator', '<>')
     ->execute();
 
@@ -357,6 +358,7 @@ function _social_core_create_menu_links() {
  */
 function social_core_update_8002() {
   $roles = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
     ->execute();
 
@@ -386,6 +388,7 @@ function social_core_update_8003() {
  */
 function social_core_update_8004() {
   $roles = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
     ->execute();
 
@@ -1266,6 +1269,7 @@ function social_core_update_8813() {
  */
 function social_core_update_8901() {
   $roles = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', ['authenticated'], 'IN')
     ->execute();
 

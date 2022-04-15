@@ -22,7 +22,7 @@ class TopicQueryHelper extends ConnectionQueryHelperBase {
     return $this->entityTypeManager->getStorage('node')
       ->getQuery()
       ->currentRevision()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('type', 'topic');
   }
 

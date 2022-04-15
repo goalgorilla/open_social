@@ -80,6 +80,7 @@ function social_swiftmail_update_8002() {
  */
 function social_swiftmail_update_8003() {
   $roles = \Drupal::entityQuery('user_role')
+    ->accessCheck()
     ->condition('id', [
       'authenticated',
       'contentmanager',

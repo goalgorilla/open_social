@@ -48,7 +48,7 @@ class TopicQueryByTypeHelper extends ConnectionQueryHelperBase {
     return $this->entityTypeManager->getStorage('node')
       ->getQuery()
       ->currentRevision()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('type', 'topic')
       ->condition('field_topic_type.0.entity:taxonomy_term.uuid', $this->type);
   }

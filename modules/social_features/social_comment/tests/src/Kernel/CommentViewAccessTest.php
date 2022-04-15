@@ -107,7 +107,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
 
     $visible_comments = $this->storage
       ->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('entity_id', $this->node->id())
       ->condition('comment_type', 'comment')
       ->execute();
@@ -131,7 +131,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
 
     $visible_comments = $this->storage
       ->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('entity_id', $this->node->id())
       ->condition('comment_type', 'comment')
       ->execute();
@@ -160,7 +160,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
 
     $visible_comments = $this->storage
       ->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('entity_id', $this->node->id())
       ->condition('comment_type', 'comment')
       ->execute();
@@ -188,7 +188,7 @@ class CommentViewAccessTest extends EntityKernelTestBase {
 
     $visible_comments = $this->storage
       ->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck()
       ->condition('entity_id', $this->node->id())
       ->condition('comment_type', 'comment')
       ->execute();

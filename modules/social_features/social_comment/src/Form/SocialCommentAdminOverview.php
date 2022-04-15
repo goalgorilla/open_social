@@ -170,6 +170,7 @@ class SocialCommentAdminOverview extends FormBase {
       'operations' => $this->t('Operations'),
     ];
     $cids = $this->commentStorage->getQuery()
+      ->accessCheck()
       ->condition('status', $status)
       ->tableSort($header)
       ->pager(50)

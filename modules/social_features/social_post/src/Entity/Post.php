@@ -183,6 +183,7 @@ class Post extends ContentEntityBase implements PostInterface {
             $roles = $this->entityTypeManager()
               ->getStorage('user_role')
               ->getQuery()
+              ->accessCheck()
               ->condition('label', $allowed_value['label'])
               ->execute();
             $role_id = reset($roles);
