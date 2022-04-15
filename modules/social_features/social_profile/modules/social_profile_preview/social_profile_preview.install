@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for social_profile_preview module.
+ */
+
+/**
+ * Add followers/following fields to the profile preview.
+ */
+function social_profile_preview_update_11201(): void {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile_preview', 'social_profile_preview_update_11201');
+  // Output logged messages to related channel of update execution.
+  $updateHelper->logger()->output();
+}

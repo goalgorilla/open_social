@@ -1,14 +1,13 @@
 {#
 /**
  * @file
- * Default theme implementation of followers counter.
+ * Default theme implementation of following counter.
  *
  * Available variables:
- * - flag: The flag object.
- * - flaggable: The flaggable entity.
- * - url: The url of the followers page.
+ * - count: The number of the following users.
+ * - url: The url of the following users page.
  *
- * @see template_preprocess_followers()
+ * @see template_preprocess_following()
  *
  * @ingroup themeable
  */
@@ -16,13 +15,11 @@
 
 {{ attach_library('social_follow_user/counter') }}
 
-{% set count = flagcount(flag, flaggable) %}
-
 <span class="badge__container">
   {% if url %}<a href="{{ url }}">{% endif %}
     <span class="badge__label">{{ count }}</span>
     <span class="badge__label badge__label--description">
-      {% trans %}follower{% plural count %}followers{% endtrans %}
+      {% trans %}following{% endtrans %}
     </span>
   {% if url %}</a>{% endif %}
 </span>
