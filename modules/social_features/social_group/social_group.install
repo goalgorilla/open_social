@@ -716,19 +716,13 @@ function social_group_update_8905() {
  */
 function social_group_update_8906() {
   $config_factory = \Drupal::configFactory();
-
-  $group_types = [
-    'public_group',
-    'open_group',
-    'closed_group',
-  ];
-
-  foreach ($group_types as $group_type) {
-    $config = $config_factory->getEditable('group.type.' . $group_type);
+  $group_types = \Drupal::entityTypeManager()->getStorage('group_type')->loadMultiple();
+  foreach ($group_types as $group_types_id => $group_type) {
+    $config = $config_factory->getEditable('group.type.' . $group_types_id);
     $config->set('creator_membership', TRUE);
 
     $creator_roles = $config->get('creator_roles');
-    $group_role_id = $group_type . '-group_manager';
+    $group_role_id = $group_types_id . '-group_manager';
     if (!in_array($group_role_id, $creator_roles)) {
       $creator_roles[] = $group_role_id;
       $config->set('creator_roles', $creator_roles);
