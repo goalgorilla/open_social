@@ -316,7 +316,7 @@ class ActivityFactory extends ControllerBase {
         $comment_query = $this->entityTypeManager->getStorage('comment')->getQuery();
         $comment_query->condition('entity_id', $commented_entity->id(), '=');
         $comment_query->condition('entity_type', $commented_entity->getEntityTypeId(), '=');
-        $comment_ids = $comment_query->execute();
+        $comment_ids = $comment_query->accessCheck()->execute();
         // Get all activities provided by comments of commented entity.
         if (!empty($comment_ids)) {
           $activity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
