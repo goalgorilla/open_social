@@ -489,9 +489,24 @@ function social_group_flexible_group_update_11202(): string {
 }
 
 /**
+ * Make "Group Types" vocabulary translatable.
+ */
+function social_group_flexible_group_update_11203(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.group_type', (array) $source->read('language.content_settings.taxonomy_term.group_type_11203'));
+}
+
+/**
  * Allow extending list of allowed join methods dynamically.
  */
-function social_group_flexible_group_update_11203(): string {
+function social_group_flexible_group_update_11204(): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 

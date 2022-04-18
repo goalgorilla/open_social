@@ -3,3 +3,8 @@ services:
     class: \Drupal\social_event_type\SocialEventTypeConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
+  social_event_type.translation_defaults:
+    class: Drupal\social_event_type\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }

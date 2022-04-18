@@ -5,6 +5,7 @@
  * Install hooks for Social Content Report.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\Yaml\Yaml;
@@ -98,4 +99,19 @@ function social_content_report_update_10301() {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Make "Report Reasons" vocabulary translatable.
+ */
+function social_content_report_update_11201(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_content_report') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.report_reasons', (array) $source->read('language.content_settings.taxonomy_term.report_reasons_11201'));
 }

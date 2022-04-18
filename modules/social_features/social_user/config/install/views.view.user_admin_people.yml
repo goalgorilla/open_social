@@ -1056,11 +1056,8 @@ display:
           relationship: gid
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          operator: in
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -1069,39 +1066,35 @@ display:
             description: ''
             use_operator: false
             operator: id_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: group
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               contentmanager: '0'
               sitemanager: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
+              verified: '0'
+            reduce: false
           is_grouped: false
           group_info:
-            label: ID
-            description: null
-            identifier: id
+            label: ''
+            description: ''
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1: {  }
-              2: {  }
-              3: {  }
+            group_items: {  }
           entity_type: group
           entity_field: id
-          plugin_id: numeric
+          plugin_id: in_operator
         uid_raw:
           id: uid_raw
           table: users_field_data

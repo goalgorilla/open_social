@@ -21,9 +21,15 @@ function social_follow_user_entity_extra_field_info(): array {
     'profile' => [
       'profile' => [
         'display' => [
-          'social_follow_user' => [
+          'followers' => [
             'label' => t('Followers'),
             'description' => t('The number of users who are followed.'),
+            'weight' => 20,
+            'visible' => FALSE,
+          ],
+          'following' => [
+            'label' => t('Following users'),
+            'description' => t('The number of users that user following.'),
             'weight' => 20,
             'visible' => FALSE,
           ],
@@ -52,7 +58,7 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
   }
   else {
     // Follow button appears on listed profile display modes.
-    $allowed_display_modes = ['statistic'];
+    $allowed_display_modes = ['statistic', 'teaser'];
 
     // Allow other modules to change the list.
     \Drupal::moduleHandler()->alter(
@@ -97,14 +103,23 @@ function social_follow_user_profile_view(
   EntityViewDisplayInterface $display,
   string $view_mode
 ): void {
-  if (
-    $entity->bundle() === 'profile' &&
-    $display->getComponent('social_follow_user') !== NULL
-  ) {
-    $build['social_follow_user'] = [
-      '#theme' => 'followers',
-      '#flaggable' => $entity,
-    ];
+  if ($entity->bundle() === 'profile') {
+    // Add cacheable dependency on social_follow_user settings for user profile.
+    $config = \Drupal::config('social_follow_user.settings')->get('status');
+    \Drupal::service('renderer')
+      ->addCacheableDependency($build, (array) $config);
+
+    // Display counters only if follow users option is enabled.
+    if ($display->getComponent('flag_follow_user')) {
+      foreach (['followers', 'following'] as $field) {
+        if ($display->getComponent($field) !== NULL) {
+          $build[$field] = [
+            '#theme' => $field,
+            '#flaggable' => $entity,
+          ];
+        }
+      }
+    }
   }
 }
 
@@ -117,8 +132,54 @@ function social_follow_user_theme(): array {
       'variables' => [
         'flag' => NULL,
         'flaggable' => NULL,
+        'url' => NULL,
+      ],
+      'file' => 'social_follow_user.theme.inc',
+    ],
+    'following' => [
+      'variables' => [
+        'flaggable' => NULL,
+        'count' => NULL,
+        'url' => NULL,
       ],
       'file' => 'social_follow_user.theme.inc',
     ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_profile(array &$variables): void {
+  if ($variables['elements']['#view_mode'] === 'teaser') {
+    // Display related teaser tag for each user follow list.
+    switch (\Drupal::routeMatch()->getRouteName()) {
+      case 'view.followers_user.page_user_followers':
+        $variables['followers'] = TRUE;
+        break;
+
+      case 'view.following_users.page_following_users':
+        $variables['following'] = TRUE;
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_flag(array &$variables): void {
+  $profile = $variables['flaggable'];
+
+  if ($profile instanceof ProfileInterface) {
+    $variables['attributes']['class'] = array_merge(
+      $variables['attributes']['class'] ?? [],
+      ['btn-accent', 'btn-follow-user'],
+    );
+    $classes = &$variables['attributes']['class'];
+
+    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
+      unset($classes[$delta]);
+    }
+  }
 }

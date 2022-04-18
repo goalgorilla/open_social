@@ -5,6 +5,7 @@
  * The social profile fields install file.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
 use Symfony\Component\Yaml\Yaml;
@@ -116,4 +117,19 @@ function _social_profile_fields_nationalities() {
 
     $term->setName($nationality)->save();
   }
+}
+
+/**
+ * Make "Nationality" vocabulary translatable.
+ */
+function social_profile_fields_update_11201(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.nationality', (array) $source->read('language.content_settings.taxonomy_term.nationality_11201'));
 }
