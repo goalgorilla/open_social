@@ -2,13 +2,17 @@ core.entity_view_display.profile.profile.preview:
   expected_config:
     content:
       field_profile_self_introduction:
-        weight: 4
+        weight: 3
+      field_profile_summary:
+        weight: 2
       flag_follow_user:
         weight: 2
+      followers:
+        weight: 5
+      following:
+        weight: 5
       private_message_link:
         weight: 3
-      social_follow_user:
-        weight: 5
     hidden:
       field_profile_function: true
   update_actions:
@@ -18,13 +22,17 @@ core.entity_view_display.profile.profile.preview:
     change:
       content:
         field_profile_self_introduction:
+          weight: 6
+        field_profile_summary:
           weight: 5
         flag_follow_user:
           weight: 3
+        followers:
+          weight: 7
+        following:
+          weight: 8
         private_message_link:
           weight: 4
-        social_follow_user:
-          weight: 6
     add:
       content:
         field_profile_function:

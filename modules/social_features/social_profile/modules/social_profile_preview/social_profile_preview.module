@@ -108,7 +108,16 @@ function social_profile_preview_preprocess_profile(array &$variables): void {
     /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
     $helper = \Drupal::service('social_profile_preview.helper');
 
-    $helper->alter($profile, $variables, 'link_attributes');
+    $helper->alter($profile, $variables, 'avatar_attributes', TRUE);
+
+    $helper->alter(
+      $profile,
+      $variables,
+      'link_attributes',
+      TRUE,
+      'profile_name',
+      'profile_name_extra',
+    );
   }
 }
 
@@ -126,7 +135,14 @@ function social_profile_preview_preprocess_username(array &$variables): void {
     /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
     $helper = \Drupal::service('social_profile_preview.helper');
 
-    $helper->alter($profile, $variables);
+    $helper->alter(
+      $profile,
+      $variables,
+      'attributes',
+      FALSE,
+      'name',
+      'extra',
+    );
   }
 }
 

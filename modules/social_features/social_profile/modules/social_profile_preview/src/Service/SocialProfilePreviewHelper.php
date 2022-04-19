@@ -33,9 +33,23 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
   public function alter(
     ProfileInterface $profile,
     array &$variables,
-    $path = 'attributes'
+    $path = 'attributes',
+    bool $return_as_object = FALSE,
+    string $base_field = NULL,
+    string $extra_field = NULL
   ): void {
     if ($profile->access('view')) {
+      if ($extra_field !== NULL && !empty($variables[$extra_field])) {
+        $variables[$base_field] = [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => $variables[$base_field],
+        ];
+
+        $path = [$base_field, '#attributes'];
+        $return_as_object = FALSE;
+      }
+
       if (!NestedArray::keyExists($variables, $path = (array) $path)) {
         NestedArray::setValue($variables, $path, []);
       }
@@ -49,7 +63,7 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
       $attributes['class'][] = 'profile-preview';
       $attributes['data-profile'] = $profile->id();
 
-      if ($is_object) {
+      if ($is_object || $return_as_object) {
         $attributes = new Attribute($attributes);
       }
 
