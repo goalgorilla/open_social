@@ -41,6 +41,7 @@
                       .on('mouseleave', function () {
                         timeouts[selector] = window.setTimeout(function () {
                           dialogs[selector].close();
+                          dialogs = [];
                         }, delay);
                       })
                       .find('.ui-dialog-titlebar-close').remove();
@@ -58,9 +59,6 @@
             if (dialogs[selector] !== undefined) {
               dialogs[selector].showModal();
             }
-            else if (profiles[identifier] !== undefined) {
-              dialog();
-            }
             else {
               var ajax = Drupal.ajax({
                 url: Drupal.url('profile/' + identifier + '/preview')
@@ -76,6 +74,11 @@
 
               ajax.execute();
             }
+            // When page structure has been changed bind Ajax functionality.
+            $(document).ajaxComplete(function() {
+              Drupal.ajax.bindAjaxLinks(document.body);
+            });
+
           }, delay);
         })
         .on('mouseout', function () {
@@ -87,6 +90,7 @@
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
               dialogs[selector].close();
             }
+            dialogs = [];
           }, delay);
         });
     }
