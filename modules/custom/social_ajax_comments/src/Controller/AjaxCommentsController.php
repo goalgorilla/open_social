@@ -181,6 +181,14 @@ class AjaxCommentsController extends ContribController {
       // AjaxCommentsForm::save() during the previous HTTP request.
       $cid = $this->tempStore->getCid();
 
+      // Reset cache of the commented entity.
+      // @todo Investigate why the caches are not cleared correctly in the \Drupal\comment\Entity\Comment::postSave().
+      if ($cid) {
+        $this->entityTypeManager()
+          ->getStorage($entity->getEntityTypeId())
+          ->resetCache([$entity->id()]);
+      }
+
       // Try to insert the message above the new comment.
       if (
         !empty($cid) &&
