@@ -23,7 +23,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    */
   protected $configFactory;
 
-    /**
+  /**
    * The current route match.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
