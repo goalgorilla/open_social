@@ -1063,7 +1063,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     if ($found && isset($data)) {
       $field = &$form[$data['field']]['widget'];
 
-      if ($multiple = $field['#type'] === 'checkboxes') {
+      if ($field['#type'] === 'checkboxes') {
         $field['#type'] = 'radios';
       }
 
@@ -1089,19 +1089,17 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $join_method = array_pop($join_methods);
         $join_methods = array_reverse($join_methods);
 
-        if ($multiple) {
-          foreach ($join_methods as $current_join_method) {
-            if (in_array($current_join_method, $field['#default_value'])) {
-              $default_join_method = $current_join_method;
-              break;
-            }
+        foreach ($join_methods as $current_join_method) {
+          if (in_array($current_join_method, $field['#default_value'])) {
+            $default_join_method = $current_join_method;
+            break;
           }
+        }
 
-          $field['#default_value'] = $default_join_method ?? $join_method;
-        }
-        else {
-          $field['#default_value'] = $join_methods[0];
-        }
+        $field['#default_value'] = $default_join_method ?? reset($join_method);
+      }
+      elseif (isset($field['#default_value']) && is_array($field['#default_value'])) {
+        $field['#default_value'] = reset($field['#default_value']);
       }
     }
   }
