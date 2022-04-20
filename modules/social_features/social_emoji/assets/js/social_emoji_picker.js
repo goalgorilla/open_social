@@ -1,7 +1,7 @@
 (function (Drupal) {
 
-  const emojiTriggers = document.getElementsByClassName("emoji-trigger");
-  const emojiPickers = document.getElementsByClassName("emoji-picker");
+  var emojiTriggers = document.getElementsByClassName("emoji-trigger");
+  var emojiPickers = document.getElementsByClassName("emoji-picker");
 
   function emoji_picker(event)
   {
@@ -17,7 +17,6 @@
           var pos = parentElementId.lastIndexOf('-wrapper');
           var hiddenInputAttribute = parentElementId.slice(0, pos);
           var inputFieldId = parentElementId.replace('-wrapper', '-0-value');
-          document.getElementById(inputFieldId).focus();
           var textToInsert = e.detail.unicode;
           var curPos;
           var curValue;
