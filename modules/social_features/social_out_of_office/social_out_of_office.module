@@ -1,0 +1,231 @@
+<?php
+
+/**
+ * @file
+ * Contains social_out_of_office.module..
+ */
+
+use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\social_post\Entity\PostInterface;
+
+/**
+ * @file
+ * The Social Out of office module.
+ */
+
+/**
+ * Implements hook_entity_view_display_alter().
+ *
+ * Show message on profile statistic view mode
+ * from Out of office groupfield
+ * if today's date is in date range between start and end dates.
+ */
+function social_out_of_office_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
+  if (
+    $context['entity_type'] !== 'profile' ||
+    $context['bundle'] !== 'profile' ||
+    $context['view_mode'] !== 'statistic'
+  ) {
+    return;
+  }
+  $user = \Drupal::routeMatch()->getParameter('user');
+  if (!($user instanceof AccountInterface)) {
+    $user = \Drupal::entityTypeManager()->getStorage('user')->load($user);
+  }
+  if (!$user) {
+    return;
+  }
+
+  $profile_type = 'profile';
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile = $profile_storage->loadByUser($user, $profile_type);
+
+  if (!$profile) {
+    return;
+  }
+
+  $start_date_ooo = $profile->hasField('field_profile_start_day_ooo')
+    ? $profile->get('field_profile_start_day_ooo')->getString() : NULL;
+  $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
+    ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
+  $today = date('Y-m-d');
+
+  $message_component = [
+    'type' => 'text_default',
+    'weight' => 8,
+    'region' => 'content',
+    'label' => 'visually_hidden',
+    'settings' => [],
+    'third_party_settings' => [],
+  ];
+  $alt_contact_component = [
+    'type' => 'entity_reference_label',
+    'weight' => 9,
+    'region' => 'content',
+    'label' => 'visually_hidden',
+    'settings' => [
+      'link' => TRUE,
+    ],
+    'third_party_settings' => [],
+  ];
+
+  if ($start_date_ooo > $today || $end_date_ooo < $today) {
+    $display->removeComponent('field_profile_message_ooo');
+    $display->removeComponent('field_profile_alt_contact');
+  }
+  else {
+    $display->setComponent('field_profile_message_ooo', $message_component);
+    $display->setComponent('field_profile_alt_contact', $alt_contact_component);
+  }
+  $display->save();
+}
+
+/**
+ * Implements hook_preprocess_user().
+ *
+ * Show status in private messaging thread
+ * if someone is out of office.
+ */
+function social_out_of_office_preprocess_user(array &$variables): void {
+  if ($variables['elements']['#view_mode'] == 'private_message_author') {
+    $current_user = \Drupal::currentUser()->getAccount();
+    $user = $variables['elements']['#user'];
+
+    if ($current_user->id() !== $user->id()) {
+      $profile_type = 'profile';
+      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+      $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+      $profile = $profile_storage->loadByUser($user, $profile_type);
+      if (!$profile) {
+        return;
+      }
+      $start_date_ooo = $profile->hasField('field_profile_start_day_ooo')
+        ? $profile->get('field_profile_start_day_ooo')->getString() : NULL;
+      $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
+        ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
+      $today = date('Y-m-d');
+      if ($start_date_ooo <= $today && $end_date_ooo >= $today) {
+        $suffix = $variables['content']['linked_username']['#suffix'];
+        $suffix = '<span> ' . t('is out of office from') . " $start_date_ooo " . t('to') . " $end_date_ooo " . '</span>' . $suffix;
+        $variables['content']['linked_username']['#suffix'] = $suffix;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ *
+ * Show message about users that out of office
+ * if someone mentioned them in post or comment.
+ */
+function social_out_of_office_entity_presave(EntityInterface $entity): void {
+  if ($entity instanceof PostInterface) {
+    $body_value = $entity->get('field_post')->getValue();
+  }
+  elseif ($entity instanceof CommentInterface) {
+    $body_value = $entity->get('field_comment_body')->getValue();
+  }
+  else {
+    return;
+  }
+  $users_ooo = [];
+  $body_value = $body_value[0]['value'];
+  $matches = NULL;
+  preg_match_all('[~[0-9]]', $body_value, $matches);
+  foreach ($matches[0] as $value) {
+    $id = str_replace('~', '', $value);
+    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+    /** @var \Drupal\profile\Entity\Profile $profile */
+    $profile = $profile_storage->load($id);
+
+    $start_date_ooo = $profile->hasField('field_profile_start_day_ooo')
+      ? $profile->get('field_profile_start_day_ooo')->getString() : NULL;
+    $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
+      ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
+    $today = date('Y-m-d');
+    if ($start_date_ooo <= $today && $end_date_ooo >= $today) {
+      $name = $profile->get('profile_name')->getString();
+      $message = $profile->get('field_profile_message_ooo')->getValue();
+      $message = $message[0]['value'];
+      $users_ooo[] = [
+        'name' => $name,
+        'start_date' => $start_date_ooo,
+        'end_date' => $end_date_ooo,
+        'message' => $message,
+      ];
+    }
+  }
+  foreach ($users_ooo as $user_ooo) {
+    \Drupal::messenger()->addStatus(t('@name is out of office from @start_date to @end_date. @message', [
+      '@name' => $user_ooo['name'],
+      '@start_date' => $user_ooo['start_date'],
+      '@end_date' => $user_ooo['end_date'],
+      '@message' => $user_ooo['message'] ? '"' . $user_ooo['message'] . '"' : '',
+    ]));
+  }
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_out_of_office_form_private_message_add_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
+  $form['actions']['submit']['#submit'][] = 'social_out_of_office_add_notice_about_users_ooo';
+}
+
+/**
+ * Submit function for 'form_private_message_add' form.
+ *
+ * Check if any of members is out of office
+ * and add status message if yes.
+ */
+function social_out_of_office_add_notice_about_users_ooo(array &$form, FormStateInterface $form_state): void {
+  $messages = [];
+  $members = $form_state->getValue('members');
+  foreach ($members as $member) {
+    foreach ($member as $member_id) {
+      $user = \Drupal::entityTypeManager()->getStorage('user')->load($member_id);
+      if (!$user) {
+        return;
+      }
+      $profile_type = 'profile';
+      /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+      $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+      $profile = $profile_storage->loadByUser($user, $profile_type);
+      if (!$profile) {
+        return;
+      }
+      $start_date_ooo = $profile->hasField('field_profile_start_day_ooo')
+        ? $profile->get('field_profile_start_day_ooo')->getString() : NULL;
+      $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
+        ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
+      $today = date('Y-m-d');
+      if ($start_date_ooo <= $today && $end_date_ooo >= $today) {
+        $name = $profile->get('profile_name')->getString();
+        $message = $profile->get('field_profile_message_ooo')->getValue();
+        $message = $message[0]['value'];
+        $messages[] = [
+          'name' => $name,
+          'start_date' => $start_date_ooo,
+          'end_date' => $end_date_ooo,
+          'message' => $message,
+        ];
+      }
+    }
+  }
+  foreach ($messages as $message) {
+    \Drupal::messenger()->addStatus(t('@name is out of office from @start_date to @end_date. @message', [
+      '@name' => $message['name'],
+      '@start_date' => $message['start_date'],
+      '@end_date' => $message['end_date'],
+      '@message' => $message['message'] ? '"' . $message['message'] . '"' : '',
+    ]));
+  }
+}
