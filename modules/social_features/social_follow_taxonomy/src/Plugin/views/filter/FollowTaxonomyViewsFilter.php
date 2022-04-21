@@ -24,7 +24,7 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
   /**
    * The target flag entity id.
    */
-  private const FLAG_ID = 'follow_term';
+  public const FLAG_ID = 'follow_term';
 
   /**
    * The entity manager.
@@ -265,8 +265,24 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
   /**
    * {@inheritdoc}
    */
+  public function getCacheTags(): array {
+    // In views each row is cached by entity types tags provided to view with
+    // base table and tables added with relationships. Even we add the tags
+    // below the cache will not be invalidated because it's not
+    // possible to alter cache tags for views row.
+    /* @see \Drupal\views\Plugin\views\cache\CachePluginBase::getCacheTags */
+    // @todo Make this workable in views.
+    return [
+      ...parent::getCacheTags(),
+      ...['flagging_list:' . self::FLAG_ID],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function calculateDependencies(): array {
-    $vocabularies = $this->vocabularyStorage->loadMultiple($this->options['vid']);
+    $vocabularies = (array) $this->vocabularyStorage->loadMultiple($this->options['vid']);
     foreach ($vocabularies as $vocabulary) {
       $dependencies[$vocabulary->getConfigDependencyKey()][] = $vocabulary->getConfigDependencyName();
     }

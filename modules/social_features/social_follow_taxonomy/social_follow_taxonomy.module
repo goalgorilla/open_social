@@ -7,7 +7,6 @@
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
@@ -32,24 +31,6 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
       'base hook' => 'activity',
     ],
   ];
-}
-
-/**
- * Implements hook_form_FORM_ID_alter() for "views_exposed_form".
- */
-function social_follow_taxonomy_form_views_exposed_form_alter(array &$form, FormStateInterface &$form_state): void {
-  if (
-    $form_state->get('view')->id() === 'user_admin_people' &&
-    $form_state->get(['display', 'id']) === 'page_1' &&
-    !empty($form['social_follow_taxonomy_follow_filter']) &&
-    \Drupal::moduleHandler()->moduleExists('select2')
-  ) {
-    // Replace default "select" form element widget with "select2".
-    $form_element_id = $form['social_follow_taxonomy_follow_filter']['#type'];
-    if ($form_element_id === 'select') {
-      $form['social_follow_taxonomy_follow_filter']['#type'] = 'select2';
-    }
-  }
 }
 
 /**
