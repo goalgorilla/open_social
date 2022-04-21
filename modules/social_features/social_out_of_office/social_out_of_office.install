@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_out_of_office module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_out_of_office_install(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_out_of_office', 'social_out_of_office_update_11018.yml');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
