@@ -56,6 +56,7 @@ function social_user_post_update_10101_add_verified_role_to_existing_users(array
       // Add role "verified".
       $account->addRole('verified');
       $account->save();
+      \Drupal::service('ldap.drupal_user_processor')->reset();
     }
   }
 
