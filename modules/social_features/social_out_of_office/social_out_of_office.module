@@ -191,8 +191,8 @@ function social_out_of_office_get_message_for_user_ooo(Profile $profile): array 
  *   OoO dates.
  */
 function social_out_of_office_get_ooo_dates(Profile $profile): array {
-  $start_date_ooo = $profile->hasField('field_profile_start_day_ooo')
-    ? $profile->get('field_profile_start_day_ooo')->getString() : NULL;
+  $start_date_ooo = $profile->hasField('field_profile_start_date_ooo')
+    ? $profile->get('field_profile_start_date_ooo')->getString() : NULL;
   $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
     ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
   $today = date('Y-m-d');
