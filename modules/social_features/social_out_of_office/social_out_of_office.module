@@ -76,11 +76,43 @@ function social_out_of_office_preprocess_user(array &$variables): void {
  * if someone mentioned them in post or comment.
  */
 function social_out_of_office_entity_presave(EntityInterface $entity): void {
+  $post_comment_related_profiles = [];
+
+  $profile_type = 'profile';
+  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
   if ($entity instanceof PostInterface) {
     $body_value = $entity->get('field_post')->getValue();
+    $post_author_id = $entity->get('user_id')->getString();
+    $post_author = \Drupal::entityTypeManager()->getStorage('user')->load($post_author_id);
+    if (!$post_author) {
+      return;
+    }
+    /** @var \Drupal\profile\Entity\Profile $profile */
+    $profile = $profile_storage->loadByUser($post_author, $profile_type);
+    $post_comment_related_profiles[] = $profile;
   }
   elseif ($entity instanceof CommentInterface) {
     $body_value = $entity->get('field_comment_body')->getValue();
+    $commented_post = $entity->getCommentedEntity();
+    if ($commented_post) {
+      $post_author_id = $commented_post->get('user_id')->getString();
+      $post_author = \Drupal::entityTypeManager()->getStorage('user')->load($post_author_id);
+      if (!$post_author) {
+        return;
+      }
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = $profile_storage->loadByUser($post_author, $profile_type);
+      $post_comment_related_profiles[] = $profile;
+    }
+
+    $parent_comment = $entity->getParentComment();
+    if ($parent_comment) {
+      $parent_comment_author = $parent_comment->getOwner();
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = $profile_storage->loadByUser($parent_comment_author, $profile_type);
+      $post_comment_related_profiles[] = $profile;
+    }
   }
   else {
     return;
@@ -97,6 +129,15 @@ function social_out_of_office_entity_presave(EntityInterface $entity): void {
     $profile = $profile_storage->load($id);
 
     $message = social_out_of_office_get_message_for_user_ooo($profile);
+    if (!empty($message)) {
+      $messages[] = $message;
+    }
+    if (($index = array_search($profile, $post_comment_related_profiles)) !== FALSE) {
+      unset($post_comment_related_profiles[$index]);
+    }
+  }
+  foreach ($post_comment_related_profiles as $post_comment_related_profile) {
+    $message = social_out_of_office_get_message_for_user_ooo($post_comment_related_profile);
     if (!empty($message)) {
       $messages[] = $message;
     }
