@@ -27,7 +27,7 @@ function social_profile_extra_preprocess_profile__profile__statistic(array &$var
 
   if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
     $message = $profile->get('field_profile_message_ooo')->getValue();
-    $message = $message[0]['value'];
+    $message = ['#markup' => $message[0]['value']];
     $variables['profile_ooo_status'] = t('Currently out of office');
     $variables['profile_message_ooo'] = $message;
 
@@ -106,7 +106,7 @@ function social_out_of_office_entity_presave(EntityInterface $entity): void {
       '@name' => $message['name'],
       '@start_date' => $message['start_date'],
       '@end_date' => $message['end_date'],
-      '@message' => $message['message'] ? '"' . $message['message'] . '"' : '',
+      '@message' => $message['message'] ? '"' . strip_tags($message['message']) . '"' : '',
     ]));
   }
 
@@ -151,7 +151,7 @@ function social_out_of_office_add_notice_about_users_ooo(array &$form, FormState
       '@name' => $message['name'],
       '@start_date' => $message['start_date'],
       '@end_date' => $message['end_date'],
-      '@message' => $message['message'] ? '"' . $message['message'] . '"' : '',
+      '@message' => $message['message'] ? '"' . strip_tags($message['message']) . '"' : '',
     ]));
   }
 }
