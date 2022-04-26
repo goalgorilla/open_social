@@ -107,6 +107,9 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
             '#type' => 'button',
             '#value' => t('Add to calendar'),
             '#split' => TRUE,
+            '#attributes' => [
+              'class' => ['btn--add-to-calendar'],
+            ],
           ],
           'dropdown_links' => [
             '#theme' => 'item_list__dropdown',
@@ -136,11 +139,15 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
  * Implements hook_preprocess_HOOK() for "input--button--split.html.twig".
  */
 function social_event_addtocal_preprocess_input__button__split(array &$variables): void {
-  if (!empty($variables['element']['#value']) && $variables['element']['#value'] == 'Add to calendar') {
-    if ($variables['split_button_attributes'] instanceof Attribute) {
-      $variables['split_button_attributes']->removeClass('btn-default');
-      $variables['split_button_attributes']->addClass('btn-link');
-    }
+  if (empty($variables['element']['#attributes']['class'])
+    || !in_array('btn--add-to-calendar', $variables['element']['#attributes']['class'])
+  ) {
+    return;
+  }
+
+  if ($variables['split_button_attributes'] instanceof Attribute) {
+    $variables['split_button_attributes']->removeClass('btn-default');
+    $variables['split_button_attributes']->addClass('btn-link');
   }
 }
 
@@ -199,5 +206,8 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
 function social_event_addtocal_preprocess_swiftmailer(array &$variables): void {
   // Add library with styles for event.
   $variables['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
-  $variables['#attached']['library'][] = 'socialblue/dropdown';
+
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
+    $variables['#attached']['library'][] = 'socialblue/dropdown';
+  }
 }
