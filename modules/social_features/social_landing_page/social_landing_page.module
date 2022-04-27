@@ -303,7 +303,7 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
     // Must be of type hero.
     if ($paragraph_content && $paragraph_content->getType() === 'hero') {
       if ($paragraph_content->get('field_hero_image')->isEmpty()) {
-        return [];
+        continue;
       }
       $fid = $paragraph_content->get('field_hero_image')->target_id;
       $file = File::load($fid);
