@@ -135,3 +135,17 @@ function social_follow_user_update_11202(): void {
     $config_storage->write($origin_name, (array) $source->read($update_name));
   }
 }
+
+/**
+ * Remove title on the followers page.
+ */
+function social_follow_user_update_11203(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_follow_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
