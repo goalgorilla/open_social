@@ -243,3 +243,27 @@ function social_out_of_office_get_ooo_dates(Profile $profile): array {
     'today' => $today,
   ];
 }
+
+/**
+ * Implements hook_FORM_ID_form_alter().
+ */
+function social_out_of_office_form_profile_profile_edit_form_alter(array &$form): void {
+  $form['field_profile_message_ooo']['widget'][0]['#description'] = t('Max number of characters for Message is 240');
+  $form['#validate'][] = 'social_out_of_office_validate_maxlength_of_message';
+}
+
+/**
+ * Validator for Message field.
+ *
+ * Show error if message has more characters than 240.
+ */
+function social_out_of_office_validate_maxlength_of_message(array &$form, FormStateInterface $form_state): void {
+  $message = $form_state->getValue('field_profile_message_ooo');
+  $message = strip_tags($message[0]['value']);
+  $max_length = 240;
+  if (strlen($message) > $max_length) {
+    $form_state->setErrorByName('field_profile_message_ooo', t("The maximum length of for Message field is %max_length.", [
+      '%max_length' => $max_length,
+    ]));
+  }
+}
