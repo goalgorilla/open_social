@@ -20,23 +20,25 @@ use Drupal\social_post\Entity\PostInterface;
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_out_of_office_preprocess_profile__profile__statistic(array &$variables): void {
-  $profile = $variables['profile'];
+function social_out_of_office_preprocess_profile(array &$variables): void {
+  if ($variables['elements']['#view_mode'] == 'statistic') {
+    $profile = $variables['profile'];
 
-  $dates = social_out_of_office_get_ooo_dates($profile);
+    $dates = social_out_of_office_get_ooo_dates($profile);
 
-  if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
-    $message = $profile->get('field_profile_message_ooo')->getValue();
-    $message = ['#markup' => $message[0]['value']];
-    $variables['profile_ooo_status'] = t('Currently out of office');
-    $variables['profile_message_ooo'] = $message;
+    if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
+      $message = $profile->get('field_profile_message_ooo')->getValue();
+      $message = ['#markup' => $message[0]['value']];
+      $variables['profile_ooo_status'] = t('Currently out of office');
+      $variables['profile_message_ooo'] = $message;
 
-    $alt_contact_person = $profile->get('field_profile_alt_contact')->referencedEntities()[0];
-    if ($alt_contact_person) {
-      $alt_contact_person_name = $alt_contact_person->getAccountName();
-      $alt_contact_person_url = Url::fromRoute('social_user.stream', ['user' => $alt_contact_person->id()]);
-      $variables['profile_alt_contact_person_name'] = $alt_contact_person_name;
-      $variables['profile_alt_contact_person_url'] = $alt_contact_person_url;
+      $alt_contact_person = $profile->get('field_profile_alt_contact')->referencedEntities()[0];
+      if ($alt_contact_person) {
+        $alt_contact_person_name = $alt_contact_person->getAccountName();
+        $alt_contact_person_url = Url::fromRoute('social_user.stream', ['user' => $alt_contact_person->id()]);
+        $variables['profile_alt_contact_person_name'] = $alt_contact_person_name;
+        $variables['profile_alt_contact_person_url'] = $alt_contact_person_url;
+      }
     }
   }
 }
