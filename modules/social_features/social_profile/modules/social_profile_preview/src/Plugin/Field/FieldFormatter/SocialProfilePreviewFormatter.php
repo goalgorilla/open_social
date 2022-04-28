@@ -25,6 +25,28 @@ class SocialProfilePreviewFormatter extends EntityReferenceLabelFormatter {
   /**
    * {@inheritdoc}
    */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = parent::viewElements($items, $langcode);
+
+    if ($this->getSetting('link')) {
+      foreach (Element::children($elements) as $delta) {
+        if (isset($elements[$delta]['#url'])) {
+          /** @var \Drupal\Core\Url $url */
+          $url = $elements[$delta]['#url'];
+
+          if (!$url->access()) {
+            $elements[$delta] = ['#plain_text' => $elements[$delta]['#title']];
+          }
+        }
+      }
+    }
+
+    return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function checkAccess(EntityInterface $entity) {
     return AccessResult::allowed();
   }
