@@ -20,7 +20,7 @@ use Drupal\social_post\Entity\PostInterface;
 /**
  * Implements hook_preprocess_HOOK().
  */
-function social_profile_extra_preprocess_profile__profile__statistic(array &$variables): void {
+function social_out_of_office_preprocess_profile__profile__statistic(array &$variables): void {
   $profile = $variables['profile'];
 
   $dates = social_out_of_office_get_ooo_dates($profile);
