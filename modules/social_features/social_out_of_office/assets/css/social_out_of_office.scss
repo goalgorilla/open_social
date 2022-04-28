@@ -1,0 +1,60 @@
+.card__info-user--out-of-office {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: .625rem 0;
+  padding: 1rem .75rem 0;
+  border-radius: 14px;
+  background-color: #fff;
+
+  > * {
+    margin-bottom: 1rem;
+  }
+
+  &--message,
+  &--alt-person {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  &--status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-left: -.3rem;
+    margin-right: -.3rem;
+
+    * {
+      margin: 0 .3rem;
+    }
+
+    svg {
+      flex: 0 0 20px;
+      max-width: 20px;
+      height: 20px;
+      fill: #ee412b;
+    }
+  }
+
+  &--message {
+    * {
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    p {
+      font-size: .875rem;
+      line-height: 21px;
+    }
+
+    &:empty {
+      margin-bottom: 0;
+    }
+  }
+}
