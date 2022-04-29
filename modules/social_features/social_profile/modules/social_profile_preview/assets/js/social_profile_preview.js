@@ -2,6 +2,7 @@
   Drupal.behaviors.socialProfilePreview = {
     attach: function attach(context) {
       var timeouts = [], dialogs = [], profiles = [];
+      var refresh = -1;
       var delay = 200;
       var delta = 0;
 
@@ -41,7 +42,9 @@
                       .on('mouseleave', function () {
                         timeouts[selector] = window.setTimeout(function () {
                           dialogs[selector].close();
-                          dialogs = [];
+                          if (refresh === 1) {
+                            dialogs = [];
+                          }
                         }, delay);
                       })
                       .find('.ui-dialog-titlebar-close').remove();
@@ -58,6 +61,7 @@
 
             if (dialogs[selector] !== undefined) {
               dialogs[selector].showModal();
+              Drupal.ajax.bindAjaxLinks(document.body);
             }
             else {
               var ajax = Drupal.ajax({
@@ -75,8 +79,9 @@
               ajax.execute();
             }
             // When page structure has been changed bind Ajax functionality.
-            $(document).ajaxComplete(function() {
+            $(document).ajaxComplete(function(event, request, settings) {
               Drupal.ajax.bindAjaxLinks(document.body);
+              refresh = settings.url.indexOf('flag');
             });
 
           }, delay);
@@ -90,7 +95,9 @@
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
               dialogs[selector].close();
             }
-            dialogs = [];
+            if (refresh === 1) {
+              dialogs = [];
+            }
           }, delay);
         });
     }
