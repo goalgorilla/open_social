@@ -8,16 +8,22 @@
 use Drupal\Core\Site\Settings;
 
 /**
- * Populate the default value in new field for already existing users.
+ * Empty post update hook.
  */
 function social_embed_post_update_11001_populate_field_embed_content_settings(array &$sandbox): void {
+  // Moved to 11002.
+}
+
+/**
+ * Populate the default value in new field for already existing users.
+ */
+function social_embed_post_update_11002_populate_field_embed_content_settings(array &$sandbox): void {
   // Even though we have provided 'field_user_embed_content_consent',
   // a default value of 1. This will only pre-fill for any newly created
   // users, but not already existing users.
   // We need populate the field value of newly added field for existing users.
   // @see social_embed_update_11002().
-  $all_bundle_fields = \Drupal::service('entity_field.manager')
-    ->getFieldDefinitions('user', 'user');
+  $all_bundle_fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('user', 'user');
 
   // Proceed only if the new field is installed.
   if (isset($all_bundle_fields['field_user_embed_content_consent'])
@@ -34,16 +40,16 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
       if (!empty($query)) {
         // If 'count' is empty, we have nothing to process.
         if (!empty($uids = $query->fetchCol())) {
-          $sandbox['#finished'] = 1;
-          return;
-        }
-        else {
           // Let's store the user IDs and their count.
           $sandbox['uids'] = $uids;
           $sandbox['count'] = count($uids);
 
           // 'progress' will represent the current progress of our processing.
           $sandbox['progress'] = 0;
+        }
+        else {
+          $sandbox['#finished'] = 1;
+          return;
         }
       }
     }
@@ -77,6 +83,8 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
         )
         ->execute();
       $sandbox['progress']++;
+      \Drupal::messenger()
+        ->addMessage($uid . ' user processed.');
     }
 
     // Drupal’s Batch API will stop executing our update hook as soon as
