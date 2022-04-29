@@ -42,8 +42,13 @@
                       .on('mouseleave', function () {
                         timeouts[selector] = window.setTimeout(function () {
                           dialogs[selector].close();
+
                           if (refresh === 1) {
-                            dialogs = [];
+                            Object.entries(dialogs).forEach(([key, val]) => {
+                              if (dialogs[key].deleted == true){
+                                delete(dialogs[key]);
+                              }
+                            });
                           }
                         }, delay);
                       })
@@ -57,6 +62,7 @@
               );
 
               dialogs[selector].showModal();
+              dialogs[selector].profile_id = $element.attr('data-profile');
             }
 
             if (dialogs[selector] !== undefined) {
@@ -82,6 +88,22 @@
             $(document).ajaxComplete(function(event, request, settings) {
               Drupal.ajax.bindAjaxLinks(document.body);
               refresh = settings.url.indexOf('flag');
+              selector = $element.attr('id');
+
+              if (dialogs[selector] !== undefined) {
+                profile_id = dialogs[selector].profile_id;
+
+                if (refresh === 1) {
+                  Object.entries(dialogs).forEach(([key, val]) => {
+                    if (val.profile_id === profile_id) {
+                      dialogs[key].deleted = true;
+                    }
+                    else {
+                      dialogs[key].deleted = false;
+                    }
+                  });
+                }
+              }
             });
 
           }, delay);
@@ -94,9 +116,6 @@
           timeouts[selector] = window.setTimeout(function () {
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
               dialogs[selector].close();
-            }
-            if (refresh === 1) {
-              dialogs = [];
             }
           }, delay);
         });
