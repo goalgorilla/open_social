@@ -169,7 +169,9 @@ class ActivityLoggerFactory {
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
       $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
-      if (!empty($mt_entity_condition)) {
+      if (!empty($mt_entity_condition)
+        && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)
+      ) {
         $entity_condition_plugin = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
         $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
       }
@@ -177,20 +179,22 @@ class ActivityLoggerFactory {
         $entity_condition = TRUE;
       }
 
-      $context_plugin = $this->activityContextManager->createInstance($mt_context);
+      if ($this->activityContextManager->hasDefinition($mt_context)) {
+        $context_plugin = $this->activityContextManager->createInstance($mt_context);
 
-      $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
-      if (in_array($entity_bundle_name, $mt_entity_bundles)
-        && $context_plugin->isValidEntity($entity)
-        && $entity_condition
-        && $action === $mt_action
-      ) {
-        $messagetypes[$key] = [
-          'messagetype' => $messagetype,
-          'bundle' => $entity_bundle_name,
-          'destinations' => $mt_destinations,
-          'context' => $mt_context,
-        ];
+        $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
+        if (in_array($entity_bundle_name, $mt_entity_bundles)
+          && $context_plugin->isValidEntity($entity)
+          && $entity_condition
+          && $action === $mt_action
+        ) {
+          $messagetypes[$key] = [
+            'messagetype' => $messagetype,
+            'bundle' => $entity_bundle_name,
+            'destinations' => $mt_destinations,
+            'context' => $mt_context,
+          ];
+        }
       }
     }
     // Return the message types that belong to the requested action.

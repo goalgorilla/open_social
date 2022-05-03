@@ -514,9 +514,12 @@ function social_content_block_update_10302(&$sandbox) {
     $sort_by = $entity->field_sorting->getValue()[0]['value'];
 
     if ($sort_by !== $sandbox['sort_by']) {
+      $settings = NULL;
       $plugin_id = $entity->field_plugin_id->getValue()[0]['value'];
-      $plugin = $manager->createInstance($plugin_id);
-      $settings = $plugin->supportedSortOptions()[$sort_by];
+      if ($manager->hasDefinition($plugin_id)) {
+        $plugin = $manager->createInstance($plugin_id);
+        $settings = $plugin->supportedSortOptions()[$sort_by];
+      }
 
       if (is_array($settings) && isset($settings['limit']) && !$settings['limit']) {
         $sandbox['duration'] = NULL;
