@@ -4,6 +4,7 @@ namespace Drupal\social_user_export\Plugin\Action;
 
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -68,6 +69,13 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   protected $config;
 
   /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
    * Constructs a ExportUser object.
    *
    * @param array $configuration
@@ -84,8 +92,19 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The current user account.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory for the export plugin access.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserExportPluginManager $userExportPlugin, LoggerInterface $logger, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    UserExportPluginManager $userExportPlugin,
+    LoggerInterface $logger,
+    AccountProxyInterface $currentUser,
+    ConfigFactoryInterface $configFactory,
+    FileUrlGenerator $file_url_generator
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->userExportPlugin = $userExportPlugin;
@@ -97,6 +116,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     $definitions = $this->userExportPlugin->getDefinitions();
     $this->pluginDefinitions = $this->pluginAccess($definitions);
     usort($this->pluginDefinitions, [$this, 'sortDefinitions']);
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -107,7 +127,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -169,7 +190,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $path = 'private://csv';
 
       if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
-        $url = Url::fromUri(file_create_url($path . '/' . $name));
+        $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
         $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
         $this->messenger()->addMessage($this->t('Export is complete. @link', [

@@ -166,7 +166,7 @@ abstract class DemoSystem extends DemoContent {
       if ($logo instanceof File) {
         $theme_logo = [
           'path' => $logo->getFileUri(),
-          'url' => file_create_url($logo->getFileUri()),
+          'url' => \Drupal::service('file_url_generator')->generateAbsoluteString($logo->getFileUri()),
           'use_default' => FALSE,
         ];
         // Store the array.

@@ -155,7 +155,7 @@ function social_swiftmail_get_logo($theme_id) {
     $file = File::load($email_logo[0]);
 
     if ($file instanceof File) {
-      $logo = file_create_url($file->getFileUri());
+      $logo = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
     }
   }
 

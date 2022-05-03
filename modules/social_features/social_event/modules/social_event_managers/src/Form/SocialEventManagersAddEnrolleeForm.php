@@ -3,6 +3,7 @@
 namespace Drupal\social_event_managers\Form;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -67,6 +68,13 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   protected EventMaxEnrollService $eventMaxEnrollService;
 
   /**
+   * File URL Generator service.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
    * Constructs a new GroupContentController.
    */
   public function __construct(
@@ -75,7 +83,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     ConfigFactoryInterface $config_factory,
     Token $token,
     ModuleHandlerInterface $module_handler,
-    EventMaxEnrollService $eventMaxEnrollService
+    EventMaxEnrollService $eventMaxEnrollService,
+    FileUrlGenerator $file_url_generator
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
@@ -83,6 +92,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $this->token = $token;
     $this->moduleHandler = $module_handler;
     $this->eventMaxEnrollService = $eventMaxEnrollService;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -95,7 +105,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $container->get('config.factory'),
       $container->get('token'),
       $container->get('module_handler'),
-      $container->get('social_event_max_enroll.service')
+      $container->get('social_event_max_enroll.service'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -254,7 +265,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = file_create_url($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }
 
