@@ -114,7 +114,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
     FileUrlGenerator $file_url_generator,
-    FileRepository $file_repository,
+    FileRepository $file_repository
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
