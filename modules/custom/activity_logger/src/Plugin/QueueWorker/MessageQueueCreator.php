@@ -81,9 +81,11 @@ class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPl
         $this->createQueueItem('activity_logger_message', $data);
       }
       else {
-        // Trigger the create action for enttites.
-        $create_action = $this->actionManager->createInstance('create_entitiy_action');
-        $create_action->createMessage($entity);
+        // Trigger the create action for entities.
+        if ($this->actionManager->hasDefinition('create_entitiy_action')) {
+          $create_action = $this->actionManager->createInstance('create_entitiy_action');
+          $create_action->createMessage($entity);
+        }
       }
     }
   }
