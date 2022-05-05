@@ -11,7 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,6 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * This QueueWorker is responsible for sending emails from the queue
  */
 class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The entity type manager.
@@ -58,13 +60,6 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
   protected $renderer;
 
   /**
-   * The translation service.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface
-   */
-  protected $translation;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -74,15 +69,13 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
     EntityTypeManagerInterface $entity_type_manager,
     EmailFrequencyManager $email_frequency_manager,
     MailManagerInterface $mail_manager,
-    RendererInterface $renderer,
-    TranslationInterface $translation
+    RendererInterface $renderer
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->emailFrequencyManager = $email_frequency_manager;
     $this->mailManager = $mail_manager;
     $this->renderer = $renderer;
-    $this->translation = $translation;
   }
 
   /**
@@ -96,8 +89,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.emailfrequency'),
       $container->get('plugin.manager.mail'),
-      $container->get('renderer'),
-      $container->get('string_translation')
+      $container->get('renderer')
     );
   }
 
@@ -157,7 +149,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
           $notification_count = count($digest_notifications['#notifications']);
 
           // Get the notification count for the email template.
-          $digest_notifications['#notification_count'] = $this->translation->formatPlural(
+          $digest_notifications['#notification_count'] = $this->formatPlural(
             $notification_count,
             'You have received <strong>:count</strong> notification',
             'You have received <strong>:count</strong> notifications',
@@ -165,42 +157,48 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
             ['langcode' => $langcode]
           );
 
-          /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
-          $instance = $this->emailFrequencyManager->createInstance($data['frequency']);
+          if ($this->emailFrequencyManager->hasDefinition($data['frequency'])) {
 
-          // Translating frequency instance in the language of the user.
-          // @codingStandardsIgnoreStart
-          $frequency_translated = t($instance->getName()
-            ->getUntranslatedString(), [], ['langcode' => $langcode]);
-          // @codingStandardsIgnoreEnd
+            /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+            $instance = $this->emailFrequencyManager->createInstance($data['frequency']);
 
-          // Get the notification settings for the email template.
-          $digest_notifications['#notification_settings'] = $this->translation->formatPlural(
-            $notification_count,
-            'Based on your @settings, the notification above is sent to you as a <strong>:frequency mail</strong>',
-            'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>',
-            [
-              '@settings' => Link::fromTextAndUrl(
-                t('email notification settings'),
-                Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
-              ':frequency' => $frequency_translated,
-            ],
-            ['langcode' => $langcode]
-          );
+            // Translating frequency instance in the language of the user.
+            // @codingStandardsIgnoreStart
+            $frequency_translated = $this->t(
+              $instance->getName()->getUntranslatedString(),
+              [],
+              ['langcode' => $langcode]
+            );
+            // @codingStandardsIgnoreEnd
 
-          // Render the notifications using the digestmail.html.twig template.
-          $params['body'] = $this->renderer->renderRoot($digest_notifications);
+            // Get the notification settings for the email template.
+            $digest_notifications['#notification_settings'] = $this->formatPlural(
+              $notification_count,
+              'Based on your @settings, the notification above is sent to you as a <strong>:frequency mail</strong>',
+              'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>',
+              [
+                '@settings' => Link::fromTextAndUrl(
+                  $this->t('email notification settings'),
+                  Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
+                ':frequency' => $frequency_translated,
+              ],
+              ['langcode' => $langcode]
+            );
 
-          // Send the email.
-          $this->mailManager->mail(
-            'activity_send_email',
-            'activity_send_email',
-            $target->getEmail(),
-            $langcode,
-            $params,
-            NULL,
-            TRUE
-          );
+            // Render the notifications using the digestmail.html.twig template.
+            $params['body'] = $this->renderer->renderRoot($digest_notifications);
+
+            // Send the email.
+            $this->mailManager->mail(
+              'activity_send_email',
+              'activity_send_email',
+              $target->getEmail(),
+              $langcode,
+              $params,
+              NULL,
+              TRUE
+            );
+          }
         }
       }
     }
