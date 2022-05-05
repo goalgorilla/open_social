@@ -302,9 +302,11 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
   $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
 
   // Trigger the create action for entities.
-  /** @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
-  $create_action = $activity_send_factory->createInstance('email_activity_send');
-  $create_action->process($activity);
+  if ($activity_send_factory->hasDefinition('email_activity_send')) {
+    /** @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
+    $create_action = $activity_send_factory->createInstance('email_activity_send');
+    $create_action->process($activity);
+  }
 }
 
 /**
