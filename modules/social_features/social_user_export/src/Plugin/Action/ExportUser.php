@@ -8,6 +8,7 @@ use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\file\FileRepository;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -76,6 +77,13 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   protected FileUrlGenerator $fileUrlGenerator;
 
   /**
+   * File repository services.
+   *
+   * @var \Drupal\file\FileRepository
+   */
+  protected FileRepository $fileRepository;
+
+  /**
    * Constructs a ExportUser object.
    *
    * @param array $configuration
@@ -94,6 +102,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   Config factory for the export plugin access.
    * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
    *   The file url generator service.
+   * @param \Drupal\file\FileRepository $file_repository
+   *   The file repository service.
    */
   public function __construct(
     array $configuration,
@@ -103,7 +113,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     LoggerInterface $logger,
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
-    FileUrlGenerator $file_url_generator
+    FileUrlGenerator $file_url_generator,
+    FileRepository $file_repository,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -117,6 +128,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     $this->pluginDefinitions = $this->pluginAccess($definitions);
     usort($this->pluginDefinitions, [$this, 'sortDefinitions']);
     $this->fileUrlGenerator = $file_url_generator;
+    $this->fileRepository = $file_repository;
   }
 
   /**
@@ -189,7 +201,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $name = basename($this->context['sandbox']['results']['file_path']);
       $path = 'private://csv';
 
-      if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
+      if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && ($this->fileRepository->writeData($data, $path . '/' . $name))) {
         $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
         $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
