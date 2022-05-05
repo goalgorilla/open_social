@@ -102,53 +102,55 @@ function activity_creator_message_insert(Message $entity) {
 
       $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
-      /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */
-      $plugin = $context_plugin_manager->createInstance($data['context']);
-      $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
-      $user_recipients = [];
-      $activity_factory = \Drupal::service('activity_creator.activity_factory');
-      if (!empty($recipients)) {
-        // Default activity creator template.
-        $activity_creator_data = [
-          'mid' => $data['mid'],
-          'message_template' => $data['message_template'],
-          'actor' => $data['actor'],
-          'context' => $data['context'],
-          'destination' => $data['destination'],
-          'related_object' => $data['related_object'],
-        ];
+      if ($context_plugin_manager->hasDefinition($data['context'])) {
+        /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */
+        $plugin = $context_plugin_manager->createInstance($data['context']);
+        $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
+        $user_recipients = [];
+        $activity_factory = \Drupal::service('activity_creator.activity_factory');
+        if (!empty($recipients)) {
+          // Default activity creator template.
+          $activity_creator_data = [
+            'mid' => $data['mid'],
+            'message_template' => $data['message_template'],
+            'actor' => $data['actor'],
+            'context' => $data['context'],
+            'destination' => $data['destination'],
+            'related_object' => $data['related_object'],
+          ];
 
-        // Get all the activity recipient types. Maintain target IDs as key.
-        $activity_by_type = array_column($recipients, 'target_type');
-        foreach ($activity_by_type as $recipients_key => $target_type) {
-          // For all one to one target entity types we create an activity.
-          if ($target_type !== 'user') {
-            $activity_creator_data['recipient'] = $recipients[$recipients_key];
+          // Get all the activity recipient types. Maintain target IDs as key.
+          $activity_by_type = array_column($recipients, 'target_type');
+          foreach ($activity_by_type as $recipients_key => $target_type) {
+            // For all one to one target entity types we create an activity.
+            if ($target_type !== 'user') {
+              $activity_creator_data['recipient'] = $recipients[$recipients_key];
+              $activity_factory->createActivities($activity_creator_data);
+            }
+
+            if ($target_type === 'user') {
+              $user_recipients[] = $recipients[$recipients_key];
+            }
+          }
+
+          // When the activity should be created for a one to many user entity
+          // we like to group these.
+          if (!empty($user_recipients)) {
+            $activity_creator_data['recipient'] = $user_recipients;
             $activity_factory->createActivities($activity_creator_data);
           }
-
-          if ($target_type === 'user') {
-            $user_recipients[] = $recipients[$recipients_key];
-          }
         }
-
-        // When the activity should be created for a one to many user entity
-        // we like to group these.
-        if (!empty($user_recipients)) {
-          $activity_creator_data['recipient'] = $user_recipients;
+        else {
+          $activity_creator_data = [
+            'mid' => $data['mid'],
+            'message_template' => $data['message_template'],
+            'actor' => $data['actor'],
+            'context' => $data['context'],
+            'destination' => $data['destination'],
+            'related_object' => $data['related_object'],
+          ];
           $activity_factory->createActivities($activity_creator_data);
         }
-      }
-      else {
-        $activity_creator_data = [
-          'mid' => $data['mid'],
-          'message_template' => $data['message_template'],
-          'actor' => $data['actor'],
-          'context' => $data['context'],
-          'destination' => $data['destination'],
-          'related_object' => $data['related_object'],
-        ];
-        $activity_factory->createActivities($activity_creator_data);
       }
     }
     else {

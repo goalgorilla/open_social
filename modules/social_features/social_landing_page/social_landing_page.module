@@ -299,6 +299,10 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
 
   /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_section */
   foreach ($landing_page_section_field->referencedEntities() as $paragraph_section) {
+    if ($paragraph_section->get('field_section_paragraph')->isEmpty()) {
+      continue;
+    }
+
     // Get the related paragraph (the one with the actual content)
     $section_id = $paragraph_section->get('field_section_paragraph')->target_id;
     $paragraph_content = Paragraph::load($section_id);
@@ -306,7 +310,7 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
     // Must be of type hero.
     if ($paragraph_content && $paragraph_content->getType() === 'hero') {
       if ($paragraph_content->get('field_hero_image')->isEmpty()) {
-        return [];
+        continue;
       }
       $fid = $paragraph_content->get('field_hero_image')->target_id;
       $file = File::load($fid);
