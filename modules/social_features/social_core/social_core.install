@@ -261,7 +261,7 @@ function _social_core_get_permissions($role) {
 function _social_core_create_an_homepage_block() {
   // @todo use a better image from the theme.
   // Block image.
-  $path = drupal_get_path('module', 'social_core');
+  $path = \Drupal::service('extension.list.module')->getPath('social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
   $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
 
@@ -799,7 +799,7 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Update config post_type.
-  $path = drupal_get_path('module', 'social_post') . '/config/install';
+  $path = \Drupal::service('extension.list.module')->getPath('social_post') . '/config/install';
   $config_factory = \Drupal::configFactory();
   $config_name = "social_post.post_type.post";
   $filepath = "{$path}/{$config_name}.yml";
@@ -1379,7 +1379,7 @@ function social_core_update_8907() {
  * Add a new image thumbnail 'social_file_thumbnail' files field.
  */
 function social_core_update_8908() {
-  $config_file = drupal_get_path('module', 'social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));

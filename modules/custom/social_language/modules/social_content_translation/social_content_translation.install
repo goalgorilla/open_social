@@ -37,7 +37,7 @@ function social_content_translation_install_language_settings_for_entities() {
   $modules = \Drupal::moduleHandler()->getModuleList();
   foreach ($modules as $module_name => $extension) {
     // Check if modules have target configuration.
-    $config_path = drupal_get_path('module', $module_name) . '/config/optional';
+    $config_path = \Drupal::service('extension.list.module')->getPath($module_name) . '/config/optional';
     $source = new FileStorage($config_path);
     if (!($list = $source->listAll('language.content_settings'))) {
       // Do nothing.

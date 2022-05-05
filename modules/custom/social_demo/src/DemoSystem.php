@@ -222,7 +222,7 @@ abstract class DemoSystem extends DemoContent {
 
       $paths['target'] = $paths['target'] . '/';
       $paths['id'] = $id;
-      $paths['source'] = drupal_get_path('theme', $active_theme) . '/';
+      $paths['source'] = \Drupal::service('extension.list.theme')->getPath($active_theme) . '/';
       $paths['files'] = $paths['map'] = [];
 
       $css = [];

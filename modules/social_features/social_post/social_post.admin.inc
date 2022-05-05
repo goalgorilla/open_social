@@ -46,7 +46,7 @@ function social_post_mass_update(array $posts, array $updates, $langcode = NULL,
       'error_message' => t('The update has encountered an error.'),
       // The operations do not live in the .module file, so we need to
       // tell the batch engine which file to load before calling them.
-      'file' => drupal_get_path('module', 'social_post') . '/social_post.admin.inc',
+      'file' => \Drupal::service('extension.list.module')->getPath('social_post') . '/social_post.admin.inc',
     ];
     batch_set($batch);
   }
