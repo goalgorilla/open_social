@@ -49,7 +49,7 @@ function social_core_requirements($phase) {
       // From 9.0 on-wards a site must update to 8.1 first to ensure that the
       // features removal update hooks have run that are no longer present in
       // Open Social 9.0.
-      if (drupal_get_installed_schema_version('social_core') <= 8805) {
+      if (\Drupal::service('update.update_hook_registry')->getInstalledVersion('social_core') <= 8805) {
         $requirements['social_core_update_version'] = [
           'title' => t('Open Social Update Version'),
           'description' => t('You must update Open Social to the latest version of 8.x before upgrading to 9.0 or later.'),
