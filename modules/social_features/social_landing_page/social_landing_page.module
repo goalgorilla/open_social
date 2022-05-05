@@ -324,12 +324,12 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
         ];
         // Build a link render array.
         $build = [
-          '#title' => render($image),
+          '#title' => \Drupal::service('renderer')->render($image),
           '#type' => 'link',
           '#url' => $node->toUrl('canonical'),
         ];
         // We immediately return the 1st found hero.
-        return render($build);
+        return \Drupal::service('renderer')->render($build);
       }
     }
   }
