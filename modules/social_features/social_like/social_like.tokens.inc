@@ -77,12 +77,12 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
 
             $content_type = $entity->getEntityTypeId();
             // Check if the content type is node.
+            $content_type_label = '';
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
-                ->getStorage('node_type')
-                ->load($entity->bundle())
-                ->label());
+              $label = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle())->label();
+              $label = $label instanceof TranslatableMarkup ? $label->render() : $label;
+              $content_type_label = $label !== NULL ? mb_strtolower($label) : '';
             }
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
               $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
@@ -111,7 +111,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                   // We should only use the label of entities who have a label.
                   if ($ref_link_label = $commented_entity->label()) {
                     if ($commented_entity instanceof Node) {
-                      $commented_content_type = strtolower($commented_entity->type->entity->label());
+                      $commented_content_type = strtolower($commented_entity->getEntityType()->getLabel());
                     }
                     else {
                       $commented_content_type = $commented_entity->bundle();

@@ -32,7 +32,13 @@ class ImagePopupController extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Instantiates a new instance of this class.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container object.
+   *
+   * @return \Drupal\social_post_album\Controller\ImagePopupController|static
+   *   Instance of the class.
    */
   public static function create(ContainerInterface $container) {
     return new static(

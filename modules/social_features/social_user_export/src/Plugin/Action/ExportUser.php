@@ -72,7 +72,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   /**
    * File URL Generator services.
    *
-   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   * @var \Drupal\Core\File\FileUrlGenerator
    */
   protected FileUrlGenerator $fileUrlGenerator;
 
@@ -198,20 +198,23 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
 
     if (($this->context['sandbox']['current_batch'] * $this->context['sandbox']['batch_size']) >= $this->context['sandbox']['total']) {
       $data = @file_get_contents($file_path);
-      $name = basename($this->context['sandbox']['results']['file_path']);
-      $path = 'private://csv';
+      if (is_string($data)) {
+        $name = basename($this->context['sandbox']['results']['file_path']);
+        $path = 'private://csv';
 
-      if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && ($this->fileRepository->writeData($data, $path . '/' . $name))) {
-        $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
-        $link = Link::fromTextAndUrl($this->t('Download file'), $url);
+        if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+          $this->fileRepository->writeData($data, $path . '/' . $name);
+          $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
+          $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
-        $this->messenger()->addMessage($this->t('Export is complete. @link', [
-          '@link' => $link->toString(),
-        ]));
-      }
-      else {
-        $this->messenger()->addMessage($this->t('Could not save the export file.'), 'error');
-        $this->logger->error('Could not save the export file on: %name.', ['%name' => $name]);
+          $this->messenger()->addMessage($this->t('Export is complete. @link', [
+            '@link' => $link->toString(),
+          ]));
+        }
+        else {
+          $this->messenger()->addMessage($this->t('Could not save the export file.'), 'error');
+          $this->logger->error('Could not save the export file on: %name.', ['%name' => $name]);
+        }
       }
     }
   }
