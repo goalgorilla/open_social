@@ -8,16 +8,22 @@
 use Drupal\Core\Site\Settings;
 
 /**
- * Populate the default value in new field for already existing users.
+ * Empty post update hook.
  */
 function social_embed_post_update_11001_populate_field_embed_content_settings(array &$sandbox): void {
+  // Moved to 11002.
+}
+
+/**
+ * Populate the default value in new field for already existing users.
+ */
+function social_embed_post_update_11002_populate_field_embed_content_settings(array &$sandbox): void {
   // Even though we have provided 'field_user_embed_content_consent',
   // a default value of 1. This will only pre-fill for any newly created
   // users, but not already existing users.
   // We need populate the field value of newly added field for existing users.
   // @see social_embed_update_11002().
-  $all_bundle_fields = \Drupal::service('entity_field.manager')
-    ->getFieldDefinitions('user', 'user');
+  $all_bundle_fields = \Drupal::service('entity_field.manager')->getFieldDefinitions('user', 'user');
 
   // Proceed only if the new field is installed.
   if (isset($all_bundle_fields['field_user_embed_content_consent'])
@@ -31,20 +37,47 @@ function social_embed_post_update_11001_populate_field_embed_content_settings(ar
         ->fields('u', ['uid'])
         ->condition('uid', '0', '>')
         ->execute();
-      if (!empty($query)) {
-        // If 'count' is empty, we have nothing to process.
-        if (!empty($uids = $query->fetchCol())) {
-          $sandbox['#finished'] = 1;
-          return;
+
+      // If 'count' is empty, we have nothing to process.
+      if (!empty($query)
+        && !empty($uids = $query->fetchCol())
+      ) {
+
+        // As this feature was release in Open Social 11, and because we are
+        // moving this code to a new update, there can be a scenario where
+        // users might have already set their preferences. So, we don't want
+        // to process such uids to keep them safe.
+        $existing_uids_query = $database->select('user__field_user_embed_content_consent', 'ufu')
+          ->fields('ufu', ['entity_id'])
+          ->condition('entity_id', '0', '>')
+          ->execute();
+
+        if (!empty($existing_uids_query)
+          && !empty($existing_uids = $existing_uids_query->fetchCol())
+        ) {
+          $uids_diff = array_diff($uids, $existing_uids);
+
+          // Let's store the user IDs and their count.
+          $sandbox['uids'] = $uids_diff;
+          $sandbox['count'] = count($uids_diff);
         }
         else {
-          // Let's store the user IDs and their count.
           $sandbox['uids'] = $uids;
           $sandbox['count'] = count($uids);
+        }
 
+        if ($sandbox['count'] > 0) {
           // 'progress' will represent the current progress of our processing.
           $sandbox['progress'] = 0;
         }
+        else {
+          $sandbox['#finished'] = 1;
+          return;
+        }
+      }
+      else {
+        $sandbox['#finished'] = 1;
+        return;
       }
     }
 
