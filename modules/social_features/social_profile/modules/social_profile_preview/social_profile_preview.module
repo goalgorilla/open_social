@@ -101,14 +101,20 @@ function social_profile_preview_preprocess_flag(array &$variables): void {
  * Implements hook_preprocess_HOOK().
  */
 function social_profile_preview_preprocess_profile(array &$variables): void {
-  if ($variables['elements']['#view_mode'] === 'small_teaser') {
+  $view_mode = $variables['elements']['#view_mode'];
+
+  if (in_array($view_mode, ['compact_teaser', 'small_teaser'])) {
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $variables['profile'];
 
     /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
     $helper = \Drupal::service('social_profile_preview.helper');
 
-    $helper->alter($profile, $variables, 'link_attributes');
+    $helper->alter($profile, $variables, 'link_attributes', TRUE);
+
+    if ($view_mode === 'compact_teaser') {
+      $helper->alter($profile, $variables, 'avatar_attributes', TRUE);
+    }
   }
 }
 
