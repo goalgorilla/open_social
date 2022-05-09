@@ -3,15 +3,14 @@
  * Update the notification bell badge.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
   /**
    * Notification centre bell update behavior.
    */
   Drupal.behaviors.notificationUpdate = {
     attach: function (context) {
-      $('.notification-bell', context)
-        .once('notificationUpdate')
-        .click(this._updateNotificationCount);
+      const $notificationUpdateOnce = $(once('notificationUpdate', '.notification-bell', context));
+      $notificationUpdateOnce.click(this._updateNotificationCount);
     },
 
     _updateNotificationCount: function () {
@@ -25,4 +24,4 @@
       $('.dropdown-menu a', this).first().click();
     }
   };
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);
