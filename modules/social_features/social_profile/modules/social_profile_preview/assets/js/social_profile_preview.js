@@ -25,7 +25,7 @@
 
             function dialog() {
               dialogs[selector] = Drupal.dialog(
-                '<div>'.concat(profiles[identifier], '</div>'),
+                '<div>'.concat(profiles[identifier].data, '</div>'),
                 {
                   dialogClass: 'social-dialog social-dialog--user-preview',
                   width: '384px',
@@ -44,15 +44,21 @@
                           dialogs[selector].close();
 
                           if (refresh === 1) {
-                            Object.entries(dialogs).forEach(([key, val]) => {
-                              if (dialogs[key].deleted == true){
-                                delete(dialogs[key]);
-                              }
-                            });
+                            cleanupUserData(dialogs);
+                            cleanupUserData(profiles);
                           }
                         }, delay);
                       })
                       .find('.ui-dialog-titlebar-close').remove();
+
+                    // Clean up stored user data and display actual info.
+                    var cleanupUserData = function (items) {
+                      Object.entries(items).forEach(([key, val]) => {
+                        if (items[key].deleted){
+                          delete(items[key]);
+                        }
+                      });
+                    };
                   },
                   open: function () {
                     $(this).find('a.avatar').blur();
@@ -69,6 +75,13 @@
               dialogs[selector].showModal();
               Drupal.ajax.bindAjaxLinks(document.body);
             }
+            else if (
+              profiles[identifier] !== undefined &&
+              (profiles[identifier].deleted === false || profiles[identifier].deleted === undefined)
+            ) {
+              dialog();
+              Drupal.ajax.bindAjaxLinks(document.body);
+            }
             else {
               var ajax = Drupal.ajax({
                 url: Drupal.url('profile/' + identifier + '/preview')
@@ -76,7 +89,10 @@
 
               ajax.commands.insert = function (ajax, response, status) {
                 if (response.method === null) {
-                  profiles[identifier] = response.data;
+                  profiles[identifier] = {
+                    data: response.data,
+                    profile_id: identifier
+                  };
 
                   dialog();
                 }
@@ -90,22 +106,21 @@
               refresh = settings.url.indexOf('flag');
               selector = $element.attr('id');
 
-              if (dialogs[selector] !== undefined) {
-                profile_id = dialogs[selector].profile_id;
-
-                if (refresh === 1) {
-                  Object.entries(dialogs).forEach(([key, val]) => {
-                    if (val.profile_id === profile_id) {
-                      dialogs[key].deleted = true;
-                    }
-                    else {
-                      dialogs[key].deleted = false;
-                    }
-                  });
+              var isActualUserData = function (items, id, refresh) {
+                if (items[id] !== undefined) {
+                  profile_id = items[id].profile_id;
+                  if (refresh === 1) {
+                    Object.entries(items).forEach(([key, val]) => {
+                      items[key].deleted = val.profile_id == profile_id;
+                    });
+                  }
                 }
-              }
-            });
+              };
 
+              // Flag/Unflag the user data which needs to be refreshed.
+              isActualUserData(dialogs, selector, refresh);
+              isActualUserData(profiles, identifier, refresh);
+            });
           }, delay);
         })
         .on('mouseout', function () {
