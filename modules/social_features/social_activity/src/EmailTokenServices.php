@@ -77,6 +77,10 @@ class EmailTokenServices {
    *   An entity object. NULL if no matching entity is found.
    */
   public function getRelatedObject(Message $message) {
+    if ($message->get('field_message_related_object')->isEmpty()) {
+      return NULL;
+    }
+
     $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
     $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
