@@ -140,7 +140,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('file_url_generator')
+      $container->get('file_url_generator'),
+      $container->get('file.repository')
     );
   }
 
