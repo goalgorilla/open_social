@@ -1,0 +1,48 @@
+form.profile-form {
+  [id='edit-group-out-of-office'] {
+    .card__block {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -.5rem;
+
+      > * {
+        padding: 0 .5rem;
+
+        &:not(.field--type-datetime) {
+          flex: 0 0 100%;
+          max-width: 100%;
+
+          input {
+            width: 100%;
+            max-width: 390px;
+          }
+        }
+
+        > .form-item {
+          margin-bottom: 0;
+        }
+      }
+
+      .field--type-datetime {
+        @media(max-width: 599px) {
+          flex: 0 0 100%;
+          max-width: 100%;
+        }
+
+        input {
+          width: 100%;
+          max-width: 220px;
+
+          @media(max-width: 599px) {
+            max-width: 390px;
+          }
+        }
+
+        .form-inline,
+        .form-item {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}

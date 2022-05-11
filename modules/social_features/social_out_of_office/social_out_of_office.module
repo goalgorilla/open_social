@@ -269,3 +269,14 @@ function social_out_of_office_validate_maxlength_of_message(array &$form, FormSt
     ]));
   }
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_out_of_office_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
+  if (in_array($form_id, [
+    'profile_profile_edit_form',
+  ])) {
+    $form['#attached']['library'][] = 'social_out_of_office/admin';
+  }
+}
