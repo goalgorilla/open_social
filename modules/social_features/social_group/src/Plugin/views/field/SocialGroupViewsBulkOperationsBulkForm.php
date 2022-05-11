@@ -85,8 +85,31 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
         // If not we clear it right away.
         // Since we don't want to mess with cached date.
         $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+
+        // Calculate bulk form keys.
+        $bulk_form_keys = [];
+        if (!empty($this->view->result)) {
+          $base_field = $this->view->storage->get('base_field');
+          foreach ($this->view->result as $row_index => $row) {
+            if ($entity = $this->getEntity($row)) {
+              $bulk_form_keys[$row_index] = self::calculateEntityBulkFormKey(
+                $entity,
+                $row->{$base_field}
+              );
+            }
+          }
+        }
         // Reset initial values.
-        $this->updateTempstoreData();
+        if (
+          empty($form_state->getUserInput()['op']) &&
+          !empty($bulk_form_keys)
+        ) {
+          $this->updateTempstoreData($bulk_form_keys);
+        }
+        else {
+          $this->updateTempstoreData();
+        }
+
         // Initialize it again.
         $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
       }
