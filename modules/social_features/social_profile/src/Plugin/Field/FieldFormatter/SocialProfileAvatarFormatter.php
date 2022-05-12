@@ -94,11 +94,16 @@ class SocialProfileAvatarFormatter extends ImageFormatter {
       $entity = $items->getEntity();
 
       if (!$entity->isNew() && $entity instanceof EntityOwnerInterface) {
-        $url = $entity->getOwner()->toUrl()->mergeOptions([
-          'attributes' => [
-            'class' => ['avatar'],
-          ],
-        ]);
+        if (($url = $entity->getOwner()->toUrl())->access()) {
+          $url->mergeOptions([
+            'attributes' => [
+              'class' => ['avatar'],
+            ],
+          ]);
+        }
+        else {
+          $url = NULL;
+        }
 
         foreach ($elements as &$element) {
           $element['#url'] = $url;
