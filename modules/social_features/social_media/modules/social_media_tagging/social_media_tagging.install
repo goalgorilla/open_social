@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Social Media Tagging module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+
+/**
+ * Implements hook_install().
+ */
+function social_media_tagging_install(): void {
+  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'region' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $field_storage_definition);
+}

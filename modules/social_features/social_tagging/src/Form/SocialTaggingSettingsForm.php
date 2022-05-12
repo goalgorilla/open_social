@@ -176,6 +176,21 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       ];
     }
 
+    if ($this->moduleHandler->moduleExists('social_media_tagging')) {
+      /** @var \Drupal\media\MediaTypeInterface[] $media_types */
+      $media_types = $this->entityTypeManager->getStorage('media_type')
+        ->loadMultiple();
+      foreach ($media_types as $media_type) {
+        $field_name = 'tag_media_type_' . $media_type->id();
+        $form['node_type_settings'][$field_name] = [
+          '#type' => 'checkbox',
+          '#title' => $media_type->label(),
+          '#default_value' => $config->get($field_name),
+          '#required' => FALSE,
+        ];
+      }
+    }
+
     $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
 
     return parent::buildForm($form, $form_state);
@@ -212,6 +227,16 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     foreach ($node_types as $node_type) {
       $config_name = 'tag_node_type_' . $node_type->id();
       $config->set($config_name, $form_state->getValue($config_name))->save();
+    }
+
+    if ($this->moduleHandler->moduleExists('social_media_tagging')) {
+      /** @var \Drupal\media\MediaTypeInterface[] $media_types */
+      $media_types = $this->entityTypeManager->getStorage('media_type')
+        ->loadMultiple();
+      foreach ($media_types as $media_type) {
+        $config_name = 'tag_media_type_' . $media_type->id();
+        $config->set($config_name, $form_state->getValue($config_name))->save();
+      }
     }
 
     parent::submitForm($form, $form_state);

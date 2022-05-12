@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Social Media module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_media_install(): void {
+  $permissions = [
+    'view own unpublished media',
+    'access media overview',
+  ];
+
+  foreach (['image', 'document', 'audio', 'video'] as $bundle) {
+    $permissions[] = "create {$bundle} media";
+    $permissions[] = "delete own {$bundle} media";
+    $permissions[] = "delete any {$bundle} media";
+    $permissions[] = "edit any {$bundle} media";
+    $permissions[] = "edit own {$bundle} media";
+  }
+
+  user_role_grant_permissions('contentmanager', $permissions);
+  user_role_grant_permissions('sitemanager', $permissions);
+}
