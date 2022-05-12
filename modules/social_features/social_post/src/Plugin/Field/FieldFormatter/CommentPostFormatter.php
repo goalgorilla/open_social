@@ -137,21 +137,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
           ];
         }
         else {
-          // Add log in and sign up links below discussion comments for AN user.
-          $log_in_url = Url::fromRoute('user.login');
-          $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)
-            ->toString();
-          $create_account_url = Url::fromRoute('user.register');
-          $sign_up = Link::fromTextAndUrl(t('sign up'), $create_account_url)
-            ->toString();
-          $description = $this->t('Please @log_in or @sign_up to comment.', [
-            '@log_in' => $log_in_link,
-            '@sign_up' => $sign_up,
-          ]);
-          $output['comment_form'] = [
-            '#prefix' => '<hr>',
-            '#markup' => $description,
-          ];
+          $output['comment_form'] = $this->addHelpForCommentingIfTheCurrentUserCannot();
         }
       }
 
@@ -166,7 +152,26 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     return $elements;
   }
+  
+  protected function addHelpForCommentingIfTheCurrentUserCannot(): array {
+    if ($this->currentUser->isAuthenticated()) {
+      return [
+        '#prefix' => '<hr>',
+        '#markup' => $this->t('Please join the group to comment.'),
+      ];
+    }
 
+    $log_in_url = Url::fromRoute('user.login');
+    $create_account_url = Url::fromRoute('user.register');
+    return [
+      '#prefix' => '<hr>',
+      '#markup' => $this->t('Please @log_in or @sign_up to comment.', [
+        '@log_in' => Link::fromTextAndUrl(t('log in'), $log_in_url)->toString(),
+        '@sign_up' => Link::fromTextAndUrl(t('sign up'), $create_account_url)->toString(),
+      ]),
+    ];
+  }
+  
   /**
    * {@inheritdoc}
    */
