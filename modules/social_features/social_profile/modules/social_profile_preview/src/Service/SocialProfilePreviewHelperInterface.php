@@ -22,12 +22,20 @@ interface SocialProfilePreviewHelperInterface {
    * @param bool $return_as_object
    *   (optional) TRUE if attributes set should be returned as an object even if
    *   it was an array. Defaults to FALSE.
+   * @param string|null $base_field
+   *   (optional) The key name of the sub-element contains the base content of
+   *   the element. Defaults to NULL.
+   * @param string|null $extra_field
+   *   (optional) The key name of the sub-element that can contain an
+   *   organization tag or other extra content. Defaults to NULL.
    */
   public function alter(
     ProfileInterface $profile,
     array &$variables,
     $path = 'attributes',
-    $return_as_object = FALSE
+    bool $return_as_object = FALSE,
+    string $base_field = NULL,
+    string $extra_field = NULL
   ): void;
 
 }

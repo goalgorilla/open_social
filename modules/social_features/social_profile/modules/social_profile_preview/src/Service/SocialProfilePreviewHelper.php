@@ -34,9 +34,22 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
     ProfileInterface $profile,
     array &$variables,
     $path = 'attributes',
-    $return_as_object = FALSE
+    bool $return_as_object = FALSE,
+    string $base_field = NULL,
+    string $extra_field = NULL
   ): void {
     if ($profile->access('view')) {
+      if ($extra_field !== NULL && !empty($variables[$extra_field])) {
+        $variables[$base_field] = [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => $variables[$base_field],
+        ];
+
+        $path = [$base_field, '#attributes'];
+        $return_as_object = FALSE;
+      }
+
       if (!NestedArray::keyExists($variables, $path = (array) $path)) {
         NestedArray::setValue($variables, $path, []);
       }
