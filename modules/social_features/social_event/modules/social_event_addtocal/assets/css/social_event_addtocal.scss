@@ -1,0 +1,121 @@
+.addtocal-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  li {
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    a {
+      font-size: .875rem;
+      line-height: 21px;
+      padding: 8px 10px;
+      display: block;
+      clear: both;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #555555;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      img {
+        max-height: 21px;
+      }
+
+      span {
+        padding-left: .625rem;
+      }
+    }
+  }
+
+  &.dropdown-menu {
+    top: 100%;
+
+    li {
+      margin-bottom: 0;
+
+      a {
+        padding-top: .5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .calendar-link {
+
+        &:before {
+          left: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.addtocal-title {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.add-to-calendar.dropdown {
+  margin-bottom: 0;
+}
+
+.meta-addtocal {
+  .add-to-calendar {
+    .btn {
+      padding: 0;
+      border-radius: 0 !important;
+      font-weight: 500;
+
+      .waves-ripple {
+        background: transparent;
+      }
+    }
+
+    .btn,
+    &.open > .btn,
+    .btn:focus,
+    .btn:hover {
+      color: #4d4d4d;
+    }
+  }
+
+  .addtocal--one-link {
+    font-size: 14px;
+
+    &,
+    a {
+      color: #4d4d4d;
+      font-weight: 500;
+    }
+
+    a {
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+// Add styles for viewing "Add to calendar" list in email letters.
+.email_card {
+  ul.addtocal-list {
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
+
+    .caret {
+      display: none !important;
+    }
+  }
+
+  .add-to-calendar.dropdown {
+    margin-bottom: 2rem;
+  }
+}
