@@ -2353,6 +2353,11 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
     ];
 
     foreach ($operations as $key => &$operation) {
+      // Remove users' view page from actions.
+      if ($operation['url']->getRouteName() === 'entity.user.canonical') {
+        unset($operations[$key]);
+        continue;
+      }
       if (isset($titles[$key])) {
         $operation['title'] = $titles[$key];
       }
