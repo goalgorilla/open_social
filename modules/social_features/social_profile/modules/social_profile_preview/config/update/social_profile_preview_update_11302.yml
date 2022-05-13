@@ -1,0 +1,45 @@
+core.entity_view_display.profile.profile.preview:
+  expected_config:
+    content:
+      field_profile_self_introduction:
+        weight: 3
+      field_profile_summary:
+        weight: 2
+      flag_follow_user:
+        weight: 2
+      followers:
+        weight: 5
+      following:
+        weight: 5
+      private_message_link:
+        weight: 3
+    hidden:
+      field_profile_function: true
+  update_actions:
+    delete:
+      hidden:
+        field_profile_function: true
+    change:
+      content:
+        field_profile_self_introduction:
+          weight: 6
+        field_profile_summary:
+          weight: 5
+        flag_follow_user:
+          weight: 3
+        followers:
+          weight: 7
+        following:
+          weight: 8
+        private_message_link:
+          weight: 4
+    add:
+      content:
+        field_profile_function:
+          type: string
+          weight: 2
+          region: content
+          label: visually_hidden
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
