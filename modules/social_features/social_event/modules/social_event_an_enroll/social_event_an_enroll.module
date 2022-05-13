@@ -132,36 +132,33 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
  */
 function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
-    if (isset($output['#rows'])) {
-      if (!empty($view->args[0])) {
-        $nid = $view->args[0];
-        $node = Node::load($nid);
-        $an_count = \Drupal::service('social_event_an_enroll.service')->enrollmentCount($nid);
-        if (social_event_an_enroll_is_enabled($node) && $an_count && $an_count > 0) {
-          // Fix counter in block title.
-          $view->total_rows += $an_count;
-          // Add default avatar image with counter.
-          if (empty($output['#rows'])) {
-            $output['#rows'][0]['#theme'] = $output['#theme'];
-            $output['#rows'][0]['#view'] = $output['#view'];
-            $output['#rows'][0]['#grouping_level'] = 0;
-            $output['#rows'][0]['#title'] = '';
-          }
-          // Get default profile image uri.
-          $default_image = social_profile_get_default_image();
-          if (!empty($default_image['id'])) {
-            $file = File::load($default_image['id']);
-            $uri = $file->getFileUri();
-            $output['#rows'][0]['#rows'][] = [
-              '#prefix' => '<div class="avatar">',
-              '#theme' => 'image_style',
-              '#style_name' => 'social_medium',
-              '#uri' => $uri,
-              '#suffix' => '<span class="badge badge--pill">' . $an_count . '</span></div>',
-            ];
-          }
-          $output['#attached']['library'][] = 'social_event_an_enroll/event_an_enroll';
+    if (isset($output['#rows']) && !empty($view->args[0])) {
+      $nid = $view->args[0];
+      $an_count = \Drupal::service('social_event_an_enroll.service')->enrollmentCount($nid);
+      if ($an_count && $an_count > 0) {
+        // Fix counter in block title.
+        $view->total_rows += $an_count;
+        // Add default avatar image with counter.
+        if (empty($output['#rows'])) {
+          $output['#rows'][0]['#theme'] = $output['#theme'];
+          $output['#rows'][0]['#view'] = $output['#view'];
+          $output['#rows'][0]['#grouping_level'] = 0;
+          $output['#rows'][0]['#title'] = '';
         }
+        // Get default profile image uri.
+        $default_image = social_profile_get_default_image();
+        if (!empty($default_image['id'])) {
+          $file = File::load($default_image['id']);
+          $uri = $file->getFileUri();
+          $output['#rows'][0]['#rows'][] = [
+            '#prefix' => '<div class="avatar">',
+            '#theme' => 'image_style',
+            '#style_name' => 'social_medium',
+            '#uri' => $uri,
+            '#suffix' => '<span class="badge badge--pill">' . $an_count . '</span></div>',
+          ];
+        }
+        $output['#attached']['library'][] = 'social_event_an_enroll/event_an_enroll';
       }
     }
   }

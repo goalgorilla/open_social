@@ -72,7 +72,7 @@ class EntityAccessHelper {
                   return EntityAccessHelper::NEUTRAL;
                 }
 
-                $permission_label = $field_definition->id() . ':' . $field_value['value'];
+                $permission_label = "node.{$node->bundle()}.{$field_definition->getName()}:{$field_value['value']}";
 
                 // When content is posted in a group and the account does not
                 // have permission we return Access::ignore.
@@ -127,7 +127,7 @@ class EntityAccessHelper {
     // If the social_event_invite module is enabled and a person got invited
     // then allow access to view the node.
     // @todo Come up with a better solution for this code.
-    if ($moduleHandler->moduleExists('social_event_invite')) {
+    if ($moduleHandler->moduleExists('social_event_invite') && $node->id()) {
       if ($op == 'view') {
         $conditions = [
           'field_account' => $account->id(),

@@ -1,0 +1,72 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - view_mode: The profile view mode used.
+ * - profile: The profile object.
+ * - url: The profile URL, if available.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+  'profile',
+  'profile--' ~ profile.id,
+  'profile--type--' ~ profile.bundle|clean_class,
+  profile.isDefault() ? 'profile--is-default',
+  view_mode ? 'profile--view-mode--' ~ view_mode|clean_class,
+  'teaser-profile-preview',
+  'clearfix',
+]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_suffix.contextual_links }}
+
+  <div class="card__block">
+    <div class="media-wrapper">
+      <div class="media">
+        <div class="media-left avatar">{{ content.field_profile_image }}</div>
+        <div class="media-body">
+          {{ content.uid }}
+          {{ content.field_profile_function }}
+
+          {% if content.flag_follow_user or content.private_message_link %}
+            <div class="btn-group--wrapper">
+              {{ content.flag_follow_user }}
+              {{ content.private_message_link }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if profile.field_profile_summary.isEmpty() %}
+    {{ content.field_profile_self_introduction }}
+  {% else %}
+    {{ content.field_profile_summary }}
+  {% endif %}
+
+  {% if content.followers or content.following %}
+    <div class="follow-user--counter">
+      {{ content.followers }}
+      {{ content.following }}
+    </div>
+  {% endif %}
+
+  {{ content|without('field_profile_image', 'uid', 'field_profile_function', 'flag_follow_user', 'private_message_link', 'field_profile_summary', 'field_profile_self_introduction', 'followers', 'following') }}
+</div>

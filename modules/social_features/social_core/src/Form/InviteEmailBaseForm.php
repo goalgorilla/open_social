@@ -121,6 +121,8 @@ class InviteEmailBaseForm extends FormBase {
       '#value' => $this->t('Send your invite(s) by email'),
     ];
 
+    $form['#attached']['library'][] = 'social_core/invite-form';
+
     return $form;
   }
 

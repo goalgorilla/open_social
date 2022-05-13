@@ -42,6 +42,10 @@ class QueryCommentTest extends SocialGraphQLTestBase {
     'field',
     'text',
     'filter',
+    // Required modules.
+    'views',
+    'group',
+    'variationcache',
   ];
 
 

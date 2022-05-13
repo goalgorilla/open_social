@@ -4,7 +4,7 @@ namespace Drupal\social_activity;
 
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Datetime\DateFormatter;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -29,9 +29,9 @@ class EmailTokenServices {
   /**
    * Entity type manager services.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected EntityTypeManager $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Date Formatter services.
@@ -50,14 +50,18 @@ class EmailTokenServices {
   /**
    * Constructs a EmailTokenServices object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   EntityTypeManager object.
    * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
    *   DateFormatter object.
    * @param \Drupal\social_group\GroupStatistics $group_statistics
    *   GroupStatistics object.
    */
-  public function __construct(EntityTypeManager $entity_type_manager, DateFormatter $date_formatter, GroupStatistics $group_statistics) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    DateFormatter $date_formatter,
+    GroupStatistics $group_statistics
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
     $this->groupStatistics = $group_statistics;
@@ -73,6 +77,10 @@ class EmailTokenServices {
    *   An entity object. NULL if no matching entity is found.
    */
   public function getRelatedObject(Message $message) {
+    if ($message->get('field_message_related_object')->isEmpty()) {
+      return NULL;
+    }
+
     $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
     $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 

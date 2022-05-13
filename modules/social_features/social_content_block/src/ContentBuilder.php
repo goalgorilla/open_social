@@ -86,95 +86,95 @@ class ContentBuilder implements ContentBuilderInterface {
       ->load($block_id);
 
     $plugin_id = $block_content->field_plugin_id->getValue()[0]['value'];
-    $definition = $this->contentBlockManager->getDefinition($plugin_id);
-
-    // When the user didn't select any filter in the "Content selection" field
-    // then the block base query will be built based on all filled filterable
-    // fields.
-    if (($field = $block_content->field_plugin_field)->isEmpty()) {
-      // It could be that the plugin supports more fields than are currently
-      // available, those are removed.
-      $field_names = array_filter(
-        $definition['fields'],
-        static function ($field_name) use ($block_content) {
-          return $block_content->hasField($field_name);
-        }
-      );
-    }
-    // When the user selected some filter in the "Content selection" field then
-    // only condition based on this filter field will be added to the block base
-    // query.
-    else {
-      $field_names = array_column($field->getValue(), 'value');
-    }
-
-    $fields = [];
-
-    foreach ($field_names as $field_name) {
-      $field = $block_content->get($field_name);
-
-      if (!$field->isEmpty()) {
-        $fields[$field_name] = $field->getValue();
-
-        // Make non-empty entity reference fields easier to use.
-        if ($field instanceof EntityReferenceFieldItemListInterface) {
-          $fields[$field_name] = array_column($fields[$field_name], 'target_id');
-        }
-      }
-    }
-
-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
-
-    $table = $entity_type->getDataTable();
-    if (!empty($table) && is_string($table)) {
-      $query = $this->connection->select($table, 'base_table')
-        ->addTag('social_content_block')
-        ->addMetaData('block_content', $block_content)
-        ->fields('base_table', [$entity_type->getKey('id')]);
-
-      if (isset($definition['bundle'])) {
-        $query->condition(
-          'base_table.' . $entity_type->getKey('bundle'),
-          $definition['bundle']
+    if ($definition = $this->contentBlockManager->getDefinition($plugin_id)) {
+      // When the user didn't select any filter in the "Content selection" field
+      // then the block base query will be built based on all filled filterable
+      // fields.
+      if (($field = $block_content->field_plugin_field)->isEmpty()) {
+        // It could be that the plugin supports more fields than are currently
+        // available, those are removed.
+        $field_names = array_filter(
+          $definition['fields'],
+          static function ($field_name) use ($block_content) {
+            return $block_content->hasField($field_name);
+          }
         );
       }
-
-      $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
-      if ($fields) {
-        $plugin->query($query, $fields);
+      // When the user selected some filter in the "Content selection" field
+      // then only condition based on this filter field will be added to the
+      // block base query.
+      else {
+        $field_names = array_column($field->getValue(), 'value');
       }
 
-      // Apply our sorting logic.
-      $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
+      $fields = [];
 
-      // Add range.
-      $query->range(0, $block_content->field_item_amount->value);
+      foreach ($field_names as $field_name) {
+        $field = $block_content->get($field_name);
 
-      // Execute the query to get the results.
-      $result = $query->execute();
-      $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
+        if (!$field->isEmpty()) {
+          $fields[$field_name] = $field->getValue();
 
-      if ($entities) {
-        // Load all the topics so we can give them back.
-        $entities = $this->entityTypeManager
-          ->getStorage($definition['entityTypeId'])
-          ->loadMultiple($entities);
-
-        foreach ($entities as $key => $entity) {
-          if ($entity->access('view') === FALSE) {
-            unset($entities[$key]);
-          }
-          else {
-            // Get entity translation if exists.
-            $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+          // Make non-empty entity reference fields easier to use.
+          if ($field instanceof EntityReferenceFieldItemListInterface) {
+            $fields[$field_name] = array_column($fields[$field_name], 'target_id');
           }
         }
+      }
 
-        return $this->entityTypeManager
-          ->getViewBuilder($definition['entityTypeId'])
-          ->viewMultiple($entities, 'small_teaser');
+      /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+      $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
+
+      $table = $entity_type->getDataTable();
+      if (!empty($table) && is_string($table)) {
+        $query = $this->connection->select($table, 'base_table')
+          ->addTag('social_content_block')
+          ->addMetaData('block_content', $block_content)
+          ->fields('base_table', [$entity_type->getKey('id')]);
+
+        if (isset($definition['bundle'])) {
+          $query->condition(
+            'base_table.' . $entity_type->getKey('bundle'),
+            $definition['bundle']
+          );
+        }
+
+        $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+        if ($fields) {
+          $plugin->query($query, $fields);
+        }
+
+        // Apply our sorting logic.
+        $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
+
+        // Add range.
+        $query->range(0, $block_content->field_item_amount->value);
+
+        // Execute the query to get the results.
+        $result = $query->execute();
+        $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
+
+        if ($entities) {
+          // Load all the topics so we can give them back.
+          $entities = $this->entityTypeManager
+            ->getStorage($definition['entityTypeId'])
+            ->loadMultiple($entities);
+
+          foreach ($entities as $key => $entity) {
+            if ($entity->access('view') === FALSE) {
+              unset($entities[$key]);
+            }
+            else {
+              // Get entity translation if exists.
+              $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+            }
+          }
+
+          return $this->entityTypeManager
+            ->getViewBuilder($definition['entityTypeId'])
+            ->viewMultiple($entities, 'small_teaser');
+        }
       }
     }
 
@@ -558,10 +558,16 @@ class ContentBuilder implements ContentBuilderInterface {
         break;
 
       case 'event_date':
+      case 'event_date_desc':
         $sorting_field = $query->leftJoin('node__field_event_date', 'nfed', "$base_field = %alias.entity_id");
         $sorting_field .= '.field_event_date_value';
         $direction = 'ASC';
         $base_field = NULL;
+
+        // Change sort order for "event_date_desc".
+        if ($sort_by === 'event_date_desc') {
+          $direction = 'DESC';
+        }
         break;
     }
 

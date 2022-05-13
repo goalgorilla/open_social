@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Default theme implementation of following counter.
+ *
+ * Available variables:
+ * - count: The number of the following users.
+ * - url: The url of the following users page.
+ *
+ * @see template_preprocess_following()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{{ attach_library('social_follow_user/counter') }}
+
+<span class="badge__container">
+  {% if url %}<a href="{{ url }}">{% endif %}
+    <span class="badge__label">{{ count }}</span>
+    <span class="badge__label badge__label--description">
+      {% trans %}following{% endtrans %}
+    </span>
+  {% if url %}</a>{% endif %}
+</span>

@@ -5,7 +5,10 @@
  * Contains Social Add To Calendar module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
 
@@ -15,7 +18,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
 function social_event_addtocal_entity_extra_field_info() {
   // Add the 'Add to Calendar' field.
   $extra['node']['event']['display']['field_event_addtocal'] = [
-    'label' => t('Add to Calendar'),
+    'label' => t('Add to calendar'),
     'description' => t('Allow users to add the event to the calendar'),
     'weight' => 100,
     'visible' => FALSE,
@@ -41,26 +44,110 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
   if ($addtocal_config->get('enable_add_to_calendar')) {
     // Get calendar links.
     $links = _social_event_addtocal_get_links($node);
+    // Skip if no calendar was selected in settings.
+    if (!empty($links)) {
+      $link = reset($links);
 
-    // Update the 'Add to calendar' field rendering.
-    $build['field_event_addtocal'] = [
-      '#type' => 'dropbutton',
-      '#attributes' => [
-        'class' => ['add-to-calendar'],
-      ],
-      '#links' => $links,
-    ];
+      // Update the 'Add to calendar' field rendering.
+      $calendar_link = Link::fromTextAndUrl(
+        t('@calendar calendar', ['@calendar' => $link['title']]),
+        $link['url']
+      );
+      $build['field_event_addtocal'] = [
+        '#markup' => '<span class="addtocal--one-link">' . t('Add to')->__toString() . ' ' . $calendar_link->toString() . '</span>',
+      ];
+      // Split links if there is more than one.
+      if (count($links) > 1) {
+        $items = [];
+        foreach ($links as $link) {
+          // Update classes in calendar links.
+          /** @var \Drupal\Core\Url $url */
+          $url = $link['url'];
+          $options = $url->getOptions();
+          $options['attributes']['class'][] = 'calendar-link';
+          $options['attributes']['class'][] = 'calendar-' . Html::getId($link['title']);
+          $url->setOptions($options);
+
+          $link_title = [
+            [
+              '#type' => 'html_tag',
+              '#tag' => 'img',
+              '#attributes' => [
+                'src' => $link['icon'],
+                'class' => ['no-b-lazy'],
+              ],
+            ],
+            [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => t('@cal calendar', ['@cal' => $link['title']]),
+            ],
+          ];
+
+          $items[] = [
+            'value' => Link::fromTextAndUrl($link_title, $url)
+              ->toRenderable(),
+          ];
+        }
+        $build['field_event_addtocal'] = [
+          '#type' => 'container',
+          '#attributes' => [
+            'class' => [
+              'add-to-calendar',
+              'btn-group',
+              'dropdown',
+              'btn-group--primary',
+            ],
+            'no-split' => [
+              'title' => t('Add to calendar'),
+              'alignment' => 'right',
+            ],
+          ],
+          'dropdown_button' => [
+            '#type' => 'button',
+            '#value' => t('Add to calendar'),
+            '#split' => TRUE,
+            '#attributes' => [
+              'class' => ['btn--add-to-calendar'],
+            ],
+          ],
+          'dropdown_links' => [
+            '#theme' => 'item_list__dropdown',
+            '#items' => $items,
+            '#context' => [
+              'alignment' => 'left',
+            ],
+            '#attributes' => [
+              'class' => [
+                'addtocal-list',
+              ],
+            ],
+          ],
+        ];
+      }
+    }
 
     // Make sure we clear the cache if the settings is submitted.
     $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
 
-    // Split links if there is more than one.
-    if (count($links) > 1) {
-      $build['field_event_addtocal']['#attributes']['no-split'] = [
-        'title' => t('Add to Calendar'),
-        'alignment' => 'right',
-      ];
-    }
+    // Add styles for the 'Add to calendar' links.
+    $build['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for "input--button--split.html.twig".
+ */
+function social_event_addtocal_preprocess_input__button__split(array &$variables): void {
+  if (empty($variables['element']['#attributes']['class'])
+    || !in_array('btn--add-to-calendar', $variables['element']['#attributes']['class'])
+  ) {
+    return;
+  }
+
+  if ($variables['split_button_attributes'] instanceof Attribute) {
+    $variables['split_button_attributes']->removeClass('btn-default');
+    $variables['split_button_attributes']->addClass('btn-link');
   }
 }
 
@@ -87,30 +174,40 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
   // Get allowed calendars.
   $allowed_calendars = $addtocal_config->get('allowed_calendars');
 
-  // Set links for dropdown.
-  foreach ($allowed_calendars as $allowed_calendar) {
-    // Check if calendar plugin enabled in config.
-    if ($allowed_calendar) {
-      /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface $calendar */
-      $calendar = $social_add_to_calendar->createInstance($allowed_calendar);
+  if (is_array($allowed_calendars)) {
+    // Set links for dropdown.
+    foreach ($allowed_calendars as $allowed_calendar) {
+      // Check if calendar plugin enabled in config.
+      if ($social_add_to_calendar->hasDefinition($allowed_calendar)) {
+        /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface $calendar */
+        $calendar = $social_add_to_calendar->createInstance($allowed_calendar);
 
-      // Exit if calendar plugin nor exist.
-      if (!$calendar instanceof SocialAddToCalendarInterface) {
-        continue;
+        // Exit if calendar plugin nor exist.
+        if (!$calendar instanceof SocialAddToCalendarInterface) {
+          continue;
+        }
+
+        // Set link for plugin instance.
+        $links[] = [
+          'title' => $calendar->getName(),
+          'icon' => $calendar->getIcon(),
+          'url' => $calendar->generateUrl($node),
+        ];
       }
-
-      // Set link for plugin instance.
-      $links[] = [
-        'title' => $calendar->getName(),
-        'url' => $calendar->generateUrl($node),
-      ];
     }
   }
 
-  // Change title if only one calendar enabled.
-  if (count($links) === 1) {
-    $links[0]['title'] = t('Add to Calendar');
-  }
-
   return $links;
+}
+
+/**
+ * Implements theme_preprocess_HOOK() for "swiftmailer".
+ */
+function social_event_addtocal_preprocess_swiftmailer(array &$variables): void {
+  // Add library with styles for event.
+  $variables['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
+
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
+    $variables['#attached']['library'][] = 'socialblue/dropdown';
+  }
 }

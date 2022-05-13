@@ -10,9 +10,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_user\Entity\User;
 use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
@@ -134,13 +136,13 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       unset($form[$filter . '_wrapper'][$filter . '_op']['#title_display']);
     }
 
-    // Fill in group filter options.
-    if (isset($form['group']) && ($items = _social_user_get_groups())) {
+    if (isset($form['group'])) {
       $form['group'] = array_merge($form['group'], [
-        '#type' => 'select',
-        '#options' => $items,
-        '#empty_option' => t('- Any -'),
-        '#size' => 1,
+        '#type' => 'select2',
+        '#select2' => [
+          'closeOnSelect' => FALSE,
+          'placeholder' => t('- Any -'),
+        ],
       ]);
     }
   }
@@ -149,19 +151,8 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 /**
  * Returns array with titles of all groups, ordered by their label.
  */
-function _social_user_get_groups() {
-  $data = &drupal_static(__FUNCTION__);
-
-  if (empty($data)) {
-    $data = \Drupal::database()
-      ->select('groups_field_data', 'gfd')
-      ->fields('gfd', ['id', 'label'])
-      ->orderBy('label')
-      ->execute()
-      ->fetchAllKeyed(0, 1);
-  }
-
-  return $data;
+function _social_user_get_groups(): array {
+  return call_user_func([SocialGroupHelperService::class, 'getGroups']);
 }
 
 /**
@@ -330,7 +321,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
 /**
  * Submit function for resetting password form.
  */
-function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
+function _social_user_pass_reset_submit(array $form, FormStateInterface $form_state): void {
   $storage = $form_state->getValues();
   $submitted_user_id = $storage['uid'] ?? '';
 
@@ -748,4 +739,31 @@ function social_user_user_insert(UserInterface $user): void {
     $user->addRole('verified');
     $user->save();
   }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_user_views_data_alter(array &$data): void {
+  if (isset($data['groups_field_data'])) {
+    $filter = &$data['groups_field_data']['id']['filter'];
+    $filter['id'] = 'in_operator';
+
+    $filter['options callback'] = [
+      SocialGroupHelperService::class,
+      'getSplitGroups',
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Override the default drupal truncate function for all usernames, so the whole
+ * name will be displayed.
+ */
+function social_user_preprocess_username(array &$variables): void {
+  $account = $variables['account'] ?: new AnonymousUserSession();
+  $variables['name'] = $account->getDisplayName();
+  $variables['truncated'] = FALSE;
 }

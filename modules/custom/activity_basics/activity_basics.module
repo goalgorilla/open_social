@@ -74,7 +74,8 @@ function activity_basics_social_group_move(NodeInterface $node): void {
  *   The instance.
  */
 function _activity_basics_entity_action(EntityInterface $entity, $instance): void {
-  \Drupal::service('plugin.manager.activity_action.processor')
-    ->createInstance($instance)
-    ->create($entity);
+  $plugin_mananger = \Drupal::service('plugin.manager.activity_action.processor');
+  if ($plugin_mananger->hasDefinition($instance)) {
+    $plugin_mananger->createInstance($instance)->create($entity);
+  }
 }

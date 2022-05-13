@@ -93,7 +93,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   public function getCacheContexts() {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user.group_permissions';
-    $cache_contexts[] = 'route.group';
+    $cache_contexts[] = 'url.path';
     return $cache_contexts;
   }
 
@@ -125,7 +125,18 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
 
     // Get current group so we can build correct links.
     if (_social_group_invite_current_type_enabled_invites()) {
+      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = _social_group_get_current_group();
+
+      $button = [
+        '#type' => 'link',
+        '#title' => $this->t('View invites'),
+        '#url' => Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]),
+        '#attributes' => [
+          'class' => ['btn', 'btn-default'],
+        ],
+      ];
+
       $links = [
         '#type' => 'dropbutton',
         '#attributes' => [
@@ -144,14 +155,10 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
             'title' => $this->t('Invite users'),
             'url' => Url::fromRoute('ginvite.invitation.bulk', ['group' => $group->id()]),
           ],
-          'view_invites' => [
-            'title' => $this->t('View invites'),
-            'url' => Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]),
-          ],
         ],
       ];
 
-      $build['content'] = $links;
+      $build['content'] = [$button, $links];
     }
 
     return $build;

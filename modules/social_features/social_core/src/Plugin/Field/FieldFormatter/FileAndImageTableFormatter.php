@@ -35,6 +35,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
         $elements[$delta] = [
           '#theme' => 'file_link',
           '#file' => $file,
+          '#description' => $item->get('description')->getValue(),
           '#cache' => [
             'tags' => $file->getCacheTags(),
           ],

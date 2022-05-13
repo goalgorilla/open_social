@@ -1,0 +1,105 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.preview
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_banner_image
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
+    - field.field.profile.profile.field_profile_self_introduction
+    - field.field.profile.profile.field_profile_show_email
+    - field.field.profile.profile.field_profile_summary
+    - image.style.social_large
+    - profile.type.profile
+  enforced:
+    module:
+      - social_profile_preview
+  module:
+    - social_profile
+    - text
+id: profile.profile.preview
+targetEntityType: profile
+bundle: profile
+mode: preview
+content:
+  field_profile_function:
+    type: string
+    weight: 2
+    region: content
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_profile_image:
+    type: social_profile_avatar
+    weight: 0
+    region: content
+    label: visually_hidden
+    settings:
+      image_style: social_large
+      image_link: owner
+    third_party_settings: {  }
+  field_profile_self_introduction:
+    weight: 6
+    label: visually_hidden
+    settings:
+      trim_length: 140
+    third_party_settings: {  }
+    type: text_trimmed
+    region: content
+  field_profile_summary:
+    type: string
+    weight: 5
+    region: content
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  flag_follow_user:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  private_message_link:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  followers:
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  following:
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: social_profile_preview_username
+    weight: 1
+    region: content
+    label: visually_hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+hidden:
+  field_profile_address: true
+  field_profile_banner_image: true
+  field_profile_expertise: true
+  field_profile_first_name: true
+  field_profile_interests: true
+  field_profile_last_name: true
+  field_profile_organization: true
+  field_profile_phone_number: true
+  field_profile_profile_tag: true
+  field_profile_show_email: true
+  search_api_excerpt: true

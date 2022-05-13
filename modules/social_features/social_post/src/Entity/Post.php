@@ -7,6 +7,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Drupal\social_core\EntityUrlLanguageTrait;
 use Drupal\user\RoleInterface;
@@ -62,8 +63,10 @@ use Drupal\user\UserInterface;
  * )
  */
 class Post extends ContentEntityBase implements PostInterface {
+
   use EntityChangedTrait;
   use EntityUrlLanguageTrait;
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -154,11 +157,12 @@ class Post extends ContentEntityBase implements PostInterface {
    * {@inheritdoc}
    */
   public function getDisplayName() {
-    if ($this->hasField('field_post_image') && !$this->get('field_post_image')->isEmpty()) {
-      return t('photo');
+    if ($this->hasField('field_post_image') && !$this->get('field_post_image')
+      ->isEmpty()) {
+      return $this->t('photo');
     }
 
-    return t('post');
+    return $this->t('post');
   }
 
   /**
@@ -212,15 +216,15 @@ class Post extends ContentEntityBase implements PostInterface {
     $default_visibilities = [
       [
         'id' => 'community',
-        'label' => 'Community',
+        'label' => $this->t('Community'),
       ],
       [
         'id' => 'public',
-        'label' => 'Public',
+        'label' => $this->t('Public'),
       ],
       [
         'id' => 'group',
-        'label' => 'Group members',
+        'label' => $this->t('Group members'),
       ],
     ];
 
@@ -263,7 +267,9 @@ class Post extends ContentEntityBase implements PostInterface {
 
     if (!$visibility_label) {
       /** @var \Drupal\user\RoleInterface $role */
-      $role = $this->entityTypeManager()->getStorage('user_role')->load($visibility);
+      $role = $this->entityTypeManager()
+        ->getStorage('user_role')
+        ->load($visibility);
       if ($role instanceof RoleInterface) {
         foreach ($allowed_values as $key => $value) {
           if ($value['label'] === $role->label()) {

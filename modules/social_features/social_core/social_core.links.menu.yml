@@ -2,3 +2,153 @@ social_core.admin.config.social:
   title: Open Social Settings
   parent: system.admin_config
   route_name: social_core.admin.config.social
+
+social_core.dashboard:
+  title: 'Dashboard'
+  route_name: social_core.dashboard
+  parent: system.admin
+  description: 'Administer Open Social settings.'
+  weight: -99
+
+social_core.dashboard.content_management:
+  title: Content management
+  route_name: social_core.dashboard.content_management
+  parent: social_core.dashboard
+  position: left
+  weight: -20
+social_core.dashboard.content_management.content_overview:
+  title: 'Content overview'
+  parent: social_core.dashboard.content_management
+  description: 'Overview of all the content on the platform.'
+  route_name: view.content.page_1
+  weight: -100
+social_core.dashboard.content_management.create_new_content:
+  title: 'Create new content'
+  parent: social_core.dashboard.content_management
+  description: 'Create new content.'
+  route_name: node.add_page
+  weight: -90
+social_core.dashboard.content_management.comments_overview:
+  title: 'Comments overview'
+  parent: social_core.dashboard.content_management
+  description: 'Overview of all the comments on the platform.'
+  route_name: comment.admin
+  weight: -80
+social_core.dashboard.content_management.group_overview:
+  title: 'Group overview'
+  parent: social_core.dashboard.content_management
+  description: 'Overview of all the groups on the platform.'
+  route_name: entity.group.collection
+  weight: -70
+
+social_core.dashboard.menu_management:
+  title: Menu management
+  route_name: social_core.dashboard.menu_management
+  parent: social_core.dashboard
+  position: right
+  weight: -19
+social_core.dashboard.menu_management.main_menu:
+  title: 'Main menu'
+  parent: social_core.dashboard.menu_management
+  description: 'Change or add links to the Main menu.'
+  url: 'internal:/admin/structure/menu/manage/main'
+  weight: -100
+social_core.dashboard.menu_management.footer_menu:
+  title: 'Footer menu'
+  parent: social_core.dashboard.menu_management
+  description: 'Change or add links to the Footer menu.'
+  url: 'internal:/admin/structure/menu/manage/footer'
+  weight: -90
+
+social_core.dashboard.people:
+  title: People
+  route_name: social_core.dashboard.people
+  parent: social_core.dashboard
+  position: left
+  weight: -18
+social_core.dashboard.people.account_settings:
+  title: 'Account settings'
+  parent: social_core.dashboard.people
+  description: 'Who can register on your platform and adjust the contents of automatic emails sent by your platform.'
+  route_name: entity.user.admin_form
+  weight: -100
+social_core.dashboard.people.people_overview:
+  title: 'People overview'
+  parent: social_core.dashboard.people
+  description: 'Administration of all the people registered on the site.'
+  route_name: view.user_admin_people.page_1
+  weight: -90
+social_core.dashboard.people.add_new_user:
+  title: 'Add new user'
+  parent: social_core.dashboard.people
+  description: 'Add new user.'
+  route_name: user.admin_create
+  weight: -80
+
+social_core.dashboard.configuration:
+  title: Configuration
+  route_name: social_core.dashboard.configuration
+  parent: social_core.dashboard
+  position: right
+  weight: -17
+social_core.dashboard.configuration.basic_site_settings:
+  title: 'Basic Site Settings'
+  parent: social_core.dashboard.configuration
+  description: 'Change the name and email address of your site.'
+  route_name: system.site_information_settings
+  weight: -100
+social_core.dashboard.configuration.taxonomy_settings:
+  title: 'Taxonomy settings'
+  parent: social_core.dashboard.configuration
+  description: 'Topic types, Event types, Profile tags, Organization tags, Expertise and Interests can be added, removed or changed here.'
+  url: 'internal:/admin/structure/taxonomy'
+  weight: -90
+social_core.dashboard.configuration.regional_settings:
+  title: 'Regional Settings'
+  parent: social_core.dashboard.configuration
+  description: 'Configure the locale and timezone settings.'
+  route_name: system.regional_settings
+  weight: -80
+social_core.dashboard.configuration.date_and_time_formats:
+  title: 'Date and time formats'
+  parent: social_core.dashboard.configuration
+  description: 'Configure how dates and times are displayed.'
+  route_name: entity.date_format.collection
+  weight: -70
+social_core.dashboard.configuration.public_visibility_settings:
+  title: 'Public visibility settings'
+  parent: social_core.dashboard.configuration
+  route_name: entity_access_by_field.settings
+  weight: -60
+
+social_core.dashboard.data_collection_usage:
+  title: 'Data collection and usage'
+  route_name: social_core.dashboard.data_collection_usage
+  parent: social_core.dashboard
+  position: left
+  weight: -16
+social_core.dashboard.data_collection_usage.user_conscent:
+  title: 'User consent overview'
+  parent: social_core.dashboard.data_collection_usage
+  description: 'View user consents per data policy.'
+  url: 'internal:/admin/reports/data-policy-agreements'
+  weight: -100
+
+social_core.dashboard.appearance:
+  title: Appearance
+  route_name: social_core.dashboard.appearance
+  parent: social_core.dashboard
+  position: left
+  weight: -15
+social_core.dashboard.appearance.change_colors_and_styling:
+  title: 'Change colors and styling'
+  parent: social_core.dashboard.appearance
+  description: 'Determine the look and feel of your site.'
+  route_name: social_core.dashboard.appearance.active_theme
+  weight: -100
+
+# @todo Add documentation to explain.
+social_core.dashboard.appearance.active_homepage_configuration:
+  parent: social_core.dashboard.appearance
+  class: Drupal\social_core\Plugin\Menu\HomepageConfigurationHeroBlockLink
+  weight: -90

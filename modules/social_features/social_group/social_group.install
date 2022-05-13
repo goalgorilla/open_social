@@ -960,3 +960,17 @@ function social_group_update_11003(array &$sandbox): void {
   $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
   $config->save();
 }
+
+/**
+ * Change Rendering Language settings for Group Events (Group content) view.
+ */
+function social_group_update_11004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

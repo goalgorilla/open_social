@@ -7,9 +7,9 @@ cache:
 
 addons:
   artifacts:
-   # ...
-   paths:
-     - $(git ls-files -o | grep travis_artifacts | tr "\n" ":")
+    # ...
+    paths:
+      - $(git ls-files -o | grep travis_artifacts | tr "\n" ":")
 
 language: php
 
@@ -26,13 +26,13 @@ env:
 matrix:
   fast_finish: true
   include:
-  - env: TEST_SUITE=install_stability_1
-  - env: TEST_SUITE=install_stability_2
-  - env: TEST_SUITE=install_stability_3
-  - env: TEST_SUITE=install_stability_4
-  - env: TEST_SUITE=install_stability_5
-  - env: TEST_SUITE=install_update
-  - env: TEST_SUITE=install_without_optional
+    - env: TEST_SUITE=install_stability_1
+    - env: TEST_SUITE=install_stability_2
+    - env: TEST_SUITE=install_stability_3
+    - env: TEST_SUITE=install_stability_4
+    - env: TEST_SUITE=install_stability_5
+    - env: TEST_SUITE=install_update
+    - env: TEST_SUITE=install_without_optional
 #  - env: TEST_SUITE=accessibility
 
 services:
@@ -48,7 +48,7 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 3.1.0 https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 4.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 2.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
@@ -57,6 +57,8 @@ before_install:
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
   # Pull Open Social from GitHub instead of Drupal's Packagist so all our dev branches are available.
   - composer config repositories.social git https://github.com/goalgorilla/open_social.git
+  # Remove roave/security-advisories depdendency as it conflicts with drupal/core:~8.9.9 requirements in our update branch. See: https://github.com/Roave/SecurityAdvisories/commit/5bd8c4f672d819d073ca8de1922fdb6898d0df3a
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer remove roave/security-advisories --no-update; fi
   # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldnt release but helps us with testing our update path.
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
   # For Pull Requests that are not from Open Social's own repo we must overwrite the repository we set earlier so we can pull in the work done by the external contributor.
@@ -74,9 +76,9 @@ install:
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --localsettings; fi
   # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 2.0.0 of goalgorilla/drupal_social
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
-  # Reset the entire branch, so we can checkout goalgorilla/drupal_social:3.1.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
+  # Reset the entire branch, so we can checkout goalgorilla/drupal_social:4.0.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 3.1.0; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 4.0.0; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi

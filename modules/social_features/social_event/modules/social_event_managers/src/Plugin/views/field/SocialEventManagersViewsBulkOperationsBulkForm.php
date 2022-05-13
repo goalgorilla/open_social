@@ -6,6 +6,7 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -166,8 +167,31 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       // If not we clear it right away.
       // Since we don't want to mess with cached date.
       $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+
+      // Calculate bulk form keys.
+      $bulk_form_keys = [];
+      if (!empty($this->view->result)) {
+        $base_field = $this->view->storage->get('base_field');
+        foreach ($this->view->result as $row_index => $row) {
+          if ($entity = $this->getEntity($row)) {
+            $bulk_form_keys[$row_index] = self::calculateEntityBulkFormKey(
+              $entity,
+              $row->{$base_field}
+            );
+          }
+        }
+      }
       // Reset initial values.
-      $this->updateTempstoreData();
+      if (
+        empty($form_state->getUserInput()['op']) &&
+        !empty($bulk_form_keys)
+      ) {
+        $this->updateTempstoreData($bulk_form_keys);
+      }
+      else {
+        $this->updateTempstoreData();
+      }
+
       // Initialize it again.
       $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     }
@@ -275,8 +299,24 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
       $available_options = $this->getBulkOptions();
+      $selected_actions = $this->options['selected_actions'];
       // Grab all the actions that are available.
-      foreach ($this->options['selected_actions'] as $action_key => $action) {
+      foreach (Element::children($this->actions) as $action) {
+
+        // Combine both arrays elements.
+        $array_combine = (array) array_combine(
+          array_keys($selected_actions),
+          array_column($selected_actions, 'action_id')
+        );
+
+        // Get the action key.
+        $action_key = array_search($action, array_filter($array_combine));
+
+        // If the option is not in our selected options, next.
+        if ($action_key === FALSE) {
+          continue;
+        }
+
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
         $label = $available_options[$action_key];
 
@@ -425,14 +465,15 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // Load each action and check the access.
     foreach ($bulkOptions as $id => $name) {
       $action_id = $this->options['selected_actions'][$id]['action_id'];
-      /** @var \Drupal\Core\Action\ActionInterface $action */
-      $action = $this->actionManager->createInstance($action_id);
-
-      // Check the access.
-      /** @var bool $access */
-      $access = $action->access($eventEnrollment, $this->currentUser);
-      if (!$access) {
-        unset($bulkOptions[$id]);
+      if ($this->actionManager->hasDefinition($action_id)) {
+        /** @var \Drupal\Core\Action\ActionInterface $action */
+        $action = $this->actionManager->createInstance($action_id);
+        // Check the access.
+        /** @var bool $access */
+        $access = $action->access($eventEnrollment, $this->currentUser);
+        if (!$access) {
+          unset($bulkOptions[$id]);
+        }
       }
     }
 

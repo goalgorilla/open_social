@@ -1,0 +1,151 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_follow_user module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_user.
+ */
+function social_follow_user_install(): void {
+  // Grant the default permissions for this feature.
+  $permissions = [
+    'flag follow_user',
+    'unflag follow_user',
+  ];
+
+  foreach (['verified', 'contentmanager'] as $role_id) {
+    user_role_grant_permissions($role_id, $permissions);
+  }
+
+  // Allow SM to configure visibility for Social Follow User feature.
+  $permissions[] = 'administer social_follow_user settings';
+  user_role_grant_permissions('sitemanager', $permissions);
+
+  // Add & apply user follow functionality.
+  _social_follow_user_config_update();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_follow_user_uninstall(): void {
+  $config_factory = \Drupal::service('config.factory');
+
+  // Remove users follow fields.
+  foreach (['statistic', 'teaser'] as $display_id) {
+    $config = $config_factory->getEditable('core.entity_view_display.profile.profile.' . $display_id);
+    $config->clear('content.followers');
+    $config->clear('content.following');
+    $config->save();
+  }
+
+  // Delete follow user views.
+  $views = [
+    'views.view.followers_user',
+    'views.view.following_users',
+  ];
+  foreach ($views as $config) {
+    $config_factory->getEditable($config)->delete();
+  }
+
+  // Remove views urls from the visibility block rules.
+  $paths = [
+    '/user/*/following/users',
+    '/user/*/followers',
+  ];
+  $config_names = [
+    'block.block.socialblue_profile_hero_block',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = $config_factory->getEditable($config_name);
+
+    if (!empty($config->getRawData())) {
+      $pages = $config->get('visibility.request_path.pages');
+      $pages = explode("\r\n", $pages);
+
+      foreach ($pages as $delta => $page) {
+        if (in_array($page, $paths)) {
+          unset($pages[$delta]);
+        }
+      }
+      $pages = implode("\r\n", $pages);
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
+}
+
+/**
+ * Update profile view modes/block visibility rules.
+ */
+function social_follow_user_update_11201(): void {
+  _social_follow_user_config_update();
+}
+
+/**
+ * Helper callback to apply users follow config updates.
+ */
+function _social_follow_user_config_update(): void {
+  // Display hero & statistic block on the following users/followers pages.
+  $config_names = [
+    'block.block.socialblue_profile_hero_block',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = \Drupal::configFactory()->getEditable($config_name);
+
+    if (!empty($config->getRawData())) {
+      $pages = $config->get('visibility.request_path.pages');
+      $pages .= "\r\n/user/*/following/users";
+      $pages .= "\r\n/user/*/followers";
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
+
+  // Update statistic profile view mode.
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_follow_user', 'social_follow_user_update_11201');
+  // Output logged messages to related channel of update execution.
+  $updateHelper->logger()->output();
+}
+
+/**
+ * Create follow/following user lists.
+ */
+function social_follow_user_update_11202(): void {
+  $configs = [
+    'views.view.followers_user' => 'views.view.followers_user_11202',
+    'views.view.following_users' => 'views.view.following_users_11202',
+  ];
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $origin_name => $update_name) {
+    $config_storage->write($origin_name, (array) $source->read($update_name));
+  }
+}
+
+/**
+ * Remove title on the followers page.
+ */
+function social_follow_user_update_11203(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_follow_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

@@ -182,12 +182,31 @@ function _social_content_block_allowed_values_callback(FieldStorageDefinitionInt
   }
 
   foreach ($plugin_ids as $plugin_id) {
-    $plugin = $manager->createInstance($plugin_id);
-
-    foreach ($plugin->supportedSortOptions() as $name => $settings) {
-      $values[$name] = is_array($settings) ? $settings['label'] : $settings;
+    if ($manager->hasDefinition($plugin_id)) {
+      $plugin = $manager->createInstance($plugin_id);
+      foreach ($plugin->supportedSortOptions() as $name => $settings) {
+        $values[$name] = is_array($settings) ? $settings['label'] : $settings;
+      }
     }
   }
 
   return $values;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_content_block_theme(): array {
+  return [
+    'block__multiple_content_block' => [
+      'base hook' => 'block',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_content_block_preprocess_block__multiple_content_block(array &$variables): void {
+  $variables['subtitle'] = $variables['configuration']['subtitle'];
 }

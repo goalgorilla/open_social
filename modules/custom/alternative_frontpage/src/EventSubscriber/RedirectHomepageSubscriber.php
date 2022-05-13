@@ -11,11 +11,12 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathMatcher;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxy;
-use Drupal\Core\State\State;
+use Drupal\Core\State\StateInterface;
 use Drupal\user\UserData;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Drupal\Core\Url;
 
 /**
  * The RedirectHomepageSubscriber class.
@@ -27,49 +28,49 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\user\UserData
    */
-  protected $userData;
+  protected UserData $userData;
 
   /**
    * The config factory to perform operations on the configs.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected ConfigFactory $configFactory;
 
   /**
    * Protected var for the current user.
    *
    * @var \Drupal\Core\Session\AccountProxy
    */
-  protected $currentUser;
+  protected AccountProxy $currentUser;
 
   /**
    * Protected var for the path matcher.
    *
    * @var \Drupal\Core\Path\PathMatcher
    */
-  protected $pathMatcher;
+  protected PathMatcher $pathMatcher;
 
   /**
    * Protected var entityTypeManager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * The state.
    *
-   * @var \Drupal\Core\State\State
+   * @var \Drupal\Core\State\StateInterface
    */
-  protected $state;
+  protected StateInterface $state;
 
   /**
    * Constructor for the RedirectHomepageSubscriber.
@@ -82,15 +83,23 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *   The current user.
    * @param \Drupal\Core\Path\PathMatcher $path_matcher
    *   The path matcher.
-   * @param \Drupal\Core\State\State $state
+   * @param \Drupal\Core\State\StateInterface $state
    *   The state.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
-    // We needs it.
+  public function __construct(
+    UserData $user_data,
+    ConfigFactory $config_factory,
+    AccountProxy $current_user,
+    PathMatcher $path_matcher,
+    StateInterface $state,
+    EntityTypeManagerInterface $entity_type_manager,
+    LanguageManagerInterface $language_manager
+  ) {
+    // We need it.
     $this->userData = $user_data;
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
@@ -169,8 +178,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $user_role = $current_user_data['role'] ?? '';
     $user_page = $current_user_data['page'] ?? '';
 
-    $active_language = $this->languageManager->getCurrentLanguage()->getId();
-    $default_language = $this->languageManager->getDefaultLanguage()->getId();
+    $active_language = $this->languageManager->getCurrentLanguage();
 
     // Do nothing if the current user does not have a custom front page.
     if (empty($user_page)) {
@@ -184,20 +192,16 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     }
 
     // We only proceed if the user requests the home page.
-    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
+    if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language->getId())) {
       // The home page for the user is the same as in the site configuration,
       // and we are not redirecting, otherwise there will be an endless loop.
       if ($user_page === $site_settings_frontpage) {
         return;
       }
 
-      $redirect_path = $user_page;
-
-      // The custom user page is different from the home page from
-      // the site settings.
-      if ($active_language !== $default_language) {
-        $redirect_path = '/' . $active_language . $user_page;
-      }
+      $redirect_path = Url::fromUserInput('/' . ltrim($user_page, '/'), [
+        'language' => $active_language,
+      ])->toString();
 
       $this->doRedirect($event, $user_role, $redirect_path);
     }

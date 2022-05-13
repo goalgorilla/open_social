@@ -18,14 +18,14 @@ jobs:
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
       # A separate path is used to keep our working directory clean.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: ${{ github.workspace }}/tmp/repository
           # Since composer must clone from this we require all the history.
           fetch-depth: 0
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.json') }}

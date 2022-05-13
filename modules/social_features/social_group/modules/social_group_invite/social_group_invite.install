@@ -118,6 +118,11 @@ function social_group_invite_update_8007() {
  * Add a new field to the flexible group.
  */
 function social_group_invite_update_11001(): void {
+  // Do nothing if the Social Flexible Group module is disabled.
+  if (!\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    return;
+  }
+
   $config_path = drupal_get_path('module', 'social_group_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
@@ -143,4 +148,26 @@ function social_group_invite_update_11001(): void {
   if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
     $field_config_storage->create($data)->save();
   }
+}
+
+/**
+ * Add views bulk operations to "manage invites" page.
+ */
+function social_group_invite_update_11002(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
+
+  // Reorder displayed fields.
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('views.view.social_group_invitations');
+  $fields = $config->get('display.default.display_options.fields');
+  $fields = ['social_views_bulk_operations_bulk_form_invites' => $fields['social_views_bulk_operations_bulk_form_invites']] + $fields;
+  $config->set('display.default.display_options.fields', $fields);
+  $config->save();
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

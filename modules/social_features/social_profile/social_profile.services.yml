@@ -14,3 +14,8 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@module_handler'
+  social_profile.translation_defaults:
+    class: Drupal\social_profile\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }

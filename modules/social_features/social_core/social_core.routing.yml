@@ -28,3 +28,68 @@ social_core.my_invites:
     _controller: '\Drupal\social_core\Controller\SocialCoreController::myInvitesUserPage'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+social_core.dashboard:
+  path: '/admin/dashboard'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::overview'
+    link_id: 'social_core.dashboard'
+    _title: 'Dashboard'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.content_management:
+  path: '/admin/dashboard/content_management'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Content management'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.menu_management:
+  path: '/admin/dashboard/menu_management'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Menu management'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.appearance:
+  path: '/admin/dashboard/appearance'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Appearance'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.appearance.active_theme:
+  path: '/admin/dashboard/appearance/active-theme'
+  defaults:
+    _controller: '\Drupal\social_core\Controller\DashboardController::getActiveTheme'
+    _title: 'Active theme'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.people:
+  path: '/admin/dashboard/people'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'People'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.configuration:
+  path: '/admin/dashboard/configuration'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Configuration'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.data_collection_usage:
+  path: '/admin/dashboard/data-collection-usage'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Data collection and usage'
+  requirements:
+    _permission: 'access social_core dashboard'

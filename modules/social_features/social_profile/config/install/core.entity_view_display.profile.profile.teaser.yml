@@ -16,10 +16,12 @@ dependencies:
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
+    - field.field.profile.profile.field_profile_summary
     - image.style.social_x_large
     - profile.type.profile
   module:
     - image
+    - social_profile
 id: profile.profile.teaser
 targetEntityType: profile
 bundle: profile
@@ -74,12 +76,27 @@ content:
       link: false
     third_party_settings: {  }
     region: content
+  field_profile_self_introduction:
+    type: social_profile_text
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      trim_length: 140
+    third_party_settings: {  }
+  field_profile_summary:
+    type: string
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
   field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
   field_profile_interests: true
   field_profile_phone_number: true
-  field_profile_self_introduction: true
   field_profile_show_email: true
   search_api_excerpt: true
