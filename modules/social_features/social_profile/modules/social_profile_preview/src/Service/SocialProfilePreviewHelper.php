@@ -71,7 +71,6 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
 
       if ($this->moduleHandler->moduleExists('social_follow_user')) {
         $variables['#attached']['library'][] = 'social_follow_user/counter';
-        $variables['#attached']['library'][] = 'social_follow_user/button';
       }
     }
   }
