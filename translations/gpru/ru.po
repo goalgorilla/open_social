@@ -1499,7 +1499,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-05-14 00:18+0000\n"
+"POT-Creation-Date: 2022-05-15 00:19+0000\n"
 "PO-Revision-Date: 2021-10-24 22:03+0000\n"
 "Last-Translator: Natalia Karlina <n.karlina@angarals.co.uk>\n"
 "Language-Team: Russian <https://translate.getopensocial.com/projects/gpru/"
@@ -4992,6 +4992,10 @@ msgstr "Произошла ошибка во время обработки"
 msgid "An error occurred while processing @operation with arguments : @args"
 msgstr "Произошла ошибка при обработке @operation с аргументами: @args"
 
+#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:113
+msgid "An invalid vocabulary is selected. Please change it in the options."
+msgstr ""
+
 #: config/install/user.settings.yml:0
 #: modules/social_features/social_group/config/install/group.role.closed_group-anonymous.yml:0
 #: modules/social_features/social_group/config/install/group.role.open_group-anonymous.yml:0
@@ -7391,6 +7395,10 @@ msgstr ""
 msgid "Display entity label even when access is prohibited."
 msgstr ""
 
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Display error message"
+msgstr ""
+
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:68
 msgid "Display icon configuration"
 msgstr "Показать конфигурацию иконки"
@@ -8630,6 +8638,10 @@ msgstr "Фильтр на активностях для персональной
 #: modules/social_features/social_activity/social_activity.install:297
 msgid "Filter removed from display: %name"
 msgstr "Фильтр удалён с экрана: %name"
+
+#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.views.inc:18
+msgid "Filter users by tags they are following"
+msgstr ""
 
 #: modules/custom/mentions/mentions.info.yml:0
 msgid "Filters"
@@ -10345,6 +10357,12 @@ msgstr "Оставить комментарий"
 msgid "Leave a message to @name"
 msgstr "Отправить сообщение @name"
 
+#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:236
+msgid ""
+"Leave blank for all. Otherwise, the first selected term will be the default "
+"instead of \"Any\"."
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.module:34
 msgid "Leave remark"
 msgstr "Оставить замечание"
@@ -10357,6 +10375,10 @@ msgstr "Нравится"
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/schema/social_profile_privacy.schema.yml:0
 msgid "Limit search and mention"
 msgstr "Ограничить поиск и упоминания"
+
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Limit to vocabulary"
+msgstr ""
 
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/mentions/src/MentionsViewsData.php:138
@@ -10945,7 +10967,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:320
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:112
 #: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module:38
-#: modules/social_features/social_profile/modules/social_profile_preview/social_profile_preview.module:227
+#: modules/social_features/social_profile/modules/social_profile_preview/social_profile_preview.module:226
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:249
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "Message"
@@ -14047,6 +14069,10 @@ msgstr "Выбрать необязательные модули"
 msgid "Select taxonomy vocabularies"
 msgstr "Выбрать словари таксономии"
 
+#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:125;217
+msgid "Select terms"
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php:155
 msgid "Select the fields you want to use on this profile type."
 msgstr "Выбрать поля, которые вы хотите использовать в этом типе профиля."
@@ -14146,6 +14172,10 @@ msgid ""
 msgstr ""
 "Выбранный тег будет показан в блоке с вариантами подписаться на него и "
 "посмотреть связанный с ним контент."
+
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Selection type"
+msgstr ""
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10
 msgid "Selects a field from an entity."
@@ -14434,6 +14464,10 @@ msgstr "Показать адрес электронной почты в спр�
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:88
 msgid "Show email on all user profiles"
 msgstr "Показать адрес электронной почты во всех профилях пользователя"
+
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Show hierarchy in dropdown"
+msgstr ""
 
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:96
 msgid "Show language on all user profiles"
@@ -15695,6 +15729,11 @@ msgstr ""
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.tokens.inc:37
 msgid "Taxonomy term I follow"
 msgstr "Термин таксономии, на который я подписан(а)"
+
+#: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.views.inc:15;17
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Taxonomy terms the user is following"
+msgstr ""
 
 #: modules/social_features/social_activity/modules/social_activity_filter/config/schema/social_activity_filter.settings.yml:0
 msgid "Taxonomy vocabularies"
@@ -17458,6 +17497,7 @@ msgstr ""
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0;0
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:195;211
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/schema/social_profile_privacy.schema.yml:0
 msgid "Value"
 msgstr "Значение"
@@ -17465,6 +17505,10 @@ msgstr "Значение"
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
 msgid "Value (Media source or FileItem)"
 msgstr "Значение (медиа-источник или FileItem)"
+
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Values"
+msgstr ""
 
 #: modules/social_features/social_core/social_core.install:1467
 msgid "Verified User"
@@ -17757,6 +17801,10 @@ msgstr "Видно только вошедшим пользователям"
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Visible to all visitors of the site"
 msgstr "Видно всем посетителям сайта"
+
+#: modules/social_features/social_follow_taxonomy/config/schema/social_follow_taxonomy.views.schema.yml:0
+msgid "Vocabularies"
+msgstr ""
 
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:141
 msgid "Vocabulary"
