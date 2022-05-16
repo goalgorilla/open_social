@@ -152,13 +152,10 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     return $elements;
   }
-  
+
   protected function addHelpForCommentingIfTheCurrentUserCannot(): array {
     if ($this->currentUser->isAuthenticated()) {
-      return [
-        '#prefix' => '<hr>',
-        '#markup' => $this->t('Please join the group to comment.'),
-      ];
+      return [];
     }
 
     $log_in_url = Url::fromRoute('user.login');
@@ -171,7 +168,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       ]),
     ];
   }
-  
+
   /**
    * {@inheritdoc}
    */
