@@ -3,19 +3,16 @@
 namespace Drupal\social_event_invite\Form;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,50 +24,31 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
   /**
    * The node storage for event enrollments.
-   *
-   * @var \Drupal\Core\entity\EntityStorageInterface
    */
   protected EntityStorageInterface $entityStorage;
 
   /**
    * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
-   *
-   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
    */
-  private PrivateTempStoreFactory $tempStoreFactory;
-
-  /**
-   * The Config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
    * The token service.
-   *
-   * @var \Drupal\Core\Utility\Token
    */
   protected Token $token;
 
   /**
    * The social event enroll.
-   *
-   * @var \Drupal\social_event\Service\SocialEventEnrollServiceInterface
    */
   protected SocialEventEnrollServiceInterface $eventEnrollService;
 
   /**
    * The module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The event maximum enroll service.
-   *
-   * @var \Drupal\social_event_max_enroll\Service\EventMaxEnrollService
    */
   protected EventMaxEnrollService $eventMaxEnrollService;
 
@@ -84,44 +62,18 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function __construct(
-    RouteMatchInterface $route_match,
-    EntityTypeManagerInterface $entity_type_manager,
-    LoggerChannelFactoryInterface $logger_factory,
-    EntityStorageInterface $entity_storage,
-    PrivateTempStoreFactory $tempStoreFactory,
-    ConfigFactoryInterface $config_factory,
-    Token $token,
-    SocialEventEnrollServiceInterface $event_enroll_service,
-    ModuleHandlerInterface $module_handler,
-    EventMaxEnrollService $eventMaxEnrollService
-  ) {
-    parent::__construct($route_match, $entity_type_manager, $logger_factory);
-    $this->entityStorage = $entity_storage;
-    $this->tempStoreFactory = $tempStoreFactory;
-    $this->configFactory = $config_factory;
-    $this->token = $token;
-    $this->eventEnrollService = $event_enroll_service;
-    $this->moduleHandler = $module_handler;
-    $this->eventMaxEnrollService = $eventMaxEnrollService;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('current_route_match'),
-      $container->get('entity_type.manager'),
-      $container->get('logger.factory'),
-      $container->get('entity_type.manager')->getStorage('event_enrollment'),
-      $container->get('tempstore.private'),
-      $container->get('config.factory'),
-      $container->get('token'),
-      $container->get('social_event.enroll'),
-      $container->get('module_handler'),
-      $container->get('social_event_max_enroll.service')
-    );
+    $instance = parent::create($container);
+    $instance->entityStorage = $instance->entityTypeManager->getStorage('event_enrollment');
+    $instance->tempStoreFactory = $container->get('tempstore.private');
+    $instance->token = $container->get('token');
+    $instance->eventEnrollService = $container->get('social_event.enroll');
+    $instance->moduleHandler = $container->get('module_handler');
+    if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
+      $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
+    }
+
+    return $instance;
   }
 
   /**
@@ -141,14 +93,14 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     ];
 
     // Load event invite configuration.
-    $invite_config = $this->configFactory->get('social_event_invite.settings');
+    $invite_config = $this->config('social_event_invite.settings');
 
     // Cleanup message body and replace any links on invite preview page.
     $body = $this->token->replace($invite_config->get('invite_message'), $params);
     $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
 
     // Get default logo image and replace if it overridden with email settings.
-    $theme_id = $this->configFactory->get('system.theme')->get('default');
+    $theme_id = $this->config('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
     $email_logo = theme_get_setting('email_logo', $theme_id);
 
@@ -206,12 +158,10 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     // We should prevent invite enrollments if social_event_max_enroll is
     // enabled and there are no left spots.
     if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
-      $event_max_enroll_service = $this->eventMaxEnrollService;
-
       if (
         $node instanceof NodeInterface &&
-        $event_max_enroll_service->isEnabled($node) &&
-        $event_max_enroll_service->getEnrollmentsLeft($node) === 0
+        $this->eventMaxEnrollService->isEnabled($node) &&
+        $this->eventMaxEnrollService->getEnrollmentsLeft($node) === 0
       ) {
         $form['actions']['submit']['#attributes'] = [
           'disabled' => 'disabled',
@@ -322,13 +272,20 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * Returns access to the invite page.
    *
-   * @param \Drupal\node\NodeInterface|mixed[] $node
+   * @param \Drupal\node\NodeInterface $node
    *   The node entity.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The currently logged in account.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access results.
    */
-  public function inviteAccess(NodeInterface $node) {
+  public function inviteAccess(NodeInterface $node, AccountInterface $account) {
+    // Anonymous users should not have the possibility to invite users.
+    if ($account->isAnonymous()) {
+      return AccessResult::forbidden();
+    }
+
     // Allow for event managers/organizers.
     if (social_event_manager_or_organizer()) {
       return AccessResult::allowed();
@@ -341,7 +298,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     $enrollment = $this->entityTypeManager->getStorage('event_enrollment')
       ->loadByProperties([
         'status' => TRUE,
-        'field_account' => $this->currentUser()->id(),
+        'field_account' => $account->id(),
         'field_event' => $node->id(),
         'field_enrollment_status' => '1',
       ]);
