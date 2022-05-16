@@ -28,8 +28,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
     $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
-    $current_user = $this->currentUser;
-    $uid = $current_user->id();
+    $current_user = $this->currentUser();
 
     if (!$current_user->isAnonymous()) {
       // Check if enrollment is enabled.
@@ -37,10 +36,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
         return [];
       }
       $conditions = [
-        'field_account' => $uid,
+        'field_account' => $current_user->id(),
         'field_event' => $nid,
       ];
-      $enrollments = $this->entityStorage->loadByProperties($conditions);
+      $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
       // If the event is invite only and you have not been invited, return.
       // Unless you are the node owner or organizer.
@@ -143,7 +142,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
     $operation = $form_state->getValue('operation');
-    $current_user = $this->currentUser;
+    $current_user = $this->currentUser();
     $uid = $current_user->id();
     $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
 
@@ -152,7 +151,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       'field_event' => $nid,
     ];
 
-    $enrollments = $this->entityStorage->loadByProperties($conditions);
+    $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
     // @todo also clear the breadcrumb cachetags.
     // Invalidate cache for our enrollment cache tag in
