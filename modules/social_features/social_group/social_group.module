@@ -2157,7 +2157,7 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     return;
   }
   $account = \Drupal::currentUser()->getAccount();
-  if ($account->isAuthenticated()) {
+  if (!$account->isAuthenticated()) {
     // Get all groups for LU.
     /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $group_helper */
     $group_helper = \Drupal::service('social_group.helper_service');
