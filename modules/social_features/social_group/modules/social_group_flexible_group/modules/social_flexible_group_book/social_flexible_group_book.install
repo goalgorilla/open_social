@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the "social_flexible_group_book" module.
+ */
+
+use Drupal\social_flexible_group_book\SocialFlexibleGroupBookInstallHelper;
+
+/**
+ * Implements hook_install().
+ */
+function social_flexible_group_book_install(): void {
+  /** @var \Drupal\social_flexible_group_book\SocialFlexibleGroupBookInstallHelper $install_helper */
+  $install_helper = \Drupal::classResolver(SocialFlexibleGroupBookInstallHelper::class);
+  $install_helper->setGroupPermissions();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_group_flexible_group_uninstall(bool $is_syncing): void {
+  /** @var \Drupal\social_flexible_group_book\SocialFlexibleGroupBookInstallHelper $install_helper */
+  $install_helper = \Drupal::classResolver(SocialFlexibleGroupBookInstallHelper::class);
+  $install_helper->revokeGroupPermissions();
+}

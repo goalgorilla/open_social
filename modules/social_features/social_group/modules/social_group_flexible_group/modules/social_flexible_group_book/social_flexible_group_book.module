@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Contains Social Flexible Group Book functions.
+ */
+
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_flexible_group_book_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if ($context['entity_type'] !== 'node' && $context['bundle'] !== 'book' && $form_display->getMode() === 'default') {
+    return;
+  }
+
+  // Add "groups" field to the form.
+  /* @see \Drupal\social_group\SocialGroupSelectorWidgetConfigOverride::loadOverrides */
+  $form_display->setComponent('groups', [
+    'type' => 'social_group_selector_widget',
+    'weight' => 0,
+    'region' => 'content',
+    'third_party_settings' => [],
+    'settings' => [
+      'width' => '100%',
+      'match_operator' => 'CONTAINS',
+      'match_limit' => '10',
+      'autocomplete' => FALSE,
+    ],
+  ]);
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "node_form".
+ */
+function social_flexible_group_book_form_node_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_object->getEntity();
+
+  if ($node->bundle() !== 'book') {
+    return;
+  }
+
+  if (!empty($form['#fieldgroups']['group_visibility'])) {
+    $form['#fieldgroups']['group_visibility']->children[] = 'groups';
+    $form['#group_children']['groups'] = 'group_visibility';
+  }
+}
