@@ -428,20 +428,55 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'plugin_id' => 'list_field',
     ];
 
-    $config_names_groups = [
-      'views.view.newest_groups' => [
-        'default',
-        'page_all_groups',
+    $filter_default_langcode = [
+      'id' => 'default_langcode',
+      'table' => 'groups_field_data',
+      'field' => 'default_langcode',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => '=',
+      'value' => '1',
+      'group' => 1,
+      'exposed' => FALSE,
+      'expose' => [
+        'operator_id' => '',
+        'label' => '',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => '',
+        'operator_limit_selection' => FALSE,
+        'operator_list' => [],
+        'identifier' => '',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
       ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'entity_type' => 'group',
+      'entity_field' => 'default_langcode',
+      'plugin_id' => 'boolean',
     ];
 
-    foreach ($config_names_groups as $config_name_groups => $displays_groups) {
-      if (in_array($config_name_groups, $names)) {
-        foreach ($displays_groups as $display_group) {
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
-        }
-      }
-    }
+    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['defaults']['filters'] = FALSE;
+    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['defaults']['filter_groups'] = FALSE;
+    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
+    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['filters']['default_langcode'] = $filter_default_langcode;
 
     // Add join methods as option to search api groups.
     if (in_array('search_api.index.social_groups', $names)) {
