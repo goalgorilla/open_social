@@ -153,6 +153,12 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     return $elements;
   }
 
+  /**
+   * Adds help for commenting if the current user cannot.
+   *
+   * @return array
+   *   The renderable array.
+   */
   protected function addHelpForCommentingIfTheCurrentUserCannot(): array {
     if ($this->currentUser->isAuthenticated()) {
       return [];
