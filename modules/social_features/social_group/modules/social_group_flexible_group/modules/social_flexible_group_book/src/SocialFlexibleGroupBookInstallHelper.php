@@ -77,11 +77,17 @@ class SocialFlexibleGroupBookInstallHelper implements ContainerInjectionInterfac
    * Set default permissions for Book Page content in flexible group.
    */
   public function getGroupPermissions(string $role): array {
-    // Group member.
-    $group_permissions['flexible_group-member'] = [
+    // Group anonymous.
+    $group_permissions['flexible_group-anonymous'] = [
       'view group_node:book content',
       'view group_node:book entity',
     ];
+
+    // Group outsider.
+    $group_permissions['flexible_group-outsider'] = $group_permissions['flexible_group-anonymous'];
+
+    // Group member.
+    $group_permissions['flexible_group-member'] = $group_permissions['flexible_group-outsider'];
 
     // Group manager.
     $group_permissions['flexible_group-group_manager'] = [

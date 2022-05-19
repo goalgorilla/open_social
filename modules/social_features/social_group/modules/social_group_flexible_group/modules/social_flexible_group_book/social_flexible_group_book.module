@@ -5,8 +5,13 @@
  * Contains Social Flexible Group Book functions.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Implements hook_entity_form_display_alter().
@@ -50,4 +55,46 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     $form['#fieldgroups']['group_visibility']->children[] = 'groups';
     $form['#group_children']['groups'] = 'group_visibility';
   }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_flexible_group_book_menu_local_tasks_alter(array &$data, string $route_name): void {
+  if (empty($data['tabs'][0]['social_flexible_group_book.books'])) {
+    return;
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = _social_group_get_current_group();
+  if (!$group instanceof GroupInterface) {
+    return;
+  }
+
+  if ($group->bundle() === 'flexible_group') {
+    return;
+  }
+
+  $data['tabs'][0]['social_flexible_group_book.books']['#access'] = AccessResult::forbidden();
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_flexible_group_book_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  if (
+    in_array($block->getPluginId(), ['group_hero_block', 'group_statistic_block'])
+    || $block->id() === 'socialblue_pagetitleblock_content'
+  ) {
+    // @todo This should be added to the block configuration from here.
+    $request_path = $block->getVisibility()['request_path'];
+    $request_path['pages'] .= "\r\n/group/*/books";
+    $block->setVisibilityConfig('request_path', $request_path);
+  }
+
+  return AccessResult::neutral();
 }
