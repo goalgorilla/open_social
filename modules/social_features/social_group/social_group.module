@@ -1618,6 +1618,14 @@ function _social_group_get_current_group($node = NULL) {
           ->load($gid_from_entity);
       }
     }
+    else {
+      $entity_type = \Drupal::routeMatch()->getParameter('entity_type');
+      $entity = \Drupal::routeMatch()->getParameter('entity');
+      if ($entity_type == 'node') {
+        $group = _social_group_get_current_group($entity);
+        $nid = $entity->id();
+      }
+    }
   }
 
   // If we have a cache key we store the value.
