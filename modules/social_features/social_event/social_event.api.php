@@ -35,5 +35,17 @@ function hook_social_event_enroll_method_description_alter($key, &$description) 
 }
 
 /**
+ * Provide a way to add event menu local tasks to custom pages.
+ *
+ * @param array $routes
+ *   Array of routes where local tasks show show up.
+ *
+ * @ingroup social_event_api
+ */
+function hook_social_event_menu_local_tasks_routes_alter(&$routes) {
+  return $routes;
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
