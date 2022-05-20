@@ -8,7 +8,7 @@
 /**
  * Install token module.
  */
-function activity_basics_update_8101(&$sandbox) {
+function activity_basics_update_8101(array &$sandbox) : void {
 
   $modules = [
     'token',
@@ -20,7 +20,7 @@ function activity_basics_update_8101(&$sandbox) {
 /**
  * Install activity_send_email module.
  */
-function activity_basics_update_8102() {
+function activity_basics_update_8102() : void {
 
   $modules = [
     'activity_send_email',
@@ -32,7 +32,7 @@ function activity_basics_update_8102() {
 /**
  * Replace message template activity_bundle_entity single value with multiple.
  */
-function activity_basics_update_8103() {
+function activity_basics_update_8103() : void {
 
   $message_templates = [
     'create_comment_community_node',

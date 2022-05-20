@@ -3,6 +3,7 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContent;
 
@@ -30,7 +31,7 @@ class CommunityActivityContext extends ActivityContextBase {
    */
   public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
-    if ($entity->getEntityTypeId() === 'comment') {
+    if ($entity instanceof CommentInterface) {
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
     }
