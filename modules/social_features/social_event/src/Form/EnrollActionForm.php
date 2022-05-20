@@ -197,7 +197,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
             // Skip permission validation if 'enroll to events in groups' is
             // already granted.
             break;
-          } elseif ($group->hasPermission('enroll to events in groups', $current_user) === TRUE) {
+          }
+          elseif ($group->hasPermission('enroll to events in groups', $current_user) === TRUE) {
             $enroll_to_events_in_groups = TRUE;
           }
         }
