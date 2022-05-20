@@ -80,7 +80,6 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
     }
-
     $instance->fileUrlGenerator = $container->get('file_url_generator');
 
     return $instance;

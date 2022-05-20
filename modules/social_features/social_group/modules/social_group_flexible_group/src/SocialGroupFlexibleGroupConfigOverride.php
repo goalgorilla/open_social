@@ -473,10 +473,20 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'plugin_id' => 'boolean',
     ];
 
-    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['defaults']['filters'] = FALSE;
-    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['defaults']['filter_groups'] = FALSE;
-    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
-    $overrides['views.view.newest_groups']['display']['page_all_groups']['display_options']['filters']['default_langcode'] = $filter_default_langcode;
+    $config_name = 'views.view.newest_groups';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['display']['page_all_groups']['display_options'] = [
+        'filters' => [
+          'field_group_allowed_join_method_value' => $filter_overview_join_methods,
+          'default_langcode' => $filter_default_langcode,
+        ],
+        'defaults' => [
+          'filters' => FALSE,
+          'filter_groups' => FALSE,
+        ],
+      ];
+    }
 
     // Add join methods as option to search api groups.
     if (in_array('search_api.index.social_groups', $names)) {
