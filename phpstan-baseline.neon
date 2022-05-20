@@ -19190,27 +19190,17 @@ parameters:
 			path: modules/social_features/social_user/tests/src/Unit/Validation/Constraint/SocialUserNameConstraintTest.php
 
 		-
-			message: "#^Function social_user_export_update_8001\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/social_user_export.install
-
-		-
 			message: "#^Function social_user_export_file_download\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
 
 		-
-			message: "#^Function social_user_export_file_download\\(\\) has parameter \\$uri with no type specified\\.$#"
+			message: "#^Parameter \\#1 \\$path of function basename expects string, string\\|true given\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
 
 		-
-			message: "#^Parameter \\#1 \\$path of function basename expects string, bool\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/social_user_export.module
-
-		-
-			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, bool\\|string given\\.$#"
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|true given\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
 
@@ -19218,16 +19208,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between int and string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Form\\\\SocialUserExportSettingsForm\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Form/SocialUserExportSettingsForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Form\\\\SocialUserExportSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Form/SocialUserExportSettingsForm.php
 
 		-
 			message: "#^Call to an undefined method object\\:\\:getHeader\\(\\)\\.$#"
@@ -19260,11 +19240,6 @@ parameters:
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function md5 expects string, float given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
 			message: "#^Variable \\$instance in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$plugin$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
@@ -19273,139 +19248,4 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsCommentsCreated\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventEnrollments.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsEventEnrollments\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventEnrollments.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventEnrollments.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsEventsCreated\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventsCreated.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsGroupMemberships\\:\\:getValue\\(\\) should return string but returns int\\<0, max\\>\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php
-
-		-
-			message: "#^Parameter \\#1 \\$uid of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getAllGroupsForUser\\(\\) expects int, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsGroupsCreated\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupsCreated.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupsCreated.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsLikes.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsLikes\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsLikes.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsLikes.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsPostsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsPostsCreated\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsPostsCreated.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsPostsCreated.php
-
-		-
-			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsTopicsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserAnalyticsTopicsCreated\\:\\:getValue\\(\\) should return string but returns int\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsTopicsCreated.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsTopicsCreated.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserEmail\\:\\:getValue\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserEmail.php
-
-		-
-			message: "#^Parameter \\#1 \\$uid of method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getAllGroupsForUser\\(\\) expects int, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserGroupMemberships.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserId\\:\\:getValue\\(\\) should return string but returns int\\|string\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserId.php
-
-		-
-			message: "#^Method Drupal\\\\social_user_export\\\\Plugin\\\\UserExportPlugin\\\\UserUuid\\:\\:getValue\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserUuid.php
 

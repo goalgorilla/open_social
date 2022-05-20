@@ -39,7 +39,7 @@ class SocialUserExportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container) : SocialUserExportSettingsForm {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.user_export_plugin')
@@ -91,7 +91,7 @@ class SocialUserExportSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) : void {
     parent::submitForm($form, $form_state);
     $this->config('social_user_export.settings')
       ->set('plugins', $form_state->getValue('plugins'))
