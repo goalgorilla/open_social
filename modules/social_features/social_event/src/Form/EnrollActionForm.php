@@ -173,6 +173,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         && empty($enrollments)
         && social_event_manager_or_organizer() === FALSE) {
 
+        // Default prediction is that user does not have permissions to enroll
+        // to event and this is why $enroll_to_events_in_groups is set to FALSE.
+        // If user has permission 'enroll to events in groups' in at least one
+        // group in "$groups", this value will be changed to TRUE.
+        $enroll_to_events_in_groups = FALSE;
+
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
 
@@ -187,9 +193,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
             break;
           }
 
-          if ($group->hasPermission('enroll to events in groups', $current_user) == FALSE) {
-            return [];
+          if ($enroll_to_events_in_groups) {
+            // Skip permission validation if 'enroll to events in groups' is
+            // already granted.
+            break;
+          } elseif ($group->hasPermission('enroll to events in groups', $current_user) === TRUE) {
+            $enroll_to_events_in_groups = TRUE;
           }
+        }
+
+        // Do not render form if user does not have permission
+        // 'enroll to events in groups' for at least one group in "$groups".
+        if (!$enroll_to_events_in_groups) {
+          return [];
         }
       }
     }
