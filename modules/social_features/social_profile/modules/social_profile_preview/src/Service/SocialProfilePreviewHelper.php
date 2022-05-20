@@ -3,7 +3,9 @@
 namespace Drupal\social_profile_preview\Service;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
@@ -13,17 +15,30 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface {
 
   /**
+   * The configuration factory.
+   */
+  private ConfigFactoryInterface $configFactory;
+
+  /**
+   * The theme manager.
+   */
+  private ThemeManagerInterface $themeManager;
+
+  /**
    * The module handler.
    */
   private ModuleHandlerInterface $moduleHandler;
 
   /**
-   * SocialProfilePreviewHelper constructor.
-   *
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
+   * {@inheritdoc}
    */
-  public function __construct(ModuleHandlerInterface $module_handler) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    ThemeManagerInterface $theme_manager,
+    ModuleHandlerInterface $module_handler
+  ) {
+    $this->configFactory = $config_factory;
+    $this->themeManager = $theme_manager;
     $this->moduleHandler = $module_handler;
   }
 
@@ -38,7 +53,10 @@ class SocialProfilePreviewHelper implements SocialProfilePreviewHelperInterface 
     string $base_field = NULL,
     string $extra_field = NULL
   ): void {
-    if ($profile->access('view')) {
+    if (
+      $profile->access('view') &&
+      $this->configFactory->get('system.theme')->get('default') === $this->themeManager->getActiveTheme()->getName()
+    ) {
       if ($extra_field !== NULL && !empty($variables[$extra_field])) {
         $variables[$base_field] = [
           '#type' => 'html_tag',
