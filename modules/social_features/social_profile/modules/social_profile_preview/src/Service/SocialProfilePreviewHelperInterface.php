@@ -2,12 +2,31 @@
 
 namespace Drupal\social_profile_preview\Service;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Defines the helper service interface.
  */
 interface SocialProfilePreviewHelperInterface {
+
+  /**
+   * SocialProfilePreviewHelper constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   *   The theme manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   */
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    ThemeManagerInterface $theme_manager,
+    ModuleHandlerInterface $module_handler
+  );
 
   /**
    * Connect profile previewer to a specific element.
