@@ -57,18 +57,17 @@ Feature: Enroll for an event without an account
 #    And I wait for AJAX to finish
 #    Then I should see the text "Meetup: AN Event 1" in the "Modal"
 #    And I press the "Close" button
-    Given I am an anonymous user
-    And I open the "event" node with title "AN Event 1"
-    When I click "Enroll"
-    And I wait for AJAX to finish
-    When I click "Enroll as guest"
-    And I wait for AJAX to finish
-    And I fill in the following:
-      | First name    | John         |
-      | Last name     | Doe          |
-      | Email address | john@doe.com |
-    And I press "Enroll in event"
-#    @todo Uncomment line below when Firefox will have 48+ version in Selenium.
+#    Given I am an anonymous user
+#    And I open the "event" node with title "AN Event 1"
+#    When I click "Enroll"
+#    And I wait for AJAX to finish
+#    When I click "Enroll as guest"
+#    And I wait for AJAX to finish
+#    And I fill in the following:
+#      | First name    | John         |
+#      | Last name     | Doe          |
+#      | Email address | john@doe.com |
+#    And I press "Enroll in event"
 #    Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email"
     # AS CM+ I should see Guest enrollments.
     Given I am logged in as a user with the "contentmanager" role

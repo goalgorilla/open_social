@@ -60,8 +60,13 @@ class EventAnEnrollForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\node\NodeInterface|string $node */
+    /** @var \Drupal\node\NodeInterface|string|null $node */
     $node = $this->routeMatch->getRawParameter('node');
+
+    // Do nothing if we don't have the 'node' param in the URL.
+    if ($node === NULL) {
+      return [];
+    }
 
     // Load node object.
     if (!($node instanceof NodeInterface)) {
@@ -98,8 +103,6 @@ class EventAnEnrollForm extends EnrollActionForm {
     ];
 
     if ($this->moduleHandler->moduleExists('data_policy')) {
-      // We can't use dependency injection here because the module might not
-      // be enabled. So we have to use the manager directly.
       if (!$this->dataPolicyConsentManager->isDataPolicy()) {
         return $form;
       }
