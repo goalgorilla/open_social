@@ -118,19 +118,6 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
         }
       }
     }
-    elseif ($entity['target_type'] === 'node') {
-      $node = $this->entityTypeManager->getStorage('node')
-        ->load($entity['target_id']);
-
-      // Try to load the entity.
-      if ($node instanceof ContentEntityInterface) {
-        // Try to load group content from entity.
-        if ($group_contents = GroupContent::loadByEntity($node)) {
-          // Set the group id.
-          $gid = reset($group_contents)->getGroup()->id();
-        }
-      }
-    }
     elseif ($entity['target_type'] === 'group_content') {
       $group_content = $this->entityTypeManager->getStorage('group_content')
         ->load($entity['target_id']);
@@ -139,6 +126,19 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       if ($group_content instanceof GroupContentInterface) {
         // Get group id.
         $gid = $group_content->getGroup()->id();
+      }
+    }
+    else {
+      $entity = $this->entityTypeManager->getStorage($entity['target_type'])
+        ->load($entity['target_id']);
+
+      // Try to load the entity.
+      if ($entity instanceof ContentEntityInterface) {
+        // Try to load group content from entity.
+        if ($group_contents = GroupContent::loadByEntity($entity)) {
+          // Set the group id.
+          $gid = reset($group_contents)->getGroup()->id();
+        }
       }
     }
 
