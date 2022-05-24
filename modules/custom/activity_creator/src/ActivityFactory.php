@@ -311,12 +311,20 @@ class ActivityFactory extends ControllerBase {
         // Get commented entity.
         $comment_storage = $this->entityTypeManager->getStorage('comment');
         $comment = $comment_storage->load($related_object['target_id']);
-        $commented_entity = $comment->getCommentedEntity();
-        // Get all comments of commented entity.
-        $comment_query = $this->entityTypeManager->getStorage('comment')->getQuery();
-        $comment_query->condition('entity_id', $commented_entity->id(), '=');
-        $comment_query->condition('entity_type', $commented_entity->getEntityTypeId(), '=');
-        $comment_ids = $comment_query->execute();
+        // This can happen if the comment was removed before the activity was
+        // processed.
+        if ($comment === NULL) {
+          $comment_ids = NULL;
+        }
+        else {
+          $commented_entity = $comment->getCommentedEntity();
+          // Get all comments of commented entity.
+          $comment_query = $this->entityTypeManager->getStorage('comment')
+            ->getQuery();
+          $comment_query->condition('entity_id', $commented_entity->id(), '=');
+          $comment_query->condition('entity_type', $commented_entity->getEntityTypeId(), '=');
+          $comment_ids = $comment_query->execute();
+        }
         // Get all activities provided by comments of commented entity.
         if (!empty($comment_ids)) {
           $activity_query = $this->entityTypeManager->getStorage('activity')->getQuery();

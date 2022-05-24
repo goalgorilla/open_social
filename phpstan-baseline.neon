@@ -51,17 +51,7 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OrganizerActivityContext.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getAccount\\(\\)\\.$#"
-			count: 2
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
-
-		-
-			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
@@ -72,6 +62,11 @@ parameters:
 
 		-
 			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
+
+		-
+			message: "#^Variable \\$original_related_entity in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
@@ -371,11 +366,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityFactory.php
 
 		-
-			message: "#^Cannot call method getCommentedEntity\\(\\) on Drupal\\\\comment\\\\Entity\\\\Comment\\|null\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityFactory.php
-
-		-
 			message: "#^Cannot call method getEntityTypeId\\(\\) on Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityFactory.php
@@ -496,11 +486,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$ids of static method Drupal\\\\Core\\\\Entity\\\\EntityBase\\:\\:loadMultiple\\(\\) expects array\\|null, array\\|int\\<min, \\-1\\>\\|int\\<1, max\\> given\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityFactory.php
-
-		-
 			message: "#^Parameter \\#1 \\$message of method Drupal\\\\activity_creator\\\\ActivityFactory\\:\\:getAggregationSettings\\(\\) expects Drupal\\\\message\\\\Entity\\\\Message, Drupal\\\\message\\\\MessageInterface given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityFactory.php
@@ -566,11 +551,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
 
 		-
-			message: "#^Method Drupal\\\\activity_creator\\\\ActivityNotifications\\:\\:getActivityIdsByEntity\\(\\) should return array but returns array\\|int\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityNotifications.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
@@ -609,11 +589,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$content of class Drupal\\\\Core\\\\Ajax\\\\HtmlCommand constructor expects array\\|string, int\\<0, max\\> given\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Controller/NotificationsController.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getEntity\\(\\)\\.$#"
-			count: 2
-			path: modules/custom/activity_creator/src/Entity/Activity.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getVotedEntityId\\(\\)\\.$#"
@@ -769,11 +744,6 @@ parameters:
 			message: "#^Method Drupal\\\\activity_creator\\\\Plugin\\\\ActivityActionInterface\\:\\:isValidEntity\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Plugin/ActivityActionInterface.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_recipient_user\\.$#"
-			count: 2
-			path: modules/custom/activity_creator/src/Plugin/ActivityContextBase.php
 
 		-
 			message: "#^Method Drupal\\\\activity_creator\\\\Plugin\\\\ActivityDestinationBase\\:\\:getViewMode\\(\\) has no return type specified\\.$#"
@@ -1971,11 +1941,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:getEntityAccessResult\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
@@ -2296,11 +2261,6 @@ parameters:
 			path: modules/custom/ginvite/src/GroupInvitation.php
 
 		-
-			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitationLoader\\:\\:groupContentStorage\\(\\) should return Drupal\\\\group\\\\Entity\\\\Storage\\\\GroupContentStorageInterface but returns Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\.$#"
-			count: 1
-			path: modules/custom/ginvite/src/GroupInvitationLoader.php
-
-		-
 			message: "#^Method Drupal\\\\ginvite\\\\GroupInvitationLoader\\:\\:loadByGroup\\(\\) has parameter \\$mail with no type specified\\.$#"
 			count: 1
 			path: modules/custom/ginvite/src/GroupInvitationLoader.php
@@ -2344,11 +2304,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$account of method Drupal\\\\group\\\\GroupMembershipLoaderInterface\\:\\:load\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, object\\|true given\\.$#"
 			count: 1
 			path: modules/custom/ginvite/src/Plugin/Validation/Constraint/PreventDuplicatedConstraintValidator.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByGroup\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/grequest/grequest.module
 
 		-
 			message: "#^Function grequest_group_content_insert\\(\\) has no return type specified\\.$#"
@@ -2626,11 +2581,6 @@ parameters:
 			path: modules/custom/mentions/mentions.install
 
 		-
-			message: "#^Argument of an invalid type array\\|int supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: modules/custom/mentions/mentions.module
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/mentions/mentions.module
@@ -2641,27 +2591,7 @@ parameters:
 			path: modules/custom/mentions/mentions.module
 
 		-
-			message: "#^Cannot call method delete\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/mentions/mentions.module
-
-		-
-			message: "#^Cannot call method get\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 2
-			path: modules/custom/mentions/mentions.module
-
-		-
 			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/mentions/mentions.module
-
-		-
-			message: "#^Cannot call method save\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/mentions/mentions.module
-
-		-
-			message: "#^Cannot call method set\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/mentions/mentions.module
 
@@ -2727,11 +2657,6 @@ parameters:
 
 		-
 			message: "#^Function mentions_theme\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/mentions/mentions.module
-
-		-
-			message: "#^Parameter \\#1 \\$ids of method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadMultiple\\(\\) expects array\\|null, array\\|int given\\.$#"
 			count: 1
 			path: modules/custom/mentions/mentions.module
 
@@ -3941,11 +3866,6 @@ parameters:
 			path: modules/custom/social_path_manager/social_path_manager.module
 
 		-
-			message: "#^Parameter \\#1 \\$input of function array_keys expects array, array\\|int given\\.$#"
-			count: 1
-			path: modules/custom/social_path_manager/social_path_manager.module
-
-		-
 			message: "#^Call to an undefined method object\\:\\:create\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/social_queue_storage/social_queue_storage.module
@@ -4581,11 +4501,6 @@ parameters:
 			path: modules/social_features/social_album/social_album.module
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByEntity\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_album/social_album.module
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 6
 			path: modules/social_features/social_album/social_album.module
@@ -4981,11 +4896,6 @@ parameters:
 			path: modules/social_features/social_album/src/Plugin/views/field/SocialAlbumEntityOperations.php
 
 		-
-			message: "#^Cannot call method language\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_album/src/Plugin/views/field/SocialAlbumEntityOperations.php
-
-		-
 			message: "#^Method Drupal\\\\social_album\\\\Plugin\\\\views\\\\field\\\\SocialAlbumEntityOperations\\:\\:render\\(\\) should return Drupal\\\\Component\\\\Render\\\\MarkupInterface\\|string but returns array\\<string, array\\<int, array\\<int, mixed\\>\\>\\>\\.$#"
 			count: 1
 			path: modules/social_features/social_album/src/Plugin/views/field/SocialAlbumEntityOperations.php
@@ -5301,7 +5211,7 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.module
 
 		-
-			message: "#^Parameter \\#1 \\$comments of method Drupal\\\\comment\\\\CommentStorage\\:\\:getChildCids\\(\\) expects array\\<Drupal\\\\comment\\\\CommentInterface\\>, array\\<int\\|string, Drupal\\\\comment\\\\Entity\\\\Comment\\|null\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$comments of method Drupal\\\\comment\\\\CommentStorage\\:\\:getChildCids\\(\\) expects array\\<Drupal\\\\comment\\\\CommentInterface\\>, array\\<int\\|string, Drupal\\\\social_comment\\\\Entity\\\\Comment\\|null\\> given\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -6518,11 +6428,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
-			path: modules/social_features/social_core/social_core.install
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\|int given\\.$#"
-			count: 3
 			path: modules/social_features/social_core/social_core.install
 
 		-
@@ -8460,11 +8365,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagementViewsBulkOperationsConfigureAction.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getAccount\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_managers\\\\Form\\\\SocialEventManagersAddEnrolleeForm\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php
@@ -9186,11 +9086,6 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$entity_type\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.module
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_enrollment_status\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.module
 
@@ -11610,11 +11505,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.install
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByGroup\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
@@ -11898,11 +11788,6 @@ parameters:
 			message: "#^Property Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRequestForm\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByGroup\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/ActivityContext/ApprovedRequestJoinGroupActivityContext.php
 
 		-
 			message: "#^Left side of && is always true\\.$#"
@@ -13600,11 +13485,6 @@ parameters:
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
 		-
-			message: "#^Parameter \\#1 \\$ids of method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadMultiple\\(\\) expects array\\|null, array\\|int\\<min, \\-1\\>\\|int\\<1, max\\> given\\.$#"
-			count: 2
-			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
-
-		-
 			message: "#^Trying to invoke non\\-empty\\-string but it might not be a callable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
@@ -15100,16 +14980,6 @@ parameters:
 			path: modules/social_features/social_post/social_post.module
 
 		-
-			message: "#^Parameter \\#1 \\$ids of method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadMultiple\\(\\) expects array\\|null, array\\|int given\\.$#"
-			count: 1
-			path: modules/social_features/social_post/social_post.module
-
-		-
-			message: "#^Parameter \\#1 \\$posts of function social_post_mass_update expects array, array\\|int given\\.$#"
-			count: 1
-			path: modules/social_features/social_post/social_post.module
-
-		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.post_update.php
@@ -15581,11 +15451,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/PostAccessControlHandler.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:hasPermission\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
