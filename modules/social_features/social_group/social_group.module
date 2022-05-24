@@ -1597,12 +1597,11 @@ function _social_group_get_current_group($entity = NULL) {
 
   $group = \Drupal::routeMatch()->getParameter('group');
 
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::entityTypeManager()
-      ->getStorage('group')
-      ->load($group);
+  if (is_numeric($group)) {
+    $group = \Drupal::entityTypeManager()->getStorage('group')->load($group);
   }
-  else {
+
+  if ($group === NULL) {
     if (
       !is_object($entity) &&
       ($entity = \Drupal::routeMatch()->getParameter('node')) === NULL &&
