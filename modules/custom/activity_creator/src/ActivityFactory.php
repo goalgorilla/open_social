@@ -201,41 +201,31 @@ class ActivityFactory extends ControllerBase {
    * Get field value for 'output_text' field from data array.
    */
   protected function getFieldOutputText(Message $message, $arguments = []) {
-    $value = NULL;
-    if (isset($message)) {
+    $value = $this->getMessageText($message);
 
-      $value = $this->getMessageText($message);
-
-      // Text for aggregated activities.
-      if (!empty($value[1]) && !empty($arguments)) {
-        $text = str_replace('@count', $arguments['@count'], $value[1]);
-      }
-      // Text for default activities.
-      else {
-        $text = $value[0];
-      }
-
-      // Add format.
-      $value = [
-        '0' => [
-          'value' => $text,
-          'format' => 'basic_html',
-        ],
-      ];
+    // Text for aggregated activities.
+    if (!empty($value[1]) && !empty($arguments)) {
+      $text = str_replace('@count', $arguments['@count'], $value[1]);
+    }
+    // Text for default activities.
+    else {
+      $text = $value[0];
     }
 
-    return $value;
+    // Add format.
+    return [
+      '0' => [
+        'value' => $text,
+        'format' => 'basic_html',
+      ],
+    ];
   }
 
   /**
    * Get field value for 'created' field from data array.
    */
   protected function getCreated(Message $message) {
-    $value = NULL;
-    if (isset($message)) {
-      $value = $message->getCreatedTime();
-    }
-    return $value;
+    return $message->getCreatedTime();
   }
 
   /**

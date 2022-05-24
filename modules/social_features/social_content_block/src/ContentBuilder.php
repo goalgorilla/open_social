@@ -580,6 +580,7 @@ class ContentBuilder implements ContentBuilderInterface {
         $query->condition($conditions);
       }
 
+      /** @var array<array|string> $option */
       $option = $options[$sort_by];
 
       if (

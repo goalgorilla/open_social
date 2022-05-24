@@ -174,10 +174,9 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    * {@inheritdoc}
    */
   public function access(AccountInterface $account, $return_as_object = FALSE) {
-    $is_group_page = isset($this->group);
     if ($this->group instanceof Group) {
       $is_group_manager = $this->group->hasPermission('administer members', $account);
-      return AccessResult::allowedIf($is_group_page && $is_group_manager);
+      return AccessResult::allowedIf($is_group_manager);
     }
 
     return AccessResult::forbidden();

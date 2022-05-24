@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,13 +70,10 @@ class CancelEnrollInviteController extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment) {
-    // Just some sanity checks.
-    if ($node instanceof Node && !empty($event_enrollment)) {
-      // When the event owner/organizer cancelled the invite, simply remove the
-      // whole event enrollment.
-      $this->messenger()->addStatus(t('The invite has been removed.'));
-      $event_enrollment->delete();
-    }
+    // When the event owner/organizer cancelled the invite, simply remove the
+    // whole event enrollment.
+    $this->messenger()->addStatus(t('The invite has been removed.'));
+    $event_enrollment->delete();
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');

@@ -140,13 +140,11 @@ class OwnerActivityContext extends ActivityContextBase {
     }
 
     if ($entity instanceof EntityOwnerInterface) {
-      /** @var \Drupal\Core\Session\AccountInterface $account */
       $account = $entity->getOwner();
-      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
+      if ($group instanceof GroupInterface) {
         // Skip the notification for users which have muted the group
         // notification in which this content was posted.
         if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
@@ -172,7 +170,7 @@ class OwnerActivityContext extends ActivityContextBase {
         return $recipients;
       }
 
-      if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {
+      if ($original_related_entity->getAccount() !== NULL) {
         $recipients[] = [
           'target_type' => 'user',
           'target_id' => $original_related_entity->getAccount(),

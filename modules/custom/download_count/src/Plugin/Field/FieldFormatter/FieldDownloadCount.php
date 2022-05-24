@@ -163,47 +163,43 @@ class FieldDownloadCount extends GenericFileFormatter {
       $mime_type = $file->getMimeType();
       $generic_mime_type = file_icon_class($mime_type);
 
-      if (isset($generic_mime_type)) {
+      // Set new icons for the mime types.
+      switch ($generic_mime_type) {
 
-        // Set new icons for the mime types.
-        switch ($generic_mime_type) {
+        case 'application-pdf':
+          $node_icon = 'pdf';
+          break;
 
-          case 'application-pdf':
-            $node_icon = 'pdf';
-            break;
+        case 'x-office-document':
+          $node_icon = 'document';
+          break;
 
-          case 'x-office-document':
-            $node_icon = 'document';
-            break;
+        case 'x-office-presentation':
+          $node_icon = 'presentation';
+          break;
 
-          case 'x-office-presentation':
-            $node_icon = 'presentation';
-            break;
+        case 'x-office-spreadsheet':
+          $node_icon = 'spreadsheet';
+          break;
 
-          case 'x-office-spreadsheet':
-            $node_icon = 'spreadsheet';
-            break;
+        case 'package-x-generic':
+          $node_icon = 'archive';
+          break;
 
-          case 'package-x-generic':
-            $node_icon = 'archive';
-            break;
+        case 'audio':
+          $node_icon = 'audio';
+          break;
 
-          case 'audio':
-            $node_icon = 'audio';
-            break;
+        case 'video':
+          $node_icon = 'video';
+          break;
 
-          case 'video':
-            $node_icon = 'video';
-            break;
+        case 'image':
+          $node_icon = 'image';
+          break;
 
-          case 'image':
-            $node_icon = 'image';
-            break;
-
-          default:
-            $node_icon = 'text';
-        }
-
+        default:
+          $node_icon = 'text';
       }
 
       $element[$delta] = [

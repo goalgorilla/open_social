@@ -108,7 +108,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     $url = Url::fromRoute($route, ['group' => $group->id()]);
 
     // If it's not set, set to canonical, or the current user has no access.
-    if (!isset($route) || ($route === $routeMatch) || $url->access($this->currentUser) === FALSE) {
+    if ($route === $routeMatch || $url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
     }

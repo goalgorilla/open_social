@@ -92,7 +92,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
         try {
-          /** @var \Drupal\social_post\Entity\PostInterface $post */
           $post = $this->entityTypeManager->getStorage('post')
             ->load($referenced_entity['target_id']);
         }
@@ -111,7 +110,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
         $group_content = $this->entityTypeManager->getStorage('group_content')
           ->load($referenced_entity['target_id']);
 

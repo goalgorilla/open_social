@@ -36,7 +36,7 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
       $field_settings_helper = \Drupal::service('ajax_comments.field_settings_helper');
       $field_config = $build[$field_name]['#items']->getFieldDefinition();
       $field_formatter = $field_settings_helper->getFieldFormatter($context['display'], $field['#field_name'], $field_config, $context['display']->getMode());
-      if (!empty($field_formatter) && $field_settings_helper->isEnabled($field_formatter)) {
+      if ($field_settings_helper->isEnabled($field_formatter)) {
         // Check if this ID is being generated in response to an Ajax request.
         if (Utility::isAjaxRequest(\Drupal::request())) {
           // Note that setting ajax as TRUE on Html here also fixes issue

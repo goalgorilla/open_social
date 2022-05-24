@@ -37,7 +37,7 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
       if ($tag_service->allowSplit()) {
         /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
         $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
-        if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
+        if ($vocabulary->id() === 'social_tagging') {
           return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
         }
       }

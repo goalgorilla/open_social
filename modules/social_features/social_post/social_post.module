@@ -282,10 +282,10 @@ function social_post_preprocess_field(array &$variables) {
 function social_post_comment_create_access(AccountInterface $account, array $context, $entity_bundle) {
   if ($entity_bundle === 'post_comment') {
     $group = \Drupal::routeMatch()->getParameter('group');
-    if (is_numeric($group) && !$group instanceof GroupInterface) {
+    if (is_numeric($group)) {
       $group = Group::load($group);
     }
-    if ($group) {
+    if ($group instanceof GroupInterface) {
       if ($group->hasPermission('add post entities in group', $account)) {
         return AccessResult::allowed()->cachePerUser();
       }

@@ -31,42 +31,12 @@ parameters:
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/CommunityActivityContext.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\group\\\\Entity\\\\GroupContentInterface and null will always evaluate to false\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/ContentInMyGroupActivityContext.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\social_post\\\\Entity\\\\PostInterface and null will always evaluate to false\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/ContentInMyGroupActivityContext.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OrganizerActivityContext.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getOwnerId\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
-
-		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
-
-		-
-			message: "#^Variable \\$original_related_entity in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php
 
@@ -122,16 +92,6 @@ parameters:
 
 		-
 			message: "#^Function template_preprocess_activity\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
-			message: "#^Variable \\$status_class in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity.page.inc
 
@@ -247,11 +207,6 @@ parameters:
 
 		-
 			message: "#^Function activity_creator_views_data\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity_creator.module
-
-		-
-			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity_creator.module
 
@@ -506,11 +461,6 @@ parameters:
 			path: modules/custom/activity_creator/src/ActivityFactory.php
 
 		-
-			message: "#^Variable \\$message in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 2
-			path: modules/custom/activity_creator/src/ActivityFactory.php
-
-		-
 			message: "#^Method Drupal\\\\activity_creator\\\\ActivityHtmlRouteProvider\\:\\:getAddFormRoute\\(\\) should return Symfony\\\\Component\\\\Routing\\\\Route\\|null but return statement is missing\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityHtmlRouteProvider.php
@@ -537,11 +487,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/ActivityNotifications.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/ActivityNotifications.php
 
@@ -632,21 +577,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\activity_creator\\\\Entity\\\\Activity\\:\\:preCreate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/Entity/Activity.php
-
-		-
-			message: "#^Variable \\$field_activity_destinations in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/Entity/Activity.php
-
-		-
-			message: "#^Variable \\$field_activity_recipient_group in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/Entity/Activity.php
-
-		-
-			message: "#^Variable \\$field_activity_recipient_user in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Entity/Activity.php
 
@@ -814,11 +744,6 @@ parameters:
 			message: "#^Method Drupal\\\\activity_creator\\\\Plugin\\\\ActivityEntityConditionInterface\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/src/Plugin/ActivityEntityConditionInterface.php
-
-		-
-			message: "#^Variable \\$entity in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/src/Plugin/ActivityEntityConditionManager.php
 
 		-
 			message: "#^Method Drupal\\\\activity_creator\\\\Plugin\\\\QueueWorker\\\\ActivityWorkerActivities\\:\\:processItem\\(\\) has no return type specified\\.$#"
@@ -1216,11 +1141,6 @@ parameters:
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivityDestination/EmailActivityDestination.php
 
 		-
-			message: "#^Variable \\$message in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivityDestination/EmailActivityDestination.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivitySend/EmailActivitySend.php
@@ -1317,16 +1237,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\activity_send_email\\\\Plugin\\\\QueueWorker\\\\ActivitySendEmailWorker\\:\\:sendToFrequencyManager\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
-
-		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
 
@@ -1631,11 +1541,6 @@ parameters:
 			path: modules/custom/download_count/download_count.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/custom/download_count/download_count.module
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/custom/download_count/download_count.module
@@ -1682,11 +1587,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$items of method Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldFormatter\\\\EntityReferenceFormatterBase\\:\\:getEntitiesToView\\(\\) expects Drupal\\\\Core\\\\Field\\\\EntityReferenceFieldItemListInterface, Drupal\\\\Core\\\\Field\\\\FieldItemListInterface given\\.$#"
-			count: 1
-			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
-
-		-
-			message: "#^Variable \\$generic_mime_type in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php
 
@@ -2561,11 +2461,6 @@ parameters:
 			path: modules/custom/improved_theme_settings/improved_theme_settings.module
 
 		-
-			message: "#^Variable \\$style_to_add in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/improved_theme_settings/improved_theme_settings.module
-
-		-
 			message: "#^Function _mentions_set_default_config\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/mentions/mentions.install
@@ -2731,11 +2626,6 @@ parameters:
 			path: modules/custom/mentions/src/EventSubscriber/MentionsDelete.php
 
 		-
-			message: "#^Variable \\$action_plugin in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/EventSubscriber/MentionsDelete.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Executable\\\\ExecutableInterface\\:\\:execute\\(\\) invoked with 1 parameter, 0 required\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/EventSubscriber/MentionsInsert.php
@@ -2751,11 +2641,6 @@ parameters:
 			path: modules/custom/mentions/src/EventSubscriber/MentionsInsert.php
 
 		-
-			message: "#^Variable \\$action_plugin in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/EventSubscriber/MentionsInsert.php
-
-		-
 			message: "#^Method Drupal\\\\Core\\\\Executable\\\\ExecutableInterface\\:\\:execute\\(\\) invoked with 1 parameter, 0 required\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/EventSubscriber/MentionsUpdate.php
@@ -2767,11 +2652,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\mentions\\\\EventSubscriber\\\\MentionsUpdate\\:\\:onMentionsUpdate\\(\\) has parameter \\$event with no type specified\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/EventSubscriber/MentionsUpdate.php
-
-		-
-			message: "#^Variable \\$action_plugin in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/EventSubscriber/MentionsUpdate.php
 
@@ -2827,11 +2707,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of function get_class expects object, Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\|null given\\.$#"
-			count: 1
-			path: modules/custom/mentions/src/Form/MentionsTypeForm.php
-
-		-
-			message: "#^Variable \\$entity in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/custom/mentions/src/Form/MentionsTypeForm.php
 
@@ -3086,11 +2961,6 @@ parameters:
 			path: modules/custom/social_ajax_comments/social_ajax_comments.module
 
 		-
-			message: "#^Variable \\$field_formatter in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/custom/social_ajax_comments/social_ajax_comments.module
-
-		-
 			message: "#^Cannot call method id\\(\\) on Drupal\\\\comment\\\\CommentInterface\\|null\\.$#"
 			count: 1
 			path: modules/custom/social_ajax_comments/src/Controller/AjaxCommentsController.php
@@ -3107,11 +2977,6 @@ parameters:
 
 		-
 			message: "#^Function social_file_private_requirements\\(\\) has parameter \\$phase with no type specified\\.$#"
-			count: 1
-			path: modules/custom/social_file_private/social_file_private.install
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/social_file_private/social_file_private.install
 
@@ -3696,22 +3561,7 @@ parameters:
 			path: modules/custom/social_magic_login/social_magic_login.module
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/social_magic_login.module
-
-		-
 			message: "#^Method Drupal\\\\social_magic_login\\\\Controller\\\\MagicLoginController\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\user\\\\UserInterface and null will always evaluate to false\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
 
@@ -3719,16 +3569,6 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/custom/social_magic_login/src/Controller/MagicLoginController.php
-
-		-
-			message: "#^Variable \\$account in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/src/Service/MagicUrl.php
-
-		-
-			message: "#^Variable \\$destination in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/custom/social_magic_login/src/Service/MagicUrl.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
@@ -4283,11 +4123,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$data of method Drupal\\\\Core\\\\Config\\\\CachedStorage\\:\\:write\\(\\) expects array, array\\|bool given\\.$#"
 			count: 1
-			path: modules/social_features/social_activity/social_activity.install
-
-		-
-			message: "#^Variable \\$config in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 2
 			path: modules/social_features/social_activity/social_activity.install
 
 		-
@@ -5206,17 +5041,7 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.module
-
-		-
 			message: "#^Parameter \\#1 \\$comments of method Drupal\\\\comment\\\\CommentStorage\\:\\:getChildCids\\(\\) expects array\\<Drupal\\\\comment\\\\CommentInterface\\>, array\\<int\\|string, Drupal\\\\social_comment\\\\Entity\\\\Comment\\|null\\> given\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.module
-
-		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_comment/social_comment.module
 
@@ -5306,23 +5131,8 @@ parameters:
 			path: modules/social_features/social_comment/social_comment.tokens.inc
 
 		-
-			message: "#^Variable \\$entity in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_comment/social_comment.tokens.inc
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: modules/social_features/social_comment/src/Controller/SocialCommentController.php
-
-		-
 			message: "#^Parameter \\#3 \\$entity of method Drupal\\\\social_comment\\\\Controller\\\\SocialCommentController\\:\\:redirectToOriginalEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityBase\\|null, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
 			count: 1
-			path: modules/social_features/social_comment/src/Controller/SocialCommentController.php
-
-		-
-			message: "#^Variable \\$url in PHPDoc tag @var does not exist\\.$#"
-			count: 2
 			path: modules/social_features/social_comment/src/Controller/SocialCommentController.php
 
 		-
@@ -5786,17 +5596,7 @@ parameters:
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
 
 		-
-			message: "#^Call to function is_array\\(\\) with mixed will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/ContentBuilder.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_content_block/src/ContentBuilder.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_content_block/src/ContentBuilder.php
 
@@ -6057,11 +5857,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method id\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.install
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.install
 
@@ -6456,16 +6251,6 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
-			message: "#^Call to function is_numeric\\(\\) with Drupal\\\\group\\\\Entity\\\\Group will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
-			message: "#^Call to function is_numeric\\(\\) with Drupal\\\\user\\\\Entity\\\\User will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
 			message: "#^Cannot access offset 'host' on array\\{scheme\\?\\: string, host\\?\\: string, port\\?\\: int, user\\?\\: string, pass\\?\\: string, path\\?\\: string, query\\?\\: string, fragment\\?\\: string\\}\\|false\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.module
@@ -6856,17 +6641,7 @@ parameters:
 			path: modules/social_features/social_core/src/Entity/EntityAutocompleteMatcher.php
 
 		-
-			message: "#^Variable \\$string in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Entity/EntityAutocompleteMatcher.php
-
-		-
 			message: "#^Cannot call method getReferenceableEntities\\(\\) on object\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Entity/Select2EntityAutocompleteMatcher.php
-
-		-
-			message: "#^Variable \\$string in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Entity/Select2EntityAutocompleteMatcher.php
 
@@ -6882,11 +6657,6 @@ parameters:
 
 		-
 			message: "#^Property Drupal\\\\social_core\\\\EventSubscriber\\\\SocialInviteSubscriber\\:\\:\\$siteSettings \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ImmutableConfig\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/EventSubscriber/SocialInviteSubscriber.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/EventSubscriber/SocialInviteSubscriber.php
 
@@ -6932,11 +6702,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\social_tagging\\\\SocialTaggingService\\:\\:getCurrentRequest\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php
-
-		-
-			message: "#^Call to function is_object\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php
 
@@ -7027,11 +6792,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$items of method Drupal\\\\image\\\\Plugin\\\\Field\\\\FieldFormatter\\\\ImageFormatterBase\\:\\:getEntitiesToView\\(\\) expects Drupal\\\\Core\\\\Field\\\\EntityReferenceFieldItemListInterface, Drupal\\\\Core\\\\Field\\\\FieldItemListInterface given\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/FileAndImageTableFormatter.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\Core\\\\Image\\\\ImageInterface and null will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/FileAndImageTableFormatter.php
 
@@ -7400,27 +7160,12 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc
 
 		-
-			message: "#^Call to function is_null\\(\\) with Drupal\\\\node\\\\Entity\\\\Node will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_an_enroll\\\\Controller\\\\EventAnEnrollController\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php
 
 		-
 			message: "#^Method Drupal\\\\social_event_an_enroll\\\\Controller\\\\EventAnEnrollController\\:\\:enrollDialog\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php
 
@@ -7447,21 +7192,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 3
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
-
-		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
-
-		-
-			message: "#^Variable \\$node in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
 
 		-
@@ -7790,22 +7520,12 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc
-
-		-
 			message: "#^Cannot access property \\$query on Symfony\\\\Component\\\\HttpFoundation\\\\Request\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php
 
 		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Controller\\\\CancelEnrollInviteController\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php
-
-		-
-			message: "#^Variable \\$event_enrollment in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php
 
@@ -7822,11 +7542,6 @@ parameters:
 		-
 			message: "#^Property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value \\(string\\) does not accept int\\.$#"
 			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php
-
-		-
-			message: "#^Variable \\$event_enrollment in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php
 
 		-
@@ -7865,32 +7580,7 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php
 
 		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_enrollment_status\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
-			count: 2
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
-			message: "#^Cannot access property \\$field_enroll_method on Drupal\\\\node\\\\Entity\\\\Node\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
-			message: "#^Elseif condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EventInviteEnrollActionForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:\\:isEnabled\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\node\\\\Entity\\\\Node\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
 
@@ -7908,11 +7598,6 @@ parameters:
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EventInviteSettingsForm\\:\\:validateForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php
-
-		-
-			message: "#^Variable \\$event_enrollment in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_invite/src/Plugin/ActivityContext/EventInviteActivityContext.php
 
 		-
 			message: "#^Parameter \\#1 \\$user of method Drupal\\\\social_event\\\\EventEnrollmentStatusHelper\\:\\:getAllUserEventEnrollments\\(\\) expects string, null given\\.$#"
@@ -8086,11 +7771,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method getAccount\\(\\) on Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
-
-		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
 
@@ -8496,11 +8176,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event_managers\\\\Plugin\\\\views\\\\field\\\\SocialEventManagersViewsBulkOperationsBulkForm\\:\\:viewsFormValidate\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php
 
@@ -9385,21 +9060,6 @@ parameters:
 			path: modules/social_features/social_event/social_event.module
 
 		-
-			message: "#^Variable \\$end_date might not be defined\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.module
-
-		-
-			message: "#^Variable \\$end_datetime in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_event/social_event.module
-
-		-
-			message: "#^Variable \\$end_time might not be defined\\.$#"
-			count: 2
-			path: modules/social_features/social_event/social_event.module
-
-		-
 			message: "#^Variable \\$group_id might not be defined\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.module
@@ -9487,21 +9147,6 @@ parameters:
 		-
 			message: "#^Property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value \\(string\\) does not accept int\\.$#"
 			count: 2
-			path: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int and '0' will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int and '1' will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php
-
-		-
-			message: "#^Variable \\$event_enrollment in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
 			path: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php
 
 		-
@@ -10015,27 +9660,12 @@ parameters:
 			path: modules/social_features/social_follow_content/social_follow_content.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_content/social_follow_content.module
-
-		-
 			message: "#^Cannot call method access\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
 
 		-
 			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
-
-		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php
 
@@ -10145,11 +9775,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
 		-
-			message: "#^Call to function is_null\\(\\) with Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
 			message: "#^Function social_follow_tag_entity_update\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
@@ -10225,11 +9850,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
-
-		-
 			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagLazyBuilder\\:\\:lazyBuild\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
@@ -10248,16 +9868,6 @@ parameters:
 			message: "#^Function social_follow_taxonomy_update_8801\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.install
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface\\:\\:\\$original\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
-
-		-
-			message: "#^Call to function is_null\\(\\) with Drupal\\\\node\\\\NodeInterface will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
 			message: "#^Function _social_follow_taxonomy_invalidate_follow_tag_cache\\(\\) has no return type specified\\.$#"
@@ -10460,11 +10070,6 @@ parameters:
 			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
 
 		-
-			message: "#^Variable \\$block in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 2
-			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
-
-		-
 			message: "#^Method Drupal\\\\social_footer\\\\Plugin\\\\Block\\\\SocialFooterPoweredByBlock\\:\\:blockSubmit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_footer/src/Plugin/Block/SocialFooterPoweredByBlock.php
@@ -10510,22 +10115,12 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module
 
 		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 2
-			path: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module
-
-		-
 			message: "#^Method Drupal\\\\social_group_default_route\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:groupLandingPage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
 
 		-
 			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\Group\\:\\:getMember\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
-
-		-
-			message: "#^Variable \\$route in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php
 
@@ -10945,11 +10540,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addRelationship\\(\\)\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
@@ -11280,11 +10870,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
 		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
-
-		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\EventSubscriber\\\\EventSubscribers\\:\\:checkForInvite\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/EventSubscriber/EventSubscribers.php
@@ -11375,17 +10960,7 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php
-
-		-
 			message: "#^Property Drupal\\\\social_group_invite\\\\Plugin\\\\Block\\\\SocialGroupInviteNotificationBlock\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Plugin\\\\Block\\\\SocialGroupInviteNotificationBlock\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php
 
@@ -11625,11 +11200,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.module
-
-		-
 			message: "#^Function social_group_request_token_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
@@ -11651,11 +11221,6 @@ parameters:
 
 		-
 			message: "#^Function social_group_request_tokens_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
-
-		-
-			message: "#^Variable \\$group_content in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc
 
@@ -11790,17 +11355,7 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php
-
-		-
 			message: "#^Property Drupal\\\\social_group_request\\\\Plugin\\\\Block\\\\SocialGroupRequestMembershipNotification\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_request\\\\Plugin\\\\Block\\\\SocialGroupRequestMembershipNotification\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php
 
@@ -12355,11 +11910,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Expression in empty\\(\\) is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -12835,11 +12385,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
 			count: 2
 			path: modules/social_features/social_group/social_group.module
@@ -12890,27 +12435,7 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\group\\\\Entity\\\\GroupTypeInterface and 'closed_group' will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between Drupal\\\\group\\\\Entity\\\\GroupType\\|null and false will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Trying to invoke non\\-empty\\-string but it might not be a callable\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Variable \\$current_group in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -12925,17 +12450,7 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Variable \\$user in PHPDoc tag @var does not match assigned variable \\$account\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Variable \\$user_entity in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -12967,11 +12482,6 @@ parameters:
 		-
 			message: "#^Variable \\$content_url might not be defined\\.$#"
 			count: 2
-			path: modules/social_features/social_group/social_group.tokens.inc
-
-		-
-			message: "#^Variable \\$group_content_type in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
 			path: modules/social_features/social_group/social_group.tokens.inc
 
 		-
@@ -13480,17 +12990,7 @@ parameters:
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
 		-
-			message: "#^PHPDoc tag @var has invalid value \\(@param \\\\Drupal\\\\group\\\\Entity\\\\GroupContent \\$group_content\\)\\: Unexpected token \"@param\", expected type at offset 9$#"
-			count: 1
-			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
-
-		-
 			message: "#^Trying to invoke non\\-empty\\-string but it might not be a callable\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
-
-		-
-			message: "#^Variable \\$group_contents in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
@@ -13990,16 +13490,6 @@ parameters:
 			path: modules/social_features/social_like/src/Plugin/ActivityContext/VoteActivityContext.php
 
 		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_like/src/Plugin/ActivityContext/VoteActivityContext.php
-
-		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_like/src/Plugin/ActivityContext/VoteActivityContext.php
-
-		-
 			message: "#^Method Drupal\\\\social_like\\\\SocialLikeConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_like/src/SocialLikeConfigOverride.php
@@ -14170,16 +13660,6 @@ parameters:
 			path: modules/social_features/social_mentions/social_mentions.module
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/social_mentions.module
-
-		-
-			message: "#^Variable \\$profile in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/social_mentions.module
-
-		-
 			message: "#^Cannot call method getDisplayName\\(\\) on Drupal\\\\user\\\\Entity\\\\User\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.tokens.inc
@@ -14240,11 +13720,6 @@ parameters:
 			path: modules/social_features/social_mentions/src/Controller/AutocompleteController.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/src/Controller/AutocompleteController.php
-
-		-
 			message: "#^Method Drupal\\\\social_mentions\\\\Controller\\\\AutocompleteController\\:\\:create\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/src/Controller/AutocompleteController.php
@@ -14281,16 +13756,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_mentions\\\\Plugin\\\\ActivityContext\\\\MentionActivityContext\\:\\:getMentionsFromRelatedEntity\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
-
-		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/src/Plugin/ActivityContext/MentionActivityContext.php
 
@@ -14790,16 +14255,6 @@ parameters:
 			path: modules/social_features/social_post/post.page.inc
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_post/post.page.inc
-
-		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_post/post.page.inc
-
-		-
 			message: "#^Function _social_post_mass_update_batch_finished\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.admin.inc
@@ -14975,11 +14430,6 @@ parameters:
 			path: modules/social_features/social_post/social_post.module
 
 		-
-			message: "#^Instanceof between float\\|int\\|string and Drupal\\\\group\\\\Entity\\\\GroupInterface will always evaluate to false\\.$#"
-			count: 1
-			path: modules/social_features/social_post/social_post.module
-
-		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.post_update.php
@@ -14998,16 +14448,6 @@ parameters:
 			message: "#^Function social_post_views_data\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.views.inc
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Controller/PostCommentController.php
-
-		-
-			message: "#^Variable \\$url in PHPDoc tag @var does not exist\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Controller/PostCommentController.php
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
@@ -15126,16 +14566,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#3 \\$time of method Drupal\\\\Core\\\\Entity\\\\ContentEntityForm\\:\\:__construct\\(\\) expects Drupal\\\\Component\\\\Datetime\\\\TimeInterface, Drupal\\\\Component\\\\Datetime\\\\TimeInterface\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Form/PostForm.php
-
-		-
-			message: "#^Variable \\$display in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Form/PostForm.php
-
-		-
-			message: "#^Variable \\$display in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Form/PostForm.php
 
@@ -15480,11 +14910,6 @@ parameters:
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/PostAccessControlHandler.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 3
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
@@ -15601,11 +15026,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_post/src/Service/SocialPostHelper.php
-
-		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Service/SocialPostHelper.php
 
@@ -15900,11 +15320,6 @@ parameters:
 			path: modules/social_features/social_private_message/social_private_message.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: modules/social_features/social_private_message/social_private_message.module
-
-		-
 			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_private_message\\\\Service\\\\SocialPrivateMessageService\\:\\:deleteUserDataThreadInfo\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityBase, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
@@ -15916,11 +15331,6 @@ parameters:
 
 		-
 			message: "#^Variable \\$member might not be defined\\.$#"
-			count: 1
-			path: modules/social_features/social_private_message/social_private_message.module
-
-		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/social_private_message.module
 
@@ -16385,11 +15795,6 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.module
 
 		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.module
-
-		-
 			message: "#^Method Drupal\\\\social_profile_organization_tag\\\\SocialProfileOrgTagConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php
@@ -16440,18 +15845,8 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.install
 
 		-
-			message: "#^If condition is always false\\.$#"
-			count: 3
-			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.install
-
-		-
 			message: "#^Parameter \\#1 \\$role of function _social_profile_privacy_get_permissions expects string, int\\|string\\|null given\\.$#"
 			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.install
-
-		-
-			message: "#^Ternary operator condition is always false\\.$#"
-			count: 2
 			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.install
 
 		-
@@ -16551,11 +15946,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$uid of method Drupal\\\\user\\\\UserDataInterface\\:\\:get\\(\\) expects int\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module
-
-		-
-			message: "#^Variable \\$profile_storage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module
 
@@ -17095,11 +16485,6 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 2
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
 			message: "#^Parameter \\#1 \\$account of function _social_profile_get_contact_url expects Drupal\\\\user\\\\Entity\\\\User, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
@@ -17126,11 +16511,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$uid of method Drupal\\\\user\\\\UserData\\:\\:set\\(\\) expects int, int\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
-			message: "#^Variable \\$storage in empty\\(\\) always exists and is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
 
@@ -17685,11 +17065,6 @@ parameters:
 			path: modules/social_features/social_swiftmail/social_swiftmail.module
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: modules/social_features/social_swiftmail/social_swiftmail.module
-
-		-
 			message: "#^Variable \\$colors might not be defined\\.$#"
 			count: 4
 			path: modules/social_features/social_swiftmail/social_swiftmail.module
@@ -17872,11 +17247,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Delete\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 2
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
@@ -18605,11 +17975,6 @@ parameters:
 			path: modules/social_features/social_user/social_user.module
 
 		-
-			message: "#^Variable \\$view in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_user/social_user.module
-
-		-
 			message: "#^Binary operation \"/\" between int and array\\<int, int\\<0, max\\>\\|string\\>\\|int\\<0, max\\>\\|string results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.post_update.php
@@ -18665,17 +18030,7 @@ parameters:
 			path: modules/social_features/social_user/src/Controller/SocialUserController.php
 
 		-
-			message: "#^Variable \\$user in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/Controller/SocialUserController.php
-
-		-
 			message: "#^Method Drupal\\\\social_user\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:profileLandingPage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_user/src/EventSubscriber/RedirectSubscriber.php
-
-		-
-			message: "#^Variable \\$route in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/EventSubscriber/RedirectSubscriber.php
 
@@ -19031,11 +18386,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|true given\\.$#"
-			count: 1
-			path: modules/social_features/social_user_export/social_user_export.module
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int and string will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_user_export/social_user_export.module
 
