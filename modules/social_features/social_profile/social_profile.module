@@ -656,7 +656,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     }
 
     // Add Submit function only when the data is actually editable.
-    if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
+    if (empty($global_values['social_profile_show_email']) || empty($global_values['social_profile_show_language'])) {
       $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
   }
