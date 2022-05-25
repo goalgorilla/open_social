@@ -389,6 +389,8 @@ class EnrollActionForm extends FormBase {
     }
 
     $to_enroll_status = $form_state->getValue('to_enroll_status');
+
+    /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
     $enrollments = $this->enrollmentStorage->loadByProperties([
       'field_account' => $current_user->id(),
       'field_event' => $nid,

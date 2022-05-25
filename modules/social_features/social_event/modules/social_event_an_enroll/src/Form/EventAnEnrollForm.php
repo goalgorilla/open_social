@@ -177,6 +177,7 @@ class EventAnEnrollForm extends EnrollActionForm {
     $node = $this->entityTypeManager->getStorage('node')->load($nid);
 
     // Check if there is enrollment with the same email.
+    /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
     $enrollments = $this->enrollmentStorage->loadByProperties([
       'field_event' => $nid,
       'field_email' => $form_state->getValue('field_email'),
