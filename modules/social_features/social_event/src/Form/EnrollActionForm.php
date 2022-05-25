@@ -190,6 +190,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           // be joined by outsiders, which makes sense, since they also
           // couldn't see these events in the first place.
           if (in_array($group_type_id, $group_type_ids) && $group->hasPermission('join group', $current_user)) {
+            $enroll_to_events_in_groups = TRUE;
             break;
           }
 
