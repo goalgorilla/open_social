@@ -2153,30 +2153,66 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if (empty($view->rowPlugin) || !($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() != 'group') {
+  if (\Drupal::currentUser()->isAuthenticated()) {
     return;
   }
-  $account = \Drupal::currentUser()->getAccount();
-  if ($account->isAuthenticated()) {
-    // Get all groups for LU.
-    /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $group_helper */
-    $group_helper = \Drupal::service('social_group.helper_service');
-    $my_groups = $group_helper->getAllGroupsForUser($account->id());
-    if (!empty($my_groups)) {
-      // Get all hidden groups.
-      $hidden_groups = \Drupal::entityTypeManager()
-        ->getStorage('group')
-        ->loadByProperties([
-          'type' => 'closed_group',
-        ]);
 
-      // Get all hidden groups that the current user is not a member of
-      // and remove them from showing in the view.
-      $ids = array_diff(array_keys($hidden_groups), $my_groups);
-      if ($ids) {
-        /** @var \Drupal\views\Plugin\views\query\Sql $query */
-        $query->addWhere('group_membership', 'groups_field_data.id', $ids, 'NOT IN');
+  if (
+    empty($view->rowPlugin) ||
+    !($view->rowPlugin instanceof EntityRow) ||
+    $view->rowPlugin->getEntityTypeId() !== 'group'
+  ) {
+    return;
+  }
+
+  $found = FALSE;
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $where = $query->where;
+  foreach ($where as &$conditions) {
+    foreach ($conditions['conditions'] as &$condition) {
+      if ($condition['field'] === 'groups_field_data.type') {
+        $found = TRUE;
+        break 2;
       }
+    }
+  }
+
+  if (!$found) {
+    unset($condition);
+
+    $condition = [
+      'field' => 'groups_field_data.type',
+      'operator' => 'not in',
+    ];
+  }
+
+  $hiddens = isset($condition) && $condition['operator'] === 'not in';
+
+  // Define the variable as array otherwise it can be interpreted as string
+  // And breaking the code below.
+  $condition['value'] = [];
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  foreach (GroupType::loadMultiple() as $group_type) {
+    $new = !in_array($group_type->id(), $condition['value']);
+    $permissions = $group_type->getAnonymousRole()->getPermissions();
+    $hidden = !in_array('view group', $permissions);
+
+    if ($new && $hiddens === $hidden) {
+      $condition['value'][] = $group_type->id();
+    }
+  }
+
+  if (!$found) {
+    if (isset($conditions)) {
+      $conditions['conditions'][] = $condition;
+    }
+    else {
+      $query->where[] = [
+        'conditions' => [$condition],
+        'type' => 'AND',
+      ];
     }
   }
 }
