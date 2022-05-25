@@ -138,6 +138,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
+
+                case 'user_was_enrolled_to_event':
+                  $link = $event->toUrl();
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details'));
+                  $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
+                    ->renderPlain($cta_button);
+                  break;
+
               }
             }
           }
@@ -146,9 +154,10 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
             $event = _social_event_get_event_from_enrollment($event_enrollment_id);
             if ($event !== NULL) {
               /** @var \Drupal\node\Entity\Node $event */
-              $preview_info = $email_token_services->getContentPreview($event);
+              $view_builder = \Drupal::entityTypeManager()->getViewBuilder('node');
+              $preview_info = $view_builder->view($event, 'email_card');
               $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
-                ->renderPlain($preview_info);
+                ->renderRoot($preview_info);
             }
           }
         }

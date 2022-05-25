@@ -9710,11 +9710,6 @@ parameters:
 			path: modules/social_features/social_event/src/Entity/EventEnrollment.php
 
 		-
-			message: "#^Method Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\:\\:getAccount\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_event/src/Entity/EventEnrollment.php
-
-		-
 			message: "#^Method Drupal\\\\social_event\\\\Entity\\\\EventEnrollment\\:\\:getCreatedTime\\(\\) should return int but returns string\\.$#"
 			count: 1
 			path: modules/social_features/social_event/src/Entity/EventEnrollment.php
@@ -19548,4 +19543,10 @@ parameters:
 			message: "#^Parameter \\#2 \\$multiplier of function str_repeat expects int, Drupal\\\\Core\\\\Field\\\\FieldItemListInterface given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php
+
+		-
+			message: "#^Method Drupal\\\\social_event\\\\Plugin\\\\ActivityEntityCondition\\\\EventEnrollmentStandaloneEnrollActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Plugin/ActivityEntityCondition/EventEnrollmentStandaloneEnrollActivityEntityCondition.php
+
 
