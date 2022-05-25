@@ -53,7 +53,34 @@ function social_event_theme(): array {
       ],
       'file' => 'social_event.theme.inc',
     ],
+    'event_enrollment_confirmation' => [
+      'base hook' => 'node',
+    ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_preprocess_event_enrollment_confirmation(array &$variables): void {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  $variables['event_date'] = _social_event_format_date($node, 'hero');
+  $options = [
+    'attributes' => [
+      'target' => '_blank',
+      'class' => [
+        'btn',
+        'btn-sm',
+        'btn-primary',
+      ],
+    ],
+  ];
+
+  $who_going_url = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $node->id()], $options);
+  if ($who_going_url->access(\Drupal::currentUser())) {
+    $variables['who_going_link'] = Link::fromTextAndUrl(t('See who else is going'), $who_going_url);
+  }
 }
 
 /**
