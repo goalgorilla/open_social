@@ -106,7 +106,12 @@ class ActivityNotifications extends ControllerBase {
     elseif ($entity instanceof GroupContentInterface) {
       $linked_entity = $entity->getEntity();
       $group = $entity->getGroup();
-      if ($linked_entity->getEntityTypeId() === 'node' && $group->id()) {
+      // Contrary to what PHPStan says `getEntity` can return NULL within Open
+      // Social. This is because we're violating the group module's contract
+      // somewhere else. The maintainer of the group module has indicated the
+      // types are correct.
+      // See https://github.com/goalgorilla/open_social/pull/2948#issuecomment-1137102029
+      if ($linked_entity !== NULL && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
         $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
         $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
         $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
