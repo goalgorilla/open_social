@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_core module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
@@ -1559,4 +1560,14 @@ function social_core_update_11301(): void {
     $config->setData($socialblue_colors);
     $config->save();
   }
+}
+
+/**
+ * Add a new view mode for nodes - Email card.
+ */
+function social_core_update_11401(): void {
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
+  $source = new FileStorage($config_path);
+  $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11401'));
 }
