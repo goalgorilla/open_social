@@ -3,8 +3,6 @@
 
 namespace Drupal\social\Behat;
 
-use Drupal\advancedqueue\Annotation\AdvancedQueueJobType;
-use Drupal\advancedqueue\Commands\AdvancedQueueCommands;
 use Behat\Mink\Element\NodeElement;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\user\Entity\User;
