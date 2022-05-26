@@ -13,6 +13,10 @@
   </div>
   <div class="col-md">
     <h5>{% trans %}Enroll without account{% endtrans %}</h5>
-    <p><a class="btn-lg btn btn-accent" href="{{ links.guest.uri }}" title="{% trans %}Enroll as guest{% endtrans %}">{% trans %}Enroll as guest{% endtrans %}</a></p>
+    <p><a class="btn-lg btn btn-accent use-ajax"
+          href="{{ links.guest.uri }}"
+          data-dialog-options="{&quot;width&quot;:400}"
+          data-dialog-type="modal"
+          title="{% trans %}Enroll as guest{% endtrans %}">{% trans %}Enroll as guest{% endtrans %}</a></p>
   </div>
 </div>

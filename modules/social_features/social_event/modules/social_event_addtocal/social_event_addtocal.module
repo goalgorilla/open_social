@@ -28,6 +28,67 @@ function social_event_addtocal_entity_extra_field_info() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function social_event_addtocal_theme(): array {
+  return [
+    'event_enrollment_confirmation_add_to_cal' => [
+      'base hook' => 'event_enrollment_confirmation',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_event_addtocal_theme_suggestions_node_alter(array &$suggestions, array $variables): void {
+  if ($variables['theme_hook_original'] === 'event_enrollment_confirmation') {
+    $suggestions[] = 'event_enrollment_confirmation_add_to_cal';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_addtocal_preprocess_event_enrollment_confirmation_add_to_cal(array &$variables): void {
+  $addtocal_config = \Drupal::config('social_event_addtocal.settings');
+  $variables['add_to_cal'] = FALSE;
+  if ($addtocal_config->get('enable_add_to_calendar')) {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $variables['node'];
+    $variables['add_to_cal'] = TRUE;
+    // Get calendar links.
+    $items = [];
+    foreach (_social_event_addtocal_get_links($node) as $link) {
+      $items[] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => Link::fromTextAndUrl(
+          t('@calendar calendar', ['@calendar' => $link['title']]),
+          $link['url']
+        )->toString(),
+        '#attributes' => [
+          'class' => [
+            'calendar-link',
+            'calendar-' . Html::getId($link['plugin_id']),
+          ],
+        ],
+      ];
+    }
+    $variables['calendar_items'] = [
+      '#theme' => 'item_list',
+      '#list_type' => 'ul',
+      '#items' => $items,
+      '#attributes' => [
+        'class' => [
+          'addtocal-list',
+        ],
+      ],
+    ];
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_view().
  *
  * Uses for node entity type.
@@ -65,7 +126,7 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
           $url = $link['url'];
           $options = $url->getOptions();
           $options['attributes']['class'][] = 'calendar-link';
-          $options['attributes']['class'][] = 'calendar-' . Html::getId($link['title']);
+          $options['attributes']['class'][] = 'calendar-' . Html::getId($link['plugin_id']);
           $url->setOptions($options);
 
           $link_title = [
@@ -192,6 +253,7 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
           'title' => $calendar->getName(),
           'icon' => $calendar->getIcon(),
           'url' => $calendar->generateUrl($node),
+          'plugin_id' => $calendar->getPluginId(),
         ];
       }
     }

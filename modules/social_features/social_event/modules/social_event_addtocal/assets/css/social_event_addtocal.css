@@ -9,8 +9,6 @@
 .addtocal-list li a {
   font-size: 0.875rem;
   line-height: 21px;
-  padding: 8px 10px;
-  display: block;
   clear: both;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -34,11 +32,45 @@
   margin-bottom: 0;
 }
 .addtocal-list.dropdown-menu li a {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  display: block;
+  padding: 0.5rem 0.625rem;
 }
 .addtocal-list.dropdown-menu li .calendar-link:before {
-  left: 1rem;
+  display: none;
+}
+.addtocal-list .calendar-link {
+  position: relative;
+  padding-left: 42px;
+}
+.addtocal-list .calendar-link:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 18px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.addtocal-list .calendar-link.calendar-outlook:before {
+  height: 18px;
+  background-image: url("../icons/outlook.svg");
+}
+.addtocal-list .calendar-link.calendar-ical:before {
+  height: 22px;
+  background-image: url("../icons/ical.svg");
+}
+.addtocal-list .calendar-link.calendar-google:before {
+  height: 18px;
+  background-image: url("../icons/google.svg");
+}
+.addtocal-list .calendar-link.calendar-office-365:before {
+  height: 24px;
+  background-image: url("../icons/office_365.svg");
+}
+.addtocal-list .calendar-link.calendar-yahoo:before {
+  height: 16px;
+  background-image: url("../icons/yahoo.svg");
 }
 
 .addtocal-title {
