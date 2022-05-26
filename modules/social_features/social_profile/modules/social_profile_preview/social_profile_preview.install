@@ -2,17 +2,73 @@
 
 /**
  * @file
- * Install, update and uninstall functions for social_profile_preview module.
+ * Install, update and uninstall functions for the Profile Preview module.
  */
 
 /**
- * Add followers/following fields to the profile preview.
+ * Implements hook_install().
  */
-function social_profile_preview_update_11201(): void {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
+function social_profile_preview_install(bool $is_syncing): void {
+  // Set module weight higher than the weight of the "Social Profile
+  // Organization Tag" module to be able to check if a processed profile has an
+  // organization tag.
+  module_set_weight('social_profile_preview', 5);
+}
+
+/**
+ * Add followers and following fields.
+ */
+function social_profile_preview_update_11201(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile_preview', 'social_profile_preview_update_11201');
+  $update_helper->executeUpdate('social_profile_preview', __FUNCTION__);
+
   // Output logged messages to related channel of update execution.
-  $updateHelper->logger()->output();
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Add summary field.
+ */
+function social_profile_preview_update_11202(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile_preview', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Bypass access to display username.
+ */
+function social_profile_preview_update_11301(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile_preview', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Add function field and counter of following users.
+ */
+function social_profile_preview_update_11302(): string {
+  module_set_weight('social_profile_preview', 5);
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile_preview', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

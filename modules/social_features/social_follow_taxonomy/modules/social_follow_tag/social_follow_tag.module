@@ -5,9 +5,12 @@
  * Contains social_follow_tag.module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
+use Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter;
 use Drupal\taxonomy\TermInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -227,9 +230,53 @@ function social_follow_tag_entity_update(EntityInterface $entity) {
 
     // Create activity notification.
     if (!empty($taxonomy_ids)) {
-      \Drupal::service('plugin.manager.activity_action.processor')
-        ->createInstance('update_entity_action')
-        ->create($entity);
+      $plugin_manager = \Drupal::service('plugin.manager.activity_action.processor');
+      if ($plugin_manager->hasDefinition('update_entity_action')) {
+        $plugin_manager
+          ->createInstance('update_entity_action')
+          ->create($entity);
+      }
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "views_exposed_form".
+ */
+function social_follow_tag_form_views_exposed_form_alter(array &$form, FormStateInterface &$form_state): void {
+  if (
+    $form_state->get('view')->id() === 'user_admin_people' &&
+    $form_state->get(['display', 'id']) === 'page_1' &&
+    !empty($form['social_follow_taxonomy_follow_filter']) &&
+    \Drupal::moduleHandler()->moduleExists('select2')
+  ) {
+    // Replace default "select" form element widget with "select2".
+    if ($form['social_follow_taxonomy_follow_filter']['#type'] === 'select') {
+      $form['social_follow_taxonomy_follow_filter']['#type'] = 'select2';
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for "flagging".
+ */
+function social_follow_tag_flagging_delete(EntityInterface $entity): void {
+  if ($entity->bundle() === FollowTaxonomyViewsFilter::FLAG_ID) {
+    // This cache invalidation added to make possible re-count render results
+    // for the filter "FollowTaxonomyViewsFilter".
+    /* @see \Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter::getCacheTags */
+    Cache::invalidateTags(['config:views.view.user_admin_people']);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create() for "flagging".
+ */
+function social_follow_tag_flagging_create(EntityInterface $entity): void {
+  if ($entity->bundle() === FollowTaxonomyViewsFilter::FLAG_ID) {
+    // This cache invalidation added to make possible re-count render results
+    // for the filter "FollowTaxonomyViewsFilter".
+    /* @see \Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter::getCacheTags */
+    Cache::invalidateTags(['config:views.view.user_admin_people']);
   }
 }

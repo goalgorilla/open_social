@@ -312,9 +312,12 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
                 $target_account->getPreferredLangcode()
               );
             }
-            // Send item to EmailFrequency instance.
-            $instance = $this->frequencyManager->createInstance($parameters['frequency']);
-            $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+
+            if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
+              // Send item to EmailFrequency instance.
+              $instance = $this->frequencyManager->createInstance($parameters['frequency']);
+              $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+            }
           }
         }
       }

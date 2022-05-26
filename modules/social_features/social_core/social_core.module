@@ -907,6 +907,9 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           unset($form['created']);
         }
 
+        // Add validation for created date.
+        array_unshift($form['#validate'], '_social_core_created_date_validation');
+
         $has_option_fields = FALSE;
 
         foreach (['promote', 'sticky'] as $field) {
@@ -975,6 +978,31 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         unset($form['actions']['preview']);
       }
     }
+  }
+}
+
+/**
+ * Custom form validation handler for validating created date.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_core_created_date_validation(array $form, FormStateInterface $form_state): void {
+  $created = $form_state->getValue('created');
+  if (!$created) {
+    return;
+  }
+
+  $date = end($created);
+  /** @var \Drupal\Core\Datetime\DrupalDateTime $date */
+  $date = $date['value'];
+
+  if ($date->getTimestamp() > time()) {
+    $form_state->setErrorByName('created', t('The created date cannot be in the future.'));
   }
 }
 
@@ -1140,55 +1168,58 @@ function social_core_preprocess_flag(array &$variables): void {
  * Get all default main menu links that ships with Open Social.
  */
 function _social_core_default_main_menu_links() {
-  $default_os_links = [
-    'Home' => [
-      'link' => 'internal:/',
-      'menu_name' => 'main',
-    ],
-    'Explore' => [
-      'link' => 'internal:',
-      'menu_name' => 'main',
-    ],
-  ];
-
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $menu_links = $entity_type_manager
-    ->getStorage('menu_link_content')
-    ->loadByProperties(['menu_name' => 'main']);
-
-  $links = [];
-
-  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $link */
-  foreach ($menu_links as $link) {
-    if (!in_array($link->getTitle(), array_keys($default_os_links))) {
-      continue;
-    }
-
-    $os_link = $default_os_links[$link->getTitle()];
-    $link_uri = $link->get('link')->getValue();
-    $link_uri = end($link_uri);
-    $link_uri = $link_uri['uri'];
-    if ($link_uri !== $os_link['link']) {
-      continue;
-    }
-
-    if ($link->getMenuName() !== $os_link['menu_name']) {
-      continue;
-    }
-
-    $links[] = $link;
-  }
-
-  // Enable modules to alter the list.
-  \Drupal::moduleHandler()->invokeAll(
-    'social_core_default_main_menu_links_alter',
-    [&$links]
-  );
-
   // If user has a permission to bypass all the restrictions, then
   // we don't return any links.
   if (\Drupal::currentUser()->hasPermission('bypass social_core menu links access')) {
     return [];
+  }
+
+  $links = &drupal_static(__FUNCTION__);
+
+  if (empty($links)) {
+    $default_os_links = [
+      'Home' => [
+        'link' => 'internal:/',
+        'menu_name' => 'main',
+      ],
+      'Explore' => [
+        'link' => 'internal:',
+        'menu_name' => 'main',
+      ],
+    ];
+
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $menu_links = $entity_type_manager
+      ->getStorage('menu_link_content')
+      ->loadByProperties(['menu_name' => 'main']);
+
+    $links = [];
+
+    /** @var \Drupal\menu_link_content\MenuLinkContentInterface $link */
+    foreach ($menu_links as $link) {
+      if (!in_array($link->getTitle(), array_keys($default_os_links))) {
+        continue;
+      }
+
+      $os_link = $default_os_links[$link->getTitle()];
+      $link_uri = $link->get('link')->getValue();
+      $link_uri = end($link_uri);
+      $link_uri = $link_uri['uri'];
+      if ($link_uri !== $os_link['link']) {
+        continue;
+      }
+
+      if ($link->getMenuName() !== $os_link['menu_name']) {
+        continue;
+      }
+
+      $links[] = $link;
+    }
+    // Enable modules to alter the list.
+    \Drupal::moduleHandler()->invokeAll(
+      'social_core_default_main_menu_links_alter',
+      [&$links]
+    );
   }
 
   return $links;
@@ -1202,30 +1233,31 @@ function _social_core_default_main_menu_links() {
 function social_core_entity_access(EntityInterface $entity, string $operation, AccountInterface $account) {
   $entity_type = $entity->getEntityTypeId();
 
-  if ($entity_type !== 'menu_link_content') {
-    return;
-  }
+  if (
+    ($entity_type === 'menu_link_content')
+    && $operation !== 'view'
+    && $account->isAuthenticated()
+    && !$account->hasPermission('bypass social_core menu links access')
+    && $account->hasPermission('administer menu')
+  ) {
+    /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
+    $name = $entity->getTitle();
+    $link = $entity->get('link')->getValue();
+    $link = end($link);
 
-  if ($operation === 'view') {
-    return;
-  }
+    $default_os_links = _social_core_default_main_menu_links();
 
-  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
-  $name = $entity->getTitle();
-  $link = $entity->get('link')->getValue();
-  $link = end($link);
-
-  $default_os_links = _social_core_default_main_menu_links();
-
-  /** @var \Drupal\menu_link_content\MenuLinkContentInterface $os_link */
-  foreach ($default_os_links as $os_link) {
-    $os_link_title = $os_link->getTitle();
-    $os_link_uri = $entity->get('link')->getValue();
-    $os_link_uri = end($os_link_uri)['uri'];
-    if ($name === $os_link_title && $link['uri'] === $os_link_uri) {
-      return AccessResult::forbidden();
+    /** @var \Drupal\menu_link_content\MenuLinkContentInterface $os_link */
+    foreach ($default_os_links as $os_link) {
+      $os_link_title = $os_link->getTitle();
+      $os_link_uri = $entity->get('link')->getValue();
+      $os_link_uri = end($os_link_uri)['uri'];
+      if ($name === $os_link_title && $link['uri'] === $os_link_uri) {
+        return AccessResult::forbidden();
+      }
     }
   }
+  return AccessResult::neutral();
 }
 
 /**

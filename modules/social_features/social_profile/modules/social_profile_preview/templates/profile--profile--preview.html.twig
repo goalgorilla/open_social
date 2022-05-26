@@ -37,11 +37,12 @@
   {{ title_suffix.contextual_links }}
 
   <div class="card__block">
-    <div class='media-wrapper'>
-      <div class='media'>
+    <div class="media-wrapper">
+      <div class="media">
         <div class="media-left avatar">{{ content.field_profile_image }}</div>
         <div class="media-body">
           {{ content.uid }}
+          {{ content.field_profile_function }}
 
           {% if content.flag_follow_user or content.private_message_link %}
             <div class="btn-group--wrapper">
@@ -54,7 +55,11 @@
     </div>
   </div>
 
-  {{ content.field_profile_self_introduction }}
+  {% if profile.field_profile_summary.isEmpty() %}
+    {{ content.field_profile_self_introduction }}
+  {% else %}
+    {{ content.field_profile_summary }}
+  {% endif %}
 
   {% if content.followers or content.following %}
     <div class="follow-user--counter">
@@ -63,6 +68,5 @@
     </div>
   {% endif %}
 
-  {{ content|without('field_profile_image', 'uid', 'flag_follow_user', 'private_message_link', 'field_profile_self_introduction', 'followers', 'following') }}
-
+  {{ content|without('field_profile_image', 'uid', 'field_profile_function', 'flag_follow_user', 'private_message_link', 'field_profile_summary', 'field_profile_self_introduction', 'followers', 'following') }}
 </div>

@@ -20,7 +20,6 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
@@ -47,13 +46,35 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
     case 'field_profile_phone_number':
       // @todo Remove this when rule for .form-tel elements will be added.
       $element['value']['#attributes']['class'][] = 'form-text';
+      $element['value']['#attributes']['autocomplete'][] = 'tel';
       break;
 
     case 'field_profile_address':
       // @todo Remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
+
+    case 'field_profile_nick_name':
+      $element['value']['#attributes']['autocomplete'][] = 'nickname';
+      break;
+
+    case 'field_profile_first_name':
+      $element['value']['#attributes']['autocomplete'][] = 'given-name';
+      break;
+
+    case 'field_profile_last_name':
+      $element['value']['#attributes']['autocomplete'][] = 'family-name';
+      break;
+
+    case 'field_profile_organization':
+      $element['value']['#attributes']['autocomplete'][] = 'organization';
+      break;
+
+    case 'field_profile_function':
+      $element['value']['#attributes']['autocomplete'][] = 'organization-title';
+      break;
   }
+
   // This replaces all user entity references with our EntityReferenceSelection.
   if ($field_definition->getType() === 'entity_reference') {
     if (
@@ -432,15 +453,6 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
-  }
-  elseif (
-    $variables['elements']['#view_mode'] === 'small_teaser' &&
-    (
-      !isset($variables['link_attributes']) ||
-      !$variables['link_attributes'] instanceof Attribute
-    )
-  ) {
-    $variables['link_attributes'] = new Attribute($variables['link_attributes'] ?? []);
   }
 
   /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
