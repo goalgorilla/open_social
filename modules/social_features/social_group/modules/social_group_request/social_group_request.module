@@ -65,6 +65,68 @@ function social_group_request_entity_base_field_info(EntityTypeInterface $entity
 }
 
 /**
+ * Implements hook_social_group_join_method_usage_alter().
+ */
+function social_group_request_social_group_join_method_usage_alter(array &$items): void {
+  /** @var array $all_bundles */
+  $all_bundles = \Drupal::entityQuery('group_type')
+    ->accessCheck(FALSE)
+    ->execute();
+
+  $bundles = [];
+
+  foreach ($items as $item) {
+    if ($item['entity_type'] === 'group') {
+      $add = FALSE;
+
+      if (isset($item['field'])) {
+        if (isset($item['method'])) {
+          if (in_array('request', (array) $item['method'])) {
+            $add = TRUE;
+          }
+        }
+        else {
+          $add = TRUE;
+        }
+      }
+      elseif (in_array('request', (array) $item['method'])) {
+        $add = TRUE;
+      }
+
+      if ($add) {
+        $bundles = array_merge(
+          $bundles,
+          isset($item['bundle']) ? (array) $item['bundle'] : $all_bundles,
+        );
+      }
+    }
+  }
+
+  $query = \Drupal::entityQuery('group_type')->accessCheck(FALSE);
+
+  if (!empty($bundles)) {
+    $query->condition('id', $bundles, 'NOT IN');
+  }
+
+  /** @var array $bundles */
+  $bundles = $query->execute();
+
+  if (!empty($bundles)) {
+    $item = [
+      'entity_type' => 'group',
+      'field' => 'allow_request',
+      'method' => 'request',
+    ];
+
+    if (count($bundles) < count($all_bundles)) {
+      $item['bundle'] = array_values($bundles);
+    }
+
+    $items[] = $item;
+  }
+}
+
+/**
  * Implements hook_social_group_join_method_info().
  */
 function social_group_request_social_group_join_method_info(): array {
@@ -249,7 +311,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
       /** @var string $bundle */
       $bundle = $group_type->id();
 
-      if ($manager->hasMethod($bundle, 'request')) {
+      if (!$manager->hasMethod($bundle, 'request')) {
         $prohibit = TRUE;
       }
     }

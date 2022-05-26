@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "social_group_request_join",
  *   entityTypeId = "group",
  *   method = "request",
- *   weight = 30,
+ *   weight = 20,
  * )
  */
 class SocialGroupRequestJoin extends JoinBase {

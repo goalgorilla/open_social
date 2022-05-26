@@ -127,7 +127,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
 
     $entity_type = $entity->getEntityType();
     $entity_type_id = $entity->getEntityTypeId();
-    $found = FALSE;
+    $methods = [];
 
     foreach ($this->relations() as $data) {
       if (
@@ -138,35 +138,47 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
           in_array($entity->bundle(), (array) $data['bundle'])
         )
       ) {
-        $found = TRUE;
+        if (isset($data['field'])) {
+          if (isset($data['method'])) {
+            $field = $entity->get($data['field']);
 
-        break;
+            if (!$field->isEmpty() && !empty($field->getValue()[0]['value'])) {
+              $relation_methods = (array) $data['method'];
+            }
+            else {
+              continue;
+            }
+          }
+          else {
+            $relation_methods = array_column(
+              $entity->get($data['field'])->getValue(),
+              'value',
+            );
+          }
+        }
+        else {
+          $relation_methods = (array) $data['method'];
+        }
+
+        $methods = array_merge($methods, $relation_methods);
       }
     }
 
-    if (!$found || !isset($data)) {
+    if (empty($methods)) {
       return;
-    }
-
-    if (isset($data['method'])) {
-      $methods = (array) $data['method'];
-    }
-    else {
-      $methods = array_column($entity->get($data['field'])->getValue(), 'value');
     }
 
     $definitions = array_filter(
       $this->getDefinitions(),
-      function ($definition) use ($entity_type_id, $methods) {
-        return (
-            !isset($definition['entityTypeId']) ||
-            $definition['entityTypeId'] === $entity_type_id
-          ) &&
-          (
-            !isset($definition['method']) ||
-            in_array($definition['method'], $methods)
-          );
-      }
+      fn (array $definition): bool =>
+        (
+          !isset($definition['entityTypeId']) ||
+          $definition['entityTypeId'] === $entity_type_id
+        ) &&
+        (
+          !isset($definition['method']) ||
+          in_array($definition['method'], $methods)
+        ),
     );
 
     usort($definitions, [SortArray::class, 'sortByWeightElement']);

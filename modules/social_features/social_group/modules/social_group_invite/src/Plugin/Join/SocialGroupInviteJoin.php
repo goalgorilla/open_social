@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "social_group_invite_join",
  *   entityTypeId = "group",
  *   method = "added",
- *   weight = 20,
+ *   weight = 30,
  * )
  */
 class SocialGroupInviteJoin extends SocialGroupDirectJoin {
