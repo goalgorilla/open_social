@@ -3,7 +3,7 @@
 namespace Drupal\social_event;
 
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
  * Trait SocialEventTrait.
@@ -15,13 +15,13 @@ trait SocialEventTrait {
   /**
    * Function to determine if an event has been finished.
    *
-   * @param \Drupal\node\Entity\Node $node
+   * @param \Drupal\node\NodeInterface $node
    *   The event.
    *
    * @return bool
    *   TRUE if the evens is finished/completed.
    */
-  protected function eventHasBeenFinished(Node $node): bool {
+  protected function eventHasBeenFinished(NodeInterface $node): bool {
     $current_time = new DrupalDateTime();
 
     // Use the start date when the end date is not set to determine if the event

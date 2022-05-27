@@ -6,10 +6,12 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\MessageCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\Form\EnrollActionForm;
+use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,7 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\social_event_an_enroll\Form
  */
-class EventAnEnrollActionForm extends EnrollActionForm {
+class EventAnEnrollActionForm extends FormBase implements ContainerInjectionInterface {
+
+  use SocialEventTrait;
 
   /**
    * Event anonymous enrollment service.
@@ -34,12 +38,36 @@ class EventAnEnrollActionForm extends EnrollActionForm {
   protected $tempStoreFactory;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
     $instance = parent::create($container);
     $instance->eventAnEnrollService = $container->get('social_event_an_enroll.service');
     $instance->tempStoreFactory = $container->get('tempstore.private');
+    $instance->currentUser = $container->get('current_user');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->formBuilder = $container->get('form_builder');
     return $instance;
   }
 
@@ -184,7 +212,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
       $token = $an_enrollments[$nid];
     }
 
-    $enrollments = $this->enrollmentStorage->loadByProperties([
+    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties([
       'field_account' => $uid,
       'field_event' => $nid,
       'field_token' => $token,

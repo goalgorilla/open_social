@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
