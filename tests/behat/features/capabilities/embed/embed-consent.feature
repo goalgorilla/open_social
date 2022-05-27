@@ -32,7 +32,11 @@ Feature: Embed
     And I wait for AJAX to finish
     And I fill in "URL" with "https://www.youtube.com/watch?v=ojafuCcUZzU"
     And I click the xth "0" element with the css ".url-select-dialog .form-actions .ui-button"
-    And I wait for AJAX to finish
+    # Temporary comment next step since it will fails because of the Embed
+    # module new release https://www.drupal.org/project/embed/releases/8.x-1.5
+    # @see https://git.drupalcode.org/project/embed/-/commit/89b249e4da8f5b39fdfa3e97960107c850427469
+    # @todo Uncomment it out when a solution will found
+    # And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Create topic"
     Then I should see "Topic Embed consent has been created."
@@ -75,7 +79,11 @@ Feature: Embed
     And I wait for AJAX to finish
     And I fill in "URL" with "https://www.youtube.com/watch?v=ojafuCcUZzU"
     And I click the xth "0" element with the css ".url-select-dialog .form-actions .ui-button"
-    And I wait for AJAX to finish
+    # Temporary comment next step since it will fails because of the Embed
+    # module new release https://www.drupal.org/project/embed/releases/8.x-1.5
+    # @see https://git.drupalcode.org/project/embed/-/commit/89b249e4da8f5b39fdfa3e97960107c850427469
+    # @todo Uncomment it out when a solution will found
+    # And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Create topic"
     Then I should see "Topic Embed consent (AN) has been created."
