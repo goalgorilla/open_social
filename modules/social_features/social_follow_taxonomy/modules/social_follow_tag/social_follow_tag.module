@@ -196,7 +196,7 @@ function social_follow_tag_entity_update(EntityInterface $entity) {
   /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
   if ($entity->getEntityTypeId() === 'node') {
     // Prepare list of tags before update node.
-    if (!is_null($entity->original)) {
+    if (isset($entity->original)) {
       $original_entity = $entity->original;
       if ($original_entity->hasField('social_tagging')) {
         if (!empty($original_entity->get('social_tagging')->getValue())) {

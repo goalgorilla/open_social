@@ -27,14 +27,25 @@ class UserAnalyticsCommentsCreated extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
+    $user_id = $entity->id();
+    if (!is_int($user_id)) {
+      return "0";
+    }
+
     $query = $this->database->select('comment', 'c');
     $query->join('comment_field_data', 'cfd', 'cfd.cid = c.cid');
-    $query->condition('cfd.uid', $entity->id());
+    $query->condition('cfd.uid', (string) $user_id);
 
-    return (int) $query
+    $result = $query
       ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->execute();
+    if ($result === NULL) {
+      return "0";
+    }
+
+    // Cast to int first so an empty result registers a "0". We cast to string
+    // to satisfy the user export plugin interface.
+    return (string) (int) $result->fetchField();
   }
 
 }

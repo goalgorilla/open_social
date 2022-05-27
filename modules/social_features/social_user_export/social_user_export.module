@@ -11,9 +11,18 @@ use Drupal\file\Entity\File;
 /**
  * Implements hook_file_download().
  */
-function social_user_export_file_download($uri) {
+function social_user_export_file_download(string $uri) {
   $scheme = StreamWrapperManager::getScheme($uri);
   $target = StreamWrapperManager::getTarget($uri);
+
+  // In the following circumstances this hook doesn't care about the file and
+  // other modules should control access:
+  // - The private filesystem is not being used.
+  // - There is no target in the uri.
+  // - The file doesn't match our CSV export file pattern.
+  if ($scheme !== 'private' || $target === FALSE || !preg_match('/^csv\/export-(users|enrollments|members)-([a-f0-9]{12})\.csv$/i', $target)) {
+    return NULL;
+  }
 
   // Get the file to see who the owner is.
   $query = \Drupal::entityQuery('file');
@@ -26,16 +35,17 @@ function social_user_export_file_download($uri) {
   $access = FALSE;
 
   // Allow access to users with correct permission or file owner.
-  if (\Drupal::currentUser()->hasPermission('administer users') || \Drupal::currentUser()->id() === $file->get('uid')->getString()) {
+  if (\Drupal::currentUser()->hasPermission('administer users') || (string) \Drupal::currentUser()->id() === $file->get('uid')->getString()) {
     $access = TRUE;
   }
 
-  // The pattern should match all the declared file patterns from
-  // the `generateFilePath()` methods in export bulk actions plugins.
-  if ($scheme === 'private' && $access
-    && preg_match('/^csv\/export-(users|enrollments|members)-([a-f0-9]{12})\.csv$/i', $target)) {
+  // In case the user has access we send them the file.
+  if ($access) {
     return [
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];
   }
+
+  // Deny access in all other cases.
+  return -1;
 }

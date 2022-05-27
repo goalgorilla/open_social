@@ -492,12 +492,12 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       // Prepare some variables for checking on the email field.
       $global_show_email = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_email');
-      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : NULL;
+      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : FALSE;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
       // this email field.
-      if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
+      if ($global_show_email || $profile_show_email) {
         $flag = TRUE;
       }
       break;
@@ -512,12 +512,12 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       $global_show_lang = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_language');
       $profile_show_lang = \Drupal::service('user.data')
-        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? NULL;
+        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? FALSE;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
       // this preferred language.
-      if ($global_show_lang || (!$global_show_lang && !empty($profile_show_lang))) {
+      if ($global_show_lang || $profile_show_lang) {
         $flag = TRUE;
       }
       break;
@@ -656,7 +656,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     }
 
     // Add Submit function only when the data is actually editable.
-    if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
+    if (empty($global_values['social_profile_show_email']) || empty($global_values['social_profile_show_language'])) {
       $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
   }
@@ -719,9 +719,7 @@ function _social_profile_get_profile_from_route() {
 
   if (!empty($account)) {
     $storage = $entity_type_manager->getStorage('profile');
-    if (!empty($storage)) {
-      $profile = $storage->loadByUser($account, 'profile');
-    }
+    $profile = $storage->loadByUser($account, 'profile');
   }
 
   return $profile;

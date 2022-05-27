@@ -11,6 +11,7 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -60,18 +61,16 @@ class EventAnEnrollForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\node\NodeInterface|string|null $node */
     $node = $this->routeMatch->getRawParameter('node');
 
-    // Do nothing if we don't have the 'node' param in the URL.
-    if ($node === NULL) {
-      return [];
+    // Load node object in case it's not converted for us.
+    if (is_numeric($node)) {
+      $node = Node::load($node);
     }
 
-    // Load node object.
-    if (!($node instanceof NodeInterface)) {
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = $this->entityTypeManager->getStorage('node')->load($node);
+    // Do nothing if we don't have the 'node' param in the URL.
+    if (!$node instanceof NodeInterface) {
+      return [];
     }
 
     $form['error_wrapper'] = [

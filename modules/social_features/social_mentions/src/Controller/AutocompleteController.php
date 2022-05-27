@@ -101,7 +101,8 @@ class AutocompleteController extends ControllerBase {
         'profile_id' => '',
       ];
 
-      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE)) && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
+      $profile = $storage->loadByUser($account, 'profile', TRUE);
+      if ($profile !== NULL && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
         $build = $view_builder->view($profile, 'autocomplete_item');
         $item['html_item'] = render($build);
         $item['profile_id'] = $profile->id();

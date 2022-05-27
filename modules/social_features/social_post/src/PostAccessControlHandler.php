@@ -102,8 +102,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
               // Check if the post has been posted in a group.
               $group_id = $entity->field_recipient_group->target_id;
 
+              $group = NULL;
               if ($group_id !== NULL) {
-                /** @var \Drupal\group\Entity\Group $group */
                 $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
               }
 
