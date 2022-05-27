@@ -229,3 +229,23 @@ function _social_ajax_comments_pager(array &$items) {
     }
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_ajax_comments_form_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id) :void {
+  // The comment below is copied from "ajax_comments" module version
+  // "8.x-1.0-beta4". Comment is located at
+  // "ajax_comments/src/Form/AjaxCommentsForm.php" in "buildForm()" method.
+  // In case the logic of contrib module will be changed in the future,
+  // the logic below should follow accordingly.
+  //
+  // Ajax replies to other comments should happen on the canonical entity page
+  // (note this functionality has not been ported to D8, yet).
+  // If the user is on the standalone comment reply page or comment edit page,
+  // it means JavaScript is disabled or the ajax functionality is not working.
+  // Do not proceed with the form alter.
+  if (in_array(\Drupal::routeMatch()->getRouteName(), ['comment.reply', 'entity.comment.edit_form'])) {
+    unset($form['actions']['submit']['#ajax']);
+  }
+}
