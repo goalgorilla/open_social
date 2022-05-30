@@ -74,9 +74,7 @@ class FooterSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $block = $this->configFactory()->get('block.block.socialblue_footer_powered');
-    if (!empty($block)) {
-      $settings = $block->get('settings');
-    }
+    $settings = $block->get('settings');
 
     $default_scheme = $this->config('system.file')->get('default_scheme');
 
@@ -144,14 +142,12 @@ class FooterSettingsForm extends FormBase {
     $this->setInlineImagesAsPermanent($text);
 
     $block = $this->configFactory()->getEditable('block.block.socialblue_footer_powered');
-    if (!empty($block)) {
-      $settings = $block->get('settings');
-      $settings['logo'] = $logo;
-      $settings['text'] = $values['text'];
-      $settings['link']['url'] = $values['url'];
-      $settings['link']['title'] = $values['title'];
-      $block->set('settings', $settings)->save();
-    }
+    $settings = $block->get('settings');
+    $settings['logo'] = $logo;
+    $settings['text'] = $values['text'];
+    $settings['link']['url'] = $values['url'];
+    $settings['link']['title'] = $values['title'];
+    $block->set('settings', $settings)->save();
 
     $this->messenger()->addStatus($this->t('Your footer settings have been updated'));
   }

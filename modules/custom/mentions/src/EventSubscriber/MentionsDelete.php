@@ -65,9 +65,7 @@ class MentionsDelete implements EventSubscriberInterface {
     }
 
     $action_plugin = $action->getPlugin();
-    if (!empty($action_plugin)) {
-      $action_plugin->execute(FALSE);
-    }
+    $action_plugin->execute(FALSE);
   }
 
 }

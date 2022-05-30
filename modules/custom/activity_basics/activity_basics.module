@@ -5,6 +5,7 @@
  * Contains activity_basics.module.
  */
 
+use Drupal\activity_creator\Plugin\ActivityActionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\node\NodeInterface;
@@ -76,6 +77,8 @@ function activity_basics_social_group_move(NodeInterface $node): void {
 function _activity_basics_entity_action(EntityInterface $entity, $instance): void {
   $plugin_mananger = \Drupal::service('plugin.manager.activity_action.processor');
   if ($plugin_mananger->hasDefinition($instance)) {
-    $plugin_mananger->createInstance($instance)->create($entity);
+    $plugin = $plugin_mananger->createInstance($instance);
+    assert($plugin instanceof ActivityActionInterface);
+    $plugin->create($entity);
   }
 }

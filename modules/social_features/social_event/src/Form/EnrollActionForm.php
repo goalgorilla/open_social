@@ -109,14 +109,21 @@ class EnrollActionForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $node = $this->routeMatch->getParameter('node');
     $current_user = $this->currentUser();
 
-    /** @var \Drupal\node\NodeInterface|string $node */
-    $node = $this->routeMatch->getParameter('node');
+    // It's possible this form is rendered through a route that doesn't properly
+    // convert the parameter to a node. So in that case we must do so manually.
+    if (is_numeric($node)) {
+      $node = $this->entityTypeManager
+        ->getStorage('node')
+        ->load($node);
+    }
 
-    if (!($node instanceof NodeInterface)) {
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = $this->entityTypeManager->getStorage('node')->load($node);
+    // This entire function collapses if we don't have a node so we just short-
+    // circuit early.
+    if (!$node instanceof NodeInterface) {
+      return [];
     }
 
     // We check if the node is placed in a Group I am a member of. If not,
@@ -147,7 +154,7 @@ class EnrollActionForm extends FormBase {
         // this commit. This now means that events in a closed group cannot
         // be joined by outsiders, which makes sense, since they also
         // couldn't see these events in the first place.
-        if (in_array($group->bundle(), $group_type_ids) && $group->hasPermission('join group', $current_user)) {
+        if (in_array($group->bundle(), $group_type_ids, TRUE) && $group->hasPermission('join group', $current_user)) {
           break;
         }
 

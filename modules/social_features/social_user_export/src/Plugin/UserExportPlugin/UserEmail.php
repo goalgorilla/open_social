@@ -27,7 +27,7 @@ class UserEmail extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    return $entity->getEmail();
+    return $entity->getEmail() ?? "";
   }
 
 }

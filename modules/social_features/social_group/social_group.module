@@ -32,6 +32,7 @@ use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
+use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -1393,7 +1394,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
 
       // Ensure we disable the correct visibility options.
       foreach ($selected_groups as $current_group) {
-        if (!empty($current_group)) {
+        if ($current_group !== NULL) {
           $group_type = $current_group->getGroupType();
           $group_type_id = $group_type->id();
 
@@ -1444,7 +1445,7 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
         $group_content = $row['#group_content'];
         // Get Profile.
         $user_profile = _social_group_get_member_profile($group_content);
-        if ($user_profile) {
+        if ($user_profile !== NULL) {
           // Use teaser for page and small_teaser for block.
           $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
           // Replace output with profile teaser.
@@ -1486,7 +1487,6 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   $group = Drupal::routeMatch()->getParameter('group');
 
   if ($group instanceof GroupInterface) {
-    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
     // Check if it's a closed group.
     if ($group_type === 'closed_group') {
@@ -1549,20 +1549,18 @@ function social_group_menu_local_actions_alter(&$local_actions) {
  * @param \Drupal\group\Entity\GroupContent $group_content
  *   Group content entity.
  *
- * @return \Drupal\profile\Entity\Profile
+ * @return \Drupal\profile\Entity\Profile|null
  *   Returns the Profile entity for the member.
  */
 function _social_group_get_member_profile(GroupContent $group_content) {
   $user_profile = NULL;
   // Get User entity.
   $user_entity = $group_content->getEntity();
-  if (!empty($user_entity)) {
+  if ($user_entity instanceof UserInterface) {
     // Get Profile storage.
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      // Get Profile entity.
-      $user_profile = $storage->loadByUser($user_entity, 'profile');
-    }
+    // Get Profile entity.
+    $user_profile = $storage->loadByUser($user_entity, 'profile');
   }
   return $user_profile;
 }
@@ -2153,30 +2151,66 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
  * Implements hook_views_query_alter().
  */
 function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if (empty($view->rowPlugin) || !($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() != 'group') {
+  if (\Drupal::currentUser()->isAuthenticated()) {
     return;
   }
-  $account = \Drupal::currentUser()->getAccount();
-  if ($account->isAuthenticated()) {
-    // Get all groups for LU.
-    /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $group_helper */
-    $group_helper = \Drupal::service('social_group.helper_service');
-    $my_groups = $group_helper->getAllGroupsForUser($account->id());
-    if (!empty($my_groups)) {
-      // Get all hidden groups.
-      $hidden_groups = \Drupal::entityTypeManager()
-        ->getStorage('group')
-        ->loadByProperties([
-          'type' => 'closed_group',
-        ]);
 
-      // Get all hidden groups that the current user is not a member of
-      // and remove them from showing in the view.
-      $ids = array_diff(array_keys($hidden_groups), $my_groups);
-      if ($ids) {
-        /** @var \Drupal\views\Plugin\views\query\Sql $query */
-        $query->addWhere('group_membership', 'groups_field_data.id', $ids, 'NOT IN');
+  if (
+    empty($view->rowPlugin) ||
+    !($view->rowPlugin instanceof EntityRow) ||
+    $view->rowPlugin->getEntityTypeId() !== 'group'
+  ) {
+    return;
+  }
+
+  $found = FALSE;
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $where = $query->where;
+  foreach ($where as &$conditions) {
+    foreach ($conditions['conditions'] as &$condition) {
+      if ($condition['field'] === 'groups_field_data.type') {
+        $found = TRUE;
+        break 2;
       }
+    }
+  }
+
+  if (!$found) {
+    unset($condition);
+
+    $condition = [
+      'field' => 'groups_field_data.type',
+      'operator' => 'not in',
+    ];
+  }
+
+  $hiddens = isset($condition) && $condition['operator'] === 'not in';
+
+  // Define the variable as array otherwise it can be interpreted as string
+  // And breaking the code below.
+  $condition['value'] = [];
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  foreach (GroupType::loadMultiple() as $group_type) {
+    $new = !in_array($group_type->id(), $condition['value']);
+    $permissions = $group_type->getAnonymousRole()->getPermissions();
+    $hidden = !in_array('view group', $permissions);
+
+    if ($new && $hiddens === $hidden) {
+      $condition['value'][] = $group_type->id();
+    }
+  }
+
+  if (!$found) {
+    if (isset($conditions)) {
+      $conditions['conditions'][] = $condition;
+    }
+    else {
+      $query->where[] = [
+        'conditions' => [$condition],
+        'type' => 'AND',
+      ];
     }
   }
 }
@@ -2294,7 +2328,7 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   $group_type = GroupType::load($type);
 
   // If the group type doesn't exist then the user can't see the group type.
-  if ($group_type === FALSE || $group_type === NULL) {
+  if ($group_type === NULL) {
     return FALSE;
   }
 
@@ -2427,7 +2461,6 @@ function social_group_batch_alter(&$batch) {
  *   Returns the batch action id.
  */
 function _social_group_get_action_id(array &$batch) {
-  /** @var \Drupal\Core\Form\FormStateInterface $form_state */
   $form_state = &$batch['form_state'];
 
   $action_id = '';
@@ -2672,7 +2705,7 @@ function social_group_render_tooltip($field_name, TranslatableMarkup $data_title
       'data-container' => 'body',
       'data-html' => 'true',
       'data-placement' => 'bottom',
-      'data-title' => $data_title ?: '',
+      'data-title' => $data_title,
     ],
   ];
   $build['requirements'] = [

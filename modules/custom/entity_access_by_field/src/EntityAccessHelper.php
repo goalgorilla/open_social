@@ -139,8 +139,7 @@ class EntityAccessHelper {
         $enrollments = $storage->loadByProperties($conditions);
 
         if ($enrollment = array_pop($enrollments)) {
-          if ($enrollment->field_request_or_invite_status
-            && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
+          if ((int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
             && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED) {
             $access = EntityAccessHelper::ALLOW;
           }

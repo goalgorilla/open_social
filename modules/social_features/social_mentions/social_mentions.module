@@ -121,8 +121,8 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
     ];
 
     if ($suggestions_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
-      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE))) {
+      $profile = $storage->loadByUser($account, 'profile', TRUE);
+      if ($profile !== NULL) {
         $item['profile_id'] = $profile->id();
         $item['value'] = $account->getDisplayName();
       }

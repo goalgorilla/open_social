@@ -32,24 +32,27 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     if (!$current_user->isAnonymous()) {
       // Check if enrollment is enabled.
-      if (!$this->eventEnrollService->isEnabled($node)) {
+      if ($node === NULL || !$this->eventEnrollService->isEnabled($node)) {
         return [];
       }
       $conditions = [
         'field_account' => $current_user->id(),
         'field_event' => $nid,
       ];
+
+      /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
       $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
       // If the event is invite only and you have not been invited, return.
       // Unless you are the node owner or organizer.
-      if (empty($enrollments)) {
+      $enrollment = array_pop($enrollments);
+      if ($enrollment === NULL) {
         if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
           && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
       }
-      elseif ($enrollment = array_pop($enrollments)) {
+      else {
         $enroll_request_status = $enrollment->field_request_or_invite_status->value;
 
         // If user got invited perform actions.
@@ -151,6 +154,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       'field_event' => $nid,
     ];
 
+    /** @var \Drupal\social_event\EventEnrollmentInterface[] $enrollments */
     $enrollments = $this->enrollmentStorage->loadByProperties($conditions);
 
     // @todo also clear the breadcrumb cachetags.
@@ -163,12 +167,13 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     if ($enrollment = array_pop($enrollments)) {
       // Only trigger when the user is invited.
-      if ($enrollment->field_request_or_invite_status
-        && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+      if (!$enrollment->get('field_request_or_invite_status')->isEmpty()
+        && (int) $enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
         // Delete any messages since it would show a 'successful enrollment'.
         $this->messenger()->deleteAll();
         // Accept the invite.
         $enrollment->field_enrollment_status->value = '1';
+        // @phpstan-ignore-next-line
         $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
 
         // If decline is chosen, set invite to declined.
@@ -176,6 +181,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
           // Delete any messages since it would show a 'successful enrollment'.
           $this->messenger()->deleteAll();
           $enrollment->field_enrollment_status->value = '0';
+          // @phpstan-ignore-next-line
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         }
         $enrollment->save();

@@ -48,14 +48,6 @@ class QueryCommentsTest extends SocialGraphQLTestBase {
     'variationcache',
   ];
 
-
-  /**
-   * The list of comments.
-   *
-   * @var \Drupal\comment\CommentInterface[]
-   */
-  private $comments = [];
-
   /**
    * {@inheritdoc}
    */

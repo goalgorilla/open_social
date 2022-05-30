@@ -5,6 +5,7 @@ namespace Drupal\social_event_an_enroll;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Class EventAnEnrollService.
@@ -110,16 +111,15 @@ class EventAnEnrollService {
 
     // Get the token and Node ID from the route.
     $token = $this->currentRouteMatch->getParameter('token');
-    /** @var \Drupal\node\NodeInterface $node */
     $node = $this->currentRouteMatch->getParameter('node');
 
     // If some data is missing we can already return FALSE.
-    if (!empty($token) || !empty($node)) {
+    if (empty($token) || !$node instanceof NodeInterface) {
       return FALSE;
     }
 
     // Check if the token is valid.
-    return $this->tokenExists($token, $node->id());
+    return $this->tokenExists($token, (int) $node->id());
   }
 
 }

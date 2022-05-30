@@ -77,7 +77,7 @@ function social_activity_update_8002() {
           $config = \Drupal::service('config.factory')
             ->getEditable($config_name);
 
-          if (!empty($config)) {
+          if (!$config->isNew()) {
             $config->set('text', $new_text);
             $config->save();
           }
@@ -97,7 +97,7 @@ function social_activity_update_8003() {
     ->getEditable('core.entity_view_display.activity.activity.default');
 
   // Only update if config exists and this is not a fresh install.
-  if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
+  if (!$config->isNew() && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
     if (!empty($settings['view_mode'])) {
       $config->clear('content.field_activity_entity.settings');
 
