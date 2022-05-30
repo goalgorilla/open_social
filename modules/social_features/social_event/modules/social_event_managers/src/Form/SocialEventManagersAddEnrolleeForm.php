@@ -6,7 +6,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -75,39 +74,21 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   protected FileUrlGenerator $fileUrlGenerator;
 
   /**
-   * Constructs a new GroupContentController.
-   */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    RendererInterface $renderer,
-    ConfigFactoryInterface $config_factory,
-    Token $token,
-    ModuleHandlerInterface $module_handler,
-    EventMaxEnrollService $eventMaxEnrollService,
-    FileUrlGenerator $file_url_generator
-  ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->renderer = $renderer;
-    $this->configFactory = $config_factory;
-    $this->token = $token;
-    $this->moduleHandler = $module_handler;
-    $this->eventMaxEnrollService = $eventMaxEnrollService;
-    $this->fileUrlGenerator = $file_url_generator;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('renderer'),
-      $container->get('config.factory'),
-      $container->get('token'),
-      $container->get('module_handler'),
-      $container->get('social_event_max_enroll.service'),
-      $container->get('file_url_generator')
-    );
+    $instance = parent::create($container);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->renderer = $container->get('renderer');
+    $instance->configFactory = $container->get('config.factory');
+    $instance->token = $container->get('token');
+    $instance->moduleHandler = $container->get('module_handler');
+    if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
+      $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
+    }
+    $instance->fileUrlGenerator = $container->get('file_url_generator');
+
+    return $instance;
   }
 
   /**
