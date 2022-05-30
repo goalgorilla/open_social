@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event;
 
+use DateTime;
+use DateTimeZone;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\node\NodeInterface;
 
@@ -27,10 +29,16 @@ trait SocialEventTrait {
     // Use the start date when the end date is not set to determine if the event
     // is closed.
     /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
-    $check_end_date = $node->field_event_date_end->date ?? $node->field_event_date->date;
+    $check_end_date = $node->get('field_event_date_end')->getString() ?? $node->get('field_event_date')->getString();
+
+    // Retrieve timezone from current time.
+    $timezone = $current_time->getTimezone()->getName();
+
+    $start_datetime = new DateTime($check_end_date, new DateTimeZone($timezone));
+    $start_datetime = $start_datetime->getTimestamp();
 
     // The event has finished if the end date is smaller than the current date.
-    return $current_time > $check_end_date;
+    return $current_time->getTimestamp() > $start_datetime;
   }
 
 }
