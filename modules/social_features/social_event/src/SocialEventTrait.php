@@ -28,8 +28,9 @@ trait SocialEventTrait {
 
     // Use the start date when the end date is not set to determine if the event
     // is closed.
-    /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
-    $check_end_date = $node->get('field_event_date_end')->getString() ?? $node->get('field_event_date')->getString();
+    $check_end_date = $node->get('field_event_date_end')->isEmpty()
+      ? $node->get('field_event_date')->getString()
+      : $node->get('field_event_date_end')->getString();
 
     // Retrieve timezone from current time.
     $timezone = $current_time->getTimezone()->getName();
