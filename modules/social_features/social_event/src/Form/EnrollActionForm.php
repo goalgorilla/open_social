@@ -107,20 +107,20 @@ class EnrollActionForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $nid = $this->routeMatch->getParameter('node');
+    $node = $this->routeMatch->getParameter('node');
     $current_user = $this->currentUser();
+
+    // It's possible this form is rendered through a route that doesn't properly
+    // convert the parameter to a node. So in that case we must do so manually.
+    if (is_numeric($node)) {
+      $node = $this->entityTypeManager
+        ->getStorage('node')
+        ->load($node);
+    }
 
     // This entire function collapses if we don't have a node so we just short-
     // circuit early.
-    if (!is_numeric($nid)) {
-      return [];
-    }
-
-    $node = $this->entityTypeManager
-      ->getStorage('node')
-      ->load($nid);
-
-    if ($node === NULL) {
+    if (!$node instanceof NodeInterface) {
       return [];
     }
 
