@@ -1,0 +1,54 @@
+type TestAccessField {
+  allowUserSingleScope: String! @allowUser(requiredScopes: ["test:scope1"])
+  allowBotSingleScope: String! @allowBot(requiredScopes: ["test:scope1"])
+  allowAllSingleScope: String! @allowAll(requiredScopes: ["test:scope1"])
+  allowUserMultipleScopes: String! @allowUser(requiredScopes: ["test:scope1", "test:scope2"])
+  allowBotMultipleScopes: String! @allowBot(requiredScopes: ["test:scope1", "test:scope2"])
+  allowAllMultipleScopes: String! @allowAll(requiredScopes: ["test:scope1", "test:scope2"])
+  allowMultipleDirectiveScopes: String! @allowUser(requiredScopes: ["test:scope1"]) @allowBot(requiredScopes: ["test:scope2"])
+}
+
+type TestAccessType {
+  allowUserSingleScope: AllowUserSingleScope!
+  allowBotSingleScope: AllowBotSingleScope!
+  allowAllSingleScope: AllowAllSingleScope!
+  allowUserMultipleScopes: AllowUserMultipleScopes!
+  allowBotMultipleScopes: AllowBotMultipleScopes!
+  allowAllMultipleScopes: AllowAllMultipleScopes!
+  allowMultipleDirectiveScopes: AllowMultipleDirectiveScopes!
+}
+
+type AllowUserSingleScope @allowUser(requiredScopes: ["test:scope1"]) {
+  test: String!
+  fieldUser: String! @allowUser(requiredScopes: ["test:scope2"])
+  fieldAll: String! @allowAll(requiredScopes: ["test:scope2"])
+}
+
+type AllowBotSingleScope @allowBot(requiredScopes: ["test:scope1"]) {
+  test: String!
+  fieldBot: String! @allowBot(requiredScopes: ["test:scope2"])
+  fieldAll: String! @allowAll(requiredScopes: ["test:scope2"])
+}
+
+type AllowAllSingleScope @allowAll(requiredScopes: ["test:scope1"]) {
+  test: String!
+  fieldUser: String! @allowUser(requiredScopes: ["test:scope2"])
+  fieldBot: String! @allowBot(requiredScopes: ["test:scope2"])
+  fieldAll: String! @allowAll(requiredScopes: ["test:scope2"])
+}
+
+type AllowUserMultipleScopes @allowUser(requiredScopes: ["test:scope1", "test:scope2"]) {
+  test: String!
+}
+
+type AllowBotMultipleScopes @allowBot(requiredScopes: ["test:scope1", "test:scope2"]) {
+  test: String!
+}
+
+type AllowAllMultipleScopes @allowAll(requiredScopes: ["test:scope1", "test:scope2"]) {
+  test: String!
+}
+
+type AllowMultipleDirectiveScopes @allowUser(requiredScopes: ["test:scope1"]) @allowBot(requiredScopes: ["test:scope2"]) {
+  test: String!
+}
