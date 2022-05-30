@@ -7,15 +7,15 @@ on:
   pull_request: { }
 
 jobs:
-  phpstan:
-    name: PHPStan
+  phpstan7:
+    name: PHPStan on PHP 7.4
     runs-on: ubuntu-latest
     steps:
-      - name: Set default PHP7.4
+      - name: Set default php7.4
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -23,15 +23,50 @@ jobs:
       - name: PHP Stan
         run: vendor/bin/phpstan analyse -c phpstan.neon
 
-  phpcs:
-    name: PHPCS
+  phpcs7:
+    name: PHPCS on PHP 7.4
     runs-on: ubuntu-latest
     steps:
-      - name: Set default PHP7.4
+      - name: Set default php7.4
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHPCS
+        uses: chekalsky/phpcs-action@v1
+        with:
+          phpcs_bin_path: './vendor/bin/phpcs'
+          enable_warnings: true
+
+  phpstan8:
+    name: PHPStan on PHP 8.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default php8.0
+        run: sudo update-alternatives --set php /usr/bin/php8.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHP Stan
+        run: vendor/bin/phpstan analyse -c phpstan.neon
+
+  phpcs8:
+    name: PHPCS on PHP 8.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set default php8.0
+        run: sudo update-alternatives --set php /usr/bin/php8.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
