@@ -354,8 +354,6 @@ class ScopeDirectiveTest extends SocialGraphQLTestBase {
    *   The fields result.
    * @param array $expected_types
    *   The types result.
-   *
-   * @throws \League\OAuth2\Server\Exception\OAuthServerException
    */
   private function assertAccess(string $fields, string $types, bool $user, bool $multi, array $expected_fields, array $expected_types): void {
     $query = $this->buildGraphqlQuery($fields, $types);
@@ -398,8 +396,6 @@ class ScopeDirectiveTest extends SocialGraphQLTestBase {
    *   Scopes to set on the access token.
    * @param bool $user
    *   Authorizes on behalf of a user (target: USER).
-   *
-   * @throws \League\OAuth2\Server\Exception\OAuthServerException
    */
   private function setAccountProxy(array $scopes = [], bool $user = TRUE): void {
     $token = clone $this->accessToken;

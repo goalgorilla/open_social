@@ -24,25 +24,28 @@ class Server extends OriginalServer {
    */
   protected function getFieldResolver(ResolverRegistryInterface $registry) {
     $parent = parent::getFieldResolver($registry);
-    $account_proxy = \Drupal::currentUser()->getAccount();
-    $token = NULL;
-    if ($account_proxy instanceof TokenAuthUserInterface) {
-      $token = $account_proxy->getToken();
-    }
-
-    return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($registry, $parent, $token) {
-      $allow_directive_values = $this->getAllowDirectiveValues($info);
-      if ($allow_directive_values) {
-        // If token is not available; it has been removed or a different
-        // authentication is used. In this case we restrict access on
-        // types/fields that have the 'allow' directive.
-        if ($token === NULL) {
-          throw new MissingDataException('There is no OAuth2 token to work on.');
-        }
-        $this->checkAccess($allow_directive_values, $token);
+    if (is_callable($parent)) {
+      $account_proxy = \Drupal::currentUser()->getAccount();
+      $token = NULL;
+      if ($account_proxy instanceof TokenAuthUserInterface) {
+        $token = $account_proxy->getToken();
       }
-      return $parent($value, $args, $context, $info);
-    };
+
+      return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent, $token) {
+        $allow_directive_values = $this->getAllowDirectiveValues($info);
+        if ($allow_directive_values) {
+          // If token is not available; it has been removed or a different
+          // authentication is used. In this case we restrict access on
+          // types/fields that have the 'allow' directive.
+          if ($token === NULL) {
+            throw new MissingDataException('There is no OAuth2 token to work on.');
+          }
+          $this->checkAccess($allow_directive_values, $token);
+        }
+        return $parent($value, $args, $context, $info);
+      };
+    }
+    return $parent;
   }
 
   /**
@@ -65,27 +68,29 @@ class Server extends OriginalServer {
     foreach ($allow_directives as $allow_directive) {
       $directive_def = $info->schema->getDirective($allow_directive);
 
-      $type = $info->returnType;
-      if ($type instanceof WrappingType) {
-        $type = $type->getWrappedType(TRUE);
-      }
+      if ($directive_def !== NULL) {
+        $type = $info->returnType;
+        if ($type instanceof WrappingType) {
+          $type = $type->getWrappedType(TRUE);
+        }
 
-      // Get directive values on the type.
-      $type_directive_values = Values::getDirectiveValues(
-        $directive_def,
-        $type->astNode
-      );
+        // Get directive values on the type.
+        $type_directive_values = $type->astNode !== NULL ? Values::getDirectiveValues(
+          $directive_def,
+          $type->astNode
+        ) : NULL;
 
-      // Get directive values on the field.
-      $field_directive_values = Values::getDirectiveValues(
-        $directive_def,
-        $info->fieldDefinition->astNode
-      );
+        // Get directive values on the field.
+        $field_directive_values = $info->fieldDefinition->astNode ? Values::getDirectiveValues(
+          $directive_def,
+          $info->fieldDefinition->astNode
+        ) : NULL;
 
-      $values = $type_directive_values ?: $field_directive_values;
+        $values = $type_directive_values ?: $field_directive_values;
 
-      if (!empty($values)) {
-        $directive_values[$allow_directive] = $values;
+        if (!empty($values)) {
+          $directive_values[$allow_directive] = $values;
+        }
       }
     }
 
@@ -102,9 +107,11 @@ class Server extends OriginalServer {
    */
   private function checkAccess(array $directive_values, Oauth2TokenInterface $token): void {
     $token_has_user = !$token->get('auth_user_id')->isEmpty();
+    /** @var \Drupal\simple_oauth\Plugin\Field\FieldType\Oauth2ScopeReferenceItemListInterface $scopes_field */
+    $scopes_field = $token->get('scopes');
     $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
       return $scope->getName();
-    }, $token->get('scopes')->getScopes());
+    }, $scopes_field->getScopes());
 
     $directive_name = $token_has_user ? 'allowUser' : 'allowBot';
     $grant_type = $token_has_user ? 'client credentials' : 'authorization code';
@@ -148,7 +155,7 @@ class Server extends OriginalServer {
     $required_scopes = [];
 
     if (isset($directive_values[$directive_name]['requiredScopes'])) {
-      $required_scopes = empty($required_scopes) ? $directive_values[$directive_name]['requiredScopes'] : array_merge($directive_values[$directive_name]['requiredScopes'], $required_scopes);
+      $required_scopes = $directive_values[$directive_name]['requiredScopes'];
     }
     if (isset($directive_values['allowAll']['requiredScopes'])) {
       $required_scopes = empty($required_scopes) ? $directive_values['allowAll']['requiredScopes'] : array_merge($directive_values[$directive_name]['requiredScopes'], $required_scopes);

@@ -20,6 +20,6 @@ class Oauth2SchemaExtension extends SchemaExtensionPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry) {}
+  public function registerResolvers(ResolverRegistryInterface $registry): void {}
 
 }
