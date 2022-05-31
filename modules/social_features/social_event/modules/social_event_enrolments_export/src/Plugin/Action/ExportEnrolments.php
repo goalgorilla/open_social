@@ -55,7 +55,7 @@ class ExportEnrolments extends ExportUser {
    * @see social_user_export_file_download()
    */
   protected function generateFilePath() : string {
-    $hash = md5(microtime(TRUE));
+    $hash = md5(microtime());
     return 'export-enrollments-' . substr($hash, 20, 12) . '.csv';
   }
 

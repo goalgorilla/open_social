@@ -56,7 +56,7 @@ class SocialGroupSelection extends DefaultSelection {
       }
     }
 
-    if ($excluded_group_types) {
+    if ($excluded_group_types && is_array($all_group_types)) {
       $diff = array_diff($all_group_types, $excluded_group_types);
       if (!empty($diff)) {
         $bundle = $this->entityTypeManager->getDefinition($configuration['target_type'])->getKey('bundle');

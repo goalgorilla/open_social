@@ -97,7 +97,7 @@ function social_group_flexible_group_update_8901(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -239,7 +239,7 @@ function social_group_flexible_group_update_8908(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -302,7 +302,7 @@ function social_group_flexible_group_update_8910(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
