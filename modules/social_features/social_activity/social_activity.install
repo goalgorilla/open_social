@@ -310,7 +310,7 @@ function social_activity_update_10302() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_activity') . '/config/static/';
   $source = new FileStorage($config_path);
   foreach ($config_files as $origin_name => $update_name) {
     // Add new message templates.
@@ -338,7 +338,7 @@ function social_activity_update_10302() {
  */
 function social_activity_update_10303() {
   // Prepare the path.
-  $path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_activity') . '/config/static/';
 
   $message_templates = [
     'message.template.create_comment_author_node_post' => $path . 'message.template.create_comment_author_node_post_10303.yml',

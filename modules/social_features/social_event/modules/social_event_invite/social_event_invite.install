@@ -157,7 +157,7 @@ function social_event_invite_update_10301() {
  * Add a new field to event.
  */
 function social_event_invite_update_11001(): void {
-  $config_path = drupal_get_path('module', 'social_event_invite') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_event_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 

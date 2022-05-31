@@ -128,7 +128,7 @@ function social_follow_user_update_11202(): void {
     'views.view.following_users' => 'views.view.following_users_11202',
   ];
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_follow_user') . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {

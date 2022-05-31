@@ -5,6 +5,7 @@ namespace Drupal\social_event_invite\Form;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -53,6 +54,13 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   protected EventMaxEnrollService $eventMaxEnrollService;
 
   /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -72,6 +80,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
       $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
     }
+    $instance->fileUrlGenerator = $container->get('file_url_generator');
 
     return $instance;
   }
@@ -108,7 +117,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = file_create_url($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }
 

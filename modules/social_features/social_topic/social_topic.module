@@ -314,7 +314,7 @@ function social_topic_social_follow_content_types_alter(array &$types) {
  * Sets dynamic allowed values for the topic type icon field.
  */
 function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
-  $theme_path = drupal_get_path('theme', 'socialbase');
+  $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
   $options = [];
@@ -350,7 +350,7 @@ function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStat
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
@@ -371,7 +371,7 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
