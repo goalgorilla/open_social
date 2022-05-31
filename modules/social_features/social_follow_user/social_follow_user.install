@@ -29,6 +29,10 @@ function social_follow_user_install(): void {
 
   // Add & apply user follow functionality.
   _social_follow_user_config_update();
+
+  // Set the weight of the social_follow_user to 6
+  // so it is loaded after the social_profile module.
+  module_set_weight('social_follow_user', 6);
 }
 
 /**
@@ -148,4 +152,11 @@ function social_follow_user_update_11203(): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Change a weigh of the social_follow_user module.
+ */
+function social_follow_user_update_11204(): void {
+  module_set_weight('social_follow_user', 6);
 }
