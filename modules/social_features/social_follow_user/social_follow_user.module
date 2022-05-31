@@ -7,11 +7,15 @@
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\flag\Entity\Flag;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -151,7 +155,9 @@ function social_follow_user_theme(): array {
  * Implements hook_preprocess_HOOK().
  */
 function social_follow_user_preprocess_profile(array &$variables): void {
-  if ($variables['elements']['#view_mode'] === 'teaser') {
+  $active = \Drupal::config('social_follow_user.settings')->get('status')) {
+
+  if ($variables['elements']['#view_mode'] === 'teaser' && $active) {
     // Display related teaser tag for each user follow list.
     switch (\Drupal::routeMatch()->getRouteName()) {
       case 'view.followers_user.page_user_followers':
@@ -162,7 +168,32 @@ function social_follow_user_preprocess_profile(array &$variables): void {
         $variables['following'] = TRUE;
         break;
     }
+
+    // Check & disable following due to privacy settings.
+    $profile = $variables['profile'];
+    $helper = \Drupal::service('social_follow_user.helper');
+    if ($disable = $helper->isDisabledFollowing($profile)){
+      $variables['disable_following'] = $disable;
+    }
+
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_profile__profile__statistic(array &$variables): void {
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    return;
+  }
+
+  // Check & disable following due to privacy settings.
+  $profile = $variables['profile'];
+  $helper = \Drupal::service('social_follow_user.helper');
+  if ($disable = $helper->isDisabledFollowing($profile)){
+    $variables['disable_following'] = $disable;
+  }
+
 }
 
 /**
@@ -185,5 +216,63 @@ function social_follow_user_preprocess_flag(array &$variables): void {
     if (\Drupal::config('social_follow_user.settings')->get('status')) {
       $variables['follow_user'] = 'follow_user';
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ */
+function social_follow_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  $profile = _social_profile_get_profile_from_route();
+  $active = \Drupal::config('social_follow_user.settings')->get('status')
+
+  if ($profile instanceof ProfileInterface && $active) {
+    $user_data = \Drupal::service('user.data');
+    $disable_following = $user_data->get('social_profile_privacy', $profile->get('uid')->target_id, 'disable_following');
+
+    $form['profile_privacy']['social_profile_disable_following'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Prevent members from following me'),
+      '#default_value' => $disable_following,
+      '#description' => t('This section allows you to turn off the ability for 
+members to follow your activity and receive notification about new content 
+you create.'),
+      '#attributes' => [
+        'data-switch' => TRUE,
+      ],
+    ];
+
+    // Add Submit function only when the data is actually editable.
+    $form['actions']['submit']['#submit'][] = '_social_follow_user_form_submit';
+  }
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   Commnent on a post form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_follow_user_form_submit(array $form, FormStateInterface $form_state) {
+  $profile = _social_profile_get_profile_from_route();
+  $profile_privacy = $form_state->getValue('profile_privacy');
+
+  if ($profile instanceof Profile) {
+    $uid = $profile->getOwnerId();
+
+    if (isset($profile_privacy['social_profile_disable_following'])) {
+      // Save language info in the user data.
+      \Drupal::service('user.data')->set(
+        'social_profile_privacy',
+        $uid,
+        'disable_following',
+        $profile_privacy['social_profile_disable_following']
+      );
+    }
+
+    // Invalidate profile cache tags.
+    Cache::invalidateTags(['profile:' . $uid]);
   }
 }
