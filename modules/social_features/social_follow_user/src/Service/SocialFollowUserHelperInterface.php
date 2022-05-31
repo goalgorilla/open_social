@@ -2,11 +2,8 @@
 
 namespace Drupal\social_follow_user\Service;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
@@ -25,14 +22,14 @@ interface SocialFollowUserHelperInterface {
    *   The user data service.
    * @param \Drupal\flag\FlagServiceInterface $flag
    *   The flag service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
   public function __construct(
-    AccountProxyInterface $currentUser,
+    AccountProxyInterface $current_user,
     UserDataInterface $user_data,
     FlagServiceInterface $flag,
-    EntityTypeManagerInterface $entityTypeManager
+    EntityTypeManagerInterface $entity_type_manager
   );
 
   /**
@@ -40,6 +37,7 @@ interface SocialFollowUserHelperInterface {
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
    *   The profile entity object.
+   *
    * @return bool
    *   TRUE if the user following is disabled, FALSE otherwise.
    */

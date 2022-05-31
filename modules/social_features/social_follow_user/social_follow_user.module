@@ -15,7 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\flag\Entity\Flag;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -172,10 +171,9 @@ function social_follow_user_preprocess_profile(array &$variables): void {
     // Check & disable following due to privacy settings.
     $profile = $variables['profile'];
     $helper = \Drupal::service('social_follow_user.helper');
-    if ($disable = $helper->isDisabledFollowing($profile)){
+    if ($disable = $helper->isDisabledFollowing($profile)) {
       $variables['disable_following'] = $disable;
     }
-
   }
 }
 
@@ -190,7 +188,7 @@ function social_follow_user_preprocess_profile__profile__statistic(array &$varia
   // Check & disable following due to privacy settings.
   $profile = $variables['profile'];
   $helper = \Drupal::service('social_follow_user.helper');
-  if ($disable = $helper->isDisabledFollowing($profile)){
+  if ($disable = $helper->isDisabledFollowing($profile)) {
     $variables['disable_following'] = $disable;
   }
 
@@ -222,13 +220,13 @@ function social_follow_user_preprocess_flag(array &$variables): void {
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
-function social_follow_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function social_follow_user_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
   $profile = _social_profile_get_profile_from_route();
   $active = \Drupal::config('social_follow_user.settings')->get('status');
 
   if ($profile instanceof ProfileInterface && $active) {
     $user_data = \Drupal::service('user.data');
-    $disable_following = $user_data->get('social_profile_privacy', $profile->get('uid')->target_id, 'disable_following');
+    $disable_following = $user_data->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'disable_following');
 
     $form['profile_privacy']['social_profile_disable_following'] = [
       '#type' => 'checkbox',
@@ -255,7 +253,7 @@ you create.'),
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_follow_user_form_submit(array $form, FormStateInterface $form_state) {
+function _social_follow_user_form_submit(array $form, FormStateInterface $form_state): void {
   $profile = _social_profile_get_profile_from_route();
   $profile_privacy = $form_state->getValue('profile_privacy');
 
@@ -266,7 +264,7 @@ function _social_follow_user_form_submit(array $form, FormStateInterface $form_s
       // Save language info in the user data.
       \Drupal::service('user.data')->set(
         'social_profile_privacy',
-        $uid,
+        (int) $uid,
         'disable_following',
         $profile_privacy['social_profile_disable_following']
       );

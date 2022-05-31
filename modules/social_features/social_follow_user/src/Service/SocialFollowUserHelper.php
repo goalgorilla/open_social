@@ -8,7 +8,6 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 
-
 /**
  * Defines the helper service.
  */
@@ -46,15 +45,15 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
    * {@inheritdoc}
    */
   public function __construct(
-    AccountProxyInterface $currentUser,
+    AccountProxyInterface $current_user,
     UserDataInterface $user_data,
     FlagServiceInterface $flag,
-    EntityTypeManagerInterface $entityTypeManager
+    EntityTypeManagerInterface $entity_type_manager
   ) {
-    $this->currentUser = $currentUser;
+    $this->currentUser = $current_user;
     $this->userData = $user_data;
     $this->flagService = $flag;
-    $this->entityTypeManager = $entityTypeManager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -64,13 +63,14 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
     $disable_following = FALSE;
 
     // Check if disabled user following due to privacy settings.
-    if ($this->userData->get('social_profile_privacy', $profile->get('uid')->target_id, 'disable_following')) {
+    if ($this->userData->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'disable_following')) {
       $disable_following = TRUE;
 
       // Check if user already followed.
+      /** @var \Drupal\flag\FlagInterface $flag */
       $flag = $this->flagService->getFlagById('follow_user');
       // And display only "Unfollow" button.
-      if ($this->flagService->getFlagging($flag, $profile, $this->currentUser)){
+      if ($this->flagService->getFlagging($flag, $profile, $this->currentUser)) {
         $disable_following = FALSE;
       }
     }
