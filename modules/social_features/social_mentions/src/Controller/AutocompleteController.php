@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\Renderer;
 use Drupal\social_profile\SocialProfileTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,6 +46,13 @@ class AutocompleteController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
+   * Renderer services.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected Renderer $renderer;
+
+  /**
    * AutocompleteController constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
@@ -53,11 +61,18 @@ class AutocompleteController extends ControllerBase {
    *   The database connection.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   The renderer service.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, Connection $database, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(
+    ConfigFactoryInterface $configFactory,
+    Connection $database,
+    EntityTypeManagerInterface $entityTypeManager,
+    Renderer $renderer) {
     $this->configFactory = $configFactory;
     $this->database = $database;
     $this->entityTypeManager = $entityTypeManager;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -67,7 +82,8 @@ class AutocompleteController extends ControllerBase {
     return new static(
       $container->get('config.factory'),
       $container->get('database'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('renderer')
     );
   }
 
@@ -101,9 +117,10 @@ class AutocompleteController extends ControllerBase {
         'profile_id' => '',
       ];
 
-      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE)) && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
+      $profile = $storage->loadByUser($account, 'profile', TRUE);
+      if ($profile !== NULL && $suggestion_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
         $build = $view_builder->view($profile, 'autocomplete_item');
-        $item['html_item'] = render($build);
+        $item['html_item'] = $this->renderer->render($build);
         $item['profile_id'] = $profile->id();
         $item['value'] = strip_tags($account->getDisplayName());
       }

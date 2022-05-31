@@ -19,6 +19,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
@@ -285,7 +286,9 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
     'activity_comment',
   ])) {
     // Add a readmore link.
-    $node_title_stripped = strip_tags($entity->label());
+    $label = $entity->label() instanceof TranslatableMarkup ? $entity->label()->render() : $entity->label();
+    $label = $label ?? '';
+    $node_title_stripped = strip_tags($label);
     $links['node']['#links']['node-readmore'] = [
       'title' => t('Read more<span class="visually-hidden"> about @title</span>', [
         '@title' => $node_title_stripped,
@@ -321,9 +324,9 @@ function social_core_preprocess_field(array &$variables) {
  * Implements hook_preprocess_block().
  */
 function social_core_preprocess_block(&$variables) {
-  /** @var \Drupal\user\Entity\User $account */
+  /** @var \Drupal\user\Entity\User|int $account */
   $account = \Drupal::routeMatch()->getParameter('user');
-  /** @var \Drupal\group\Entity\Group $group */
+  /** @var \Drupal\group\Entity\Group|int $group */
   $group = \Drupal::routeMatch()->getParameter('group');
 
   if (is_numeric($account)) {
@@ -426,31 +429,37 @@ function social_core_preprocess_block(&$variables) {
       break;
 
     case 'group_members-block_newest_members':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromRoute('view.group_members.page_group_members', [
-        'group' => $group->id(),
-      ]);
-      $variables['button_text'] = $more_link;
-      $link->setOption('use_more', FALSE);
+      if ($group instanceof GroupInterface) {
+        $variables['subtitle'] = t('in the group');
+        $variables['view_all_path'] = Url::fromRoute('view.group_members.page_group_members', [
+          'group' => $group->id(),
+        ]);
+        $variables['button_text'] = $more_link;
+        $link->setOption('use_more', FALSE);
+      }
       break;
 
     case 'upcoming_events-upcoming_events_group':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromRoute('view.group_events.page_group_events', [
-        'group' => $group->id(),
-      ]);
-      $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
-      ]);
+      if ($group instanceof GroupInterface) {
+        $variables['subtitle'] = t('in the group');
+        $variables['view_all_path'] = Url::fromRoute('view.group_events.page_group_events', [
+          'group' => $group->id(),
+        ]);
+        $variables['button_text'] = t('All @label', [
+          '@label' => $variables['label']['#markup'],
+        ]);
+      }
       break;
 
     case 'latest_topics-group_topics_block':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromRoute('view.group_topics.page_group_topics', [
-        'group' => $group->id(),
-      ]);
-      $variables['button_text'] = $more_link;
-      $link->setOption('use_more', FALSE);
+      if ($group instanceof GroupInterface) {
+        $variables['subtitle'] = t('in the group');
+        $variables['view_all_path'] = Url::fromRoute('view.group_topics.page_group_topics', [
+          'group' => $group->id(),
+        ]);
+        $variables['button_text'] = $more_link;
+        $link->setOption('use_more', FALSE);
+      }
       break;
   }
 }
@@ -1082,7 +1091,7 @@ function _social_core_set_default_email_logo_for_socialblue() {
   // Only when socialblue is default we continue.
   if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
     $logo = theme_get_setting('logo.url', 'socialblue');
-    $basetheme_url = drupal_get_path('theme', 'socialblue');
+    $basetheme_url = \Drupal::service('extension.list.theme')->getPath('socialblue');
     // Only if the theme setting for the logo, is still the socialblue
     // default logo, we can update our default logo.
     // If someone changed it to their own branding, let's not update it

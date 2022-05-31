@@ -107,7 +107,7 @@ function social_event_type_preprocess_node(array &$variables): void {
  * Sets dynamic allowed values for the event type icon field.
  */
 function social_event_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
-  $theme_path = drupal_get_path('theme', 'socialbase');
+  $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
   $options = [];
@@ -143,7 +143,7 @@ function social_event_type_form_taxonomy_term_event_types_form_alter(&$form, For
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
@@ -164,7 +164,7 @@ function _social_event_type_change_topic_icon_ajax(array $form, FormStateInterfa
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 

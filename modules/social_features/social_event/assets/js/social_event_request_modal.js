@@ -2,7 +2,7 @@
  * @file social_event_request_modal.js
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings, once) {
 
   'use strict';
 
@@ -10,7 +10,8 @@
     attach: function (context, settings) {
 
       // Trigger the modal window.
-      $('body', context).once('eventEnrollmentRequest').each(function () {
+      const $bodyElementOnce = $(once('eventEnrollmentRequest', 'body', context));
+      $bodyElementOnce.each(function () {
         $('a#modal-trigger').click();
 
         // When the dialog closes, reload without the location.search parameter.
@@ -22,12 +23,13 @@
       // When submitting the request, close the page.
       var closeDialog = settings.eventEnrollmentRequest.closeDialog;
 
-      $('body').once('eventEnrollmentSubmitRequest').on('dialogclose', '.ui-dialog', function() {
-        if (closeDialog === true) {
-          location.assign(location.origin + location.pathname);
-        }
-      });
+      $(once('eventEnrollmentSubmitRequest', 'body'))
+        .on('dialogclose', '.ui-dialog', function() {
+          if (closeDialog === true) {
+            location.assign(location.origin + location.pathname);
+          }
+        });
     }
   }
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);

@@ -72,13 +72,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
    *   TRUE when it's an image and not a file
    */
   private function isImage(FileInterface $file) {
-    $image = $this->getImage($file);
-
-    if ($image === NULL) {
-      return FALSE;
-    }
-
-    return $image->isValid();
+    return $this->getImage($file)->isValid();
   }
 
   /**

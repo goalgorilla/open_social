@@ -130,10 +130,11 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               switch ($entity->getEntityTypeId()) {
                 case 'node':
                   // Then get the bundle name.
-                  $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
-                    ->getStorage('node_type')
-                    ->load($entity->bundle())
-                    ->label());
+                  $content_type_label = '';
+                  $label = \Drupal::entityTypeManager()->getStorage('node_type')->load($entity->bundle())->label();
+                  if (is_string($label) || $label instanceof TranslatableMarkup) {
+                    $content_type_label = mb_strtolower($label);
+                  }
                   break;
 
                 case 'post':

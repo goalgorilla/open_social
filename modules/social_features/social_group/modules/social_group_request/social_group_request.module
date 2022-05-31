@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
@@ -160,15 +161,16 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
 
     /** @var \Drupal\group\Entity\GroupContentInterface $request */
     foreach ($requests as $request) {
-      $request
-        ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
-        ->set('grequest_updated_by', $approver)
-        ->save();
+      try {
+        $request
+          ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
+          ->set('grequest_updated_by', $approver)
+          ->save();
 
-      if ($request) {
         \Drupal::messenger()->addStatus(t('Membership request approved'));
       }
-      else {
+      catch (EntityStorageException $exception) {
+        \Drupal::logger('social_group_request')->critical("Exception trying to save a group membership request: @message", ['@message' => $exception->getMessage()]);
         \Drupal::messenger()->addError(t('Error updating Request'));
       }
     }

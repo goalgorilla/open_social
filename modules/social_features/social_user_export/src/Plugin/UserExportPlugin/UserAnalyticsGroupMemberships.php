@@ -90,7 +90,12 @@ class UserAnalyticsGroupMemberships extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    return count($this->groupHelper->getAllGroupsForUser($entity->id()));
+    $user_id = $entity->id();
+    if (!is_int($user_id)) {
+      return "0";
+    }
+
+    return (string) count($this->groupHelper->getAllGroupsForUser($user_id));
   }
 
 }

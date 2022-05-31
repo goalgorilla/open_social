@@ -114,11 +114,10 @@ class MentionActivityContext extends ActivityContextBase {
             $account = $mention->uid->entity;
 
             if ($mentioned_entity->access('view', $account)) {
-              /** @var \Drupal\group\Entity\GroupInterface $group */
               $group = $this->groupMuteNotify->getGroupByContent($mentioned_entity);
               // Check if we have $group set which means that this content was
               // posted in a group.
-              if (!empty($group) && $group instanceof GroupInterface) {
+              if ($group instanceof GroupInterface) {
                 // Skip the notification for users which have muted the group
                 // notification in which this content was posted.
                 if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {

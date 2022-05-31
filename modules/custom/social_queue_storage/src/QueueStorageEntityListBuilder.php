@@ -5,6 +5,7 @@ namespace Drupal\social_queue_storage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Defines a class to build a listing of Queue storage entity entities.
@@ -34,7 +35,8 @@ class QueueStorageEntityListBuilder extends EntityListBuilder {
     $row['owner'] = $entity->getOwner()->getDisplayName();
 
     // Add a description.
-    $row_description = $entity->label();
+    $entity_label = $entity->label();
+    $row_description = $entity_label instanceof TranslatableMarkup ? $entity_label->render() : '';
     if ($entity->bundle() === 'email') {
       // When bundle is email, display the email subject.
       $row_description = $entity->get('field_subject')->value;

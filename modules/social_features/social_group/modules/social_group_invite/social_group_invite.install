@@ -85,7 +85,7 @@ function social_group_invite_update_8005() {
  * Update group invite views().
  */
 function social_group_invite_update_8006() {
-  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/optional';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_invite') . '/config/optional';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
@@ -123,7 +123,7 @@ function social_group_invite_update_11001(): void {
     return;
   }
 
-  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 

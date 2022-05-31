@@ -11,7 +11,7 @@ use Drupal\Core\Config\FileStorage;
  * Create a new paragraph type.
  */
 function social_content_block_landing_page_update_11001(): void {
-  $config_path = drupal_get_path('module', 'social_content_block_landing_page') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_content_block_landing_page') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
   $config_storage = \Drupal::service('config.storage');

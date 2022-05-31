@@ -707,7 +707,7 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
  * Implements hook_views_pre_render().
  */
 function social_user_views_pre_render(ViewExecutable $view) {
-  if (isset($view) && ($view->storage->id() == 'user_admin_people')) {
+  if ($view->storage->id() == 'user_admin_people') {
     $view->element['#attached']['library'][] = 'social_user/admin.people';
   }
 }

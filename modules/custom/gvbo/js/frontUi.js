@@ -3,7 +3,7 @@
  * Select-All Button functionality.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -12,7 +12,9 @@
    */
   Drupal.behaviors.group_views_bulk_operations = {
     attach: function (context, settings) {
-      $('.vbo-view-form').once('group-vbo-init').each(Drupal.groupViewsBulkOperationsFrontUi);
+      const $groupVboInitOnce = $(once('group-vbo-init', '.vbo-view-form'));
+      // `$elements` is always a jQuery object.
+      $groupVboInitOnce.each(Drupal.groupViewsBulkOperationsFrontUi);
     }
   };
 
@@ -29,4 +31,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);
