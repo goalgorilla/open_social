@@ -138,7 +138,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
         }
         else {
           // Add log in and sign up links below discussion comments for AN user.
-          $log_in_url = Url::fromRoute('user.login');
+          $log_in_url = Url::fromRoute('user.login', ['destination' => Url::fromRoute('<current>')->toString()]);
           $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)
             ->toString();
           $create_account_url = Url::fromRoute('user.register');
