@@ -48,7 +48,7 @@ mergeable:
     validate:
       - do: commit
         message:
-          regex: '^(coding standards|chore|fix|refactor|test|style|perf)(\(\w+\))?:.+$'
+          regex: '^(?!.*\btest\b)(?!.*\bfix\b)(?!.*\bcoding standards\b)(?!.*\bupdated\b)(?!.*\bfix\b)(?!.*\brefactor\b)(?!.*\bstyle\b)(?!.*\bperf\b).*$'
           skip_merge: true
     fail:
       - do: comment
