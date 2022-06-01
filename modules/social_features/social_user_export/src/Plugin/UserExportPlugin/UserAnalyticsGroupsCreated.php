@@ -27,14 +27,25 @@ class UserAnalyticsGroupsCreated extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
+    $user_id = $entity->id();
+    if (!is_int($user_id)) {
+      return "0";
+    }
+
     $query = $this->database->select('groups', 'g');
     $query->join('groups_field_data', 'gfd', 'gfd.id = g.id');
-    $query->condition('gfd.uid', $entity->id());
+    $query->condition('gfd.uid', (string) $user_id);
 
-    return (int) $query
+    $result = $query
       ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->execute();
+    if ($result === NULL) {
+      return "0";
+    }
+
+    // Cast to int first so an empty result registers a "0". We cast to string
+    // to satisfy the user export plugin interface.
+    return (string) (int) $result->fetchField();
   }
 
 }

@@ -241,12 +241,12 @@ function social_activity_theme($existing, $type, $theme, $path) {
  * @param array $status
  *   Filter by status.
  *
- * @return int|void
- *   Returns the amount of notifications.
+ * @return int
+ *   The amount of notifications.
  *
  * @see \Drupal\activity_creator\ActivityNotifications
  */
-function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
+function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) : int {
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
 
   return count($account_notifications->getNotifications($account, $status)) ?? 0;

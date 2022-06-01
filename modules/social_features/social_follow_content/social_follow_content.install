@@ -69,7 +69,7 @@ function social_follow_content_update_8001() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_follow_content_update_10301() {
-  $config_file = drupal_get_path('module', 'social_follow_content') . '/config/static/message.template.create_comment_following_node_10301.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_follow_content') . '/config/static/message.template.create_comment_following_node_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {

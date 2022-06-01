@@ -109,6 +109,8 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     '#description' => t('Select a entity condition for this message.'),
     '#default_value' => $activity_entity_condition_value,
     '#options' => $activity_entity_condition_options,
+    '#empty_option' => t('- none -'),
+    '#empty_value' => '',
     '#access' => !empty($activity_entity_condition_options),
   ];
 

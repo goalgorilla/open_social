@@ -1,0 +1,25 @@
+core.entity_view_display.profile.profile.preview:
+  expected_config:
+    content:
+      field_profile_self_introduction:
+        weight: 4
+        settings: {  }
+        type: text_default
+  update_actions:
+    change:
+      content:
+        field_profile_self_introduction:
+          weight: 3
+          settings:
+            trim_length: 140
+          type: text_trimmed
+    add:
+      content:
+        field_profile_summary:
+          type: string
+          weight: 2
+          region: content
+          label: visually_hidden
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }

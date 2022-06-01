@@ -137,7 +137,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
 
     // At this point the parameter could also be a simple string of a nid.
     // EG: on: /node/%node/enrollments.
-    if (!is_null($nid) && !is_object($nid)) {
+    if (is_numeric($nid)) {
       $node = $this->entityTypeManager->getStorage('node')->load($nid);
     }
 

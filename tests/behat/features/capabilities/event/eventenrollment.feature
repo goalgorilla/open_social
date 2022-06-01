@@ -19,7 +19,13 @@ Feature: Enroll for an event
     And I should see the link "Manage enrollments"
 
     When I press the "Enroll" button
-    Then I should see the button "Enrolled"
+    And I wait for AJAX to finish
+    Then I should see the text "Meetup: My Behat Event created" in the "Modal"
+    And I should see the link "See who else is going" in the "Modal"
+    And I press the "Close" button
+    And I should see the button "Enrolled"
+
+    Then I reload the page
     And I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
@@ -48,6 +54,7 @@ Feature: Enroll for an event
     Then I should see "Enrollment redirect test event"
 
     When I press the "Enroll" button
+    And I wait for AJAX to finish
     Then I should see "Please log in or create a new account so that you can enroll to the event"
     And I should see "Log in"
 
@@ -57,7 +64,13 @@ Feature: Enroll for an event
     Then I should see "Enrollment redirect test event"
 
     When I press the "Enroll" button
-    Then I should see the button "Enrolled"
+    And I wait for AJAX to finish
+    Then I should see the text "Meetup: Enrollment redirect test event" in the "Modal"
+    And I should see the link "See who else is going" in the "Modal"
+    And I press the "Close" button
+    And I should see the button "Enrolled"
+
+    Then I reload the page
     And I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
@@ -76,18 +89,28 @@ Feature: Enroll for an event
     And I should see the link "Manage enrollments"
 
     When I press the "Enroll" button
-    Then I should see the button "Enrolled"
+    And I wait for AJAX to finish
+    Then I should see the text "Meetup: My Behat Event created" in the "Modal"
+    And I should see the link "See who else is going" in the "Modal"
+    And I press the "Close" button
+    And I should see the button "Enrolled"
+    Then I reload the page
     And I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
     When I press the "Enrolled" button
-    And I click "Cancel enrollment"
+    And I press "Cancel enrollment"
+    And I wait for AJAX to finish
+    And I reload the page
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
     And I should see the link "Manage enrollments"
 
     # Enroll again, since this is technically something different.
     When I press the "Enroll" button
+    And I wait for AJAX to finish
+    And I press the "Close" button
+    And I reload the page
     Then I should see "1 people have enrolled"
     And I should see the link "All enrollments"
 
@@ -107,6 +130,8 @@ Feature: Enroll for an event
 
     When I click "Enrollment test event"
     And I press the "Enroll" button
+    And I wait for AJAX to finish
+    And I press the "Close" button
     Then I should see the button "Enrolled"
     And I click "eventenrollment" in the "Main content"
     And I click "Events"

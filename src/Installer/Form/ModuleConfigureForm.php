@@ -5,6 +5,7 @@ namespace Drupal\social\Installer\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\social\Installer\OptionalModuleManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -21,24 +22,33 @@ class ModuleConfigureForm extends ConfigFormBase {
   protected $optionalModuleManager;
 
   /**
+   * The Drupal state manager.
+   */
+  private StateInterface $state;
+
+  /**
    * Constructs a ModuleConfigureForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The Drupal state manager.
    * @param \Drupal\social\Installer\OptionalModuleManager $optional_module_manager
    *   The module extension list.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, OptionalModuleManager $optional_module_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, OptionalModuleManager $optional_module_manager) {
     parent::__construct($config_factory);
+    $this->state = $state;
     $this->optionalModuleManager = $optional_module_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container) : ModuleConfigureForm {
     return new static(
       $container->get('config.factory'),
+      $container->get('state'),
       // Create the OptionalModuleManager ourselves because it can not be
       // available as a service yet.
       OptionalModuleManager::create($container)
@@ -131,7 +141,7 @@ class ModuleConfigureForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) : void {
     if ($form_state->getValue('select_all')) {
       // Create a simple array with all the possible optional modules.
       $optional_modules = array_keys($this->optionalModuleManager->getOptionalModules());
@@ -164,7 +174,7 @@ class ModuleConfigureForm extends ConfigFormBase {
     }
 
     // Store whether we need to set up demo content.
-    \Drupal::state()->set('social_install_demo_content', $form_state->getValue('demo_content'));
+    $this->state->set('social_install_demo_content', $form_state->getValue('demo_content'));
   }
 
 }

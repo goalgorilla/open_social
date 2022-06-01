@@ -181,5 +181,9 @@ function social_follow_user_preprocess_flag(array &$variables): void {
     if (($delta = array_search('btn-default', $classes)) !== FALSE) {
       unset($classes[$delta]);
     }
+
+    if (\Drupal::config('social_follow_user.settings')->get('status')) {
+      $variables['follow_user'] = 'follow_user';
+    }
   }
 }

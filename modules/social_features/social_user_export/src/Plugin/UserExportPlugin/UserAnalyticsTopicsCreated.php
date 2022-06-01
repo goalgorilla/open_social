@@ -27,16 +27,27 @@ class UserAnalyticsTopicsCreated extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
+    $user_id = $entity->id();
+    if (!is_int($user_id)) {
+      return "0";
+    }
+
     $query = $this->database->select('node', 'n');
     $query->join('node_field_data', 'nfd', 'nfd.nid = n.nid');
     $query
-      ->condition('nfd.uid', $entity->id())
+      ->condition('nfd.uid', (string) $user_id)
       ->condition('nfd.type', 'topic');
 
-    return (int) $query
+    $result = $query
       ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->execute();
+    if ($result === NULL) {
+      return "0";
+    }
+
+    // Cast to int first so an empty result registers a "0". We cast to string
+    // to satisfy the user export plugin interface.
+    return (string) (int) $result->fetchField();
   }
 
 }

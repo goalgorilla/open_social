@@ -4,9 +4,11 @@ namespace Drupal\social_user_export\Plugin\Action;
 
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\file\FileRepository;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,6 +70,20 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   protected $config;
 
   /**
+   * File URL Generator services.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
+   * File repository services.
+   *
+   * @var \Drupal\file\FileRepository
+   */
+  protected FileRepository $fileRepository;
+
+  /**
    * Constructs a ExportUser object.
    *
    * @param array $configuration
@@ -84,8 +100,22 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The current user account.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory for the export plugin access.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
+   * @param \Drupal\file\FileRepository $file_repository
+   *   The file repository service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserExportPluginManager $userExportPlugin, LoggerInterface $logger, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    UserExportPluginManager $userExportPlugin,
+    LoggerInterface $logger,
+    AccountProxyInterface $currentUser,
+    ConfigFactoryInterface $configFactory,
+    FileUrlGenerator $file_url_generator,
+    FileRepository $file_repository
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->userExportPlugin = $userExportPlugin;
@@ -97,6 +127,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     $definitions = $this->userExportPlugin->getDefinitions();
     $this->pluginDefinitions = $this->pluginAccess($definitions);
     usort($this->pluginDefinitions, [$this, 'sortDefinitions']);
+    $this->fileUrlGenerator = $file_url_generator;
+    $this->fileRepository = $file_repository;
   }
 
   /**
@@ -107,7 +139,9 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('file_url_generator'),
+      $container->get('file.repository')
     );
   }
 
@@ -165,20 +199,23 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
 
     if (($this->context['sandbox']['current_batch'] * $this->context['sandbox']['batch_size']) >= $this->context['sandbox']['total']) {
       $data = @file_get_contents($file_path);
-      $name = basename($this->context['sandbox']['results']['file_path']);
-      $path = 'private://csv';
+      if (is_string($data)) {
+        $name = basename($this->context['sandbox']['results']['file_path']);
+        $path = 'private://csv';
 
-      if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
-        $url = Url::fromUri(file_create_url($path . '/' . $name));
-        $link = Link::fromTextAndUrl($this->t('Download file'), $url);
+        if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+          $this->fileRepository->writeData($data, $path . '/' . $name);
+          $url = Url::fromUri($this->fileUrlGenerator->generateAbsoluteString($path . '/' . $name));
+          $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
-        $this->messenger()->addMessage($this->t('Export is complete. @link', [
-          '@link' => $link->toString(),
-        ]));
-      }
-      else {
-        $this->messenger()->addMessage($this->t('Could not save the export file.'), 'error');
-        $this->logger->error('Could not save the export file on: %name.', ['%name' => $name]);
+          $this->messenger()->addMessage($this->t('Export is complete. @link', [
+            '@link' => $link->toString(),
+          ]));
+        }
+        else {
+          $this->messenger()->addMessage($this->t('Could not save the export file.'), 'error');
+          $this->logger->error('Could not save the export file on: %name.', ['%name' => $name]);
+        }
       }
     }
   }
@@ -236,7 +273,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The path to the file.
    */
   protected function generateFilePath() : string {
-    $hash = md5(microtime(TRUE));
+    $hash = md5((string) microtime(TRUE));
     return 'export-users-' . substr($hash, 20, 12) . '.csv';
   }
 

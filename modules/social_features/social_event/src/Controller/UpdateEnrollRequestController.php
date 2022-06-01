@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -73,34 +72,31 @@ class UpdateEnrollRequestController extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve) {
-    // Just some sanity checks.
-    if ($node instanceof Node && !empty($event_enrollment)) {
-      // First, lets delete all messages to keep the messages clean.
-      $this->messenger()->deleteAll();
-      // When the user approved,
-      // we set the field_request_or_invite_status to approved.
-      if ($approve === '1') {
-        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_APPROVED;
-        $event_enrollment->field_enrollment_status->value = '1';
-        $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
-      }
-      // When the user declined,
-      // we set the field_request_or_invite_status to decline.
-      elseif ($approve === '0') {
-        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-        $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
-      }
-
-      // In order for the notifications to be sent correctly we're updating the
-      // owner here. The account is still linked to the actual enrollee.
-      // The owner is always used as the actor.
-      // @see activity_creator_message_insert().
-      $event_enrollment->setOwnerId($this->currentUser->id());
-
-      // And finally save (update) this updated $event_enrollment.
-      // @todo maybe think of deleting approved/declined records from the db?
-      $event_enrollment->save();
+    // First, lets delete all messages to keep the messages clean.
+    $this->messenger()->deleteAll();
+    // When the user approved,
+    // we set the field_request_or_invite_status to approved.
+    if ((string) $approve === '1') {
+      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_APPROVED;
+      $event_enrollment->field_enrollment_status->value = '1';
+      $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
     }
+    // When the user declined,
+    // we set the field_request_or_invite_status to decline.
+    elseif ((string) $approve === '0') {
+      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
+    }
+
+    // In order for the notifications to be sent correctly we're updating the
+    // owner here. The account is still linked to the actual enrollee.
+    // The owner is always used as the actor.
+    // @see activity_creator_message_insert().
+    $event_enrollment->setOwnerId($this->currentUser->id());
+
+    // And finally save (update) this updated $event_enrollment.
+    // @todo maybe think of deleting approved/declined records from the db?
+    $event_enrollment->save();
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');

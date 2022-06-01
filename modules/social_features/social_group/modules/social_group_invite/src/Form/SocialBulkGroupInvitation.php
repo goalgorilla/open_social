@@ -5,6 +5,7 @@ namespace Drupal\social_group_invite\Form;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -109,6 +110,13 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $pluginManager;
 
   /**
+   * The file url generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
    * Constructs a new BulkGroupInvitation Form.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
@@ -131,6 +139,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   The config factory.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    */
   public function __construct(
     RouteMatchInterface $route_match,
@@ -142,7 +152,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     GroupInvitationLoader $invitation_loader,
     GroupContentEnablerManagerInterface $plugin_manager,
     ConfigFactoryInterface $config_factory,
-    Token $token
+    Token $token,
+    FileUrlGenerator $file_url_generator
   ) {
     parent::__construct($route_match, $entity_type_manager, $temp_store_factory, $logger_factory, $messenger, $group_membership_loader, $invitation_loader);
     $this->group = $this->routeMatch->getParameter('group');
@@ -151,6 +162,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $this->token = $token;
     $this->groupInvitationLoader = $group_membership_loader;
     $this->groupMembershipLoader = $invitation_loader;
+    $this->fileUrlGenerator = $file_url_generator;
   }
 
   /**
@@ -167,7 +179,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       $container->get('ginvite.invitation_loader'),
       $container->get('plugin.manager.group_content_enabler'),
       $container->get('config.factory'),
-      $container->get('token')
+      $container->get('token'),
+      $container->get('file_url_generator')
     );
   }
 
@@ -250,7 +263,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = file_create_url($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }
 

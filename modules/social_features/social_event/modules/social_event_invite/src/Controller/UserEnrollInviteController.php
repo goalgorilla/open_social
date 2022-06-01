@@ -21,42 +21,39 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
    * {@inheritdoc}
    */
   public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, string $accept_decline) {
-    // Just some sanity checks.
-    if (!empty($event_enrollment)) {
-      // When the user accepted the invite,
-      // we set the field_request_or_invite_status to approved.
-      if ($accept_decline === '1') {
-        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
-        $event_enrollment->field_enrollment_status->value = '1';
-        $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
-        if (!empty($statusMessage)) {
-          // Lets delete all messages to keep the messages clean.
-          $this->messenger()->deleteAll();
-          $this->messenger()->addStatus($statusMessage);
-        }
+    // When the user accepted the invite,
+    // we set the field_request_or_invite_status to approved.
+    if ($accept_decline === '1') {
+      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+      $event_enrollment->field_enrollment_status->value = '1';
+      $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
+      if (!empty($statusMessage)) {
+        // Lets delete all messages to keep the messages clean.
+        $this->messenger()->deleteAll();
+        $this->messenger()->addStatus($statusMessage);
       }
-      // When the user declined,
-      // we set the field_request_or_invite_status to decline.
-      elseif ($accept_decline === '0') {
-        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-        $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
-        if (!empty($statusMessage)) {
-          // Lets delete all messages to keep the messages clean.
-          $this->messenger()->deleteAll();
-          $this->messenger()->addStatus($statusMessage);
-        }
-      }
-
-      // And finally save (update) this updated $event_enrollment.
-      // @todo maybe think of deleting approved/declined records from the db?
-      $event_enrollment->save();
-
-      // Invalidate cache.
-      $tags = [];
-      $tags[] = 'enrollment:' . $event_enrollment->field_event->value . '-' . $this->currentUser->id();
-      $tags[] = 'event_content_list:entity:' . $this->currentUser->id();
-      Cache::invalidateTags($tags);
     }
+    // When the user declined,
+    // we set the field_request_or_invite_status to decline.
+    elseif ($accept_decline === '0') {
+      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
+      if (!empty($statusMessage)) {
+        // Lets delete all messages to keep the messages clean.
+        $this->messenger()->deleteAll();
+        $this->messenger()->addStatus($statusMessage);
+      }
+    }
+
+    // And finally save (update) this updated $event_enrollment.
+    // @todo maybe think of deleting approved/declined records from the db?
+    $event_enrollment->save();
+
+    // Invalidate cache.
+    $tags = [];
+    $tags[] = 'enrollment:' . $event_enrollment->field_event->value . '-' . $this->currentUser->id();
+    $tags[] = 'event_content_list:entity:' . $this->currentUser->id();
+    Cache::invalidateTags($tags);
 
     // Get the redirect destination we're given in the request for the response.
     $destination = Url::fromRoute('view.user_event_invites.page_user_event_invites', ['user' => $this->currentUser->id()])->toString();
