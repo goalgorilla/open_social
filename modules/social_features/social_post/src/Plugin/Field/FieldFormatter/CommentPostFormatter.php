@@ -169,8 +169,8 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     return [
       '#prefix' => '<hr>',
       '#markup' => $this->t('Please @log_in or @sign_up to comment.', [
-        '@log_in' => Link::fromTextAndUrl(t('log in'), $log_in_url)->toString(),
-        '@sign_up' => Link::fromTextAndUrl(t('sign up'), $create_account_url)->toString(),
+        '@log_in' => Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString(),
+        '@sign_up' => Link::fromTextAndUrl($this->t('sign up'), $create_account_url)->toString(),
       ]),
     ];
   }
