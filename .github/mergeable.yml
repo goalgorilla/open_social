@@ -1,3 +1,23 @@
+# This file is a configuration file of github bot called mergeables.
+# See: https://github.com/apps/mergeable
+#
+# The bot help us to enforce standards and conventions on our repository.
+# See: https://mergeable.readthedocs.io/en/latest/usage.html
+#
+# This contains the following checks.
+#    1. Welcomes a PR contributor.
+#    2. Validates the title in a given format.
+#    3. Checks for certain keywords in commit messages. For example, 'fix'.
+#    4. Validates that certain labels are added on PR.
+#    5. Adds 'status: needs work' label when reviews request changes in PR, and also removed 'status: needs review' label.
+#    6. Adds 'status: needs review' label when a PR review is requested.
+#    7. Requests maintainers for review when the label 'optional: review requested' label is added.
+#    8. Performs check for backport after 24 hours of PR merged.
+#    9. Performs check on PR being open for more than 30 days and informs the maintainers about it.
+#
+# Please read documentation of mergeable at
+# https://mergeable.readthedocs.io/en/latest/configuration.html#basics
+
 version: 2
 mergeable:
   # Let's welcome contributors.
@@ -172,7 +192,7 @@ mergeable:
       # If the PR has the following label.
       - do: label
         begins_with:
-          match: 'optional: review_requested'
+          match: 'optional: review requested'
     pass:
       # Request the maintainers for the review.
       - do: request_review
