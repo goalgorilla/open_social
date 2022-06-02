@@ -188,15 +188,15 @@ mergeable:
     # See: https://mergeable.readthedocs.io/en/latest/operators/or.html
     validate:
       - do: or
-          validate:
-            # The PR should have a milestone.
-            - do: milestone
+        validate:
+          # The PR should have a milestone.
+          - do: milestone
             no_empty:
               enabled: true
-            # Or, the PR should have one of the following title words.
-            - do: title
-              begins_with:
-                match: [ 'Internal:', 'Hotfix:' ]
+          # Or, the PR should have one of the following title words.
+          - do: title
+            begins_with:
+              match: [ 'Internal:', 'Hotfix:' ]
     pass:
       - do: checks
         status: 'success'
@@ -219,29 +219,27 @@ mergeable:
     filter:
       # see: https://mergeable.readthedocs.io/en/latest/operators/or.html
       - do: and
-          filter:
-            # One of the following filters.
-            - do: or
-              filter:
-                # Pull request contains backport label.
-                - do: payload
-                  pull_request:
-                    labels:
-                      must_include:
-                        regex: 'status: needs backport'
-                        key: 'name'
-                # Or, it contains a milestone.
-                - do: payload
-                  pull_request:
-                    milestone:
-                      boolean:
-                        match: true
-            # And, is definitely the PR is merged.
-            - do: payload
-              pull_request:
-                merged:
-                  boolean:
-                    match: true
+        filter:
+          # One of the following filters.
+          - do: or
+            filter:
+              # Pull request contains backport label.
+              - do: payload
+                pull_request:
+                  labels:
+                    must_include:
+                      regex: 'status: needs backport'
+                      key: 'name'
+              # Or, it contains a milestone.
+              - do: milestone
+                no_empty:
+                  enabled: true
+          # And, is definitely the PR is merged.
+          - do: payload
+            pull_request:
+              merged:
+                boolean:
+                  match: true
     validate:
       # We want to check that the PR is 24 hours old.
       - do: stale
