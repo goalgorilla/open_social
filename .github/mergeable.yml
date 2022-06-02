@@ -22,9 +22,14 @@ mergeable:
   - when: pull_request.*
     name: "Valid issue title"
     validate:
+      # The PR should have the title in following formats
       - do: title
+        # It must start with following keywords.
         begins_with:
           match: ['Issue #', 'Internal:', 'Updates:', 'Hotfix:']
+        # It must end with a full stop.
+        ends_with:
+          match: '.'
     fail:
       - do: comment
         payload:
@@ -34,6 +39,7 @@ mergeable:
               - begin with Internal: if it's related to an internal ticket
               - begin with Updates: if we are updating one of our dependencies
               - begin with Hotfix: if we are creating a hotfix
+              - ends with a full stop (.)
       - do: labels
         add: 'blocked: drupal.org ticket'
       - do: checks # default fail case
@@ -48,6 +54,8 @@ mergeable:
   - when: pull_request.*
     name: "Check commit messages"
     validate:
+      # Check the commit messages.
+      # It should not contain the following keywords.
       - do: commit
         message:
           regex: '^(?!.*\btest\b)(?!.*\bfix\b)(?!.*\bcoding standards\b)(?!.*\bupdated\b)(?!.*\bfix\b)(?!.*\brefactor\b)(?!.*\bstyle\b)(?!.*\bperf\b).*$'
@@ -73,6 +81,7 @@ mergeable:
   - when: pull_request.*
     name: "Valid labels"
     validate:
+      # The PR must have the following labels.
       - do: label
         and:
           - must_include:
@@ -99,41 +108,24 @@ mergeable:
             Don't worry if you're unsure what labels to pick, our maintainers will be able to assist you with that.
       - do: checks # default error case
         status: 'failure' # Can be: success, failure, neutral, cancelled, timed_out, or action_required
-        payload:
-          title: 'Mergeable found some errors!'
-          summary: |
-            ### Status: {{toUpperCase validationStatus}}
-            Some or All of the validators have returned 'error' status, please check below for details
-            Here are some stats of the run: \n {{validationCount}} validations were ran.
-            {{passCount}} ***PASSED***
-            {{failCount}} ***FAILED***
-            {{errorCount}} ***ERRORED***
-          text: "{{#each validationSuites}}
-              #### {{{statusIcon status}}} Validator: {{toUpperCase name}}
-              Status {{toUpperCase status}}
-              {{#each validations }} * {{{statusIcon status}}} ***{{{ description }}}***
-                     Input : {{{details.input}}}
-                     Settings : {{{displaySettings details.settings}}}
-                     {{#if details.error}}
-                     Error : {{{details.error}}}
-                     {{/if}}
-                     {{/each}}
-              {{/each}}"
 
   # Remove label 'status: needs review' once PR is approved.
   - when: 'pull_request_review.*'
     name: 'Status check'
     filter:
+      # If the PR is approved by reviewer.
       - do: payload
         review:
           state:
             must_include:
               regex: 'approved'
     validate:
+      # If it has needs review label.
       - do: label
         must_include:
           regex: 'status: needs review'
     pass:
+      # Remove the label.
       - do: labels
         delete: 'status: needs review'
       - do: checks
@@ -143,16 +135,19 @@ mergeable:
   - when: 'pull_request_review.*'
     name: 'Status check'
     filter:
+      # The author should have requested review.
       - do: payload
         review:
           state:
             must_include:
               regex: 'changes_requested'
     validate:
+      # The PR should contain the needs review label.
       - do: label
         must_include:
           regex: 'status: needs review'
     pass:
+      # If it has the needs review label, remove it and add needs work.
       - do: labels
         add: 'status: needs work'
         delete: 'status: needs review'
@@ -164,16 +159,19 @@ mergeable:
   - when: 'pull_request_review.*'
     name: 'Request mainatainer for review'
     filter:
+      # The PR should have status request for review.
       - do: payload
         review:
           state:
             must_include:
               regex: 'review_requested'
     validate:
+      # If the PR has the following label.
       - do: label
         begins_with:
           match: 'optional: review_requested'
     pass:
+      # Request the maintainers for the review.
       - do: request_review
         teams: ['maintainers']
       - do: comment
@@ -184,13 +182,18 @@ mergeable:
   # This is only ignored if PR is internal.
   - when: pull_request.*
     name: "Valid milestone"
+    # See: https://mergeable.readthedocs.io/en/latest/operators/or.html
     validate:
-      - do: milestone
-        no_empty:
-          enabled: true
-      - do: title
-        begins_with:
-          match: [ 'Internal:', 'Hotfix:' ]
+      - do: or
+          validate:
+            # The PR should have a milestone.
+            - do: milestone
+            no_empty:
+              enabled: true
+            # Or, the PR should have one of the following title words.
+            - do: title
+              begins_with:
+                match: [ 'Internal:', 'Hotfix:' ]
     pass:
       - do: checks
         status: 'success'
@@ -211,18 +214,33 @@ mergeable:
     name: 'Check backport'
     type: pull_request
     filter:
-      - do: payload
-        pull_request:
-          merged:
-            boolean:
-              match: true
-      - do: payload
-        pull_request:
-          labels:
-            must_include:
-              regex: 'status: needs backport'
-              key: 'name'
+      # see: https://mergeable.readthedocs.io/en/latest/operators/or.html
+      - do: and
+          filter:
+            # One of the following filters.
+            - do: or
+              filter:
+                # Pull request contains backport label.
+                - do: payload
+                  pull_request:
+                    labels:
+                      must_include:
+                        regex: 'status: needs backport'
+                        key: 'name'
+                # Or, it contains a milestone.
+                - do: payload
+                  pull_request:
+                    milestone:
+                      boolean:
+                        match: true
+            # And, is definitely the PR is merged.
+            - do: payload
+              pull_request:
+                merged:
+                  boolean:
+                    match: true
     validate:
+      # We want to check that the PR is 24 hours old.
       - do: stale
         days: 1
         type: pull_request
@@ -230,6 +248,7 @@ mergeable:
           time_zone: 'Europe/Amsterdamn'
           hours_between: [ '9', '17' ]
           days_of_week: [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]
+      # It should contain the 'verified-cherry-picks'
       - do: label
         must_include:
           regex: 'verified-cherry-picks'
