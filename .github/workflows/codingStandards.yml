@@ -17,6 +17,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clear composer cache
+        run: composer clearcache
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
@@ -32,6 +35,9 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Clear composer cache
+        run: composer clearcache
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
@@ -52,6 +58,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clear composer cache
+        run: composer clearcache
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
@@ -67,6 +76,9 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Clear composer cache
+        run: composer clearcache
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
