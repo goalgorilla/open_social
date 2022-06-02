@@ -7,7 +7,6 @@ use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -15,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\SocialEventTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,6 +23,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\social_event\Form
  */
 class EnrollActionForm extends FormBase {
+
+  use SocialEventTrait;
 
   /**
    * The routing matcher to get the nid.
@@ -509,34 +511,6 @@ class EnrollActionForm extends FormBase {
     }
 
     return $groups;
-  }
-
-  /**
-   * Function to determine if an event has been finished.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The event.
-   *
-   * @return bool
-   *   TRUE if the evens is finished / completed.
-   */
-  protected function eventHasBeenFinished(NodeInterface $node) {
-    // Use the start date when the end date is not set to determine if the
-    // event is closed.
-    /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
-    $check_end_date = $node->field_event_date->date;
-
-    if (isset($node->field_event_date_end->date)) {
-      $check_end_date = $node->field_event_date_end->date;
-    }
-
-    $current_time = new DrupalDateTime();
-
-    // The event has finished if the end date is smaller than the current date.
-    if ($current_time > $check_end_date) {
-      return TRUE;
-    }
-    return FALSE;
   }
 
 }
