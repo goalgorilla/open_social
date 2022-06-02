@@ -6,6 +6,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\Element\EntityAutocomplete;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\flag\FlagInterface;
@@ -147,7 +148,17 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
                 continue;
               }
               $choice = new \stdClass();
-              $choice->option = [$term->id() => str_repeat('-', $term->depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
+
+              // There is a PHPStan error:
+              // ---------------------------------------------------------------
+              // Parameter #2 $times of function str_repeat expects int,
+              // Drupal\Core\Field\FieldItemListInterface given.
+              // ---------------------------------------------------------------
+              // Typecasting directly for $term->depth is not solve this error.
+              // So, to fix it let's ensure that $term->depth is not a property
+              // of FieldItemListInterface and then typecast that value.
+              $depth = $term->depth instanceof FieldItemListInterface ? 0 : (int) $term->depth;
+              $choice->option = [$term->id() => str_repeat('-', $depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
               $options[] = $choice;
             }
           }
