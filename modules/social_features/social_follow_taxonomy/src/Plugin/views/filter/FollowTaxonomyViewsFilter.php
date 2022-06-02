@@ -148,17 +148,7 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
                 continue;
               }
               $choice = new \stdClass();
-
-              // There is a PHPStan error:
-              // ---------------------------------------------------------------
-              // Parameter #2 $times of function str_repeat expects int,
-              // Drupal\Core\Field\FieldItemListInterface given.
-              // ---------------------------------------------------------------
-              // Typecasting directly for $term->depth is not solve this error.
-              // So, to fix it let's ensure that $term->depth is not a property
-              // of FieldItemListInterface and then typecast that value.
-              $depth = $term->depth instanceof FieldItemListInterface ? 0 : (int) $term->depth;
-              $choice->option = [$term->id() => str_repeat('-', $depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
+              $choice->option = [$term->id() => str_repeat('-', (int) $term->depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
               $options[] = $choice;
             }
           }
