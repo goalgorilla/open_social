@@ -19,6 +19,7 @@ mergeable:
         leave_old_comment: true
 
   # Check for a valid title.
+  # See: https://mergeable.readthedocs.io/en/latest/validators/title.html
   - when: pull_request.*
     name: "Valid issue title"
     validate:
@@ -51,6 +52,7 @@ mergeable:
         status: 'success'
 
   # Check for meaningful commit messages.
+  # See: https://mergeable.readthedocs.io/en/latest/validators/commit.html
   - when: pull_request.*
     name: "Check commit messages"
     validate:
@@ -110,6 +112,7 @@ mergeable:
         status: 'failure' # Can be: success, failure, neutral, cancelled, timed_out, or action_required
 
   # Remove label 'status: needs review' once PR is approved.
+  # See: https://mergeable.readthedocs.io/en/latest/filters/payload.html
   - when: 'pull_request_review.*'
     name: 'Status check'
     filter:
