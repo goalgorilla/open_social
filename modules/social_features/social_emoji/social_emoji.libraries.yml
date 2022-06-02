@@ -8,9 +8,9 @@ emoji-picker-element:
     theme:
       assets/css/social_emoji.css: {}
   js:
-    ../../../../../../libraries/emoji-picker-element/index.js: { attributes: { type: module } }
-    https://unpkg.com/@popperjs/core@2: { minified: true }
-    assets/js/social_emoji_picker.js: {}
+    assets/js/social_emoji_picker.js: { attributes: { type: module } }
   dependencies:
-    - core/jquery
     - core/drupal
+    - core/once
+    - core/popperjs
+    - core/tabbable

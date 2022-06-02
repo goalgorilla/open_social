@@ -8,21 +8,11 @@
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Implements hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  *
- * Add emoji trigger element to posts and comments.
+ * Add emoji trigger element to every text_texarea element.
  */
 function social_emoji_field_widget_single_element_text_textarea_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
-  $element['#suffix'] = "<span class='emoji-trigger'>" . t("Emoji") . "</span><span class='tooltip emoji-picker' role='tooltip'></span>";
-  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
-}
-
-/**
- * Implements hook_field_widget_single_element_text_WIDGET_TYPE_form_alter().
- *
- * Add emoji trigger element to CKEditor.
- */
-function social_emoji_field_widget_single_element_text_textarea_with_summary_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
-  $element['#suffix'] = "<span class='emoji-trigger'>" . t("Emoji") . "</span><span class='tooltip emoji-picker' role='tooltip'></span>";
+  $element['#attributes']['class'][] = 'social-emoji-capable';
   $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
 }
