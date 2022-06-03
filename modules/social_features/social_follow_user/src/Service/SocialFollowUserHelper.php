@@ -59,23 +59,46 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function isDisabledFollowing(ProfileInterface $profile): bool {
-    $disable_following = FALSE;
+  public function isFollowingEnabled(ProfileInterface $profile): bool {
+    $following_enabled = TRUE;
 
     // Check if disabled user following due to privacy settings.
-    if ($this->userData->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'disable_following')) {
-      $disable_following = TRUE;
+    if (!$this->getFollowingStatus((int) $profile->get('uid')->target_id)) {
+      $following_enabled = FALSE;
 
       // Check if user already followed.
       /** @var \Drupal\flag\FlagInterface $flag */
       $flag = $this->flagService->getFlagById('follow_user');
-      // And display only "Unfollow" button.
+      // And display only "Unfollow" button because we should leave the ability
+      // to unfollow user.
       if ($this->flagService->getFlagging($flag, $profile, $this->currentUser)) {
-        $disable_following = FALSE;
+        $following_enabled = TRUE;
       }
     }
+    return $following_enabled;
+  }
 
-    return $disable_following;
+  /**
+   * {@inheritdoc}
+   */
+  public function setFollowingStatus(int $uid, $status = TRUE): void {
+    $this->userData->set(
+      'social_profile_privacy',
+      $uid,
+      'following_enabled',
+      $status
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFollowingStatus(int $uid): bool {
+    return $this->userData->get(
+      'social_profile_privacy',
+      $uid,
+      'following_enabled'
+    );
   }
 
 }

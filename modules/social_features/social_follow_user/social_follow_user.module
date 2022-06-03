@@ -15,6 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -172,10 +173,10 @@ function social_follow_user_preprocess_profile(array &$variables): void {
         $variables['following'] = TRUE;
         break;
     }
-    _social_follow_user_disable_following($variables);
+    _social_follow_user_check_following_status($variables);
   }
   if ($view_mode === 'preview') {
-    _social_follow_user_disable_following($variables);
+    _social_follow_user_check_following_status($variables);
   }
 }
 
@@ -186,7 +187,7 @@ function social_follow_user_preprocess_profile__profile__statistic(array &$varia
   if (!\Drupal::config('social_follow_user.settings')->get('status')) {
     return;
   }
-  _social_follow_user_disable_following($variables);
+  _social_follow_user_check_following_status($variables);
 }
 
 /**
@@ -220,13 +221,13 @@ function social_follow_user_form_user_form_alter(array &$form, FormStateInterfac
   $active = \Drupal::config('social_follow_user.settings')->get('status');
 
   if ($profile instanceof ProfileInterface && $active) {
-    $user_data = \Drupal::service('user.data');
-    $disable_following = $user_data->get('social_profile_privacy', (int) $profile->get('uid')->target_id, 'disable_following');
+    $following_enabled = \Drupal::service('social_follow_user.helper')
+      ->getFollowingStatus((int) $profile->get('uid')->target_id);
 
-    $form['profile_privacy']['social_profile_disable_following'] = [
+    $form['profile_privacy']['social_profile_following_enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Prevent members from following me'),
-      '#default_value' => $disable_following,
+      '#title' => t('Allow members to follow me'),
+      '#default_value' => $following_enabled,
       '#description' => t('This section allows you to turn off the ability for 
 members to follow your activity and receive notification about new content you 
 create.'),
@@ -255,29 +256,36 @@ function _social_follow_user_form_submit(array $form, FormStateInterface $form_s
   if ($profile instanceof Profile) {
     $uid = $profile->getOwnerId();
 
-    if (isset($profile_privacy['social_profile_disable_following'])) {
-      // Save language info in the user data.
-      \Drupal::service('user.data')->set(
-        'social_profile_privacy',
-        (int) $uid,
-        'disable_following',
-        $profile_privacy['social_profile_disable_following']
-      );
+    if (isset($profile_privacy['social_profile_following_enabled'])) {
+      // Save following status in the user data.
+      \Drupal::service('social_follow_user.helper')
+        ->setFollowingStatus((int) $uid, (bool) $profile_privacy['social_profile_following_enabled']);
     }
-
     // Invalidate profile cache tags.
     Cache::invalidateTags(['profile:' . $uid]);
   }
 }
 
 /**
- * Check & disable following due to privacy settings.
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_follow_user_user_insert(UserInterface $user): void {
+  // New registered users should have the "Allow members to follow me" option
+  // enabled by default when they are registered.
+  \Drupal::service('social_follow_user.helper')
+    ->setFollowingStatus((int) $user->id());
+}
+
+/**
+ * Checks following status due to privacy settings.
  *
  * @param array $variables
  *   Array with variables of a profile.
  */
-function _social_follow_user_disable_following(array &$variables): void {
-  if (\Drupal::service('social_follow_user.helper')->isDisabledFollowing($variables['profile'])) {
-    $variables['disable_following'] = TRUE;
+function _social_follow_user_check_following_status(array &$variables): void {
+  if (\Drupal::service('social_follow_user.helper')->isFollowingEnabled($variables['profile'])) {
+    $variables['following_enabled'] = TRUE;
   }
 }

@@ -33,6 +33,9 @@ function social_follow_user_install(): void {
   // Set the weight of the social_follow_user to 6
   // so it is loaded after the social_profile module.
   module_set_weight('social_follow_user', 6);
+
+  // Enable following status of all existing users by default.
+  _social_follow_user_enable_following_status();
 }
 
 /**
@@ -157,6 +160,24 @@ function social_follow_user_update_11203(): string {
 /**
  * Change a weigh of the social_follow_user module.
  */
-function social_follow_user_update_11204(): void {
+function social_follow_user_update_11401(): void {
   module_set_weight('social_follow_user', 6);
+}
+
+/**
+ * Enable following status of all existing users by default.
+ */
+function social_follow_user_update_11402(): void {
+  _social_follow_user_enable_following_status();
+}
+
+/**
+ * Helper callback to set following status of all existing users by default.
+ */
+function _social_follow_user_enable_following_status(): void {
+  $users = \Drupal::entityTypeManager()->getStorage('user')->loadMultiple();
+  foreach ($users as $user) {
+    \Drupal::service('social_follow_user.helper')
+      ->setFollowingStatus((int) $user->id());
+  }
 }

@@ -33,14 +33,35 @@ interface SocialFollowUserHelperInterface {
   );
 
   /**
-   * Check if following is disabled for the profile.
+   * Check if following is enabled for the profile.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
    *   The profile entity object.
    *
    * @return bool
-   *   TRUE if the user following is disabled, FALSE otherwise.
+   *   TRUE or FALSE depending upon following status.
    */
-  public function isDisabledFollowing(ProfileInterface $profile): bool;
+  public function isFollowingEnabled(ProfileInterface $profile): bool;
+
+  /**
+   * Set following status of user.
+   *
+   * @param int $uid
+   *   The user id.
+   * @param bool $status
+   *   The following status.
+   */
+  public function setFollowingStatus(int $uid, $status = TRUE): void;
+
+  /**
+   * Get following status of user.
+   *
+   * @param int $uid
+   *   The user id.
+   *
+   * @return bool
+   *   TRUE if the user following is enabled, FALSE otherwise.
+   */
+  public function getFollowingStatus(int $uid): bool;
 
 }
