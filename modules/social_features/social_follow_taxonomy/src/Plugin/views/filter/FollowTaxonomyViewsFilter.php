@@ -146,24 +146,10 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
               if (!$term->isPublished() && !$this->currentUser->hasPermission('administer taxonomy')) {
                 continue;
               }
-              // There is a PHPStan error:
-              // ---------------------------------------------------------------
-              // Parameter #2 $times of function str_repeat expects int,
-              // Drupal\Core\Field\FieldItemListInterface given.
-              // ---------------------------------------------------------------
-              // The property 'depth' is adding to the term in
-              // TermStorage::loadTree(), this is why we can't load it with the
-              // usual methods.
-              // Typecasting directly for $term->depth is not solve this error.
-              // So, to fix it we need to determine term depth with another
-              // approach.
-              // @todo Load the term's depth in the right way when it will be
-              //   possible
-              $parents = $this->entityTypeManager->getStorage('taxonomy_term')->loadParents((int) $term->id());
-              // The number of parents determines the current depth.
-              $depth = count($parents);
               $choice = new \stdClass();
-              $choice->option = [$term->id() => str_repeat('-', $depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
+
+              // @phpstan-ignore-next-line
+              $choice->option = [$term->id() => str_repeat('-', $term->depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
               $options[] = $choice;
             }
           }
