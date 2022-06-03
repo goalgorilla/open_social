@@ -1,4 +1,4 @@
-(function ($, Drupal) {
+(function ($, Drupal, debounce) {
 
   Drupal.behaviors.tooltip = {
     attach: function (context, settings) {
@@ -7,21 +7,45 @@
 
       tag.each(function () {
         var el = $(this);
+        var teaser = el.closest('.teaser');
         var parentW = el.closest('.teaser__body').width();
         var position = el.position();
         var percentage = (position.left / (parentW * 0.01)).toString();
         var text = el.find('.text');
         var conditionPercentage = '50';
 
+        // Add extra class to the teaser with profile organization tag.
+        teaser.addClass('js-teaser-profile-org-tag');
+
         // Reset `overflow` style for the `teaser__content-text` and `teaser__published-author` classes.
         var teaserC = el.closest('.teaser__content-text');
         var teaserP = el.closest('.teaser__published-author');
+        var resetStyles = {'overflow': 'visible', 'white-space': 'normal'};
+        var revertStyles = {'overflow': 'hidden', 'white-space': 'nowrap'};
 
-        teaserC.css('overflow', 'visible');
-        teaserP.css('overflow', 'visible');
+        function viewportProfileOrgChanges() {
+          if(teaser.hasClass('js-teaser-profile-org-tag')) {
+            if ($(window).width() >= 1025) {
+              teaserC.css(resetStyles);
+              teaserP.css(resetStyles);
+            }
+            else{
+              teaserC.css(revertStyles);
+              teaserP.css(revertStyles);
+            }
+          }
+        }
+
+        viewportProfileOrgChanges();
+
+        // Debounce.
+        var viewportChange = debounce(function() {
+          viewportProfileOrgChanges()
+        }, 250);
+
+        window.addEventListener('resize', viewportChange);
 
         if($('body.path-user').length === 0) {
-          console.log(1);
           if (percentage >= conditionPercentage) {
             text.css({
               'left': 'auto',
@@ -54,4 +78,4 @@
     }
   }
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, Drupal.debounce);
