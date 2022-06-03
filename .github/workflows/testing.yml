@@ -72,12 +72,6 @@ jobs:
           # Since composer must clone from this we require all the history.
           fetch-depth: 0
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.json') }}
-
       # Create a branch for the specific commit so that composer can check it
       # out.
       - name: Composerify local checkout
