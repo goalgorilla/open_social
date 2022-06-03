@@ -43,9 +43,6 @@ jobs:
       - name: Composer Config
         run: composer config repositories.social vcs $GITHUB_WORKSPACE/tmp/repository
 
-      - name: Clear composer cache
-        run: composer clearcache
-
       # Install the version of Open Social under test.
       - name: Composer Install
         run: composer require goalgorilla/open_social:dev-${{ github.sha }}#${{ github.sha }}
@@ -93,9 +90,6 @@ jobs:
       # Set up composer with our desired PHP version.
       - name: Composer Config
         run: composer config repositories.social vcs $GITHUB_WORKSPACE/tmp/repository
-
-      - name: Clear composer cache
-        run: composer clearcache
 
       # Install the version of Open Social under test.
       - name: Composer Install
