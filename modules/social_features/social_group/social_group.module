@@ -798,6 +798,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
+    if (isset($form['path'])) {
+      $form['path']['#access'] = FALSE;
+    }
 
     // Add cancel option on join and leave form.
     $form['actions']['cancel'] = [
