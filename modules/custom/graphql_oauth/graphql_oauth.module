@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains social_graphql_oauth2.module.
+ * Contains graphql_oauth.module.
  */
 
-use Drupal\social_graphql_oauth2\Entity\Server;
+use Drupal\graphql_oauth\Entity\Server;
 
 /**
  * Implements hook_entity_type_build().
  */
-function social_graphql_oauth2_entity_type_build(array &$entity_types): void {
+function graphql_oauth_entity_type_build(array &$entity_types): void {
   if (array_key_exists('graphql_server', $entity_types)) {
     /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
     $entity_types['graphql_server']->setClass(Server::class);

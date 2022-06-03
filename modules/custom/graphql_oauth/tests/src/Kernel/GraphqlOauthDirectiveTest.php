@@ -1,33 +1,37 @@
 <?php
 
-namespace Drupal\Tests\social_graphql_oauth2\Kernel;
+namespace Drupal\Tests\graphql_oauth\Kernel;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\consumers\Entity\Consumer;
+use Drupal\graphql\Entity\Server;
+use Drupal\graphql\Entity\ServerInterface;
 use Drupal\simple_oauth\Authentication\TokenAuthUser;
 use Drupal\simple_oauth\Entity\Oauth2Scope;
 use Drupal\simple_oauth\Entity\Oauth2Token;
-use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
+use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
 
 /**
- * Tests scope directive.
+ * Tests OAuth directives.
  *
- * @group social_graphql
+ * @group graphql_oauth
  */
-class ScopeDirectiveTest extends SocialGraphQLTestBase {
+class GraphqlOauthDirectiveTest extends GraphQLTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'consumers',
+    'entity',
     'file',
     'image',
     'options',
     'serialization',
     'simple_oauth',
-    'social_graphql_oauth2',
-    'social_graphql_oauth2_test',
+    'graphql_oauth',
+    'graphql_oauth_test',
   ];
 
   /**
@@ -64,10 +68,15 @@ class ScopeDirectiveTest extends SocialGraphQLTestBase {
   protected function setUp() : void {
     parent::setUp();
 
+    $this->installConfig('graphql_oauth_test');
     $this->installEntitySchema('oauth2_scope');
     $this->installEntitySchema('consumer');
     $this->installEntitySchema('oauth2_token');
     $this->installConfig(['simple_oauth']);
+
+    $server = Server::load("graphql_oauth_test");
+    assert($server instanceof ServerInterface);
+    $this->server = $server;
 
     $this->user = $this->setUpCurrentUser([], $this->userPermissions());
 
@@ -340,6 +349,54 @@ class ScopeDirectiveTest extends SocialGraphQLTestBase {
   }
 
   /**
+   * Test allow user access on query.
+   */
+  public function testAccessQueryUser(): void {
+    $query = '
+      query {
+        testQueryAccess {
+          allowUserSingleScope
+        }
+      }
+    ';
+    $error = "The 'test:scope2' scope is required.";
+    $this->setAccountProxy([$this->scope1->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "The 'test:scope1' scope is required.";
+    $this->setAccountProxy([$this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "The 'authorization code' grant type is required.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertResults(
+      $query,
+      [],
+      [
+        'testQueryAccess' => [
+          'allowUserSingleScope' => 'test',
+        ],
+      ],
+      $this->getCacheMetaData()
+    );
+  }
+
+  /**
    * Assert access on GraphQL request.
    *
    * @param string $fields
@@ -480,6 +537,23 @@ class ScopeDirectiveTest extends SocialGraphQLTestBase {
       'testAccessTypeNonNullArrayItem' => [$types],
       'testAccessTypeNonNullArrayAndItem' => [$types],
     ];
+  }
+
+  /**
+   * Returns the default cache maximum age for the test.
+   */
+  protected function defaultCacheMaxAge(): int {
+    return Cache::PERMANENT;
+  }
+
+  /**
+   * Provides the user permissions that the test user is set up with.
+   *
+   * @return string[]
+   *   List of user permissions.
+   */
+  protected function userPermissions(): array {
+    return ['access content', 'bypass graphql access'];
   }
 
 }

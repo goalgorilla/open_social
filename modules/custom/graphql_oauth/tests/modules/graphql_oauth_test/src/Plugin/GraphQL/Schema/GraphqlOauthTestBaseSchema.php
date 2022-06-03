@@ -1,27 +1,42 @@
 <?php
 
-namespace Drupal\social_graphql_oauth2_test\Plugin\GraphQL\SchemaExtension;
+namespace Drupal\graphql_oauth_test\Plugin\GraphQL\Schema;
 
 use Drupal\graphql\GraphQL\ResolverBuilder;
+use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
-use Drupal\social_graphql\Plugin\GraphQL\SchemaExtension\SchemaExtensionPluginBase;
+use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 
 /**
- * Adds test data to the Open Social GraphQL API.
+ * Schema base for testing the OAuth directives.
  *
- * @SchemaExtension(
- *   id = "test_schema_extension",
- *   name = "Open Social - Test Schema Extension",
- *   description = "GraphQL schema extension for testing the directives.",
- *   schema = "open_social"
+ * @Schema(
+ *   id = "graphql_oauth_test",
+ *   name = "Test OAuth GraphQL Schema"
  * )
  */
-class TestSchemaExtension extends SchemaExtensionPluginBase {
+class GraphqlOauthTestBaseSchema extends SdlSchemaPluginBase {
 
   /**
    * {@inheritdoc}
    */
-  public function registerResolvers(ResolverRegistryInterface $registry): void {
+  protected function getExtensions(): array {
+    $parent = parent::getExtensions();
+    $oauth2_extension = $this->extensionManager->getExtensions('graphql_oauth_schema_extension');
+    return array_merge($parent, $oauth2_extension);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getResolverRegistry() {
+    return new ResolverRegistry();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSchema(ResolverRegistryInterface $registry) {
     $builder = new ResolverBuilder();
 
     $query_fields = [
@@ -29,6 +44,7 @@ class TestSchemaExtension extends SchemaExtensionPluginBase {
       'testAccessFieldNonNull',
       'testAccessType',
       'testAccessTypeNonNull',
+      'testQueryAccess',
     ];
     foreach ($query_fields as $field) {
       $registry->addFieldResolver('Query', $field,
@@ -103,6 +119,9 @@ class TestSchemaExtension extends SchemaExtensionPluginBase {
         );
       }
     }
+
+    // Instantiate the schema and add all extensions.
+    return parent::getSchema($registry);
   }
 
 }

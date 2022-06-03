@@ -1,3 +1,23 @@
+schema {
+  query: Query
+}
+
+type Query {
+  testAccessField: TestAccessField
+  testAccessFieldNonNull: TestAccessField!
+  testAccessFieldArray: [TestAccessField]
+  testAccessFieldNonNullArray: [TestAccessField]!
+  testAccessFieldNonNullArrayItem: [TestAccessField!]
+  testAccessFieldNonNullArrayAndItem: [TestAccessField!]!
+  testAccessType: TestAccessType
+  testAccessTypeNonNull: TestAccessType!
+  testAccessTypeArray: [TestAccessType]
+  testAccessTypeNonNullArray: [TestAccessType]!
+  testAccessTypeNonNullArrayItem: [TestAccessType!]
+  testAccessTypeNonNullArrayAndItem: [TestAccessType!]!
+  testQueryAccess: TestAccessField! @allowUser(requiredScopes: ["test:scope2"])
+}
+
 type TestAccessField {
   allowUserSingleScope: String! @allowUser(requiredScopes: ["test:scope1"])
   allowBotSingleScope: String! @allowBot(requiredScopes: ["test:scope1"])

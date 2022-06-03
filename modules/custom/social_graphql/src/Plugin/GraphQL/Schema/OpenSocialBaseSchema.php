@@ -34,6 +34,15 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
+  protected function getExtensions(): array {
+    $parent = parent::getExtensions();
+    $oauth2_extension = $this->extensionManager->getExtensions('social_graphql_oauth2_schema_extension');
+    return array_merge($parent, $oauth2_extension);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getResolverRegistry() {
     return new ResolverRegistry();
   }

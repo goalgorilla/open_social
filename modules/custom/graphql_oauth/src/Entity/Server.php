@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_graphql_oauth2\Entity;
+namespace Drupal\graphql_oauth\Entity;
 
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\graphql\Entity\Server as OriginalServer;
@@ -9,6 +9,7 @@ use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\simple_oauth\Authentication\TokenAuthUserInterface;
 use Drupal\simple_oauth\Entity\Oauth2TokenInterface;
 use Drupal\simple_oauth\Oauth2ScopeInterface;
+use Drupal\simple_oauth\Plugin\Field\FieldType\Oauth2ScopeReferenceItemListInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -70,10 +71,12 @@ class Server extends OriginalServer {
 
       if ($directive_def !== NULL) {
         $type = $info->returnType;
+        // GraphQL wraps non-null and list definitions in `NonNull` and `List`
+        // types but access directives are always on the concrete underlying
+        // type, so we must unwrap our types to find the definitions.
         if ($type instanceof WrappingType) {
           $type = $type->getWrappedType(TRUE);
         }
-
         // Get directive values on the type.
         $type_directive_values = $type->astNode !== NULL ? Values::getDirectiveValues(
           $directive_def,
@@ -81,7 +84,7 @@ class Server extends OriginalServer {
         ) : NULL;
 
         // Get directive values on the field.
-        $field_directive_values = $info->fieldDefinition->astNode ? Values::getDirectiveValues(
+        $field_directive_values = $info->fieldDefinition->astNode !== NULL ? Values::getDirectiveValues(
           $directive_def,
           $info->fieldDefinition->astNode
         ) : NULL;
@@ -107,16 +110,16 @@ class Server extends OriginalServer {
    */
   private function checkAccess(array $directive_values, Oauth2TokenInterface $token): void {
     $token_has_user = !$token->get('auth_user_id')->isEmpty();
-    /** @var \Drupal\simple_oauth\Plugin\Field\FieldType\Oauth2ScopeReferenceItemListInterface $scopes_field */
     $scopes_field = $token->get('scopes');
+    assert($scopes_field instanceof Oauth2ScopeReferenceItemListInterface);
     $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
       return $scope->getName();
     }, $scopes_field->getScopes());
 
     $directive_name = $token_has_user ? 'allowUser' : 'allowBot';
-    $grant_type = $token_has_user ? 'client credentials' : 'authorization code';
     $required_scopes = $this->getRequiredScopes($directive_name, $directive_values);
     if (empty($required_scopes)) {
+      $grant_type = $token_has_user ? 'client credentials' : 'authorization code';
       throw new UserError(sprintf("The '%s' grant type is required.", $grant_type));
     }
     $this->checkRequiredScopes($required_scopes, $token_scopes);
@@ -158,7 +161,7 @@ class Server extends OriginalServer {
       $required_scopes = $directive_values[$directive_name]['requiredScopes'];
     }
     if (isset($directive_values['allowAll']['requiredScopes'])) {
-      $required_scopes = empty($required_scopes) ? $directive_values['allowAll']['requiredScopes'] : array_merge($directive_values[$directive_name]['requiredScopes'], $required_scopes);
+      $required_scopes = array_merge($directive_values['allowAll']['requiredScopes'], $required_scopes);
     }
 
     return $required_scopes;
