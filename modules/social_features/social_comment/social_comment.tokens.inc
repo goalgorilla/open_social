@@ -314,6 +314,7 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
 function _social_comment_get_summary($text) {
   $summary = html_entity_decode(strip_tags($text));
   $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
+  assert($summary !== NULL, 'Invalid regular expression in preg_replace call');
   $max_length = 280;
 
   if (mb_strlen($summary) > $max_length) {
