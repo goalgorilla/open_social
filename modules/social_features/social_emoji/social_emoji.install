@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Enables emoji picker for all applicable comments/posts fields.
+ */
+function social_emoji_install() {
+  /** @var \Drupal\Core\Entity\Entity\EntityFormDisplayInterface[] $entity_form_displays */
+  $entity_form_displays = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties(['targetEntityType' => 'comment']);
+
+  $entity_form_displays += \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties(['targetEntityType' => 'post']);
+
+  foreach ($entity_form_displays as $entity_form_display) {
+    $components = $entity_form_display->getComponents();
+    foreach($components as $name => $component) {
+      if (array_key_exists('type', $component) && ($component['type'] === 'text_textarea' || $component['type'] === 'text_textarea_with_summary')) {
+        $component['third_party_settings']['social_emoji']['display_emoji_picker'] = TRUE;
+        $entity_form_display->setComponent($name, $component);
+      }
+    }
+    $entity_form_display->save();
+  }
+}

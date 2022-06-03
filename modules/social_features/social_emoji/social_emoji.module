@@ -5,6 +5,8 @@
  * The social_emoji module.
  */
 
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -13,6 +15,36 @@ use Drupal\Core\Form\FormStateInterface;
  * Add emoji trigger element to every text_texarea element.
  */
 function social_emoji_field_widget_single_element_text_textarea_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
-  $element['#attributes']['class'][] = 'social-emoji-capable';
-  $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+  if ($context['widget']->getThirdPartySetting('social_emoji', 'display_emoji_picker')) {
+    $element['#attributes']['class'][] = 'social-emoji-capable';
+    $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+  }
+}
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function social_emoji_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, array $form, FormStateInterface $form_state): array {
+  $element = [];
+
+  if ($plugin->getPluginId() === 'text_textarea' || $plugin->getPluginId() === 'text_textarea_with_summary') {
+    $element['display_emoji_picker'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Display emoji picker'),
+      '#default_value' => $plugin->getThirdPartySetting('social_emoji', 'display_emoji_picker'),
+    ];
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function social_emoji_field_widget_settings_summary_alter(&$summary, $context) {
+  /** @var \Drupal\Core\Field\WidgetInterface $widget */
+  $widget = $context['widget'];
+  if ($widget->getPluginId() === 'text_textarea' || $widget->getPluginId() === 'text_textarea_with_summary') {
+    $summary[] = t('Display emoji picker: @display_emoji_picker', ['@display_emoji_picker' => $widget->getThirdPartySetting('social_emoji', 'display_emoji_picker') ? t('Yes') : t('No')]);
+  }
 }
