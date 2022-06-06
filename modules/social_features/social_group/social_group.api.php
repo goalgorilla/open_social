@@ -5,6 +5,7 @@
  * Hooks provided by the Social Group module.
  */
 
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 
@@ -222,6 +223,32 @@ added/invited by @entity_type_id managers.'),
       'weight' => 20,
     ],
   ];
+}
+
+/**
+ * Alter the list of join method definitions.
+ *
+ * @param array $items
+ *   The join method definitions.
+ * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
+ *   The entity object.
+ *
+ * @see _social_group_allowed_values_callback()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_join_method_info_alter(
+  array &$items,
+  ?FieldableEntityInterface $entity
+) {
+  if (
+    isset($items['added']) &&
+    $entity !== NULL &&
+    $entity->getEntityTypeId() === 'group' &&
+    $entity->bundle() === 'secret_group'
+  ) {
+    $items['added']['weight'] = 90;
+  }
 }
 
 /**

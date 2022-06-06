@@ -660,17 +660,17 @@ function _social_group_allowed_values_callback(
   FieldStorageDefinitionInterface $definition,
   FieldableEntityInterface $entity = NULL
 ): array {
-  $values = [];
   $hook = 'social_group_join_method_info';
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-    /** @var callable $function */
-    $function = $module . '_' . $hook;
+  $values = \Drupal::moduleHandler()->invokeAll($hook);
 
-    foreach ($function() as $id => $item) {
-      $values[] = ['id' => $id] + $item;
-    }
-  }
+  \Drupal::moduleHandler()->alter($hook, $values, $entity);
+
+  $values = array_map(
+    fn ($id, $item) => ['id' => $id] + $item,
+    array_keys($values),
+    array_values($values),
+  );
 
   usort($values, [SortArray::class, 'sortByWeightElement']);
 
