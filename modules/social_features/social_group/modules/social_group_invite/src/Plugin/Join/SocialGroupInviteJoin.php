@@ -107,7 +107,7 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
     }
     elseif (
       count($items = parent::actions($entity, $variables)) === 1 &&
-      $entity->bundle() === 'flexible_group' ||
+      in_array($entity->bundle(), $this->types()) ||
       $entity->bundle() === 'closed_group' &&
       !$entity->hasPermission('manage all groups', $this->currentUser)
     ) {
@@ -123,6 +123,13 @@ class SocialGroupInviteJoin extends SocialGroupDirectJoin {
     }
 
     return $items;
+  }
+
+  /**
+   * Gets a list of group types to which a user can be invited.
+   */
+  protected function types(): array {
+    return ['flexible_group'];
   }
 
 }
