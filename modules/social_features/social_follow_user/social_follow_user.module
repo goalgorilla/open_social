@@ -15,7 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -236,7 +235,6 @@ create.'),
       ],
     ];
 
-    // Add Submit function only when the data is actually editable.
     $form['actions']['submit']['#submit'][] = '_social_follow_user_form_submit';
   }
 }
@@ -267,15 +265,26 @@ function _social_follow_user_form_submit(array $form, FormStateInterface $form_s
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
+ * Implements hook_form_FORM_ID_alter().
  */
-function social_follow_user_user_insert(UserInterface $user): void {
-  // New registered users should have the "Allow members to follow me" option
-  // enabled by default when they are registered.
+function social_follow_user_form_user_register_form_alter(array &$form, FormStateInterface $form_state): void {
+  $form['actions']['submit']['#submit'][] = '_social_follow_user_register_form_submit';
+}
+
+/**
+ * Form submit for user_register_form.
+ *
+ * @param array $form
+ *   The user edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_follow_user_register_form_submit(array $form, FormStateInterface $form_state): void {
+  // Enabled "Allow members to follow me" option by default for new users.
+  /** @var \Drupal\user\UserInterface $account */
+  $account = $form_state->get('user');
   \Drupal::service('social_follow_user.helper')
-    ->setFollowingStatus((int) $user->id());
+    ->setFollowingStatus((int) $account->id());
 }
 
 /**

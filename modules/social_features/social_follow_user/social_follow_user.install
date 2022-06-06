@@ -135,7 +135,9 @@ function social_follow_user_update_11202(): void {
     'views.view.following_users' => 'views.view.following_users_11202',
   ];
   $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_follow_user') . '/config/static/';
+  $config_path = \Drupal::moduleHandler()
+    ->getModule('social_follow_user')
+    ->getPath() . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -175,9 +177,22 @@ function social_follow_user_update_11402(): void {
  * Helper callback to set following status of all existing users by default.
  */
 function _social_follow_user_enable_following_status(): void {
-  $users = \Drupal::entityTypeManager()->getStorage('user')->loadMultiple();
-  foreach ($users as $user) {
-    \Drupal::service('social_follow_user.helper')
-      ->setFollowingStatus((int) $user->id());
-  }
+  $uids = \Drupal::entityQuery('user')->execute();
+  $file_path = \Drupal::moduleHandler()
+    ->getModule('social_follow_user')
+    ->getPath() . '/social_follow_user.batch.inc';
+  $batch = [
+    'operations' => [
+      [
+        '_social_follow_user_enable_following_status_batch_process',
+        [$uids],
+      ],
+    ],
+    'finished' => '_social_follow_user_enable_following_status_batch_finished',
+    'title' => t('Processing'),
+    'progress_message' => '',
+    'error_message' => t('The update has encountered an error.'),
+    'file' => $file_path,
+  ];
+  batch_set($batch);
 }
