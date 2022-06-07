@@ -201,7 +201,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
             'timestamp' => $event->getCreatedTime(),
           ],
           'heroImage' => [
-            'url' => file_create_url($event_image->getFileUri()),
+            'url' => \Drupal::service('file_url_generator')->generateAbsoluteString($event_image->getFileUri()),
           ],
           'managers' => [
             'nodes' => [

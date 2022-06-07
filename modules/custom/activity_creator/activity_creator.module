@@ -63,45 +63,45 @@ function activity_creator_field_activity_destinations_allowed_values(): array {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_creator_message_insert(Message $entity) {
-  if ($entity) {
-    // @todo Move all this logic to services (also in Queue).
-    $mid = $entity->id();
-    $message_template_id = $entity->getTemplate()->id();
-    $actor = $entity->getOwner()->id();
+  // @todo Move all this logic to services (also in Queue).
+  $mid = $entity->id();
+  $message_template_id = $entity->getTemplate()->id();
+  $actor = $entity->getOwner()->id();
 
-    // If one field of field_message_context, field_message_destination or
-    // field_message_related_object is empty, don't create activities.
-    if (
-      $entity->get('field_message_context')->isEmpty() ||
-      $entity->get('field_message_destination')->isEmpty() ||
-      $entity->get('field_message_related_object')->isEmpty()
-    ) {
-      return;
-    }
+  // If one field of field_message_context, field_message_destination or
+  // field_message_related_object is empty, don't create activities.
+  if (
+    $entity->get('field_message_context')->isEmpty() ||
+    $entity->get('field_message_destination')->isEmpty() ||
+    $entity->get('field_message_related_object')->isEmpty()
+  ) {
+    return;
+  }
 
-    $context = $entity->get('field_message_context')->getValue();
-    $destinations = $entity->get('field_message_destination')->getValue();
-    $related_object = $entity->get('field_message_related_object')->getValue();
+  $context = $entity->get('field_message_context')->getValue();
+  $destinations = $entity->get('field_message_destination')->getValue();
+  $related_object = $entity->get('field_message_related_object')->getValue();
 
-    $data = [
-      'mid' => $mid,
-      'message_template' => $message_template_id,
-      'actor' => $actor,
-      'context' => $context[0]['value'],
-      'destination' => $destinations,
-      'related_object' => $related_object,
-      'last_uid' => 0,
-      'status' => NULL,
-    ];
+  $data = [
+    'mid' => $mid,
+    'message_template' => $message_template_id,
+    'actor' => $actor,
+    'context' => $context[0]['value'],
+    'destination' => $destinations,
+    'related_object' => $related_object,
+    'last_uid' => 0,
+    'status' => NULL,
+  ];
 
-    $message_template = $entity->getTemplate();
+  $message_template = $entity->getTemplate();
 
-    $activity_create_direct = $message_template->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
+  $activity_create_direct = $message_template->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
 
-    if ($activity_create_direct) {
+  if ($activity_create_direct) {
 
-      $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
+    $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
+    if ($context_plugin_manager->hasDefinition($data['context'])) {
       /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */
       $plugin = $context_plugin_manager->createInstance($data['context']);
       $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
@@ -151,10 +151,10 @@ function activity_creator_message_insert(Message $entity) {
         $activity_factory->createActivities($activity_creator_data);
       }
     }
-    else {
-      $queue = \Drupal::queue('activity_creator_logger');
-      $queue->createItem($data);
-    }
+  }
+  else {
+    $queue = \Drupal::queue('activity_creator_logger');
+    $queue->createItem($data);
   }
 }
 

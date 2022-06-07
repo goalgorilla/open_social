@@ -102,7 +102,7 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
       $request_path = $request->getPathInfo();
       $route_name = $this->currentRoute->getRouteName();
       $default_front = $this->siteSettings->get('page.front');
-      $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user') ?: '';
+      $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user');
 
       // Either allow on paths.
       $paths_allowed = [

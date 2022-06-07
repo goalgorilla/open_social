@@ -1,0 +1,38 @@
+{{ attach_library('social_event/event_addtocall_popup') }}
+
+<div class='dialog-content--addtocal'>
+  {% block main %}
+    <div class='addtocal-location'>
+      <h4>
+        {{ 'Meetup'|t }}:
+        {{ label }}
+      </h4>
+      <div class='article__special-field'>
+        <svg class="article__special-fields-icon" aria-hidden="true">
+          <title>{% trans %}Event date{% endtrans %}</title>
+          <use xlink:href="#icon-schedule"></use>
+        </svg>
+        <span class="sr-only">{% trans %}Event date{% endtrans %}</span>
+        <span class="inline-center">{{ event_date }}</span>
+      </div>
+
+      {% if content.field_event_address|render or content.field_event_location|render %}
+        <div class="article__special-field">
+          <svg class="article__special-fields-icon">
+            <title>{% trans %}Event location{% endtrans %}</title>
+            <use xlink:href="#icon-location"></use>
+          </svg>
+          <span class="sr-only">{% trans %}Event location{% endtrans %}</span>
+          <span class="inline-center">
+            {{ content.field_event_location }}
+            {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
+            {{ content.field_event_address|render }}
+          </span>
+        </div>
+      {% endif %}
+    </div>
+  {% endblock %}
+  {% block footer %}
+    {{ who_going_link }}
+  {% endblock %}
+</div>

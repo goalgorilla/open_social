@@ -19,6 +19,14 @@ interface SocialAddToCalendarInterface extends PluginInspectionInterface {
   public function getName();
 
   /**
+   * Returns plugin icon.
+   *
+   * @return string
+   *   The path to plugin icon.
+   */
+  public function getIcon(): string;
+
+  /**
    * Returns the 'Add to calendar' link.
    *
    * @param \Drupal\node\NodeInterface $node

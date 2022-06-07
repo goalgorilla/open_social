@@ -5,6 +5,7 @@ namespace Drupal\social_group\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
@@ -231,6 +232,7 @@ class SocialGroupController extends ControllerBase {
   public function createFormTitle(GroupInterface $group, $plugin_id) {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+    /** @var \Drupal\group\Entity\GroupContentType $group_content_type */
     $group_content_type = GroupContentType::load($plugin->getContentTypeConfigId());
 
     // The node_types that have a different article than a.
@@ -241,14 +243,17 @@ class SocialGroupController extends ControllerBase {
     // Make sure extensions can change this as well.
     \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
 
-    if ($group_content_type !== NULL && array_key_exists($group_content_type->label(), $node_types)) {
+    $label = $group_content_type->label();
+    $label = $label instanceof TranslatableMarkup ? $label->render() : $label;
+    $label = $label ?? '';
+    if (array_key_exists($label, $node_types)) {
       return $this->t('Create @article @name', [
-        '@article' => $node_types[$group_content_type->label()],
+        '@article' => $node_types[$label],
         '@name' => $group_content_type->label(),
       ]);
     }
 
-    return $this->t('Create a @name', ['@name' => $group_content_type->label()]);
+    return $this->t('Create a @name', ['@name' => $label]);
   }
 
 }

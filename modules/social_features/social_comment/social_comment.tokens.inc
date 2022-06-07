@@ -201,7 +201,6 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 ->load($target_id);
 
               if ($comment instanceof CommentInterface) {
-                /** @var \Drupal\Core\Entity\EntityInterface $entity */
                 $entity = $comment->getCommentedEntity();
                 if (!empty($entity)) {
                   if ($entity instanceof PostInterface) {
@@ -212,7 +211,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
                   else {
                     if ($entity instanceof NodeInterface) {
-                      $commented_content_type = strtolower($entity->type->entity->label());
+                      $commented_content_type = strtolower($entity->getType());
                     }
                     else {
                       $commented_content_type = $entity->bundle();

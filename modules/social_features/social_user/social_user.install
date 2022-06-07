@@ -315,7 +315,7 @@ function social_user_update_11005(): void {
  * Update 'views.view.user_admin_people'.
  */
 function social_user_update_11006(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11006.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_user') . '/config/static/social_user_update_11006.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));

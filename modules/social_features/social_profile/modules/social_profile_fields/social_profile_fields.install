@@ -87,7 +87,7 @@ function social_profile_fields_update_8003() {
     'field.field.profile.profile.field_profile_' => 'field_config',
   ];
 
-  $path = drupal_get_path('module', 'social_profile_fields') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
     $config_file = $path . $prefix . 'nationality_8003.yml';
@@ -106,7 +106,7 @@ function social_profile_fields_update_8003() {
  * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
  */
 function _social_profile_fields_nationalities() {
-  $path = drupal_get_path('module', 'social_profile_fields') . '/content/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/content/';
   $data = Yaml::parseFile($path . 'nationalities.yml');
 
   $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');

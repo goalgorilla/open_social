@@ -3,28 +3,30 @@
  * extends the image widget width eventlisteners and triggers for customized presentation.
  */
 
-(function ($) {
+(function ($, once) {
 
   'use strict';
 
   Drupal.behaviors.postPhotoWidget = {
     attach: function (context, settings) {
 
-      $(document).once('field-post-image-add').on('click', '#post-photo-add', function (e) {
-        $(this)
-        .parents('.container-post-image')
-        .find('input[data-drupal-selector^="edit-field-post-image-0-upload"]')
-        .trigger('click');
-        e.preventDefault();
-      });
+      $(once('field-post-image-add', 'body'))
+        .on('click', '#post-photo-add', function (e) {
+          $(this)
+            .parents('.container-post-image')
+            .find('input[data-drupal-selector^="edit-field-post-image-0-upload"]')
+            .trigger('click');
+          e.preventDefault();
+        });
 
-      $(document).once('field-post-image-remove').on('click', '#post-photo-remove', function (e) {
-        $(this)
-        .parents('.container-post-image')
-        .find('button[data-drupal-selector^="edit-field-post-image-0-remove-button"]')
-        .trigger('mousedown');
-        e.preventDefault();
-      });
+      $(once('field-post-image-remove', 'body'))
+        .on('click', '#post-photo-remove', function (e) {
+          $(this)
+            .parents('.container-post-image')
+            .find('button[data-drupal-selector^="edit-field-post-image-0-remove-button"]')
+            .trigger('mousedown');
+          e.preventDefault();
+        });
 
       // Change placeholder text when someone adds a photo.
       $('[data-drupal-selector^="edit-field-post-image-0-upload"]', context).change(function (e) {
@@ -35,4 +37,4 @@
 
     }
   };
-})(jQuery);
+})(jQuery, once);
