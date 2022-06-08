@@ -1349,7 +1349,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     }
     $entity = $form_state->getFormObject()->getEntity();
 
-    $current_group = _social_group_get_current_group();
+    $current_group = _social_group_get_current_group($entity);
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
@@ -1571,48 +1571,54 @@ function _social_group_get_member_profile(GroupContent $group_content) {
 /**
  * Gets current Group entity from the route.
  *
- * @param \Drupal\node\NodeInterface|null $node
- *   (optional) The node object or NULL.
+ * @param mixed $entity
+ *   (optional) The entity object or NULL.
  *
  * @return \Drupal\group\Entity\GroupInterface|null
  *   Returns the group object.
  */
-function _social_group_get_current_group($node = NULL) {
+function _social_group_get_current_group($entity = NULL) {
   $cache = &drupal_static(__FUNCTION__, []);
 
   // For the same $node input, within the same request the return is always
   // the same.
-  $nid = NULL;
-  if (is_null($node)) {
-    $nid = -1;
+  $entity_id = NULL;
+  if (is_null($entity)) {
+    $entity_id = -1;
   }
-  elseif ($node instanceof NodeInterface) {
-    $nid = $node->id();
+  elseif ($entity instanceof EntityInterface) {
+    $entity_id = $entity->id();
   }
 
   // If we have a cache key and it has a value, we're done early.
-  if (!is_null($nid) && isset($cache[$nid])) {
+  if (!is_null($entity_id) && isset($cache[$entity_id])) {
     // Translate FALSE (so isset works) back to NULL.
-    return $cache[$nid] ?: NULL;
+    return $cache[$entity_id] ?: NULL;
   }
 
   $group = \Drupal::routeMatch()->getParameter('group');
 
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::entityTypeManager()
-      ->getStorage('group')
-      ->load($group);
+  if (is_numeric($group)) {
+    $group = \Drupal::entityTypeManager()->getStorage('group')->load($group);
   }
-  else {
-    $node = is_object($node) ? $node : \Drupal::routeMatch()
-      ->getParameter('node');
-    if (is_object($node)) {
-      $node_entity = [
-        'target_type' => 'node',
-        'target_id' => $node->id(),
+
+  if ($group === NULL) {
+    if (
+      !is_object($entity) &&
+      ($entity = \Drupal::routeMatch()->getParameter('node')) === NULL &&
+      ($route_name = \Drupal::routeMatch()->getRouteName()) !== NULL &&
+      preg_match('/^entity\.([^.]+)/', $route_name, $matches)
+    ) {
+      $entity = \Drupal::routeMatch()->getParameter($matches[1]);
+    }
+
+    if ($entity instanceof EntityInterface) {
+      $entity = [
+        'target_type' => $entity->getEntityTypeId(),
+        'target_id' => $entity->id(),
       ];
       $gid_from_entity = \Drupal::service('social_group.helper_service')
-        ->getGroupFromEntity($node_entity);
+        ->getGroupFromEntity($entity);
       if ($gid_from_entity !== NULL) {
         $group = \Drupal::entityTypeManager()
           ->getStorage('group')
@@ -1622,9 +1628,9 @@ function _social_group_get_current_group($node = NULL) {
   }
 
   // If we have a cache key we store the value.
-  if (!is_null($nid)) {
+  if (!is_null($entity_id)) {
     // Translate NULL to FALSE so that isset works.
-    $cache[$nid] = $group ?? FALSE;
+    $cache[$entity_id] = $group ?? FALSE;
   }
 
   return $group;
@@ -2106,7 +2112,7 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
 
     default:
       if (empty($group)) {
-        $group = _social_group_get_current_group();
+        $group = _social_group_get_current_group($entity);
       }
       if ($group !== NULL && $group->hasField('field_group_allowed_visibility')) {
         $visibility_options['public'] = FALSE;
