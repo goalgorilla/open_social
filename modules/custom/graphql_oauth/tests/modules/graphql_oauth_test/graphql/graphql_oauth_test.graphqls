@@ -15,7 +15,23 @@ type Query {
   testAccessTypeNonNullArray: [TestAccessType]!
   testAccessTypeNonNullArrayItem: [TestAccessType!]
   testAccessTypeNonNullArrayAndItem: [TestAccessType!]!
-  testQueryAccess: TestAccessField! @allowUser(requiredScopes: ["test:scope2"])
+  testQueryAccessFieldUser: TestQueryAccessField! @allowUser(requiredScopes: ["test:scope2"])
+  testQueryAccessFieldBot: TestQueryAccessField! @allowBot(requiredScopes: ["test:scope2"])
+  testQueryAccessTypeUser: TestQueryAccessTypeUser! @allowUser(requiredScopes: ["test:scope2"])
+  testQueryAccessTypeBot: TestQueryAccessTypeBot! @allowBot(requiredScopes: ["test:scope2"])
+}
+
+type TestQueryAccessField {
+  allowUserSingleScope: String! @allowUser(requiredScopes: ["test:scope1"])
+  allowBotSingleScope: String! @allowBot(requiredScopes: ["test:scope1"])
+}
+
+type TestQueryAccessTypeUser @allowUser(requiredScopes: ["test:scope1"]) {
+  test: String!
+}
+
+type TestQueryAccessTypeBot @allowBot(requiredScopes: ["test:scope1"]) {
+  test: String!
 }
 
 type TestAccessField {

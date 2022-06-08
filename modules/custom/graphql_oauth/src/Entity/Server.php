@@ -7,11 +7,11 @@ use Drupal\graphql\Entity\Server as OriginalServer;
 use Drupal\graphql\GraphQL\Execution\ResolveContext;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\simple_oauth\Authentication\TokenAuthUserInterface;
-use Drupal\simple_oauth\Entity\Oauth2TokenInterface;
 use Drupal\simple_oauth\Oauth2ScopeInterface;
 use Drupal\simple_oauth\Plugin\Field\FieldType\Oauth2ScopeReferenceItemListInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Values;
+use GraphQL\Type\Definition\Directive;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\WrappingType;
 
@@ -28,20 +28,28 @@ class Server extends OriginalServer {
     if (is_callable($parent)) {
       $account_proxy = \Drupal::currentUser()->getAccount();
       $token = NULL;
+      $token_scopes = [];
+      $directive_name = '';
       if ($account_proxy instanceof TokenAuthUserInterface) {
         $token = $account_proxy->getToken();
+        $scopes_field = $token->get('scopes');
+        assert($scopes_field instanceof Oauth2ScopeReferenceItemListInterface);
+        $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
+          return $scope->getName();
+        }, $scopes_field->getScopes());
+        $directive_name = !$token->get('auth_user_id')->isEmpty() ? 'allowUser' : 'allowBot';
       }
 
-      return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent, $token) {
+      return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent, $token, $directive_name, $token_scopes) {
         $allow_directive_values = $this->getAllowDirectiveValues($info);
-        if ($allow_directive_values) {
+        if (!empty($allow_directive_values)) {
           // If token is not available; it has been removed or a different
           // authentication is used. In this case we restrict access on
           // types/fields that have the 'allow' directive.
           if ($token === NULL) {
             throw new MissingDataException('There is no OAuth2 token to work on.');
           }
-          $this->checkAccess($allow_directive_values, $token);
+          $this->checkAccess($allow_directive_values, $directive_name, $token_scopes);
         }
         return $parent($value, $args, $context, $info);
       };
@@ -77,23 +85,11 @@ class Server extends OriginalServer {
         if ($type instanceof WrappingType) {
           $type = $type->getWrappedType(TRUE);
         }
-        // Get directive values on the type.
-        $type_directive_values = $type->astNode !== NULL ? Values::getDirectiveValues(
-          $directive_def,
-          $type->astNode
-        ) : NULL;
 
-        // Get directive values on the field.
-        $field_directive_values = $info->fieldDefinition->astNode !== NULL ? Values::getDirectiveValues(
-          $directive_def,
-          $info->fieldDefinition->astNode
-        ) : NULL;
-
-        $values = $type_directive_values ?: $field_directive_values;
-
-        if (!empty($values)) {
-          $directive_values[$allow_directive] = $values;
-        }
+        // Add directive values from the field.
+        $this->addDirectiveValue($info->fieldDefinition->astNode, $info->fieldName, $directive_def, $directive_values);
+        // Add directive values from the type.
+        $this->addDirectiveValue($type->astNode, $type->name, $directive_def, $directive_values);
       }
     }
 
@@ -101,44 +97,57 @@ class Server extends OriginalServer {
   }
 
   /**
-   * Checks access based on the directive values and token.
+   * Add directive value.
    *
+   * @param \GraphQL\Language\AST\TypeDefinitionNode|\GraphQL\Language\AST\FieldDefinitionNode|null $ast_node
+   *   Abstract Syntax Tree definition.
+   * @param string $def_name
+   *   Name of the definition.
+   * @param \GraphQL\Type\Definition\Directive $directive_def
+   *   Directive definition.
    * @param array $directive_values
-   *   The directive values.
-   * @param \Drupal\simple_oauth\Entity\Oauth2TokenInterface $token
-   *   The OAuth2 token.
+   *   Directive values.
    */
-  private function checkAccess(array $directive_values, Oauth2TokenInterface $token): void {
-    $token_has_user = !$token->get('auth_user_id')->isEmpty();
-    $scopes_field = $token->get('scopes');
-    assert($scopes_field instanceof Oauth2ScopeReferenceItemListInterface);
-    $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
-      return $scope->getName();
-    }, $scopes_field->getScopes());
-
-    $directive_name = $token_has_user ? 'allowUser' : 'allowBot';
-    $required_scopes = $this->getRequiredScopes($directive_name, $directive_values);
-    if (empty($required_scopes)) {
-      $grant_type = $token_has_user ? 'client credentials' : 'authorization code';
-      throw new UserError(sprintf("The '%s' grant type is required.", $grant_type));
+  private function addDirectiveValue($ast_node, string $def_name, Directive $directive_def, array &$directive_values): void {
+    if ($ast_node !== NULL) {
+      $values = Values::getDirectiveValues(
+        $directive_def,
+        $ast_node
+      );
+      if ($values !== NULL) {
+        $directive_values[$directive_def->name][$def_name] = isset($directive_values[$directive_def->name][$def_name]) ? array_merge($directive_values[$directive_def->name][$def_name], $values) : $values;
+      }
     }
-    $this->checkRequiredScopes($required_scopes, $token_scopes);
   }
 
   /**
-   * Checks if the access token has the scope id's.
+   * Checks access based on the directive values and token.
    *
-   * @param array $required_scopes
-   *   The required scope id's.
+   * @param array $directive_values
+   *   Directive values.
+   * @param string $directive_name
+   *   The directive name.
    * @param array $token_scopes
-   *   The scopes on the token.
-   *
-   * @throws \GraphQL\Error\UserError
+   *   The granted scopes on the token.
    */
-  private function checkRequiredScopes(array $required_scopes, array $token_scopes): void {
-    foreach ($required_scopes as $scope) {
-      if (!in_array($scope, $token_scopes)) {
-        throw new UserError(sprintf("The '%s' scope is required.", $scope));
+  private function checkAccess(array $directive_values, string $directive_name, array $token_scopes): void {
+    $required_scopes = $this->getRequiredScopes($directive_name, $directive_values);
+
+    // If there is no required scopes available for the associated directive,
+    // this means the opposite directive is in effect.
+    if (empty($required_scopes)) {
+      $opposite_directive_name = $directive_name === 'allowUser' ? 'allowBot' : 'allowUser';
+      $required_scopes = $this->getRequiredScopes($opposite_directive_name, $directive_values);
+      $application_type = $directive_name === 'allowUser' ? 'User' : 'Bot';
+      $def_name = key($required_scopes);
+      throw new UserError(sprintf("Application type '%s' does not have access on '%s'.", $application_type, $def_name));
+    }
+
+    foreach ($required_scopes as $def_name => $value) {
+      foreach ($value['requiredScopes'] as $required_scope) {
+        if (!in_array($required_scope, $token_scopes)) {
+          throw new UserError(sprintf("Missing scope '%s' on '%s'.", $required_scope, $def_name));
+        }
       }
     }
   }
@@ -156,12 +165,10 @@ class Server extends OriginalServer {
    */
   private function getRequiredScopes(string $directive_name, array $directive_values): array {
     $required_scopes = [];
-
-    if (isset($directive_values[$directive_name]['requiredScopes'])) {
-      $required_scopes = $directive_values[$directive_name]['requiredScopes'];
-    }
-    if (isset($directive_values['allowAll']['requiredScopes'])) {
-      $required_scopes = array_merge($directive_values['allowAll']['requiredScopes'], $required_scopes);
+    foreach ([$directive_name, 'allowAll'] as $allow_directive) {
+      if (array_key_exists($allow_directive, $directive_values)) {
+        $required_scopes = isset($required_scopes[$allow_directive]) ? array_merge($required_scopes[$allow_directive], $directive_values[$allow_directive]) : $directive_values[$allow_directive];
+      }
     }
 
     return $required_scopes;

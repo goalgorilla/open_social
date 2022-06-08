@@ -44,7 +44,11 @@ class GraphqlOauthTestBaseSchema extends SdlSchemaPluginBase {
       'testAccessFieldNonNull',
       'testAccessType',
       'testAccessTypeNonNull',
-      'testQueryAccess',
+      'testQueryAccessField',
+      'testQueryAccessFieldUser',
+      'testQueryAccessFieldBot',
+      'testQueryAccessTypeUser',
+      'testQueryAccessTypeBot',
     ];
     foreach ($query_fields as $field) {
       $registry->addFieldResolver('Query', $field,
@@ -86,6 +90,12 @@ class GraphqlOauthTestBaseSchema extends SdlSchemaPluginBase {
       );
     }
 
+    foreach (['allowUserSingleScope', 'allowBotSingleScope'] as $field) {
+      $registry->addFieldResolver('TestQueryAccessField', $field,
+        $builder->fromValue('test')
+      );
+    }
+
     $types = [
       'AllowUserSingleScope',
       'AllowBotSingleScope',
@@ -94,6 +104,9 @@ class GraphqlOauthTestBaseSchema extends SdlSchemaPluginBase {
       'AllowBotMultipleScopes',
       'AllowAllMultipleScopes',
       'AllowMultipleDirectiveScopes',
+      'TestQueryAccessField',
+      'TestQueryAccessTypeUser',
+      'TestQueryAccessTypeBot',
     ];
     foreach ($types as $type) {
       $registry->addFieldResolver($type, 'test',

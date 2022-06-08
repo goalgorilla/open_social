@@ -136,7 +136,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
    * Test allow user/all access using single scope.
    */
   public function testAccessUserSingleScope(): void {
-    $this->assertAccess(
+    $query = $this->buildGraphqlQuery(
       '
         allowUserSingleScope
         allowAllSingleScope
@@ -149,16 +149,37 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
           test
         }
       ',
-      TRUE,
-      FALSE,
-      [
-        'allowUserSingleScope' => 'test',
-        'allowAllSingleScope' => 'test',
-      ],
-      [
-        'allowUserSingleScope' => ['test' => 'test'],
-        'allowAllSingleScope' => ['test' => 'test'],
-      ]
+    );
+    $error = "Missing scope 'test:scope1' on 'allowUserSingleScope'.";
+    $this->setAccountProxy([$this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'Bot' does not have access on 'allowUserSingleScope'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $expected_fields = [
+      'allowUserSingleScope' => 'test',
+      'allowAllSingleScope' => 'test',
+    ];
+    $expected_types = [
+      'allowUserSingleScope' => ['test' => 'test'],
+      'allowAllSingleScope' => ['test' => 'test'],
+    ];
+    $this->assertResults(
+      $query,
+      [],
+      $this->buildExpectedResults($expected_fields, $expected_types),
+      $this->getCacheMetaData()
     );
   }
 
@@ -166,7 +187,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
    * Test allow user/all access using multiple scopes.
    */
   public function testAccessUserMultipleScopes(): void {
-    $this->assertAccess(
+    $query = $this->buildGraphqlQuery(
       '
         allowUserMultipleScopes
         allowAllMultipleScopes
@@ -179,16 +200,37 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
           test
         }
       ',
-      TRUE,
-      TRUE,
-      [
-        'allowUserMultipleScopes' => 'test',
-        'allowAllMultipleScopes' => 'test',
-      ],
-      [
-        'allowUserMultipleScopes' => ['test' => 'test'],
-        'allowAllMultipleScopes' => ['test' => 'test'],
-      ]
+    );
+    $error = "Missing scope 'test:scope1' on 'allowUserMultipleScopes'.";
+    $this->setAccountProxy([$this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'Bot' does not have access on 'allowUserMultipleScopes'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $expected_fields = [
+      'allowUserMultipleScopes' => 'test',
+      'allowAllMultipleScopes' => 'test',
+    ];
+    $expected_types = [
+      'allowUserMultipleScopes' => ['test' => 'test'],
+      'allowAllMultipleScopes' => ['test' => 'test'],
+    ];
+    $this->assertResults(
+      $query,
+      [],
+      $this->buildExpectedResults($expected_fields, $expected_types),
+      $this->getCacheMetaData()
     );
   }
 
@@ -196,7 +238,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
    * Test allow user/all access using nested scopes.
    */
   public function testAccessUserSingleNestedScope(): void {
-    $this->assertAccess(
+    $query = $this->buildGraphqlQuery(
       '
         allowUserSingleScope
       ',
@@ -206,17 +248,38 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
           fieldAll
         }
       ',
-      TRUE,
-      TRUE,
-      [
-        'allowUserSingleScope' => 'test',
+    );
+    $error = "Missing scope 'test:scope1' on 'allowUserSingleScope'.";
+    $this->setAccountProxy([$this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'Bot' does not have access on 'allowUserSingleScope'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $expected_fields = [
+      'allowUserSingleScope' => 'test',
+    ];
+    $expected_types = [
+      'allowUserSingleScope' => [
+        'fieldUser' => 'test',
+        'fieldAll' => 'test',
       ],
-      [
-        'allowUserSingleScope' => [
-          'fieldUser' => 'test',
-          'fieldAll' => 'test',
-        ],
-      ]
+    ];
+    $this->assertResults(
+      $query,
+      [],
+      $this->buildExpectedResults($expected_fields, $expected_types),
+      $this->getCacheMetaData()
     );
   }
 
@@ -224,7 +287,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
    * Test allow bot/all access using single scope.
    */
   public function testAccessBotSingleScope(): void {
-    $this->assertAccess(
+    $query = $this->buildGraphqlQuery(
       '
         allowBotSingleScope
         allowAllSingleScope
@@ -237,16 +300,37 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
           test
         }
       ',
-      FALSE,
-      FALSE,
-      [
-        'allowBotSingleScope' => 'test',
-        'allowAllSingleScope' => 'test',
-      ],
-      [
-        'allowBotSingleScope' => ['test' => 'test'],
-        'allowAllSingleScope' => ['test' => 'test'],
-      ],
+    );
+    $error = "Missing scope 'test:scope1' on 'allowBotSingleScope'.";
+    $this->setAccountProxy([$this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'User' does not have access on 'allowBotSingleScope'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $expected_fields = [
+      'allowBotSingleScope' => 'test',
+      'allowAllSingleScope' => 'test',
+    ];
+    $expected_types = [
+      'allowBotSingleScope' => ['test' => 'test'],
+      'allowAllSingleScope' => ['test' => 'test'],
+    ];
+    $this->assertResults(
+      $query,
+      [],
+      $this->buildExpectedResults($expected_fields, $expected_types),
+      $this->getCacheMetaData()
     );
   }
 
@@ -254,7 +338,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
    * Test allow bot/all access using multiple scopes.
    */
   public function testAccessBotMultipleScopes(): void {
-    $this->assertAccess(
+    $query = $this->buildGraphqlQuery(
       '
         allowBotMultipleScopes
         allowAllMultipleScopes
@@ -267,16 +351,37 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
           test
         }
       ',
-      FALSE,
-      TRUE,
-      [
-        'allowBotMultipleScopes' => 'test',
-        'allowAllMultipleScopes' => 'test',
-      ],
-      [
-        'allowBotMultipleScopes' => ['test' => 'test'],
-        'allowAllMultipleScopes' => ['test' => 'test'],
-      ],
+    );
+    $error = "Missing scope 'test:scope1' on 'allowBotMultipleScopes'.";
+    $this->setAccountProxy([$this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'User' does not have access on 'allowBotMultipleScopes'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $expected_fields = [
+      'allowBotMultipleScopes' => 'test',
+      'allowAllMultipleScopes' => 'test',
+    ];
+    $expected_types = [
+      'allowBotMultipleScopes' => ['test' => 'test'],
+      'allowAllMultipleScopes' => ['test' => 'test'],
+    ];
+    $this->assertResults(
+      $query,
+      [],
+      $this->buildExpectedResults($expected_fields, $expected_types),
+      $this->getCacheMetaData()
     );
   }
 
@@ -294,8 +399,8 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
         }
       ',
     );
-    $error = "The 'test:scope1' scope is required.";
     // Test error when a scope is not granted on the associated grant type.
+    $error = "Missing scope 'test:scope1' on 'allowMultipleDirectiveScopes'.";
     $this->setAccountProxy();
     $this->assertErrors(
       $query,
@@ -314,10 +419,10 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
     $this->assertErrors(
       $query,
       [],
-      ["The 'test:scope2' scope is required."],
+      ["Missing scope 'test:scope2' on 'allowMultipleDirectiveScopes'."],
       $this->getCacheMetaData(TRUE)
     );
-    // Test results by proper grant type and scopes.
+    // Test results by proper application type and scopes.
     $this->setAccountProxy([$this->scope1->id()]);
     $this->assertResults(
       $query,
@@ -349,17 +454,17 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
   }
 
   /**
-   * Test allow user access on query.
+   * Test allowUser field access on query.
    */
-  public function testAccessQueryUser(): void {
+  public function testQueryFieldAccessUser(): void {
     $query = '
       query {
-        testQueryAccess {
+        testQueryAccessFieldUser {
           allowUserSingleScope
         }
       }
     ';
-    $error = "The 'test:scope2' scope is required.";
+    $error = "Missing scope 'test:scope2' on 'testQueryAccessFieldUser'.";
     $this->setAccountProxy([$this->scope1->id()]);
     $this->assertErrors(
       $query,
@@ -367,7 +472,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
       [$error],
       $this->getCacheMetaData(TRUE)
     );
-    $error = "The 'test:scope1' scope is required.";
+    $error = "Missing scope 'test:scope1' on 'allowUserSingleScope'.";
     $this->setAccountProxy([$this->scope2->id()]);
     $this->assertErrors(
       $query,
@@ -375,7 +480,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
       [$error],
       $this->getCacheMetaData(TRUE)
     );
-    $error = "The 'authorization code' grant type is required.";
+    $error = "Application type 'Bot' does not have access on 'testQueryAccessFieldUser'.";
     $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
     $this->assertErrors(
       $query,
@@ -388,7 +493,7 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
       $query,
       [],
       [
-        'testQueryAccess' => [
+        'testQueryAccessFieldUser' => [
           'allowUserSingleScope' => 'test',
         ],
       ],
@@ -397,51 +502,145 @@ class GraphqlOauthDirectiveTest extends GraphQLTestBase {
   }
 
   /**
-   * Assert access on GraphQL request.
-   *
-   * @param string $fields
-   *   GraphQL query fields.
-   * @param string $types
-   *   GraphQL query types.
-   * @param bool $user
-   *   Authorizes on behalf of a user (target: USER).
-   * @param bool $multi
-   *   Has multiple scopes.
-   * @param array $expected_fields
-   *   The fields result.
-   * @param array $expected_types
-   *   The types result.
+   * Test allowBot field access on query.
    */
-  private function assertAccess(string $fields, string $types, bool $user, bool $multi, array $expected_fields, array $expected_types): void {
-    $query = $this->buildGraphqlQuery($fields, $types);
-    // Test error when a different grant type is used.
-    $this->setAccountProxy([], !$user);
-    $grant_type = !$user ? 'client credentials' : 'authorization code';
-    $error = "The '{$grant_type}' grant type is required.";
+  public function testQueryFieldAccessBot(): void {
+    $query = '
+      query {
+        testQueryAccessFieldBot {
+          allowBotSingleScope
+        }
+      }
+    ';
+    $error = "Missing scope 'test:scope2' on 'testQueryAccessFieldBot'.";
+    $this->setAccountProxy([$this->scope1->id()], FALSE);
     $this->assertErrors(
       $query,
       [],
       [$error],
       $this->getCacheMetaData(TRUE)
     );
-    // Test error when a scope is not granted.
-    $scopes = $multi ? [$this->scope1->id()] : [];
-    $this->setAccountProxy($scopes, $user);
-    $required_scope = $multi ? 'test:scope2' : 'test:scope1';
-    $error = "The '{$required_scope}' scope is required.";
+    $error = "Missing scope 'test:scope1' on 'allowBotSingleScope'.";
+    $this->setAccountProxy([$this->scope2->id()], FALSE);
     $this->assertErrors(
       $query,
       [],
       [$error],
       $this->getCacheMetaData(TRUE)
     );
-    // Test results by proper grant type and scopes.
-    $scopes = $multi ? [$this->scope1->id(), $this->scope2->id()] : [$this->scope1->id()];
-    $this->setAccountProxy($scopes, $user);
+    $error = "Application type 'User' does not have access on 'testQueryAccessFieldBot'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
     $this->assertResults(
       $query,
       [],
-      $this->buildExpectedResults($expected_fields, $expected_types),
+      [
+        'testQueryAccessFieldBot' => [
+          'allowBotSingleScope' => 'test',
+        ],
+      ],
+      $this->getCacheMetaData()
+    );
+  }
+
+  /**
+   * Test allowUser type access on query.
+   */
+  public function testQueryAccessTypeUser(): void {
+    $query = '
+      query {
+        testQueryAccessTypeUser {
+          test
+        }
+      }
+    ';
+    $error = "Missing scope 'test:scope2' on 'testQueryAccessTypeUser'.";
+    $this->setAccountProxy([$this->scope1->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Missing scope 'test:scope1' on 'TestQueryAccessTypeUser'.";
+    $this->setAccountProxy([$this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'Bot' does not have access on 'testQueryAccessTypeUser'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertResults(
+      $query,
+      [],
+      [
+        'testQueryAccessTypeUser' => [
+          'test' => 'test',
+        ],
+      ],
+      $this->getCacheMetaData()
+    );
+  }
+
+  /**
+   * Test allowBot type access on query.
+   */
+  public function testQueryAccessTypeBot(): void {
+    $query = '
+      query {
+        testQueryAccessTypeBot {
+          test
+        }
+      }
+    ';
+    $error = "Missing scope 'test:scope2' on 'testQueryAccessTypeBot'.";
+    $this->setAccountProxy([$this->scope1->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Missing scope 'test:scope1' on 'TestQueryAccessTypeBot'.";
+    $this->setAccountProxy([$this->scope2->id()], FALSE);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $error = "Application type 'User' does not have access on 'testQueryAccessTypeBot'.";
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()]);
+    $this->assertErrors(
+      $query,
+      [],
+      [$error],
+      $this->getCacheMetaData(TRUE)
+    );
+    $this->setAccountProxy([$this->scope1->id(), $this->scope2->id()], FALSE);
+    $this->assertResults(
+      $query,
+      [],
+      [
+        'testQueryAccessTypeBot' => [
+          'test' => 'test',
+        ],
+      ],
       $this->getCacheMetaData()
     );
   }
