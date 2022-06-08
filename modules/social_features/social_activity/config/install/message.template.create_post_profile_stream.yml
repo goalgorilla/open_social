@@ -8,11 +8,11 @@ third_party_settings:
     activity_context: profile_activity_context
     activity_destinations:
       stream_profile: stream_profile
-    activity_create_direct: 1
+    activity_create_direct: TRUE
     activity_bundle_entities:
       post-post: post-post
     activity_action: create_entitiy_action
-    activity_aggregate: 0
+    activity_aggregate: FALSE
     email_subject: ''
 template: create_post_profile_stream
 label: 'Create post on profile stream output'
@@ -31,8 +31,4 @@ settings:
   'token options':
     clear: false
     'token replace': true
-  purge:
-    override: false
-    enabled: false
-    quota: null
-    days: null
+  purge_methods: {  }
