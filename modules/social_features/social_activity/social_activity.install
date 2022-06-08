@@ -365,3 +365,17 @@ function social_activity_update_10303() {
     }
   }
 }
+
+/**
+ * Updating  configuration keys as per underlying schema.
+ */
+function social_activity_update_11001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_activity', 'social_activity_update_11001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
