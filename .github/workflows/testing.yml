@@ -51,6 +51,10 @@ jobs:
         run: mkdir -p $GITHUB_WORKSPACE/sites/default/files && sudo chmod -R 664 $GITHUB_WORKSPACE/sites/default/files
 
       - name: PHPUnit
-        run: $GITHUB_WORKSPACE/vendor/bin/phpunit -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpunit.xml.dist --log-junit $GITHUB_WORKSPACE/test-reports/phpunit.xml
+        run: |
+          $GITHUB_WORKSPACE/vendor/bin/drush runserver $SIMPLETEST_BASE_URL > /dev/null 2>&1 &
+          chromedriver --port=9515 > /dev/null 2>&1 &
+          $GITHUB_WORKSPACE/vendor/bin/phpunit -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpunit.xml.dist --log-junit $GITHUB_WORKSPACE/test-reports/phpunit.xml
         env:
           SIMPLETEST_DB: sqlite://tmp/db.sqlite
+          SIMPLETEST_BASE_URL: http://127.0.0.1:8080
