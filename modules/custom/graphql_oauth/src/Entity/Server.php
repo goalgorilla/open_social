@@ -27,28 +27,31 @@ class Server extends OriginalServer {
     $parent = parent::getFieldResolver($registry);
     if (is_callable($parent)) {
       $account_proxy = \Drupal::currentUser()->getAccount();
-      $token = NULL;
-      $token_scopes = [];
-      $directive_name = '';
-      if ($account_proxy instanceof TokenAuthUserInterface) {
-        $token = $account_proxy->getToken();
-        $scopes_field = $token->get('scopes');
-        assert($scopes_field instanceof Oauth2ScopeReferenceItemListInterface);
-        $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
-          return $scope->getName();
-        }, $scopes_field->getScopes());
-        $directive_name = !$token->get('auth_user_id')->isEmpty() ? 'allowUser' : 'allowBot';
+      if (!$account_proxy instanceof TokenAuthUserInterface) {
+        // If the current user is not authenticated with OAuth then our
+        // field resolver simply denies access to any protected field because
+        // there is never a token, that has the scope.
+        return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent) {
+          $allow_directive_values = $this->getAllowDirectiveValues($info);
+          if (!empty($allow_directive_values)) {
+            throw new MissingDataException('Token with valid scope was required but no token was presented.');
+          }
+          return $parent($value, $args, $context, $info);
+        };
       }
-
-      return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent, $token, $directive_name, $token_scopes) {
+      $token = $account_proxy->getToken();
+      $scopes_field = $token->get('scopes');
+      assert($scopes_field instanceof Oauth2ScopeReferenceItemListInterface);
+      $token_scopes = array_map(function (Oauth2ScopeInterface $scope) {
+        return $scope->getName();
+      }, $scopes_field->getScopes());
+      // `auth_user_id` is only set for tokens created for specific users.
+      // Application ("bot") tokens are not linked to specific users but their
+      // user is determined by the user id configured for the consumer entity.
+      $directive_name = !$token->get('auth_user_id')->isEmpty() ? 'allowUser' : 'allowBot';
+      return function ($value, $args, ResolveContext $context, ResolveInfo $info) use ($parent, $directive_name, $token_scopes) {
         $allow_directive_values = $this->getAllowDirectiveValues($info);
         if (!empty($allow_directive_values)) {
-          // If token is not available; it has been removed or a different
-          // authentication is used. In this case we restrict access on
-          // types/fields that have the 'allow' directive.
-          if ($token === NULL) {
-            throw new MissingDataException('There is no OAuth2 token to work on.');
-          }
           $this->checkAccess($allow_directive_values, $directive_name, $token_scopes);
         }
         return $parent($value, $args, $context, $info);
@@ -129,6 +132,9 @@ class Server extends OriginalServer {
    *   The directive name.
    * @param array $token_scopes
    *   The granted scopes on the token.
+   *
+   * @phpstan-param "allowUser"|"allowBot" $directive_name
+   *    The directive name.
    */
   private function checkAccess(array $directive_values, string $directive_name, array $token_scopes): void {
     $required_scopes = $this->getRequiredScopes($directive_name, $directive_values);
