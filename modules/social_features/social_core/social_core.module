@@ -673,6 +673,29 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
     }
   }
 
+  // Make sure that socialblue_pagetitleblock_content doesn't show on nodes
+  // pages. We can't add visibility 'entity_bundle:node' whether 'group_type'
+  // since the block will disappear from pages like Access denied and some tests
+  // will be failed. So, let's hide the block for node canonical instead.
+  if (
+    $operation === 'view' &&
+    $block->getPluginId() === 'social_page_title_block' &&
+    $block->id() === 'socialblue_pagetitleblock_content'
+  ) {
+    /** @var \Drupal\node\Entity\Node $node */
+    $node = \Drupal::routeMatch()->getParameter('node');
+    // Get the route name.
+    $route_name = \Drupal::routeMatch()->getRouteName();
+
+    // If it is a node we prevent the block from showing.
+    if (
+      $node instanceof NodeInterface &&
+      $route_name === 'entity.node.canonical'
+    ) {
+      return AccessResult::forbidden();
+    }
+  }
+
   // No opinion.
   return AccessResult::neutral();
 }
