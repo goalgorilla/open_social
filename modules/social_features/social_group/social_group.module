@@ -770,14 +770,13 @@ function social_group_allowed_join_method_description(
 
   $hook = 'social_group_join_method_info';
 
-  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
-    // There is minimal overhead since the hook is not invoked.
-    $implementors[] = $module;
-  });
+  if (!($modules = \Drupal::moduleHandler()->getImplementations($hook))) {
+    return $description;
+  }
 
   $found = FALSE;
 
-  foreach ($implementors as $module) {
+  foreach ($modules as $module) {
     /** @var callable $function */
     $function = $module . '_' . $hook;
 
