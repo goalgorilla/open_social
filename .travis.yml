@@ -76,14 +76,13 @@ install:
   # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 'upgrade-path' of goalgorilla/drupal_social
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   # Reset the entire branch, so we can checkout goalgorilla/drupal_social:5.1.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
-  - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web git stash; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web rm -rf vendor/ composer.lock; fi
   # @todo Change to next tagged version of drupal_social.
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 5.1.0; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web git checkout 5.1.0; fi
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
-#  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Update once and for all to the latest versions also within goalgorilla/drupal_social.
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web composer require drupal/social_search_autocomplete; composer update; fi
   # Run the update hooks to see if our update path still works with an almost reset code base from 8.x to 11.x
