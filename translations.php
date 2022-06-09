@@ -25,6 +25,14 @@ die('This file should not be run directly.');
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
 
+// Changed in version 11.0
+new TranslatableMarkup('Open to join');
+new TranslatableMarkup('users can join this @entity_type_id without approval.');
+new TranslatableMarkup('Invite only');
+new TranslatableMarkup('users can only join this @entity_type_id if they are added/invited by @entity_type_id managers.');
+new TranslatableMarkup('Request to join');
+new TranslatableMarkup('users can "request to join" this @entity_type_id which @entity_type_id managers approve/decline.');
+
 // Changed in version 8.7, 9.4, 10.0
 new TranslatableMarkup('
         Oops, there was an error. This may have happened for the following reasons: <br>

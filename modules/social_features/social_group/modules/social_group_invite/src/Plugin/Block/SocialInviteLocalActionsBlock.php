@@ -124,10 +124,10 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     $build = [];
 
     // Get current group so we can build correct links.
-    if (_social_group_invite_current_type_enabled_invites()) {
-      /** @var \Drupal\group\Entity\GroupInterface $group */
-      $group = _social_group_get_current_group();
-
+    if (
+      _social_group_invite_current_type_enabled_invites() &&
+      ($group = _social_group_get_current_group()) !== NULL
+    ) {
       $button = [
         '#type' => 'link',
         '#title' => $this->t('View invites'),

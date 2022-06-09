@@ -2,15 +2,16 @@
 
 namespace Drupal\social_group\Element;
 
+use Drupal\Component\Utility\Tags;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
-use Drupal\Component\Utility\Tags;
-use Drupal\user\Entity\User;
+use Drupal\social_group\EntityMemberInterface;
+use Drupal\user\UserInterface;
 
 /**
- * Provides an Group member autocomplete form element.
+ * Provides a Group member autocomplete form element.
  *
  * The #default_value accepted by this element is either an entity object or an
  * array of entity objects.
@@ -21,6 +22,15 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
   /**
    * Form element validation handler for entity_autocomplete elements.
+   *
+   * @param array $element
+   *   The element being processed.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   * @param bool $select2
+   *   (optional) TRUE if the Select2 widget is used. Defaults to FALSE.
    */
   public static function validateEntityAutocomplete(
     array &$element,
@@ -28,8 +38,6 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     array &$complete_form,
     bool $select2 = FALSE
   ): void {
-    $duplicated_values = $value = [];
-
     /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
 
@@ -38,7 +46,13 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $entity = $entity->getGroup();
     }
 
-    if (!method_exists($entity, 'getMember')) {
+    // We need set "validate_reference" for element to prevent receive notice
+    // Undefined index #validate_reference.
+    if (!isset($element['#validate_reference'])) {
+      $element['#validate_reference'] = FALSE;
+    }
+
+    if (!$entity instanceof EntityMemberInterface) {
       parent::validateEntityAutocomplete($element, $form_state, $complete_form);
 
       return;
@@ -51,21 +65,27 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       $input_values = $element['#value'];
     }
 
+    $duplicated_values = $value = [];
+    $storage = \Drupal::entityTypeManager()->getStorage('user');
+
+    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $manager */
+    $manager = \Drupal::service('plugin.manager.entity_reference_selection');
+
     foreach ($input_values as $input) {
-      $match = static::extractEntityIdFromAutocompleteInput($input);
       // If we use the select 2 widget then we already got a nice array.
-      if ($select2 === TRUE) {
-        $match = $input;
-      }
+      $match = $select2 ? $input : static::extractEntityIdFromAutocompleteInput($input);
+
       if ($match === NULL) {
         $options = $element['#selection_settings'] + [
           'target_type' => $element['#target_type'],
           'handler' => $element['#selection_handler'],
         ];
 
-        /** @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
-        $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
-        $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
+        /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
+        $handler = $manager->getInstance($options);
+
+        $autocreate = $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
+
         // Try to get a match from the input string when the user didn't use
         // the autocomplete but filled in a value manually.
         // Got this from the parent::validateEntityAutocomplete.
@@ -73,21 +93,15 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       }
 
       if ($match !== NULL) {
-        $value[$match] = [
-          'target_id' => $match,
-        ];
+        $value[$match] = ['target_id' => $match];
+        $account = $storage->load($match);
 
-        $account = User::load($match);
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
-        if ($entity->getMember($account)) {
+        if ($account instanceof UserInterface && $entity->hasMember($account)) {
           $duplicated_values[] = $account->getDisplayName();
         }
-        // We need set "validate_reference" for element to prevent
-        // receive notice Undefined index #validate_reference.
-        if (!isset($element['#validate_reference'])) {
-          $element['#validate_reference'] = FALSE;
-        }
+
         // Validate input for every single user. This way we make sure that
         // The element validates one, or more users added in the autocomplete.
         // This is because Group doesn't allow adding multiple users at once,
@@ -99,21 +113,20 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
     // If we have duplicates, provide an error message.
     if (!empty($duplicated_values)) {
-      $usernames = implode(', ', $duplicated_values);
-
       $message = \Drupal::translation()->formatPlural(count($duplicated_values),
         "@usernames is already member of the @type, you can't add them again",
         "@usernames are already members of the @type, you can't add them again",
         [
-          '@usernames' => $usernames,
+          '@usernames' => implode(', ', $duplicated_values),
           '@type' => $entity->getEntityType()->getSingularLabel(),
-        ]
+        ],
       );
 
       // We have to kick in a form set error here, or else the
       // GroupContentCardinalityValidator will kick in and show a faulty
       // error message. Alter this later when Group supports multiple members.
       $form_state->setError($element, $message);
+
       return;
     }
 
@@ -122,10 +135,29 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       // don't use it to perform the action, but we should mimic the behaviour
       // as it would be without Select2.
       if ($select2 === TRUE) {
-        $form_state->setValue($element['#parents'], $match);
+        $form_state->setValue($element['#parents'], $match ?? NULL);
       }
+
       $form_state->setValue('entity_id_new', $value);
     }
+  }
+
+  /**
+   * Form element validation handler for entity_autocomplete elements.
+   *
+   * @param array $element
+   *   The element being processed.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   */
+  public static function validateEntityAutocompleteSelect2(
+    array &$element,
+    FormStateInterface $form_state,
+    array &$complete_form
+  ): void {
+    static::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }
 
 }

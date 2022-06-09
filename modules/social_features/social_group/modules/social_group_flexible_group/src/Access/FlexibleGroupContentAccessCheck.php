@@ -2,13 +2,12 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
-use Drupal\group\Entity\Group;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\group\GroupMembership;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -45,7 +44,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
-    if (!$group instanceof Group) {
+    if (!$group instanceof SocialGroupInterface) {
       return AccessResult::allowed();
     }
 
@@ -54,12 +53,11 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::allowed();
     }
 
+    $is_member = $group->hasMember($account);
+
     // Handling the visibility of a group.
     if ($group->hasField('field_flexible_group_visibility')) {
-      $group_visibility_value = $group->getFieldValue('field_flexible_group_visibility', 'value');
-      $is_member = $group->getMember($account) instanceof GroupMembership;
-
-      switch ($group_visibility_value) {
+      switch ($group->field_flexible_group_visibility->value) {
         case 'members':
           if (!$is_member) {
             return AccessResult::forbidden();
@@ -86,7 +84,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
     }
 
     // If User is a member we can also rely on Group to take permissions.
-    if ($group->getMember($account) !== FALSE) {
+    if ($is_member) {
       return AccessResult::allowed()->addCacheableDependency($group);
     }
 
