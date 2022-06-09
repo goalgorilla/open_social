@@ -82,6 +82,8 @@ install:
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
+  # Update once and for all to the latest versions also within goalgorilla/drupal_social.
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web composer require drupal/social_search_autocomplete; fi
   # Run the update hooks to see if our update path still works with an almost reset code base from 8.x to 11.x
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/update.sh; fi
 
