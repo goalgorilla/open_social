@@ -107,10 +107,7 @@ interface SocialGroupHelperServiceInterface {
 
   /**
    * Provides a field for potential members.
-   *
-   * @return array
-   *   The renderable field.
    */
-  public function addMemberFormField();
+  public function addMemberFormField(): array;
 
 }

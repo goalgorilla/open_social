@@ -243,10 +243,10 @@ class SocialAlbumController extends ControllerBase {
         $storage = $this->entityTypeManager()->getStorage('group_content');
 
         if ($group_content = $storage->loadByEntity($node)) {
-          /** @var \Drupal\group\Entity\GroupInterface $group */
+          /** @var \Drupal\social_group\SocialGroupInterface $group */
           $group = reset($group_content)->getGroup();
 
-          return AccessResult::allowedIf($group->getMember($account) !== FALSE);
+          return AccessResult::allowedIf($group->hasMember($account));
         }
       }
     }

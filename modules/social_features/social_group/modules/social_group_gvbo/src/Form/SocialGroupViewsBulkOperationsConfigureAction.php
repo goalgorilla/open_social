@@ -33,8 +33,10 @@ class SocialGroupViewsBulkOperationsConfigureAction extends GroupViewsBulkOperat
       if ($url->getRouteName() === 'views_bulk_operations.confirm') {
         $parameters = $url->getRouteParameters();
 
-        if (empty($parameters['group'])) {
-          $group = _social_group_get_current_group();
+        if (
+          empty($parameters['group']) &&
+          ($group = _social_group_get_current_group()) !== NULL
+        ) {
           $parameters['group'] = $group->id();
         }
 

@@ -9,6 +9,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
+use Drupal\social_group\SocialGroupInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\user\Entity\User;
@@ -72,14 +73,11 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
    */
   public function execute($entity = NULL) {
     // Load the Group.
-    $group = Group::load($this->configuration['groups']);
+    $group = $this->storage->load($this->configuration['groups']);
 
-    if (NULL !== $group) {
-      // Check if user already is a member.
-      $is_member = $group->getMember($entity);
-
+    if ($group instanceof SocialGroupInterface) {
       // If that is not the case we can add it to the group.
-      if (!$is_member) {
+      if (!$group->hasMember($entity)) {
         $group->addMember($entity);
 
         return $this->t('Amount of users added to group');

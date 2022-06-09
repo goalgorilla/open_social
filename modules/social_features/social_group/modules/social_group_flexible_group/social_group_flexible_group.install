@@ -502,3 +502,17 @@ function social_group_flexible_group_update_11203(): void {
 
   $config_storage->write('language.content_settings.taxonomy_term.group_type', (array) $source->read('language.content_settings.taxonomy_term.group_type_11203'));
 }
+
+/**
+ * Allow extending list of allowed join methods dynamically.
+ */
+function social_group_flexible_group_update_11401(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_group_flexible_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
