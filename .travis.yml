@@ -48,7 +48,7 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   # @todo Change to next tagged version of drupal_social.
   - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 'issue/3260861-php8-support' https://github.com/goalgorilla/drupal_social.git install; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 2.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 'upgrade-path' https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
@@ -73,19 +73,19 @@ before_install:
 install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]  || [ "$TEST_SUITE" = "install_stability_5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional --localsettings; fi
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --localsettings; fi
-  # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 2.0.0 of goalgorilla/drupal_social
+  # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 'upgrade-path' of goalgorilla/drupal_social
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   # Reset the entire branch, so we can checkout goalgorilla/drupal_social:5.1.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
   # @todo Change to next tagged version of drupal_social.
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout issue/3260861-php8-support; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 5.1.0; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Now install the feature branch on top to make sure we get all our goodies.
-  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
-  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
+#  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
   # Update once and for all to the latest versions also within goalgorilla/drupal_social.
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require drupal/social_search_autocomplete; composer update; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web composer require drupal/social_search_autocomplete; composer update; fi
   # Run the update hooks to see if our update path still works with an almost reset code base from 8.x to 11.x
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/update.sh; fi
 
