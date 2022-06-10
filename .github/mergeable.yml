@@ -20,7 +20,7 @@
 version: 2
 mergeable:
   # Let's welcome contributors.
-  - when: pull_request.opened, pull_request.reopened
+  - when: pull_request.opened
     name: "Hola!"
     validate: []
     filter:
@@ -151,34 +151,6 @@ mergeable:
       # Request the maintainers for the review.
       - do: request_review
         teams: ['maintainers']
-
-  # Open Social always maintains multiple releases. We want to make sure that a proper milestone is added.
-  # This is only ignored if pull request is internal.
-  - when: pull_request.opened, pull_request.reopened, pull_request.milestoned, pull_request.demilestoned
-    name: "Valid milestone"
-    # See: https://mergeable.readthedocs.io/en/latest/operators/or.html
-    validate:
-      - do: or
-        validate:
-          # The pull request should have a milestone.
-          - do: milestone
-            no_empty:
-              enabled: true
-              message: 'Please select a milestone for this pull request.'
-          # Or, the pull request should have one of the following title words.
-          - do: title
-            begins_with:
-              match: [ 'Internal:', 'Hotfix:' ]
-    fail:
-      - do: labels
-        add: 'blocked: mergeable'
-      - do: checks
-        status: 'failure'
-    pass:
-      - do: labels
-        delete: 'blocked: mergeable'
-      - do: checks
-        status: 'success'
 
   # We want to make sure that the cherry-pick was completed after the pull request was merged.
   # This check will run after 24 hours of pull request merging.
