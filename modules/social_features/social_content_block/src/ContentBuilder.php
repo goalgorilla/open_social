@@ -383,7 +383,7 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
+  public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
     $parents = ['field_sorting'];
 
     // Check that the currently selected value is valid and change it otherwise.
