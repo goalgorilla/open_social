@@ -2090,6 +2090,24 @@ function social_group_get_all_groups() {
 }
 
 /**
+ * Implements hook_group_types_alter().
+ *
+ * Remove 'group_type_<group_type>' fields from the node and user entities as
+ * these fields providing issues with cross posting and translations. Also, we
+ * do not use these fields in Open Social, so we can disable them.
+ */
+function social_group_group_types_alter(array &$types): void {
+  $types = array_fill_keys(array_keys($types), FALSE);
+}
+
+/**
+ * Implements hook_social_group_linked_type().
+ */
+function social_group_social_group_linked_type(): string {
+  return 'node';
+}
+
+/**
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
@@ -2097,9 +2115,13 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
     return;
   }
 
-  $entity_types = ['node', 'user'];
-  if (in_array($entity_type->id(), $entity_types)) {
-    if ($entity_type->id() === 'node') {
+  $entity_types = \Drupal::moduleHandler()->invokeAll('group_types');
+  \Drupal::moduleHandler()->alter('group_types', $entity_types);
+
+  if (isset($entity_types[$entity_type->id()])) {
+    $entity_types = \Drupal::moduleHandler()->invokeAll('social_group_linked_type');
+
+    if (in_array($entity_type->id(), $entity_types)) {
       /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
       $fields['groups']
         ->setLabel(t('Group'))
@@ -2112,15 +2134,6 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
           'weight' => 16,
         ])
         ->setDisplayConfigurable('form', TRUE);
-    }
-
-    // Remove 'group_type_<group_type>' fields from the node and user entities
-    // as these fields providing issues with cross posting and translations.
-    // Also, we do not use these fields in Open Social, so we can disable them.
-    /** @var \Drupal\group\Entity\GroupType $group_type */
-    foreach (\Drupal::service('entity_type.manager')->getStorage('group_type')->loadMultiple() as $group_type) {
-      $field_name = 'groups_type_' . $group_type->id();
-      unset($fields[$field_name]);
     }
   }
 }
