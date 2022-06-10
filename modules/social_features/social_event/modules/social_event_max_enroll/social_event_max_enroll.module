@@ -146,12 +146,19 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           // there are no more spots left, exception for the owner or organizer.
           if (!$enrollments && !$an_enrollments && social_event_manager_or_organizer() === FALSE) {
             if ($form_id === 'enroll_action_form' || $form_id === 'event_invite_enroll_action_form') {
-              $form['enroll_for_this_event']['#type'] = 'submit';
-              $form['enroll_for_this_event']['#value'] = t('No spots left');
-              $form['enroll_for_this_event']['#disabled'] = TRUE;
+              if (isset($form['enroll_wrapper'])) {
+                $form['enroll_wrapper']['enroll_for_this_event']['#type'] = 'submit';
+                $form['enroll_wrapper']['enroll_for_this_event']['#value'] = t('No spots left');
+                $form['enroll_wrapper']['enroll_for_this_event']['#disabled'] = TRUE;
+              }
+              else {
+                $form['enroll_for_this_event']['#type'] = 'submit';
+                $form['enroll_for_this_event']['#value'] = t('No spots left');
+                $form['enroll_for_this_event']['#disabled'] = TRUE;
+              }
             }
             elseif ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
-              $form['event_enrollment'] = [
+              $enrolment_button = [
                 '#type' => 'submit',
                 '#value' => t('No spots left'),
                 '#disabled' => TRUE,
@@ -166,6 +173,12 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
                   ],
                 ],
               ];
+              if (isset($form['enroll_wrapper'])) {
+                $form['enroll_wrapper']['event_enrollment'] = $enrolment_button;
+              }
+              else {
+                $form['event_enrollment'] = $enrolment_button;
+              }
             }
           }
         }
