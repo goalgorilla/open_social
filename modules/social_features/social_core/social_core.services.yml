@@ -1,16 +1,25 @@
 services:
   social_core.route_subscriber:
-    class: \Drupal\social_core\Routing\RouteSubscriber
+    class: Drupal\social_core\Routing\RouteSubscriber
+    arguments: ['@module_handler']
     tags:
       - { name: event_subscriber }
+
   social_core.invite:
     class: Drupal\social_core\InviteService
     arguments: ['@request_stack', '@module_handler', '@current_user']
+
   social_core.event_subscriber:
     class: Drupal\social_core\EventSubscriber\SocialInviteSubscriber
-    arguments: ['@social_core.invite', '@current_user', '@messenger', '@current_route_match', '@config.factory']
+    arguments:
+      - '@social_core.invite'
+      - '@current_user'
+      - '@messenger'
+      - '@current_route_match'
+      - '@config.factory'
     tags:
       - {name: event_subscriber}
+
   social_core.translation_defaults:
     class: Drupal\social_core\ContentTranslationDefaultsConfigOverride
     arguments: ['@module_handler']

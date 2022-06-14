@@ -3161,3 +3161,26 @@ function social_group_social_core_default_main_menu_links_alter(array &$links) {
 
   $links[] = $link;
 }
+
+/**
+ * Implements hook_social_core_title().
+ */
+function social_group_social_core_title(): array {
+  return [
+    'group_content' => [
+      'route_name' => 'entity.group_content.create_form',
+      'callback' => function () {
+        /** @var \Drupal\social_group\SocialGroupInterface $group */
+        $group = \Drupal::routeMatch()->getParameter('group');
+
+        $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
+
+        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+
+        return \Drupal::entityTypeManager()
+          ->getStorage($plugin->getEntityTypeId() . '_type')
+          ->load($plugin->getEntityBundle());
+      },
+    ],
+  ];
+}
