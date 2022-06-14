@@ -156,11 +156,11 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
 
     this.trigger = pickerTrigger;
 
-    // Popper.js will take care of palcing the emoji picker.
+    // Popper.js will take care of placing the emoji picker.
     this.popper = Popper.createPopper(this.trigger.button, this.pickerElement, {
       onFirstUpdate: state => {
         // Focus a user to the search input for bigger screens only, as on
-        // mobiles this behavior creates unpleasent scrolls.
+        // mobiles this behavior creates unpleasant scrolls.
         if (window.innerWidth >= 480 && window.innerHeight >= 480) {
           this.pickerElement.shadowRoot.querySelector('#search').focus();
         }
@@ -296,9 +296,9 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
   };
 
   /**
-   * Inserts the given emojhi character to the corresponding input DOM element.
+   * Inserts the given emoji character to the corresponding input DOM element.
    *
-   * This method ensures that empji is being inserted into the right input
+   * This method ensures that emoji is being inserted into the right input
    * DOM element, and that caret (cursor) position is being preserved.
    *
    * @param {string} emoji
