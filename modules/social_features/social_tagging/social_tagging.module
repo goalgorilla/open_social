@@ -18,6 +18,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Database\Database;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\select2\Element\Select2;
 
 /**
  * Implements hook_help().
@@ -521,6 +522,18 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         $form[$label]['#options'] += $tag_service->getChildren($tid);
         $form[$label]['#type'] = 'select2';
         $form[$label]['#size'] = NULL;
+
+        if (isset($form[$label]['#context']['#plugin_type']) && $form[$label]['#context']['#plugin_type'] === 'bef') {
+          $form[$label]['#select2'] = [];
+          $form[$label]['#process'] = [
+            [Select2::class, 'processSelect'],
+          ];
+          $form[$label]['#pre_render'] = [
+            [Select2::class, 'preRenderSelect'],
+            [Select2::class, 'preRenderAutocomplete'],
+            [Select2::class, 'preRenderOverwrites'],
+          ];
+        }
 
         /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
         $query = \Drupal::request()->query;
