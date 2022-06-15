@@ -44,7 +44,7 @@ Feature: Follow Users
     And I should see the text "Unfollow"
 
     # Check if follow counter has been update on the user page.
-    Then I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "My profile"
     And I wait for "3" seconds
     Then I should see the text "0 followers"
@@ -56,6 +56,8 @@ Feature: Follow Users
 
     # Check if following page is accessible as well.
     When I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    And I should see the text "1 following"
     Then I click "1 following"
     And I should see the text "following"
     And I should see the text "Mike Tyson"
@@ -64,8 +66,8 @@ Feature: Follow Users
     # Check if there is followers.
     Given I am logged in as "follower"
     And I click the xth "0" element with the css ".navbar-nav .profile"
-    Then I click "My profile"
-    And I should see the text "1 follower"
+    And I click "My profile"
+    Then I should see the text "1 follower"
     And I should see the text "0 following"
 
     # Check a case when following is disabled.
@@ -82,8 +84,8 @@ Feature: Follow Users
     # Check if following really disabled.
     Given I am logged in as "follower"
     When I go to "all-members"
-    Then I wait for "3" seconds
-    And I should see the link "Mark Twain"
+    And I wait for "3" seconds
+    Then I should see the link "Mark Twain"
     Then I click "Mark Twain"
     And I wait for "3" seconds
-    Then I should not see "Follow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
+    And I should not see "Follow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
