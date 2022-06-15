@@ -61,7 +61,7 @@
                     };
                   },
                   open: function () {
-                    $(this).find('a.avatar').blur();
+                    $(this).find('a').blur();
                     $('.ui-widget-overlay').addClass('hide');
                   }
                 }
