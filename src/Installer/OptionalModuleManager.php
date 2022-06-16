@@ -153,7 +153,6 @@ class OptionalModuleManager implements ContainerInjectionInterface {
       return NULL;
     }
 
-
     $contents = file_get_contents($optional_info_file);
     if ($contents === FALSE) {
       throw new IOException("Could not read '${$optional_info_file}'.");

@@ -321,7 +321,7 @@ function social_topic_update_8907(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);

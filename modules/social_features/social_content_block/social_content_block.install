@@ -268,7 +268,7 @@ function social_content_block_update_8001(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
   $parts = explode('.', $name);
 

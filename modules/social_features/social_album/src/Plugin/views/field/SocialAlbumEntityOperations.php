@@ -4,6 +4,7 @@ namespace Drupal\social_album\Plugin\views\field;
 
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Url;
+use Drupal\social_post\PostViewBuilder;
 use Drupal\views\Plugin\views\field\EntityOperations;
 use Drupal\views\ResultRow;
 
@@ -60,13 +61,7 @@ class SocialAlbumEntityOperations extends EntityOperations implements TrustedCal
       return [];
     }
 
-    $links = call_user_func(
-      [\Drupal::entityTypeManager()->getViewBuilder('post'), __FUNCTION__],
-      $post_id,
-      'default',
-      $entity->language()->getId(),
-      !empty($entity->in_preview)
-    );
+    $links = PostViewBuilder::renderLinks((string) $post_id, 'default', $entity->language()->getId(), !empty($entity->in_preview));
 
     if (isset($links['post']['#links']['delete'])) {
       $url = Url::fromRoute('social_album.image.delete', [

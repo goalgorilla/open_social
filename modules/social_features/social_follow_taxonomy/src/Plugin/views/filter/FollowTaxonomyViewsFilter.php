@@ -147,6 +147,8 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
                 continue;
               }
               $choice = new \stdClass();
+
+              // @phpstan-ignore-next-line
               $choice->option = [$term->id() => str_repeat('-', $term->depth) . $this->entityRepository->getTranslationFromContext($term)->label()];
               $options[] = $choice;
             }

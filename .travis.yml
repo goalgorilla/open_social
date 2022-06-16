@@ -14,14 +14,12 @@ addons:
 language: php
 
 php:
-  - 7.4
+  - 8.0
 
 env:
   global:
     # Travis Token.
     secure: "u6jLZiftQdb8Ozxngu5sgwmnXeUyvNF3/Y+5eX3+Xyb7Sm6K++cBLbYl/zNbuzp1rZE5dn3pVTQc4tstVXZw2B5KjCd64r9HE9gdwCEnS/AA/w3wGlaEBinTzKOrrN1EvqNNhnJUY2JmqEYVom+UYwLZWIIKM/5OoaeidNqHDvImZZLAeYfPMGnySsFC01yCzrOn6jv8Bwu00dQPVEOQylVEV5qgdGYz6CvGGslcvGxhvR0qdY/IXhrA0yxIk1yA6vu1mQpCSjGpPLy024JhcqRr3AzjH2N0QRKlL7vcNFxl/OC0qcK2bOl8lcQydeC5LRp92eeCLfMfvqHDqLJKvebCsvaZSmqlzCURlcHaJOM5bce7XPVyNLdwnfppgSacocGol38qxfEc09qV4AZnklwigYCfnk346oSaocKApy48KRW4cNXL45U7+z10IzVAENGwbyyuwdvKHhDtMCgMd8eeYfRF5EvENOKVSG02Kca8X2fLBhmJsXkFcBEW7pSRZKxixkIkuAwEYSQW/lvvM4LJmd2np7vZDEMh1dmf7TBRBygDVmM7vtdYRSzivR/T9nH+mXPP9FcjVvlPPeWAEaqtLPmmONmYRjDRcoHjJh3YnSMpvVs8wejDf7iS6A44cI6xZQRoEoCFA/WUu5EnzmoOCY7HvZ62xnZ0I9nNyL4="
-    # Docker Hub token.
-    secure: "YUkomj6ieyi6AqrMnFyhPTORMvBhvMtZolvMZmckiAUaEV+Kiwb6TU6BsxARU1LeAfeSDuu5Ay69yib20AHe/OI8m7DmzZhhmnfRcV5aE09/xIdS7DN55g0a+9rWMHuYreeX7Xc8KX6DAEEcmW7EotyCO1pf8ljMD7wHuO+HpeydCLEGM200r1pSLCZpPCCTnHQXJBQ8MwSZu6tcPiVNnrmYs/fbbWOxB8QIv330SaF/i8trFDGJBUFLRw/7cIStA5Ye9EJp7AS7e+nR+kuCs/GPsRxSNH8BNtbk78iPwFILCH+xPhjRQ/hVL4St7DeN/F0PXn13GPAXkfrUXqrOgpDcpqPgtucEJekyDW9+YBuz2AJDynaIuWqjIWW1gheCVPSrsF7a9l7u/RVoQbeuSmGkbQXWzQuUaOkhVM6bq28qzRraeq/gNidV1ZikwoV7oi57HBxBQPZpVlKrLmNJ4Tsa9FkFwzjt55NV8VtxV8rav3r4zeQ3C/6yLAXr0Z3hX8bJdPCTgE4k+4dbA9nLjgZh6YV5yXwoIXNq8tF/A/rctpAA491AOk57qfLOH8Xi+y9kOPjshG5dNSprfIL/yZxz5CgED5OPNhh2veH9GrXlUcNzyO2+BI7kMQ8ipc+wy39Hw0xOu2JF40x4TVQuphc9flh/OQLDRludDY3aJd4="
 
 matrix:
   fast_finish: true
@@ -48,8 +46,9 @@ before_install:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
-  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 5.1.0 https://github.com/goalgorilla/drupal_social.git install; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 2.0.0 https://github.com/goalgorilla/drupal_social.git install; fi
+  # @todo Change to next tagged version of drupal_social.
+  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch '5.2.0' https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 'upgrade-path' https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
@@ -59,7 +58,7 @@ before_install:
   - composer config repositories.social git https://github.com/goalgorilla/open_social.git
   # Remove roave/security-advisories depdendency as it conflicts with drupal/core:~8.9.9 requirements in our update branch. See: https://github.com/Roave/SecurityAdvisories/commit/5bd8c4f672d819d073ca8de1922fdb6898d0df3a
   - if [ "$TEST_SUITE" = "install_update" ]; then composer remove roave/security-advisories --no-update; fi
-  # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldnt release but helps us with testing our update path.
+  # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldn't release but helps us with testing our update path.
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
   # For Pull Requests that are not from Open Social's own repo we must overwrite the repository we set earlier so we can pull in the work done by the external contributor.
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
@@ -74,18 +73,18 @@ before_install:
 install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]  || [ "$TEST_SUITE" = "install_stability_5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional --localsettings; fi
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --localsettings; fi
-  # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 2.0.0 of goalgorilla/drupal_social
+  # Install docker using the composer details from the 8.x-8.x branch of goalgorilla/open_social and 'upgrade-path' of goalgorilla/drupal_social
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
-  # Reset the entire branch, so we can checkout goalgorilla/drupal_social:5.0.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
+  # Reset the entire branch, so we can checkout goalgorilla/drupal_social:5.1.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 5.0.0; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
+  # @todo Change to next tagged version of drupal_social.
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 5.2.0; fi
   # Now install the feature branch on top to make sure we get all our goodies.
-  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
-  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
+  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
   # Update once and for all to the latest versions also within goalgorilla/drupal_social.
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require drupal/social_search_autocomplete; composer update; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/restore-permissions.sh; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web composer require drupal/social_search_autocomplete; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web chown -R www-data:www-data vendor/ html/; fi
   # Run the update hooks to see if our update path still works with an almost reset code base from 8.x to 11.x
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/update.sh; fi
 
@@ -99,6 +98,3 @@ script:
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
-
-after_success:
-  - bash scripts/social/trigger_dockerhub.sh

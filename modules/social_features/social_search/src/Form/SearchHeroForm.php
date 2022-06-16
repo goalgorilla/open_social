@@ -93,7 +93,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_route = $this->routeMatch->getRouteName();
-    $route_parts = explode('.', $current_route);
+    $route_parts = explode('.', ($current_route ?? ''));
 
     $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
     $options = ['query' => $query];
