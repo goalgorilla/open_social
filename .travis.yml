@@ -14,7 +14,7 @@ addons:
 language: php
 
 php:
-  - 8.0.19
+  - 8.0
 
 env:
   global:
@@ -47,7 +47,7 @@ before_install:
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   # @todo Change to next tagged version of drupal_social.
-  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch 'issue/3260861-php8-support' https://github.com/goalgorilla/drupal_social.git install; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then git clone --branch '5.2.0' https://github.com/goalgorilla/drupal_social.git install; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then git clone --branch 'upgrade-path' https://github.com/goalgorilla/drupal_social.git install; fi
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
@@ -78,7 +78,7 @@ install:
   # Reset the entire branch, so we can checkout goalgorilla/drupal_social:5.1.0 and we dont get issues with dev dependencies from 8.x related Open Social versions.
   - if [ "$TEST_SUITE" = "install_update" ]; then git stash; rm -rf vendor/ composer.lock; fi
   # @todo Change to next tagged version of drupal_social.
-  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout issue/3260861-php8-support; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then git checkout 5.2.0; fi
   # Now install the feature branch on top to make sure we get all our goodies.
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --update-with-all-dependencies; fi
   - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker exec -i social_ci_web composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --update-with-all-dependencies; fi
