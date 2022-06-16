@@ -111,7 +111,7 @@ class GroupContentVisibilityUpdate {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, $new_type, array &$context) {
+  public static function updateVisibility($entity, $new_type, array &$context) {
     // Find the corresponding visibility for the new group_type.
     $default_visibility = SocialGroupHelperService::getDefaultGroupVisibility($new_type);
 
