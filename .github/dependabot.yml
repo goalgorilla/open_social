@@ -36,21 +36,3 @@ updates:
       include: "scope"
     # Allow up to 5 open pull requests for Drupal dependencies as we have some to go.
     open-pull-requests-limit: 5
-
-  # Maintain our test dependencies
-  - package-ecosystem: "composer"
-    directory: "/tests"
-    schedule:
-      interval: "daily"
-      time: "01:00"
-      timezone: "Europe/Amsterdam"
-    labels:
-      - "type: update"
-      - "team: nucleus"
-    # Let core team maintainers review it.
-    reviewers:
-      - "goalgorilla/maintainers"
-    # Prefix all commit messages and include a list of updated dependencies
-    commit-message:
-      prefix: "Updates deps: "
-      include: "scope"
