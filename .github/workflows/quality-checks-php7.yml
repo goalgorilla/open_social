@@ -16,7 +16,7 @@ jobs:
         run: sudo update-alternatives --set php /usr/bin/php7.4
 
       # We want to reuse our project setup to run different jobs at once.
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
@@ -57,7 +57,7 @@ jobs:
     name: PHPStan check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
@@ -76,7 +76,7 @@ jobs:
     name: PHPCS check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
@@ -100,7 +100,7 @@ jobs:
     name: PHPUnit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*

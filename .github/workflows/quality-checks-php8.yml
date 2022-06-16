@@ -16,11 +16,11 @@ jobs:
         run: sudo update-alternatives --set php /usr/bin/php8.0
 
       # We want to reuse our project setup to run different jobs at once.
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-php8
 
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
@@ -57,11 +57,11 @@ jobs:
     name: PHPStan check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-php8
 
       # Set PHP 7.4 as default.
       - name: Set default PHP 8.0
@@ -76,11 +76,11 @@ jobs:
     name: PHPUnit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-php8
 
       # Set PHP 7.4 as default.
       - name: Set default PHP 8.0
