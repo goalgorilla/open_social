@@ -10200,6 +10200,16 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
 		-
+			message: "#^Cannot call method get\\(\\) on array\\|Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
+			message: "#^Cannot call method getGroup\\(\\) on array\\|Drupal\\\\group\\\\Entity\\\\GroupContentInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
@@ -10421,6 +10431,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:validateForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$group with type array\\|Drupal\\\\group\\\\Entity\\\\GroupInterface is not subtype of native type Drupal\\\\group\\\\Entity\\\\GroupInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
 
