@@ -1032,6 +1032,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       ];
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
+
+    if (!empty($form['advanced']) && Element::isVisibleElement($form['advanced'])) {
+      // Hide revision fields.
+      $form['advanced']['#access'] =
+      $form['revision']['#access'] =
+      $form['revision_log']['#access'] =
+      $form['revision_information']['#access'] = FALSE;
+    }
   }
 
   if (
