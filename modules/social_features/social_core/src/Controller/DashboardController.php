@@ -2,40 +2,74 @@
 
 namespace Drupal\social_core\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\system\Controller\SystemController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Implements the DashboardController class.
+ * Contains various response method for Dashboard.
  *
  * @package Drupal\social_core\Controller
  */
-class DashboardController extends ControllerBase {
+class DashboardController extends SystemController {
 
   /**
-   * The theme handler service.
-   *
-   * @var \Drupal\Core\Extension\ThemeHandlerInterface
+   * {@inheritDoc}
    */
-  protected $themeHandler;
+  public function overview($link_id) {
+    // Load all menu links below it.
+    $parameters = new MenuTreeParameters();
+    $parameters->setRoot($link_id)->excludeRoot()->setTopLevelOnly()->onlyEnabledLinks();
+    $tree = $this->menuLinkTree->load('', $parameters);
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ];
+    $tree = $this->menuLinkTree->transform($tree, $manipulators);
+    $tree_access_cacheability = new CacheableMetadata();
+    $blocks = [];
+    foreach ($tree as $key => $element) {
 
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(ThemeHandlerInterface $theme_handler) {
-    $this->themeHandler = $theme_handler;
-  }
+      $tree_access_cacheability = $tree_access_cacheability->merge(CacheableMetadata::createFromObject($element->access));
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): self {
-    return new static(
-      $container->get('theme_handler'),
-    );
+      // Only render accessible links.
+      if ($element->access instanceof AccessResultInterface
+        && !$element->access->isAllowed()) {
+        continue;
+      }
+
+      $link = $element->link;
+      $block['title'] = $link->getTitle();
+      $block['description'] = $link->getDescription();
+      $block['content'] = [
+        '#theme' => 'admin_block_content',
+        '#content' => $this->systemManager->getAdminBlock($link),
+      ];
+
+      if (!empty($block['content']['#content'])) {
+        $blocks[$key] = $block;
+      }
+    }
+
+    if ($blocks) {
+      ksort($blocks);
+      $build = [
+        '#theme' => 'admin_page',
+        '#blocks' => $blocks,
+      ];
+      $tree_access_cacheability->applyTo($build);
+      return $build;
+    }
+    else {
+      $build = [
+        '#markup' => $this->t('You do not have any administrative items.'),
+      ];
+      $tree_access_cacheability->applyTo($build);
+      return $build;
+    }
   }
 
   /**
