@@ -3,9 +3,29 @@
  * Provides an emoji picker via emoji-picker-element.
  */
 
-import { Picker } from '/libraries/emoji-picker-element/index.js';
+(function (Drupal, drupalSettings, once, Popper, tabbable, CKEDITOR) {
 
-(function (Drupal, once, Popper, tabbable, CKEDITOR) {
+  /**
+   * Social emoji picker object instance.
+   *
+   * @type {Drupal.emojiPicker}
+   */
+  let emojiPicker;
+
+  // Dynamically import the emoji picker element module.
+  (async () => {
+    let {Picker} = await import(drupalSettings.path.baseUrl + 'libraries/emoji-picker-element/index.js');
+
+    emojiPicker = new Drupal.emojiPicker(Picker);
+
+    // Manully attach social emoji picker behavior.
+    try {
+      Drupal.behaviors.socialEmojiPicker.attach(document, drupalSettings);
+    } catch (e) {
+      Drupal.throwError(e);
+    }
+
+  })();
 
   /**
    * Attaches the emoji picker to each Ajax form element.
@@ -20,15 +40,13 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
   Drupal.behaviors.socialEmojiPicker = {
     attach: function (context, settings) {
 
-      let emojiPicker;
-
-      emojiPicker = emojiPicker || new Drupal.emojiPicker();
-
-      const elements = once('social-emoji-capable-processed', 'textarea.social-emoji-capable', context);
-
-      elements.forEach(el => {
-        emojiPicker.instances.push(new Drupal.emojiPickerTrigger(el, emojiPicker));
-      });
+      // This code might run before emoji picker object is ready.
+      if (typeof emojiPicker !== 'undefined') {
+        const elements = once('social-emoji-capable-processed', 'textarea.social-emoji-capable', context);
+        elements.forEach(el => {
+          new Drupal.emojiPickerTrigger(el, emojiPicker);
+        });
+      }
     }
   };
 
@@ -38,11 +56,14 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
    * Creates the emoji picker instance. The idea is to have a single instance
    * that is being dynamically attached to a trigerring element.
    *
+   * @param {Picker} Picker
+   *   Emoji picker element.
+   *
    * @constructor
    */
-  Drupal.emojiPicker = function() {
+  Drupal.emojiPicker = function(Picker) {
 
-    this.createPickerElement();
+    this.createPickerElement(Picker);
     this.onEmojiClick();
     this.onKeyDown();
 
@@ -71,8 +92,11 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
 
   /**
    * Creates an emoji picker DOM element and attaches it to the document body.
+   *
+   * @param {Picker} Picker
+   *   Emoji picker element.
    */
-  Drupal.emojiPicker.prototype.createPickerElement = function() {
+  Drupal.emojiPicker.prototype.createPickerElement = function(Picker) {
     this.pickerElement = new Picker();
     this.pickerElement.setAttribute('aria-modal', 'true');
     // OS doesn't support light/dark themes. Let's stick to a light one atm.
@@ -374,4 +398,4 @@ import { Picker } from '/libraries/emoji-picker-element/index.js';
     }
   };
 
-})(Drupal, once, Popper, tabbable, window.CKEDITOR);
+})(Drupal, drupalSettings, once, Popper, tabbable, window.CKEDITOR);
