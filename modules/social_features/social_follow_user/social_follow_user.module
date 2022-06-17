@@ -221,9 +221,9 @@ function social_follow_user_form_user_form_alter(array &$form, FormStateInterfac
 
   if ($profile instanceof ProfileInterface && $active) {
     $following_enabled = \Drupal::service('social_follow_user.helper')
-      ->getFollowingStatus((int) $profile->get('uid')->target_id);
+      ->getFollowingStatus($profile);
 
-    $form['profile_privacy']['social_profile_following_enabled'] = [
+    $form['profile_privacy']['field_profile_allow_following'] = [
       '#type' => 'checkbox',
       '#title' => t('Allow members to follow me'),
       '#default_value' => $following_enabled,
@@ -254,37 +254,14 @@ function _social_follow_user_form_submit(array $form, FormStateInterface $form_s
   if ($profile instanceof Profile) {
     $uid = $profile->getOwnerId();
 
-    if (isset($profile_privacy['social_profile_following_enabled'])) {
+    if (isset($profile_privacy['field_profile_allow_following'])) {
       // Save following status in the user data.
-      \Drupal::service('social_follow_user.helper')
-        ->setFollowingStatus((int) $uid, (bool) $profile_privacy['social_profile_following_enabled']);
+      $profile->set('field_profile_allow_following', $profile_privacy['field_profile_allow_following']);
+      $profile->save();
     }
     // Invalidate profile cache tags.
     Cache::invalidateTags(['profile:' . $uid]);
   }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_follow_user_form_user_register_form_alter(array &$form, FormStateInterface $form_state): void {
-  $form['actions']['submit']['#submit'][] = '_social_follow_user_register_form_submit';
-}
-
-/**
- * Form submit for user_register_form.
- *
- * @param array $form
- *   The user edit form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_follow_user_register_form_submit(array $form, FormStateInterface $form_state): void {
-  // Enabled "Allow members to follow me" option by default for new users.
-  /** @var \Drupal\user\UserInterface $account */
-  $account = $form_state->get('user');
-  \Drupal::service('social_follow_user.helper')
-    ->setFollowingStatus((int) $account->id());
 }
 
 /**
@@ -294,7 +271,8 @@ function _social_follow_user_register_form_submit(array $form, FormStateInterfac
  *   Array with variables of a profile.
  */
 function _social_follow_user_check_following_status(array &$variables): void {
-  if (\Drupal::service('social_follow_user.helper')->isFollowingEnabled($variables['profile'])) {
+  if (\Drupal::service('social_follow_user.helper')
+    ->isFollowingAllowed($variables['profile'])) {
     $variables['following_enabled'] = TRUE;
   }
 }

@@ -2,11 +2,9 @@
 
 namespace Drupal\social_follow_user\Service;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\user\UserDataInterface;
 
 /**
  * Defines the helper service.
@@ -15,55 +13,33 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
 
   /**
    * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
-
-  /**
-   * The user data service.
-   *
-   * @var \Drupal\user\UserDataInterface
-   */
-  protected $userData;
+  protected AccountProxyInterface $currentUser;
 
   /**
    * The flag service.
-   *
-   * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
+  protected FlagServiceInterface $flagService;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(
     AccountProxyInterface $current_user,
-    UserDataInterface $user_data,
-    FlagServiceInterface $flag,
-    EntityTypeManagerInterface $entity_type_manager
+    FlagServiceInterface $flag
   ) {
     $this->currentUser = $current_user;
-    $this->userData = $user_data;
     $this->flagService = $flag;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isFollowingEnabled(ProfileInterface $profile): bool {
+  public function isFollowingAllowed(ProfileInterface $profile): bool {
     $following_enabled = TRUE;
 
     // Check if disabled user following due to privacy settings.
-    if (!$this->getFollowingStatus((int) $profile->get('uid')->target_id)) {
+    if (!$this->getFollowingStatus($profile)) {
       $following_enabled = FALSE;
 
       // Check if user already followed.
@@ -81,24 +57,19 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function setFollowingStatus(int $uid, $status = TRUE): void {
-    $this->userData->set(
-      'social_profile_privacy',
-      $uid,
-      'following_enabled',
-      $status
-    );
-  }
+  public function getFollowingStatus(ProfileInterface $profile): bool {
+    $allow_following = $profile->field_profile_allow_following->value;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getFollowingStatus(int $uid): bool {
-    return $this->userData->get(
-      'social_profile_privacy',
-      $uid,
-      'following_enabled'
-    );
+    // Check if it's unchanged value and set it to the TRUE because for existing
+    // users the "allow following" option should be enabled by default.
+    if ($allow_following == NULL) {
+      $allow_following = TRUE;
+    }
+    else {
+      $allow_following = (bool) $allow_following;
+    }
+
+    return $allow_following;
   }
 
 }
