@@ -1,4 +1,4 @@
-name: Quality checks on PHP 7.4
+name: Quality checks
 
 on:
   push:
@@ -10,17 +10,20 @@ jobs:
   setup:
     name: Project Setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
       # Set PHP 7.4 as default.
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+      - name: Set default PHP${{ matrix.php }}
+        run: sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
 
       # We want to reuse our project setup to run different jobs at once.
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-{{ matrix.php }}
 
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
@@ -56,16 +59,15 @@ jobs:
     needs: setup
     name: PHPStan check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
-
-      # Set PHP 7.4 as default.
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
+          key: ${{ github.sha }}-{{ matrix.php }}
 
       # Run PHPStan
       - name: Run PHPStan analysis
@@ -75,36 +77,35 @@ jobs:
     needs: setup
     name: PHPCS check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-{{ matrix.php }}
       # Copy phpcs.xml folder to root.
       - name: Copy PHPCS.xml file from temporary repository to root of workspace.
         run: cp $GITHUB_WORKSPACE/tmp/repository/phpcs.xml phpcs.xml
 
-      # Set PHP 7.4 as default.
-      - name: Set default PHP7.4
-        run: sudo update-alternatives --set php /usr/bin/php7.4
-
       - name: Run PHPCS checks
-        uses: chekalsky/phpcs-action@v1
-        with:
-          phpcs_bin_path: './vendor/bin/phpcs'
-          enable_warnings: true
+        run: vendor/bin/phpcs -q --report=checkstyle
 
   phpunit:
     needs: setup
     name: PHPUnit Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}
+          key: ${{ github.sha }}-{{ matrix.php }}
 
       # Set PHP 7.4 as default.
       - name: Set default PHP7.4
