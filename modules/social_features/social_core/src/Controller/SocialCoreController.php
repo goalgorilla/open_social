@@ -4,7 +4,7 @@ namespace Drupal\social_core\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\RevisionableEntityBundleInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -262,21 +262,28 @@ class SocialCoreController extends ControllerBase {
       $entity_type = $titles[$entity_type_id]['callback']();
     }
     else {
-      $entity_type = $this->routeMatch->getParameter($entity_type_id . '_type');
+      $definition = $this->entityTypeManager()->getDefinition($entity_type_id);
+
+      if (
+        $definition !== NULL &&
+        ($bundle_entity_type = $definition->getBundleEntityType()) !== NULL
+      ) {
+        $entity_type = $this->routeMatch->getParameter($bundle_entity_type);
+      }
     }
 
-    if (!$entity_type instanceof RevisionableEntityBundleInterface) {
-      return NULL;
+    if (
+      isset($entity_type) &&
+      $entity_type instanceof EntityInterface &&
+      ($label = $entity_type->label()) !== NULL
+    ) {
+      return $this->t('Create @article @name', [
+        '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? 'a',
+        '@name' => mb_strtolower($label),
+      ]);
     }
 
-    if (($label = $entity_type->label()) === NULL) {
-      return NULL;
-    }
-
-    return $this->t('Create @article @name', [
-      '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? 'a',
-      '@name' => mb_strtolower($label),
-    ]);
+    return NULL;
   }
 
 }

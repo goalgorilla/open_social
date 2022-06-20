@@ -3177,9 +3177,18 @@ function social_group_social_core_title(): array {
 
         $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
 
-        return \Drupal::entityTypeManager()
-          ->getStorage($plugin->getEntityTypeId() . '_type')
-          ->load($plugin->getEntityBundle());
+        $definition = \Drupal::entityTypeManager()
+          ->getDefinition($plugin->getEntityTypeId());
+
+        if (
+          $definition !== NULL &&
+          ($entity_type_id = $definition->getBundleEntityType()) !== NULL
+        ) {
+          return \Drupal::entityTypeManager()->getStorage($entity_type_id)
+            ->load($plugin->getEntityBundle());
+        }
+
+        return NULL;
       },
     ],
   ];
