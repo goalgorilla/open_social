@@ -90,7 +90,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     if (!empty($data['related_object'])) {
@@ -135,7 +135,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return $entity->getEntityTypeId() === 'group_content';
   }
 

@@ -38,7 +38,7 @@
 
   // Adds mention input config for the textarea.
   var initMentions = function(element, context, settings) {
-    $(element).mentionsInput({
+    const $textarea = $(element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
         renderItem: function(ul, item) {
@@ -72,8 +72,18 @@
       }
     });
 
+    // Init existing mentions.
+    if (settings.socialMentions.initMentions?.mentions?.length) {
+      const mentionsInput = $textarea.data("mentionsInput");
+      $(settings.socialMentions.initMentions.mentions).each(function () {
+        mentionsInput._addMention(this);
+      });
+      mentionsInput._setValue(settings.socialMentions.initMentions.text);
+      mentionsInput.input.trigger('change.mentionsInput');
+    }
+
     // Hook up the autogrow resize event to the highligher resize event handler.
-    $(element).on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
+    $textarea.on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
   };
 
   // Adds mention input config for the textarea.
