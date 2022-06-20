@@ -90,14 +90,14 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return TRUE;
   }
 
@@ -112,8 +112,11 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *   pairs:
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getRecipientsFromPost(array $referenced_entity) {
+  public function getRecipientsFromPost(array $referenced_entity): array {
     $recipients = [];
 
     $post = $this->entityTypeManager->getStorage('post')
