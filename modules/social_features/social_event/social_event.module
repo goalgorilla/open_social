@@ -810,7 +810,13 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
 
     if ($node instanceof NodeInterface) {
-      $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
+      $access = \Drupal::service('social_event.enroll')->isEnabled($node);
+      if (isset($form['enroll_wrapper'])) {
+        $form['enroll_wrapper']['#access'] = $access;
+      }
+      else {
+        $form['enroll_for_this_event']['#access'] = $access;
+      }
     }
   }
 }

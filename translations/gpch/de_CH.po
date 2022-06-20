@@ -1499,8 +1499,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-06-10 00:15+0000\n"
-"PO-Revision-Date: 2022-05-09 20:39+0000\n"
+"POT-Creation-Date: 2022-06-18 00:16+0000\n"
+"PO-Revision-Date: 2022-06-15 22:03+0000\n"
 "Last-Translator: Greenwire Team CH <greenwire@greenpeace.ch>\n"
 "Language-Team: German (de_CH) <https://translate.getopensocial.com/projects/"
 "gpch/distribution/de_CH/>\n"
@@ -1593,7 +1593,7 @@ msgid_plural "(+ @count other groups)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:34;212
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:34;225
 msgid "(1 spot left)"
 msgid_plural "(@count spots left)"
 msgstr[0] "(1 Platz frei)"
@@ -1688,7 +1688,7 @@ msgstr "-Alle-"
 #: modules/social_features/social_comment/social_comment.module:401
 #: modules/social_features/social_group/src/Plugin/views/filter/FilterByGroup.php:74
 #: modules/social_features/social_search/social_search.module:76
-#: modules/social_features/social_tagging/social_tagging.module:514;537
+#: modules/social_features/social_tagging/social_tagging.module:515;550
 #: modules/social_features/social_user/social_user.module:144
 msgid "- Any -"
 msgstr "- Alle -"
@@ -2041,6 +2041,15 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> hat Tag(s), denen du folgst zu [social_taxonomy:indefinite_article] "
+"[social_taxonomy:content_type] <a href=\"[message:"
+"field_message_related_object:entity:url:absolute]\">[message:node-title] "
+"hinzugefügt </a>.</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.update_node_following_tag.yml:0;0
 msgid ""
@@ -2064,6 +2073,13 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> hat dich zu folgender Veranstaltung hinzugefügt [social_event:"
+"event_iam_organizing]</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -2112,8 +2128,8 @@ msgid ""
 "event_iam_organizing]</p>\r\n"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> hat deine Anfrage zur Anmeldung für die folgende Veranstaltung bestätigt "
-"[social_event:event_iam_organizing]</p>\n"
+"a> hat deine Anfrage zur Anmeldung für die Veranstaltung \"[social_event:"
+"event_iam_organizing]\" bestätigt</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0
 msgid ""
@@ -2125,6 +2141,13 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> hat deine Anfrage zur Anmeldung für die folgende Veranstaltung bestätigt "
+"[social_event:event_iam_organizing]</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid ""
@@ -2142,6 +2165,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kommentierte [social_comment:commented_content_type] <a href=\"[message:"
+"field_message_related_object:entity:url:absolute]\">[message:node-title]</a> "
+"dem du folgst</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -2221,6 +2257,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kommentierte deine/n [social_comment:commented_entity_link_html]</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid ""
@@ -2258,6 +2300,15 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> erstellte [social_taxonomy:indefinite_article] [social_taxonomy:"
+"content_type] <a href=\"[message:field_message_related_object:entity:url:"
+"absolute]\">[message:node-title]</a> mit den/m Tag/s, denen/dem du folgst.</"
+"p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid ""
@@ -2322,6 +2373,12 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> gefällt dein [social_like:liked_entity_link_html]</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0;0
 msgid ""
@@ -2342,6 +2399,14 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> hat dich in einem <a href=\"[message:field_message_related_object:entity:"
+"url:absolute]\">Kommentar</a>&nbsp;erstellt auf [social_mentions:"
+"commented_entity_link_html] erwähnt</p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0;0
 msgid ""
@@ -3032,7 +3097,7 @@ msgstr "@total Mitglieder"
 msgid "@total people have enrolled"
 msgstr "@total Personen haben sich angemeldet"
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:217
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:230
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
 msgstr[0] "@total Person hat sich angemeldet @spots_left"
@@ -3361,7 +3426,7 @@ msgstr ""
 #: modules/social_features/social_footer/social_footer.module:18
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_page/social_page.module:21
-#: modules/social_features/social_tagging/social_tagging.module:30
+#: modules/social_features/social_tagging/social_tagging.module:31
 msgid "About"
 msgstr "Info"
 
@@ -4441,7 +4506,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:45
 msgid "Allow anonymous users to enroll in new events by default"
 msgstr ""
-"Anonymen Benutzer*innen standardmässig erlauben sich für Veranstaltungen "
+"Anonymen Benutzer*innen standardmässig erlauben, sich für Veranstaltungen "
 "anzumelden"
 
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:137
@@ -4630,7 +4695,7 @@ msgstr ""
 
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:113
 msgid "Allow users to tag content in content."
-msgstr "Benutzern erlauben im Text zu verschlagworten."
+msgstr "Benutzern erlauben, im Text zu verschlagworten."
 
 #: modules/social_features/social_event/modules/social_event_addtocal/src/Form/SocialAddToCalendarSettingsForm.php:87
 msgid "Allowed calendars"
@@ -4935,7 +5000,7 @@ msgstr ""
 msgid "Apply"
 msgstr "Anwenden"
 
-#: modules/social_features/social_event/social_event.module:985
+#: modules/social_features/social_event/social_event.module:991
 msgid "Approve"
 msgstr "Zustimmen"
 
@@ -5204,7 +5269,7 @@ msgstr ""
 msgid "Avatar settings"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1033
+#: modules/social_features/social_event/social_event.module:1039
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:165
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:162
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
@@ -6229,7 +6294,7 @@ msgstr ""
 msgid "Content selection"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:31
+#: modules/social_features/social_tagging/social_tagging.module:32
 #: modules/social_features/social_tagging/social_tagging.info.yml:0
 msgid "Content tagging module"
 msgstr "Content-Tagging-Modul"
@@ -6311,7 +6376,7 @@ msgstr ""
 msgid "Could not create profile for @user_id"
 msgstr "Profil für @user_id konnte nicht erstellt werden"
 
-#: modules/social_features/social_core/social_core.install:1356
+#: modules/social_features/social_core/social_core.install:1358
 msgid ""
 "Could not install Content Entity forms as Open Social please do so manually "
 "in the Socialblue settings."
@@ -6806,7 +6871,7 @@ msgstr "Tag Monat"
 msgid "Day Month Time"
 msgstr "Tag Monat Zeit"
 
-#: modules/social_features/social_event/social_event.module:992
+#: modules/social_features/social_event/social_event.module:998
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:111
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php:98
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
@@ -7706,7 +7771,7 @@ msgid ""
 "Enabling this feature provides event organisers with the possibility to "
 "allow anonymous users to enroll in public events."
 msgstr ""
-"Aktivierung dieses Feature ermöglicht Veranstaltungsorganisator*innen die "
+"Aktivierung dieses Features ermöglicht Veranstaltungsorganisator*innen, die "
 "Veranstaltungsanmeldungen für Gäste zu erlauben."
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:38
@@ -7737,7 +7802,7 @@ msgstr ""
 msgid "End"
 msgstr "Ende"
 
-#: modules/social_features/social_event/social_event.module:840
+#: modules/social_features/social_event/social_event.module:846
 msgid "End date is required!"
 msgstr "Enddatum ist erforderlich!"
 
@@ -7804,7 +7869,7 @@ msgstr "Anmelden für die @label Veranstaltung"
 msgid "Enroll in event"
 msgstr "Anmelden für die Veranstaltung"
 
-#: modules/social_features/social_event/social_event.module:1338
+#: modules/social_features/social_event/social_event.module:1344
 #: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
 msgid "Enroll method"
 msgstr "Anmeldemethode"
@@ -9702,7 +9767,7 @@ msgstr ""
 msgid "Invite(s) have been successfully sent."
 msgstr "Einladung(en) wurde(n) erfolgreich übermittelt."
 
-#: modules/social_features/social_event/social_event.module:162;1246
+#: modules/social_features/social_event/social_event.module:162;1252
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Invite-only"
 msgstr "Beitritt nur auf Einladung"
@@ -10079,7 +10144,7 @@ msgstr "Schreibe einen Kommentar"
 msgid "Leave a message to @name"
 msgstr "Eine Nachricht für @name hinterlassen"
 
-#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:236
+#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:238
 msgid ""
 "Leave blank for all. Otherwise, the first selected term will be the default "
 "instead of \"Any\"."
@@ -10283,7 +10348,7 @@ msgstr "Systemname"
 msgid "Mail HTML"
 msgstr ""
 
-#: modules/social_features/social_tagging/social_tagging.module:70
+#: modules/social_features/social_tagging/social_tagging.module:71
 msgid "Main category"
 msgstr "Hauptkategorie"
 
@@ -10883,7 +10948,7 @@ msgstr "Neuer Inhalt"
 
 #: translations.php:122
 msgid "New content has been added to a group you are in"
-msgstr ""
+msgstr "In einer deiner Gruppen wurde ein neuer Inhalt erstellt"
 
 #: modules/social_features/social_private_message/src/Plugin/Block/PmAddBlock.php:55
 msgid "New message"
@@ -11094,7 +11159,7 @@ msgstr "Keine Berichte verfügbar."
 msgid "No results found."
 msgstr "Keine Ergebnisse gefunden."
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:150;156;267
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:151;156;163;280
 msgid "No spots left"
 msgstr "Keine Plätze übrig"
 
@@ -11156,7 +11221,7 @@ msgstr "Nicht installiert"
 msgid "Not reply comment"
 msgstr "Nicht auf Kommentar antworten"
 
-#: modules/social_features/social_tagging/social_tagging.module:41
+#: modules/social_features/social_tagging/social_tagging.module:42
 msgid ""
 "Notice: Drag and drop has intentionally been disabled for this vocabulary."
 msgstr ""
@@ -11483,7 +11548,7 @@ msgstr "Offene Gruppe: Gruppenmitgliedschaft"
 msgid "Open group: Group node (Album)"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:156;1234
+#: modules/social_features/social_event/social_event.module:156;1240
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll"
 msgstr "Offene Teilnahme"
@@ -11846,7 +11911,7 @@ msgstr "Telefonnummer und Anschrift"
 msgid "Photo"
 msgstr "Foto"
 
-#: modules/social_features/social_tagging/social_tagging.module:65
+#: modules/social_features/social_tagging/social_tagging.module:66
 msgid "Placement"
 msgstr "Platzierung"
 
@@ -12814,7 +12879,7 @@ msgstr "Mehr darüber lesen"
 msgid "Read more about this"
 msgstr "Erfahre mehr über diesen"
 
-#: modules/social_features/social_core/social_core.install:1052
+#: modules/social_features/social_core/social_core.install:1054
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_link.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.basic.field_basic_link.yml:0
 msgid "Read more link"
@@ -13208,7 +13273,7 @@ msgstr ""
 msgid "Request status"
 msgstr "Status der Anfrage"
 
-#: modules/social_features/social_event/social_event.module:159;1240
+#: modules/social_features/social_event/social_event.module:159;1246
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:88;95
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:194;209;263
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
@@ -13723,7 +13788,7 @@ msgstr ""
 msgid "Select taxonomy vocabularies"
 msgstr ""
 
-#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:125;217
+#: modules/social_features/social_follow_taxonomy/src/Plugin/views/filter/FollowTaxonomyViewsFilter.php:125;219
 msgid "Select terms"
 msgstr ""
 
@@ -15047,27 +15112,27 @@ msgstr ""
 
 #: translations.php:132
 msgid "Someone added content you might be interested in"
-msgstr ""
+msgstr "Jemand hat Inhalte hinzugefügt, die dich interessieren könnten"
 
 #: translations.php:119;131
 msgid "Someone commented on your content"
-msgstr ""
+msgstr "Jemand hat einen deiner Inhalte kommentiert"
 
 #: translations.php:125
 msgid "Someone joined one of your groups"
-msgstr ""
+msgstr "Jemand ist einer deiner Gruppen beigetreten"
 
 #: translations.php:127
 msgid "Someone reported content as inappropriate"
-msgstr ""
+msgstr "Jemand hat einen Inhalt als unangemessen gemeldet"
 
 #: translations.php:126
 msgid "Someone wants to enroll to your event"
-msgstr ""
+msgstr "Jemand möchte sich für deine Veranstaltung anmelden"
 
 #: translations.php:134
 msgid "Someone wants to join your group"
-msgstr ""
+msgstr "Jemand möchte deiner Gruppe beitreten"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
 msgid "Sort"
@@ -15321,7 +15386,7 @@ msgid "Tag"
 msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module:151
-#: modules/social_features/social_tagging/social_tagging.module:178
+#: modules/social_features/social_tagging/social_tagging.module:179
 msgid "Tag content"
 msgstr "Inhalt taggen"
 
@@ -15331,12 +15396,12 @@ msgstr "Inhalt taggen"
 msgid "Tag settings"
 msgstr "Einstellungen für Schlagworte"
 
-#: modules/social_features/social_tagging/social_tagging.module:343
+#: modules/social_features/social_tagging/social_tagging.module:344
 #: modules/social_features/social_tagging/social_tagging.install:162
 msgid "Tagging"
 msgstr "Verschlagwortung"
 
-#: modules/social_features/social_tagging/social_tagging.module:344
+#: modules/social_features/social_tagging/social_tagging.module:345
 #: modules/social_features/social_tagging/social_tagging.install:163
 msgid "Tagging field."
 msgstr "Feld für Verschlagwortung."
@@ -15344,7 +15409,7 @@ msgstr "Feld für Verschlagwortung."
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:164
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php:155
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
-#: modules/social_features/social_tagging/social_tagging.module:193;200;219;276;445
+#: modules/social_features/social_tagging/social_tagging.module:194;201;220;277;446
 #: modules/social_features/social_tagging/src/SocialTaggingOverrides.php:121;232
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/config/install/field.field.block_content.follow_tags.field_tags.yml:0
 #: modules/social_features/social_tagging/config/optional/block.block.socialtagsblock.yml:0
@@ -15421,7 +15486,7 @@ msgstr ""
 msgid "Text area display format settings"
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:1069
+#: modules/social_features/social_core/social_core.install:1071
 #: modules/social_features/social_core/config/install/field.field.block_content.basic.field_text_block.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_text_block.yml:0
 #: modules/social_features/social_core/config/install/field.field.block_content.platform_intro.field_text_block.yml:0
@@ -16213,7 +16278,7 @@ msgstr ""
 
 #: translations.php:123
 msgid "There is a new post in your stream"
-msgstr ""
+msgstr "Es gibt einen neuen Post in deinem Stream"
 
 #: modules/custom/alternative_frontpage/src/Form/AlternativeFrontpageForm.php:121
 msgid "There is already a setting created for this role."
@@ -17130,7 +17195,7 @@ msgstr ""
 msgid "Values"
 msgstr ""
 
-#: modules/social_features/social_core/social_core.install:1470
+#: modules/social_features/social_core/social_core.install:1472
 msgid "Verified User"
 msgstr ""
 
@@ -17781,6 +17846,10 @@ msgstr ""
 msgid "You do not follow any tags."
 msgstr ""
 
+#: modules/social_features/social_core/src/Controller/DashboardController.php:68
+msgid "You do not have any administrative items."
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 msgid "You do not have any notifications."
 msgstr "Du hast keine neuen Benachrichtigungen."
@@ -17813,19 +17882,19 @@ msgstr[1] ""
 
 #: translations.php:120
 msgid "You have a new comment on a post"
-msgstr ""
+msgstr "Ein Post wurde kommentiert"
 
 #: translations.php:128
 msgid "You have a new enrollment to your event"
-msgstr ""
+msgstr "Jemand hat sich für deine Veranstaltung angemeldet"
 
 #: translations.php:137
 msgid "You have a new reply to a thread you were mentioned in"
-msgstr ""
+msgstr "Es gibt eine neue Antwort in einem Thread, der dich erwähnt"
 
 #: translations.php:121
 msgid "You have a new reply to your comment"
-msgstr ""
+msgstr "Jemand hat auf deinen Kommentar geantwortet"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:89
 msgid "You have accepted the invitation for the @event event."
@@ -17833,7 +17902,7 @@ msgstr "Du hast die Einladung zu der Veranstaltung @event angenommen."
 
 #: translations.php:130
 msgid "You have been added to an event"
-msgstr ""
+msgstr "Du wurdest zu einer Veranstaltung hinzugefügt"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:189
 msgid ""
@@ -17855,7 +17924,7 @@ msgstr ""
 
 #: translations.php:129
 msgid "You have been invited to an event"
-msgstr ""
+msgstr "Du wurdest zu einer Veranstaltung eingeladen"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
 msgid "You have been invited to join a group"
@@ -17867,7 +17936,7 @@ msgstr "Du wurdest eingeladen Mitglied in dieser Gruppe zu werden"
 
 #: translations.php:136
 msgid "You have been mentioned"
-msgstr ""
+msgstr "Du wurdest erwähnt"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:93
 msgid "You have declined the invitation for the @event event."
@@ -17916,7 +17985,7 @@ msgstr[1] "Du erhieltst <strong>:count</strong> Benachrichtigungen"
 
 #: translations.php:138
 msgid "You have received a new private message"
-msgstr ""
+msgstr "Du hast eine neue Nachricht erhalten"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:91
 msgid ""
@@ -17957,7 +18026,7 @@ msgstr "Du wurdest zu dieser Gruppe hinzugefügt."
 
 #: translations.php:135
 msgid "Your content has been liked"
-msgstr ""
+msgstr "Jemandem gefällt dein Inhalt"
 
 #: translations.php:144
 msgid "Your email has been sent to 1 selected enrollee successfully"
@@ -18049,11 +18118,11 @@ msgstr ""
 
 #: translations.php:124
 msgid "Your request to enroll to an event has been accepted"
-msgstr ""
+msgstr "Deine Anfrage zur Anmeldung an einer Veranstaltung wurde bestätigt"
 
 #: translations.php:133
 msgid "Your request to join a group has been accepted"
-msgstr ""
+msgstr "Deine Anfrage einer Gruppe beizutreten wurde bestätigt"
 
 #: modules/custom/social_file_private/social_file_private.install:26
 msgid ""
@@ -18709,7 +18778,7 @@ msgstr "unveröffentlicht"
 msgid "users"
 msgstr "Benutzer*innen"
 
-#: modules/social_features/social_event/social_event.module:1241
+#: modules/social_features/social_event/social_event.module:1247
 msgid ""
 "users can \"request to enroll\" for this event which event organisers "
 "approve/decline"
@@ -18729,7 +18798,7 @@ msgid ""
 "managers approve/decline."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1235
+#: modules/social_features/social_event/social_event.module:1241
 msgid "users can enroll for this event without approval"
 msgstr "Nutzer:innen können sich direkt für diese Veranstaltung anmelden"
 
@@ -18738,7 +18807,7 @@ msgstr "Nutzer:innen können sich direkt für diese Veranstaltung anmelden"
 msgid "users can join this @entity_type_id without approval."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1247
+#: modules/social_features/social_event/social_event.module:1253
 msgid ""
 "users can only enroll for this event if they are added/invited by event "
 "organisers"
