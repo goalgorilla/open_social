@@ -219,7 +219,7 @@ function social_follow_user_form_user_form_alter(array &$form, FormStateInterfac
   $profile = _social_profile_get_profile_from_route();
   $active = \Drupal::config('social_follow_user.settings')->get('status');
 
-  if ($profile instanceof ProfileInterface && $active) {
+  if ($profile instanceof Profile && $active) {
     $following_enabled = \Drupal::service('social_follow_user.helper')
       ->getFollowingStatus($profile);
 

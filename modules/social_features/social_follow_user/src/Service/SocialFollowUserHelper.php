@@ -4,7 +4,7 @@ namespace Drupal\social_follow_user\Service;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\flag\FlagServiceInterface;
-use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\Entity\Profile;
 
 /**
  * Defines the helper service.
@@ -35,7 +35,7 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function isFollowingAllowed(ProfileInterface $profile): bool {
+  public function isFollowingAllowed(Profile $profile): bool {
     $following_enabled = TRUE;
 
     // Check if disabled user following due to privacy settings.
@@ -57,8 +57,8 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFollowingStatus(ProfileInterface $profile): bool {
-    $allow_following = $profile->field_profile_allow_following->value;
+  public function getFollowingStatus(Profile $profile): bool {
+    $allow_following = $profile->getFieldValue('field_profile_allow_following', 'value');
 
     // Check if it's unchanged value and set it to the TRUE because for existing
     // users the "allow following" option should be enabled by default.

@@ -4,7 +4,7 @@ namespace Drupal\social_follow_user\Service;
 
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\flag\FlagServiceInterface;
-use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\Entity\Profile;
 
 /**
  * Defines the helper service interface.
@@ -27,23 +27,23 @@ interface SocialFollowUserHelperInterface {
   /**
    * Check if following is allowed for the profile.
    *
-   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   * @param \Drupal\profile\Entity\Profile $profile
    *   The profile entity object.
    *
    * @return bool
    *   TRUE or FALSE depending upon following is allowed.
    */
-  public function isFollowingAllowed(ProfileInterface $profile): bool;
+  public function isFollowingAllowed(Profile $profile): bool;
 
   /**
    * Get following status of user.
    *
-   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   * @param \Drupal\profile\Entity\Profile $profile
    *   The profile entity object.
    *
    * @return bool
    *   TRUE if the user following is enabled, FALSE otherwise.
    */
-  public function getFollowingStatus(ProfileInterface $profile): bool;
+  public function getFollowingStatus(Profile $profile): bool;
 
 }
