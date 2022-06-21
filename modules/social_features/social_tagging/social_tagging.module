@@ -158,6 +158,11 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
         break;
 
+      case 'media':
+        $type = $form_entity->bundle();
+        $tag_enabled = $tag_settings->get('tag_media_type_' . $type);
+        break;
+
       default:
         $tag_enabled = FALSE;
         break;
@@ -337,6 +342,10 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
     'group',
     'profile',
   ];
+
+  if (\Drupal::moduleHandler()->moduleExists('media')) {
+    $entity_types[] = 'media';
+  }
 
   // Add a Tagging base field.
   if (in_array($entity_type->id(), $entity_types)) {
@@ -660,5 +669,26 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
   /** @var \Drupal\search_api\Plugin\views\query\SearchApiQuery $query */
   if ($view->id() === 'search_content' && isset($query->getWhere()[2]['type'])) {
     $query->getWhere()[2]['type'] = 'AND';
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function social_tagging_modules_installed(array $modules): void {
+  if (in_array('media', $modules)) {
+    $entity_type = \Drupal::entityTypeManager()
+      ->getStorage('media')
+      ->getEntityType();
+
+    $fields = \Drupal::moduleHandler()
+      ->invokeAll('entity_base_field_info', [$entity_type]);
+
+    if (!isset($fields['social_tagging'])) {
+      return;
+    }
+
+    \Drupal::entityDefinitionUpdateManager()
+      ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $fields['social_tagging']);
   }
 }
