@@ -5,7 +5,7 @@
 
 (function ($, Drupal) {
   /**
-   * Notification centre bell update behavior.
+   * Notification Center bell update behavior.
    */
   Drupal.behaviors.notificationUpdate = {
     attach: function (context) {
