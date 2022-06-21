@@ -30,9 +30,9 @@ class BookParentOnlyActivityEntityCondition extends ActivityEntityConditionBase 
     if (!empty($node) && $node instanceof NodeInterface) {
       // The main book page always has the depth 1.
       if (
-        $node->bundle() === 'book'
-        && isset($node->book['depth'])
-        && (int) $node->book['depth'] === 1
+        $node->bundle() === 'book' &&
+        isset($node->book['depth']) &&
+        (int) $node->book['depth'] === 1
       ) {
         return TRUE;
       }

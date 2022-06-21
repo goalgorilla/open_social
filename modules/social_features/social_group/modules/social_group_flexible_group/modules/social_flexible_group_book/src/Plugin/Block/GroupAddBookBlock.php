@@ -33,10 +33,7 @@ class GroupAddBookBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if ($group instanceof GroupInterface) {
-      if (
-        $group->hasPermission('create group_node:book entity', $account)
-        && $account->hasPermission('create book content')
-      ) {
+      if ($group->hasPermission('create group_node:book entity', $account)) {
         return AccessResult::allowed();
       }
     }
