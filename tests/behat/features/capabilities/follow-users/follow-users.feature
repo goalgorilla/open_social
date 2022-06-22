@@ -5,14 +5,15 @@ Feature: Follow Users
   Goal/Desire: I want to follow users
 
   Scenario: Successfully follow users
-    And I enable the module "social_follow_user"
-    Given I set the configuration item "socialblue.settings" with key "style" to "sky"
+    Given I enable the module "social_follow_user"
+    And I set the configuration item "social_follow_user.settings" with key "status" to "true"
+    And I set the configuration item "socialblue.settings" with key "style" to "sky"
     And users:
       | name              | mail                      | status | roles          | field_profile_first_name | field_profile_last_name |
       | follower          | follower@test.user        | 1      | verified       | Mike                     | Tyson                   |
       | following         | following@test.user       | 1      | verified       | Jack                     | Richer                  |
-      | disable_follow    | disable_follow@test.user  | 1      | verified       | Mark                     | Twain                  |
-      | behat_manager     | behat_manager@test.user   | 1      | sitemanager    | site                     | manager                 |
+      | disable_follow    | disable_follow@test.user  | 1      | verified       | Mark                     | Twain                   |
+      | behat_manager     | behat_manager@test.user   | 1      | sitemanager    | behat                    | manager                 |
     And I wait for "5" seconds
 
     # Verify that user follow feat is active.
@@ -74,12 +75,12 @@ Feature: Follow Users
     Given I am logged in as "disable_follow"
     When I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see checked the box "Allow members to follow me"
+    And I should see checked the box "Allow members to follow me"
 
-    # Disable user following settings
-    When I uncheck the box "Allow members to follow me"
+    # Disable user following settings.
+    Then I uncheck the box "Allow members to follow me"
     And I press "Save"
-    Then I should see "The changes have been saved."
+    And I should see "The changes have been saved."
 
     # Check if following really disabled.
     Given I am logged in as "follower"
@@ -89,3 +90,7 @@ Feature: Follow Users
     Then I click "Mark Twain"
     And I wait for "3" seconds
     And I should not see "Follow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
+
+    # Uninstall module and disable back sky theme style.
+    Then I disable the module "social_follow_user"
+    And I set the configuration item "socialblue.settings" with key "style" to ""
