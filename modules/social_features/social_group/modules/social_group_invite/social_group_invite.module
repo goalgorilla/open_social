@@ -682,7 +682,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     isset($context["data"]["group"]) &&
     $context["type"] === 'group_content'
   ) {
-    /** @var \Drupal\group\Entity\GroupContentInterface|mixed[] $group_content */
+    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
     $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
