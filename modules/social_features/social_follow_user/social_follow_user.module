@@ -82,7 +82,7 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
 }
 
 /**
- * Implements hook_follow_user_flag_action_access().
+ * Implements hook_flag_action_access().
  */
 function social_follow_user_flag_action_access(
   string $action,
@@ -90,9 +90,15 @@ function social_follow_user_flag_action_access(
   AccountInterface $account,
   EntityInterface $flaggable = NULL
 ): AccessResultInterface {
+  if (!$flaggable instanceof Profile) {
+    return AccessResult::neutral();
+  }
+  $status = \Drupal::service('social_follow_user.helper')
+    ->isFollowingAllowed($flaggable);
+
   return AccessResult::forbiddenIf(
-    $flaggable instanceof ProfileInterface &&
-    $flaggable->getOwnerId() === $account->id(),
+    $flaggable->getOwnerId() === $account->id() ||
+    ($action === 'flag' && !$status),
     'User should not be able to follow own profile.',
   );
 }
@@ -183,6 +189,7 @@ function social_follow_user_preprocess_profile(array &$variables): void {
  * Implements hook_preprocess_HOOK().
  */
 function social_follow_user_preprocess_profile__profile__statistic(array &$variables): void {
+  // Skip any action if "follow user" is not active.
   if (!\Drupal::config('social_follow_user.settings')->get('status')) {
     return;
   }

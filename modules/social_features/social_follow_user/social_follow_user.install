@@ -33,6 +33,10 @@ function social_follow_user_install(): void {
   // Set the weight of the social_follow_user to 6
   // so it is loaded after the social_profile module.
   module_set_weight('social_follow_user', 6);
+
+  // Clear cache so than form elements will be available after changing
+  // module weight.
+  drupal_flush_all_caches();
 }
 
 /**
@@ -110,7 +114,6 @@ function social_follow_user_uninstall(): void {
   if (!is_null($field_storage)) {
     $field_storage->delete();
   }
-
 }
 
 /**
