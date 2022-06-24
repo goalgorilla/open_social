@@ -9,21 +9,25 @@ on:
 jobs:
   setup:
     name: Project Setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php: [ '7.4', '8.0' ]
     steps:
-      # Set PHP 7.4 as default.
-      - name: Set default PHP${{ matrix.php }}
-        run: sudo update-alternatives --set php /usr/bin/php${{ matrix.php }}
-
       # We want to reuse our project setup to run different jobs at once.
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}-{{ matrix.php }}
+          key: ${{ matrix.php }}
+
+      # Set PHP {{ matrix.php }} as default.
+      # https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
 
       # We checkout the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
@@ -58,7 +62,7 @@ jobs:
   phpstan:
     needs: setup
     name: PHPStan check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php: [ '7.4', '8.0' ]
@@ -67,16 +71,25 @@ jobs:
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}-{{ matrix.php }}
+          key: ${{ matrix.php }}
+
+      # Set PHP {{ matrix.php }} as default.
+      # https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: cs2pr
 
       # Run PHPStan
       - name: Run PHPStan analysis
-        run: $GITHUB_WORKSPACE/vendor/bin/phpstan analyse -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpstan.neon
+        run: $GITHUB_WORKSPACE/vendor/bin/phpstan analyse -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpstan.neon --error-format=checkstyle | cs2pr
 
   phpcs:
     needs: setup
     name: PHPCS check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php: [ '7.4', '8.0' ]
@@ -85,18 +98,32 @@ jobs:
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}-{{ matrix.php }}
+          key: ${{ matrix.php }}
+
+      # Set PHP {{ matrix.php }} as default.
+      # https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: cs2pr
+
       # Copy phpcs.xml folder to root.
       - name: Copy PHPCS.xml file from temporary repository to root of workspace.
         run: cp $GITHUB_WORKSPACE/tmp/repository/phpcs.xml phpcs.xml
 
       - name: Run PHPCS checks
-        run: vendor/bin/phpcs
+        run: vendor/bin/phpcs  --report-full --report-checkstyle=./phpcs-report.xml
+
+      # https://github.com/staabm/annotate-pull-request-from-checkstyle#using-php_codesniffer
+      - name: Show PHPCS results in PR
+        run: cs2pr ./phpcs-report.xml
 
   phpunit:
     needs: setup
     name: PHPUnit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         php: [ '7.4', '8.0' ]
@@ -105,7 +132,20 @@ jobs:
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}-{{ matrix.php }}
+          key: ${{ matrix.php }}
+
+      # Set PHP {{ matrix.php }} as default.
+      # https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: cs2pr
+
+      # https://github.com/shivammathur/setup-php#phpunit
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       # Run PHPUnit testing.
       - name: Run PHPUnit test suite
