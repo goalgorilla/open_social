@@ -46,7 +46,9 @@
 
           {% if content.flag_follow_user or content.private_message_link %}
             <div class="btn-group--wrapper">
-              {{ content.flag_follow_user }}
+              {% if following_enabled %}
+                {{ content.flag_follow_user }}
+              {% endif %}
               {{ content.private_message_link }}
             </div>
           {% endif %}
