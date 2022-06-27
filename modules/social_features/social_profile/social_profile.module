@@ -249,6 +249,18 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
         'user' => $uid,
       ]
     );
+
+    // If this was the first login and social_user is enabled, send the user
+    // elsewhere.
+    if (
+      \Drupal::request()->get('first_time_login') &&
+      \Drupal::moduleHandler()->moduleExists('social_user')
+    ) {
+      $redirect_after_signup = \Drupal::configFactory()->get('social_user.settings')->get('redirect_after_signup');
+      if (!empty($redirect_after_signup)) {
+        $form_state->setRedirectUrl(Url::fromUserInput($redirect_after_signup));
+      }
+    }
   }
 }
 

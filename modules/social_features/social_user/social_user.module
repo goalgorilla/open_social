@@ -338,6 +338,7 @@ function _social_user_pass_reset_submit(array $form, FormStateInterface $form_st
         [
           'user' => $submitted_user_id,
           'profile_type' => 'profile',
+          'first_time_login' => TRUE,
           [],
         ]);
       $form_state->set('first_time_login', FALSE);
@@ -584,7 +585,18 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
     '#weight' => -10,
   ];
 
+  $form['registration_cancellation']['redirect_after_signup'] = [
+    '#type' => 'textfield',
+    '#title' => new TranslatableMarkup('Redirect new users to specific page'),
+    '#description' => new TranslatableMarkup('The page where we want to redirect new signed-up users towards. Enter the path starting with a forward slash. Default: /stream.'),
+    '#maxlength' => 64,
+    '#size' => 64,
+    '#default_value' => $config->get('redirect_after_signup'),
+  ];
+
   $form['#submit'][] = 'social_user_form_user_admin_settings_submit';
+  // Add validation for the user admin settings form.
+  $form['#validate'][] = 'social_user_form_user_admin_settings_validate';
 }
 
 /**
@@ -593,10 +605,43 @@ function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $
 function social_user_form_user_admin_settings_submit($form, FormStateInterface $form_state) {
   $config = \Drupal::configFactory()
     ->getEditable('social_user.settings');
-  $config->set('signup_help', $form_state->getValue("signup_help"));
-  $config->set('login_help', $form_state->getValue("login_help"));
-  $config->set('verified_immediately', $form_state->getValue("verified_immediately"));
+  $config->set('signup_help', $form_state->getValue('signup_help'));
+  $config->set('login_help', $form_state->getValue('login_help'));
+  $config->set('verified_immediately', $form_state->getValue('verified_immediately'));
+  $config->set('redirect_after_signup', $form_state->getValue('redirect_after_signup'));
   $config->save();
+}
+
+/**
+ * Validate function for the user admin settings form.
+ */
+function social_user_form_user_admin_settings_validate(array &$form, FormStateInterface $form_state): void {
+  $redirect_after_signup = $form_state->getValue('redirect_after_signup');
+
+  if ($redirect_after_signup) {
+    $path_validator = \Drupal::service('path.validator');
+
+    if (!$path_validator->getUrlIfValidWithoutAccessCheck($redirect_after_signup)) {
+      $form_state->setErrorByName('redirect_after_signup', new TranslatableMarkup('The path for the redirect after signup is not valid.'));
+    }
+    elseif (substr($redirect_after_signup, 0, 1) !== '/') {
+      $form_state->setErrorByName('redirect_after_signup', new TranslatableMarkup('The path for the redirect after signup should start with a forward slash.'));
+    }
+    else {
+      // @todo A defensive check code for not allowed paths is retrieved from
+      //   AlternativeFrontpageForm::isAllowedPath(). It would be nice to move
+      //   this method e.g. to social_core and make it global to use anywhere.
+      $unallowed_paths = [
+        '/user/logout',
+        '/ajax',
+      ];
+      foreach ($unallowed_paths as $unallowed_path) {
+        if (strpos($redirect_after_signup, $unallowed_path) === 0) {
+          $form_state->setErrorByName('redirect_after_signup', new TranslatableMarkup('The path for the redirect after signup is not allowed.'));
+        }
+      }
+    }
+  }
 }
 
 /**
