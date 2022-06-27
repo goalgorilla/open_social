@@ -145,6 +145,12 @@ class EnrollActionForm extends FormBase {
       && !social_event_manager_or_organizer()
     ) {
 
+      // Default prediction is that user does not have permissions to enroll
+      // to event and this is why $enroll_to_events_in_groups is set to FALSE.
+      // If user has permission 'enroll to events in groups' in at least one
+      // group in "$groups", this value will be changed to TRUE.
+      $enroll_to_events_in_groups = FALSE;
+
       $group_type_ids = $this->configFactory->get('social_event.settings')
         ->get('enroll');
 
@@ -155,12 +161,23 @@ class EnrollActionForm extends FormBase {
         // be joined by outsiders, which makes sense, since they also
         // couldn't see these events in the first place.
         if (in_array($group->bundle(), $group_type_ids, TRUE) && $group->hasPermission('join group', $current_user)) {
+          $enroll_to_events_in_groups = TRUE;
           break;
         }
 
-        if (!$group->hasPermission('enroll to events in groups', $current_user)) {
-          return [];
+        if ($group->hasPermission('enroll to events in groups', $current_user)) {
+          $enroll_to_events_in_groups = TRUE;
+
+          // Skip permission validation if 'enroll to events in groups' is
+          // already granted.
+          break;
         }
+      }
+
+      // Do not render form if user does not have permission
+      // 'enroll to events in groups' for at least one group in "$groups".
+      if (!$enroll_to_events_in_groups) {
+        return [];
       }
     }
 
