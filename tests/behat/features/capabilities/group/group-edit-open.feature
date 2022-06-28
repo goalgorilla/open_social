@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @DS-4211 @stability-2 @group-edit-open
+@api @group @stability @DS-956 @DS-4211 @javascript @stability-2 @group-edit-open
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -32,8 +32,9 @@ Feature: Edit my group as a group manager
     And I wait for AJAX to finish
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
-    And I should see "Test open group" in the "Main content"
-    Then I should see "Description text - edited" in the "Main content"
+    Then I should see "Test open group" in the "Main content"
+    And I wait for "5" seconds
+    And I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
     And I should see "Stream"
     And I should see "About"

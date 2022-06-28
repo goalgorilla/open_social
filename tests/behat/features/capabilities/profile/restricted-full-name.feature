@@ -1,4 +1,4 @@
-@account @profile @api @issue-3039084 @stability @stability-2 @restricted-full-name
+@account @profile @api @issue-3039084 @javascript @stability @stability-2 @restricted-full-name
 Feature: I want to restrict full name visibility when nickname is used
   Benefit: In order to have better privacy
   Role: As a Verified

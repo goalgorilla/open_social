@@ -26,6 +26,7 @@ Feature: Event Management
       | edit-field-event-date-end-0-value-time | 11:00:00                               |
       | Location name                          | GG HQ                                  |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click the xth "0" element with the css "#attachments summary"
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
@@ -52,6 +53,7 @@ Feature: Event Management
       | edit-field-event-date-end-0-value-time | 11:00:00                                        |
       | Location name                          | GG HQ                                           |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click the xth "0" element with the css "#attachments summary"
     And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
