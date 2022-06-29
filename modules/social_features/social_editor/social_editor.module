@@ -39,18 +39,25 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
 
   // Forms.
   $forms = [
-    "social_post_entity_form",
     "comment_post_comment_form",
     "comment_comment_form",
   ];
-  // Allowed formats.
-  $allowed_format = 'simple_text';
 
   // Check if it needs to be done here.
   if (in_array($complete_form['#form_id'], $forms)) {
     // Remove user formats except simple_text.
     foreach ($element['format']['format']['#options'] as $key => $value) {
-      if ($key !== $allowed_format) {
+      if ($key !== 'simple_text') {
+        unset($element['format']['format']['#options'][$key]);
+      }
+    }
+    // No changes can be made in text formats, so remove the fields.
+    $disable_fields = TRUE;
+  }
+  elseif ($complete_form['#form_id'] === 'social_post_entity_form') {
+    // Remove user formats except simple_html.
+    foreach ($element['format']['format']['#options'] as $key => $value) {
+      if ($key !== 'simple_html') {
         unset($element['format']['format']['#options'][$key]);
       }
     }
@@ -58,9 +65,9 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
     $disable_fields = TRUE;
   }
   else {
-    // Remove simple_text.
+    // Remove simple_text & simple_html.
     foreach ($element['format']['format']['#options'] as $key => $value) {
-      if ($key === $allowed_format) {
+      if ($key === 'simple_text' || $key === 'simple_html') {
         unset($element['format']['format']['#options'][$key]);
       }
     }

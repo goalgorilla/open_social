@@ -1,6 +1,7 @@
 services:
   social_mentions.overrider:
     class: \Drupal\social_mentions\SocialMentionsConfigOverride
+    arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
 

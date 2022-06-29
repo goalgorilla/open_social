@@ -42,6 +42,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
       'full_html' => TRUE,
       'plain_text' => TRUE,
       'simple_text' => TRUE,
+      'simple_html' => TRUE,
       'restricted_html' => TRUE,
       'mail_html' => TRUE,
     ];

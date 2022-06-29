@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * @file
  * Contains install and update hooks.
@@ -52,4 +54,22 @@ function social_editor_update_9000(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Added new Simple HTML format.
+ */
+function social_editor_update_11041() {
+  $configs = [
+    'filter.format.simple_html',
+    'editor.editor.simple_html',
+  ];
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_editor') . '/config/static/';
+  $source = new FileStorage($config_path);
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, (array) $source->read($config . '_11041 '));
+  }
 }

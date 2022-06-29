@@ -66,6 +66,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $formats = [
       'basic_html' => TRUE,
       'full_html' => FALSE,
+      'simple_html' => TRUE,
     ];
 
     $this->moduleHandler->alter('social_embed_formats', $formats);
