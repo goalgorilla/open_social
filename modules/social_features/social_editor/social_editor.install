@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\Core\Config\FileStorage;
-
 /**
  * @file
  * Contains install and update hooks.
  */
+
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Enable editor advanced link module.
@@ -59,7 +59,7 @@ function social_editor_update_9000(): string {
 /**
  * Added new Simple HTML format.
  */
-function social_editor_update_11041() {
+function social_editor_update_11041(): void {
   $configs = [
     'filter.format.simple_html',
     'editor.editor.simple_html',

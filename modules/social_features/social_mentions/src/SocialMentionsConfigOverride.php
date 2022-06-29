@@ -3,7 +3,6 @@
 namespace Drupal\social_mentions;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -15,23 +14,6 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_mentions
  */
 class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * Constructs the configuration override.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory) {
-    $this->configFactory = $config_factory;
-  }
 
   /**
    * Returns config overrides.
@@ -61,10 +43,10 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
    * @param array $overrides
    *   An override configuration.
    */
-  protected function addFilterOverride($text_format, array &$overrides) {
+  protected function addFilterOverride($text_format, array &$overrides): void {
     $config_name = 'filter.format.' . $text_format;
     /** @var \Drupal\Core\Config\Config $config */
-    $config = $this->configFactory->getEditable($config_name);
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
     $dependencies = $config->getOriginal('dependencies.module');
     $overrides[$config_name]['dependencies']['module'] = $dependencies;
     $overrides[$config_name]['dependencies']['module'][] = 'mentions';
