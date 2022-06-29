@@ -59,7 +59,7 @@ function social_editor_update_9000(): string {
 /**
  * Added new Simple HTML format.
  */
-function social_editor_update_11041(): void {
+function social_editor_update_11401(): void {
   $configs = [
     'filter.format.simple_html',
     'editor.editor.simple_html',
@@ -70,6 +70,6 @@ function social_editor_update_11041(): void {
   $source = new FileStorage($config_path);
 
   foreach ($configs as $config) {
-    $config_storage->write($config, (array) $source->read($config . '_11041 '));
+    $config_storage->write($config, (array) $source->read($config . '_11041'));
   }
 }
