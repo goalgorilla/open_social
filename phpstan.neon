@@ -64,7 +64,3 @@ parameters:
       # The accessCheck test seems to be horribly broken and providing false positives
       # Disable until https://github.com/mglaman/phpstan-drupal/issues/396 is fixed.
       - "#^Missing explicit access check on entity query\\.$#"
-      # See: https://github.com/webonyx/graphql-php/pull/1155
-      # The second parameter on 'Values::getDirectiveValues()' is missing the 'TypeDefinitionNode'
-      # in the docblock comment. We can remove this line when webonyx/graphql-php introduces a new release.
-      - "#^Parameter \\#2 \\$node of static method GraphQL\\\\Executor\\\\Values\\:\\:getDirectiveValues\\(\\) expects#"
