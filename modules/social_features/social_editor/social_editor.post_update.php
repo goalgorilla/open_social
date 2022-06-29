@@ -10,6 +10,6 @@ use Drupal\user\RoleInterface;
 /**
  * Grant authenticated user permission to use Simple HTML format.
  */
-function social_core_post_update_11401(): void {
+function social_editor_post_update_11401(): void {
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, ['use text format simple_html']);
 }
