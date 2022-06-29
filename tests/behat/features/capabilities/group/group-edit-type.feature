@@ -1,4 +1,4 @@
-@api @group @DS-5504 @stability @stability-3 @group-edit-group-type
+@api @group @DS-5504 @javascript @stability @stability-3 @group-edit-group-type
 Feature: Edit group type after creation
   Benefit: Have full control over groups and group content types
   Role: As a CM+
@@ -40,6 +40,7 @@ Feature: Edit group type after creation
     Then I should see "Closed group"
       And I should see "Nescafe"
     When I click "Edit group"
+    And I click the xth "0" element with the css "#edit-group-settings summary"
     Then I should see checked the box "Closed group"
 
     Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"

@@ -21,9 +21,9 @@ Feature: Use a landing page as 404 page
       | field_landing_page_section[0][subform][field_section_paragraph][0][subform][field_hero_title][0][value]                                     | Hero title    |
       | field_landing_page_section[0][subform][field_section_paragraph][0][subform][field_hero_subtitle][0][value]                                  | Hero subtitle |
     # Set URL Alias
+    And I click the xth "0" element with the css "#edit-group-settings summary"
     And I set alias as "page-not-found"
     And I press "Create landing page"
-    And I wait for "3" seconds
     # See as LU
     Then I should see "Landing page Page not found has been created."
     Given I set the configuration item "system.site" with key "page.404" to "/page-not-found"
