@@ -21,7 +21,10 @@
   flex-flow: row wrap;
   justify-content: flex-start;
   margin: 0 -1%;
-  padding: 0 1rem;
+
+  @include for-tablet-landscape-up {
+    margin: 0 -2%;
+  }
 
   @include for-desktop-up {
     padding: 0;
@@ -31,6 +34,7 @@
     margin: 0 1% 20px;
     flex: 0 0 98%;
     max-width: 98%;
+    flex-wrap: nowrap;
     height: auto;
     flex-direction: column;
     overflow: hidden;
@@ -67,6 +71,11 @@
         height: 100%;
         object-fit: cover;
       }
+    }
+
+    .teaser__body {
+      flex: 1;
+      max-width: none;
     }
 
     .teaser__teaser-type {
