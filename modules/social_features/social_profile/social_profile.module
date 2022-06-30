@@ -13,6 +13,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -21,7 +22,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
@@ -737,6 +738,12 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  $image_item = $build['field_profile_image'][0]['#item'] ?? NULL;
+
+  // Image doesn't exists.
+  if (!($image_item instanceof FieldItemInterface)) {
+    return;
+  }
 
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
@@ -745,27 +752,21 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   // have access to the users profile.
   if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
     // Try to load the profile picture.
-    $fid = $entity->get('field_profile_image')->target_id;
+    $image = $entity->get('field_profile_image')->entity;
+
     // Must have a value and not be NULL.
-    if (!is_null($fid)) {
-      // Load the file.
-      $file = File::load($fid);
-      // Check if it's a real file.
-      if ($file instanceof File) {
-        // Potentially the file is in the private file system. In that case,
-        // anonymous user don't have access to it.
-        if (!$file->access('view', $current_user)) {
-          // Load default data.
-          $replacement_data = social_profile_get_default_image();
-          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
-          $imgitem = $build['field_profile_image'][0]['#item'];
-          // Time to override the data that going to be rendered.
-          $imgitem->set('target_id', $replacement_data['id']);
-          $imgitem->set('width', $replacement_data['width']);
-          $imgitem->set('height', $replacement_data['height']);
-          // Put replacement data back in the object that's about to be built.
-          $build['field_profile_image'][0]['#item'] = $imgitem;
-        }
+    if ($image instanceof FileInterface) {
+      // Potentially the file is in the private file system. In that case,
+      // anonymous user don't have access to it.
+      if (!$image->access('view', $current_user)) {
+        // Load default data.
+        $replacement_data = social_profile_get_default_image();
+        // Time to override the data that going to be rendered.
+        $image_item->set('target_id', $replacement_data['id']);
+        $image_item->set('width', $replacement_data['width']);
+        $image_item->set('height', $replacement_data['height']);
+        // Put replacement data back in the object that's about to be built.
+        $build['field_profile_image'][0]['#item'] = $image_item;
       }
     }
   }
