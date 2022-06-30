@@ -133,8 +133,11 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
    * {@inheritdoc}
    */
   public function getEventDescription(NodeInterface $node) {
+    // Get event URL.
+    $node_url = '<p>Event link: ' . $node->toUrl('canonical', ['absolute' => TRUE])->toString() . '</p>';
+
     // Get event description.
-    $description = $node->body->value;
+    $description = $node_url . $node->body->value;
 
     // Strings for replace.
     $replace_strings = [
