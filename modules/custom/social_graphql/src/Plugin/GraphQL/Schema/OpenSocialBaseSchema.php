@@ -34,6 +34,21 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   /**
    * {@inheritdoc}
    */
+  protected function getExtensions(): array {
+    $extensions = parent::getExtensions();
+    // Enable OAuth related directives in our schema.
+    $oauth_extension_plugin_id = 'graphql_oauth_schema_extension';
+    if (!isset($extensions[$oauth_extension_plugin_id])) {
+      /** @var \Drupal\graphql\Plugin\SchemaExtensionPluginInterface $plugin */
+      $plugin = $this->extensionManager->createInstance($oauth_extension_plugin_id);
+      $extensions[$oauth_extension_plugin_id] = $plugin;
+    }
+    return $extensions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getResolverRegistry() {
     return new ResolverRegistry();
   }
