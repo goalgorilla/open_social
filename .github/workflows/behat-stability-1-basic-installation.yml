@@ -2,8 +2,9 @@ name: 'Behat'
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on pull request events
-  pull_request: { }
+  pull_request:
+    # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#webhook-payload-object-35
+    types: [ ready_for_review, reopened, synchronize ]
 
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
@@ -14,7 +15,8 @@ env:
 jobs:
   # This workflow contains a single job called "Running tests"
   tests:
-    name:  Basic Installation
+    name:  'Basic Installation'
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-22.04
     steps:
       # Set PHP version to 8.0
