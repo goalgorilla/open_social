@@ -934,6 +934,29 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       ];
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
+
+    // Move "path" field to "Settings" section if the "Social Path Manager"
+    // module is disabled.
+    if (!\Drupal::moduleHandler()->moduleExists('social_path_manager')) {
+      if (!empty($form['path'])) {
+        $form['path']['#type'] = 'fieldset';
+        if (Element::isVisibleElement($form['path'])) {
+          if (!empty($form['#fieldgroups']['group_settings'])) {
+            $form['path']['#group'] = 'group_settings';
+            $form['#fieldgroups']['group_settings']->children[] = 'path';
+          }
+        }
+      }
+    }
+
+    // Hide default field group "advanced" for group entities.
+    if (!empty($form['advanced']) && Element::isVisibleElement($form['advanced'])) {
+      // Hide revision fields.
+      $form['advanced']['#access'] =
+      $form['revision']['#access'] =
+      $form['revision_log']['#access'] =
+      $form['revision_information']['#access'] = FALSE;
+    }
   }
 
   $group_types = ['flexible_group'];
