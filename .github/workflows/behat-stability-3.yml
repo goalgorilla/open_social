@@ -1,16 +1,9 @@
-name: 'Behat stability 3'
+name: 'Behat'
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
+  # Triggers the workflow on pull request events
   pull_request: { }
-
-  # @todo Enable after successful testing
-  # Allows you to run this workflow manually from the Actions tab
-  # workflow_dispatch:
-
 
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
@@ -21,7 +14,7 @@ env:
 jobs:
   # This workflow contains a single job called "Running tests"
   tests:
-    name: Running tests
+    name: Stability 3
     runs-on: ubuntu-22.04
     steps:
       # Set PHP version to 8.0

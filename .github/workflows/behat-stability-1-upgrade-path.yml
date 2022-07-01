@@ -1,16 +1,9 @@
-name: 'Behat - Upgrade Path'
+name: 'Behat'
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
+  # Triggers the workflow on pull request events
   pull_request: { }
-
-  # @todo Enable after successful testing
-  # Allows you to run this workflow manually from the Actions tab
-  # workflow_dispatch:
-
 
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
@@ -21,7 +14,7 @@ env:
 jobs:
   # This workflow contains a single job called "Running tests"
   tests:
-    name: Running tests
+    name: Upgrade Path
     runs-on: ubuntu-22.04
     steps:
       # Setup PHP 7.4
@@ -46,11 +39,13 @@ jobs:
           export COMPOSER_MEMORY_LIMIT=-1
           export COMPOSER_EXIT_ON_PATCH_FAILURE=1
 
-      # Install the version of Open Social under test.
-      - name: Composer Install update branch of Open Social
-        run: |
-          composer remove roave/security-advisories --no-update
-          composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist
+      # Remove roave/security-advisories depdendency as it conflicts with drupal/core:~8.9.9 requirements in our update branch. See: https://github.com/Roave/SecurityAdvisories/commit/5bd8c4f672d819d073ca8de1922fdb6898d0df3a
+      - name: Remove roave/security-advisories from composer.json
+        run: composer remove roave/security-advisories --no-update
+
+      # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldn't release but helps us with testing our update path.
+      - name: Install update branch of Open Social
+        run: composer require goalgorilla/open_social:dev-8.x-8.x-composer-update-to-10-branch --prefer-dist
 
       # Install the docker.
       - name: Install Docker
