@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
@@ -356,5 +357,8 @@ function social_activity_social_core_default_main_menu_links_alter(array &$links
     ]);
   $link = end($link);
 
-  $links[] = $link;
+  // Ensure that the end() doesn't return FALSE, and we have link instance.
+  if ($link instanceof MenuLinkContentInterface) {
+    $links[] = $link;
+  }
 }
