@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.flexible_group
+    - node.type.book
+  module:
+    - node
+  enforced:
+    module:
+      - social_flexible_group_book
+id: flexible_group-group_node-book
+label: 'Flexible group: Group node (Book page)'
+description: 'Adds <em class="placeholder">Book page</em> content to groups both publicly and privately.'
+group_type: flexible_group
+content_plugin: 'group_node:book'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

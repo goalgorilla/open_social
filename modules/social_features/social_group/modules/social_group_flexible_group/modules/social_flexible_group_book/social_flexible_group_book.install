@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the "social_flexible_group_book" module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_flexible_group_book_install(): void {
+  // Make this module hooks fired after "book" module.
+  $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+  $weight = $extension_config->get('module.book');
+  // Set the weight of this module.
+  module_set_weight('social_flexible_group_book', $weight + 1);
+
+  // Set global permissions.
+  $permissions['verified'] = [
+    'add content to books',
+  ];
+
+  $roles = (array) \Drupal::entityTypeManager()->getStorage('user_role')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('id', 'administrator', '<>')
+    ->execute();
+
+  foreach ($roles as $role_id) {
+    if (!empty($permissions[$role_id])) {
+      user_role_grant_permissions($role_id, $permissions[$role_id]);
+    }
+  }
+
+  // Set group permissions.
+  // Group anonymous.
+  $group_permissions['flexible_group-anonymous'] = [
+    'view group_node:book content',
+    'view group_node:book entity',
+  ];
+
+  // Group outsider.
+  $group_permissions['flexible_group-outsider'] = $group_permissions['flexible_group-anonymous'];
+
+  // Group member.
+  $group_permissions['flexible_group-member'] = $group_permissions['flexible_group-outsider'];
+
+  // Group manager.
+  $group_permissions['flexible_group-group_manager'] = [
+    ...$group_permissions['flexible_group-member'],
+    'create group_node:book content',
+    'create group_node:book entity',
+    'delete own group_node:book entity',
+    'delete own group_node:book content',
+    'update own group_node:book content',
+    'update own group_node:book entity',
+  ];
+  // Group outside role: Content manager.
+  $group_permissions['flexible_group-83776d798'] = $group_permissions['flexible_group-group_manager'];
+
+  // Group admin.
+  $group_permissions['flexible_group-group_admin'] = [
+    ...$group_permissions['flexible_group-group_manager'],
+    'delete any group_node:book content',
+    'delete any group_node:book entity',
+    'update any group_node:book content',
+    'update any group_node:book entity',
+    'view unpublished group_node:book entity',
+  ];
+
+  // Group outside role: Site manager.
+  $group_permissions['flexible_group-ba5854c29'] = $group_permissions['flexible_group-group_admin'];
+
+  // Group outside role: Administrator.
+  $group_permissions['flexible_group-a416e6833'] = $group_permissions['flexible_group-group_admin'];
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  $group_type = \Drupal::entityTypeManager()
+    ->getStorage('group_type')
+    ->load('flexible_group');
+
+  foreach ($group_type->getRoles() as $role) {
+    if (!empty($group_permissions[$role->id()])) {
+      $role->grantPermissions($group_permissions[$role->id()])
+        ->save();
+    }
+  }
+}
