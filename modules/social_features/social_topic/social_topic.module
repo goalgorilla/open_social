@@ -20,6 +20,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -385,5 +386,8 @@ function social_topic_social_core_default_main_menu_links_alter(array &$links) {
     ]);
   $link = end($link);
 
-  $links[] = $link;
+  // Ensure that the end() doesn't return FALSE, and we have link instance.
+  if ($link instanceof MenuLinkContentInterface) {
+    $links[] = $link;
+  }
 }
