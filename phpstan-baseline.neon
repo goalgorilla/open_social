@@ -17708,3 +17708,8 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
