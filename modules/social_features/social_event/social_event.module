@@ -23,6 +23,7 @@ use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
@@ -1258,5 +1259,8 @@ function social_event_social_core_default_main_menu_links_alter(array &$links) {
     ]);
   $link = end($link);
 
-  $links[] = $link;
+  // Ensure that the end() doesn't return FALSE, and we have link instance.
+  if ($link instanceof MenuLinkContentInterface) {
+    $links[] = $link;
+  }
 }
