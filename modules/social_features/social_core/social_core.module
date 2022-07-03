@@ -20,6 +20,7 @@ use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\group\Entity\Group;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
@@ -1249,6 +1250,11 @@ function social_core_entity_access(EntityInterface $entity, string $operation, A
 
     /** @var \Drupal\menu_link_content\MenuLinkContentInterface $os_link */
     foreach ($default_os_links as $os_link) {
+      // Ensure that we have link instance.
+      if (!($os_link instanceof MenuLinkContentInterface)) {
+        continue;
+      }
+
       $os_link_title = $os_link->getTitle();
       $os_link_uri = $entity->get('link')->getValue();
       $os_link_uri = end($os_link_uri)['uri'];
