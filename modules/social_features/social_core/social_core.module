@@ -28,6 +28,7 @@ use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\block\BlockInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -1298,5 +1299,78 @@ function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface 
   foreach ($os_links_ids as $menu_id) {
     unset($form['links']['links'][$menu_id]['operations']['#links']['edit']);
     unset($form['links']['links'][$menu_id]['operations']['#links']['delete']);
+  }
+}
+
+/**
+ * Add new paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_core_blocks_paths(string $pages, array $paths): string {
+  return $pages . "\r\n" . implode("\r\n", $paths);
+}
+
+/**
+ * Removes paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_core_blocks_unset_paths(string $pages, array $paths): string {
+  $pages = explode("\r\n", $pages);
+
+  foreach ($pages as $delta => $page) {
+    if (in_array($page, $paths)) {
+      unset($pages[$delta]);
+    }
+  }
+
+  return implode("\r\n", $pages);
+}
+
+/**
+ * Process list of pages where chosen blocks should be shown.
+ *
+ * @param array $items
+ *   Paths of blocks.
+ * @param callable|null $function
+ *   (optional) The function which updates the pages set. Defaults to NULL.
+ */
+function _social_core_install_blocks(array $items, callable $function = NULL): void {
+  if (!is_callable($function)) {
+    $function = '_social_core_blocks_paths';
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+
+  foreach ($items as $id => $paths) {
+    $block = $storage->load($id);
+
+    if (!$block instanceof BlockInterface) {
+      continue;
+    }
+
+    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
+    $visibility = $block->getVisibilityCondition('request_path');
+
+    $configuration = $visibility->getConfiguration();
+    $pages = $function($configuration['pages'], (array) $paths);
+
+    if ($configuration['pages'] !== $pages) {
+      $configuration['pages'] = $pages;
+      $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
   }
 }
