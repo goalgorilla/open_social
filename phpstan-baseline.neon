@@ -5731,8 +5731,18 @@ parameters:
 			path: modules/social_features/social_core/social_core.post_update.php
 
 		-
+<<<<<<< HEAD
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
+=======
+			message: "#^Method Drupal\\\\social_core\\\\ContentTranslationConfigOverrideBase\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
+			count: 1
+			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+>>>>>>> c1f09781a (Merge pull request #2987 from goalgorilla/feature/3285045-group-reference-for-any-entity-type)
 			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
 
 		-
