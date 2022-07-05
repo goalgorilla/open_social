@@ -92,6 +92,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       'entity.group.canonical',
       'view.group_events.page_group_events',
       'view.group_topics.page_group_topics',
+      'view.group_books.page_group_books',
       'social_group.stream',
     ];
 

@@ -5,19 +5,24 @@
     "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "update-with-dependencies": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "drupal/core-composer-scaffold": true,
+            "oomphinc/composer-installers-extender": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true,
+            "drupal/console-extend-plugin": true,
+            "zaporylie/composer-drupal-optimizations": true
+        }
+    },
     "require": {},
     "require-dev": {
-        "drupal/coder": "^8.3",
-        "drupal/core-dev": "~9.3.15",
-        "drupal/devel": "^4.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "~0.7.1",
-        "phpstan/phpstan": "1.7.1",
-        "mglaman/phpstan-drupal": "1.1.17",
-        "mikey179/vfsstream": "^1.6",
-        "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "1.1.1"
+        "goalgorilla/open_social_dev": "dev-main"
     },
     "repositories": [
         {

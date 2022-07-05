@@ -11,6 +11,7 @@ use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\filter\FilterFormatInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -21,11 +22,13 @@ use Drupal\filter\Entity\FilterFormat;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\block\BlockInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -868,7 +871,7 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         }
 
         // Move the Published status to group settings with a new wrapper.
-        if (!empty($form['status'])) {
+        if (!empty($form['status']) && Element::isVisibleElement($form['status'])) {
           // Add an details element to status.
           $form['status_label'] = [
             '#type' => 'details',
@@ -883,15 +886,17 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           unset($form['status']);
         }
 
-        // Node author information for administrators.
-        $form['author_info'] = [
-          '#type' => 'details',
-          '#title' => t('Author Information'),
-          '#description' => '',
-          '#open' => TRUE,
-          '#weight' => 100,
-          '#group' => 'group_settings',
-        ];
+        if (Element::isVisibleElement($form['uid']) || Element::isVisibleElement($form['created'])) {
+          // Node author information for administrators.
+          $form['author_info'] = [
+            '#type' => 'details',
+            '#title' => t('Author Information'),
+            '#description' => '',
+            '#open' => TRUE,
+            '#weight' => 100,
+            '#group' => 'group_settings',
+          ];
+        }
 
         // Move author uid to the new author info fieldset,
         // and remove descriptive text.
@@ -1258,6 +1263,11 @@ function social_core_entity_access(EntityInterface $entity, string $operation, A
 
     /** @var \Drupal\menu_link_content\MenuLinkContentInterface $os_link */
     foreach ($default_os_links as $os_link) {
+      // Ensure that we have link instance.
+      if (!($os_link instanceof MenuLinkContentInterface)) {
+        continue;
+      }
+
       $os_link_title = $os_link->getTitle();
       $os_link_uri = $entity->get('link')->getValue();
       $os_link_uri = end($os_link_uri)['uri'];
@@ -1289,5 +1299,78 @@ function social_core_form_menu_edit_form_alter(array &$form, FormStateInterface 
   foreach ($os_links_ids as $menu_id) {
     unset($form['links']['links'][$menu_id]['operations']['#links']['edit']);
     unset($form['links']['links'][$menu_id]['operations']['#links']['delete']);
+  }
+}
+
+/**
+ * Add new paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_core_blocks_paths(string $pages, array $paths): string {
+  return $pages . "\r\n" . implode("\r\n", $paths);
+}
+
+/**
+ * Removes paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_core_blocks_unset_paths(string $pages, array $paths): string {
+  $pages = explode("\r\n", $pages);
+
+  foreach ($pages as $delta => $page) {
+    if (in_array($page, $paths)) {
+      unset($pages[$delta]);
+    }
+  }
+
+  return implode("\r\n", $pages);
+}
+
+/**
+ * Process list of pages where chosen blocks should be shown.
+ *
+ * @param array $items
+ *   Paths of blocks.
+ * @param callable|null $function
+ *   (optional) The function which updates the pages set. Defaults to NULL.
+ */
+function _social_core_install_blocks(array $items, callable $function = NULL): void {
+  if (!is_callable($function)) {
+    $function = '_social_core_blocks_paths';
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+
+  foreach ($items as $id => $paths) {
+    $block = $storage->load($id);
+
+    if (!$block instanceof BlockInterface) {
+      continue;
+    }
+
+    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
+    $visibility = $block->getVisibilityCondition('request_path');
+
+    $configuration = $visibility->getConfiguration();
+    $pages = $function($configuration['pages'], (array) $paths);
+
+    if ($configuration['pages'] !== $pages) {
+      $configuration['pages'] = $pages;
+      $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
   }
 }
