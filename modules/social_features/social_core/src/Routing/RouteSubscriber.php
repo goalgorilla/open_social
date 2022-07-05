@@ -57,7 +57,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       }
 
       $this->moduleHandler->alterDeprecated(
-        'Deprecated in social:11.2.0 and is removed from social:12.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
+        'Deprecated in social:11.4.0 and is removed from social:12.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
         'social_node_title_prefix_articles',
         $titles['node']['bundles'],
       );

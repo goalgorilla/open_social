@@ -235,7 +235,7 @@ class SocialCoreController extends ControllerBase {
   /**
    * The _title_callback for the entity creation route.
    */
-  public function addPageTitle(): ?TranslatableMarkup {
+  public function addPageTitle(): string {
     $titles = $this->moduleHandler()->invokeAll('social_core_title');
     $this->moduleHandler()->alter('social_core_title', $titles);
 
@@ -245,14 +245,14 @@ class SocialCoreController extends ControllerBase {
       }
 
       $this->moduleHandler()->alterDeprecated(
-        'Deprecated in social:11.2.0 and is removed from social:12.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
+        'Deprecated in social:11.4.0 and is removed from social:12.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
         'social_node_title_prefix_articles',
         $titles['node']['bundles'],
       );
     }
 
     if (($route_name = $this->routeMatch->getRouteName()) === NULL) {
-      return NULL;
+      return '';
     }
 
     $route_name = explode('.', $route_name);
@@ -280,10 +280,10 @@ class SocialCoreController extends ControllerBase {
       return $this->t('Create @article @name', [
         '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? 'a',
         '@name' => mb_strtolower($label),
-      ]);
+      ])->render();
     }
 
-    return NULL;
+    return '';
   }
 
 }
