@@ -1,0 +1,109 @@
+.ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview {
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: none;
+  animation: dialog_opacity 0.5s ease-out;
+
+  @media(max-width: 1024px) {
+    display: none !important;
+  }
+
+  > .ui-dialog-content {
+    font-family: 'montserrat', sans-serif;
+    padding: 1rem 1.5rem;
+  }
+}
+
+.teaser-profile-preview {
+  padding: .5rem 0 1rem;
+
+  .card__block {
+    padding: 0;
+  }
+
+  .media,
+  .field--name-field-profile-self-introduction {
+    margin-bottom: 1.5rem;
+  }
+
+  .media-left {
+    padding-right: 1rem;
+
+    a {
+      display: block;
+    }
+  }
+
+  .media-body {
+    .btn-group--wrapper {
+      display: flex;
+      align-items: center;
+      margin: .75rem -5px 0;
+
+      > .btn {
+        margin: 0 5px;
+        padding: 6px 12px !important;
+        color: #1f1c38;
+      }
+    }
+  }
+
+  .avatar {
+    img {
+      width: 96px;
+      height: auto;
+      max-height: 96px;
+    }
+  }
+
+  .field--name-uid {
+    .field--item {
+      &,
+      a {
+        font-size: 1.125rem;
+        font-weight: bold;
+        line-height: 22px;
+        color: #4d4e4d;
+      }
+    }
+  }
+
+  .field--name-field-profile-self-introduction {
+    .field--item {
+      > *:last-child {
+        margin-bottom: 0;
+      }
+
+      > p {
+        font-size: 1.125rem;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .badge {
+    font-size: .875rem;
+  }
+
+  .badge__label {
+    &:not(.badge__label--description) {
+      font-weight: bold;
+      color: #343434;
+    }
+
+    &.badge__label--description {
+      font-weight: 500;
+      color: #777876;
+    }
+  }
+}
+
+// Dialog animate.
+@keyframes dialog_opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

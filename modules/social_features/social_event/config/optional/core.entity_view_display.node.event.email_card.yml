@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.email_card
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_location
+    - node.type.event
+  module:
+    - address
+    - datetime
+    - user
+  enforced:
+    module:
+      - social_event
+id: node.event.email_card
+targetEntityType: node
+bundle: event
+mode: email_card
+content:
+  field_event_address:
+    type: address_plain
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_event_addtocal:
+    weight: 3
+    region: content
+    settings: { }
+    third_party_settings: { }
+  field_event_date:
+    type: datetime_default
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_event_location:
+    type: string
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  body: true
+  field_enroll_method: true
+  field_event_all_day: true
+  field_event_an_enroll: true
+  field_event_comments: true
+  field_event_date_end: true
+  field_event_enroll: true
+  field_event_enroll_outside_group: true
+  field_event_geolocation: true
+  field_event_image: true
+  field_event_managers: true
+  field_event_max_enroll: true
+  field_event_max_enroll_num: true
+  field_event_type: true
+  field_files: true
+  langcode: true
+  links: true

@@ -361,9 +361,8 @@ function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $en
   }
   else {
     $tags = [];
-    /** @var \Drupal\node\NodeInterface $old_entity */
-    $old_entity = $entity->original;
-    if (!is_null($old_entity)) {
+    if (isset($entity->original)) {
+      $old_entity = $entity->original;
       // Tags before save.
       $old_tags = $old_entity->get('social_tagging')->getValue();
       // Tags after save.

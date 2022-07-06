@@ -315,7 +315,7 @@ function social_user_update_11005(): void {
  * Update 'views.view.user_admin_people'.
  */
 function social_user_update_11006(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_user') . '/config/static/social_user_update_11006.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_user') . '/config/static/social_user_update_11006.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));
@@ -326,4 +326,18 @@ function social_user_update_11006(array &$sandbox): void {
       $config->setData($settings)->save(TRUE);
     }
   }
+}
+
+/**
+ * Allow select few items in group filter on the users overview admin page.
+ */
+function social_user_update_11201(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

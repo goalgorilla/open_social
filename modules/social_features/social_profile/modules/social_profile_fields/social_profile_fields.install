@@ -5,6 +5,7 @@
  * The social profile fields install file.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
 use Symfony\Component\Yaml\Yaml;
@@ -86,7 +87,7 @@ function social_profile_fields_update_8003() {
     'field.field.profile.profile.field_profile_' => 'field_config',
   ];
 
-  $path = drupal_get_path('module', 'social_profile_fields') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
     $config_file = $path . $prefix . 'nationality_8003.yml';
@@ -105,7 +106,7 @@ function social_profile_fields_update_8003() {
  * Create taxonomy terms for nationalities in the "Nationality" vocabulary.
  */
 function _social_profile_fields_nationalities() {
-  $path = drupal_get_path('module', 'social_profile_fields') . '/content/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/content/';
   $data = Yaml::parseFile($path . 'nationalities.yml');
 
   $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
@@ -116,4 +117,19 @@ function _social_profile_fields_nationalities() {
 
     $term->setName($nationality)->save();
   }
+}
+
+/**
+ * Make "Nationality" vocabulary translatable.
+ */
+function social_profile_fields_update_11201(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile_fields') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_storage->write('language.content_settings.taxonomy_term.nationality', (array) $source->read('language.content_settings.taxonomy_term.nationality_11201'));
 }

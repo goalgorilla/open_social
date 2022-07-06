@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,11 +31,9 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
   protected $account;
 
   /**
-   * Group entity.
-   *
-   * @var \Drupal\group\Entity\GroupInterface
+   * The group entity object.
    */
-  protected $group;
+  protected ?SocialGroupInterface $group;
 
   /**
    * Translation manager.
@@ -100,7 +99,10 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
    */
   public function build() {
     // Only when group invite is installed.
-    if (!$this->group->getGroupType()->hasContentPlugin('group_invitation')) {
+    if (
+      $this->group === NULL ||
+      !$this->group->getGroupType()->hasContentPlugin('group_invitation')
+    ) {
       return [];
     }
 
@@ -133,7 +135,7 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
    * {@inheritdoc}
    */
   public function access(AccountInterface $account, $return_as_object = FALSE) {
-    $is_group_page = isset($this->group);
+    $is_group_page = $this->group !== NULL;
     $is_logged_in = $account->isAuthenticated();
 
     return AccessResult::allowedIf($is_group_page && $is_logged_in);
@@ -157,11 +159,16 @@ class SocialGroupInviteNotificationBlock extends BlockBase implements ContainerF
    * {@inheritdoc}
    */
   public function getCacheTags() {
-    return Cache::mergeTags(parent::getCacheTags(), [
+    $tags = [
       'group_content_list:entity:' . $this->account->id(),
       'group_content_list:plugin:group_invitation:entity:' . $this->account->id(),
-      'group:' . $this->group->id(),
-    ]);
+    ];
+
+    if ($this->group !== NULL) {
+      $tags[] = 'group:' . $this->group->id();
+    }
+
+    return Cache::mergeTags(parent::getCacheTags(), $tags);
   }
 
 }

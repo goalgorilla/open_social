@@ -6,7 +6,10 @@
  */
 
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\message\Entity\Message;
+use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -72,37 +75,31 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                 ->getStorage($target_type)
                 ->load($target_id);
 
-              if (is_object($entity)) {
-                switch ($target_type) {
-
-                  // If it's group content.
-                  case 'group_content':
-                    /** @var \Drupal\group\Entity\GroupContent $entity */
-                    $group_content_type = $entity->getGroupContentType();
-                    if (!empty($group_content_type)) {
-                      $display_name = $group_content_type->label();
-                      $content_url = Url::fromRoute('entity.node.canonical',
-                        ['node' => $entity->getEntity()->id()],
-                        ['absolute' => TRUE]
-                      );
-                    }
-                    break;
-
-                  // If it's node.
-                  case 'node':
-                    $display_name = $entity->bundle();
-                    break;
-
-                  // When it's a post or photo post.
-                  case 'photo':
-                  case 'post':
-                    $display_name = mb_strtolower($entity->getEntityType()->getLabel());
-                    $content_url = Url::fromRoute('entity.post.canonical',
-                      ['post' => $entity->id()],
+              if ($entity !== NULL) {
+                // If it's group content.
+                if ($entity instanceof GroupContentInterface) {
+                  $group_content_type = $entity->getGroupContentType();
+                  if ($group_content_type !== NULL) {
+                    $display_name = $group_content_type->label();
+                    $content_url = Url::fromRoute('entity.node.canonical',
+                      ['node' => $entity->getEntity()->id()],
                       ['absolute' => TRUE]
                     );
-                    break;
+                  }
 
+                }
+                // If it's node.
+                elseif ($entity instanceof NodeInterface) {
+                  $display_name = $entity->bundle();
+                }
+                // When it's a post or photo post.
+                elseif ($entity instanceof PostInterface) {
+                  $display_name = mb_strtolower($entity->getEntityType()
+                    ->getLabel());
+                  $content_url = Url::fromRoute('entity.post.canonical',
+                    ['post' => $entity->id()],
+                    ['absolute' => TRUE]
+                  );
                 }
 
                 // When a name of content name starts from a vowel letter then
@@ -127,7 +124,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $replacements[$original] = $display_name;
                   }
                 }
-                elseif ($name === 'created_entity_link_html') {
+                elseif ($name === 'created_entity_link_html' && isset($display_name)) {
                   // We should only use the label of entities who have a label.
                   if ($link_label = $entity->label()) {
                     $entity_link_html = $display_name . ' <a href="' . $content_url->toString() . '">' . $link_label . '</a>';

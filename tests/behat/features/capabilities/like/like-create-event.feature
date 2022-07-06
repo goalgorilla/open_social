@@ -35,5 +35,5 @@ Feature: Create event like
     Given I am logged in as "user_1"
       And I wait for the queue to be empty
       And I click the xth "0" element with the css ".notification-bell a"
-     Then I should see "Notification centre"
+     Then I should see "Notification center"
       And I should see "Isaac Newton likes your event"

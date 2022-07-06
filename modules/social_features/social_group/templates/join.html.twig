@@ -1,0 +1,47 @@
+{#
+/**
+ * @file
+ * Default theme implementation for join actions.
+ *
+ * Available variables:
+ * - attributes: HTML attributes to apply to the wrapper.
+ * - primary: The primary element.
+ * - secondaries: The secondary elements.
+ *
+ * @see template_preprocess_join()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if primary %}
+  <div class="hero-footer__cta">
+    <div{{ attributes }}>
+      {% if secondaries %}
+        {% if primary.label %}
+          <a{{ primary.attributes.addClass('form-item', 'btn', 'btn-accent', 'btn-lg', 'btn-raised') }}>{{ primary.label }}</a>
+          <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle waves-effect waves-btn waves-light margin-left-m"><span class="caret"></span></button>
+        {% else %}
+          <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle btn-block">{{ primary }}<span class="caret"></span></button>
+        {% endif %}
+        <ul class="dropdown-menu dropdown-menu-right">
+          {% for secondary in secondaries %}
+            <li>{{ secondary }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <a{{ primary.attributes.addClass('btn', 'btn-block') }}>{{ primary.label }}</a>
+      {% endif %}
+    </div>
+
+    {% if invite_widget %}
+      <div class="btn-group">
+        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default btn-block dropdown-toggle">
+          {% trans %}Invite{% endtrans %}<span class="caret"></span>
+        </button>
+        <div class="dropdown-menu dropdown-menu--invite">
+          {{ invite_widget }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

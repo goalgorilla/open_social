@@ -75,7 +75,7 @@ function _social_mentions_set_default_config() {
  */
 function social_mentions_update_10301() {
   // Prepare the path.
-  $path = drupal_get_path('module', 'social_mentions') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_mentions') . '/config/static/';
 
   $message_templates = [
     'message.template.create_comment_reply_mention' => $path . 'message.template.create_comment_reply_mention_10301.yml',
@@ -96,4 +96,18 @@ function social_mentions_update_10301() {
       }
     }
   }
+}
+
+/**
+ * Updating  configuration keys as per underlying schema.
+ */
+function social_mentions_update_11001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_mentions', 'social_mentions_update_11001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }

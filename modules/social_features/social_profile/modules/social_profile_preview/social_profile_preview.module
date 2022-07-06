@@ -1,0 +1,259 @@
+<?php
+
+/**
+ * @file
+ * The Social Profile Preview module.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_profile_preview_entity_base_field_info_alter(array &$fields, EntityTypeInterface $entity_type): void {
+  if ($entity_type->id() === 'profile') {
+    /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
+    $fields['uid']->setDisplayConfigurable('view', TRUE);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_field__field_activity_output_text(array &$variables): void {
+  /** @var \Drupal\activity_creator\ActivityInterface $activity */
+  $activity = $variables['element']['#object'];
+
+  $account = $activity->getOwner();
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
+    /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
+    $helper = \Drupal::service('social_profile_preview.helper');
+
+    $helper->alter($profile, $variables, 'temp_attributes');
+
+    if (isset($variables['temp_attributes'])) {
+      $url = $account->toUrl()->setAbsolute()->toString();
+      $old_markup = ($prefix = '<a href="' . $url . '"') . ($suffix = '>');
+      $new_markup = $prefix . (new Attribute($variables['temp_attributes'])) . $suffix;
+
+      unset($variables['temp_attributes']);
+
+      /** @var \Drupal\Core\Render\RendererInterface $renderer */
+      $renderer = \Drupal::service('renderer');
+
+      foreach ($variables['items'] as &$item) {
+        $item['content'] = [
+          '#markup' => str_replace(
+            $old_markup,
+            $new_markup,
+            $renderer->render($item['content']),
+          ),
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_profile__profile__name_raw(array &$variables): void {
+  if ($variables['profile'] instanceof ProfileInterface) {
+    /** @var Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['profile'];
+
+    // Get & attach modal attributes.
+    \Drupal::service('social_profile_preview.helper')
+      ->alter($profile, $variables, 'temp_attributes');
+
+    $profile_name = \Drupal::service('social_profile.name_service')
+      ->getProfileName($profile);
+
+    // Override profile name to display modal window on hover.
+    if (isset($variables['temp_attributes'])) {
+      $variables['temp_attributes']['class'][] = 'notranslate';
+      $variables['profile_name'] = [
+        '#markup' => '<span ' . new Attribute($variables['temp_attributes']) . '>' . $profile_name . '</span>',
+      ];
+      unset($variables['temp_attributes']);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_field__field_profile_image(array &$variables): void {
+  $element = $variables['element'];
+
+  /** @var \Drupal\Core\Routing\CurrentRouteMatch $current_route */
+  $current_route = \Drupal::service('current_route_match');
+
+  // Disable modal preview profile in the popup window of notification center.
+  if ($current_route->getRouteName() === 'activity_creator.stream.notifications') {
+    return;
+  }
+
+  if (in_array($element['#view_mode'], ['compact', 'compact_notification'])) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $element['#object'];
+
+    /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
+    $helper = \Drupal::service('social_profile_preview.helper');
+
+    $helper->alter(
+      $profile,
+      $variables,
+      ['items', 0, 'content', '#item_attributes'],
+    );
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_flag(array &$variables): void {
+  if (\Drupal::routeMatch()->getRouteName() === 'social_profile_preview.canonical') {
+    $variables['attributes']['class'][] = 'btn-primary';
+    $classes = &$variables['attributes']['class'];
+
+    if (($delta = array_search('btn-default', $classes)) !== FALSE) {
+      unset($classes[$delta]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_profile(array &$variables): void {
+  $view_mode = $variables['elements']['#view_mode'];
+
+  if (in_array($view_mode, ['compact_teaser', 'small_teaser'])) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['profile'];
+
+    /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
+    $helper = \Drupal::service('social_profile_preview.helper');
+
+    $helper->alter(
+      $profile,
+      $variables,
+      'link_attributes',
+      TRUE,
+      'profile_name',
+      'profile_name_extra',
+    );
+
+    if ($view_mode === 'compact_teaser') {
+      $helper->alter($profile, $variables, 'avatar_attributes', TRUE);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_profile_preview_preprocess_username(array &$variables): void {
+  /** @var \Drupal\user\UserInterface $account */
+  $account = $variables['account'];
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
+    /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
+    $helper = \Drupal::service('social_profile_preview.helper');
+
+    $helper->alter(
+      $profile,
+      $variables,
+      'attributes',
+      FALSE,
+      'name',
+      'extra',
+    );
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_profile_preview_profile_view_alter(
+  array &$build,
+  EntityInterface $entity,
+  EntityViewDisplayInterface $display
+): void {
+  if (
+    $build['#view_mode'] === 'preview' &&
+    $entity->bundle() === 'profile' &&
+    $display->getComponent('private_message_link') !== NULL
+  ) {
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $entity;
+
+    $account = $profile->getOwner();
+
+    if (
+      $account->hasPermission('use private messaging system') &&
+      $account->hasPermission('create private messages thread')
+    ) {
+      $element = &$build['private_message_link'];
+
+      $url = $element['#url'];
+
+      if ($url instanceof Url) {
+        $url->mergeOptions([
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-default',
+              'waves-effect',
+              'waves-btn',
+            ],
+          ],
+        ]);
+
+        $element['#title'] = t('Message');
+
+        unset($element['#prefix'], $element['#suffix']);
+
+        return;
+      }
+    }
+
+    unset($build['private_message_link']);
+  }
+}
+
+/**
+ * Implements hook_social_follow_user_profile_modes_alter().
+ *
+ * Allows seeing the "Follow" button in a modal window.
+ *
+ * @see social_follow_user_entity_view_display_alter()
+ */
+function social_profile_preview_social_follow_user_profile_modes_alter(array &$displays): void {
+  $displays[] = 'preview';
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_preview_theme(): array {
+  return [
+    'profile__profile__preview' => [
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+}

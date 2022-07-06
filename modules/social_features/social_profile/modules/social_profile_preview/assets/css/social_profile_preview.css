@@ -1,0 +1,83 @@
+.ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview {
+  margin-top: 0;
+  margin-bottom: 0;
+  transform: none;
+  animation: dialog_opacity 0.5s ease-out;
+}
+@media (max-width: 1024px) {
+  .ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview {
+    display: none !important;
+  }
+}
+.ui-dialog:not(.ui-dialog-off-canvas).social-dialog--user-preview > .ui-dialog-content {
+  font-family: "montserrat", sans-serif;
+  padding: 1rem 1.5rem;
+}
+
+.teaser-profile-preview {
+  padding: 0.5rem 0 1rem;
+}
+.teaser-profile-preview .card__block {
+  padding: 0;
+}
+.teaser-profile-preview .media,
+.teaser-profile-preview .field--name-field-profile-self-introduction {
+  margin-bottom: 1.5rem;
+}
+.teaser-profile-preview .media-left {
+  padding-right: 1rem;
+}
+.teaser-profile-preview .media-left a {
+  display: block;
+}
+.teaser-profile-preview .media-body .btn-group--wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0.75rem -5px 0;
+}
+.teaser-profile-preview .media-body .btn-group--wrapper > .btn {
+  margin: 0 5px;
+  padding: 6px 12px !important;
+  color: #1f1c38;
+}
+.teaser-profile-preview .avatar img {
+  width: 96px;
+  height: auto;
+  max-height: 96px;
+}
+.teaser-profile-preview .field--name-uid .field--item,
+.teaser-profile-preview .field--name-uid .field--item a {
+  font-size: 1.125rem;
+  font-weight: bold;
+  line-height: 22px;
+  color: #4d4e4d;
+}
+.teaser-profile-preview .field--name-field-profile-self-introduction .field--item > *:last-child {
+  margin-bottom: 0;
+}
+.teaser-profile-preview .field--name-field-profile-self-introduction .field--item > p {
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+.teaser-profile-preview .badge {
+  font-size: 0.875rem;
+}
+.teaser-profile-preview .badge__label:not(.badge__label--description) {
+  font-weight: bold;
+  color: #343434;
+}
+.teaser-profile-preview .badge__label.badge__label--description {
+  font-weight: 500;
+  color: #777876;
+}
+
+@keyframes dialog_opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*# sourceMappingURL=social_profile_preview.css.map */

@@ -5,6 +5,7 @@
  * The Social profile module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -20,17 +22,17 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
+use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
-use Drupal\social_profile\SocialProfileUserFormAlter;
-use Drupal\block\Entity\Block;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
 const SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME = 'full_name';
@@ -46,13 +48,35 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
     case 'field_profile_phone_number':
       // @todo Remove this when rule for .form-tel elements will be added.
       $element['value']['#attributes']['class'][] = 'form-text';
+      $element['value']['#attributes']['autocomplete'][] = 'tel';
       break;
 
     case 'field_profile_address':
       // @todo Remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
+
+    case 'field_profile_nick_name':
+      $element['value']['#attributes']['autocomplete'][] = 'nickname';
+      break;
+
+    case 'field_profile_first_name':
+      $element['value']['#attributes']['autocomplete'][] = 'given-name';
+      break;
+
+    case 'field_profile_last_name':
+      $element['value']['#attributes']['autocomplete'][] = 'family-name';
+      break;
+
+    case 'field_profile_organization':
+      $element['value']['#attributes']['autocomplete'][] = 'organization';
+      break;
+
+    case 'field_profile_function':
+      $element['value']['#attributes']['autocomplete'][] = 'organization-title';
+      break;
   }
+
   // This replaces all user entity references with our EntityReferenceSelection.
   if ($field_definition->getType() === 'entity_reference') {
     if (
@@ -291,6 +315,32 @@ function social_profile_preprocess_form_element_label(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Allows modifying link attributes by modules instead of using hardcoded
+ * attributes in the theme template.
+ */
+function social_profile_preprocess_field__field_profile_image(array &$variables): void {
+  if ($variables['element']['#view_mode'] === 'compact') {
+    $element = &$variables['items'][0]['content'];
+    $url = $element['#url'];
+
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['element']['#object'];
+
+    $name = $profile->getOwner()->getDisplayName();
+
+    if ($url instanceof Url) {
+      $url->mergeOptions([
+        'attributes' => ['title' => $name],
+      ]);
+    }
+
+    $element['#item_attributes']['alt'] = $name;
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
@@ -394,11 +444,6 @@ function social_profile_preprocess_profile(array &$variables) {
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
 
-  // Add the profile image.
-  if (!empty($profile->field_profile_image->entity)) {
-    $variables['profile_image_url'] = ImageStyle::load('social_medium')
-      ->buildUrl($profile->field_profile_image->entity->getFileUri());
-  }
   // Profile information URL.
   $variables['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
 
@@ -449,12 +494,12 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       // Prepare some variables for checking on the email field.
       $global_show_email = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_email');
-      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : NULL;
+      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : FALSE;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
       // this email field.
-      if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
+      if ($global_show_email || $profile_show_email) {
         $flag = TRUE;
       }
       break;
@@ -469,12 +514,12 @@ function _social_profile_check_property_access(Profile $profile, AccountProxyInt
       $global_show_lang = \Drupal::config('social_profile.settings')
         ->get('social_profile_show_language');
       $profile_show_lang = \Drupal::service('user.data')
-        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? NULL;
+        ->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info') ?? FALSE;
 
       // If the current user doesn't have the above permission, perform
       // additional checks to see if the current user is still able to view
       // this preferred language.
-      if ($global_show_lang || (!$global_show_lang && !empty($profile_show_lang))) {
+      if ($global_show_lang || $profile_show_lang) {
         $flag = TRUE;
       }
       break;
@@ -613,7 +658,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     }
 
     // Add Submit function only when the data is actually editable.
-    if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
+    if (empty($global_values['social_profile_show_email']) || empty($global_values['social_profile_show_language'])) {
       $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
   }
@@ -676,9 +721,7 @@ function _social_profile_get_profile_from_route() {
 
   if (!empty($account)) {
     $storage = $entity_type_manager->getStorage('profile');
-    if (!empty($storage)) {
-      $profile = $storage->loadByUser($account, 'profile');
-    }
+    $profile = $storage->loadByUser($account, 'profile');
   }
 
   return $profile;
@@ -696,6 +739,12 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  $image_item = $build['field_profile_image'][0]['#item'] ?? NULL;
+
+  // Image doesn't exists.
+  if (!($image_item instanceof FieldItemInterface)) {
+    return;
+  }
 
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
@@ -704,27 +753,21 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   // have access to the users profile.
   if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
     // Try to load the profile picture.
-    $fid = $entity->get('field_profile_image')->target_id;
+    $image = $entity->get('field_profile_image')->entity;
+
     // Must have a value and not be NULL.
-    if (!is_null($fid)) {
-      // Load the file.
-      $file = File::load($fid);
-      // Check if it's a real file.
-      if ($file instanceof File) {
-        // Potentially the file is in the private file system. In that case,
-        // anonymous user don't have access to it.
-        if (!$file->access('view', $current_user)) {
-          // Load default data.
-          $replacement_data = social_profile_get_default_image();
-          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
-          $imgitem = $build['field_profile_image'][0]['#item'];
-          // Time to override the data that going to be rendered.
-          $imgitem->set('target_id', $replacement_data['id']);
-          $imgitem->set('width', $replacement_data['width']);
-          $imgitem->set('height', $replacement_data['height']);
-          // Put replacement data back in the object that's about to be built.
-          $build['field_profile_image'][0]['#item'] = $imgitem;
-        }
+    if ($image instanceof FileInterface) {
+      // Potentially the file is in the private file system. In that case,
+      // anonymous user don't have access to it.
+      if (!$image->access('view', $current_user)) {
+        // Load default data.
+        $replacement_data = social_profile_get_default_image();
+        // Time to override the data that going to be rendered.
+        $image_item->set('target_id', $replacement_data['id']);
+        $image_item->set('width', $replacement_data['width']);
+        $image_item->set('height', $replacement_data['height']);
+        // Put replacement data back in the object that's about to be built.
+        $build['field_profile_image'][0]['#item'] = $image_item;
       }
     }
   }
@@ -1023,5 +1066,23 @@ function social_profile_profile_presave(EntityInterface $profile) {
     $profile_name = $profile_name_service->getProfileName($profile);
     // Update profile name.
     $profile->set('profile_name', $profile_name);
+  }
+}
+
+/**
+ * Implements hook_social_core_default_main_menu_links_alter().
+ */
+function social_profile_social_core_default_main_menu_links_alter(array &$links) {
+  $link = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties([
+      'title' => 'All members',
+      'menu_name' => 'main',
+      'link' => 'internal:/all-members',
+    ]);
+  $link = end($link);
+
+  // Ensure that the end() doesn't return FALSE, and we have link instance.
+  if ($link instanceof MenuLinkContentInterface) {
+    $links[] = $link;
   }
 }

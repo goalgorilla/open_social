@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\social\Exception\SocialFeatureDataException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Optional Module Manager.
@@ -47,7 +48,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container) : OptionalModuleManager {
     return new static(
       $container->get('extension.list.module'),
       $container->getParameter('install_profile')
@@ -115,7 +116,11 @@ class OptionalModuleManager implements ContainerInjectionInterface {
       return [];
     }
 
-    $features = Yaml::decode(file_get_contents($feature_list_file));
+    $contents = file_get_contents($feature_list_file);
+    if ($contents === FALSE) {
+      throw new IOException("Could not read '${feature_list_file}'.");
+    }
+    $features = Yaml::decode($contents);
 
     foreach ($features as $module_name => &$info) {
       // Validate the info so we know it won't cause any issues.
@@ -148,17 +153,20 @@ class OptionalModuleManager implements ContainerInjectionInterface {
       return NULL;
     }
 
+    $contents = file_get_contents($optional_info_file);
+    if ($contents === FALSE) {
+      throw new IOException("Could not read '${$optional_info_file}'.");
+    }
     // We don't catch the InvalidDataTypeException thrown here because we have
     // no better info to give developers about invalid Yaml files.
-    $feature_info = Yaml::decode(file_get_contents($optional_info_file));
+    $feature_info = Yaml::decode($contents);
 
     // Add our defaults to the data.
     $feature_info += $this->getInfoDefaults();
 
-    // Validate the data that we've found.
-    if (!$this->validateSocialFeatureData($extension->getName(), $feature_info)) {
-      return NULL;
-    }
+    // Validate the data that we've found. This throws an exception in case of
+    // error.
+    $this->validateSocialFeatureData($extension->getName(), $feature_info);
 
     return $feature_info;
   }

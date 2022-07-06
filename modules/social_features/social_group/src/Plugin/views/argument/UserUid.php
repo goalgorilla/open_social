@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Argument handler to accept a user id.
  *
- * This checks for groups that user created or is a member off.
+ * This checks for groups that user created or is a member of.
  *
  * @ingroup views_argument_handlers
  *
@@ -56,18 +56,18 @@ class UserUid extends ArgumentPluginBase {
     $this->ensureMyTable();
 
     // Use the table definition to correctly add this user ID condition.
-    if ($this->table != 'group_content_field_data') {
+    if ($this->table !== 'group_content_field_data') {
       $subselect2 = $this->database->select('group_content_field_data', 'gc');
       $subselect2->addField('gc', 'gid');
       $subselect2->condition('gc.entity_id', $this->argument);
       $subselect2->condition('gc.type', '%' . $this->database->escapeLike('membership') . '%', 'LIKE');
 
       if ($this->usesOptions && isset($this->options['group'])) {
-        $this->query->addWhere($this->options['group'], 'groups_field_data.id', $subselect2, 'IN');
+        $this->query->addWhere($this->options['group'], $this->tableAlias . '.id', $subselect2, 'IN');
       }
       else {
         // Add with default options (AND).
-        $this->query->addWhere(0, 'groups_field_data.id', $subselect2, 'IN');
+        $this->query->addWhere(0, $this->tableAlias . '.id', $subselect2, 'IN');
       }
     }
   }

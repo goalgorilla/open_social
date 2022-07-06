@@ -212,26 +212,28 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       ];
       $this->outputSettings[$config_name] = $output_settings;
       $mention_type = $settings->get('mention_type');
-      $mention = $this->mentionsManager->createInstance($mention_type);
+      if ($this->mentionsManager->hasDefinition($mention_type)) {
+        $mention = $this->mentionsManager->createInstance($mention_type);
 
-      if ($mention instanceof MentionsPluginInterface) {
-        $pattern = '/(?:' . preg_quote($this->inputSettings[$config_name]['prefix']) . ')([ a-z0-9@+_.\'-]+)' . preg_quote($this->inputSettings[$config_name]['suffix']) . '/';
+        if ($mention instanceof MentionsPluginInterface) {
+          $pattern = '/(?:' . preg_quote($this->inputSettings[$config_name]['prefix']) . ')([ a-z0-9@+_.\'-]+)' . preg_quote($this->inputSettings[$config_name]['suffix']) . '/';
 
-        preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
+          preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
 
-        foreach ($matches as $match) {
-          $target = $mention->targetCallback($match[1], $input_settings);
+          foreach ($matches as $match) {
+            $target = $mention->targetCallback($match[1], $input_settings);
 
-          if ($target !== FALSE) {
-            $mentions[$match[0]] = [
-              'type' => $mention_type,
-              'source' => [
-                'string' => $match[0],
-                'match' => $match[1],
-              ],
-              'target' => $target,
-              'config_name' => $config_name,
-            ];
+            if ($target !== FALSE) {
+              $mentions[$match[0]] = [
+                'type' => $mention_type,
+                'source' => [
+                  'string' => $match[0],
+                  'match' => $match[1],
+                ],
+                'target' => $target,
+                'config_name' => $config_name,
+              ];
+            }
           }
         }
       }
@@ -253,21 +255,23 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
     $mentions = $this->getMentions($text);
 
     foreach ($mentions as $match) {
-      $mention = $this->mentionsManager->createInstance($match['type']);
+      if ($this->mentionsManager->hasDefinition($match['type'])) {
+        $mention = $this->mentionsManager->createInstance($match['type']);
 
-      if ($mention instanceof MentionsPluginInterface) {
-        $output_settings = $this->outputSettings[$match['config_name']];
-        $output = $mention->outputCallback($match, $output_settings);
-        $build = [
-          '#theme' => 'mention_link',
-          '#mention_id' => $match['target']['entity_id'],
-          '#link' => base_path() . $output['link'],
-          '#render_link' => $output_settings['renderlink'],
-          '#render_value' => $output['value'],
-          '#render_plain' => $output['render_plain'] ?? FALSE,
-        ];
-        $mentions = $this->renderer->render($build);
-        $text = str_replace($match['source']['string'], $mentions, $text);
+        if ($mention instanceof MentionsPluginInterface) {
+          $output_settings = $this->outputSettings[$match['config_name']];
+          $output = $mention->outputCallback($match, $output_settings);
+          $build = [
+            '#theme' => 'mention_link',
+            '#mention_id' => $match['target']['entity_id'],
+            '#link' => base_path() . $output['link'],
+            '#render_link' => $output_settings['renderlink'],
+            '#render_value' => $output['value'],
+            '#render_plain' => $output['render_plain'] ?? FALSE,
+          ];
+          $mentions = $this->renderer->render($build);
+          $text = str_replace($match['source']['string'], $mentions, $text);
+        }
       }
     }
 

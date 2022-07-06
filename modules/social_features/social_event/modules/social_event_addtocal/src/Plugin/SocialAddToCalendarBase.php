@@ -4,20 +4,70 @@ namespace Drupal\social_event_addtocal\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for Social add to calendar plugins.
  */
-abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddToCalendarInterface {
+abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddToCalendarInterface, ContainerFactoryPluginInterface {
+
+  /**
+   * The module extension list.
+   */
+  protected ModuleExtensionList $moduleExtensionList;
+
+  /**
+   * Constructs a SocialAddToCalendarBase object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
+   *   The module extension list.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleExtensionList $extension_list_module) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleExtensionList = $extension_list_module;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('extension.list.module'),
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function getName() {
     return $this->pluginDefinition['label'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getIcon(): string {
+    $module_path = $this->moduleExtensionList
+      ->getPath('social_event_addtocal');
+
+    $default_icon = $module_path . '/assets/icons/default-calendar.svg';
+    $plugin_icon = $module_path . '/assets/icons/' . $this->pluginDefinition['id'] . '.svg';
+
+    return '/' . (file_exists($plugin_icon) ? $plugin_icon : $default_icon);
   }
 
   /**

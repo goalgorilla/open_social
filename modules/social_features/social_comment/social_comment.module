@@ -327,17 +327,13 @@ function social_comment_preprocess_comment(&$variables) {
   $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $account = $comment->getOwner();
-  if ($account) {
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      $user_profile = $storage->loadByUser($account, 'profile');
-      if ($user_profile) {
-        $content = \Drupal::entityTypeManager()
-          ->getViewBuilder('profile')
-          ->view($user_profile, 'compact');
-        $variables['author_picture'] = $content;
-      }
-    }
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $user_profile = $storage->loadByUser($account, 'profile');
+  if ($user_profile) {
+    $content = \Drupal::entityTypeManager()
+      ->getViewBuilder('profile')
+      ->view($user_profile, 'compact');
+    $variables['author_picture'] = $content;
   }
 
   // Add node ID attribute for comment "new" indicator.

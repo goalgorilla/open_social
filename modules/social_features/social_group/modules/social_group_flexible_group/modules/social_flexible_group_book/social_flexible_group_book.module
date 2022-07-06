@@ -1,0 +1,208 @@
+<?php
+
+/**
+ * @file
+ * Contains Social Flexible Group Book functions.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_flexible_group_book_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context): void {
+  if (
+    $context['entity_type'] === 'node' &&
+    $context['bundle'] === 'book' &&
+    $form_display->getMode() === 'default'
+  ) {
+    // Add "groups" field to the form.
+    // @see \Drupal\social_group\SocialGroupSelectorWidgetConfigOverride::loadOverrides
+    $form_display->setComponent('groups', [
+      'type' => 'social_group_selector_widget',
+      'weight' => 0,
+      'region' => 'content',
+      'third_party_settings' => [],
+      'settings' => [
+        'width' => '100%',
+        'match_operator' => 'CONTAINS',
+        'match_limit' => '10',
+        'autocomplete' => FALSE,
+      ],
+    ]);
+  }
+
+  if (
+    $context['entity_type'] === 'group' &&
+    $context['bundle'] === 'flexible_group' &&
+    $form_display->getMode() === 'default'
+  ) {
+    $form_display->setComponent('enable_books', [
+      'weight' => 6,
+      'settings' => [
+        'display_label' => 'true',
+      ],
+      'third_party_settings' => [],
+      'type' => 'boolean_checkbox',
+      'region' => 'content',
+    ]);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_flexible_group_book_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  switch ($form_id) {
+    case 'group_flexible_group_add_form':
+    case 'group_flexible_group_edit_form':
+      // Move 'enable_books' field to the "Personalisation" field group.
+      if (isset($form['#fieldgroups']['group_personalisation'])) {
+        $form['#fieldgroups']['group_personalisation']->children[] = 'enable_books';
+        $form['#group_children']['enable_books'] = 'group_personalisation';
+      }
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "node_form".
+ */
+function social_flexible_group_book_form_node_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_object->getEntity();
+
+  if ($node->bundle() !== 'book') {
+    return;
+  }
+
+  if (!empty($form['#fieldgroups']['group_visibility'])) {
+    $form['#fieldgroups']['group_visibility']->children[] = 'groups';
+    $form['#group_children']['groups'] = 'group_visibility';
+  }
+
+  // We need add this option here because by default "book" module require
+  // a specific global permission - "create new books".
+  // Group managers with only "verified" global role should be able to create
+  // new books as well even without this permission.
+  $nid = !$node->isNew() ? $node->id() : 'new';
+  $options = $form['book']['bid']['#options'];
+  if (!isset($options[$nid])) {
+    if ($nid == 'new' || ($nid != $node->book['original_bid'])) {
+      // The node can become a new book, if it is not one already.
+      $form['book']['bid']['#options'] = [$nid => t('- Create a new book -')] + $options;
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_flexible_group_book_menu_local_tasks_alter(array &$data, string $route_name): void {
+  if (empty($data['tabs'][0]['social_flexible_group_book.books'])) {
+    return;
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = _social_group_get_current_group();
+  if (!$group instanceof GroupInterface) {
+    return;
+  }
+
+  if ($group->bundle() === 'flexible_group') {
+    $is_books_enabled = !$group->hasField('enable_books')
+      || (bool) $group->get('enable_books')->getString();
+    $access = $is_books_enabled ? AccessResult::allowed() : AccessResult::forbidden();
+  }
+  else {
+    // For other group types we disable the tab.
+    $access = AccessResult::forbidden();
+  }
+
+  $data['tabs'][0]['social_flexible_group_book.books']['#access'] = $access;
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_flexible_group_book_block_access(Block $block, string $operation, AccountInterface $account): AccessResultInterface {
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  if (
+    in_array($block->getPluginId(), ['group_hero_block', 'group_statistic_block']) ||
+    $block->id() === 'socialblue_pagetitleblock_content'
+  ) {
+    $request_path = $block->getVisibility()['request_path'];
+    $request_path['pages'] .= "\r\n/group/*/books";
+    $block->setVisibilityConfig('request_path', $request_path);
+  }
+
+  $group = _social_group_get_current_group();
+  if ($group instanceof GroupInterface) {
+    $is_books_enabled = !$group->hasField('enable_books')
+      || (bool) $group->get('enable_books')->getString();
+
+    if ($block->getPluginId() === 'group_add_book_block' && !$is_books_enabled) {
+      return AccessResult::forbidden();
+    }
+
+    if (
+      !$is_books_enabled &&
+      $block->getPluginId() === 'group_statistic_block' &&
+      // We need to hide the block on "view.group_books.page_group_books" route
+      // but due to this moment user gets "access denied" and previous route is
+      // unavailable.
+      \Drupal::routeMatch()->getRouteName() === 'system.403'
+    ) {
+      return AccessResult::forbidden();
+    }
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_options_list_alter().
+ */
+function social_flexible_group_book_options_list_alter(array &$options, array $context): void {
+  // Filter options in "groups" field when creating book pages in group
+  // context - remove flexible groups with disabled book pages.
+  if (
+    $context['fieldDefinition']->getName() === 'groups' &&
+    $context['entity']->getEntityTypeId() === 'node' &&
+    $context['entity']->bundle() === 'book'
+  ) {
+
+    $valid_gids = \Drupal::entityQuery('group')
+      ->accessCheck(FALSE)
+      ->condition('enable_books', TRUE)
+      ->execute();
+
+    foreach ($options as $key => $value) {
+      // If options contain sub-categories loop in nested array.
+      if (is_array($value)) {
+        foreach ($value as $nested_key => $nested_value) {
+          if (!in_array($nested_key, $valid_gids)) {
+            unset($options[$key][$nested_key]);
+          }
+        }
+        continue;
+      }
+
+      if (!in_array($key, $valid_gids)) {
+        unset($options[$key]);
+      }
+    }
+  }
+}

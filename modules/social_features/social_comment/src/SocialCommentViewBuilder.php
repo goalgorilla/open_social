@@ -40,7 +40,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
       // Add indentation div or close open divs as needed.
       if ($build['#comment_threaded']) {
         if ($build['#comment_indent'] <= 0) {
-          $prefix .= str_repeat('</div>', abs($build['#comment_indent']));
+          $prefix .= str_repeat('</div>', (int) abs($build['#comment_indent']));
         }
 
         // We are in a thread of comments.

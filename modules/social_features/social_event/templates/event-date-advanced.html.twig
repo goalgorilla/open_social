@@ -1,0 +1,24 @@
+{#
+/**
+ * @file event-date-advanced.html.twig
+ * Default theme implementation to present Event date.
+ *
+ * This template is used for correct displaying Event date on Event view modes.
+ *
+ *
+ * Available variables:
+ * - icon: an icon before the date
+ * - date: a date string
+ *
+ * @see template_preprocess_event_date_advanced()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {% if icon and date %}
+    <span class="icon no-b-lazy"><img src="{{ icon }}" alt={{ 'Event date'|t }}/></span>
+  {% endif %}
+  <span class="sr-only">{{ 'Event date'|t }}</span>
+  <span class="inline-center date">{{ date }}</span>
+</div>

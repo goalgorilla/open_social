@@ -121,8 +121,8 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
     ];
 
     if ($suggestions_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
-      /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE))) {
+      $profile = $storage->loadByUser($account, 'profile', TRUE);
+      if ($profile !== NULL) {
         $item['profile_id'] = $profile->id();
         $item['value'] = $account->getDisplayName();
       }
@@ -210,7 +210,7 @@ function social_mentions_form_mentions_settings_form_submit($form, FormStateInte
  * Implements hook_js_alter().
  */
 function social_mentions_js_alter(&$javascript, AttachedAssetsInterface $assets) {
-  $path = drupal_get_path('module', 'social_mentions') . '/js/social_mentions.js';
+  $path = \Drupal::service('extension.list.module')->getPath('social_mentions') . '/js/social_mentions.js';
 
   if (isset($javascript[$path]) && isset($javascript['core/assets/vendor/ckeditor/ckeditor.js'])) {
     $javascript[$path]['weight'] += $javascript['core/assets/vendor/ckeditor/ckeditor.js']['weight'];

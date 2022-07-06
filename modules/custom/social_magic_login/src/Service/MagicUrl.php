@@ -32,10 +32,6 @@ class MagicUrl implements MagicUrlInterface {
    * {@inheritdoc}
    */
   public function create(UserInterface $account, string $destination, array $options) : ?Url {
-    if (!isset($account, $destination)) {
-      return NULL;
-    }
-
     // Check if path isn't external.
     if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($destination)) {
       return NULL;

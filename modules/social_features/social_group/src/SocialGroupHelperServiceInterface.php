@@ -37,19 +37,18 @@ interface SocialGroupHelperServiceInterface {
   /**
    * Returns a group id from a entity (post, node).
    *
+   * The group that this entity belongs to or NULL if the entity doesn't belong
+   * to any group.
+   *
    * @param array $entity
    *   The entity in the form of an entity reference array to get the group for.
    * @param bool $read_cache
-   *   Whether the per-request cache should be used. This should only be
-   *   disabled if you know that the group for the entity has changed because
+   *   (optional) Whether the per-request cache should be used. This should only
+   *   be disabled if you know that the group for the entity has changed because
    *   disabling this can have serious performance implications. Setting this to
-   *   FALSE will update the cache for subsequent calls.
-   *
-   * @return \Drupal\group\Entity\GroupInterface|null
-   *   The group that this entity belongs to or NULL if the entity doesn't
-   *   belong to any group.
+   *   FALSE will update the cache for subsequent calls. Defaults to TRUE.
    */
-  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE);
+  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE): ?int;
 
   /**
    * Returns the default visibility.
@@ -108,10 +107,7 @@ interface SocialGroupHelperServiceInterface {
 
   /**
    * Provides a field for potential members.
-   *
-   * @return array
-   *   The renderable field.
    */
-  public function addMemberFormField();
+  public function addMemberFormField(): array;
 
 }

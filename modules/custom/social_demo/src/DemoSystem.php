@@ -166,7 +166,7 @@ abstract class DemoSystem extends DemoContent {
       if ($logo instanceof File) {
         $theme_logo = [
           'path' => $logo->getFileUri(),
-          'url' => file_create_url($logo->getFileUri()),
+          'url' => \Drupal::service('file_url_generator')->generateAbsoluteString($logo->getFileUri()),
           'use_default' => FALSE,
         ];
         // Store the array.
@@ -222,7 +222,7 @@ abstract class DemoSystem extends DemoContent {
 
       $paths['target'] = $paths['target'] . '/';
       $paths['id'] = $id;
-      $paths['source'] = drupal_get_path('theme', $active_theme) . '/';
+      $paths['source'] = \Drupal::service('extension.list.theme')->getPath($active_theme) . '/';
       $paths['files'] = $paths['map'] = [];
 
       $css = [];

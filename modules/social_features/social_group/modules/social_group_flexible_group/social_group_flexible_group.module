@@ -19,6 +19,7 @@ use Drupal\block\Entity\Block;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
@@ -78,20 +79,6 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
     $form['#id'] === 'views-exposed-form-search-groups-page') {
-
-    // Update filter values so it matches the join methods in the popover.
-    if (!empty($form['field_group_allowed_join_method'])) {
-      if (array_key_exists('added', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['added'] = t('Invite only');
-      }
-      if (array_key_exists('direct', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['direct'] = t('Open to join');
-      }
-      if (array_key_exists('request', $form['field_group_allowed_join_method']['#options'])) {
-        $form['field_group_allowed_join_method']['#options']['request'] = t('Request to join');
-      }
-    }
-
     // Add states so this is only available when flexible groups is checked.
     // Could be hidden when only flexible groups is enabled, so check that.
     // @todo remove this once everything is migrated to flexible groups.
@@ -130,18 +117,6 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
     }
     // Change the allowed join method on flexible groups.
     if (!empty($form['field_group_allowed_join_method'])) {
-      // First we reorder the elmements, if invite only is part of it
-      // we always want to show this last.
-      if (!empty($form['field_group_allowed_join_method']['widget']['#options'])) {
-        if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
-          $option = $form['field_group_allowed_join_method']['widget']['#options']['added'];
-          // Unset it.
-          unset($form['field_group_allowed_join_method']['widget']['#options']['added']);
-          // Add it at the end.
-          $form['field_group_allowed_join_method']['widget']['#options']['added'] = $option;
-        }
-      }
-
       if (!empty($form['field_group_allowed_join_method']['widget']['#title'])) {
         $form['field_group_allowed_join_method']['widget']['#title'] = t('Join methods');
       }
@@ -284,7 +259,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   $result = AccessResult::neutral();
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
-  /** @var \Drupal\group\Entity\GroupInterface $entity */
+  /** @var \Drupal\social_group\SocialGroupInterface $entity */
   if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
@@ -294,32 +269,32 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   }
 
   // If group visibility value doesn't exist we can skip.
-  if (empty($entity->getFieldValue('field_flexible_group_visibility', 'value'))) {
+  if ($entity->field_flexible_group_visibility->isEmpty()) {
     return $result;
   }
 
-  // If group visibility exists and public is selected, we can skip.
-  $group_visibility = $entity->getFieldValue('field_flexible_group_visibility', 'value');
-  if ($group_visibility === 'public') {
-    return $result;
-  }
+  switch ($entity->field_flexible_group_visibility->value) {
+    // If group visibility exists and public is selected, we can skip.
+    case 'public':
+      return $result;
 
-  // If group visibility exists and community or members is selected, check
-  // if user is logged.
-  if ($group_visibility === 'community') {
-    return AccessResult::forbiddenIf($account->isAnonymous())
-      ->cachePerUser()
-      ->addCacheableDependency($entity);
-  }
-  // If group visibility exists and members only is selected, we need to check
-  // if user is logged in and is a member of the group.
-  if ($group_visibility === 'members') {
-    $not_a_member = !$entity->getMember($account) || $account->isAnonymous();
-    return AccessResult::forbiddenIf($not_a_member)
-      ->cachePerPermissions()
-      ->cachePerUser()
-      ->addCacheableDependency($entity)
-      ->addCacheableDependency($account);
+    // If group visibility exists and community or members is selected, check
+    // if user is logged.
+    case 'community':
+      return AccessResult::forbiddenIf($account->isAnonymous())
+        ->cachePerUser()
+        ->addCacheableDependency($entity);
+
+    // If group visibility exists and members only is selected, we need to check
+    // if user is logged in and is a member of the group.
+    case 'members':
+      $not_a_member = !$entity->hasMember($account) || $account->isAnonymous();
+
+      return AccessResult::forbiddenIf($not_a_member)
+        ->cachePerPermissions()
+        ->cachePerUser()
+        ->addCacheableDependency($entity)
+        ->addCacheableDependency($account);
   }
 
   return $result;
@@ -357,45 +332,53 @@ function social_group_flexible_group_preprocess_form_element(&$variables) {
 }
 
 /**
- * Implements template_preprocess_form_element().
+ * Implements hook_preprocess_HOOK().
  */
-function social_group_flexible_group_preprocess_fieldset(&$variables) {
+function social_group_flexible_group_preprocess_fieldset(array &$variables): void {
   // Make sure our flexible group visibility field renders a tooltip, since
   // this field is rendered as fieldset with legend and radios as children
   // we need to do it in this preprocess.
   $element = $variables['element'];
-  if (!empty($element['#field_name'])) {
-    if ($element['#field_name'] === 'field_flexible_group_visibility') {
-      $description = '';
-      foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_group_visibility_description($key);
-      }
 
-      // Render a specific tooltip based on a field name and description.
-      // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
-    }
-    if ($element['#field_name'] === 'field_group_allowed_visibility') {
-      $description = '';
-      foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_allowed_visibility_description($key);
-      }
-
-      // Render a specific tooltip based on a field name and description.
-      // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_render_tooltip('field_group_allowed_visibility', t('Group content visibility'), $description);
-    }
-    if ($element['#field_name'] === 'field_group_allowed_join_method') {
-      $description = '';
-      foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_allowed_join_method_description($key);
-      }
-
-      // Render a specific tooltip based on a field name and description.
-      // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
-    }
+  if (empty($element['#field_name'])) {
+    return;
   }
+
+  $fields = [
+    'field_flexible_group_visibility' => t('Group Visibility'),
+    'field_group_allowed_visibility' => t('Group content visibility'),
+  ];
+
+  if (!isset($fields[$element['#field_name']])) {
+    return;
+  }
+
+  $description = '';
+
+  foreach ($element['#options'] as $key => $label) {
+    $description .= social_group_group_visibility_description($key);
+  }
+
+  // Render a specific tooltip based on a field name and description.
+  // This is done in the fieldset, next to the <legend>.
+  $variables['popover'] = social_group_render_tooltip(
+    $element['#field_name'],
+    $fields[$element['#field_name']],
+    $description,
+  );
+}
+
+/**
+ * Implements hook_social_group_join_method_usage().
+ */
+function social_group_flexible_group_social_group_join_method_usage(): array {
+  return [
+    [
+      'entity_type' => 'group',
+      'bundle' => 'flexible_group',
+      'field' => 'field_group_allowed_join_method',
+    ],
+  ];
 }
 
 /**
@@ -478,20 +461,20 @@ function social_group_flexible_group_can_join_directly(GroupInterface $group) {
 /**
  * Check if a user can be added to a group.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\social_group\SocialGroupInterface $group
  *   The group we are checking.
  *
  * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_can_be_added(Group $group) {
-  $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-
-  if (!in_array('added', array_column($join_methods, 'value'), FALSE)) {
-    return FALSE;
-  }
-
-  return TRUE;
+function social_group_flexible_group_can_be_added(SocialGroupInterface $group): bool {
+  return in_array(
+    'added',
+    array_column(
+      $group->get('field_group_allowed_join_method')->getValue(),
+      'value',
+    ),
+  );
 }
 
 /**
@@ -554,18 +537,17 @@ function social_group_flexible_group_members_enabled(Group $group) {
 /**
  * Implements hook_menu_local_actions_alter().
  */
-function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
-  $group = _social_group_get_current_group();
-  $user = \Drupal::currentUser();
+function social_group_flexible_group_menu_local_actions_alter(array &$local_actions): void {
+  $account = \Drupal::currentUser();
 
-  // Remove the social_group add member action on the
-  // membership overview if we can't add members directly.
-  // SM+ can still add members though.
-  if ($group instanceof GroupInterface
-    && $group->getGroupType()->id() === 'flexible_group'
-    && !social_group_flexible_group_can_be_added($group)
-    && !$user->hasPermission('manage all groups')
-    && !$group->hasPermission('administer members', $user)
+  // Remove the social_group add member action on the membership overview if we
+  // can't add members directly. SM+ can still add members though.
+  if (
+    ($group = _social_group_get_current_group()) !== NULL &&
+    $group->getGroupType()->id() === 'flexible_group' &&
+    !social_group_flexible_group_can_be_added($group) &&
+    !$account->hasPermission('manage all groups') &&
+    !$group->hasPermission('administer members', $account)
   ) {
     unset($local_actions['social_group.add_member']);
   }
@@ -574,7 +556,7 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
 /**
  * Determine whether a user can see flexible groups as outsider.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\social_group\SocialGroupInterface $group
  *   The group we are checking.
  * @param \Drupal\Core\Session\AccountInterface $account
  *   The user to check for.
@@ -582,14 +564,17 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
  * @return bool
  *   Whether the user is allowed to view this flexible groups.
  */
-function social_group_flexible_group_can_view_flexible_groups(Group $group, AccountInterface $account) : bool {
+function social_group_flexible_group_can_view_flexible_groups(
+  SocialGroupInterface $group,
+  AccountInterface $account
+): bool {
   // Users who can manage all can manage everything.
   if ($account->hasPermission('manage all groups')) {
     return TRUE;
   }
 
   // If User is a member it can see it.
-  if ($group->getMember($account) !== FALSE) {
+  if ($group->hasMember($account)) {
     return TRUE;
   }
 
@@ -730,9 +715,11 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
       return AccessResult::neutral();
     }
 
-    if (!$group->getMember($account) &&
+    if (
+      !$group->hasMember($account) &&
       !social_group_flexible_group_community_enabled($group) &&
-      !social_group_flexible_group_public_enabled($group)) {
+      !social_group_flexible_group_public_enabled($group)
+    ) {
       // If it is flexible and the current user is not an member of this group,
       // and content visibility is not public and also not community
       // hide it.
@@ -755,7 +742,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
  * Sets dynamic allowed values for the group type icon field.
  */
 function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
-  $theme_path = drupal_get_path('theme', 'socialbase');
+  $theme_path = \Drupal::service('extension.list.theme')->getPath('socialbase');
   $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
   $options = [];
@@ -791,7 +778,7 @@ function social_group_flexible_group_form_taxonomy_term_group_type_form_alter(&$
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
@@ -812,7 +799,7 @@ function _social_group_flexible_group_type_change_topic_icon_ajax(array $form, F
     '#type' => 'inline_template',
     '#template' => '<div class="icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
-      'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
+      'svg_icons' => file_get_contents(\Drupal::service('extension.list.theme')->getPath('socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
