@@ -1,0 +1,58 @@
+views.view.user_admin_people:
+  expected_config: { }
+  update_actions:
+    add:
+      dependencies:
+        config:
+          - taxonomy.vocabulary.profile_tag
+        module:
+          - taxonomy
+      display:
+        default:
+          display_options:
+            filters:
+              field_profile_profile_tag_target_id:
+                id: field_profile_profile_tag_target_id
+                table: profile__field_profile_profile_tag
+                field: field_profile_profile_tag_target_id
+                relationship: profile
+                group_type: group
+                admin_label: ''
+                plugin_id: taxonomy_index_tid
+                operator: or
+                value: { }
+                group: 1
+                exposed: true
+                expose:
+                  operator_id: field_profile_profile_tag_target_id_op
+                  label: 'Profile Tag(s)'
+                  description: ''
+                  use_operator: false
+                  operator: field_profile_profile_tag_target_id_op
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: profile_tag
+                  required: false
+                  remember: false
+                  multiple: true
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+                reduce_duplicates: true
+                vid: profile_tag
+                type: textfield
+                hierarchy: false
+                limit: true
+                error_message: true

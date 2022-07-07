@@ -145,6 +145,29 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
         ],
       ]);
     }
+
+    if (isset($form['profile_tag'])) {
+      /** @var \Drupal\taxonomy\TermInterface[] $profile_tags */
+      $profile_tags = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+        ->loadByProperties([
+          'status' => TRUE,
+          'vid' => 'profile_tag',
+        ]);
+
+      // Generate list of profile tag options.
+      $profile_tag_options = array_map(static function ($profile_tag) {
+        return $profile_tag->label();
+      }, $profile_tags);
+      $form['profile_tag'] = array_merge($form['profile_tag'], [
+        '#type' => 'select2',
+        '#select2' => [
+          'closeOnSelect' => FALSE,
+          'placeholder' => t('- Any -'),
+        ],
+        '#options' => $profile_tag_options,
+        '#multiple' => TRUE,
+      ]);
+    }
   }
 }
 
