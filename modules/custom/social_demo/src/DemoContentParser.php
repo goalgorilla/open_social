@@ -18,7 +18,7 @@ class DemoContentParser extends Yaml implements DemoContentParserInterface {
     if ($profile != '' && strpos($profile, DIRECTORY_SEPARATOR) === FALSE) {
       $profile .= DIRECTORY_SEPARATOR;
     }
-    return drupal_get_path('module', $module) . DIRECTORY_SEPARATOR . $profile . $file;
+    return \Drupal::service('extension.list.module')->getPath($module) . DIRECTORY_SEPARATOR . $profile . $file;
   }
 
   /**

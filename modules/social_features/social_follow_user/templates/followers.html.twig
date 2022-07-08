@@ -6,6 +6,7 @@
  * Available variables:
  * - flag: The flag object.
  * - flaggable: The flaggable entity.
+ * - url: The url of the followers page.
  *
  * @see template_preprocess_followers()
  *
@@ -13,12 +14,15 @@
  */
 #}
 
+{{ attach_library('social_follow_user/counter') }}
+
 {% set count = flagcount(flag, flaggable) %}
 
 <span class="badge__container">
-  <span class="badge__label">{{ count }}</span>
-  &nbsp;
-  <span class="badge__label badge__label--description">
-    {% trans %}follower{% plural count %}followers{% endtrans %}
-  </span>
+  {% if url %}<a href="{{ url }}">{% endif %}
+    <span class="badge__label">{{ count }}</span>
+    <span class="badge__label badge__label--description">
+      {% trans %}follower{% plural count %}followers{% endtrans %}
+    </span>
+  {% if url %}</a>{% endif %}
 </span>

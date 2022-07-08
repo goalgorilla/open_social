@@ -251,14 +251,27 @@ class SocialTaggingService {
         }
         // Get current terms parents.
         if ($parents = $this->entityTypeManager->getStorage('taxonomy_term')->loadParents($current_term->id())) {
+          /** @var \Drupal\taxonomy\Entity\Term $parent */
           $parent = reset($parents);
-          $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)
-            ->getName() : $parent->getName();
+          if ($parent->hasTranslation($langcode)) {
+            /** @var \Drupal\taxonomy\Entity\Term $translated_term */
+            $translated_term = $parent->getTranslation($langcode);
+            $category_label = $translated_term->getName();
+          }
+          else {
+            $category_label = $parent->getName();
+          }
         }
         // Or add the parent term itself if it connected to the content.
         else {
-          $category_label = $current_term->hasTranslation($langcode) ? $current_term->getTranslation($langcode)
-            ->getName() : $current_term->getName();
+          if ($current_term->hasTranslation($langcode)) {
+            /** @var \Drupal\taxonomy\Entity\Term $translated_term */
+            $translated_term = $current_term->getTranslation($langcode);
+            $category_label = $translated_term->getName();
+          }
+          else {
+            $category_label = $current_term->getName();
+          }
           $parent = $current_term;
         }
         // Prepare the parameter;.
@@ -276,9 +289,19 @@ class SocialTaggingService {
 
         // Finally, prepare the hierarchy.
         $tree[$parent->id()]['title'] = $category_label;
+
+        if ($current_term->hasTranslation($langcode)) {
+          /** @var \Drupal\taxonomy\Entity\Term $translated_term */
+          $translated_term = $current_term->getTranslation($langcode);
+          $term_name = $translated_term->getName();
+        }
+        else {
+          $term_name = $current_term->getName();
+        }
+
         $tree[$parent->id()]['tags'][$current_term->id()] = [
           'url' => $url,
-          'name' => $current_term->hasTranslation($langcode) ? $current_term->getTranslation($langcode)->getName() : $current_term->getName(),
+          'name' => $term_name,
         ];
       }
     }

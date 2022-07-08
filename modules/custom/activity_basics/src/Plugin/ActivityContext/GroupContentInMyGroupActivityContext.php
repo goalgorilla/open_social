@@ -96,18 +96,16 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     if (!empty($data['related_object'])) {
       $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
-      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
       $group_content = $this->entityTypeManager->getStorage('group_content')
         ->load($referenced_entity['target_id']);
 
       // It could happen that a notification has been queued but the content
       // has since been deleted. In that case we can find no additional
       // recipients.
-      if (!$group_content) {
+      if ($group_content === NULL) {
         return $recipients;
       }
 
-      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $group_content->getGroup();
 
       $memberships = $group->getMembers($group->bundle() . '-group_manager');

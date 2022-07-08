@@ -197,7 +197,7 @@ function social_like_update_10301() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_like_update_10302() {
-  $config_file = drupal_get_path('module', 'social_like') . '/config/static/message.template.create_like_node_or_post_10302.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_like') . '/config/static/message.template.create_like_node_or_post_10302.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {

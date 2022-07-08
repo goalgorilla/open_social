@@ -1,0 +1,35 @@
+.follow-user--counter {
+  display: flex;
+  align-items: center;
+  margin: 0 -10px 1.5rem;
+
+  .badge__container {
+    padding: 0 10px;
+
+    a {
+      font-size: .875rem;
+      line-height: 1.25rem;
+    }
+
+    .badge__label {
+      &:not(.badge__label--description) {
+        font-weight: 700;
+        color: #4d4d4d;
+      }
+
+      &.badge__label--description {
+        display: inline;
+        font-weight: 500;
+        color: #777876;
+      }
+    }
+  }
+
+  .teaser-profile-preview & {
+    margin-bottom: 0;
+  }
+
+  .teaser__header & {
+    margin-bottom: .5rem;
+  }
+}

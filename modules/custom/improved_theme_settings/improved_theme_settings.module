@@ -222,19 +222,17 @@ function improved_theme_settings_page_attachments(array &$page) {
       $module_styles = \Drupal::moduleHandler()->invokeAll('improved_theme_settings_add', [$system_theme_settings]);
       $style_to_add .= implode("\n", $module_styles);
 
-      if (!empty($style_to_add)) {
-        $page['#attached']['html_head'][] = [
-          [
-            '#type' => 'html_tag',
-            '#tag' => 'style',
-            '#value' => Markup::create($style_to_add),
-          ],
+      $page['#attached']['html_head'][] = [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'style',
+          '#value' => Markup::create($style_to_add),
+        ],
 
-          // A key, to make it possible to recognize this HTML element when
-          // altering.
-          'social_theme_preprocess',
-        ];
-      }
+        // A key, to make it possible to recognize this HTML element when
+        // altering.
+        'social_theme_preprocess',
+      ];
     }
   }
 }
@@ -254,7 +252,7 @@ function improved_theme_settings_get_setting($setting, $themename) {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename));
   // In this case '' is something different than 0.
-  if ($themevar !== trim((int) $themevar)) {
+  if (is_numeric($themevar)) {
     return FALSE;
   }
   return $themevar;

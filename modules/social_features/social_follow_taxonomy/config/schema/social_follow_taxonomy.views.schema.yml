@@ -1,0 +1,30 @@
+# Schema for the views plugins of the Social Follow Taxonomy module.
+
+# This schema repeat "taxonomy_index_tid" views filter schema except "vid" key which was changed to "sequence" type.
+views.filter.social_follow_taxonomy_follow_filter:
+  type: views.filter.many_to_one
+  label: 'Taxonomy terms the user is following'
+  mapping:
+    vid:
+      type: sequence
+      label: 'Vocabularies'
+      sequence:
+        type: string
+    type:
+      type: string
+      label: 'Selection type'
+    hierarchy:
+      type: boolean
+      label: 'Show hierarchy in dropdown'
+    limit:
+      type: boolean
+      label: 'Limit to vocabulary'
+    error_message:
+      type: boolean
+      label: 'Display error message'
+    value:
+      type: sequence
+      label: 'Values'
+      sequence:
+        type: integer
+        label: 'Value'

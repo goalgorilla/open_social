@@ -54,12 +54,11 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
             $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
             if (isset($target_type) && !empty($target_type) && $target_type === 'group_content') {
-              /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
               $group_content = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
 
-              if (!empty($group_content)) {
+              if ($group_content !== NULL) {
                 $replacements[$original] = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group_content->getGroup()->id()])->toString();
               }
             }

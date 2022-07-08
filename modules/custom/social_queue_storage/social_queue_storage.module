@@ -13,9 +13,10 @@ use Drupal\Core\Entity\EntityInterface;
 function social_queue_storage_entity_update(EntityInterface $entity) {
   /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
   if ($entity->getEntityTypeId() === 'queue_storage_entity') {
-    \Drupal::service('plugin.manager.activity_action.processor')
-      ->createInstance('update_entity_action')
-      ->create($entity);
+    $plugin_manager = \Drupal::service('plugin.manager.activity_action.processor');
+    if ($plugin_manager->hasDefinition('update_entity_action')) {
+      $plugin_manager->createInstance('update_entity_action')->create($entity);
+    }
   }
 }
 

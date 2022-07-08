@@ -3,7 +3,7 @@
  * Select-All Button functionality.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -12,7 +12,9 @@
    */
   Drupal.behaviors.social_views_bulk_operations = {
     attach: function (context, settings) {
-      $('.vbo-view-form').once('social-vbo-init').each(Drupal.socialEventViewsBulkOperationsFrontUi);
+      // Changing to new once() function.
+      const $socialVboInitOnce = $(once('social-vbo-init', '.vbo-view-form'));
+      $socialVboInitOnce.each(Drupal.socialEventViewsBulkOperationsFrontUi);
     }
   };
 
@@ -23,4 +25,4 @@
     $('.vbo-view-form .select-all').addClass('form-no-label checkbox form-checkbox views-field-views-bulk-operations-bulk-form');
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

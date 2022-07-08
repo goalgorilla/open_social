@@ -5,8 +5,7 @@ namespace Drupal\social_group_default_route\EventSubscriber;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
-use Drupal\user\Entity\User;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -18,6 +17,26 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @package Drupal\social_group_default_route\EventSubscriber
  */
 class RedirectSubscriber implements EventSubscriberInterface {
+
+  /**
+   * The route name of the default page of any group type except closed groups.
+   */
+  private const DEFAULT_ROUTE = 'social_group.stream';
+
+  /**
+   * The route name of the group default page is provided by the current module.
+   */
+  private const ALTERNATIVE_ROUTE = 'social_group_default.group_home';
+
+  /**
+   * The route name of the default page of any group.
+   */
+  private const DEFAULT_GROUP_ROUTE = 'entity.group.canonical';
+
+  /**
+   * The route name of the default page of closed groups.
+   */
+  private const DEFAULT_CLOSED_ROUTE = 'view.group_information.page_group_about';
 
   /**
    * The current route.
@@ -34,7 +53,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
   protected $currentUser;
 
   /**
-   * Redirectsubscriber construct.
+   * RedirectSubscriber constructor.
    *
    * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
    *   The current route.
@@ -47,10 +66,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Get the request events.
-   *
-   * @return mixed
-   *   Returns request events.
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = ['groupLandingPage'];
@@ -66,52 +82,53 @@ class RedirectSubscriber implements EventSubscriberInterface {
   public function groupLandingPage(RequestEvent $event) {
 
     // First check if the current route is the group canonical.
-    $routeMatch = $this->currentRoute->getRouteName();
+    $route_name = $this->currentRoute->getRouteName();
 
     // Not group canonical, then we leave.
     if (
-      $routeMatch !== 'entity.group.canonical' &&
-      $routeMatch !== 'social_group_default.group_home'
+      $route_name !== self::DEFAULT_GROUP_ROUTE &&
+      $route_name !== self::ALTERNATIVE_ROUTE
     ) {
       return;
     }
 
     // Fetch the group parameter and check if's an actual group.
     $group = $this->currentRoute->getParameter('group');
+
     // Not group, then we leave.
-    if (!$group instanceof Group) {
+    if (!$group instanceof SocialGroupInterface) {
       return;
     }
 
-    // Set the already default redirect route.
-    $defaultRoute = 'social_group.stream';
-    $defaultClosedRoute = 'view.group_information.page_group_about';
-
-    // Check if this group has a custom route set.
-    $route = $group->getFieldValue('default_route', 'value');
-
     // Check if current user is a member.
-    if ($group->getMember(User::load($this->currentUser->id())) === FALSE) {
-      $route = $group->getFieldValue('default_route_an', 'value');
-      // If you're not a member and the group type is closed.
+    if (!$group->hasMember($this->currentUser)) {
+      /** @var string|null $route */
+      $route = $group->default_route_an->value;
+
       if ($route === NULL) {
-        $route = ($group->getGroupType()->id() === 'closed_group') ? $defaultClosedRoute : $defaultRoute;
+        $route = $group->getGroupType()->id() === 'closed_group'
+          ? self::DEFAULT_CLOSED_ROUTE : self::DEFAULT_ROUTE;
       }
     }
+    else {
+      /** @var string|null $route */
+      $route = $group->default_route->value;
 
-    // Still no route here? Then we use the normal default.
-    if ($route === NULL) {
-      $route = $defaultRoute;
+      // Still no route here? Then we use the normal default.
+      if ($route === NULL) {
+        $route = self::DEFAULT_ROUTE;
+      }
     }
 
     // Determine the URL we want to redirect to.
     $url = Url::fromRoute($route, ['group' => $group->id()]);
 
     // If it's not set, set to canonical, or the current user has no access.
-    if (!isset($route) || ($route === $routeMatch) || $url->access($this->currentUser) === FALSE) {
+    if ($route === $route_name || $url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
     }
+
     // Redirect.
     $event->setResponse(new RedirectResponse($url->toString()));
   }

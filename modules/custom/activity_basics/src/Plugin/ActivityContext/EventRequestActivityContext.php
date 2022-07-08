@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -153,7 +154,7 @@ class EventRequestActivityContext extends ActivityContextBase {
       $storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
       $event = $storage->load($related_entity['target_id']);
 
-      if ($event === NULL) {
+      if (!$event instanceof EntityOwnerInterface) {
         return $recipients;
       }
 

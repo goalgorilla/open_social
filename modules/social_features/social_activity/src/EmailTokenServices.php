@@ -77,6 +77,10 @@ class EmailTokenServices {
    *   An entity object. NULL if no matching entity is found.
    */
   public function getRelatedObject(Message $message) {
+    if ($message->get('field_message_related_object')->isEmpty()) {
+      return NULL;
+    }
+
     $target_type = $message->getFieldValue('field_message_related_object', 'target_type');
     $target_id = $message->getFieldValue('field_message_related_object', 'target_id');
 
@@ -232,10 +236,13 @@ class EmailTokenServices {
    */
   public function getGroupPreview(Group $group) {
     // Add the group preview.
+    $label = $group->getGroupType()->label();
+    $group_type_label = $label instanceof TranslatableMarkup ? $label->render() : $label;
+    $group_type_label = $group_type_label ?? '';
     return [
       '#theme' => 'message_group_preview',
       '#group_title' => $group->label(),
-      '#group_type' => strtoupper($group->getGroupType()->label()),
+      '#group_type' => strtoupper($group_type_label),
       '#group_members' => $this->groupStatistics->getGroupMemberCount($group),
     ];
   }

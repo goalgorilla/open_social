@@ -15,6 +15,7 @@ function social_file_private_requirements($phase) {
 
   // Test if the Private File System Path is set.
   if ($phase == 'runtime') {
+    /** @var string|NULL $file_private_path_base_path */
     $file_private_path_base_path = PrivateStream::basePath();
 
     if ($file_private_path_base_path === NULL) {

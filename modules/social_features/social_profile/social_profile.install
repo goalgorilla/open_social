@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -89,7 +90,7 @@ function _social_profile_add_default_profile_image() {
   $default_image = $field_image_config->get('settings.default_image');
 
   $uri = Drupal::service('file_system')
-    ->copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
+    ->copy(\Drupal::service('extension.list.module')->getPath('social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'uri' => $uri,
@@ -435,8 +436,8 @@ function social_profile_update_8803() {
  */
 function social_profile_update_8901() {
   $config_files = [
-    'block.block.exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.exposedformnewest_userspage_newest_users_8901.yml',
-    'block.block.socialblue_exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
+    'block.block.exposedformnewest_userspage_newest_users' => \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/static/block.block.exposedformnewest_userspage_newest_users_8901.yml',
+    'block.block.socialblue_exposedformnewest_userspage_newest_users' => \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
   ];
 
   foreach ($config_files as $key => $config_file) {
@@ -626,7 +627,7 @@ function social_profile_update_11201(array &$sandbox): string {
     'field.field.profile.profile.field_profile_' => 'field_config',
   ];
 
-  $path = drupal_get_path('module', 'social_profile') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/static/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
     $config_file = $path . $prefix . 'summary_11201.yml';
@@ -652,6 +653,43 @@ function social_profile_update_11201(array &$sandbox): string {
  * Make the user picture clickable and rounded in a compact profile.
  */
 function social_profile_update_11202(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Make profile related vocabularies translatable.
+ */
+function social_profile_update_11203(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
+    return;
+  }
+
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_profile') . '/config/static';
+  $source = new FileStorage($config_path);
+
+  $config_names = [
+    'language.content_settings.taxonomy_term.expertise' => 'language.content_settings.taxonomy_term.expertise_11203',
+    'language.content_settings.taxonomy_term.interests' => 'language.content_settings.taxonomy_term.interests_11203',
+    'language.content_settings.taxonomy_term.profile_tag' => 'language.content_settings.taxonomy_term.profile_tag_11203',
+  ];
+
+  foreach ($config_names as $name => $static) {
+    $config_storage->write($name, (array) $source->read($static));
+  }
+}
+
+/**
+ * Add "Summary" and "Self introduction" fields to the profile teaser.
+ */
+function social_profile_update_11301(array &$sandbox): string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 

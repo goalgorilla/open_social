@@ -65,7 +65,7 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   protected $loggerFactory;
 
   /**
-   * Constructs SocialGroupRequestMembershipNotification.
+   * Constructs EventRequestEnrollmentNotification.
    *
    * @param array $configuration
    *   Configuration array.

@@ -95,7 +95,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
     $plugin_names = $this->mentionsManager->getPluginNames();
     $entity = $this->entity;
     $inputsettings = $entity->get('input');
-    $entity_id = isset($entity) ? $entity->id() : '';
+    $entity_id = $entity->id();
     $all_entitytypes = array_keys($this->entityTypeRepository->getEntityTypeLabels());
     $candidate_entitytypes = [];
     foreach ($all_entitytypes as $entity_type) {

@@ -28,7 +28,6 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
     $group_tabs = _social_group_default_route_group_tabs();
 
     // Get the form entity.
-    /** @var \Drupal\group\Entity\Group $group */
     $group = $form_state->getFormObject()->getEntity();
 
     // Add a (hidden) card for the tabs.

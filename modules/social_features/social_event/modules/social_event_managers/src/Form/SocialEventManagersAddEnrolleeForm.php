@@ -3,9 +3,9 @@
 namespace Drupal\social_event_managers\Form;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -67,36 +67,28 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   protected EventMaxEnrollService $eventMaxEnrollService;
 
   /**
-   * Constructs a new GroupContentController.
+   * File URL Generator service.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
    */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    RendererInterface $renderer,
-    ConfigFactoryInterface $config_factory,
-    Token $token,
-    ModuleHandlerInterface $module_handler,
-    EventMaxEnrollService $eventMaxEnrollService
-  ) {
-    $this->entityTypeManager = $entity_type_manager;
-    $this->renderer = $renderer;
-    $this->configFactory = $config_factory;
-    $this->token = $token;
-    $this->moduleHandler = $module_handler;
-    $this->eventMaxEnrollService = $eventMaxEnrollService;
-  }
+  protected FileUrlGenerator $fileUrlGenerator;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('renderer'),
-      $container->get('config.factory'),
-      $container->get('token'),
-      $container->get('module_handler'),
-      $container->get('social_event_max_enroll.service')
-    );
+    $instance = parent::create($container);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->renderer = $container->get('renderer');
+    $instance->configFactory = $container->get('config.factory');
+    $instance->token = $container->get('token');
+    $instance->moduleHandler = $container->get('module_handler');
+    if ($instance->moduleHandler->moduleExists('social_event_max_enroll')) {
+      $instance->eventMaxEnrollService = $container->get('social_event_max_enroll.service');
+    }
+    $instance->fileUrlGenerator = $container->get('file_url_generator');
+
+    return $instance;
   }
 
   /**
@@ -254,7 +246,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $file = File::load(reset($email_logo));
 
       if ($file instanceof File) {
-        $logo = file_create_url($file->getFileUri());
+        $logo = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
       }
     }
 

@@ -6,8 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Routing\CurrentRouteMatch;
-use Drupal\Core\Url;
-use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -62,21 +61,12 @@ class SocialQuickJoinController extends ControllerBase {
   /**
    * Function that add the current user to a group without confirmation step.
    *
-   * @param \Drupal\group\Entity\GroupInterface $group
+   * @param \Drupal\social_group\SocialGroupInterface $group
    *   The group you want to join.
-   *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
-   *   Where to redirect to.
    *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function quickJoin(GroupInterface $group) {
-
-    // No group, so go home.
-    if (!$group instanceof GroupInterface) {
-      return new RedirectResponse(Url::fromRoute('<front>')->toString());
-    }
-
+  public function quickJoin(SocialGroupInterface $group): RedirectResponse {
     // It's a group, so determine the path for redirection.
     $groupRedirect = $group->toUrl()->toString();
 
@@ -90,7 +80,7 @@ class SocialQuickJoinController extends ControllerBase {
     }
 
     // Already a member.
-    if ($group->getMember($this->currentUser())) {
+    if ($group->hasMember($this->currentUser())) {
       // Set a message.
       $this->messenger()->addMessage($this->t("You're already a member of this group."));
       // Redirect to the group.

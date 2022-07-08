@@ -27,13 +27,24 @@ class UserAnalyticsLikes extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    $query = $this->database->select('votingapi_vote', 'v');
-    $query->condition('v.user_id', $entity->id());
+    $user_id = $entity->id();
+    if (!is_int($user_id)) {
+      return "0";
+    }
 
-    return (int) $query
+    $query = $this->database->select('votingapi_vote', 'v');
+    $query->condition('v.user_id', (string) $user_id);
+
+    $result = $query
       ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->execute();
+    if ($result === NULL) {
+      return "0";
+    }
+
+    // Cast to int first so an empty result registers a "0". We cast to string
+    // to satisfy the user export plugin interface.
+    return (string) (int) $result->fetchField();
   }
 
 }

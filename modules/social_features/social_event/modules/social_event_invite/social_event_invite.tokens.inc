@@ -92,7 +92,6 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         if ($message instanceof Message) {
           // Load the current Event enrollments so we can check duplicates.
           $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-          /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
           $event_enrollment = $storage->load($message->getFieldValue('field_message_related_object', 'target_id'));
 
           if ($event_enrollment) {
@@ -112,7 +111,6 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         if ($message instanceof Message) {
           // Load the current Event enrollments so we can check duplicates.
           $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-          /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
           $event_enrollment = $storage->load($message->getFieldValue('field_message_related_object', 'target_id'));
 
           if ($event_enrollment) {

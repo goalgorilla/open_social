@@ -4,7 +4,7 @@
   z-index: 9999 !important;
 }
 
-.ui-widget.ui-dialog.post {
+.ui-dialog:not(.ui-dialog-off-canvas)[role='dialog'].post {
   height: 100% !important;
   width: 100% !important;
   max-width: 100%;
@@ -59,6 +59,7 @@
   .ui-dialog-titlebar {
     padding: 0;
     border: none;
+    background: transparent;
 
     .ui-dialog-titlebar-close {
       position: absolute;
@@ -77,10 +78,15 @@
       z-index: 10000;
       border-color: #fff;
       border-radius: 0;
+      transform: none;
 
       @media (max-width: 899px) {
         width: 38px;
         height: 38px;
+      }
+
+      &:before {
+        background-image: url('../icons/icon-close.svg');
       }
 
       &:hover,
@@ -90,40 +96,10 @@
         border-color: #fff;
         opacity: 1;
 
-        &:before,
-        &:after {
-          background: #fff;
+        &:before {
+
+          background-image: url('../icons/icon-close_white.svg');
         }
-      }
-
-      > * {
-        display: none;
-      }
-
-      &:before,
-      &:after {
-        content: '';
-        position: absolute;
-        top: 20px;
-        left: 14px;
-        right: auto;
-        width: 18px;
-        height: 2px;
-        background: #777;
-        transition: none;
-
-        @media (max-width: 899px) {
-          top: 18px;
-          left: 11px;
-        }
-      }
-
-      &:before {
-        transform: rotate(45deg);
-      }
-
-      &:after {
-        transform: rotate(-45deg);
       }
     }
   }
@@ -133,6 +109,7 @@
   }
 }
 
+// Custom styles for the elements inside popup.
 .social-post-album--popup {
   display: flex;
   align-items: flex-start;
@@ -155,11 +132,12 @@
 
   .post-comment-wrapper {
     position: relative;
+    display: none;
     height: 100%;
     flex: 0 0 380px;
     max-width: 380px;
+    padding-bottom: 48px;
     background: #fff;
-    display: none;
 
     &.post-comment-block--active {
       display: block;
@@ -173,21 +151,17 @@
       height: auto;
       top: auto;
       bottom: 0;
+      padding-bottom: 0;
     }
 
     .post-header {
-      position: absolute;
-      width: 100%;
-      top: 0;
-      left: 0;
+      padding: .5625rem 44px .5625rem 1.25rem;
       border-bottom: 1px solid #f3f3f3;
       background: #fff;
-      padding: .75rem 44px .75rem 1.25rem;
       font-size: .875rem;
       z-index: 1;
 
       @media (max-width: 899px) {
-        position: fixed;
         padding: .5rem 38px .5rem .875rem;
       }
     }
@@ -222,7 +196,7 @@
         height: auto;
         margin-bottom: 0;
         overflow-y: auto;
-        padding: 55px 1.25rem 0;
+        padding: 1rem 1.25rem 0;
       }
 
       .margin-top-s {
@@ -230,9 +204,9 @@
       }
 
       > .js-comment.comment-form__wrapper {
-        overflow: hidden;
-
         .card__nested-section {
+          margin-top: 0;
+          padding-top: 0;
           border: none;
           background: transparent;
         }
@@ -352,8 +326,14 @@
       .slick-arrow {
         width: 37px;
         height: 37px;
-        background: #4d4d4d;
+        background: #343434;
         z-index: 1;
+
+        &:hover {
+          svg {
+            transform: scale(1.2);
+          }
+        }
 
         &:before {
           display: none;
@@ -367,6 +347,8 @@
           width: 21px;
           height: 21px;
           fill: #fff;
+          transform: scale(1);
+          transition: transform .2s linear;
         }
       }
     }

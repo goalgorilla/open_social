@@ -181,12 +181,10 @@ class SetGroupsForNodeService {
    */
   public static function removeGroupContent(NodeInterface $node, Group $group) {
     // Try to load group content from entity.
-    if (($group_contents = GroupContent::loadByEntity($node)) && !empty($group_contents)) {
-      /** @var @param \Drupal\group\Entity\GroupContent $group_content */
-      foreach ($group_contents as $group_content) {
-        if ($group->id() === $group_content->getGroup()->id()) {
-          $group_content->delete();
-        }
+    $group_contents = GroupContent::loadByEntity($node);
+    foreach ($group_contents as $group_content) {
+      if ($group->id() === $group_content->getGroup()->id()) {
+        $group_content->delete();
       }
     }
   }

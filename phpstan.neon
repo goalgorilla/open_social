@@ -17,11 +17,50 @@ parameters:
     analyse:
       - *SocialProfileTrait.php
   drupal:
-      drupal_root: %currentWorkingDirectory%/core
+      drupal_root: %currentWorkingDirectory%/html/core
+      entityMapping:
+        activity:
+          class:  Drupal\activity_creator\Entity\Activity
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+        comment:
+          class: Drupal\social_comment\Entity\Comment
+          storage: Drupal\comment\CommentStorage
+        event_enrollment:
+          class: Drupal\social_event\Entity\EventEnrollment
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+        font:
+          class: Drupal\social_font\Entity\Font
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+        group:
+          class: Drupal\social_group\Entity\Group
+          storage: Drupal\group\Entity\Storage\GroupStorage
+        group_content:
+          class: Drupal\group\Entity\GroupContent
+          storage: Drupal\group\Entity\Storage\GroupContentStorage
+        mentions:
+          class: Drupal\mentions\Entity\Mentions
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+        mentions_type:
+          class: Drupal\mentions\Entity\MentionsType
+          storage: Drupal\Core\Config\Entity\ConfigEntityStorage
+        post:
+          class: Drupal\social_post\Entity\Post
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+        post_type:
+          class: Drupal\social_post\Entity\PostType
+          storage: Drupal\Core\Config\Entity\ConfigEntityStorage
+        queue_storage_entity:
+          class: Drupal\social_queue_storage\Entity
+          storage: Drupal\Core\Entity\ContentEntityStorageBase
+
   # When writing Drupal code we have arrays all over the place and even all
   # entities are considered iterable type. Thus it's more sensible to disable
   # this check than work with an ever expanding baseline.
   # See https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type
   checkMissingIterableValueType: false
   ignoreErrors:
-      - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
+      - '#Unsafe usage of new static\(\)#'
+      # See - https://github.com/mglaman/drupal-check/pull/187
+      # The accessCheck test seems to be horribly broken and providing false positives
+      # Disable until https://github.com/mglaman/phpstan-drupal/issues/396 is fixed.
+      - "#^Missing explicit access check on entity query\\.$#"

@@ -46,7 +46,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $site_config = \Drupal::config('system.site');
     // When branding should be removed, check if the default site settings are
     // set and override variables.
-    if ($site_config) {
+    if (!$site_config->isNew()) {
       $variables['site_link'] = TRUE;
       $variables['site_name'] = $site_config->get('name');
       if ($site_config->get('slogan')) {
@@ -155,7 +155,7 @@ function social_swiftmail_get_logo($theme_id) {
     $file = File::load($email_logo[0]);
 
     if ($file instanceof File) {
-      $logo = file_create_url($file->getFileUri());
+      $logo = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
     }
   }
 

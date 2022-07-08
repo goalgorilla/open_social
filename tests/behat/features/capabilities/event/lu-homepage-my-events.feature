@@ -23,6 +23,8 @@ Feature: See my upcoming events
       | status           | 1                       |
 
     When I press the "Enroll" button
+    And I wait for AJAX to finish
+    And I press the "Close" button
     Then I should see "Enrolled"
 
     When I go to the homepage

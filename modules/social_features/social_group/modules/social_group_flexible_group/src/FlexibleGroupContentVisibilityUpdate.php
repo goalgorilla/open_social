@@ -217,7 +217,6 @@ class FlexibleGroupContentVisibilityUpdate {
       return reset($new_options)['value'];
     }
 
-    /** @var \Drupal\user\RoleInterface $role */
     $role = \Drupal::entityTypeManager()->getStorage('user_role')->load($current_visibility);
     if ($role instanceof RoleInterface) {
       return reset($new_options)['value'];

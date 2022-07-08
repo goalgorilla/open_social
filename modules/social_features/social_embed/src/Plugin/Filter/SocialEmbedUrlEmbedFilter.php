@@ -122,8 +122,8 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
         /** @var \DOMElement $node */
         $url = $node->getAttribute('data-embed-url');
         $url_output = '';
-        $info = $this->urlEmbed->getUrlInfo($url);
         try {
+          $info = $this->urlEmbed->getUrlInfo($url);
           /** @var \Drupal\user\Entity\User $user */
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           $embed_settings = $this->configFactory->get('social_embed.settings');

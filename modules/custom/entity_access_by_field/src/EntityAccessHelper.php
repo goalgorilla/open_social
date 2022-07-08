@@ -127,7 +127,7 @@ class EntityAccessHelper {
     // If the social_event_invite module is enabled and a person got invited
     // then allow access to view the node.
     // @todo Come up with a better solution for this code.
-    if ($moduleHandler->moduleExists('social_event_invite')) {
+    if ($moduleHandler->moduleExists('social_event_invite') && $node->id()) {
       if ($op == 'view') {
         $conditions = [
           'field_account' => $account->id(),
@@ -139,8 +139,7 @@ class EntityAccessHelper {
         $enrollments = $storage->loadByProperties($conditions);
 
         if ($enrollment = array_pop($enrollments)) {
-          if ($enrollment->field_request_or_invite_status
-            && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
+          if ((int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
             && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED) {
             $access = EntityAccessHelper::ALLOW;
           }
