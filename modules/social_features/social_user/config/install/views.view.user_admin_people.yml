@@ -1250,33 +1250,33 @@ display:
           entity_type: user
           entity_field: login
           plugin_id: date
-        field_profile_profile_tag_target_id:
-          id: field_profile_profile_tag_target_id
+        social_split_profile_terms:
+          id: social_split_profile_terms
           table: profile__field_profile_profile_tag
-          field: field_profile_profile_tag_target_id
+          field: social_split_profile_terms
           relationship: profile
           group_type: group
           admin_label: ''
-          plugin_id: taxonomy_index_tid
+          plugin_id: social_split_profile_terms
           operator: or
           value: { }
           group: 1
           exposed: true
           expose:
-            operator_id: field_profile_profile_tag_target_id_op
-            label: 'Profile Tag(s)'
+            operator_id: social_split_profile_terms_op
+            label: 'Profile tags'
             description: ''
             use_operator: false
-            operator: field_profile_profile_tag_target_id_op
+            operator: social_split_profile_terms_op
             operator_limit_selection: false
             operator_list: { }
-            identifier: profile_tag
+            identifier: profile_tags
             required: false
             remember: false
             multiple: true
             remember_roles:
               authenticated: authenticated
-            reduce: false
+            reduce: 0
           is_grouped: false
           group_info:
             label: ''
@@ -1289,12 +1289,12 @@ display:
             default_group: All
             default_group_multiple: { }
             group_items: { }
-          reduce_duplicates: true
-          vid: profile_tag
-          type: textfield
-          hierarchy: false
+          reduce_duplicates: 1
+          type: select
           limit: true
-          error_message: true
+          vid: profile_tag
+          hierarchy: 1
+          error_message: 1
       sorts:
         created:
           id: created
