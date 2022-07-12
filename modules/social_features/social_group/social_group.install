@@ -947,18 +947,11 @@ function social_group_update_11002(array &$sandbox): void {
 }
 
 /**
- * Add 'social_group_add_members_to_group_action'.
- *
- * Update 'views.view.user_admin_people' after VBO module updates.
+ * The emptied hook.
  */
 function social_group_update_11003(array &$sandbox): void {
-  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
-  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
-  $selected_actions[] = [
-    'action_id' => 'social_group_add_members_to_group_action',
-  ];
-  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
-  $config->save();
+  // Moved to separate sequential update hook.
+  // @see: social_group_update_11005
 }
 
 /**
@@ -973,4 +966,24 @@ function social_group_update_11004(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add 'social_group_add_members_to_group_action'.
+ *
+ * Update 'views.view.user_admin_people' after VBO module updates.
+ */
+function social_group_update_11005(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
+  $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
+  // We have to check if action is already added.
+  $action = array_search('social_group_add_members_to_group_action', array_column($selected_actions, 'action_id'), FALSE);
+  // If action is not added we add it.
+  if ($action === FALSE) {
+    $selected_actions[] = [
+      'action_id' => 'social_group_add_members_to_group_action',
+    ];
+    $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+    $config->save();
+  }
 }
