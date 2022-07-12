@@ -111,6 +111,7 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
  *   The entity type identifier.
  *
  * @see social_group_entity_base_field_info_alter()
+ * @see social_group_form_alter()
  *
  * @ingroup social_group_api
  */
