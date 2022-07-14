@@ -93,3 +93,11 @@ social_core.dashboard.data_collection_usage:
     _title: 'Data collection and usage'
   requirements:
     _permission: 'access social_core dashboard'
+
+social_core.dashboard.appearance.active_homepage_configuration:
+  path: '/admin/dashboard/homepage-settings'
+  defaults:
+    _controller: '\Drupal\social_core\Controller\DashboardController::redirectCustomizedHomepage'
+    _title: 'Customize home page'
+  requirements:
+    _permission: 'access social_core dashboard'
