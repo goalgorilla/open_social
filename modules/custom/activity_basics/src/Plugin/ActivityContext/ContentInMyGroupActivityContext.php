@@ -164,9 +164,11 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           // group_content_field_data, so, it is necessary to check
           // if the user actually exists in system.
           $group_user = $membership->getUser();
-          if ($group_user !== NULL &&
+          if (
+            $group_user !== NULL &&
             $owner_id != $membership->getUser()->id() &&
-            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())) {
+            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())
+          ) {
             $recipients[] = [
               'target_type' => 'user',
               'target_id' => $membership->getUser()->id(),
