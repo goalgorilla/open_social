@@ -77,9 +77,13 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
   public function buildMultiple(array $build_list) {
     $build_list = parent::buildMultiple($build_list);
 
-    $tags = $build_list['pager']['#tags'] ?? [];
-    $tags[] = self::PAGER_TAG;
-    $build_list['pager']['#tags'] = $tags;
+    // Since PAGER_TAG need for social_ajax_comments_preprocess_pager(), let's
+    // add it only if the module social_ajax_comments is enabled.
+    if ($this->moduleHandler->moduleExists('social_ajax_comments')) {
+      $tags = $build_list['pager']['#tags'] ?? [];
+      $tags[] = self::PAGER_TAG;
+      $build_list['pager']['#tags'] = $tags;
+    }
 
     return $build_list;
   }
