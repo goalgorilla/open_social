@@ -155,8 +155,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
         /** @var \Drupal\group\GroupMembership $membership */
         foreach ($memberships as $membership) {
-          // Check if this not the created user and didn't mute the group
-          // notifications.
           // Check if this is not the created user and didn't mute the group
           // notifications.
           // There can be incidences where even if the user was deleted
