@@ -89,30 +89,28 @@ function social_content_report_tokens_alter(array &$replacements, array $context
 
         if ($target_type === 'flagging') {
           $message_template_id = $message->getTemplate()->id();
-          switch ($message_template_id) {
-            case 'content_reported':
-              // Load the flag.
-              $flagging_id = $message->getFieldValue('field_message_related_object', 'target_id');
-              $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+          if ($message_template_id === 'content_reported') {
+            // Load the flag.
+            $flagging_id = $message->getFieldValue('field_message_related_object', 'target_id');
+            $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
-              // Replace the preview token.
-              if (isset($context['tokens']['cta_button'])) {
-                $link = Url::fromRoute('view.report_overview.overview');
-                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents'));
-                $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
-              }
+            // Replace the preview token.
+            if (isset($context['tokens']['cta_button'])) {
+              $link = Url::fromRoute('view.report_overview.overview');
+              $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents'));
+              $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
+            }
 
-              // Replace the preview token.
-              if (isset($context['tokens']['preview'])) {
+            // Replace the preview token.
+            if (isset($context['tokens']['preview'])) {
+              $flagging = $storage->load($flagging_id);
+              $preview_info = [];
+              // Check if the flagging entity exists in database.
+              if ($flagging !== NULL) {
                 /** @var \Drupal\flag\FlaggingInterface $flagging */
-                $flagging = $storage->load($flagging_id);
-
                 // Load the flagged entity.
                 $entity = $flagging->getFlaggable();
                 $entity_type = $entity->getEntityTypeId();
-
-                $summary = '';
-                $preview_info = [];
 
                 switch ($entity_type) {
                   case 'post':
@@ -137,10 +135,12 @@ function social_content_report_tokens_alter(array &$replacements, array $context
                     $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')->renderPlain($preview_info);
                     break;
                 }
+              }
+              else {
                 $replacements[$context['tokens']['preview']] = \Drupal::service('renderer')
                   ->renderPlain($preview_info);
               }
-              break;
+            }
           }
         }
       }
