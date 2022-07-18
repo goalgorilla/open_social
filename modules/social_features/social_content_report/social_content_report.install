@@ -115,3 +115,17 @@ function social_content_report_update_11201(): void {
 
   $config_storage->write('language.content_settings.taxonomy_term.report_reasons', (array) $source->read('language.content_settings.taxonomy_term.report_reasons_11201'));
 }
+
+/**
+ * Update exposed filter button name.
+ */
+function social_content_report_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_content_report', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
