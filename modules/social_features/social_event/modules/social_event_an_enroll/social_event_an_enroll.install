@@ -211,3 +211,17 @@ function social_event_an_enroll_update_11001(array &$sandbox): void {
   $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_enrollments_1.selected_actions', $selected_actions);
   $config->save();
 }
+
+/**
+ * Update exposed filter button name.
+ */
+function social_event_an_enroll_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_an_enroll', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

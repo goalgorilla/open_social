@@ -41,6 +41,13 @@ class EntityAccessByField extends ContentAccess {
   protected $currentUser;
 
   /**
+   * The group content storage handler.
+   *
+   * @var \Drupal\group\Entity\Storage\GroupContentStorageInterface
+   */
+  protected $groupContentStorage;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -50,6 +57,10 @@ class EntityAccessByField extends ContentAccess {
     $processor->setLogger($container->get('logger.channel.search_api'));
     $processor->setDatabase($container->get('database'));
     $processor->setCurrentUser($container->get('current_user'));
+
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+    $group_content_storage = $container->get('entity_type.manager')->getStorage('group_content');
+    $processor->groupContentStorage = $group_content_storage;
 
     return $processor;
   }
@@ -78,24 +89,28 @@ class EntityAccessByField extends ContentAccess {
       return;
     }
 
+    $fields = $item->getFields();
+    $fields = $this->getFieldsHelper()
+      ->filterForPropertyPath($fields, NULL, 'search_api_node_grants');
+
     // Get the field definitions of the node.
     $field_definitions = $node->getFieldDefinitions();
-    /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
-    foreach ($field_definitions as $field_name => $field_definition) {
-      // Lets get a node access realm if the field is implemented.
-      if ($field_definition->getType() === 'entity_access_field') {
-        $realm = [
-          'view',
-          'node',
-          $node->getType(),
-          $field_name,
-        ];
-        $realm = implode('_', $realm);
 
-        $fields = $item->getFields();
-        $fields = $this->getFieldsHelper()
-          ->filterForPropertyPath($fields, NULL, 'search_api_node_grants');
-        foreach ($fields as $field) {
+    // Get all group content entities.
+    $gnodes = $this->groupContentStorage->loadByEntity($node);
+
+    foreach ($fields as $field) {
+      /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+      foreach ($field_definitions as $field_name => $field_definition) {
+        // Lets get a node access realm if the field is implemented.
+        if ($field_definition->getType() === 'entity_access_field') {
+          $realm = [
+            'view',
+            'node',
+            $node->getType(),
+            $field_name,
+          ];
+          $realm = implode('_', $realm);
           // Collect grant records for the node.
           $sql = 'SELECT gid, realm FROM {node_access} WHERE (nid = 0 OR nid = :nid) AND grant_view = 1 AND realm LIKE :realm';
           $args = [
@@ -109,6 +124,17 @@ class EntityAccessByField extends ContentAccess {
             }
           }
         }
+      }
+
+      // Add node access check by node type in group.
+      foreach ($gnodes as $gnode) {
+        $realm = [
+          'node_access_gnode',
+          $node->getType(),
+          $gnode->getGroup()->id(),
+        ];
+        $realm = implode(':', $realm);
+        $field->addValue($realm);
       }
     }
   }
