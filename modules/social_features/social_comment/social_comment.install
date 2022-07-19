@@ -149,41 +149,44 @@ function social_comment_update_11201(): string {
  * Reorder fields in the comment views.
  */
 function social_comment_update_11202(): void {
-  $comment_view = \Drupal::configFactory()->getEditable('views.view.comment');
+  $config_factory = \Drupal::configFactory();
+  if (!empty($config_factory->get('views.view.comment')->getRawData())) {
+    $comment_view = $config_factory->getEditable('views.view.comment');
 
-  // View displays where we need reorder fields.
-  $displays = [
-    'display.default',
-    'display.page_unapproved',
-  ];
+    // View displays where we need reorder fields.
+    $displays = [
+      'display.default',
+      'display.page_unapproved',
+    ];
 
-  // Field for reordering which should be placed before the 'update' column.
-  $fields_to_replace = [
-    'type',
-    'label',
-  ];
+    // Field for reordering which should be placed before the 'update' column.
+    $fields_to_replace = [
+      'type',
+      'label',
+    ];
 
-  // Reorder fields.
-  foreach ($displays as $display) {
-    $fields_config = "$display.display_options.fields";
-    $fields = $comment_view->get($fields_config);
+    // Reorder fields.
+    foreach ($displays as $display) {
+      $fields_config = "$display.display_options.fields";
+      $fields = $comment_view->get($fields_config);
 
-    // Reorder field in array.
-    foreach ($fields_to_replace as $field) {
-      $update_index = array_search('changed', array_keys($fields));
-      if ($update_index !== FALSE) {
-        $field_data = $fields[$field];
-        unset($fields[$field]);
-        $fields = array_slice($fields, 0, $update_index, TRUE) +
-          [$field => $field_data] +
-          array_slice($fields, $update_index, count($fields) - $update_index, TRUE);
+      // Reorder field in array.
+      foreach ($fields_to_replace as $field) {
+        $update_index = array_search('changed', array_keys($fields));
+        if ($update_index !== FALSE) {
+          $field_data = $fields[$field];
+          unset($fields[$field]);
+          $fields = array_slice($fields, 0, $update_index, TRUE) +
+            [$field => $field_data] +
+            array_slice($fields, $update_index, count($fields) - $update_index, TRUE);
+        }
       }
+
+      // Set reordered fields.
+      $comment_view->set($fields_config, $fields);
     }
 
-    // Set reordered fields.
-    $comment_view->set($fields_config, $fields);
+    // Save updated view configuration.
+    $comment_view->save();
   }
-
-  // Save updated view configuration.
-  $comment_view->save();
 }
