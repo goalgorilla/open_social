@@ -164,7 +164,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       return [];
     }
 
-    $log_in_url = Url::fromRoute('user.login');
+    $log_in_url = Url::fromRoute('user.login', ['destination' => Url::fromRoute('<current>')->toString()]);
     $create_account_url = Url::fromRoute('user.register');
     return [
       '#prefix' => '<hr>',
