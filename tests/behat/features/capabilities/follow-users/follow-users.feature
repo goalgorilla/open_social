@@ -110,6 +110,7 @@ Feature: Follow Users
     Then I click "Mark Twain"
     And I should see "Unfollow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
     When I click "Unfollow"
+    And I wait for "3" seconds
     And I should not see "Unfollow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
     And I should not see "Follow" in the "#block-socialblue-profile-statistic-block .follow-user-wrapper" element
 
