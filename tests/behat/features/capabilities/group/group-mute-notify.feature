@@ -45,11 +45,11 @@ Feature: Mute/Unmute group notifications
     When I am on "/my-groups"
     Then I should see "Ressinel's group 2nd"
     When I select "My muted groups" from "Muted groups"
-      And I press the "Apply" button
+      And I press the "Filter" button
     Then I should not see "Ressinel's group 2nd"
       But I should see "Ressinel's group 1st"
     When I select "My unmuted groups" from "Muted groups"
-      And I press the "Apply" button
+      And I press the "Filter" button
     Then I should not see "Ressinel's group 1st"
       But I should see "Ressinel's group 2nd"
     When I press the "Reset" button

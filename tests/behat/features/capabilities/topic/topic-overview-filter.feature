@@ -14,5 +14,5 @@ Feature: Topic Overview Filter
     Then I should see "All topics"
     And I click the element with css selector "select[name=field_topic_type_target_id]"
     And I click "News"
-    Then I press the "Apply" button
+    Then I press the "Filter" button
     And I should see "Topics of type News"
