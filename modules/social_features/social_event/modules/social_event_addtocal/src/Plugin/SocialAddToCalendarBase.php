@@ -141,6 +141,11 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     // Update event description with adding event link.
     $description = $node_url;
 
+    // Get event URL.
+    $node_url = $this->t('Event link: @link', ['@link' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]) . PHP_EOL;
+    // Update event description with adding event link.
+    $description = $node_url . $description;
+
     return Unicode::truncate(strip_tags($description), 1000, TRUE, TRUE);
   }
 
