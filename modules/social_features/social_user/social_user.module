@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
@@ -706,7 +707,7 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
  * Implements hook_views_pre_render().
  */
 function social_user_views_pre_render(ViewExecutable $view) {
-  if (isset($view) && ($view->storage->id() == 'user_admin_people')) {
+  if ($view->storage->id() == 'user_admin_people') {
     $view->element['#attached']['library'][] = 'social_user/admin.people';
   }
 }
@@ -753,4 +754,16 @@ function social_user_views_data_alter(array &$data): void {
       'getSplitGroups',
     ];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Override the default drupal truncate function for all usernames, so the whole
+ * name will be displayed.
+ */
+function social_user_preprocess_username(array &$variables): void {
+  $account = $variables['account'] ?: new AnonymousUserSession();
+  $variables['name'] = $account->getDisplayName();
+  $variables['truncated'] = FALSE;
 }

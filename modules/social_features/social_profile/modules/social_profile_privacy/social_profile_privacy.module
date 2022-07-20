@@ -216,7 +216,10 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
     ];
   }
 
-  $form['profile_privacy']['fields'] = ['#type' => 'container'];
+  $form['profile_privacy']['fields'] = [
+    '#type' => 'container',
+    '#weight' => 10,
+  ];
 
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
@@ -322,11 +325,9 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   }
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($profile_storage)) {
-    $profile = $profile_storage->load($profile);
-    if ($profile instanceof ProfileInterface) {
-      SocialProfilePrivacyBatchHelper::updateProfileName($profile);
-    }
+  $profile = $profile_storage->load($profile);
+  if ($profile instanceof ProfileInterface) {
+    SocialProfilePrivacyBatchHelper::updateProfileName($profile);
   }
 }
 

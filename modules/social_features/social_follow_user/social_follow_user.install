@@ -29,6 +29,14 @@ function social_follow_user_install(): void {
 
   // Add & apply user follow functionality.
   _social_follow_user_config_update();
+
+  // Set the weight of the social_follow_user to 6
+  // so it is loaded after the social_profile module.
+  module_set_weight('social_follow_user', 6);
+
+  // Clear cache so than form elements will be available after changing
+  // module weight.
+  drupal_flush_all_caches();
 }
 
 /**
@@ -80,6 +88,32 @@ function social_follow_user_uninstall(): void {
       $config->save();
     }
   }
+
+  // Cleanup settings.
+  \Drupal::configFactory()->getEditable('social_follow_user.settings')->delete();
+
+  // Remove fields.
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  // Delete field config.
+  /** @var \Drupal\field\FieldConfigStorage $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+
+  /** @var \Drupal\field\FieldConfigInterface|null $field */
+  $field = $field_config_storage->load('profile.profile.field_profile_allow_following');
+  if (!is_null($field)) {
+    $field->delete();
+  }
+
+  // Delete storage.
+  /** @var \Drupal\field\FieldStorageConfigStorage $field_storage_storage */
+  $field_storage_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  /** @var \Drupal\field\FieldStorageConfigInterface|null $field_storage */
+  $field_storage = $field_storage_storage->load('profile.field_profile_allow_following');
+  if (!is_null($field_storage)) {
+    $field_storage->delete();
+  }
 }
 
 /**
@@ -128,7 +162,9 @@ function social_follow_user_update_11202(): void {
     'views.view.following_users' => 'views.view.following_users_11202',
   ];
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_follow_user') . '/config/static/';
+  $config_path = \Drupal::moduleHandler()
+    ->getModule('social_follow_user')
+    ->getPath() . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -148,4 +184,44 @@ function social_follow_user_update_11203(): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Change a weigh of the social_follow_user module.
+ */
+function social_follow_user_update_11401(): void {
+  module_set_weight('social_follow_user', 6);
+}
+
+/**
+ * Add "Allow following" field to profile.
+ */
+function social_follow_user_update_11402(): void {
+  $config_path = \Drupal::moduleHandler()
+    ->getModule('social_follow_user')
+    ->getPath() . '/config/static/';
+
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.profile.field_profile_allow_following_11402');
+  if (is_array($data)) {
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
+  }
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  // Create field settings.
+  $data = $source->read('field.field.profile.profile.field_profile_allow_following_11402');
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
 }

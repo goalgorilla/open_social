@@ -81,7 +81,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
     $service = \Drupal::service('social_event_an_enroll.manager');
 
     if ($service->isGuest($entity)) {
-      $url = Url::fromUserInput('/' . drupal_get_path('module', 'social_event_an_enroll') . '/images/icon.svg');
+      $url = Url::fromUserInput('/' . \Drupal::service('extension.list.module')->getPath('social_event_an_enroll') . '/images/icon.svg');
 
       $variables['output'] = [
         '#theme' => 'event_an_enroll_guest',

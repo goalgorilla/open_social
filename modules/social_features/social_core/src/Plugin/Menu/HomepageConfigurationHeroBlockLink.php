@@ -71,8 +71,9 @@ class HomepageConfigurationHeroBlockLink extends MenuLinkDefault {
       $this->pluginDefinition['description'] = $this->t('Change the image and text on the home page.');
     }
     else {
-      // Disable the link.
-      $this->pluginDefinition['enabled'] = FALSE;
+      $this->pluginDefinition['url'] = "internal:/block/add/hero_call_to_action_block";
+      $this->pluginDefinition['title'] = $this->t('Customize home page hero header block');
+      $this->pluginDefinition['description'] = $this->t('Add a "Hero call to action block" and set it to hero region to customize front page.');
     }
   }
 

@@ -201,7 +201,6 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 ->load($target_id);
 
               if ($comment instanceof CommentInterface) {
-                /** @var \Drupal\Core\Entity\EntityInterface $entity */
                 $entity = $comment->getCommentedEntity();
                 if (!empty($entity)) {
                   if ($entity instanceof PostInterface) {
@@ -212,7 +211,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
                   else {
                     if ($entity instanceof NodeInterface) {
-                      $commented_content_type = strtolower($entity->type->entity->label());
+                      $commented_content_type = strtolower($entity->getType());
                     }
                     else {
                       $commented_content_type = $entity->bundle();
@@ -315,6 +314,7 @@ function social_comment_tokens_alter(array &$replacements, array $context, Bubbl
 function _social_comment_get_summary($text) {
   $summary = html_entity_decode(strip_tags($text));
   $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
+  assert($summary !== NULL, 'Invalid regular expression in preg_replace call');
   $max_length = 280;
 
   if (mb_strlen($summary) > $max_length) {

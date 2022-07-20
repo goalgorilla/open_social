@@ -4,3 +4,8 @@ services:
     arguments: ['@cache_tags.invalidator']
     tags:
       - { name: event_subscriber }
+  social_follow_user.helper:
+    class: Drupal\social_follow_user\Service\SocialFollowUserHelper
+    arguments:
+      - '@current_user'
+      - '@flag'

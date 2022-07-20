@@ -87,7 +87,7 @@ function social_embed_update_11001() :void {
  * Install field_user_embed_content_consent field to user entity.
  */
 function social_embed_update_11002() :void {
-  $config_directory_path = drupal_get_path('module', 'social_embed') . '/config/install';
+  $config_directory_path = \Drupal::service('extension.list.module')->getPath('social_embed') . '/config/install';
   $config_directory = new FileStorage($config_directory_path);
   $field_storage_name = 'field.storage.user.field_user_embed_content_consent';
   $config_record = $config_directory->read($field_storage_name);

@@ -90,7 +90,7 @@ function social_content_report_install() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_content_report_update_10301() {
-  $config_file = drupal_get_path('module', 'social_content_report') . '/config/static/message.template.content_reported_10301.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_content_report') . '/config/static/message.template.content_reported_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
@@ -114,4 +114,18 @@ function social_content_report_update_11201(): void {
   $source = new FileStorage($config_path);
 
   $config_storage->write('language.content_settings.taxonomy_term.report_reasons', (array) $source->read('language.content_settings.taxonomy_term.report_reasons_11201'));
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_content_report_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_content_report', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

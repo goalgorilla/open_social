@@ -46,9 +46,10 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
         $config = $this->configFactory->getEditable($config_name);
-        $bundles = $config->get('visibility.node_type.bundles');
+        $node_type_config = $config->get('visibility.node_type') ? 'node_type' : 'entity_bundle:node';
+        $bundles = $config->get("visibility.{$node_type_config}.bundles");
         $bundles['book'] = 'book';
-        $overrides[$config_name] = ['visibility' => ['node_type' => ['bundles' => $bundles]]];
+        $overrides[$config_name] = ['visibility' => [$node_type_config => ['bundles' => $bundles]]];
       }
     }
 

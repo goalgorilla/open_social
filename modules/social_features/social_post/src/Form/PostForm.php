@@ -76,12 +76,13 @@ class PostForm extends ContentEntityForm {
 
     // If we're rendered in a block and given a display mode then we store it
     // now because it's overwritten by ContentEntityForm::init().
+    /** @var mixed|NULL $display */
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
     $form['#attached']['library'][] = 'social_post/keycode-submit';
 
     // If we already have a form display mode then we simply restore that.
-    if (!empty($display)) {
+    if ($display !== NULL) {
       $this->setFormDisplay($display, $form_state);
     }
     // If we are editing a post then the default view mode is used but we have
@@ -263,16 +264,15 @@ class PostForm extends ContentEntityForm {
 
     $display = $this->getFormDisplay($form_state);
 
-    if ($this->entity->isNew()) {
-      if (isset($display) && ($display_id = $display->get('id'))) {
-        if ($display_id === $this->postViewProfile) {
-          $account_profile = \Drupal::routeMatch()->getParameter('user');
-          $this->entity->get('field_recipient_user')->setValue($account_profile);
-        }
-        elseif ($display_id === $this->postViewGroup) {
-          $group = \Drupal::routeMatch()->getParameter('group');
-          $this->entity->get('field_recipient_group')->setValue($group);
-        }
+    if ($display !== NULL && $this->entity->isNew()) {
+      $display_id = $display->get('id');
+      if ($display_id === $this->postViewProfile) {
+        $account_profile = \Drupal::routeMatch()->getParameter('user');
+        $this->entity->get('field_recipient_user')->setValue($account_profile);
+      }
+      elseif ($display_id === $this->postViewGroup) {
+        $group = \Drupal::routeMatch()->getParameter('group');
+        $this->entity->get('field_recipient_group')->setValue($group);
       }
     }
 

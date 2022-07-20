@@ -78,7 +78,7 @@ function social_event_type_update_8901() {
  * Create new field & field storage configuration for new event type icon field.
  */
 function social_event_type_update_8902(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_event_type') . '/config/static/social_event_type_update_8902.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_event_type') . '/config/static/social_event_type_update_8902.yml';
 
   if (is_file($config_file)) {
     $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
@@ -89,7 +89,7 @@ function social_event_type_update_8902(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);

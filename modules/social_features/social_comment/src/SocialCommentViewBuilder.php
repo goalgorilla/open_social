@@ -40,7 +40,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
       // Add indentation div or close open divs as needed.
       if ($build['#comment_threaded']) {
         if ($build['#comment_indent'] <= 0) {
-          $prefix .= str_repeat('</div>', abs($build['#comment_indent']));
+          $prefix .= str_repeat('</div>', (int) abs($build['#comment_indent']));
         }
 
         // We are in a thread of comments.
@@ -77,9 +77,13 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
   public function buildMultiple(array $build_list) {
     $build_list = parent::buildMultiple($build_list);
 
-    $tags = $build_list['pager']['#tags'] ?? [];
-    $tags[] = self::PAGER_TAG;
-    $build_list['pager']['#tags'] = $tags;
+    // Since PAGER_TAG need for social_ajax_comments_preprocess_pager(), let's
+    // add it only if the module social_ajax_comments is enabled.
+    if ($this->moduleHandler->moduleExists('social_ajax_comments')) {
+      $tags = $build_list['pager']['#tags'] ?? [];
+      $tags[] = self::PAGER_TAG;
+      $build_list['pager']['#tags'] = $tags;
+    }
 
     return $build_list;
   }

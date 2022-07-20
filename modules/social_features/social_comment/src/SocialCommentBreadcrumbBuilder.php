@@ -2,6 +2,7 @@
 
 namespace Drupal\social_comment;
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -62,7 +63,9 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       case 'comment.reply':
         $page_title = $this->t('Reply to Comment');
         $pid = $route_match->getParameter('pid');
-        $comment = $this->storage->load($pid);
+        if ($pid) {
+          $comment = $this->storage->load($pid);
+        }
         break;
 
       case 'entity.comment.edit_form':
@@ -92,7 +95,10 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     }
 
     // Add Caching.
-    if ($comment) {
+    if (
+      isset($comment) &&
+      $comment instanceof CommentInterface
+    ) {
       $breadcrumb->addCacheableDependency($comment);
     }
 

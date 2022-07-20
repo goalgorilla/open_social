@@ -139,7 +139,7 @@ function social_book_update_8801() {
   ];
 
   foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_book') . '/config/features_removal/' . $config_file . '.yml';
+    $config = \Drupal::service('extension.list.module')->getPath('social_book') . '/config/features_removal/' . $config_file . '.yml';
 
     if (is_file($config)) {
       $settings = Yaml::parse(file_get_contents($config));
@@ -204,7 +204,7 @@ function social_book_update_8804() {
  * Update Books to the new Config Form Open Social style.
  */
 function social_book_update_8901() {
-  $config_file = drupal_get_path('module', 'social_book') . '/config/static/social_book_static_update_8901.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_book') . '/config/static/social_book_static_update_8901.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -243,7 +243,7 @@ function social_book_update_8902() {
  * Add small_teaser view mode for book.
  */
 function social_book_update_8903() {
-  $config_path = drupal_get_path('module', 'social_book') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_book') . '/config/static';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
@@ -274,4 +274,18 @@ function social_book_update_10301() {
   foreach (['sitemanager', 'contentmanager'] as $role_id) {
     user_role_grant_permissions($role_id, ['translate book node']);
   }
+}
+
+/**
+ * Hide book image field labels in view displays.
+ */
+function social_book_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_book', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

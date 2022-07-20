@@ -333,9 +333,8 @@ class ContentBuilder implements ContentBuilderInterface {
       }
     }
 
-    $field = $element['field_sorting']['#group'];
-    $element[$field]['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
-    $element[$field]['#suffix'] = '</div>';
+    $element['field_sorting']['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
+    $element['field_sorting']['#suffix'] = '</div>';
 
     if (!$selected_plugin) {
       return $element;
@@ -384,12 +383,8 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
+  public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
     $parents = ['field_sorting'];
-
-    if ($form_state->has('layout_builder__component')) {
-      $parents = array_merge(['settings', 'block_form'], $parents);
-    }
 
     // Check that the currently selected value is valid and change it otherwise.
     $value_parents = array_merge($parents, ['0', 'value']);
@@ -405,8 +400,6 @@ class ContentBuilder implements ContentBuilderInterface {
       $form_state->clearErrors();
       $form_state->setValue($value_parents, key($options));
     }
-
-    $parents = [NestedArray::getValue($form, array_merge($parents, ['#group']))];
 
     if ($form_state->has('layout_builder__component')) {
       $parents = array_merge(['settings', 'block_form'], $parents);
@@ -587,6 +580,7 @@ class ContentBuilder implements ContentBuilderInterface {
         $query->condition($conditions);
       }
 
+      /** @var array<array|string> $option */
       $option = $options[$sort_by];
 
       if (

@@ -85,7 +85,7 @@ function social_group_invite_update_8005() {
  * Update group invite views().
  */
 function social_group_invite_update_8006() {
-  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/optional';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_invite') . '/config/optional';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
@@ -123,7 +123,7 @@ function social_group_invite_update_11001(): void {
     return;
   }
 
-  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -167,6 +167,20 @@ function social_group_invite_update_11002(): string {
   $fields = ['social_views_bulk_operations_bulk_form_invites' => $fields['social_views_bulk_operations_bulk_form_invites']] + $fields;
   $config->set('display.default.display_options.fields', $fields);
   $config->save();
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_group_invite_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();

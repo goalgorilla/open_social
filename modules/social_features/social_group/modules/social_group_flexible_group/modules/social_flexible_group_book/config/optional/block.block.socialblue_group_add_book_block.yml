@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_flexible_group_book
+    - system
+  theme:
+    - socialblue
+  enforced:
+    module:
+      - social_flexible_group_book
+id: socialblue_group_add_book_block
+theme: socialblue
+region: complementary_top
+weight: -97
+provider: null
+plugin: group_add_book_block
+settings:
+  id: group_add_book_block
+  label: 'Group add book block'
+  provider: social_flexible_group_book
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/books'
+    negate: false

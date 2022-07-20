@@ -236,10 +236,13 @@ class EmailTokenServices {
    */
   public function getGroupPreview(Group $group) {
     // Add the group preview.
+    $label = $group->getGroupType()->label();
+    $group_type_label = $label instanceof TranslatableMarkup ? $label->render() : $label;
+    $group_type_label = $group_type_label ?? '';
     return [
       '#theme' => 'message_group_preview',
       '#group_title' => $group->label(),
-      '#group_type' => strtoupper($group->getGroupType()->label()),
+      '#group_type' => strtoupper($group_type_label),
       '#group_members' => $this->groupStatistics->getGroupMemberCount($group),
     ];
   }

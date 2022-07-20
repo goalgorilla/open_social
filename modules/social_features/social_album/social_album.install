@@ -5,7 +5,6 @@
  * Install, update and uninstall functions for the social_album module.
  */
 
-use Drupal\block\BlockInterface;
 use Drupal\user\RoleInterface;
 
 /**
@@ -53,7 +52,7 @@ function social_album_install() {
 
   module_set_weight('social_album', 5);
 
-  _social_album_blocks('_social_album_install_blocks');
+  _social_album_blocks();
 }
 
 /**
@@ -64,28 +63,23 @@ function social_album_install() {
  * @param array $paths
  *   List of blocks which should be updated and paths which should be added.
  *
+ * @deprecated in social:11.4.0 and is removed from social:12.0.0. Use
+ *   _social_core_blocks_paths instead.
+ *
+ * @see https://www.drupal.org/node/3291491
+ *
  * @return string
  *   List of block paths with new paths.
  */
-function _social_album_install_blocks($pages, array $paths) {
-  return $pages . "\r\n" . implode("\r\n", $paths);
+function _social_album_install_blocks(string $pages, array $paths) {
+  return _social_core_blocks_paths($pages, $paths);
 }
 
 /**
  * Implements hook_uninstall().
  */
 function social_album_uninstall() {
-  _social_album_blocks(function ($pages, array $paths) {
-    $pages = explode("\r\n", $pages);
-
-    foreach ($pages as $delta => $page) {
-      if (in_array($page, $paths)) {
-        unset($pages[$delta]);
-      }
-    }
-
-    return implode("\r\n", $pages);
-  });
+  _social_album_blocks('_social_core_blocks_unset_paths');
 }
 
 /**
@@ -189,12 +183,12 @@ function _social_album_set_group_permissions() {
 /**
  * Process list of pages where chosen blocks should be shown.
  *
- * @param callable $function
- *   The function which updates the pages set.
+ * @param callable|null $function
+ *   (optional) The function which updates the pages set. Defaults to NULL.
  * @param array $items
- *   Paths of blocks.
+ *   (optional) Paths of blocks. Defaults to NULL.
  */
-function _social_album_blocks(callable $function, array $items = [
+function _social_album_blocks(callable $function = NULL, array $items = [
   'socialblue_profile_hero_block' => '/user/*/albums',
   'socialblue_pagetitleblock_content' => [
     '/user/*/albums',
@@ -204,27 +198,8 @@ function _social_album_blocks(callable $function, array $items = [
   'socialblue_profile_statistic_block' => '/user/*/albums',
   'socialblue_groupheroblock' => '/group/*/albums',
   'socialblue_group_statistic_block' => '/group/*/albums',
-]) {
-  $storage = \Drupal::entityTypeManager()->getStorage('block');
-
-  foreach ($items as $id => $paths) {
-    $block = $storage->load($id);
-
-    if (!$block instanceof BlockInterface) {
-      continue;
-    }
-
-    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
-    $visibility = $block->getVisibilityCondition('request_path');
-
-    $configuration = $visibility->getConfiguration();
-    $pages = $function($configuration['pages'], (array) $paths);
-
-    if ($configuration['pages'] !== $pages) {
-      $configuration['pages'] = $pages;
-      $block->setVisibilityConfig('request_path', $configuration)->save();
-    }
-  }
+]): void {
+  _social_core_install_blocks($items, $function);
 }
 
 /**
@@ -271,7 +246,7 @@ function social_album_update_8903() {
  * Delete duplicate of title from the group album creation page.
  */
 function social_album_update_8904() {
-  _social_album_blocks('_social_album_install_blocks', [
+  _social_core_install_blocks([
     'socialblue_pagetitleblock_content' => [
       '/group/*/albums/add',
     ],
@@ -317,4 +292,18 @@ function social_album_update_11001(): void {
       'view node.album.field_content_visibility:public content',
     ]
   );
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_album_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_album', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

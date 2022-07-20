@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_core module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContent;
@@ -48,7 +49,7 @@ function social_core_requirements($phase) {
       // From 9.0 on-wards a site must update to 8.1 first to ensure that the
       // features removal update hooks have run that are no longer present in
       // Open Social 9.0.
-      if (drupal_get_installed_schema_version('social_core') <= 8805) {
+      if (\Drupal::service('update.update_hook_registry')->getInstalledVersion('social_core') <= 8805) {
         $requirements['social_core_update_version'] = [
           'title' => t('Open Social Update Version'),
           'description' => t('You must update Open Social to the latest version of 8.x before upgrading to 9.0 or later.'),
@@ -260,7 +261,7 @@ function _social_core_get_permissions($role) {
 function _social_core_create_an_homepage_block() {
   // @todo use a better image from the theme.
   // Block image.
-  $path = drupal_get_path('module', 'social_core');
+  $path = \Drupal::service('extension.list.module')->getPath('social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
   $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
 
@@ -414,6 +415,7 @@ function social_core_update_8005(&$sandbox) {
       ->condition('type', 'page')
       ->condition('type', 'book');
 
+    /** @var array $sandbox['items']['node_ids'] */
     $sandbox['items']['node_ids'] = $query->execute();
     $sandbox['max'] = count($sandbox['items']['node_ids']);
 
@@ -422,6 +424,7 @@ function social_core_update_8005(&$sandbox) {
     $sandbox['max'] += count($sandbox['items']['group_ids']);
 
     $query = \Drupal::entityQuery('profile');
+    /** @var array $sandbox['items']['node_ids'] */
     $sandbox['items']['profile_ids'] = $query->execute();
     $sandbox['max'] += count($sandbox['items']['profile_ids']);
   }
@@ -689,7 +692,7 @@ function social_core_update_8018(&$sandbox) {
 function social_core_update_8019() {
   $file_private_path_base_path = PrivateStream::basePath();
 
-  if ($file_private_path_base_path !== NULL) {
+  if ($file_private_path_base_path !== "") {
     $modules = [
       'social_file_private',
     ];
@@ -796,7 +799,7 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Update config post_type.
-  $path = drupal_get_path('module', 'social_post') . '/config/install';
+  $path = \Drupal::service('extension.list.module')->getPath('social_post') . '/config/install';
   $config_factory = \Drupal::configFactory();
   $config_name = "social_post.post_type.post";
   $filepath = "{$path}/{$config_name}.yml";
@@ -911,20 +914,22 @@ function social_core_update_8026() {
         ->range(0, 1);
       $crop = $query->execute();
 
-      /** @var \Drupal\crop\Entity\Crop $crop */
-      $crop = Crop::load(current($crop));
+      if (is_array($crop)) {
+        /** @var \Drupal\crop\Entity\Crop $crop */
+        $crop = Crop::load(current($crop));
 
-      // Crop object found, set the crop type to hero_an.
-      if ($crop instanceof Crop) {
-        $size = $crop->size();
+        // Crop object found, set the crop type to hero_an.
+        if ($crop instanceof Crop) {
+          $size = $crop->size();
 
-        // We need to adjust the width, as this is the safest way to set the new
-        // crop automatically.
-        // Aspect ratio was 2.836879433 (width 1200, height 423). It became
-        // 2.448979592 (width 1200, height 490).
-        $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
-        $crop->set('type', 'hero_an');
-        $crop->save();
+          // We need to adjust the width, as this is the safest way
+          // to set the new crop automatically.
+          // Aspect ratio was 2.836879433 (width 1200, height 423). It became
+          // 2.448979592 (width 1200, height 490).
+          $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
+          $crop->set('type', 'hero_an');
+          $crop->save();
+        }
       }
     }
   }
@@ -1139,7 +1144,7 @@ function social_core_update_8806(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
 
   $parts = explode('.', $name);
@@ -1376,7 +1381,7 @@ function social_core_update_8907() {
  * Add a new image thumbnail 'social_file_thumbnail' files field.
  */
 function social_core_update_8908() {
-  $config_file = drupal_get_path('module', 'social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1559,4 +1564,28 @@ function social_core_update_11301(): void {
     $config->setData($socialblue_colors);
     $config->save();
   }
+}
+
+/**
+ * Add a new view mode for nodes - Email card.
+ */
+function social_core_update_11401(): void {
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
+  $source = new FileStorage($config_path);
+  $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11401'));
+}
+
+/**
+ * Remove block visibility settings that were added in the wrong place.
+ */
+function social_core_update_11402(array &$sandbox): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

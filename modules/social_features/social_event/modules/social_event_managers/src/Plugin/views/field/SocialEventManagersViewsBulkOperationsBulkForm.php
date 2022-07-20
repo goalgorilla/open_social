@@ -384,7 +384,6 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         'uid' => $entity->field_account->target_id,
       ]);
 
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = reset($profiles);
 
     // It must be a Guest, so we pick the name values we can get.

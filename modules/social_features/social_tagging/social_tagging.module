@@ -18,6 +18,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Database\Database;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\select2\Element\Select2;
 
 /**
  * Implements hook_help().
@@ -37,7 +38,7 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
       if ($tag_service->allowSplit()) {
         /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
         $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
-        if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
+        if ($vocabulary->id() === 'social_tagging') {
           return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
         }
       }
@@ -155,6 +156,11 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
       case 'profile':
         $type = $form_entity->getEntityTypeId();
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
+        break;
+
+      case 'media':
+        $type = $form_entity->bundle();
+        $tag_enabled = $tag_settings->get('tag_media_type_' . $type);
         break;
 
       default:
@@ -337,6 +343,10 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
     'profile',
   ];
 
+  if (\Drupal::moduleHandler()->moduleExists('media')) {
+    $entity_types[] = 'media';
+  }
+
   // Add a Tagging base field.
   if (in_array($entity_type->id(), $entity_types)) {
     $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
@@ -490,6 +500,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-events-events-overview',
     'views-exposed-form-group-topics-page-group-topics',
     'views-exposed-form-group-events-page-group-events',
+    'views-exposed-form-group-books-page-group-books',
     'views-exposed-form-newest-groups-page-all-groups',
     'views-exposed-form-newest-users-page-newest-users',
   ];
@@ -521,6 +532,18 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         $form[$label]['#options'] += $tag_service->getChildren($tid);
         $form[$label]['#type'] = 'select2';
         $form[$label]['#size'] = NULL;
+
+        if (isset($form[$label]['#context']['#plugin_type']) && $form[$label]['#context']['#plugin_type'] === 'bef') {
+          $form[$label]['#select2'] = [];
+          $form[$label]['#process'] = [
+            [Select2::class, 'processSelect'],
+          ];
+          $form[$label]['#pre_render'] = [
+            [Select2::class, 'preRenderSelect'],
+            [Select2::class, 'preRenderAutocomplete'],
+            [Select2::class, 'preRenderOverwrites'],
+          ];
+        }
 
         /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
         $query = \Drupal::request()->query;
@@ -606,6 +629,7 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
     'events' => 'events_overview',
     'group_topics' => 'default',
     'group_events' => 'default',
+    'group_books' => 'default',
     'newest_groups' => 'page_all_groups',
     'newest_users' => 'page',
   ];
@@ -647,5 +671,26 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
   /** @var \Drupal\search_api\Plugin\views\query\SearchApiQuery $query */
   if ($view->id() === 'search_content' && isset($query->getWhere()[2]['type'])) {
     $query->getWhere()[2]['type'] = 'AND';
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function social_tagging_modules_installed(array $modules): void {
+  if (in_array('media', $modules)) {
+    $entity_type = \Drupal::entityTypeManager()
+      ->getStorage('media')
+      ->getEntityType();
+
+    $fields = \Drupal::moduleHandler()
+      ->invokeAll('entity_base_field_info', [$entity_type]);
+
+    if (!isset($fields['social_tagging'])) {
+      return;
+    }
+
+    \Drupal::entityDefinitionUpdateManager()
+      ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $fields['social_tagging']);
   }
 }

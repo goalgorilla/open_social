@@ -164,16 +164,35 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#required' => FALSE,
     ];
 
-    foreach ($node_types as $nodetype) {
-      $field_name = 'tag_node_type_' . $nodetype->id();
+    foreach ($node_types as $node_type) {
+      $field_name = 'tag_node_type_' . $node_type->id();
       $value = $config->get($field_name);
       $default_value = isset($value) ? $config->get($field_name) : TRUE;
       $form['node_type_settings'][$field_name] = [
         '#type' => 'checkbox',
-        '#title' => $nodetype->label(),
+        '#title' => $this->t('Node type: @node_type', [
+          '@node_type' => $node_type->label(),
+        ]),
         '#default_value' => $default_value,
         '#required' => FALSE,
       ];
+    }
+
+    if ($this->moduleHandler->moduleExists('media')) {
+      /** @var \Drupal\media\MediaTypeInterface[] $media_types */
+      $media_types = $this->entityTypeManager->getStorage('media_type')
+        ->loadMultiple();
+      foreach ($media_types as $media_type) {
+        $field_name = 'tag_media_type_' . $media_type->id();
+        $form['node_type_settings'][$field_name] = [
+          '#type' => 'checkbox',
+          '#title' => $this->t('Media type: @node_type', [
+            '@node_type' => $media_type->label(),
+          ]),
+          '#default_value' => $config->get($field_name),
+          '#required' => FALSE,
+        ];
+      }
     }
 
     $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
@@ -212,6 +231,16 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     foreach ($node_types as $node_type) {
       $config_name = 'tag_node_type_' . $node_type->id();
       $config->set($config_name, $form_state->getValue($config_name))->save();
+    }
+
+    if ($this->moduleHandler->moduleExists('media')) {
+      /** @var \Drupal\media\MediaTypeInterface[] $media_types */
+      $media_types = $this->entityTypeManager->getStorage('media_type')
+        ->loadMultiple();
+      foreach ($media_types as $media_type) {
+        $config_name = 'tag_media_type_' . $media_type->id();
+        $config->set($config_name, $form_state->getValue($config_name))->save();
+      }
     }
 
     parent::submitForm($form, $form_state);

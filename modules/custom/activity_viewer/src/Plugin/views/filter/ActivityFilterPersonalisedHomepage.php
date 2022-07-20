@@ -239,47 +239,50 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    *   List of node IDs.
    */
   protected function getAvailableNodeIds(AccountInterface $user, array $memberships) {
-    $query = $this->connection->select('node_field_data', 'nfd');
-    $query->fields('nfd', ['nid']);
-    $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
-    $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
-    $or = $query->orConditionGroup();
-    if ($user->isAuthenticated()) {
-      // Nodes community visibility.
-      $community_access = $or->andConditionGroup()
-        ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
-        ->isNull('gcfd.entity_id');
-      $or->condition($community_access);
+    $nids = &drupal_static(__FUNCTION__);
+    if (!isset($nids)) {
+      $query = $this->connection->select('node_field_data', 'nfd');
+      $query->fields('nfd', ['nid']);
+      $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
+      $query->leftJoin('group_content_field_data', 'gcfd', "gcfd.entity_id = nfd.nid AND gcfd.type LIKE '%-group_node-%'");
+      $or = $query->orConditionGroup();
+      if ($user->isAuthenticated()) {
+        // Nodes community visibility.
+        $community_access = $or->andConditionGroup()
+          ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
+          ->isNull('gcfd.entity_id');
+        $or->condition($community_access);
 
-      // Node visibility by group.
-      if (count($memberships) > 0) {
-        $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
-        $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
-        $access_by_group->condition('gcfd.gid', $memberships, 'IN');
-        $or->condition($access_by_group);
+        // Node visibility by group.
+        if (count($memberships) > 0) {
+          $access_by_group = $or->andConditionGroup();
+          $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
+          $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
+          $access_by_group->condition('gcfd.gid', $memberships, 'IN');
+          $or->condition($access_by_group);
+        }
       }
-    }
-    else {
-      // Public nodes without group.
-      $anonymous_access = $or->andConditionGroup()
-        ->condition('nfcv.field_content_visibility_value', 'public')
-        ->isNull('gcfd.entity_id');
-      $or->condition($anonymous_access);
-    }
-    $or->isNull('nfcv.entity_id');
-    $query->condition($or);
+      else {
+        // Public nodes without group.
+        $anonymous_access = $or->andConditionGroup()
+          ->condition('nfcv.field_content_visibility_value', 'public')
+          ->isNull('gcfd.entity_id');
+        $or->condition($anonymous_access);
+      }
+      $or->isNull('nfcv.entity_id');
+      $query->condition($or);
 
-    // Alter query for custom conditions.
-    $this->moduleHandler->alter('activity_viewer_available_nodes_query', $query, $user);
+      // Alter query for custom conditions.
+      $this->moduleHandler->alter('activity_viewer_available_nodes_query', $query, $user);
 
-    // Check node status and user access to it.
-    $node_status = ['1'];
-    if ($user->hasPermission('view any unpublished content')) {
-      $node_status[] = '0';
+      // Check node status and user access to it.
+      $node_status = ['1'];
+      if ($user->hasPermission('view any unpublished content')) {
+        $node_status[] = '0';
+      }
+      $query->condition('nfd.status', $node_status, 'IN');
+      $nids = $query->execute()->fetchCol();
     }
-    $query->condition('nfd.status', $node_status, 'IN');
-    $nids = $query->execute()->fetchCol();
 
     return array_unique($nids);
   }

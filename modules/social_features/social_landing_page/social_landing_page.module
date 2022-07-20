@@ -279,7 +279,7 @@ function social_landing_page_preprocess_field(&$variables) {
  * @param \Drupal\node\NodeInterface $node
  *   The landing page.
  *
- * @return array
+ * @return array|\Drupal\Component\Render\MarkupInterface
  *   Render array of the image with a link.
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
@@ -324,12 +324,12 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
         ];
         // Build a link render array.
         $build = [
-          '#title' => render($image),
+          '#title' => \Drupal::service('renderer')->render($image),
           '#type' => 'link',
           '#url' => $node->toUrl('canonical'),
         ];
         // We immediately return the 1st found hero.
-        return render($build);
+        return \Drupal::service('renderer')->render($build);
       }
     }
   }
@@ -362,26 +362,20 @@ function social_landing_page_social_user_account_header_create_links($context) {
  * components when it uses for 404 page.
  */
 function social_landing_page_theme_suggestions_page_alter(array &$suggestions, array $variables): void {
-  // Get Request Object.
-  $request = \Drupal::request();
-
   // If there is HTTP Exception.
-  if ($exception = $request->attributes->get('exception')) {
-    // Get the status code.
-    $status_code = $exception->getStatusCode();
-    if ($status_code == 404) {
-      // Get current node.
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = \Drupal::routeMatch()->getParameter('node');
+  if (
+    ($exception = \Drupal::request()->attributes->get('exception')) &&
+    is_object($exception) &&
+    method_exists($exception, 'getStatusCode') &&
+    $exception->getStatusCode() == 404
+  ) {
+    // Get current node.
+    $node = \Drupal::routeMatch()->getParameter('node');
 
-      // Overrides template for 404 page only if target node has a landing page
-      // type.
-      if (
-        $node instanceof NodeInterface &&
-        $node->getType() === 'landing_page'
-      ) {
-        $suggestions[] = 'page__node__landing_page';
-      }
+    // Overrides template for 404 page only if target node has a landing page
+    // type.
+    if ($node instanceof NodeInterface && $node->getType() === 'landing_page') {
+      $suggestions[] = 'page__node__landing_page';
     }
   }
 }

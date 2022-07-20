@@ -19,6 +19,12 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * The entity query.
    *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
+   *
+   * The unused private variable is ignored here. Removing it would be a BC
+   * break but most classes extending the base class also don't use it so making
+   * it protected would cause more code to maintain. We should remove this in a
+   * major version and update the constructor.
+   * @phpstan-ignore-next-line
    */
   private $entityQuery;
 

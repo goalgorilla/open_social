@@ -1,4 +1,8 @@
 services:
+  plugin.manager.social_group.join:
+    class: Drupal\social_group\JoinManager
+    parent: default_plugin_manager
+
   social_group.route_subscriber:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:

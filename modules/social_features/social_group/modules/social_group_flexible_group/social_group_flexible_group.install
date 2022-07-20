@@ -86,7 +86,7 @@ function social_group_flexible_group_update_8802() {
  * Add new field group visibility field to flexible groups.
  */
 function social_group_flexible_group_update_8901(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8901.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8901.yml';
 
   if (is_file($config_file)) {
     $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
@@ -97,7 +97,7 @@ function social_group_flexible_group_update_8901(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -228,7 +228,7 @@ function social_group_flexible_group_update_8907() {
  * Create new field & field storage configuration for new group type field.
  */
 function social_group_flexible_group_update_8908(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8908.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8908.yml';
 
   if (is_file($config_file)) {
     $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
@@ -239,7 +239,7 @@ function social_group_flexible_group_update_8908(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -291,7 +291,7 @@ function social_group_flexible_group_update_8909() {
  * Create new field & field storage configuration for new group type icon field.
  */
 function social_group_flexible_group_update_8910(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8910.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8910.yml';
 
   if (is_file($config_file)) {
     $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
@@ -302,7 +302,7 @@ function social_group_flexible_group_update_8910(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -412,7 +412,7 @@ function social_group_flexible_group_update_10303(&$sandbox) {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group_flexible_group') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/static';
   $source = new FileStorage($config_path);
 
   foreach ($config_files as $origin_name => $update_name) {
@@ -447,7 +447,7 @@ function social_group_flexible_group_update_11002(): string {
  * Create a new field to disable posts in groups.
  */
 function social_group_flexible_group_update_11201(): void {
-  $config_path = drupal_get_path('module', 'social_group_flexible_group') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group_flexible_group') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -501,4 +501,18 @@ function social_group_flexible_group_update_11203(): void {
   $source = new FileStorage($config_path);
 
   $config_storage->write('language.content_settings.taxonomy_term.group_type', (array) $source->read('language.content_settings.taxonomy_term.group_type_11203'));
+}
+
+/**
+ * Allow extending list of allowed join methods dynamically.
+ */
+function social_group_flexible_group_update_11401(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_group_flexible_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

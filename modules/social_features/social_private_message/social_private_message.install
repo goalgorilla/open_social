@@ -261,7 +261,7 @@ function social_private_message_update_8802() {
  */
 function _social_private_message_features_removal_config_revert_helper(array $config_files) {
   foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
+    $config = \Drupal::service('extension.list.module')->getPath('social_private_message') . '/config/features_removal/' . $config_file . '.yml';
 
     if (is_file($config)) {
       $settings = Yaml::parse(file_get_contents($config));
@@ -305,7 +305,7 @@ function social_private_message_update_8803() {
  * Added new 'preview' and 'cta_button' tokens.
  */
 function social_private_message_update_10301() {
-  $config_file = drupal_get_path('module', 'social_private_message') . '/config/static/message.template.create_private_message_10301.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_private_message') . '/config/static/message.template.create_private_message_10301.yml';
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
@@ -490,4 +490,18 @@ function social_private_message_update_11011(): void {
       ->set('status', FALSE)
       ->save();
   }
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_private_message_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_private_message', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
