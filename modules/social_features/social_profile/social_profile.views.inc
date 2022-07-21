@@ -17,4 +17,15 @@ function social_profile_views_data_alter(array &$data) {
       'id' => 'profile_entity_sortable',
     ],
   ];
+
+  $data['profile__field_profile_profile_tag']['social_split_profile_terms'] = [
+    'title' => t('Filter by profile tags'),
+    'filter' => [
+      'title' => t('Filter by profile tags'),
+      'help' => t('Provide a filter for split profile tags'),
+      'group' => t('Profile'),
+      'field' => 'field_profile_profile_tag_target_id',
+      'id' => 'social_split_profile_terms',
+    ],
+  ];
 }
