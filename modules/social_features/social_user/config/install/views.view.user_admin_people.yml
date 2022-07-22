@@ -5,11 +5,13 @@ dependencies:
     - core.entity_view_mode.profile.name
     - field.storage.profile.field_profile_first_name
     - field.storage.profile.field_profile_last_name
+    - taxonomy.vocabulary.profile_tag
   module:
     - group
     - profile
     - social_profile
     - social_user
+    - taxonomy
     - user
     - views_bulk_operations
 id: user_admin_people
@@ -1248,6 +1250,51 @@ display:
           entity_type: user
           entity_field: login
           plugin_id: date
+        social_split_profile_terms:
+          id: social_split_profile_terms
+          table: profile__field_profile_profile_tag
+          field: social_split_profile_terms
+          relationship: profile
+          group_type: group
+          admin_label: ''
+          plugin_id: social_split_profile_terms
+          operator: or
+          value: { }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: social_split_profile_terms_op
+            label: 'Profile tags'
+            description: ''
+            use_operator: false
+            operator: social_split_profile_terms_op
+            operator_limit_selection: false
+            operator_list: { }
+            identifier: profile_tags
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: 0
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: { }
+            group_items: { }
+          reduce_duplicates: 1
+          type: select
+          limit: true
+          vid: profile_tag
+          hierarchy: 1
+          error_message: 1
       sorts:
         created:
           id: created
