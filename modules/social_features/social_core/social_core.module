@@ -7,7 +7,6 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -1040,27 +1039,6 @@ function social_core_form_alter(
       // Remove the preview button.
       if (isset($form['actions']['preview'])) {
         unset($form['actions']['preview']);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_form_alter().
- */
-function social_core_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  // This code will move the comments field to the "Settings" field group
-  // only if $form['advanced'] does not exist.
-  if (method_exists($form_state->getFormObject(), 'getEntity')) {
-    $entity = $form_state->getFormObject()->getEntity();
-    if ($entity instanceof ContentEntityInterface) {
-      // Move comments field to "group_settings" field group.
-      $comments_field = "field_{$entity->bundle()}_comments";
-      if (!empty($form[$comments_field])) {
-        if (!empty($form['#fieldgroups']['group_settings'])) {
-          $form[$comments_field]['#group'] = 'group_settings';
-          $form['#group_children']['group_settings'] = $comments_field;
-        }
       }
     }
   }
