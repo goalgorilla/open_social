@@ -7,8 +7,8 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -784,9 +784,13 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_core_form_alter(
+  array &$form,
+  FormStateInterface $form_state,
+  string $form_id
+): void {
   // Array of node types, which have the new group_settings fieldset,
   // these nodes can use the new content style, and have $form['advanced']
   // removed.
@@ -812,6 +816,12 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
   // old settings and use Field UI to change the other fields.
   $use_social_content_forms = theme_get_setting('content_entity_form_style');
   if ($use_social_content_forms === 'open_social' && in_array($form_id, $compatible_content_type_forms)) {
+    $form_object = $form_state->getFormObject();
+
+    if ($form_object instanceof EntityFormInterface) {
+      $entity = $form_object->getEntity();
+    }
+
     // We want to move all the fields from $form['advanced'] to our new
     // field sets which are created as part of #3186003.
     if (!empty($form['advanced'])) {
@@ -861,22 +871,21 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         // #502430 we need to remove this ourselves, users with permission
         // can see the book outline even when not configured as part
         // of the book settings.
-        if (!empty($form['book']) &&
-          $form_state->getFormObject() !== NULL &&
-          \Drupal::moduleHandler()->moduleExists('book')) {
-          // Grab the Entity to see if books are enabled for this one.
-          $entity = $form_state->getFormObject()->getEntity();
-          if (!empty($entity->getType()) && is_string($entity->getType())) {
-            // Move it to our new fieldset on book pages either on its own
-            // or in the group_settings.
-            $form['book']['#type'] = 'fieldset';
-            $form['book']['#attributes']['class'][] = 'card';
-            $form['book']['#weight'] = isset($form['#fieldgroups']['group_visibility']->weight) ? $form['#fieldgroups']['group_visibility']->weight + 1 : '3';
-            $enabled = book_type_is_allowed($entity->getType());
-            // If it's not enabled we can just safely unset it.
-            if (!$enabled) {
-              unset($form['book']);
-            }
+        if (
+          !empty($form['book']) &&
+          isset($entity) &&
+          \Drupal::moduleHandler()->moduleExists('book')
+        ) {
+          // Move it to our new fieldset on book pages either on its own
+          // or in the group_settings.
+          $form['book']['#type'] = 'fieldset';
+          $form['book']['#attributes']['class'][] = 'card';
+          $form['book']['#weight'] = isset($form['#fieldgroups']['group_visibility']->weight)
+            ? $form['#fieldgroups']['group_visibility']->weight + 1 : '3';
+
+          // If it's not enabled we can just safely unset it.
+          if (!book_type_is_allowed($entity->bundle())) {
+            unset($form['book']);
           }
         }
 
@@ -983,23 +992,39 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
     // Change the button text from Save to Create topic / event etc.
     // Adds a cancel button.
     // Removes the preview button.
-    if (!empty($form['actions']['submit']) &&
-      !empty($form['actions']['submit']['#value']) &&
-      $form_state->getFormObject() !== NULL &&
-      method_exists($form_state->getFormObject(), 'getOperation')) {
+    if (!empty($form['actions']['submit']['#value']) && isset($entity)) {
 
       // Change the button text from Save to Create topic / event etc.
-      // Only on node add pages.
-      if ($form_state->getFormObject()->getOperation() !== 'edit') {
-        /** @var \Drupal\Node\NodeInterface $entity */
-        $entity = $form_state->getFormObject()->getEntity();
-        if (!empty(node_get_type_label($entity)) && is_string(node_get_type_label($entity))) {
-          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => strtolower(node_get_type_label($entity))]);
+      /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+      if ($form_object->getOperation() !== 'edit') {
+        $definition = \Drupal::entityTypeManager()
+          ->getDefinition($entity->getEntityTypeId());
+
+        if ($definition !== NULL) {
+          $bundle_entity_type = $definition->getBundleEntityType();
+
+          if ($bundle_entity_type !== NULL) {
+            $bundle_entity = \Drupal::entityTypeManager()
+              ->getStorage($bundle_entity_type)
+              ->load($entity->bundle());
+
+            if (
+              $bundle_entity !== NULL &&
+              ($label = $bundle_entity->label()) !== NULL
+            ) {
+              $form['actions']['submit']['#value'] = t('Create @entity', [
+                '@entity' => strtolower((string) $label),
+              ]);
+            }
+          }
         }
       }
 
       // Adds cancel button.
-      if (!isset($form['actions']['cancel'])) {
+      if (
+        !isset($form['actions']['cancel']) &&
+        $entity->getEntityTypeId() === 'node'
+      ) {
         $form['actions']['cancel'] = [
           '#type' => 'submit',
           '#value' => t('Cancel'),
@@ -1014,27 +1039,6 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
       // Remove the preview button.
       if (isset($form['actions']['preview'])) {
         unset($form['actions']['preview']);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_form_alter().
- */
-function social_core_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  // This code will move the comments field to the "Settings" field group
-  // only if $form['advanced'] does not exist.
-  if (method_exists($form_state->getFormObject(), 'getEntity')) {
-    $entity = $form_state->getFormObject()->getEntity();
-    if ($entity instanceof ContentEntityInterface) {
-      // Move comments field to "group_settings" field group.
-      $comments_field = "field_{$entity->bundle()}_comments";
-      if (!empty($form[$comments_field])) {
-        if (!empty($form['#fieldgroups']['group_settings'])) {
-          $form[$comments_field]['#group'] = 'group_settings';
-          $form['#group_children']['group_settings'] = $comments_field;
-        }
       }
     }
   }
