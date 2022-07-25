@@ -42,6 +42,13 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
         'table' => 'group_content_field_data',
         'field' => 'entity_id',
         'operator' => '=',
+        'extra' => [
+          0 => [
+            'field' => 'type',
+            'value' => '%node%',
+            'operator' => 'LIKE',
+          ],
+        ],
       ];
 
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
