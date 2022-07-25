@@ -258,7 +258,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     ];
 
     if ($tag_service->profileActive()) {
-      $config_overviews['views.view.newest_users'] = 'default';
+      $config_overviews['views.view.newest_users'] = 'page_newest_users';
     }
 
     foreach ($config_overviews as $config_name => $display) {
