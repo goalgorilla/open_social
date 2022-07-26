@@ -1981,6 +1981,8 @@ function social_event_update_10306(&$sandbox) {
 
   /** @var \Drupal\node\NodeInterface $event */
   foreach ($node_storage->loadMultiple($events_ids) as $event) {
+    $sandbox['current']++;
+
     if (
       !$event->hasField('field_event_enable_enrollment') ||
       $event->get('field_event_enable_enrollment')->isEmpty()
@@ -1995,8 +1997,6 @@ function social_event_update_10306(&$sandbox) {
 
     \Drupal::messenger()
       ->addMessage($sandbox['current'] . ' users processed.');
-
-    $sandbox['current']++;
   }
 
   // Try to update the percentage but avoid division by zero.
