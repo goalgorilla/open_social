@@ -130,7 +130,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   public function executeMultiple(array $entities) {
     $this->entities = $entities;
 
-    parent::executeMultiple($entities);
+    return parent::executeMultiple($entities);
   }
 
   /**
