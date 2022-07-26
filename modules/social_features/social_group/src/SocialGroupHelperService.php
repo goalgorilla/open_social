@@ -15,6 +15,7 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
@@ -72,11 +73,15 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE) {
+  public function getGroupFromEntity(array $entity, bool $read_cache = TRUE): ?int {
+    if ($entity['target_id'] === NULL) {
+      return NULL;
+    }
+
     // Comments can have groups based on what the comment is posted on so the
     // cache type differs from what we later used to fetch the group.
-    $cache_type = $entity['target_type'];
-    $cache_id = $entity['target_id'];
+    $cache_type = $entity_type = $entity['target_type'];
+    $cache_id = $entity_id = $entity['target_id'];
 
     if (
       $read_cache &&
@@ -89,56 +94,56 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
 
     // Special cases for comments.
     // Returns the entity to which the comment is attached.
-    if ($entity['target_type'] === 'comment') {
+    if ($entity_type === 'comment') {
       $comment = $this->entityTypeManager->getStorage('comment')
-        ->load($entity['target_id']);
+        ->load($entity_id);
 
       if (
         $comment instanceof CommentInterface &&
         ($commented_entity = $comment->getCommentedEntity()) !== NULL
       ) {
-        $entity['target_type'] = $commented_entity->getEntityTypeId();
-        $entity['target_id'] = $commented_entity->id();
+        $entity_type = $commented_entity->getEntityTypeId();
+        $entity_id = $commented_entity->id();
       }
       else {
-        $entity['target_type'] = NULL;
+        $entity_type = NULL;
       }
     }
 
     $gid = NULL;
 
-    if ($entity['target_type'] === 'post') {
-      $post = $this->entityTypeManager->getStorage('post')
-        ->load($entity['target_id']);
+    if ($entity_type === 'post') {
+      $post = $this->entityTypeManager->getStorage('post')->load($entity_id);
 
       if ($post instanceof PostInterface) {
         $recipient_group = $post->get('field_recipient_group')->getValue();
+
         if (!empty($recipient_group)) {
           $gid = $recipient_group['0']['target_id'];
         }
       }
     }
-    elseif ($entity['target_type'] === 'node') {
-      $node = $this->entityTypeManager->getStorage('node')
-        ->load($entity['target_id']);
-
-      // Try to load the entity.
-      if ($node instanceof ContentEntityInterface) {
-        // Try to load group content from entity.
-        if ($group_contents = GroupContent::loadByEntity($node)) {
-          // Set the group id.
-          $gid = reset($group_contents)->getGroup()->id();
-        }
-      }
-    }
-    elseif ($entity['target_type'] === 'group_content') {
+    elseif ($entity_type === 'group_content') {
       $group_content = $this->entityTypeManager->getStorage('group_content')
-        ->load($entity['target_id']);
+        ->load($entity_id);
 
       // Try to load the entity.
       if ($group_content instanceof GroupContentInterface) {
         // Get group id.
         $gid = $group_content->getGroup()->id();
+      }
+    }
+    elseif ($entity_type !== 'comment') {
+      $entity = $this->entityTypeManager->getStorage($entity_type)
+        ->load($entity_id);
+
+      // Try to load the entity.
+      if ($entity instanceof ContentEntityInterface) {
+        // Try to load group content from entity.
+        if ($group_contents = GroupContent::loadByEntity($entity)) {
+          // Set the group id.
+          $gid = reset($group_contents)->getGroup()->id();
+        }
       }
     }
 
@@ -307,7 +312,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addMemberFormField() {
+  public function addMemberFormField(): array {
     return [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
@@ -320,7 +325,12 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
       ],
       '#selection_handler' => 'social',
       '#target_type' => 'user',
-      '#element_validate' => ['_social_group_unique_members'],
+      '#element_validate' => [
+        [
+          SocialGroupEntityAutocomplete::class,
+          'validateEntityAutocompleteSelect2',
+        ],
+      ],
     ];
   }
 

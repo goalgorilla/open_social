@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.enable_books
+    - group.type.flexible_group
+  enforced:
+    module:
+      - social_flexible_group_book
+id: group.flexible_group.enable_books
+field_name: enable_books
+entity_type: group
+bundle: flexible_group
+label: 'Enable book pages'
+description: 'Please note, if there are related books they will be published to the group after this option is turned on. Books will become unavailable if this option is deselected.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

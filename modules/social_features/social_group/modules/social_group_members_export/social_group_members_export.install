@@ -48,19 +48,32 @@ function _social_group_members_export_alter_group_manage_members_view(): void {
 }
 
 /**
+ * The emptied hook.
+ */
+function social_group_members_export_update_11001(array &$sandbox): void {
+  // Moved to separate sequential update hook.
+  // @see: social_group_members_export_update_11002
+}
+
+/**
  * Adds custom action in 'views.view.group_manage_members' after VBO updates.
  *
  * Action ID: 'social_group_members_export_member_action'.
  */
-function social_group_members_export_update_11001(array &$sandbox): void {
+function social_group_members_export_update_11002(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.group_manage_members');
   $selected_actions = $config->get('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions');
-  $selected_actions[] = [
-    'action_id' => 'social_group_members_export_member_action',
-    'preconfiguration' => [
-      'label_override' => t('Export'),
-    ],
-  ];
-  $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
-  $config->save();
+  // We have to check if action is already added.
+  $action = array_search('social_group_members_export_member_action', array_column($selected_actions, 'action_id'), FALSE);
+  // If action is not added we add it.
+  if ($action === FALSE) {
+    $selected_actions[] = [
+      'action_id' => 'social_group_members_export_member_action',
+      'preconfiguration' => [
+        'label_override' => t('Export'),
+      ],
+    ];
+    $config->set('display.default.display_options.fields.social_views_bulk_operations_bulk_form_group.selected_actions', $selected_actions);
+    $config->save();
+  }
 }

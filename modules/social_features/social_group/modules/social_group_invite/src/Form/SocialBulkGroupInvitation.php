@@ -554,7 +554,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   /**
    * Returns access to the invite page.
    *
-   * @param \Drupal\group\Entity\GroupInterface|mixed[] $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The group entity.
    *
    * @return \Drupal\Core\Access\AccessResultInterface

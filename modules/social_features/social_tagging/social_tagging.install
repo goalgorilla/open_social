@@ -237,3 +237,53 @@ function social_tagging_update_11201(): void {
 
   $config_storage->write('language.content_settings.taxonomy_term.social_tagging', (array) $source->read('language.content_settings.taxonomy_term.social_tagging_11201'));
 }
+
+/**
+ * Install Tagging base field to the media entity type.
+ */
+function social_tagging_update_11401(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('media')) {
+    return;
+  }
+
+  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'region' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $field_storage_definition);
+}
+
+/**
+ * Remove filters from the views config so that it can be added in an overrider.
+ */
+function social_tagging_update_11402(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.newest_users');
+
+  if ($filters = $config->get('display.default.display_options.filters')) {
+    $filters = array_filter($filters, fn($filter) => $filter['field'] !== 'social_tagging_target_id');
+    $config->set('display.page_newest_users.display_options.filters', $filters);
+    $config->set('display.block_newest_users.display_options.filters', $filters);
+    $config->set('display.page_newest_users.display_options.defaults.filters', FALSE);
+    $config->set('display.block_newest_users.display_options.defaults.filters', FALSE);
+    $config->save(TRUE);
+  }
+}

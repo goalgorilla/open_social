@@ -268,8 +268,10 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
         $parameters = $url->getRouteParameters();
 
-        if (empty($parameters['group'])) {
-          $group = _social_group_get_current_group();
+        if (
+          empty($parameters['group']) &&
+          ($group = _social_group_get_current_group()) !== NULL
+        ) {
           $parameters['group'] = $group->id();
         }
 

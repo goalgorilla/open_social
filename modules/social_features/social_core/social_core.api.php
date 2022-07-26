@@ -23,16 +23,66 @@ function hook_social_filter_format_default_alter(&$filter_format) {
 }
 
 /**
- * Provide a method to alter the article for a node. If it's a, or an or the.
+ * Provide a method to insert an article in the page title.
+ *
+ * @return array
+ *   An associative array of titles configuration. The keys are entity types.
+ *   The values are associative arrays that may contain the following elements:
+ *   - route_name: The route name of the page which title should be replaced.
+ *   - bundles: (optional) An associative array of articles, keyed by bundle
+ *     name.
+ *   - callback: (optional) The function should return the config entity object
+ *     of an entity type.
+ *
+ * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
+ * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_core_title() {
+  return [
+    'node' => [
+      'route_name' => 'node.add',
+      'bundles' => [
+        'article' => 'an',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Alter configuration of titles.
+ *
+ * @param array $titles
+ *   An associative array of titles configuration returned by
+ *   hook_social_core_title().
+ *
+ * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
+ * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_core_title_alter(array &$titles) {
+  $titles['node']['bundles']['event'] = 'an';
+}
+
+/**
+ * Provide a method to alter the article for a node. E.g. 'a', 'an', 'the'.
  *
  * @param array $node_types
  *   The filter format that is default.
  *
+ * @deprecated in social:11.4.0 and is removed from social:12.0.0. Use
+ *   hook_social_core_title_alter instead.
+ *
+ * @see https://www.drupal.org/node/3285045
+ * @see \Drupal\social_core\Routing\RouteSubscriber::alterRoutes()
+ * @see \Drupal\social_core\Controller\SocialCoreController::addPageTitle()
+ *
  * @ingroup social_core_api
  */
 function hook_social_node_title_prefix_articles_alter(array &$node_types) {
-  // The default is set to a.
-  // See SocialCoreController::addPageTitle for example.
+  // The default is set to 'a'.
   $node_types['discussions'] = 'an';
 }
 
@@ -109,15 +159,15 @@ function hook_social_content_type_alter(array &$page_to_exclude) {
 }
 
 /**
- * Provide method to allows extensions to use the new content style on a node.
+ * Provide a method to alter new content style on an entity.
  *
  * @param array $compatible_content_type_forms
- *   Array of the nodes.
+ *   Array of the form identifiers.
  *
- * @see social_core_form_node_form_alter()
+ * @see social_core_form_alter()
  * @ingroup social_core_api
  */
-function hook_social_core_compatible_content_forms(array &$compatible_content_type_forms) {
+function hook_social_core_compatible_content_forms_alter(array &$compatible_content_type_forms) {
   $compatible_content_type_forms[] = 'node_landing_page_form';
 }
 

@@ -124,15 +124,6 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
       }
     }
 
-    $config_name = 'field.storage.group.field_group_allowed_join_method';
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name] = [
-        'settings' => [
-          'allowed_values_function' => 'social_group_request_allowed_join_method_values',
-        ],
-      ];
-    }
-
     $config_name = 'views.view.group_pending_members';
     if (in_array($config_name, $names)) {
       $overrides[$config_name] = [

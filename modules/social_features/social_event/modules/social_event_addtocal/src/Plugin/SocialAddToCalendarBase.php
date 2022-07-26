@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\NodeInterface;
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for Social add to calendar plugins.
  */
 abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddToCalendarInterface, ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The module extension list.
@@ -147,6 +150,11 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     foreach ($replace_strings as $search => $replace) {
       $description = str_replace($search, $replace, $description);
     }
+
+    // Get event URL.
+    $node_url = $this->t('Event link: @link', ['@link' => $node->toUrl('canonical', ['absolute' => TRUE])->toString()]) . PHP_EOL;
+    // Update event description with adding event link.
+    $description = $node_url . $description;
 
     return Unicode::truncate(strip_tags($description), 1000, TRUE, TRUE);
   }

@@ -97,3 +97,17 @@ function social_mentions_update_10301() {
     }
   }
 }
+
+/**
+ * Updating  configuration keys as per underlying schema.
+ */
+function social_mentions_update_11001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_mentions', 'social_mentions_update_11001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}

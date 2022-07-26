@@ -79,7 +79,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // If the user can manage groups or the user is a member.
     if (
       $this->currentUser->hasPermission('manage all groups') ||
-      $group->getMember($this->currentUser)
+      $group->hasMember($this->currentUser)
     ) {
       return;
     }
@@ -92,6 +92,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       'entity.group.canonical',
       'view.group_events.page_group_events',
       'view.group_topics.page_group_topics',
+      'view.group_books.page_group_books',
       'social_group.stream',
     ];
 

@@ -24,6 +24,7 @@ use Drupal\Core\Url;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
@@ -810,7 +811,13 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
 
     if ($node instanceof NodeInterface) {
-      $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
+      $access = \Drupal::service('social_event.enroll')->isEnabled($node);
+      if (isset($form['enroll_wrapper'])) {
+        $form['enroll_wrapper']['#access'] = $access;
+      }
+      else {
+        $form['enroll_for_this_event']['#access'] = $access;
+      }
     }
   }
 }
@@ -1372,5 +1379,17 @@ function social_event_social_core_default_main_menu_links_alter(array &$links) {
     ]);
   $link = end($link);
 
-  $links[] = $link;
+  // Ensure that the end() doesn't return FALSE, and we have link instance.
+  if ($link instanceof MenuLinkContentInterface) {
+    $links[] = $link;
+  }
+}
+
+/**
+ * Implements hook_social_core_title_alter().
+ */
+function social_event_social_core_title_alter(array &$titles): void {
+  foreach (['node', 'group_content'] as $entity_type) {
+    $titles[$entity_type]['bundles']['event'] = 'an';
+  }
 }

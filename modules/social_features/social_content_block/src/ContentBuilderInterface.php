@@ -78,6 +78,6 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
-  public function updateFormSortingOptions(array $form, FormStateInterface $form_state): array;
+  public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array;
 
 }
