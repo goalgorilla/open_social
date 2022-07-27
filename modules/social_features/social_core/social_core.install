@@ -1575,3 +1575,17 @@ function social_core_update_11401(): void {
   $source = new FileStorage($config_path);
   $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11401'));
 }
+
+/**
+ * Remove block visibility settings that were added in the wrong place.
+ */
+function social_core_update_11402(array &$sandbox): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}

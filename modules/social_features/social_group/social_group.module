@@ -939,25 +939,39 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Check if form is group content create form.
-  if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
-    // Add custom validate handler to check if groups field values in node.
-    $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
+  if (isset($form['#entity_type'])) {
+    if ($form['#entity_type'] === 'node') {
+      // Add custom validate handler to check if groups field values in node.
+      $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
 
-    $group = _social_group_get_current_group();
+      $group = _social_group_get_current_group();
 
-    if (!empty($group)) {
-      // Add custom submit handler just for redirect purposes.
-      // We don't want to override the form::save in group.
-      $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+      if (!empty($group)) {
+        // Add custom submit handler just for redirect purposes.
+        // We don't want to override the form::save in group.
+        $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+      }
+      elseif (isset($entity)) {
+        // If node don't belong to any group as a group content plugin
+        // we don't need group visibility field.
+        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+
+        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
+          unset($form['groups']);
+        }
+      }
     }
-    elseif (isset($entity)) {
-      // If node don't belong to any group as a group content plugin
-      // we don't need group visibility field.
-      /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
-      $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
 
-      if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
-        unset($form['groups']);
+    // Let's remove the original submit function in favor of this submit.
+    if (isset($form['groups'])) {
+      $entity_types = \Drupal::moduleHandler()->invokeAll('social_group_linked_type');
+
+      if (in_array($form['#entity_type'], $entity_types)) {
+        $form['actions']['submit']['#submit'] = array_filter(
+          $form['actions']['submit']['#submit'],
+          fn (string $callback): bool => $callback !== 'group_content_entity_submit',
+        );
       }
     }
   }
@@ -2092,6 +2106,17 @@ function _social_group_delete_group() {
 }
 
 /**
+ * Get all public groups.
+ */
+function social_group_get_all_public_groups(): array {
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
+    ->condition('type', 'public_group');
+  return $query->execute();
+}
+
+/**
  * Get all open groups.
  */
 function social_group_get_all_open_groups() {
@@ -2103,7 +2128,7 @@ function social_group_get_all_open_groups() {
 }
 
 /**
- * Get all open groups.
+ * Get all groups.
  */
 function social_group_get_all_groups() {
   $query = \Drupal::service('entity_type.manager')
@@ -2114,6 +2139,24 @@ function social_group_get_all_groups() {
 }
 
 /**
+ * Implements hook_group_types_alter().
+ *
+ * Remove 'group_type_<group_type>' fields from the node and user entities as
+ * these fields providing issues with cross posting and translations. Also, we
+ * do not use these fields in Open Social, so we can disable them.
+ */
+function social_group_group_types_alter(array &$types): void {
+  $types = array_fill_keys(array_keys($types), FALSE);
+}
+
+/**
+ * Implements hook_social_group_linked_type().
+ */
+function social_group_social_group_linked_type(): string {
+  return 'node';
+}
+
+/**
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
@@ -2121,9 +2164,13 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
     return;
   }
 
-  $entity_types = ['node', 'user'];
-  if (in_array($entity_type->id(), $entity_types)) {
-    if ($entity_type->id() === 'node') {
+  $entity_types = \Drupal::moduleHandler()->invokeAll('group_types');
+  \Drupal::moduleHandler()->alter('group_types', $entity_types);
+
+  if (isset($entity_types[$entity_type->id()])) {
+    $entity_types = \Drupal::moduleHandler()->invokeAll('social_group_linked_type');
+
+    if (in_array($entity_type->id(), $entity_types)) {
       /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
       $fields['groups']
         ->setLabel(t('Group'))
@@ -2136,15 +2183,6 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
           'weight' => 16,
         ])
         ->setDisplayConfigurable('form', TRUE);
-    }
-
-    // Remove 'group_type_<group_type>' fields from the node and user entities
-    // as these fields providing issues with cross posting and translations.
-    // Also, we do not use these fields in Open Social, so we can disable them.
-    /** @var \Drupal\group\Entity\GroupType $group_type */
-    foreach (\Drupal::service('entity_type.manager')->getStorage('group_type')->loadMultiple() as $group_type) {
-      $field_name = 'groups_type_' . $group_type->id();
-      unset($fields[$field_name]);
     }
   }
 }
@@ -2181,12 +2219,6 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
       foreach ($change_fieldgroup_titles as $fieldgroup_title) {
         if (isset($form['#fieldgroups'][$fieldgroup_title])) {
           $form['#fieldgroups'][$fieldgroup_title]->label = t('Access permissions')->render();
-        }
-      }
-      // Lets remove the original submit function in favor of this submit.
-      foreach ($form['actions']['submit']['#submit'] as $submit_key => $submit_function) {
-        if ($submit_function === 'group_content_entity_submit') {
-          unset($form['actions']['submit']['#submit'][$submit_key]);
         }
       }
 
@@ -3174,4 +3206,36 @@ function social_group_social_core_default_main_menu_links_alter(array &$links) {
   if ($link instanceof MenuLinkContentInterface) {
     $links[] = $link;
   }
+}
+
+/**
+ * Implements hook_social_core_title().
+ */
+function social_group_social_core_title(): array {
+  return [
+    'group_content' => [
+      'route_name' => 'entity.group_content.create_form',
+      'callback' => function () {
+        /** @var \Drupal\social_group\SocialGroupInterface $group */
+        $group = \Drupal::routeMatch()->getParameter('group');
+
+        $plugin_id = \Drupal::routeMatch()->getParameter('plugin_id');
+
+        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+
+        $definition = \Drupal::entityTypeManager()
+          ->getDefinition($plugin->getEntityTypeId());
+
+        if (
+          $definition !== NULL &&
+          ($entity_type_id = $definition->getBundleEntityType()) !== NULL
+        ) {
+          return \Drupal::entityTypeManager()->getStorage($entity_type_id)
+            ->load($plugin->getEntityBundle());
+        }
+
+        return NULL;
+      },
+    ],
+  ];
 }
