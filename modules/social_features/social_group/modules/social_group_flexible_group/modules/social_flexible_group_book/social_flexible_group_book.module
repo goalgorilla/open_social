@@ -90,6 +90,9 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     $form['#group_children']['groups'] = 'group_visibility';
   }
 
+  unset($form['book']['bid']['#options'][0]);
+  $form['book']['bid']['#required'] = TRUE;
+
   // We need add this option here because by default "book" module require
   // a specific global permission - "create new books".
   // Group managers with only "verified" global role should be able to create
@@ -97,7 +100,7 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   $nid = !$node->isNew() ? $node->id() : 'new';
   $options = $form['book']['bid']['#options'];
   if (!isset($options[$nid])) {
-    if ($nid == 'new' || ($nid != $node->book['original_bid'])) {
+    if ($nid === 'new' || ($nid !== $node->book['original_bid'])) {
       // The node can become a new book, if it is not one already.
       $form['book']['bid']['#options'] = [$nid => t('- Create a new book -')] + $options;
     }
