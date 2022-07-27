@@ -50,4 +50,4 @@ jobs:
 
       # For Stability 1 we also run Drupal UI install tests, for that we need to reset the database etc.
       - name: Run Drupal UI install test
-        run: docker exec -i social_ci_behat bash /var/www/scripts/social/behatstability.sh "install --stop-on-failure --strict  --colors"
+        run: docker exec -i social_ci_web bash /var/www/scripts/social/behatstability.sh "install --stop-on-failure --strict --colors"
