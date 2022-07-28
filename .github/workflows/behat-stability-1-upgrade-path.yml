@@ -79,6 +79,11 @@ jobs:
       - name: Run the updates
         run: docker exec -i social_ci_web bash /var/www/scripts/social/install/update.sh
 
+      - name: Restart Docker containers
+        run: |
+          docker-compose -f docker-compose-ci.yml stop
+          docker-compose -f docker-compose-ci.yml up -d
+
       # Run the upgrade path behat tests
       - name: Run Integration tests
         run: docker exec -i social_ci_web sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict  --colors"
