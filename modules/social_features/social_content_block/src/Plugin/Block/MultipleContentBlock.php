@@ -5,6 +5,7 @@ namespace Drupal\social_content_block\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\taxonomy\TermInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -139,6 +140,13 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
       '#default_value' => $terms,
     ];
 
+    $form['content']['content_tags_children'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Content tags children'),
+      '#description' => $this->t('Include all content tags children.'),
+      '#default_value' => $config['content_tags_children'] ?? FALSE,
+    ];
+
     $form['content']['amount'] = [
       '#type' => 'number',
       '#title' => $this->t('Number of items'),
@@ -182,6 +190,10 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
     $this->setConfigurationValue('content_tags', $form_state->getValue([
       'content',
       'content_tags',
+    ]));
+    $this->setConfigurationValue('content_tags_children', $form_state->getValue([
+      'content',
+      'content_tags_children',
     ]));
     $this->setConfigurationValue('amount', $form_state->getValue([
       'content',
@@ -325,6 +337,19 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
       $content_tag_table = "{$type}__social_tagging";
       if ($this->database->schema()->tableExists($content_tag_table)) {
         $tags = array_column($this->getSelectedContentTags(), 'target_id');
+
+        /** @var \Drupal\taxonomy\TermStorage $term_storage */
+        $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
+
+        if ($this->getContentTagsChildren()) {
+          foreach ($tags as $tag) {
+            /** @var \Drupal\taxonomy\TermInterface $term */
+            $term = $term_storage->load($tag);
+            $children = $this->getTermChildren($term);
+            $tags = array_merge($tags, $children);
+          }
+        }
+
         $query->innerJoin($content_tag_table, 'st', "st.entity_id = base_table.$id_key");
         $query->condition('st.social_tagging_target_id', $tags, 'IN');
       }
@@ -348,6 +373,33 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
   }
 
   /**
+   * Returns all term childern.
+   */
+  protected function getTermChildren(TermInterface $term): array {
+    $children = [];
+
+    /** @var array $vid_value */
+    $vid_value = $term->get('vid')->getValue();
+    /** @var string $vid */
+    $vid = end($vid_value);
+
+    /** @var \Drupal\taxonomy\TermStorage $term_storage */
+    $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
+    $tree = $term_storage->loadTree($vid, (int) $term->id());
+
+    if (empty($tree)) {
+      return $children;
+    }
+
+    /** @var \stdClass $child */
+    foreach ($tree as $child) {
+      $children[] = $child->tid;
+    }
+
+    return $children;
+  }
+
+  /**
    * Returns provided amount of items to show.
    */
   protected function getAmountItems(): string {
@@ -366,6 +418,13 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
    */
   protected function getSelectedContentTags(): array {
     return $this->configuration['content_tags'] ?? [];
+  }
+
+  /**
+   * Returns provided content tags.
+   */
+  protected function getContentTagsChildren(): bool {
+    return $this->configuration['content_tags_children'] ?? FALSE;
   }
 
   /**
