@@ -3,7 +3,6 @@ includes:
 
 parameters:
   level: 8
-  phpVersion: 70400
   paths:
       - src
       - modules/custom
@@ -18,7 +17,7 @@ parameters:
     analyse:
       - *SocialProfileTrait.php
   drupal:
-      drupal_root: %currentWorkingDirectory%/core
+      drupal_root: %currentWorkingDirectory%/html/core
       entityMapping:
         activity:
           class:  Drupal\activity_creator\Entity\Activity
@@ -60,7 +59,8 @@ parameters:
   # See https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type
   checkMissingIterableValueType: false
   ignoreErrors:
-      - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
+      - '#Unsafe usage of new static\(\)#'
+      # See - https://github.com/mglaman/drupal-check/pull/187
       # The accessCheck test seems to be horribly broken and providing false positives
       # Disable until https://github.com/mglaman/phpstan-drupal/issues/396 is fixed.
       - "#^Missing explicit access check on entity query\\.$#"

@@ -25,7 +25,9 @@
 - [ ] All automated tests are green
 - [ ] Functional/manual tests of the acceptance criteria are approved
 - [ ] All acceptance criteria were met
-- [ ] If applicable (I.E. new hook_updates) the update path from previous versions (major and minor versions) are tested
+- [ ] New features or changes to existing features are covered by tests, either unit (preferably) or behat
+- [ ] Update path is tested. New hook_updates should respect update order, right naming convention and consider hook_post_update code
+- [ ] Module can be safely uninstalled. Update/implement hook_uninstall and make sure that removed configuration or dependencies are removed/uninstalled
 - [ ] This pull request has all required labels (team/type/priority)
 - [ ] This pull request has a milestone
 - [ ] This pull request has an assignee (if applicable)

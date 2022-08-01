@@ -56,6 +56,43 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op): arr
 }
 
 /**
+ * Implements hook_node_grants_alter().
+ */
+function entity_access_by_field_node_grants_alter(array &$grants, AccountInterface $account, string $op): void {
+  if ($op === 'view') {
+    $entity_type_manager = \Drupal::entityTypeManager();
+
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+    $group_content_storage = $entity_type_manager->getStorage('group_content');
+
+    /** @var \Drupal\user\UserStorageInterface $user_storage */
+    $user_storage = $entity_type_manager->getStorage('user');
+
+    // Get all user's memberships.
+    /** @var \Drupal\user\UserInterface $user */
+    $user = $user_storage->load($account->id());
+    $memberships = $group_content_storage->loadByEntity($user);
+    $gids = [];
+    foreach ($memberships as $membership) {
+      $gids[] = $membership->getGroup()->id();
+    }
+
+    // Load node types.
+    $node_types = \Drupal::entityTypeManager()
+      ->getStorage('node_type')
+      ->getQuery()
+      ->execute();
+
+    // Remove grants of node type if user are not a member in this group.
+    foreach ($node_types as $node_type) {
+      if (isset($grants["gnode:$node_type"])) {
+        $grants["gnode:$node_type"] = array_intersect($grants["gnode:$node_type"], $gids);
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_node_access_records().
  */
 function entity_access_by_field_node_access_records(NodeInterface $node): array {

@@ -4,11 +4,15 @@ namespace Drupal\social_core\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
-use Drupal\node\NodeTypeInterface;
+use Drupal\social_core\InviteService;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -20,51 +24,78 @@ class SocialCoreController extends ControllerBase {
   use ViewsBulkOperationsFormTrait;
 
   /**
-   * The tempstore service.
-   *
-   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   * The private temporary storage factory.
    */
-  protected $tempStoreFactory;
+  protected PrivateTempStoreFactory $tempStoreFactory;
 
   /**
-   * Views Bulk Operations action processor.
-   *
-   * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
+   * The Views Bulk Operations action processor.
    */
-  protected $actionProcessor;
+  protected ViewsBulkOperationsActionProcessorInterface $actionProcessor;
+
+  /**
+   * The currently active route match object.
+   */
+  private RouteMatchInterface $routeMatch;
+
+  /**
+   * The invite service.
+   */
+  private InviteService $invite;
 
   /**
    * SocialGroupController constructor.
    *
-   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory
-   *   Private temporary storage factory.
-   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
-   *   Views Bulk Operations action processor.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
+   *   The private temporary storage factory.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $action_processor
+   *   The Views Bulk Operations action processor.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The currently active route match object.
+   * @param \Drupal\social_core\InviteService $invite
+   *   The invite service.
    */
-  public function __construct(PrivateTempStoreFactory $tempStoreFactory, ViewsBulkOperationsActionProcessorInterface $actionProcessor) {
-    $this->tempStoreFactory = $tempStoreFactory;
-    $this->actionProcessor = $actionProcessor;
+  public function __construct(
+    PrivateTempStoreFactory $temp_store_factory,
+    ViewsBulkOperationsActionProcessorInterface $action_processor,
+    ModuleHandlerInterface $module_handler,
+    RouteMatchInterface $route_match,
+    InviteService $invite
+  ) {
+    $this->tempStoreFactory = $temp_store_factory;
+    $this->actionProcessor = $action_processor;
+    $this->moduleHandler = $module_handler;
+    $this->routeMatch = $route_match;
+    $this->invite = $invite;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('tempstore.private'),
-      $container->get('views_bulk_operations.processor')
+      $container->get('views_bulk_operations.processor'),
+      $container->get('module_handler'),
+      $container->get('current_route_match'),
+      $container->get('social_core.invite'),
     );
   }
 
   /**
    * Custom function for returning markup on the access denied page.
    */
-  public function accessDenied() {
+  public function accessDenied(): array {
     // Get the front page URL.
     $frontpage = $this->config('system.site')->get('page.front');
 
     // Determine the message we want to set.
-    $text = $this->t("<p>You have insufficient permissions to view the page you're trying to access. There could be several reasons for this:</p><ul><li>You are trying to edit content you're not allowed to edit.</li><li>You are trying to view content (from a group) you don't have access to.</li><li>You are trying to access administration pages.</li></ul><p>Click the back button of your browser to go back where you came from or click <a href=\":url\">here</a> to go to the homepage</p>", [':url' => $frontpage]);
+    $text = $this->t(
+      "<p>You have insufficient permissions to view the page you're trying to access. There could be several reasons for this:</p><ul><li>You are trying to edit content you're not allowed to edit.</li><li>You are trying to view content (from a group) you don't have access to.</li><li>You are trying to access administration pages.</li></ul><p>Click the back button of your browser to go back where you came from or click <a href=\":url\">here</a> to go to the homepage</p>",
+      [':url' => $frontpage],
+    );
 
     // Return the message in the render array.
     return ['#markup' => $text];
@@ -73,11 +104,8 @@ class SocialCoreController extends ControllerBase {
   /**
    * Empty page for the homepage.
    */
-  public function stream() {
-    $element = [
-      '#markup' => '',
-    ];
-    return $element;
+  public function stream(): array {
+    return ['#markup' => ''];
   }
 
   /**
@@ -90,7 +118,11 @@ class SocialCoreController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    */
-  public function updateSelection($view_id, $display_id, Request $request) {
+  public function updateSelection(
+    string $view_id,
+    string $display_id,
+    Request $request
+  ): AjaxResponse {
     $view_data = $this->getTempstoreData($view_id, $display_id);
     if (empty($view_data)) {
       throw new NotFoundHttpException();
@@ -112,7 +144,7 @@ class SocialCoreController extends ControllerBase {
     // If the event id doesn't match.
     // We reset the selection and update the group.
     if ($view_id === 'event_manage_enrollments') {
-      // Get's overridden by GVBO in to the group argument.
+      // Gets overridden by GVBO in to the group argument.
       $event_id = $request->attributes->get('group');
       if (!empty($event_id) && !empty($view_data['event_id'])) {
         if ($event_id !== $view_data['event_id']) {
@@ -167,65 +199,90 @@ class SocialCoreController extends ControllerBase {
 
     $this->setTempstoreData($view_data);
 
-    $count = empty($view_data['exclude_mode']) ? count($view_data['list']) : $view_data['total_results'] - count($view_data['list']);
+    $count = empty($view_data['exclude_mode'])
+      ? count($view_data['list'])
+      : $view_data['total_results'] - count($view_data['list']);
 
-    $response = new AjaxResponse();
-    $response->setData([
-      'count' => $count,
-      'selection_info' => $this->formatPlural($count, '<b><em class="placeholder">1</em> Member</b> is selected', '<b><em class="placeholder">@count</em> Members</b> are selected'),
-    ]);
-    return $response;
+    return (new AjaxResponse())
+      ->setData([
+        'count' => $count,
+        'selection_info' => $this->formatPlural(
+          $count,
+          '<b><em class="placeholder">1</em> Member</b> is selected',
+          '<b><em class="placeholder">@count</em> Members</b> are selected',
+        ),
+      ]);
   }
 
   /**
    * Redirects a user to the group or events invite page, or home if empty.
-   *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns a redirect to the events of the currently logged in user.
    */
-  public function myInvitesUserPage() {
-    /** @var \Drupal\social_core\InviteService $core_invites */
-    $core_invites = \Drupal::service('social_core.invite');
-    // Only when there are actual Invite plugins enabled.
-    if (!empty($core_invites->getInviteData('name'))) {
-      return $this->redirect($core_invites->getInviteData('name'), [
-        'user' => $this->currentUser()->id(),
-      ]);
-    }
+  public function myInvitesUserPage(): RedirectResponse {
+    /** @var string $invite */
+    $invite = $this->invite->getInviteData('name');
 
-    // If there are no invites found or no module enabled
-    // lets redirect user to their stream.
-    return $this->redirect('social_user.user_home', [
-      'user' => $this->currentUser()->id(),
-    ]);
+    $route_name = !empty($invite)
+      // Only when there are actual Invite plugins enabled.
+      ? $invite
+      // If there are no invites found or no module enabled lets redirect user
+      // to their stream.
+      : 'social_user.user_home';
+
+    return $this->redirect($route_name, ['user' => $this->currentUser()->id()]);
   }
 
   /**
-   * The _title_callback for the node.add route.
-   *
-   * @param \Drupal\node\NodeTypeInterface $node_type
-   *   The current node.
-   *
-   * @return string
-   *   The page title.
+   * The _title_callback for the entity creation route.
    */
-  public function addPageTitle(NodeTypeInterface $node_type) {
-    // The node_types that have a different article than a.
-    $node_types = [
-      'event' => 'an',
-    ];
+  public function addPageTitle(): string {
+    $titles = $this->moduleHandler()->invokeAll('social_core_title');
+    $this->moduleHandler()->alter('social_core_title', $titles);
 
-    // Make sure extensions can change this as well.
-    \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
+    if (!empty($titles['node'])) {
+      if (!isset($titles['node']['bundles'])) {
+        $titles['node']['bundles'] = [];
+      }
 
-    if ($node_type !== NULL && array_key_exists($node_type->id(), $node_types)) {
-      return $this->t('Create @article @name', [
-        '@article' => $node_types[$node_type->id()],
-        '@name' => $node_type->label(),
-      ]);
+      $this->moduleHandler()->alterDeprecated(
+        'Deprecated in social:11.4.0 and is removed from social:12.0.0. Use hook_social_core_title_alter instead. See https://www.drupal.org/node/3285045',
+        'social_node_title_prefix_articles',
+        $titles['node']['bundles'],
+      );
     }
 
-    return $this->t('Create a @name', ['@name' => $node_type->label()]);
+    if (($route_name = $this->routeMatch->getRouteName()) === NULL) {
+      return '';
+    }
+
+    $route_name = explode('.', $route_name);
+    $entity_type_id = $route_name[count($route_name) - 2];
+
+    if (isset($titles[$entity_type_id]['callback'])) {
+      $entity_type = $titles[$entity_type_id]['callback']();
+    }
+    else {
+      $definition = $this->entityTypeManager()->getDefinition($entity_type_id);
+
+      if (
+        $definition !== NULL &&
+        ($bundle_entity_type = $definition->getBundleEntityType()) !== NULL
+      ) {
+        $entity_type = $this->routeMatch->getParameter($bundle_entity_type);
+      }
+    }
+
+    if (
+      isset($entity_type) &&
+      $entity_type instanceof EntityInterface &&
+      ($label = $entity_type->label()) !== NULL
+    ) {
+      return $this->t('Create @article @name', [
+        '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? 'a',
+        '@name' => mb_strtolower($label),
+      ])->render();
+    }
+
+    return '';
   }
 
 }

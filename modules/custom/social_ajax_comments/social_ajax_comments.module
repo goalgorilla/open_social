@@ -193,7 +193,13 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
         preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
       ) {
         $content = &$item['data'];
-        $content = substr($content, strrpos(substr($content, 0, strpos($content, $matches[1])), '<'));
+
+        $strpos_matches = strpos($content, $matches[1]);
+        $strpos_substrng = strrpos(substr($content, 0, (int) $strpos_matches), '<');
+
+        if ($strpos_matches !== FALSE && $strpos_substrng !== FALSE) {
+          $content = substr($content, $strpos_substrng);
+        }
         return;
       }
     }

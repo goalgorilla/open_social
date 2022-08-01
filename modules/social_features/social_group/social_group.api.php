@@ -105,6 +105,21 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
 }
 
 /**
+ * Provide entity type which entity display group reference field.
+ *
+ * @return string
+ *   The entity type identifier.
+ *
+ * @see social_group_entity_base_field_info_alter()
+ * @see social_group_form_alter()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_linked_type() {
+  return 'node';
+}
+
+/**
  * Provide a method to return node which was moved to another group.
  *
  * @param \Drupal\node\NodeInterface $node

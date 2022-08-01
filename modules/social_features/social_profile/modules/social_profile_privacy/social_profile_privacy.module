@@ -216,7 +216,10 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
     ];
   }
 
-  $form['profile_privacy']['fields'] = ['#type' => 'container'];
+  $form['profile_privacy']['fields'] = [
+    '#type' => 'container',
+    '#weight' => 10,
+  ];
 
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');

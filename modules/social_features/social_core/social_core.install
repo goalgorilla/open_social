@@ -914,20 +914,22 @@ function social_core_update_8026() {
         ->range(0, 1);
       $crop = $query->execute();
 
-      /** @var \Drupal\crop\Entity\Crop $crop */
-      $crop = Crop::load(current($crop));
+      if (is_array($crop)) {
+        /** @var \Drupal\crop\Entity\Crop $crop */
+        $crop = Crop::load(current($crop));
 
-      // Crop object found, set the crop type to hero_an.
-      if ($crop instanceof Crop) {
-        $size = $crop->size();
+        // Crop object found, set the crop type to hero_an.
+        if ($crop instanceof Crop) {
+          $size = $crop->size();
 
-        // We need to adjust the width, as this is the safest way to set the new
-        // crop automatically.
-        // Aspect ratio was 2.836879433 (width 1200, height 423). It became
-        // 2.448979592 (width 1200, height 490).
-        $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
-        $crop->set('type', 'hero_an');
-        $crop->save();
+          // We need to adjust the width, as this is the safest way
+          // to set the new crop automatically.
+          // Aspect ratio was 2.836879433 (width 1200, height 423). It became
+          // 2.448979592 (width 1200, height 490).
+          $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
+          $crop->set('type', 'hero_an');
+          $crop->save();
+        }
       }
     }
   }
@@ -1142,7 +1144,7 @@ function social_core_update_8806(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
 
   $parts = explode('.', $name);
@@ -1572,4 +1574,18 @@ function social_core_update_11401(): void {
   $config_path = \Drupal::service('extension.list.module')->getPath('social_core') . '/config/static';
   $source = new FileStorage($config_path);
   $config_storage->write('core.entity_view_mode.node.email_card', (array) $source->read('core.entity_view_mode.node.email_card_11401'));
+}
+
+/**
+ * Remove block visibility settings that were added in the wrong place.
+ */
+function social_core_update_11402(array &$sandbox): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

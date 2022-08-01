@@ -1451,7 +1451,7 @@ function social_event_update_8805(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
 
   $parts = explode('.', $name);
@@ -2140,6 +2140,20 @@ function social_event_update_11401(): void {
  * Update event display.
  */
 function social_event_update_11402(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_event_update_11403(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

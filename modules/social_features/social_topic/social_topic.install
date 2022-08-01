@@ -321,7 +321,7 @@ function social_topic_update_8907(&$sandbox) {
     }
 
     $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
+    $name = (string) $names[$sandbox['current']++];
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
@@ -499,4 +499,18 @@ function social_topic_update_11201(): void {
   $source = new FileStorage($config_path);
 
   $config_storage->write('language.content_settings.taxonomy_term.topic_types', (array) $source->read('language.content_settings.taxonomy_term.topic_types_11201'));
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_topic_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

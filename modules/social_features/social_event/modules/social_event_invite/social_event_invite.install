@@ -183,3 +183,17 @@ function social_event_invite_update_11001(): void {
     $field_config_storage->create($data)->save();
   }
 }
+
+/**
+ * Update exposed filter button name.
+ */
+function social_event_invite_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

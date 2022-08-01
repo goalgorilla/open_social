@@ -32,7 +32,7 @@ social_core.my_invites:
 social_core.dashboard:
   path: '/admin/dashboard'
   defaults:
-    _controller: '\Drupal\system\Controller\SystemController::overview'
+    _controller: '\Drupal\social_core\Controller\DashboardController::overview'
     link_id: 'social_core.dashboard'
     _title: 'Dashboard'
   requirements:
@@ -91,5 +91,13 @@ social_core.dashboard.data_collection_usage:
   defaults:
     _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
     _title: 'Data collection and usage'
+  requirements:
+    _permission: 'access social_core dashboard'
+
+social_core.dashboard.appearance.active_homepage_configuration:
+  path: '/admin/dashboard/homepage-settings'
+  defaults:
+    _controller: '\Drupal\social_core\Controller\DashboardController::redirectCustomizedHomepage'
+    _title: 'Customize home page'
   requirements:
     _permission: 'access social_core dashboard'

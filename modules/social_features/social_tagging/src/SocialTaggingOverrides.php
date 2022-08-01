@@ -58,6 +58,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.events',
       'views.view.group_topics',
       'views.view.group_events',
+      'views.view.group_books',
       'views.view.newest_groups',
       'views.view.newest_users',
       'core.entity_view_display.profile.profile.default',
@@ -252,11 +253,12 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.events' => 'events_overview',
       'views.view.group_topics' => 'default',
       'views.view.group_events' => 'default',
+      'views.view.group_books' => 'default',
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
     if ($tag_service->profileActive()) {
-      $config_overviews['views.view.newest_users'] = 'default';
+      $config_overviews['views.view.newest_users'] = 'page_newest_users';
     }
 
     foreach ($config_overviews as $config_name => $display) {
@@ -273,7 +275,9 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
           $group++;
         }
 
-        $relationship = ($config_name === 'views.view.group_topics' || $config_name === 'views.view.group_events') ? 'gc__node' : 'none';
+        $relationship = in_array($config_name, ['views.view.group_topics', 'views.view.group_events', 'views.view.group_books'])
+          ? 'gc__node'
+          : 'none';
 
         // Select the correct table, based on the config.
         switch ($config_name) {

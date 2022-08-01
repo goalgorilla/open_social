@@ -7,10 +7,13 @@
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 
 /**
@@ -79,7 +82,7 @@ function social_follow_user_entity_view_display_alter(EntityViewDisplayInterface
 }
 
 /**
- * Implements hook_follow_user_flag_action_access().
+ * Implements hook_flag_action_access().
  */
 function social_follow_user_flag_action_access(
   string $action,
@@ -87,9 +90,15 @@ function social_follow_user_flag_action_access(
   AccountInterface $account,
   EntityInterface $flaggable = NULL
 ): AccessResultInterface {
+  if (!$flaggable instanceof Profile) {
+    return AccessResult::neutral();
+  }
+  $status = \Drupal::service('social_follow_user.helper')
+    ->isFollowingAllowed($flaggable);
+
   return AccessResult::forbiddenIf(
-    $flaggable instanceof ProfileInterface &&
-    $flaggable->getOwnerId() === $account->id(),
+    $flaggable->getOwnerId() === $account->id() ||
+    ($action === 'flag' && !$status),
     'User should not be able to follow own profile.',
   );
 }
@@ -151,7 +160,14 @@ function social_follow_user_theme(): array {
  * Implements hook_preprocess_HOOK().
  */
 function social_follow_user_preprocess_profile(array &$variables): void {
-  if ($variables['elements']['#view_mode'] === 'teaser') {
+  // Skip any action if "follow user" is not active.
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    return;
+  }
+
+  $view_mode = $variables['elements']['#view_mode'];
+
+  if ($view_mode === 'teaser') {
     // Display related teaser tag for each user follow list.
     switch (\Drupal::routeMatch()->getRouteName()) {
       case 'view.followers_user.page_user_followers':
@@ -162,7 +178,22 @@ function social_follow_user_preprocess_profile(array &$variables): void {
         $variables['following'] = TRUE;
         break;
     }
+    _social_follow_user_check_following_status($variables);
   }
+  if ($view_mode === 'preview') {
+    _social_follow_user_check_following_status($variables);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_user_preprocess_profile__profile__statistic(array &$variables): void {
+  // Skip any action if "follow user" is not active.
+  if (!\Drupal::config('social_follow_user.settings')->get('status')) {
+    return;
+  }
+  _social_follow_user_check_following_status($variables);
 }
 
 /**
@@ -185,5 +216,70 @@ function social_follow_user_preprocess_flag(array &$variables): void {
     if (\Drupal::config('social_follow_user.settings')->get('status')) {
       $variables['follow_user'] = 'follow_user';
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ */
+function social_follow_user_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
+  $profile = _social_profile_get_profile_from_route();
+  $active = \Drupal::config('social_follow_user.settings')->get('status');
+
+  if ($profile instanceof Profile && $active) {
+    $following_enabled = \Drupal::service('social_follow_user.helper')
+      ->getFollowingStatus($profile);
+
+    $form['profile_privacy']['field_profile_allow_following'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Allow members to follow me'),
+      '#default_value' => $following_enabled,
+      '#description' => t('This selection allows you to turn on the ability for 
+members to follow your activity and receive notifications about new content you
+create.'),
+      '#attributes' => [
+        'data-switch' => TRUE,
+      ],
+    ];
+
+    $form['actions']['submit']['#submit'][] = '_social_follow_user_form_submit';
+  }
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   The user edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_follow_user_form_submit(array $form, FormStateInterface $form_state): void {
+  $profile = _social_profile_get_profile_from_route();
+  $profile_privacy = $form_state->getValue('profile_privacy');
+
+  if ($profile instanceof Profile) {
+    $uid = $profile->getOwnerId();
+
+    if (isset($profile_privacy['field_profile_allow_following'])) {
+      // Save following status in the user data.
+      $profile->set('field_profile_allow_following', $profile_privacy['field_profile_allow_following']);
+      $profile->save();
+    }
+    // Invalidate profile cache tags.
+    Cache::invalidateTags(['profile:' . $uid]);
+  }
+}
+
+/**
+ * Checks following status due to privacy settings.
+ *
+ * @param array $variables
+ *   Array with variables of a profile.
+ */
+function _social_follow_user_check_following_status(array &$variables): void {
+  if (\Drupal::service('social_follow_user.helper')
+    ->isFollowingAllowed($variables['profile'])) {
+    $variables['following_enabled'] = TRUE;
   }
 }
