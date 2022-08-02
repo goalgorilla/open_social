@@ -52,6 +52,12 @@ interface SocialOutOfOfficeHelperInterface {
    */
   public function getOutOfOfficeUserMessage(ProfileInterface $profile): array;
 
+  /**
+   * Show OoO status message.
+   *
+   * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *   Profile entity.
+   */
   public function showOutOfOfficeStatusMessage(ProfileInterface $profile): void;
 
 }

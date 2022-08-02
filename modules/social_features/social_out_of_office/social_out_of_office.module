@@ -115,29 +115,33 @@ function social_out_of_office_entity_presave(EntityInterface $entity): void {
     !($entity instanceof PostInterface) &&
     !($entity instanceof CommentInterface)
   ) {
-   return;
+    return;
   }
+  $entity_type_manager = \Drupal::entityTypeManager();
+
   $post_comment_related_profiles = [];
 
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile_storage = $entity_type_manager->getStorage('profile');
 
   // Comment entity type.
   if ($entity instanceof CommentInterface) {
     $body_value = $entity->get('field_comment_body')->getValue();
 
     // If commented entity author is OoO we should show message about that.
-    $commented_post = $entity->getCommentedEntity();
-    if ($commented_post) {
-      $post_author_id = $commented_post->getOwnerId();
-      $post_author = \Drupal::entityTypeManager()->getStorage('user')->load($post_author_id);
+    /** @var \Drupal\social_post\Entity\PostInterface $commented_entity */
+    /** @var \Drupal\node\NodeInterface $commented_entity */
+    $commented_entity = $entity->getCommentedEntity();
+    if ($commented_entity !== NULL) {
+      $author_id = $commented_entity->getOwnerId();
+      $author = $entity_type_manager->getStorage('user')->load($author_id);
 
-      if (!($post_author instanceof UserInterface)) {
+      if (!($author instanceof UserInterface)) {
         return;
       }
 
       /** @var \Drupal\profile\Entity\Profile $profile */
-      $profile = $profile_storage->loadByUser($post_author, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
+      $profile = $profile_storage->loadByUser($author, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
       $post_comment_related_profiles[] = $profile;
     }
 
