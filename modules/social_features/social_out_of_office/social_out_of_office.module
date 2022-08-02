@@ -2,15 +2,17 @@
 
 /**
  * @file
- * Contains social_out_of_office.module..
+ * Contains social_out_of_office.module.
  */
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\user\UserInterface;
 
 /**
  * @file
@@ -21,23 +23,46 @@ use Drupal\social_post\Entity\PostInterface;
  * Implements hook_preprocess_HOOK().
  */
 function social_out_of_office_preprocess_profile(array &$variables): void {
-  if ($variables['elements']['#view_mode'] == 'statistic') {
+  if ($variables['elements']['#view_mode'] === 'statistic') {
+    /** @var \Drupal\profile\Entity\Profile $profile */
     $profile = $variables['profile'];
 
-    $dates = social_out_of_office_get_ooo_dates($profile);
+    /** @var \Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface $ooo_helper */
+    $ooo_helper = \Drupal::service('social_out_of_office.helper');
 
-    if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
-      $message = $profile->get('field_profile_message_ooo')->getValue();
-      $message = ['#markup' => $message[0]['value']];
+    // Check if user is out of office.
+    if ($ooo_helper->isUserOutOfOffice($profile)) {
+      // Set status message.
       $variables['profile_ooo_status'] = t('Currently out of office');
-      $variables['profile_message_ooo'] = $message;
 
-      $alt_contact_person = $profile->get('field_profile_alt_contact')->referencedEntities()[0];
-      if ($alt_contact_person) {
-        $alt_contact_person_name = $alt_contact_person->getAccountName();
-        $alt_contact_person_url = Url::fromRoute('social_user.stream', ['user' => $alt_contact_person->id()]);
-        $variables['profile_alt_contact_person_name'] = $alt_contact_person_name;
-        $variables['profile_alt_contact_person_url'] = $alt_contact_person_url;
+      // Retrieve, prepare and set a message from user profile.
+      $message = $profile->get('field_profile_message_ooo')->getValue();
+      $variables['profile_message_ooo'] = ['#markup' => $message[0]['value'] ?? ''];
+
+      // If there is an alternative person we should show them out.
+      if (!$profile->get('field_profile_alt_contact')->isEmpty()) {
+        // Retrieve and show an alternative person, if filled.
+        $alt_contact_person_user = $profile->get('field_profile_alt_contact')->referencedEntities()[0];
+
+        /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
+        $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+        /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+        $alt_contact_person = $profile_storage->loadByUser($alt_contact_person_user, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
+
+        if ($alt_contact_person instanceof ProfileInterface) {
+          /** @var \Drupal\social_profile\SocialProfileNameService $profile_name_service */
+          $profile_name_service = \Drupal::service('social_profile.name_service');
+
+          // Get generated profile name.
+          $alt_contact_person_name = $profile_name_service->getProfileName($alt_contact_person);
+          // Prepare contact person URL.
+          $alt_contact_person_url = Url::fromRoute('social_user.stream', ['user' => $alt_contact_person->id()]);
+
+          // Add extra variables with necessary data.
+          $variables['profile_alt_contact_person_name'] = $alt_contact_person_name;
+          $variables['profile_alt_contact_person_url'] = $alt_contact_person_url;
+        }
       }
     }
   }
@@ -45,27 +70,36 @@ function social_out_of_office_preprocess_profile(array &$variables): void {
 
 /**
  * Implements hook_preprocess_user().
- *
- * Show status in private messaging thread
- * if someone is out of office.
  */
 function social_out_of_office_preprocess_user(array &$variables): void {
-  if ($variables['elements']['#view_mode'] == 'private_message_author') {
+  // Show status in private messaging thread if someone is out of office.
+  if ($variables['elements']['#view_mode'] === 'private_message_author') {
     $current_user = \Drupal::currentUser()->getAccount();
     $user = $variables['elements']['#user'];
 
     if ($current_user->id() !== $user->id()) {
-      $profile_type = 'profile';
       /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
       $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-      /** @var \Drupal\profile\Entity\Profile $profile */
-      $profile = $profile_storage->loadByUser($user, $profile_type);
 
-      $dates = social_out_of_office_get_ooo_dates($profile);
-      if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
-        $suffix = $variables['content']['linked_username']['#suffix'];
-        $suffix = '<span> ' . t('is out of office from') . ' ' . $dates['start'] . ' ' . t('to') . " " . $dates['end'] . " " . '</span>' . $suffix;
-        $variables['content']['linked_username']['#suffix'] = $suffix;
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = $profile_storage->loadByUser($user, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
+
+      if ($profile instanceof ProfileInterface) {
+        /** @var \Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface $ooo_helper */
+        $ooo_helper = \Drupal::service('social_out_of_office.helper');
+
+        // Check if user is out of office.
+        if ($ooo_helper->isUserOutOfOffice($profile)) {
+          // Retrieve out of office dates.
+          $dates = $ooo_helper->getOutOfOfficeDates($profile);
+
+          $suffix = t('<span> is out of office from @start_date to @end_date </span>', [
+            '@start_date' => $dates['start'],
+            '@end_date' => $dates['end'],
+          ]);
+          $suffix .= $variables['content']['linked_username']['#suffix'];
+          $variables['content']['linked_username']['#suffix'] = $suffix;
+        }
       }
     }
   }
@@ -73,210 +107,160 @@ function social_out_of_office_preprocess_user(array &$variables): void {
 
 /**
  * Implements hook_entity_presave().
- *
- * Show message about users that out of office
- * if someone mentioned them in post or comment.
  */
 function social_out_of_office_entity_presave(EntityInterface $entity): void {
+  // Show message about users that out of office if someone mentioned them in
+  // post or comment.
+  if (
+    !($entity instanceof PostInterface) &&
+    !($entity instanceof CommentInterface)
+  ) {
+   return;
+  }
   $post_comment_related_profiles = [];
 
-  $profile_type = 'profile';
   /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
   $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if ($entity instanceof PostInterface) {
-    $body_value = $entity->get('field_post')->getValue();
-    $post_author_id = $entity->get('user_id')->getString();
-    $post_author = \Drupal::entityTypeManager()->getStorage('user')->load($post_author_id);
-    if (!$post_author) {
-      return;
-    }
-    /** @var \Drupal\profile\Entity\Profile $profile */
-    $profile = $profile_storage->loadByUser($post_author, $profile_type);
-    $post_comment_related_profiles[] = $profile;
-  }
-  elseif ($entity instanceof CommentInterface) {
+
+  // Comment entity type.
+  if ($entity instanceof CommentInterface) {
     $body_value = $entity->get('field_comment_body')->getValue();
+
+    // If commented entity author is OoO we should show message about that.
     $commented_post = $entity->getCommentedEntity();
     if ($commented_post) {
-      $post_author_id = $commented_post->get('user_id')->getString();
+      $post_author_id = $commented_post->getOwnerId();
       $post_author = \Drupal::entityTypeManager()->getStorage('user')->load($post_author_id);
-      if (!$post_author) {
+
+      if (!($post_author instanceof UserInterface)) {
         return;
       }
+
       /** @var \Drupal\profile\Entity\Profile $profile */
-      $profile = $profile_storage->loadByUser($post_author, $profile_type);
+      $profile = $profile_storage->loadByUser($post_author, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
       $post_comment_related_profiles[] = $profile;
     }
 
+    // If parent comment author is OoO we should show message about that.
     $parent_comment = $entity->getParentComment();
     if ($parent_comment) {
       $parent_comment_author = $parent_comment->getOwner();
       /** @var \Drupal\profile\Entity\Profile $profile */
-      $profile = $profile_storage->loadByUser($parent_comment_author, $profile_type);
+      $profile = $profile_storage->loadByUser($parent_comment_author, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
       $post_comment_related_profiles[] = $profile;
     }
   }
+  // Post entity type.
   else {
-    return;
+    $body_value = $entity->get('field_post')->getValue();
   }
-  $messages = [];
-  $body_value = $body_value[0]['value'];
-  $matches = NULL;
-  preg_match_all('[~[0-9]]', $body_value, $matches);
-  foreach ($matches[0] as $value) {
-    $id = str_replace('~', '', $value);
-    /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-    $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-    /** @var \Drupal\profile\Entity\Profile $profile */
-    $profile = $profile_storage->load($id);
 
-    $message = social_out_of_office_get_message_for_user_ooo($profile);
-    if (!empty($message)) {
-      $messages[] = $message;
-    }
-    if (($index = array_search($profile, $post_comment_related_profiles)) !== FALSE) {
-      unset($post_comment_related_profiles[$index]);
+  /** @var \Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface $ooo_helper */
+  $ooo_helper = \Drupal::service('social_out_of_office.helper');
+
+  /** @var \Drupal\social_mentions\SocialMentionsHelperInterface $social_mentions_helper */
+  $social_mentions_helper = \Drupal::service('social_mentions.helper');
+
+  // Prepare body value.
+  $body_value = $body_value[0]['value'] ?? '';
+
+  // Retrieve mentions from body.
+  $mentions = $social_mentions_helper->getMentions($body_value);
+
+  // Go through all mentions.
+  if (!empty($mentions)) {
+    foreach ($mentions as $id) {
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = $profile_storage->load($id);
+
+      if (!($profile instanceof ProfileInterface)) {
+        continue;
+      }
+
+      // Remove mention profile if it is in related profiles array.
+      if (($index = array_search($profile, $post_comment_related_profiles)) !== FALSE) {
+        unset($post_comment_related_profiles[$index]);
+      }
+
+      // Show out of office message that contains in user profile.
+      $ooo_helper->showOutOfOfficeStatusMessage($profile);
     }
   }
+
+  // Show OoO messages for related profiles.
   foreach ($post_comment_related_profiles as $post_comment_related_profile) {
-    $message = social_out_of_office_get_message_for_user_ooo($post_comment_related_profile);
-    if (!empty($message)) {
-      $messages[] = $message;
-    }
+    // Show out of office message that contains in user profile.
+    $ooo_helper->showOutOfOfficeStatusMessage($post_comment_related_profile);
   }
-  foreach ($messages as $message) {
-    \Drupal::messenger()->addStatus(t('@name is out of office from @start_date to @end_date. @message', [
-      '@name' => $message['name'],
-      '@start_date' => $message['start_date'],
-      '@end_date' => $message['end_date'],
-      '@message' => $message['message'] ? '"' . strip_tags($message['message']) . '"' : '',
-    ]));
-  }
-
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_out_of_office_form_private_message_add_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  $form['actions']['submit']['#submit'][] = 'social_out_of_office_add_notice_about_users_ooo';
+  // Make sure that we add custom submit handler exactly for create new chat
+  // with user since we already add message about out of office for existing
+  // chats.
+  // @see social_out_of_office_preprocess_user()
+  if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create') {
+    $form['actions']['submit']['#submit'][] = 'social_out_of_office_add_notice_about_users_ooo';
+  }
 }
 
 /**
  * Submit function for 'form_private_message_add' form.
- *
- * Check if any of members is out of office
- * and add status message if yes.
  */
 function social_out_of_office_add_notice_about_users_ooo(array &$form, FormStateInterface $form_state): void {
-  $messages = [];
+  /** @var \Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface $ooo_helper */
+  $ooo_helper = \Drupal::service('social_out_of_office.helper');
+
+  // Check if any of members is out of office and add status message if yes.
   $members = $form_state->getValue('members');
   foreach ($members as $member) {
     foreach ($member as $member_id) {
+      /** @var \Drupal\user\Entity\User $user */
       $user = \Drupal::entityTypeManager()->getStorage('user')->load($member_id);
-      if (!$user) {
+
+      if (!($user instanceof UserInterface)) {
         return;
       }
-      $profile_type = 'profile';
+
       /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
       $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-      /** @var \Drupal\profile\Entity\Profile $profile */
-      $profile = $profile_storage->loadByUser($user, $profile_type);
 
-      $message = social_out_of_office_get_message_for_user_ooo($profile);
-      if (!empty($message)) {
-        $messages[] = $message;
-      }
+      /** @var \Drupal\profile\Entity\Profile $profile */
+      $profile = $profile_storage->loadByUser($user, SocialOutOfOfficeHelperInterface::PROFILE_TYPE);
+
+      // Show out of office message that contains in user profile.
+      $ooo_helper->showOutOfOfficeStatusMessage($profile);
     }
   }
-  foreach ($messages as $message) {
-    \Drupal::messenger()->addStatus(t('@name is out of office from @start_date to @end_date. @message', [
-      '@name' => $message['name'],
-      '@start_date' => $message['start_date'],
-      '@end_date' => $message['end_date'],
-      '@message' => $message['message'] ? '"' . strip_tags($message['message']) . '"' : '',
-    ]));
-  }
-}
-
-/**
- * Function get from profile data from out of office fields.
- *
- * @param \Drupal\profile\Entity\Profile $profile
- *   Profile entity.
- *
- * @return array
- *   Data from profile OoO fields.
- */
-function social_out_of_office_get_message_for_user_ooo(Profile $profile): array {
-  $dates = social_out_of_office_get_ooo_dates($profile);
-  if ($dates['start'] <= $dates['today'] && $dates['end'] >= $dates['today']) {
-    $name = $profile->get('profile_name')->getString();
-    $message = $profile->get('field_profile_message_ooo')->getValue();
-    $message = $message[0]['value'];
-    return [
-      'name' => $name,
-      'start_date' => $dates['start'],
-      'end_date' => $dates['end'],
-      'message' => $message,
-    ];
-  }
-  return [];
-}
-
-/**
- * Function get from profile out of office dates.
- *
- * @param \Drupal\profile\Entity\Profile $profile
- *   Profile entity.
- *
- * @return array
- *   OoO dates.
- */
-function social_out_of_office_get_ooo_dates(Profile $profile): array {
-  $start_date_ooo = $profile->hasField('field_profile_start_date_ooo')
-    ? $profile->get('field_profile_start_date_ooo')->getString() : NULL;
-  $end_date_ooo = $profile->hasField('field_profile_end_date_ooo')
-    ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
-  $today = date('Y-m-d');
-  return [
-    'start' => $start_date_ooo,
-    'end' => $end_date_ooo,
-    'today' => $today,
-  ];
 }
 
 /**
  * Implements hook_FORM_ID_form_alter().
  */
 function social_out_of_office_form_profile_profile_edit_form_alter(array &$form): void {
-  $form['field_profile_message_ooo']['widget'][0]['#description'] = t('Max number of characters for Message is 240');
-  $form['#validate'][] = 'social_out_of_office_validate_maxlength_of_message';
+  // Add Out of office message description.
+  $form['field_profile_message_ooo']['widget'][0]['#description'] = t('Max number of characters for Message is @max_length', [
+    '@max_length' => SocialOutOfOfficeHelperInterface::MESSAGE_MAX_LENGTH,
+  ]);
+  // Add Out of office message validation.
+  $form['#validate'][] = 'social_out_of_office_max_length_of_message_validate';
+  // Attach custom library.
+  $form['#attached']['library'][] = 'social_out_of_office/admin';
 }
 
 /**
  * Validator for Message field.
- *
- * Show error if message has more characters than 240.
  */
-function social_out_of_office_validate_maxlength_of_message(array &$form, FormStateInterface $form_state): void {
+function social_out_of_office_max_length_of_message_validate(array &$form, FormStateInterface $form_state): void {
+  // Show error if message has more characters than 240.
   $message = $form_state->getValue('field_profile_message_ooo');
-  $message = strip_tags($message[0]['value']);
-  $max_length = 240;
-  if (strlen($message) > $max_length) {
-    $form_state->setErrorByName('field_profile_message_ooo', t("The maximum length of for Message field is %max_length.", [
-      '%max_length' => $max_length,
+  $message = strip_tags($message[0]['value'] ?? '');
+  if (strlen($message) > SocialOutOfOfficeHelperInterface::MESSAGE_MAX_LENGTH) {
+    $form_state->setErrorByName('field_profile_message_ooo', t('The maximum length of for Message field is @max_length.', [
+      '@max_length' => SocialOutOfOfficeHelperInterface::MESSAGE_MAX_LENGTH,
     ]));
-  }
-}
-
-/**
- * Implements hook_form_alter().
- */
-function social_out_of_office_form_alter(array &$form, FormStateInterface $form_state, $form_id): void {
-  if (in_array($form_id, [
-    'profile_profile_edit_form',
-  ])) {
-    $form['#attached']['library'][] = 'social_out_of_office/admin';
   }
 }
