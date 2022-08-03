@@ -249,8 +249,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       if ($user->isAuthenticated()) {
         // Nodes community visibility.
         $community_access = $or->andConditionGroup()
-          ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
-          ->isNull('gcfd.entity_id');
+          ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN');
         $or->condition($community_access);
 
         // Node visibility by group.
@@ -265,8 +264,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       else {
         // Public nodes without group.
         $anonymous_access = $or->andConditionGroup()
-          ->condition('nfcv.field_content_visibility_value', 'public')
-          ->isNull('gcfd.entity_id');
+          ->condition('nfcv.field_content_visibility_value', 'public');
         $or->condition($anonymous_access);
       }
       $or->isNull('nfcv.entity_id');
