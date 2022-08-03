@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
-use Drupal\mentions\Entity\MentionsType;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\mentions\Plugin\Filter\MentionsFilter;
@@ -30,26 +29,13 @@ function social_mentions_form_alter(array &$form, FormStateInterface $form_state
   $profile_mention_type_id = 'ProfileMention';
 
   if (in_array($form_id, $mentions_forms)) {
-    // Initialize variables.
-    $prefix = '[~';
-    $suffix = ']';
-
     $config = \Drupal::config('mentions.settings');
 
-    if ($config->get('suggestions_format') === 'username') {
-      if ($user_mention = MentionsType::load($user_mention_type_id)) {
-        $user_mention = $user_mention->getInputSettings();
-        $prefix = $user_mention['prefix'];
-        $suffix = $user_mention['suffix'];
-      }
-    }
-    else {
-      if ($profile_mention = MentionsType::load($profile_mention_type_id)) {
-        $profile_mention = $profile_mention->getInputSettings();
-        $prefix = $profile_mention['prefix'];
-        $suffix = $profile_mention['suffix'];
-      }
-    }
+    /** @var \Drupal\social_mentions\SocialMentionsHelperInterface $social_mentions_helper */
+    $social_mentions_helper = \Drupal::service('social_mentions.helper');
+
+    // Retrieve mentions prefix and suffix array.
+    $prefix_suffix = $social_mentions_helper->getMentionsPrefixSuffix();
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
@@ -78,8 +64,8 @@ function social_mentions_form_alter(array &$form, FormStateInterface $form_state
     $form['#attached']['library'][] = 'social_mentions/social_mentions';
     $form['#attached']['drupalSettings']['socialMentions'] = [
       'suggestionsFormat' => $config->get('suggestions_format'),
-      'prefix' => $prefix,
-      'suffix' => $suffix,
+      'prefix' => $prefix_suffix['prefix'],
+      'suffix' => $prefix_suffix['suffix'],
       'initMentions' => $mentions,
     ];
   }
