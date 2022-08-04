@@ -90,9 +90,6 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     $form['#group_children']['groups'] = 'group_visibility';
   }
 
-  unset($form['book']['bid']['#options'][0]);
-  $form['book']['bid']['#required'] = TRUE;
-
   // We need add this option here because by default "book" module require
   // a specific global permission - "create new books".
   // Group managers with only "verified" global role should be able to create
@@ -153,16 +150,19 @@ function social_flexible_group_book_block_access(Block $block, string $operation
 
   $group = _social_group_get_current_group();
   if ($group instanceof GroupInterface) {
-    $is_books_enabled = !$group->hasField('enable_books')
-      || (bool) $group->get('enable_books')->getString();
+    $is_books_enabled = !$group->hasField('enable_books') || (bool) $group->get('enable_books')->getString();
 
     if ($block->getPluginId() === 'group_add_book_block' && !$is_books_enabled) {
       return AccessResult::forbidden();
     }
 
     if (
-      !$is_books_enabled &&
-      $block->getPluginId() === 'group_statistic_block' &&
+      (!$is_books_enabled || !$group->access('view', $account)) &&
+      in_array($block->getPluginId(), [
+        'group_hero_block',
+        'group_statistic_block',
+        'social_page_title_block',
+      ]) &&
       // We need to hide the block on "view.group_books.page_group_books" route
       // but due to this moment user gets "access denied" and previous route is
       // unavailable.

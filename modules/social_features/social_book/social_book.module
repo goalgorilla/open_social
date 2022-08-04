@@ -5,6 +5,7 @@
  * The Social book module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -34,7 +35,7 @@ function social_book_menu_local_tasks_alter(&$data, $route_name) {
  * Adds the "Create Book" link to the content creation menu if the user is
  * allowed to create new books.
  */
-function social_book_social_user_account_header_create_links($context) {
+function social_book_social_user_account_header_create_links($context): array {
   return [
     'add_book' => [
       '#type' => 'link',
@@ -59,4 +60,21 @@ function social_book_social_core_compatible_content_forms_alter(&$compatible_con
  */
 function social_book_social_tagging_type_alter(array &$items): void {
   $items['node'][] = 'book';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "node_form".
+ */
+function social_book_form_node_form_alter(array &$form, FormStateInterface $form_state): void {
+  /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_object->getEntity();
+
+  if ($node->bundle() !== 'book') {
+    return;
+  }
+
+  unset($form['book']['bid']['#options'][0]);
+  $form['book']['bid']['#required'] = TRUE;
 }
