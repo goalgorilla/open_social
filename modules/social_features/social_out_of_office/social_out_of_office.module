@@ -120,12 +120,8 @@ function social_out_of_office_entity_presave(EntityInterface $entity): void {
   ) {
     return;
   }
-  $entity_type_manager = \Drupal::entityTypeManager();
 
   $post_comment_related_users = [];
-
-  /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
-  $profile_storage = $entity_type_manager->getStorage('profile');
 
   // Comment entity type.
   if ($entity instanceof CommentInterface) {
