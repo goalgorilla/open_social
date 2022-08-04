@@ -3,13 +3,16 @@ status: true
 dependencies:
   module:
     - profile
-    - text
+  enforced:
+    module:
+      - social_out_of_office
 id: profile.field_profile_message_ooo
 field_name: field_profile_message_ooo
 entity_type: profile
-type: text_with_summary
-settings: {  }
-module: text
+type: string_long
+settings:
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

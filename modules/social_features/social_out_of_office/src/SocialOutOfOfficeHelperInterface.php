@@ -60,4 +60,14 @@ interface SocialOutOfOfficeHelperInterface {
    */
   public function showOutOfOfficeStatusMessage(ProfileInterface $profile): void;
 
+  /**
+   * Show OoO status messages.
+   *
+   * @param array $ids
+   *   An array of User whether Profile IDs.
+   * @param bool $is_profiles
+   *   TRUE if Profile IDs, FALSE if User IDs.
+   */
+  public function showOutOfOfficeStatusMessages(array $ids, bool $is_profiles = FALSE): void;
+
 }

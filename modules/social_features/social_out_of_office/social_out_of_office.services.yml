@@ -2,4 +2,6 @@ services:
   social_out_of_office.helper:
     class: Drupal\social_out_of_office\SocialOutOfOfficeHelper
     arguments:
-      - '@plugin.manager.mentions'
+      - '@database'
+      - '@entity_type.manager'
+      - '@social_profile.name_service'

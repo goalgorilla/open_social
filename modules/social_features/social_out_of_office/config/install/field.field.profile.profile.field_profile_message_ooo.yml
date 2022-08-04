@@ -4,19 +4,18 @@ dependencies:
   config:
     - field.storage.profile.field_profile_message_ooo
     - profile.type.profile
-  module:
-    - text
+  enforced:
+    module:
+      - social_out_of_office
 id: profile.profile.field_profile_message_ooo
 field_name: field_profile_message_ooo
 entity_type: profile
 bundle: profile
 label: Message
-description: ''
+description: 'The character limit is 240 characters including spaces.'
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  display_summary: false
-  required_summary: false
-field_type: text_with_summary
+settings: {  }
+field_type: string_long
