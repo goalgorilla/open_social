@@ -1,4 +1,4 @@
-@account @user @stability @stability-4 @perfect @api @export-users
+@account @user @stability @javascript @stability-4 @perfect @api @export-users
 Feature: Export users
   Benefit: A user with the SM role can export users.
   Role: SM

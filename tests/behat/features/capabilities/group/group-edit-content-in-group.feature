@@ -41,7 +41,6 @@ Feature: Move content after creation
     And I check the box "News"
     And I press "Create topic"
     And I should see "Kayaking"
-    And I wait for "2" seconds
 
     # Edit topic
     When I click "Edit content"

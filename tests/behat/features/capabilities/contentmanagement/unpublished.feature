@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-486 @stability-3 @unpublished
+@api @topic @stability @javascript @perfect @critical @DS-486 @stability-3 @unpublished
 Feature: Un/publish a node
   Benefit: In order to make drafts
   Role: as a Verified

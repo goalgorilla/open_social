@@ -27,7 +27,6 @@ Feature: View filtered users as site manager
     And I click the group member dropdown
     And I click "Add directly"
     Then I fill in select2 input ".form-type-select" with "Behat Member 1" and select "Behat Member 1"
-    And I wait for "3" seconds
     And I press "Save"
 
     # Add a member to the Behat Group 2 group directly.
@@ -37,7 +36,6 @@ Feature: View filtered users as site manager
     And I click the group member dropdown
     And I click "Add directly"
     Then I fill in select2 input ".form-type-select" with "Behat Member 2" and select "Behat Member 2"
-    And I wait for "3" seconds
     And I press "Save"
 
     # Add a member to the Behat Group 3 group directly.
@@ -47,7 +45,6 @@ Feature: View filtered users as site manager
     And I click the group member dropdown
     And I click "Add directly"
     Then I fill in select2 input ".form-type-select" with "Behat Member 3" and select "Behat Member 3"
-    And I wait for "3" seconds
     And I press "Save"
 
     # Add a member to the Behat Group 4 group directly.
@@ -57,7 +54,6 @@ Feature: View filtered users as site manager
     And I click the group member dropdown
     And I click "Add directly"
     Then I fill in select2 input ".form-type-select" with "Behat Member 4" and select "Behat Member 4"
-    And I wait for "3" seconds
     And I press "Save"
 
     Given I am logged in as an "sitemanager"
@@ -75,7 +71,7 @@ Feature: View filtered users as site manager
     When I select "Behat Group 1" from "Group"
     And I additionally select "Behat Group 2" from "Group"
     And I press "Filter"
-    And I wait for "3" seconds
+    And I wait for AJAX to finish
     Then I should see "Behat Member 1"
     And I should see "Behat Member 2"
     And I should not see "Behat Member 3"
