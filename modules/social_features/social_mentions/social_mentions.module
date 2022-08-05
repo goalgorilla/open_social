@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
+use Drupal\mentions\Entity\MentionsType;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 
@@ -23,19 +24,32 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
   ];
 
   if (in_array($form_id, $mentions_forms)) {
+    // Initialize variables.
+    $prefix = '[~';
+    $suffix = ']';
+
     $config = \Drupal::config('mentions.settings');
 
-    /** @var \Drupal\social_mentions\SocialMentionsHelperInterface $social_mentions_helper */
-    $social_mentions_helper = \Drupal::service('social_mentions.helper');
-
-    // Retrieve mentions prefix and suffix array.
-    $prefix_suffix = $social_mentions_helper->getMentionsPrefixSuffix();
+    if ($config->get('suggestions_format') === 'username') {
+      if ($usermention = MentionsType::load('UserMention')) {
+        $usermention = $usermention->getInputSettings();
+        $prefix = $usermention['prefix'];
+        $suffix = $usermention['suffix'];
+      }
+    }
+    else {
+      if ($profilemention = MentionsType::load('ProfileMention')) {
+        $profilemention = $profilemention->getInputSettings();
+        $prefix = $profilemention['prefix'];
+        $suffix = $profilemention['suffix'];
+      }
+    }
 
     $form['#attached']['library'][] = 'social_mentions/social_mentions';
     $form['#attached']['drupalSettings']['socialMentions'] = [
       'suggestionsFormat' => $config->get('suggestions_format'),
-      'prefix' => $prefix_suffix['prefix'],
-      'suffix' => $prefix_suffix['suffix'],
+      'prefix' => $prefix,
+      'suffix' => $suffix,
     ];
   }
 }
