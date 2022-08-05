@@ -149,17 +149,21 @@ function social_out_of_office_entity_presave(EntityInterface $entity): void {
   /** @var \Drupal\social_out_of_office\SocialOutOfOfficeHelperInterface $ooo_helper */
   $ooo_helper = \Drupal::service('social_out_of_office.helper');
 
-  /** @var \Drupal\social_mentions\SocialMentionsHelperInterface $social_mentions_helper */
-  $social_mentions_helper = \Drupal::service('social_mentions.helper');
+  // Make sure that the module social_mentions is enabled before use it's
+  // service.
+  if (\Drupal::moduleHandler()->moduleExists('social_mentions')) {
+    /** @var \Drupal\social_mentions\SocialMentionsHelperInterface $social_mentions_helper */
+    $social_mentions_helper = \Drupal::service('social_mentions.helper');
 
-  // Prepare body value.
-  $body_value = $body_value[0]['value'] ?? '';
+    // Prepare body value.
+    $body_value = $body_value[0]['value'] ?? '';
 
-  // Retrieve mentions from body.
-  $mentions = $social_mentions_helper->getMentions($body_value);
-  if (!empty($mentions)) {
-    // Show OoO messages for mentioned users.
-    $ooo_helper->showOutOfOfficeStatusMessages($mentions, TRUE);
+    // Retrieve mentions from body.
+    $mentions = $social_mentions_helper->getMentions($body_value);
+    if (!empty($mentions)) {
+      // Show OoO messages for mentioned users.
+      $ooo_helper->showOutOfOfficeStatusMessages($mentions, TRUE);
+    }
   }
 
   // Show OoO messages for related users.
