@@ -564,7 +564,7 @@ function social_content_block_update_10303(): string {
 /**
  * Allow to filter content by Flexible groups.
  */
-function social_content_block_update_10304() {
+function social_content_block_update_10304(): void {
   // Load the existing configuration.
   $config_name = 'field.field.block_content.custom_content_list.field_group';
   $config = \Drupal::configFactory()->getEditable($config_name);
