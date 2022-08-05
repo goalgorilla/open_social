@@ -79,6 +79,7 @@ Feature: Create Landing Page
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][uri]   | /explore   |
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link |
     # Set URL Alias
+    And I click the xth "0" element with the css "#edit-group-settings summary"
     And I set alias as "landingpage"
     And I press "Create landing page"
     # Ses as LU

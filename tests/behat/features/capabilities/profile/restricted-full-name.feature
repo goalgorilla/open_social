@@ -1,4 +1,4 @@
-@account @profile @api @issue-3039084 @stability @stability-2 @restricted-full-name
+@account @profile @api @issue-3039084 @javascript @stability @stability-2 @restricted-full-name
 Feature: I want to restrict full name visibility when nickname is used
   Benefit: In order to have better privacy
   Role: As a Verified
@@ -254,7 +254,6 @@ Feature: I want to restrict full name visibility when nickname is used
     When I click the group member dropdown
     And I click "Add directly"
     And I fill in select2 input ".form-type-select" with "Open User" and select "Open"
-    And I wait for "3" seconds
     And I should see the button "Cancel"
     And I press "Save"
 
@@ -396,7 +395,6 @@ Feature: I want to restrict full name visibility when nickname is used
     When I click the group member dropdown
     And I click "Add directly"
     And I fill in select2 input ".form-type-select" with "Open User" and select "User"
-    And I wait for "3" seconds
     And I should see the button "Cancel"
     And I press "Save"
 
@@ -538,7 +536,6 @@ Feature: I want to restrict full name visibility when nickname is used
     When I click the group member dropdown
     And I click "Add directly"
     And I fill in select2 input ".form-type-select" with "Hide my name" and select "Hide my name"
-    And I wait for "3" seconds
     And I should see the button "Cancel"
     And I press "Save"
 

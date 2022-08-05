@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: 'goalgorilla/drupal_social'
-          ref: 'upgrade-path'
+          ref: 'feature/upgrade-path-headless-chrome'
           fetch-depth: 0
 
       # Set php memory limit to -1 so composer update will not fail
@@ -64,7 +64,7 @@ jobs:
         run: |
           git stash
           rm -rf vendor/ composer.lock
-          git checkout 5.3.0
+          git checkout 6.0.0
 
       - name: Composer require current branch and social_search_autocomplete
         run: |
@@ -81,4 +81,4 @@ jobs:
 
       # Run the upgrade path behat tests
       - name: Run Integration tests
-        run: docker exec -i social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict  --colors"
+        run: docker exec -i social_ci_web sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict  --colors"

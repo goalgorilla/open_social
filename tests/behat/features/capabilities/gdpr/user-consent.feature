@@ -18,11 +18,11 @@ Feature: Give user consent
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy/settings"
     Then I should see the heading "Data policy settings" in the "Admin page title block" region
-    And I should see the text "I agree with the [id:1*]"
+    And the response should contain "I agree with the [id:1*]"
     When I fill in "Consent text" with "I agree with the [id:1]"
     Then I press "Save configuration"
     And I should see the text "The configuration options have been saved."
-    And I should see the text "I agree with the [id:1]"
+    And the response should contain "I agree with the [id:1]"
 
     When I am on "admin/reports/data-policy-agreements"
     Then I should see the heading "Data Policy Agreements" in the "Admin page title block" region
@@ -119,5 +119,5 @@ Feature: Give user consent
 
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy/settings"
-    And I should see the text "I agree with the [id:1]"
-    When I fill in "Consent text" with "I agree with the [id:1*]"
+    Then the response should contain "I agree with the [id:1]"
+    And I fill in "Consent text" with "I agree with the [id:1*]"

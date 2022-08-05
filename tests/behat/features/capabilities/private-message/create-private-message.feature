@@ -35,7 +35,6 @@
     When I am on the profile of "PM User Two"
     Then I should see the link "Private message"
     And I click "Private message"
-    And I wait for "3" seconds
     Then I should see "PM User Two"
     And I should see the button "Send"
     And I should see "You"

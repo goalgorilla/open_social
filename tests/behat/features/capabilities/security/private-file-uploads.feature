@@ -78,7 +78,6 @@ Feature: Private files
     And I fill in "Alternative text" with "Just a private image test"
     And I click the xth "0" element with the css ".editor-image-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
-    And I wait for "3" seconds
     And I press "Create topic"
     Then I should see "Topic Private WYSIWYG: topic has been created."
     And I should see "Private WYSIWYG: topic" in the "Hero block"

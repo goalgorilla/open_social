@@ -26,6 +26,7 @@ Feature: Create Landing Page and add Featured Content section with user profile
     And I wait for AJAX to finish
 
     # Set URL Alias
+    And I click the xth "0" element with the css "#edit-group-settings summary"
     And I set alias as "landingpage-teaser-profile"
     And I press "Create landing page"
 
