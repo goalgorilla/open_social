@@ -2,18 +2,18 @@ langcode: en
 status: true
 dependencies:
   module:
+    - datetime
     - profile
-    - user
   enforced:
     module:
       - social_out_of_office
-id: profile.field_profile_alt_contact
-field_name: field_profile_alt_contact
+id: profile.field_profile_ooo_end_date
+field_name: field_profile_ooo_end_date
 entity_type: profile
-type: entity_reference
+type: datetime
 settings:
-  target_type: user
-module: core
+  datetime_type: date
+module: datetime
 locked: false
 cardinality: 1
 translatable: true

@@ -36,13 +36,13 @@ function social_out_of_office_preprocess_profile(array &$variables): void {
       $variables['profile_ooo_status'] = t('Currently out of office');
 
       // Retrieve, prepare and set a message from user profile.
-      $message = $profile->get('field_profile_message_ooo')->getValue();
+      $message = $profile->get('field_profile_ooo_message')->getValue();
       $variables['profile_message_ooo'] = ['#markup' => $message[0]['value'] ?? ''];
 
       // If there is an alternative person we should show them out.
-      if (!$profile->get('field_profile_alt_contact')->isEmpty()) {
+      if (!$profile->get('field_profile_ooo_alt_contact')->isEmpty()) {
         // Retrieve and show an alternative person, if filled.
-        $alt_contact_person_user = $profile->get('field_profile_alt_contact')->referencedEntities()[0];
+        $alt_contact_person_user = $profile->get('field_profile_ooo_alt_contact')->referencedEntities()[0];
 
         /** @var \Drupal\profile\ProfileStorageInterface $profile_storage */
         $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -207,31 +207,31 @@ function social_out_of_office_form_profile_profile_edit_form_alter(array &$form)
  * Validator for OoO data.
  */
 function social_out_of_office_data_validate(array &$form, FormStateInterface $form_state): void {
-  $start_date = $form_state->getValue('field_profile_start_date_ooo')[0]['value'] ?? NULL;
-  $end_date = $form_state->getValue('field_profile_end_date_ooo')[0]['value'] ?? NULL;
+  $start_date = $form_state->getValue('field_profile_ooo_start_date')[0]['value'] ?? NULL;
+  $end_date = $form_state->getValue('field_profile_ooo_end_date')[0]['value'] ?? NULL;
 
   // Make sure that both dates are filled and not only one.
   if (
     ($start_date !== NULL && $end_date === NULL) ||
     ($start_date === NULL && $end_date !== NULL)
   ) {
-    $form_state->setErrorByName($start_date ? 'field_profile_start_date_ooo' : 'field_profile_end_date_ooo', t('Both start and end date should be filled.'));
+    $form_state->setErrorByName($start_date ? 'field_profile_ooo_start_date' : 'field_profile_ooo_end_date', t('Both start and end date should be filled.'));
   }
 
   // Make sure user is not able to set start date later that end date.
   if (
     $start_date !== NULL &&
     $end_date !== NULL &&
-    ($form_state->getValue('field_profile_start_date_ooo')[0]['value'] > $form_state->getValue('field_profile_end_date_ooo')[0]['value'])
+    ($form_state->getValue('field_profile_ooo_start_date')[0]['value'] > $form_state->getValue('field_profile_ooo_end_date')[0]['value'])
   ) {
-    $form_state->setErrorByName('field_profile_start_date_ooo', t('Start date cannot be later than end date.'));
+    $form_state->setErrorByName('field_profile_ooo_start_date', t('Start date cannot be later than end date.'));
   }
 
   // Show error if message has more characters than 240.
-  $message = $form_state->getValue('field_profile_message_ooo');
+  $message = $form_state->getValue('field_profile_ooo_message');
   $message = strip_tags($message[0]['value'] ?? '');
   if (strlen($message) > SocialOutOfOfficeHelperInterface::MESSAGE_MAX_LENGTH) {
-    $form_state->setErrorByName('field_profile_message_ooo', t('The maximum length for the out of office message is @max_length characters.', [
+    $form_state->setErrorByName('field_profile_ooo_message', t('The maximum length for the out of office message is @max_length characters.', [
       '@max_length' => SocialOutOfOfficeHelperInterface::MESSAGE_MAX_LENGTH,
     ]));
   }
@@ -239,11 +239,11 @@ function social_out_of_office_data_validate(array &$form, FormStateInterface $fo
   // If user filled Message or Alternative contact person we should require fill
   // dated as well.
   if (
-    (!empty($message) || !empty($form_state->getValue('field_profile_alt_contact')[0]['value'])) &&
+    (!empty($message) || !empty($form_state->getValue('field_profile_ooo_alt_contact')[0]['value'])) &&
     $start_date === NULL &&
     $end_date === NULL
   ) {
-    $form_state->setErrorByName('field_profile_start_date_ooo', t('Start and end dates should also be filled.'));
+    $form_state->setErrorByName('field_profile_ooo_start_date', t('Start and end dates should also be filled.'));
   }
 
   /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */

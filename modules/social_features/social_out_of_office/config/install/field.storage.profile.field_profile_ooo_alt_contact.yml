@@ -3,15 +3,16 @@ status: true
 dependencies:
   module:
     - profile
+    - user
   enforced:
     module:
       - social_out_of_office
-id: profile.field_profile_message_ooo
-field_name: field_profile_message_ooo
+id: profile.field_profile_ooo_alt_contact
+field_name: field_profile_ooo_alt_contact
 entity_type: profile
-type: string_long
+type: entity_reference
 settings:
-  case_sensitive: false
+  target_type: user
 module: core
 locked: false
 cardinality: 1

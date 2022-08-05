@@ -63,11 +63,11 @@ class SocialOutOfOfficeHelper implements SocialOutOfOfficeHelperInterface {
    */
   public function getOutOfOfficeDates(ProfileInterface $profile): array {
     // Out of office start date.
-    $start_date_ooo = !$profile->get('field_profile_start_date_ooo')->isEmpty()
-      ? $profile->get('field_profile_start_date_ooo')->getString() : NULL;
+    $start_date_ooo = !$profile->get('field_profile_ooo_start_date')->isEmpty()
+      ? $profile->get('field_profile_ooo_start_date')->getString() : NULL;
     // Out of office end date.
-    $end_date_ooo = !$profile->get('field_profile_end_date_ooo')->isEmpty()
-      ? $profile->get('field_profile_end_date_ooo')->getString() : NULL;
+    $end_date_ooo = !$profile->get('field_profile_ooo_end_date')->isEmpty()
+      ? $profile->get('field_profile_ooo_end_date')->getString() : NULL;
     // Current date.
     $today = date('Y-m-d');
 
@@ -107,7 +107,7 @@ class SocialOutOfOfficeHelper implements SocialOutOfOfficeHelperInterface {
       $dates = $this->getOutOfOfficeDates($profile);
 
       $name = $this->socialProfileNameService->getProfileName($profile);
-      $message = $profile->get('field_profile_message_ooo')->getValue();
+      $message = $profile->get('field_profile_ooo_message')->getValue();
       $message = $message[0]['value'] ?? '';
 
       return [
@@ -155,12 +155,12 @@ class SocialOutOfOfficeHelper implements SocialOutOfOfficeHelperInterface {
     // Load profile IDs by user IDs that are OoO.
     $query = $this->database->select('profile', 'p');
     $query->addField('p', 'profile_id');
-    $query->innerJoin('profile__field_profile_start_date_ooo', 'sd', 'p.profile_id = sd.entity_id');
+    $query->innerJoin('profile__field_profile_ooo_start_date', 'sd', 'p.profile_id = sd.entity_id');
     $query->condition('sd.bundle', self::PROFILE_TYPE);
-    $query->condition('sd.field_profile_start_date_ooo_value', $today, '<=');
-    $query->innerJoin('profile__field_profile_end_date_ooo', 'ed', 'p.profile_id = ed.entity_id');
+    $query->condition('sd.field_profile_ooo_start_date_value', $today, '<=');
+    $query->innerJoin('profile__field_profile_ooo_end_date', 'ed', 'p.profile_id = ed.entity_id');
     $query->condition('ed.bundle', self::PROFILE_TYPE);
-    $query->condition('ed.field_profile_end_date_ooo_value', $today, '>=');
+    $query->condition('ed.field_profile_ooo_end_date_value', $today, '>=');
     $query->condition($is_profiles ? 'p.profile_id' : 'p.uid', $ids, 'IN');
     $query->condition('p.status', '1');
     $result = $query->execute();

@@ -2,18 +2,17 @@ langcode: en
 status: true
 dependencies:
   module:
-    - datetime
     - profile
   enforced:
     module:
       - social_out_of_office
-id: profile.field_profile_start_date_ooo
-field_name: field_profile_start_date_ooo
+id: profile.field_profile_ooo_message
+field_name: field_profile_ooo_message
 entity_type: profile
-type: datetime
+type: string_long
 settings:
-  datetime_type: date
-module: datetime
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

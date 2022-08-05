@@ -4,18 +4,18 @@ core.entity_form_display.profile.profile.default:
     add:
       dependencies:
         config:
-          - field.field.profile.profile.field_profile_alt_contact
-          - field.field.profile.profile.field_profile_end_date_ooo
-          - field.field.profile.profile.field_profile_message_ooo
-          - field.field.profile.profile.field_profile_start_date_ooo
+          - field.field.profile.profile.field_profile_ooo_alt_contact
+          - field.field.profile.profile.field_profile_ooo_end_date
+          - field.field.profile.profile.field_profile_ooo_message
+          - field.field.profile.profile.field_profile_ooo_start_date
       third_party_settings:
         field_group:
           group_out_of_office:
             children:
-              - field_profile_start_date_ooo
-              - field_profile_end_date_ooo
-              - field_profile_message_ooo
-              - field_profile_alt_contact
+              - field_profile_ooo_start_date
+              - field_profile_ooo_end_date
+              - field_profile_ooo_message
+              - field_profile_ooo_alt_contact
             parent_name: ''
             weight: 20
             format_type: fieldset
@@ -27,7 +27,7 @@ core.entity_form_display.profile.profile.default:
               required_fields: true
             label: 'Out of office'
       content:
-        field_profile_alt_contact:
+        field_profile_ooo_alt_contact:
           weight: 29
           settings:
             match_operator: CONTAINS
@@ -37,13 +37,13 @@ core.entity_form_display.profile.profile.default:
           third_party_settings: { }
           type: entity_reference_autocomplete
           region: content
-        field_profile_end_date_ooo:
+        field_profile_ooo_end_date:
           weight: 27
           settings: { }
           third_party_settings: { }
           type: datetime_default
           region: content
-        field_profile_message_ooo:
+        field_profile_ooo_message:
           type: string_textarea
           weight: 28
           region: content
@@ -51,7 +51,7 @@ core.entity_form_display.profile.profile.default:
             rows: 9
             placeholder: ''
           third_party_settings: { }
-        field_profile_start_date_ooo:
+        field_profile_ooo_start_date:
           weight: 26
           settings: { }
           third_party_settings: { }
