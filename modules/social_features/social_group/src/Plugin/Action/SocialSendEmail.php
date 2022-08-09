@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -28,7 +29,7 @@ class SocialSendEmail extends SocialSendEmailBase {
       return $object->access('view', $account, $return_as_object);
     }
 
-    return TRUE;
+    return AccessResult::allowed();
   }
 
   /**

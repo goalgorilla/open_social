@@ -218,6 +218,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
         }
       }
     }
+
+    return [];
   }
 
   /**
