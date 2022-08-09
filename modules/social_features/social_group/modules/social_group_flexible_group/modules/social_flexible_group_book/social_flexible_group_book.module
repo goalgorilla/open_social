@@ -102,6 +102,28 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
       $form['book']['bid']['#options'] = [$nid => t('- Create a new book -')] + $options;
     }
   }
+
+  // When group is already assigned in the book we restrict ability to change
+  // field value. That's because we want to have in "Book inline"
+  // select list only books that belongs to the group that the current book
+  // belongs as well.
+  if (!empty($form['groups']['widget']['#default_value'])) {
+    $form['groups']['#disabled'] = TRUE;
+  }
+
+  // Leave only the books that belong to the current group.
+  $group = _social_group_get_current_group($node);
+  if ($group instanceof GroupInterface) {
+    /** @var \Drupal\social_node\Entity\Node[] $books */
+    $books = $group->getContentEntities('group_node:book');
+    $bids = array_map(function ($book) {
+      return $book->id();
+    }, $books);
+
+    $form['book']['bid']['#options'] = array_filter($form['book']['bid']['#options'], function ($key) use ($bids) {
+      return $key === 0 || $key === 'new' || in_array($key, $bids);
+    }, ARRAY_FILTER_USE_KEY);
+  }
 }
 
 /**
