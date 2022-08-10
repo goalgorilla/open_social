@@ -8,13 +8,10 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\social_group\Plugin\Field\FieldWidget\SocialGroupSelectorWidget;
 
 /**
  * Implements hook_entity_form_display_alter().
@@ -106,8 +103,15 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
     }
   }
 
-  // If user is creating a book in group context, then leave only the books
-  // that belong to the current group.
+  // When group is already assigned in the book we restrict ability to change
+  // field value. That's because we want to have in "Book inline"
+  // select list only books that belongs to the group that the current book
+  // belongs as well.
+  if (!empty($form['groups']['widget']['#default_value'])) {
+    $form['groups']['#disabled'] = TRUE;
+  }
+
+  // Leave only the books that belong to the current group.
   $group = _social_group_get_current_group($node);
   if ($group instanceof GroupInterface) {
     /** @var \Drupal\social_node\Entity\Node[] $books */
@@ -120,58 +124,6 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
       return $key === 0 || $key === 'new' || in_array($key, $bids);
     }, ARRAY_FILTER_USE_KEY);
   }
-
-  // We want to change "Book Inline" book list according the "Group" chosen.
-  // The "Group" field is already ajaxified, so we can't add another ajax
-  // callback. So, we just override "Group" field ajax callback and change it
-  // response.
-  $form['groups']['widget']['#ajax']['callback'] = '_social_flexible_group_book_ajax_callback';
-}
-
-/**
- * Ajax callback to replace "Book inline" books options list.
- */
-function _social_flexible_group_book_ajax_callback(array $form, FormStateInterface $form_state): AjaxResponse {
-  // Get a parent response and then override it.
-  $response = SocialGroupSelectorWidget::validateGroupSelection($form, $form_state);
-
-  // Get the "group id" if it available.
-  if (!empty($form_state->getValue('groups'))) {
-    $value = $form_state->getValue('groups');
-    $gid = is_array($value) && !empty($value[0]['target_id'])
-      ? $value[0]['target_id']
-      : (int) $value;
-  }
-  elseif (!empty($form['groups']['widget']['#default_value'][0])) {
-    $gid = $form['groups']['widget']['#default_value'][0];
-  }
-
-  if (empty($gid)) {
-    return $response;
-  }
-
-  $group = \Drupal::entityTypeManager()
-    ->getStorage('group')
-    ->load($gid);
-
-  if (!$group instanceof GroupInterface) {
-    return $response;
-  }
-
-  /** @var \Drupal\social_node\Entity\Node[] $books */
-  $books = $group->getContentEntities('group_node:book');
-  $bids = array_map(function ($book) {
-    return $book->id();
-  }, $books);
-
-  $form['book']['bid']['#options'] = array_filter($form['book']['bid']['#options'], function ($key) use ($bids) {
-    return $key === 0 || $key === 'new' || in_array($key, $bids);
-  }, ARRAY_FILTER_USE_KEY);
-
-  // Replace the list of books in "Book line" field.
-  $response->addCommand(new ReplaceCommand('.book-outline-form', $form['book']));
-
-  return $response;
 }
 
 /**
