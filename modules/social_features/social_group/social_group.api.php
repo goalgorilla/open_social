@@ -134,6 +134,20 @@ function hook_social_group_move(NodeInterface $node) {
 }
 
 /**
+ * Provide a field which is used for managing content visibility.
+ *
+ * @return string
+ *   The field name.
+ *
+ * @see social_group_preprocess_fieldset()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_content_visibility_field() {
+  return 'field_media_visibility';
+}
+
+/**
  * Provide a description for a given key from the content visibility #options.
  *
  * @param string $description
