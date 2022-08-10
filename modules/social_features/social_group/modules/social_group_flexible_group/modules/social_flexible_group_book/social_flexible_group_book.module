@@ -94,6 +94,9 @@ function social_flexible_group_book_form_node_form_alter(array &$form, FormState
   // a specific global permission - "create new books".
   // Group managers with only "verified" global role should be able to create
   // new books as well even without this permission.
+  if (!isset($form['book']['bid']['#options'])) {
+    return;
+  }
   $nid = !$node->isNew() ? $node->id() : 'new';
   $options = $form['book']['bid']['#options'];
   if (!isset($options[$nid])) {
