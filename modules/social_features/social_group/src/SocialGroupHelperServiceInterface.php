@@ -5,6 +5,7 @@ namespace Drupal\social_group;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
@@ -26,13 +27,26 @@ interface SocialGroupHelperServiceInterface {
    *   The string translation service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
    */
   public function __construct(
     Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $translation,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
+    RendererInterface $renderer
   );
+
+  /**
+   * Gets a description as HTML markup for the selected visibility option.
+   *
+   * @param string $key
+   *   The visibility option name.
+   * @param string $hook
+   *   The name of hook for altering description.
+   */
+  public function description(string $key, string $hook): string;
 
   /**
    * Returns a group id from a entity (post, node).

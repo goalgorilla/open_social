@@ -609,52 +609,19 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 }
 
 /**
- * Returns a description array for the field_flexible_group_visibility options.
+ * Gets a description as HTML markup for the selected group visibility option.
  *
- * @return string
- *   The render array containing the description.
+ * @param string $key
+ *   The visibility option name.
  */
-function social_group_group_visibility_description($key) {
-  $description = '';
+function social_group_group_visibility_description(string $key): string {
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
 
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('All visitors of the platform can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      $description = '<p>';
-      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('Only members who are logged in can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'members':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
-      $description .= ' - ' . t('Only group members can see this group')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()
-    ->alter('social_group_group_visibility_description', $key, $description);
-
-  return $description;
+  return $helper->description(
+    $key,
+    'social_group_group_visibility_description',
+  );
 }
 
 /**
@@ -709,6 +676,31 @@ function social_group_social_group_content_visibility_description_alter(string $
     'group' => [
       'title' => t('Group members only'),
       'description' => t('only visible to logged-in group members.'),
+      'icon' => 'lock',
+    ],
+  ];
+
+  if (isset($items[$key])) {
+    $description = $items[$key];
+  }
+}
+
+/**
+ * Implements hook_social_group_group_visibility_description_alter().
+ */
+function social_group_social_group_group_visibility_description_alter(string $key, &$description): void {
+  $items = [
+    'public' => [
+      'title' => t('Public'),
+      'description' => t('All visitors of the platform can see this group'),
+    ],
+    'community' => [
+      'title' => t('Community'),
+      'description' => t('Only members who are logged in can see this group'),
+    ],
+    'members' => [
+      'title' => t('Group members only (Secret)'),
+      'description' => t('Only group members can see this group'),
       'icon' => 'lock',
     ],
   ];
@@ -3118,41 +3110,19 @@ function social_group_preprocess_fieldset(array &$variables): void {
 }
 
 /**
- * Returns a description array for the field_flexible_group_visibility options.
+ * Gets a description as HTML markup for the selected content visibility option.
  *
  * @param string $key
  *   The visibility option name.
  */
 function social_group_allowed_visibility_description(string $key): string {
-  $description = '';
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
 
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()
-    ->alter('social_group_content_visibility_description', $key, $description);
-
-  if (is_array($description)) {
-    $element = [
-      '#theme' => 'visibility',
-      '#name' => $key,
-    ];
-
-    foreach ($description as $field => $item) {
-      $element['#' . $field] = $item;
-    }
-
-    /** @var \Drupal\Core\Render\RendererInterface $renderer */
-    $renderer = \Drupal::service('renderer');
-
-    $description = $renderer->render($element);
-  }
-
-  return $description;
+  return $helper->description(
+    $key,
+    'social_group_content_visibility_description',
+  );
 }
 
 /**
