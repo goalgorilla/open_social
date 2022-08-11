@@ -83,6 +83,13 @@ class EnrollActionForm extends FormBase {
   protected $formBuilder;
 
   /**
+   * The event invite status helper.
+   *
+   * @var \Drupal\social_event\EventEnrollmentStatusHelper
+   */
+  protected $eventHelper;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -102,6 +109,7 @@ class EnrollActionForm extends FormBase {
     $instance->moduleHandler = $container->get('module_handler');
     $instance->eventEnrollService = $container->get('social_event.enroll');
     $instance->formBuilder = $container->get('form_builder');
+    $instance->eventHelper = $container->get('social_event.status_helper');
     return $instance;
   }
 
@@ -454,6 +462,20 @@ class EnrollActionForm extends FormBase {
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
+
+        // If the user was invited to an event, and enrolls for this event
+        // not from the /event-invites page, but from the event itself,
+        // then we also need to mark this enrollment as accepted, otherwise
+        // the list of invites will be empty, but the notification center will
+        // say that there are new invites.
+        if ($this->moduleHandler->moduleExists('social_event_invite')) {
+          $event_invites = $this->eventHelper->getAllUserEventEnrollments((string) $current_user->id());
+
+          if (NULL !== $event_invites && $event_invites > 0 && array_key_exists((int) $enrollment->id(), $event_invites)) {
+            $enrollment->set('field_request_or_invite_status', EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED);
+          }
+        }
+
         $enrollment->save();
       }
       elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {

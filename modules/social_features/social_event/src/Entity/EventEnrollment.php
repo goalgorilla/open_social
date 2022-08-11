@@ -109,6 +109,17 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
+  public function label() {
+    $label = $this->getName();
+    if (empty($label)) {
+      $label = $this->get('field_account')->entity->label();
+    }
+    return $label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setName($name) {
     $this->set('name', $name);
     return $this;
