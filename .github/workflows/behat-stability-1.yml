@@ -47,7 +47,3 @@ jobs:
 
       - name: Run Integration tests
         run: docker exec -i social_ci_web bash /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict --colors"
-
-      # For Stability 1 we also run Drupal UI install tests, for that we need to reset the database etc.
-      - name: Run Drupal UI install test
-        run: docker exec -i social_ci_web bash /var/www/scripts/social/behatstability.sh "install --stop-on-failure --strict --colors"

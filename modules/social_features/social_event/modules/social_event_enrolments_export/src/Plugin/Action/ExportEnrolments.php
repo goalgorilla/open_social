@@ -29,7 +29,7 @@ class ExportEnrolments extends ExportUser {
       $entity = $this->getAccount($entity);
     }
 
-    parent::executeMultiple($entities);
+    return parent::executeMultiple($entities);
   }
 
   /**

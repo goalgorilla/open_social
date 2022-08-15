@@ -28,7 +28,7 @@ class ExportMember extends ExportUser {
       $entity = $entity->getEntity();
     }
 
-    parent::executeMultiple($entities);
+    return parent::executeMultiple($entities);
   }
 
   /**
