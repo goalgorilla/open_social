@@ -134,10 +134,10 @@ function hook_social_group_move(NodeInterface $node) {
 }
 
 /**
- * Provide a field which is used for managing content visibility.
+ * Provide field(s) which is(are) used for managing content visibility.
  *
- * @return string
- *   The field name.
+ * @return string|string[]
+ *   The name of a single field or list of field names.
  *
  * @see social_group_preprocess_fieldset()
  *

@@ -30,7 +30,7 @@ function hook_social_group_flexible_group_content_routes_alter(array &$content_r
  * @param string $description
  *   An explanation of a visibility option as HTML markup text.
  *
- * @deprecated in social:12.0.0 and is removed from social:12.1.0. Use
+ * @deprecated in social:11.5.0 and is removed from social:12.0.0. Use
  *   hook_social_group_group_visibility_description_alter instead.
  *
  * @see https://www.drupal.org/node/3302921
