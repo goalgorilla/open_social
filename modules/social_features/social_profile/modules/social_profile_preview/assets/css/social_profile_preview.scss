@@ -14,6 +14,12 @@
   }
 }
 
+.avatar {
+  > a {
+    cursor: pointer;
+  }
+}
+
 .teaser-profile-preview {
   padding: .5rem 0 1rem;
 
@@ -108,9 +114,13 @@
   position: relative;
   display: block;
 
-  &:before {
+  &:before,
+  &:after {
     content: '';
     position: absolute;
+  }
+
+  &:before {
     height: calc(100% + 6px);
     width: calc(100% + 6px);
     border: 1px solid transparent;
@@ -119,8 +129,24 @@
     border-radius: 50%;
   }
 
-  &:hover:before {
-    border-color: #777;
+  &:after {
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(77, 78, 77, .4);
+  }
+
+  &:hover {
+    &:before {
+      border-color: #777;
+    }
+
+    &:after {
+      display: block;
+    }
   }
 }
 
