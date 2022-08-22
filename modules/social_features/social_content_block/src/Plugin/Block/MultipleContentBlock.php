@@ -385,7 +385,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
 
     /** @var \Drupal\taxonomy\TermStorage $term_storage */
     $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    $tree = $term_storage->loadTree($vid, (int) $term->id());
+    $tree = $term_storage->loadTree($vid['target_id'], (int) $term->id());
 
     if (empty($tree)) {
       return $children;
