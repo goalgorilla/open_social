@@ -149,6 +149,10 @@ function ginvite_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function ginvite_user_insert(UserInterface $user) {
+  if ($user->get('mail')->isEmpty()) {
+    return;
+  }
+
   $properties = [
     'invitee_mail' => $user->getEmail(),
     'invitation_status' => GroupInvitation::INVITATION_PENDING,
