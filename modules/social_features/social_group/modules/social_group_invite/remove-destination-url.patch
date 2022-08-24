@@ -1,0 +1,33 @@
+diff --git a/modules/social_features/social_group/modules/social_group_invite/social_group_invite.module b/modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+index fee7afd87..35db2d8d8 100644
+--- a/modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
++++ b/modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+@@ -578,25 +578,21 @@ function social_group_invite_tokens_alter(array &$replacements, array $context,
+   ) {
+     $group_content = $context["data"]["group_content"];
+     $group_content_id = $group_content->get('id')->getString();
+-    $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
++    $group_invite_url = Url::fromRoute('social_group_invite.invitation.accept', ['group_content' => $group_content_id], ['absolute' => TRUE])->toString();
+
+-    // Attach destination to accept invite. So, after sign up/sign step the
+-    // invite will be accepted and user  will be redirected to the invited page.
+     if (
+       isset($context["tokens"]["register_link"]) &&
+       $context["tokens"]["register_link"] === '[group_content:register_link]'
+     ) {
+       // For new users for register_link token.
+-      $link = $replacements["[group_content:register_link]"];
+-      $replacements["[group_content:register_link]"] = "{$link}&{$destination}";
++      $replacements["[group_content:register_link]"] = $group_invite_url;
+     }
+     if (
+       isset($context["tokens"]["my_invitations_link"]) &&
+       $context["tokens"]["my_invitations_link"] === '[group_content:my_invitations_link]'
+     ) {
+       // For existing users for my_invitations_link token.
+-      $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
+-      $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
++      $replacements["[group_content:my_invitations_link]"] = $group_invite_url;
+     }
+   }
+ }
