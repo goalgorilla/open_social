@@ -713,7 +713,11 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     /** @var \Drupal\group\Entity\GroupContentInterface|mixed[] $group_content */
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
+
+    // We are using a destination for use with the register link.
+    // This destination is only used when user's don't have an account yet.
     $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
+    $group_invite_url = Url::fromRoute('social_group_invite.invitation.accept', ['group_content' => $group_content_id], ['absolute' => TRUE])->toString();
 
     // For groups that only group members have access to, we should change the
     // destination to the user's invites page.
@@ -724,8 +728,11 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
       in_array($group->bundle(), ['closed_group', 'secret_group'])
     ) {
+
+      // Update the destination for use with the register link.
       $url = Url::fromRoute('social_core.my_invites')->toString();
       $destination = 'destination=' . $url;
+      $group_invite_url = Url::fromRoute('social_core.my_invites', [], ['absolute' => TRUE])->toString();
     }
     // Attach destination to accept invite. So, after sign up/sign step the
     // invite will be accepted and user  will be redirected to the invited page.
@@ -742,8 +749,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       $context["tokens"]["my_invitations_link"] === '[group_content:my_invitations_link]'
     ) {
       // For existing users for my_invitations_link token.
-      $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
-      $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
+      $replacements["[group_content:my_invitations_link]"] = $group_invite_url;
     }
   }
 }
