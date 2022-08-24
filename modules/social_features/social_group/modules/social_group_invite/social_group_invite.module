@@ -686,7 +686,6 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
     $group_invite_url = Url::fromRoute('social_group_invite.invitation.accept', ['group_content' => $group_content_id], ['absolute' => TRUE])->toString();
-
     // For groups that only group members have access to, we should change the
     // destination to the user's invites page.
     $group = $group_content->getGroup();
@@ -696,6 +695,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       $group->get('field_flexible_group_visibility')->getValue()[0]['value'] === 'members') ||
       in_array($group->bundle(), ['closed_group', 'secret_group'])
     ) {
+      $group_invite_url = Url::fromRoute('social_core.my_invites')->toString();
     }
     // Attach destination to accept invite. So, after sign up/sign step the
     // invite will be accepted and user  will be redirected to the invited page.
