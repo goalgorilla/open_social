@@ -66,40 +66,6 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
 }
 
 /**
- * Implements hook_entity_access().
- *
- * This allows view access to event_enrollment entities for users which are the
- * recipients of the event enrollment but not the owner of the entity. For
- * example a site manager can create an enrollment for a specific user.
- */
-function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, string $operation, AccountInterface $account): AccessResult {
-  if ($operation != 'view') {
-    return AccessResult::neutral();
-  }
-
-  if ($event_enrollment->get('field_enrollment_status')->getString() != "1") {
-    return AccessResult::neutral();
-  }
-
-  $owner = $event_enrollment->getOwner();
-  if (!$owner->hasPermission('view published event enrollment entities')) {
-    return AccessResult::neutral();
-  }
-
-  $field_account = $event_enrollment->get('field_account')->referencedEntities();
-  if (empty($field_account)) {
-    return AccessResult::neutral();
-  }
-
-  $field_account = end($field_account);
-  if ($field_account->id() != $account->id()) {
-    return AccessResult::neutral();
-  }
-
-  return AccessResult::allowed();
-}
-
-/**
  * Implements hook_block_access().
  */
 function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
