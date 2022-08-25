@@ -72,7 +72,7 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
  * recipients of the event enrollment but not the owner of the entity. For
  * example a site manager can create an enrollment for a specific user.
  */
-function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, $operation, AccountInterface $account) {
+function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, string $operation, AccountInterface $account): AccessResult {
   if ($operation != 'view') {
     return AccessResult::neutral();
   }
