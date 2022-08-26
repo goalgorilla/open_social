@@ -4,6 +4,7 @@ namespace Drupal\social_tagging;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
@@ -11,7 +12,12 @@ use Drupal\taxonomy\TermInterface;
 /**
  * Provides a custom tagging service.
  */
-class SocialTaggingService {
+class SocialTaggingService implements SocialTaggingServiceInterface {
+
+  /**
+   * The name of the hook provides supported entity types.
+   */
+  private const HOOK = 'social_tagging_type';
 
   /**
    * The taxonomy storage.
@@ -35,111 +41,85 @@ class SocialTaggingService {
   protected $languageManager;
 
   /**
-   * SocialTaggingService constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Injection of the entityTypeManager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *   Injection of the configFactory.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   Injection of the languageManager.
+   * The module handler.
+   */
+  private ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * {@inheritdoc}
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     ConfigFactoryInterface $configFactory,
-    LanguageManagerInterface $language_manager
+    LanguageManagerInterface $language_manager,
+    ModuleHandlerInterface $module_handler
   ) {
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
     $this->languageManager = $language_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
-   * Returns whether the feature is turned on or not.
-   *
-   * @return bool
-   *   Whether tagging is turned on or not.
+   * {@inheritdoc}
    */
-  public function active() {
-    return (bool) $this->configFactory->get('social_tagging.settings')->get('enable_content_tagging');
+  public function active(): bool {
+    return (bool) $this->configFactory->get('social_tagging.settings')
+      ->get('enable_content_tagging');
   }
 
   /**
-   * Returns whether the feature is turned on for groups or not.
-   *
-   * @return bool
-   *   Whether tagging is turned on or not for groups.
+   * {@inheritdoc}
    */
-  public function groupActive() {
-    return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
+  public function groupActive(): bool {
+    return (bool) $this->configFactory->get('social_tagging.settings')
+      ->get('tag_type_group');
   }
 
   /**
-   * Returns whether the feature is turned on for profiles or not.
-   *
-   * @return bool
-   *   Whether tagging is turned on or not for profiles.
+   * {@inheritdoc}
    */
-  public function profileActive() {
+  public function profileActive(): bool {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_profile');
   }
 
   /**
-   * Returns if there are any taxonomy items available.
-   *
-   * @return bool
-   *   If there are tags available.
+   * {@inheritdoc}
    */
-  public function hasContent() {
-
-    if (count($this->getCategories()) == 0) {
-      return FALSE;
-    }
-
-    if (count($this->getAllChildren()) == 0) {
-      return FALSE;
-    }
-
-    return TRUE;
+  public function hasContent(): bool {
+    return count($this->getCategories()) > 0 && count($this->getAllChildren()) > 0;
   }
 
   /**
-   * Returns whether splitting of fields is allowed.
-   *
-   * @return bool
-   *   Whether category split on field level is turned on or not.
+   * {@inheritdoc}
    */
-  public function allowSplit() {
-    return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('allow_category_split'));
+  public function allowSplit(): bool {
+    return $this->active() &&
+      $this->configFactory->get('social_tagging.settings')
+        ->get('allow_category_split');
   }
 
   /**
-   * Returns the filter query condition.
-   *
-   * @return string
-   *   Returns OR or AND.
+   * {@inheritdoc}
    */
-  public function queryCondition() {
-    return (string) ($this->configFactory->get('social_tagging.settings')->get('use_and_condition') ? 'AND' : 'OR');
+  public function queryCondition(): string {
+    return $this->configFactory->get('social_tagging.settings')
+      ->get('use_and_condition') ? 'AND' : 'OR';
   }
 
   /**
-   * Returns whether using a parent of categories is allowed.
-   *
-   * @return bool
-   *   Whether using categories parent is turned on or not..
+   * {@inheritdoc}
    */
-  public function useCategoryParent() {
-    return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('use_category_parent'));
+  public function useCategoryParent(): bool {
+    return $this->active() &&
+      $this->configFactory->get('social_tagging.settings')
+        ->get('use_category_parent');
   }
 
   /**
-   * Returns all the top level term items, that are considered categories.
-   *
-   * @return array
-   *   An array of top level category items.
+   * {@inheritdoc}
    */
-  public function getCategories() {
+  public function getCategories(): array {
     // Define as array.
     $options = [];
 
@@ -166,15 +146,9 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns the children of top level term items.
-   *
-   * @param int $category
-   *   The category you want to fetch the child items from.
-   *
-   * @return array
-   *   An array of child items.
+   * {@inheritdoc}
    */
-  public function getChildren($category) {
+  public function getChildren(int $category): array {
     // Define as array.
     $options = [];
 
@@ -195,12 +169,9 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns all the children of top level term items.
-   *
-   * @return array
-   *   An array of child items.
+   * {@inheritdoc}
    */
-  public function getAllChildren() {
+  public function getAllChildren(): array {
     // Define as array.
     $options = [];
 
@@ -213,17 +184,9 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns a multilevel tree.
-   *
-   * @param array $term_ids
-   *   An array of items that are selected.
-   * @param string $entity_type
-   *   The entity type these tags are for.
-   *
-   * @return array
-   *   An hierarchy array of items with their parent.
+   * {@inheritdoc}
    */
-  public function buildHierarchy(array $term_ids, $entity_type) {
+  public function buildHierarchy(array $term_ids, string $entity_type): array {
     $tree = [];
     // Load all the terms together.
     if (!empty($terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadMultiple(array_column($term_ids, 'target_id')))) {
@@ -235,9 +198,14 @@ class SocialTaggingService {
       $allowSplit = $this->allowSplit();
 
       // Set the route.
-      $route = ($entity_type == 'group') ? 'view.search_groups.page_no_value' : 'view.search_content.page_no_value';
-      if ($entity_type == 'profile') {
+      if ($entity_type === 'group') {
+        $route = 'view.search_groups.page_no_value';
+      }
+      elseif ($entity_type === 'profile') {
         $route = 'view.search_users.page_no_value';
+      }
+      else {
+        $route = 'view.search_content.page_no_value';
       }
 
       // Build the hierarchy.
@@ -328,6 +296,30 @@ class SocialTaggingService {
     }
 
     return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function types(bool $short = FALSE): array {
+    $items = [];
+
+    foreach ($this->moduleHandler->invokeAll(self::HOOK) as $item) {
+      if (is_array($item)) {
+        $entity_type = $item['entity_type'];
+        $bundles = $item['bundles'];
+      }
+      else {
+        $entity_type = $item;
+        $bundles = [];
+      }
+
+      $items[$entity_type] = $bundles;
+    }
+
+    $this->moduleHandler->alter(self::HOOK, $items);
+
+    return $short ? array_keys($items) : $items;
   }
 
 }

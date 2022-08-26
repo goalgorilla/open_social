@@ -1393,3 +1393,10 @@ function social_event_social_core_title_alter(array &$titles): void {
     $titles[$entity_type]['bundles']['event'] = 'an';
   }
 }
+
+/**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_event_social_tagging_type_alter(array &$items): void {
+  $items['node'][] = 'event';
+}

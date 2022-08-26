@@ -282,9 +282,10 @@ function social_tagging_update_11402(): void {
  * Install a base field for supported entity types.
  */
 function social_tagging_update_11501(): void {
-  $entity_types = \Drupal::moduleHandler()->invokeAll('social_tagging_type');
+  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
+  $helper = \Drupal::service('social_tagging.tag_service');
 
-  foreach ($entity_types as $entity_type) {
+  foreach ($helper->types(TRUE) as $entity_type) {
     _social_tagging_add_base_field($entity_type);
   }
 }

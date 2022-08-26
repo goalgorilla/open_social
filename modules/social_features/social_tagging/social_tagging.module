@@ -141,37 +141,40 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
  * @param \Drupal\Core\Entity\EntityInterface $form_entity
  *   Entity object.
  */
-function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
+function social_tagging_social_tagging_field_form_alter(
+  array &$form,
+  FormStateInterface &$form_state,
+  EntityInterface $form_entity
+): void {
   if (!empty($form['social_tagging'])) {
-    // Load tag config..
-    $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    // Switch for the entity_type.
-    switch ($form_entity->getEntityTypeId()) {
-      case 'node':
-        $type = $form_entity->bundle();
-        $tag_enabled = $tag_settings->get('tag_node_type_' . $type);
-        break;
+    /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $tag_service */
+    $tag_service = \Drupal::service('social_tagging.tag_service');
 
-      case 'group':
-      case 'profile':
-        $type = $form_entity->getEntityTypeId();
-        $tag_enabled = $tag_settings->get('tag_type_' . $type);
-        break;
+    $items = $tag_service->types();
+    $suffix = $form_entity->getEntityTypeId();
+    $prefix = '';
 
-      case 'media':
-        $type = $form_entity->bundle();
-        $tag_enabled = $tag_settings->get('tag_media_type_' . $type);
-        break;
+    if (isset($items[$suffix])) {
+      if (!empty($items[$suffix])) {
+        $prefix = $suffix . '_';
+        $suffix = $form_entity->bundle();
+      }
 
-      default:
-        $tag_enabled = FALSE;
-        break;
+      // Load tag config.
+      $tag_enabled = \Drupal::configFactory()
+        ->getEditable('social_tagging.settings')
+        ->get("tag_{$prefix}type_$suffix");
+    }
+    else {
+      $tag_enabled = NULL;
     }
 
-    // Get the taggingservice.
-    $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
     // Check if tagging is turned on/off.
-    if (!$tag_service->active() || !$tag_service->hasContent() || $tag_enabled == FALSE) {
+    if (
+      $tag_enabled === NULL ||
+      !$tag_service->active() ||
+      !$tag_service->hasContent()
+    ) {
       // Remove the field from the form.
       $form['social_tagging']['#access'] = FALSE;
       return;
@@ -336,10 +339,12 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
  */
 function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
-  $entity_types = \Drupal::moduleHandler()->invokeAll('social_tagging_type');
+
+  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
+  $helper = \Drupal::service('social_tagging.tag_service');
 
   // Add a Tagging base field.
-  if (in_array($entity_type->id(), $entity_types)) {
+  if (in_array($entity_type->id(), $helper->types(TRUE))) {
     $fields['social_tagging'] = _social_tagging_field();
   }
 
