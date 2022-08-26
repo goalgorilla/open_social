@@ -334,42 +334,13 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
 /**
  * Implements hook_entity_base_field_info().
  */
-function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
-
-  $entity_types = [
-    'node',
-    'group',
-    'profile',
-  ];
-
-  if (\Drupal::moduleHandler()->moduleExists('media')) {
-    $entity_types[] = 'media';
-  }
+  $entity_types = \Drupal::moduleHandler()->invokeAll('social_tagging_type');
 
   // Add a Tagging base field.
   if (in_array($entity_type->id(), $entity_types)) {
-    $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Tagging'))
-      ->setDescription(t('Tagging field.'))
-      ->setSetting('target_type', 'taxonomy_term')
-      ->setSetting('handler', 'default:taxonomy_term')
-      ->setSetting('handler_settings', [
-        'target_bundles' => [
-          'social_tagging' => 'social_tagging',
-        ],
-      ])
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-      ->setDisplayOptions('view', [
-        'region' => 'hidden',
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'options_select',
-        'weight' => 3,
-        'settings' => [],
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+    $fields['social_tagging'] = _social_tagging_field();
   }
 
   return $fields;
@@ -693,4 +664,31 @@ function social_tagging_modules_installed(array $modules): void {
     \Drupal::entityDefinitionUpdateManager()
       ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $fields['social_tagging']);
   }
+}
+
+/**
+ * Gets base field.
+ */
+function _social_tagging_field(): FieldStorageDefinitionInterface {
+  return BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'region' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
 }
