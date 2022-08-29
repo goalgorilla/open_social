@@ -1610,15 +1610,18 @@ function social_core_update_11403(array &$sandbox): void {
 
   foreach ($image_styles_to_update as $image_style_name) {
     $style = ImageStyle::load($image_style_name);
-    $style->addImageEffect([
-      'id' => 'image_convert',
-      // Set "Convert to WebP" as the last effect.
-      'weight' => count($style->getEffects()) + 1,
-      'data' => [
-        'extension' => 'webp',
-      ]
-    ]);
-    $style->save();
-    $style->flush();
+
+    if ($style instanceof ImageStyle) {
+      $style->addImageEffect([
+        'id' => 'image_convert',
+        // Set "Convert to WebP" as the last effect.
+        'weight' => count($style->getEffects()) + 1,
+        'data' => [
+          'extension' => 'webp',
+        ]
+      ]);
+      $style->save();
+      $style->flush();
+    }
   }
 }
