@@ -63,6 +63,11 @@ function social_event_theme(): array {
 
 /**
  * Implements hook_entity_bundle_info_alter().
+ *
+ * Set node bundle class for "Event" node type. This allows to encapsulate
+ * related to the event functionality inside an event node object.
+ *
+ * @see https://www.drupal.org/node/3191609
  */
 function social_event_entity_bundle_info_alter(array &$bundles): void {
   $bundles['node']['event']['class'] = Event::class;
@@ -290,8 +295,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
     }
-    if ($node instanceof Node) {
-      $can_show_enrollments_link = \Drupal::service('social_event.enroll')->isEnabled($node);
+    if ($node instanceof Event) {
+      $can_show_enrollments_link = $node->isEnrollmentEnabled();
     }
 
   }
@@ -711,7 +716,7 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
         // Show only for event node type.
         !$node instanceof Event ||
         // Check if event enrollment were disabled explicitly.
-        !\Drupal::service('social_event.enroll')->isEnabled($node) ||
+        !$node->isEnrollmentEnabled() ||
         // Or disabled in the event.
         !$node->showEnrollments()
       ) {
@@ -838,7 +843,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
 
     if ($node instanceof NodeInterface) {
-      $access = \Drupal::service('social_event.enroll')->isEnabled($node);
+      $access = $node instanceof Event && $node->isEnrollmentEnabled();
       if (isset($form['enroll_wrapper'])) {
         $form['enroll_wrapper']['#access'] = $access;
       }

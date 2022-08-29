@@ -10,6 +10,14 @@ namespace Drupal\social_event\Entity\Node;
 interface EventInterface {
 
   /**
+   * Check if enrollment is allowed for the event.
+   *
+   * @return bool
+   *   TRUE if enrollment is allowed.
+   */
+  public function isEnrollmentEnabled(): bool;
+
+  /**
    * Check if access to enrollments is open.
    *
    * @return bool

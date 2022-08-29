@@ -9430,11 +9430,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
 
 		-
-			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
-
-		-
 			message: "#^Cannot call method clear\\(\\) on Drupal\\\\search_api\\\\Entity\\\\Index\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.install
@@ -17078,3 +17073,36 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
+
+		-
+			message: "#^The \"social_event\\.enroll\" service is deprecated in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. See https\\://www\\.drupal\\.org/project/social/issues/3306568$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
+
+		-
+			message: """
+				#^Call to deprecated method isEnabled\\(\\) of class Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  bundled node object itself `\\$event\\-\\>isEnrollmentEnabled\\(\\)` instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
+
+		-
+			message: """
+				#^Call to deprecated method isEnabled\\(\\) of class Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  bundled node object itself `\\$event\\-\\>isEnrollmentEnabled\\(\\)` instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_max_enroll/src/Service/EventMaxEnrollService.php
+
+		-
+			message: "#^The \"social_event\\.enroll\" service is deprecated in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. See https\\://www\\.drupal\\.org/project/social/issues/3306568$#"
+			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
