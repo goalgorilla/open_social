@@ -4,7 +4,6 @@ namespace Drupal\social_core\Service;
 
 use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Render\Element\Page;
 
 /**
  * Creates a machine name.
@@ -34,7 +33,6 @@ class MachineName {
    */
   protected $transliteration;
 
-
   /**
    * SocialTaggingService constructor.
    *
@@ -50,6 +48,8 @@ class MachineName {
    *
    * @param string $value
    *   The value to be transformed.
+   * @param string $replacePattern
+   *   The replacement pattern for regex.
    *
    * @return string
    *   The newly transformed value.
@@ -57,13 +57,15 @@ class MachineName {
   public function transform(string $value, string $replacePattern = '/[^a-z0-9_]+/'): string {
     $new_value = $this->transliteration->transliterate($value, LanguageInterface::LANGCODE_DEFAULT, '_');
     $new_value = strtolower($new_value);
-    $new_value = preg_replace($replacePattern, '_', $new_value);
-    if (!is_null($new_value)) {
-      $new_value = preg_replace('/_+/', '_', $new_value);
+    $replaced_special = preg_replace($replacePattern, '_', $new_value);
+    $replaced_underscores = '';
+    if (!is_null($replaced_special)) {
+      $replaced_underscores = preg_replace('/_+/', '_', $replaced_special);
     }
-    if (!is_null($new_value)) {
-      return $new_value;
+    if (!is_null($replaced_underscores)) {
+      return $replaced_underscores;
     }
     return '';
   }
+
 }
