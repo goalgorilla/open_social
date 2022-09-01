@@ -67,7 +67,7 @@ class SocialEventManagersAccessHelper {
   /**
    * Event enrollment acces for given operation.
    */
-  public function eventEnrollmentAccessCheck(EventEnrollment $event_enrollment, $op, AccountInterface $account) {
+  public function eventEnrollmentAccessCheck(EventEnrollment $event_enrollment, string $op, AccountInterface $account): AccessResult {
     // This allows view access to event_enrollment entities for users which are
     // the recipients of the event enrollment but not the owner of the entity.
     // For example a site manager can create an enrollment for a specific user.

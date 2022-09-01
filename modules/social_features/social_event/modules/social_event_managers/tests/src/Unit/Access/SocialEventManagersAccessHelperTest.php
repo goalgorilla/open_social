@@ -19,7 +19,7 @@ class SocialEventManagersAccessHelperTest extends UnitTestCase {
    * Test the access check to event enrollment if the recipient is the actual
    * user that got the enrollment.
    */
-  public function testAllowedEventEnrollmentAccessForRecipients() {
+  public function testAllowedEventEnrollmentAccessForRecipients(): void {
     $event_enrollment = $this->createMock('\Drupal\social_event\Entity\EventEnrollment');
 
     $account = $this->createMock('\Drupal\Core\Session\AccountInterface');
@@ -78,7 +78,7 @@ class SocialEventManagersAccessHelperTest extends UnitTestCase {
    * Test the access check to event enrollment if the recipient is not the
    * user that got the enrollment.
    */
-  public function testNeutralEventEnrollmentAccessForRecipients() {
+  public function testNeutralEventEnrollmentAccessForRecipients(): void {
     $event_enrollment = $this->createMock('\Drupal\social_event\Entity\EventEnrollment');
 
     $account = $this->createMock('\Drupal\Core\Session\AccountInterface');

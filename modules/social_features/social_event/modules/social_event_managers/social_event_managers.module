@@ -68,7 +68,7 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
 /**
  * Implements hook_entity_access().
  */
-function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, $operation, AccountInterface $account) {
+function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, string $operation, AccountInterface $account): AccessResult {
   $access_helper = new SocialEventManagersAccessHelper();
   return $access_helper->eventEnrollmentAccessCheck(
     $event_enrollment,
