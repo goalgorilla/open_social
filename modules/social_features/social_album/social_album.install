@@ -307,3 +307,16 @@ function social_album_update_11401(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Grant Profile permissions for the Anonymous user role.
+ */
+function social_album_update_11402(): void {
+  // Allow anonymous users to see a public album.
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.album.field_content_visibility:public content',
+    ]
+  );
+}
