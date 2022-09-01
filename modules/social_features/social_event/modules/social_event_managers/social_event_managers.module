@@ -69,44 +69,12 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
  * Implements hook_entity_access().
  */
 function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, $operation, AccountInterface $account) {
-  // This allows view access to event_enrollment entities for users which are the
-  // recipients of the event enrollment but not the owner of the entity. For
-  // example a site manager can create an enrollment for a specific user.
-  if ($operation !== 'view') {
-    // If we are doing different operations than viewing, then let other access
-    // checks to determine the access.
-    return AccessResult::neutral();
-  }
-
-  if ((bool) $event_enrollment->get('field_enrollment_status')->getString() !== 1) {
-    // Return neutral and let other access checks acts on this.
-    return AccessResult::neutral();
-  }
-
-  $owner = $event_enrollment->getOwner();
-  if (!$owner->hasPermission('view published event enrollment entities')) {
-    // Return neutral and let other access checks acts on this.
-    return AccessResult::neutral();
-  }
-
-  $field_account = $event_enrollment->get('field_account')->referencedEntities();
-  if (empty($field_account)) {
-    // This shouldn't happen, but just in case we return access neutral
-    // so other parts can determine access if needed.
-    return AccessResult::neutral();
-  }
-
-  $field_account = end($field_account);
-  if ($field_account->id() != $account->id()) {
-    // If current user is not the recipient then let other
-    // part of the system determine the access, by default it should
-    // be access denied, but it could be overwritten, so we don't make
-    // any assumptions here.
-    return AccessResult::neutral();
-  }
-
-  // The user is a recipient, so we allow access to event enrollment.
-  return AccessResult::allowed();
+  $access_helper = new SocialEventManagersAccessHelper();
+  return $access_helper->eventEnrollmentAccessCheck(
+    $event_enrollment,
+    $operation,
+    $account
+  );
 }
 
 /**

@@ -5,6 +5,7 @@ namespace Drupal\social_event_managers;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\EventEnrollment;
 
 /**
  * Helper class for checking update access on event managers nodes.
@@ -61,6 +62,44 @@ class SocialEventManagersAccessHelper {
     }
 
     return AccessResult::neutral();
+  }
+
+  /**
+   * Event enrollment acces for given operation.
+   */
+  public function eventEnrollmentAccessCheck(EventEnrollment $event_enrollment, $op, AccountInterface $account) {
+    // This allows view access to event_enrollment entities for users which are
+    // the recipients of the event enrollment but not the owner of the entity.
+    // For example a site manager can create an enrollment for a specific user.
+    if ($op !== 'view') {
+      // If we are doing different operations than viewing, then let other
+      // access checks to determine the access.
+      return AccessResult::neutral();
+    }
+
+    $enrollment_status = $event_enrollment->get('field_enrollment_status')->getString();
+    if (!(bool) $enrollment_status) {
+      // Return neutral and let other access checks acts on this.
+      return AccessResult::neutral();
+    }
+
+    $owner = $event_enrollment->getOwner();
+    if (!$owner->hasPermission('view published event enrollment entities')) {
+      // Return neutral and let other access checks acts on this.
+      return AccessResult::neutral();
+    }
+
+    $field_account_id = $event_enrollment->get('field_account')->getString();
+    if ($field_account_id != $account->id()) {
+      // If current user is not the recipient then let other
+      // part of the system determine the access, by default it should
+      // be access denied, but it could be overwritten, so we don't make
+      // any assumptions here.
+      return AccessResult::neutral();
+    }
+
+    // The user is a recipient, so we allow access to event enrollment.
+    return AccessResult::allowed();
   }
 
 }
