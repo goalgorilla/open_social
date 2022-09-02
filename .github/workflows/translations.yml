@@ -69,7 +69,6 @@ jobs:
 
           CHANGES=`${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/list-changes.sh translations/en.pot`
           if [[ ! -z "$CHANGES" ]]; then
-            echo "## $NAME" >> $CHANGES_FILE
             echo "\`\`\`diff" >> $CHANGES_FILE
             echo "$CHANGES" >> $CHANGES_FILE
             echo "\`\`\`" >> $CHANGES_FILE
