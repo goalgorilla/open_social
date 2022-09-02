@@ -25,12 +25,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: ${{ runner.temp }}/distribution
+          path: distribution
           # Since composer must clone from this we require all the history.
           fetch-depth: 0
 
       - name: Install Open Social Project
         run: |
+          mv ${GITHUB_WORKSPACE}/distribution ${RUNNER_TEMP}/distribution
           cp ${RUNNER_TEMP}/distribution/tests/composer.json composer.json
           composer config repositories.social vcs ${RUNNER_TEMP}/distribution
           composer require goalgorilla/open_social:dev-${GITHUB_REF}#${GITHUB_SHA}
