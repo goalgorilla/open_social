@@ -34,13 +34,13 @@ jobs:
           cp tests/composer.json ${RUNNER_TEMP}/installation/composer.json
 
       - name: Install Open Social
-        working-directory: ${{ runner.temp }/installation
+        working-directory: ${{ runner.temp }}/installation
         run: |
           composer config repositories.social vcs ${GITHUB_WORKSPACE}
           composer require goalgorilla/open_social:dev-${GITHUB_REF}
 
       - name: Install Open Social Translation Extractor
-        working-directory: ${{ runner.temp }/installation
+        working-directory: ${{ runner.temp }}/installation
         env:
           COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
         run: composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
@@ -51,7 +51,7 @@ jobs:
           ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
 
       - name: Extract Translations
-        working-directory: ${{ runner.temp }/installation/html/profiles/contrib
+        working-directory: ${{ runner.temp }}/installation/html/profiles/contrib
         run: |
           CHANGES_FILE="${RUNNER_TEMP}/CHANGES.md"
           touch $CHANGES_FILE
