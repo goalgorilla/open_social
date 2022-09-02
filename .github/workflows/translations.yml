@@ -42,8 +42,10 @@ jobs:
       - name: Install Open Social Translation Extractor
         working-directory: ${{ runner.temp }}/installation
         env:
-          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
-        run: composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
+          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_TOOLS_AUTH}}"}}}' # [tl! **]
+        run: |
+          composer config repositories.oste '{"type": "composer", "url": "https://repo.packagist.com/opensocial/distribution-tools/", "only": ["goalgorilla/oste"] }'
+          composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
 
       - name: Setup Extractor
         run: |
