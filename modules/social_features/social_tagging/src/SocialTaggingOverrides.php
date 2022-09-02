@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\social_core\Service\MachineName;
+use Drupal\social_core\Service\MachineNameInterface;
 
 /**
  * Configuration override.
@@ -25,19 +25,19 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
   /**
    * The machine name.
    */
-  private MachineName $machineName;
+  private MachineNameInterface $machineName;
 
   /**
    * Constructs the service.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\social_core\Service\MachineName $machine_name
+   * @param \Drupal\social_core\Service\MachineNameInterface $machine_name
    *   The machine name.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    MachineName $machine_name
+    MachineNameInterface $machine_name
   ) {
     $this->configFactory = $config_factory;
     $this->machineName = $machine_name;

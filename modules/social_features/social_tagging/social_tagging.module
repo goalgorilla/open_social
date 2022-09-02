@@ -569,8 +569,10 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  */
 function social_tagging_to_machine_name($text) {
   @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.5.0 and is removed from social:12.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
-  /** @var \Drupal\social_core\Service\MachineName $machine_name */
+
+  /** @var \Drupal\social_core\Service\MachineNameInterface $machine_name */
   $machine_name = \Drupal::service('social_core.machine_name');
+
   return $machine_name->transform($text);
 }
 
