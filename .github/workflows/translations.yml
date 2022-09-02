@@ -40,10 +40,11 @@ jobs:
           composer require goalgorilla/open_social:dev-${GITHUB_REF_NAME}
 
       - name: Install Open Social Translation Extractor
-        working-directory: ${{ runner.temp }}/oste
         env:
           COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_TOOLS_AUTH}}"}}}' # [tl! **]
         run: |
+          mkdir ${RUNNER_TEMP}/oste
+          cd ${RUNNER_TEMP}/oste
           composer init -n --name="goalgorilla/extractor"
           composer config repositories.oste '{"type": "composer", "url": "https://repo.packagist.com/opensocial/distribution-tools/", "only": ["goalgorilla/oste"] }'
           composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
