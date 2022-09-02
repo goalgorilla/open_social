@@ -25,18 +25,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: distribution
           # Since composer must clone from this we require all the history.
           fetch-depth: 0
 
-      - name: Install Open Social Project
+      - name: Prepare Installation Directory
         run: |
-          mv ${GITHUB_WORKSPACE}/distribution ${RUNNER_TEMP}/distribution
-          cp ${RUNNER_TEMP}/distribution/tests/composer.json composer.json
-          composer config repositories.social vcs ${RUNNER_TEMP}/distribution
-          composer require goalgorilla/open_social:dev-${GITHUB_REF}#${GITHUB_SHA}
+          mkdir ${RUNNER_TEMP}/installation
+          cp tests/composer.json ${RUNNER_TEMP}/installation/composer.json
+
+      - name: Install Open Social
+        working_directory: ${{ runner.temp }/installation
+        run: |
+          composer config repositories.social vcs ${GITHUB_WORKSPACE}
+          composer require goalgorilla/open_social:dev-${GITHUB_REF}
 
       - name: Install Open Social Translation Extractor
+        working_directory: ${{ runner.temp }/installation
         env:
           COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
         run: composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
@@ -44,17 +48,22 @@ jobs:
       - name: Setup Extractor
         run: |
           mkdir -p ${RUNNER_TEMP}/extractor
-          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
+          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
 
       - name: Extract Translations
-        working-directory: html/profiles/contrib
+        working-directory: ${{ runner.temp }/installation/html/profiles/contrib
         run: |
           CHANGES_FILE="${RUNNER_TEMP}/CHANGES.md"
           touch $CHANGES_FILE
 
-          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor social
+          NAME="social"
+          TRANSLATIONS_FOLDER="${GITHUB_WORKSPACE}/translations"
 
-          CHANGES=`${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/list-changes.sh social/translations/en.pot`
+          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor "${NAME}" "${TRANSLATIONS_FOLDER}"
+
+          cd $GITHUB_WORKSPACE
+
+          CHANGES=`${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/list-changes.sh translations/en.pot`
           if [[ ! -z "$CHANGES" ]]; then
             echo "## $NAME" >> $CHANGES_FILE
             echo "\`\`\`diff" >> $CHANGES_FILE
@@ -63,7 +72,7 @@ jobs:
           fi
 
           # Commit the changes for Open Social
-          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
+          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
 
       - name: Collect Changes
         id: changesets
