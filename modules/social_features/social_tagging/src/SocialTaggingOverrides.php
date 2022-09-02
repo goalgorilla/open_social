@@ -5,8 +5,10 @@ namespace Drupal\social_tagging;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\social_core\Service\MachineName;
 
 /**
  * Configuration override.
@@ -17,19 +19,28 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
   /**
    * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The machine name.
+   */
+  private MachineName $machineName;
 
   /**
    * Constructs the service.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\social_core\Service\MachineName $machine_name
+   *   The machine name.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    MachineName $machine_name
+  ) {
     $this->configFactory = $config_factory;
+    $this->machineName = $machine_name;
   }
 
   /**
@@ -40,11 +51,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    *
    * @param array $names
    *   The names of the configs for which overrides are being loaded.
-   *
-   * @return bool
-   *   Whether we override those configs.
    */
-  private function shouldApplyOverrides(array $names) {
+  private function shouldApplyOverrides(array $names): bool {
     $config_names = [
       'views.view.search_content',
       'views.view.search_groups',
@@ -127,14 +135,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
         // Display parent of tags.
         elseif ($tag_service->useCategoryParent()) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
@@ -238,7 +246,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_target_id_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
@@ -422,7 +430,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

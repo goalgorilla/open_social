@@ -8995,6 +8995,15 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
 
 		-
+			message: """
+				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
+			"""
+			count: 5
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
+
+		-
 			message: "#^Function _social_follow_landing_page_entity_validate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
@@ -9153,6 +9162,15 @@ parameters:
 			message: "#^Parameter \\#2 \\$nid of method Drupal\\\\social_follow_taxonomy\\\\Plugin\\\\ActivityContext\\\\FollowTaxonomyActivityContext\\:\\:haveAccessToNode\\(\\) expects int\\|string, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
+
+		-
+			message: """
+				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
 
 		-
 			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagLazyBuilder\\:\\:lazyBuild\\(\\) has no return type specified\\.$#"
@@ -9423,6 +9441,11 @@ parameters:
 			message: "#^Method Drupal\\\\social_group_default_route\\\\RouteSubscriber\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
+
+		-
+			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
 
 		-
 			message: "#^Cannot call method clear\\(\\) on Drupal\\\\search_api\\\\Entity\\\\Index\\|null\\.$#"
@@ -15460,6 +15483,16 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSearchApiSplitProfileTerms.php
 
 		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:validateExposed\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
+
+		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
+
+		-
 			message: "#^Expression in empty\\(\\) is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/SocialProfileNameService.php
@@ -15523,16 +15556,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
-
-		-
-		  message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
-		  count: 1
-		  path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
-
-		-
-		  message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:validateExposed\\(\\) has parameter \\$form with no type specified\\.$#"
-		  count: 1
-		  path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
 
 		-
 			message: "#^Parameter \\#1 \\$user of method Drupal\\\\Tests\\\\social_profile\\\\Kernel\\\\GraphQLUsersEndpointTest\\:\\:ensureTestProfile\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|false given\\.$#"
@@ -15915,6 +15938,15 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
+			message: """
+				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
+			"""
+			count: 4
+			path: modules/social_features/social_tagging/social_tagging.module
+
+		-
 			message: "#^Function _social_tagging_entity_validate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -16060,14 +16092,18 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
-			message: "#^Method Drupal\\\\social_tagging\\\\SocialTaggingOverrides\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			message: """
+				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
+			"""
 			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
+			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 
 		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
@@ -17198,8 +17234,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php

@@ -9,7 +9,7 @@ services:
 
   social_tagging.overrider:
     class: Drupal\social_tagging\SocialTaggingOverrides
-    arguments: ['@config.factory']
+    arguments: ['@config.factory', '@social_core.machine_name']
     tags:
       - { name: config.factory.override, priority: 5 }
 
