@@ -40,17 +40,18 @@ jobs:
           composer require goalgorilla/open_social:dev-${GITHUB_REF_NAME}
 
       - name: Install Open Social Translation Extractor
-        working-directory: ${{ runner.temp }}/installation
+        working-directory: ${{ runner.temp }}/oste
         env:
           COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_TOOLS_AUTH}}"}}}' # [tl! **]
         run: |
+          composer init -n --name="goalgorilla/extractor"
           composer config repositories.oste '{"type": "composer", "url": "https://repo.packagist.com/opensocial/distribution-tools/", "only": ["goalgorilla/oste"] }'
           composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
 
       - name: Setup Extractor
         run: |
           mkdir -p ${RUNNER_TEMP}/extractor
-          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
 
       - name: Extract Translations
         working-directory: ${{ runner.temp }}/installation/html/profiles/contrib
@@ -61,11 +62,11 @@ jobs:
           NAME="social"
           TRANSLATIONS_FOLDER="${GITHUB_WORKSPACE}/translations"
 
-          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor "${NAME}" "${TRANSLATIONS_FOLDER}"
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor "${NAME}" "${TRANSLATIONS_FOLDER}"
 
           cd $GITHUB_WORKSPACE
 
-          CHANGES=`${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/list-changes.sh translations/en.pot`
+          CHANGES=`${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/list-changes.sh translations/en.pot`
           if [[ ! -z "$CHANGES" ]]; then
             echo "## $NAME" >> $CHANGES_FILE
             echo "\`\`\`diff" >> $CHANGES_FILE
@@ -74,7 +75,7 @@ jobs:
           fi
 
           # Commit the changes for Open Social
-          ${RUNNER_TEMP}/installation/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
 
       - name: Collect Changes
         id: changesets
