@@ -37,7 +37,7 @@ jobs:
         working-directory: ${{ runner.temp }}/installation
         run: |
           composer config repositories.social vcs ${GITHUB_WORKSPACE}
-          composer require goalgorilla/open_social:dev-${GITHUB_REF}
+          composer require goalgorilla/open_social:dev-${GITHUB_REF_NAME}
 
       - name: Install Open Social Translation Extractor
         working-directory: ${{ runner.temp }}/installation
