@@ -47,7 +47,7 @@ jobs:
           cd ${RUNNER_TEMP}/oste
           composer init -n --name="goalgorilla/extractor"
           composer config repositories.oste '{"type": "composer", "url": "https://repo.packagist.com/opensocial/distribution-tools/", "only": ["goalgorilla/oste"] }'
-          composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
+          composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-feature/fix-msguniq-sorting
 
       - name: Setup Extractor
         run: |
