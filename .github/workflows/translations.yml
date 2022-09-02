@@ -12,3 +12,81 @@ jobs:
     steps:
       - name: Install Gettext tools
         run: sudo apt-get install gettext
+
+      - name: Set default PHP7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "noreply@getopensocial.com"
+          git config --global user.name "Open Social Translation Workflow"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: ${{ runner.temp }}/distribution
+          # Since composer must clone from this we require all the history.
+          fetch-depth: 0
+
+      - name: Install Open Social Project
+        run: |
+          cp ${RUNNER_TEMP}/distribution/tests/composer.json composer.json
+          composer config repositories.social vcs ${RUNNER_TEMP}/distribution
+          composer require goalgorilla/open_social:dev-${GITHUB_REF}#${GITHUB_SHA}
+
+      - name: Install Open Social Translation Extractor
+        env:
+          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_AUTH}}"}}}' # [tl! **]
+        run: composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
+
+      - name: Setup Extractor
+        run: |
+          mkdir -p ${RUNNER_TEMP}/extractor
+          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
+
+      - name: Extract Translations
+        working-directory: html/profiles/contrib
+        run: |
+          CHANGES_FILE="${RUNNER_TEMP}/CHANGES.md"
+          touch $CHANGES_FILE
+
+          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor social
+
+          CHANGES=`${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/list-changes.sh social/translations/en.pot`
+          if [[ ! -z "$CHANGES" ]]; then
+            echo "## $NAME" >> $CHANGES_FILE
+            echo "\`\`\`diff" >> $CHANGES_FILE
+            echo "$CHANGES" >> $CHANGES_FILE
+            echo "\`\`\`" >> $CHANGES_FILE
+          fi
+
+          # Commit the changes for Open Social
+          ${GITHUB_WORKSPACE}/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
+
+      - name: Collect Changes
+        id: changesets
+        run: |
+          CHANGES="$(cat "${RUNNER_TEMP}/CHANGES.md")"
+
+          if [[ -z "$CHANGES" ]]; then
+            CHANGES="No changes"
+          fi
+
+          PR_BODY=$(cat <<EOF
+          # Summary of Translations
+          Below is a summary of the strings changed, removed, and updated in the template file.
+
+          $CHANGES
+          EOF
+          )
+
+          echo "$PR_BODY" > "${RUNNER_TEMP}/CHANGES.md"
+
+      - name: Create Pull Request
+        uses: goalgorilla/create-pull-request@patched-2022-08-30
+        with:
+          branch: automation/translations-source-extraction
+          delete-branch: true
+          title: Updated source translations
+          body-file: ${{ runner.temp }}/CHANGES.md
+          labels: automated,translations
