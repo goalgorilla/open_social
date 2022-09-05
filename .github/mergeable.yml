@@ -27,6 +27,9 @@ mergeable:
       - do: author
         must_exclude:
           regex: 'dependabot'
+      - do: title
+        must_exclude:
+          regex: 'Updated source translations'
     pass:
       - do: comment
         payload:
