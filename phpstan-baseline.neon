@@ -6650,11 +6650,6 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.module
 
 		-
-			message: "#^Method Drupal\\\\social_event_an_enroll_enrolments_export\\\\SocialEventAnEnrollEnrolmentsExportOverrides\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/SocialEventAnEnrollEnrolmentsExportOverrides.php
-
-		-
 			message: "#^Function social_event_enrolments_export_file_download\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.module
@@ -9428,6 +9423,11 @@ parameters:
 			message: "#^Method Drupal\\\\social_group_default_route\\\\RouteSubscriber\\\\RouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
+
+		-
+			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
 
 		-
 			message: "#^Cannot call method clear\\(\\) on Drupal\\\\search_api\\\\Entity\\\\Index\\|null\\.$#"
@@ -15465,6 +15465,16 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSearchApiSplitProfileTerms.php
 
 		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:validateExposed\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
+
+		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
+
+		-
 			message: "#^Expression in empty\\(\\) is not falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/SocialProfileNameService.php
@@ -15528,16 +15538,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/tests/src/Kernel/GraphQLUsersEndpointTest.php
-
-		-
-		  message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:valueForm\\(\\) has parameter \\$form with no type specified\\.$#"
-		  count: 1
-		  path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
-
-		-
-		  message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\views\\\\filter\\\\SocialSplitProfileTerms\\:\\:validateExposed\\(\\) has parameter \\$form with no type specified\\.$#"
-		  count: 1
-		  path: modules/social_features/social_profile/src/Plugin/views/filter/SocialSplitProfileTerms.php
 
 		-
 			message: "#^Parameter \\#1 \\$user of method Drupal\\\\Tests\\\\social_profile\\\\Kernel\\\\GraphQLUsersEndpointTest\\:\\:ensureTestProfile\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\user\\\\Entity\\\\User\\|false given\\.$#"
@@ -17228,8 +17228,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: "#^Method Drupal\\\\social_flexible_group_book\\\\Plugin\\\\ActivityEntityCondition\\\\BookParentOnlyActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has parameter \\$entity with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
