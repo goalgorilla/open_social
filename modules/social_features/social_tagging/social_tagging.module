@@ -576,26 +576,16 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
 }
 
 /**
- * Transforms term names to machine name for on node edit / validate.
- *
- * This will convert the term names from any language.
+ * Main term names to machine name for on node edit / validate.
  *
  * @param string $text
  *   A node.
  *
- * @return string
- *   A machine name so it can be used programmatically.
- *
- * @deprecated in social:11.5.0 and is removed from social:12.0.0. Use
- *   \Drupal::service('social_core.machine_name')->transform() instead.
- *
- * @see https://www.drupal.org/node/3306214
+ * @return mixed|string
+ *   A machine name so it can be used pogrammatically.
  */
 function social_tagging_to_machine_name($text) {
-  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.5.0 and is removed from social:12.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
-  /** @var \Drupal\social_core\Service\MachineName $machine_name */
-  $machine_name = \Drupal::service('social_core.machine_name');
-  return $machine_name->transform($text);
+  return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 
 /**
