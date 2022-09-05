@@ -234,7 +234,7 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
         $categories = $tag_service->getCategories();
         // Loop over the categories.
         foreach ($categories as $tid => $category) {
-          $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
+          $field_name = 'social_tagging_' . \Drupal::service('social_core.machine_name')->transform($category);
           // Get the corresponding items.
           $options = $tag_service->getChildren($tid);
 
@@ -299,8 +299,9 @@ function _social_tagging_entity_validate($form, FormStateInterface $form_state) 
   $counter = 0;
   // Loop over the categories.
   foreach ($categories as $category) {
-    if (!empty($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)))) {
-      foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
+    $machine_name = \Drupal::service('social_core.machine_name');
+    if (!empty($form_state->getValue('social_tagging_' . $machine_name->transform($category)))) {
+      foreach ($form_state->getValue('social_tagging_' . $machine_name->transform($category)) as $selected) {
         $tagging_values[] = [
           'target_id' => $selected,
           '_weight' => (string) $counter,
@@ -518,7 +519,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   }
   if ($tag_service->allowSplit()) {
     foreach ($tag_service->getCategories() as $tid => $term_name) {
-      $label = social_tagging_to_machine_name($term_name);
+      $label = \Drupal::service('social_core.machine_name')->transform($term_name);
 
       if (isset($form[$label])) {
         $form[$label]['#options'] = [];
@@ -582,9 +583,15 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  *   A node.
  *
  * @return mixed|string
- *   A machine name so it can be used pogrammatically.
+ *   A machine name so it can be used programmatically.
+ *
+ * @deprecated in social:11.3.10 and is removed from social:12.0.0. Use
+ *   \Drupal::service('social_core.machine_name')->transform() instead.
+ *
+ * @see https://www.drupal.org/node/3306214
  */
 function social_tagging_to_machine_name($text) {
+  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.3.10 and is removed from social:12.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
   return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 

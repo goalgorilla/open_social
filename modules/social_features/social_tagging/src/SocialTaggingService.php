@@ -275,7 +275,8 @@ class SocialTaggingService {
           $parent = $current_term;
         }
         // Prepare the parameter;.
-        $parameter = $allowSplit ? social_tagging_to_machine_name($category_label) : 'tag';
+        // @todo Replace with dependency injection in Open Social 12.0.0.
+        $parameter = $allowSplit ? \Drupal::service('social_core.machine_name')->transform($category_label) : 'tag';
 
         $route_parameters = [
           $parameter . '[]' => $current_term->id(),
