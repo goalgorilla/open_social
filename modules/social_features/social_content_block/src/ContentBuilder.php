@@ -73,7 +73,7 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['getEntities', 'build'];
   }
 
@@ -148,27 +148,40 @@ class ContentBuilder implements ContentBuilderInterface {
         // Apply our sorting logic.
         $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
 
-        // Add range.
-        $query->range(0, $block_content->field_item_amount->value);
-
         // Execute the query to get the results.
         $result = $query->execute();
         $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
 
         if ($entities) {
+          // In order not to load the objects of all sorted entities
+          // and not to check whether the user has access to view
+          // ($entity->access('view')), we can simply do it at the query level
+          // and iterate only the necessary number of elements. This approach
+          // is much faster than loading all entities.
+          $limit = $block_content->field_item_amount->value;
+
+          foreach ($entities as $entity_id) {
+            $eid = $this->entityTypeManager->getStorage($entity_type->id())->getQuery()
+              ->accessCheck(TRUE)
+              ->condition((string) $entity_type->getKey('id'), $entity_id)
+              ->execute();
+
+            if (!empty($eid)) {
+              $allowed_entities[$entity_id] = $entity_id;
+            }
+
+            if (!empty($allowed_entities) && count($allowed_entities) >= $limit) {
+              break;
+            }
+          }
+
           // Load all the topics so we can give them back.
           $entities = $this->entityTypeManager
             ->getStorage($definition['entityTypeId'])
-            ->loadMultiple($entities);
+            ->loadMultiple($allowed_entities ?? NULL);
 
           foreach ($entities as $key => $entity) {
-            if ($entity->access('view') === FALSE) {
-              unset($entities[$key]);
-            }
-            else {
-              // Get entity translation if exists.
-              $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
-            }
+            $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
           }
 
           return $this->entityTypeManager
