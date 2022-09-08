@@ -307,3 +307,12 @@ function social_album_update_11401(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Grant albums permissions for anonymous users.
+ */
+function social_album_update_11402(): void {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_role_anonymous */
+  $group_role_anonymous = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-anonymous');
+  $group_role_anonymous->grantPermissions(['view group_node:album content', 'view group_node:album entity'])->save();
+}
