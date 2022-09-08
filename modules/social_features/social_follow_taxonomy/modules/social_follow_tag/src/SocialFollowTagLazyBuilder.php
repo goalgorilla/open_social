@@ -118,7 +118,8 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     if ($this->tagService->allowSplit()) {
       foreach ($this->tagService->getCategories() as $tid => $value) {
         if (!empty($this->tagService->getChildren($tid))) {
-          $identifiers[] = social_tagging_to_machine_name($value);
+          // @todo Replace with dependency injection in Open Social 12.0.0.
+          $identifiers[] = \Drupal::service('social_core.machine_name')->transform($value);
         }
       }
     }

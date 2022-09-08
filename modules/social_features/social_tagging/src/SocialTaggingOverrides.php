@@ -87,6 +87,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
     $tag_service = \Drupal::service('social_tagging.tag_service');
+
+    /** @var \Drupal\social_core\Service\MachineName $machine_name */
+    $machine_name_service = \Drupal::service('social_core.machine_name');
+
     $config = $this->configFactory;
 
     // Check if tagging is active.
@@ -126,14 +130,16 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
         // Display parent of tags.
         elseif ($tag_service->useCategoryParent()) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
@@ -237,7 +243,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_target_id_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
