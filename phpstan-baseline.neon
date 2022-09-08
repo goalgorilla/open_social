@@ -8995,15 +8995,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
 
 		-
-			message: """
-				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
-				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
-				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
-			"""
-			count: 5
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
 			message: "#^Function _social_follow_landing_page_entity_validate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
@@ -9164,16 +9155,12 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: """
-				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
-				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
-				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
-			"""
+			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagLazyBuilder\\:\\:lazyBuild\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
 
 		-
-			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagLazyBuilder\\:\\:lazyBuild\\(\\) has no return type specified\\.$#"
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
 
@@ -15938,15 +15925,6 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
-			message: """
-				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
-				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
-				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
-			"""
-			count: 4
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
 			message: "#^Function _social_tagging_entity_validate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -16097,16 +16075,12 @@ parameters:
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
-			message: """
-				#^Call to deprecated function social_tagging_to_machine_name\\(\\)\\:
-				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
-				  \\\\Drupal\\:\\:service\\('social_core\\.machine_name'\\)\\-\\>transform\\(\\) instead\\.$#
-			"""
+			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 
 		-
-			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 

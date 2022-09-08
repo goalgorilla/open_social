@@ -96,6 +96,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
     $tag_service = \Drupal::service('social_tagging.tag_service');
+
     $config = $this->configFactory;
 
     // Check if tagging is active.
