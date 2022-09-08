@@ -9180,6 +9180,11 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
+
+		-
 			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagOverrides\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagOverrides.php
@@ -16115,12 +16120,22 @@ parameters:
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			message: "#^Variable \\$machine_name in PHPDoc tag @var does not match assigned variable \\$machine_name_service\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
+
+		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/SocialTaggingService.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 
