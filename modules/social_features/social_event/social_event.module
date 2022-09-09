@@ -70,7 +70,9 @@ function social_event_theme(): array {
  * @see https://www.drupal.org/node/3191609
  */
 function social_event_entity_bundle_info_alter(array &$bundles): void {
-  $bundles['node']['event']['class'] = Event::class;
+  if (isset($bundles['node']['event'])) {
+    $bundles['node']['event']['class'] = Event::class;
+  }
 }
 
 /**

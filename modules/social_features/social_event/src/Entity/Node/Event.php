@@ -24,8 +24,8 @@ class Event extends Node implements EventInterface {
       return FALSE;
     }
 
-    // When field was added to the event the value become `null` which
-    // creates some inconsistent if after saving the event the value is `false`.
+    // When field was added to the event the value become `false` which
+    // creates some inconsistent.
     $was_not_changed = $this->get('field_event_enroll')->isEmpty();
     $is_enabled = (bool) $this->get('field_event_enroll')->getString();
 
