@@ -18,18 +18,18 @@ social_event_an_enroll.enroll_dialog:
     _event_an_enroll_route: TRUE
   requirements:
     _user_is_logged_in: 'FALSE'
-    _custom_access: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollAccess'
+    _entity_access: 'node.an_enroll'
 
 social_event_an_enroll.enroll_form:
   path: '/node/{node}/enroll'
   defaults:
     _form: '\Drupal\social_event_an_enroll\Form\EventAnEnrollForm'
     _title_callback: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollTitle'
-  requirements:
-    _user_is_logged_in: 'FALSE'
-    _custom_access: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollAccess'
   options:
     parameters:
       node:
         type: entity:node
     _event_an_enroll_route: TRUE
+  requirements:
+    _user_is_logged_in: 'FALSE'
+    _entity_access: 'node.an_enroll'

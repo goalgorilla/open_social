@@ -5,9 +5,12 @@
  * The Social event AN enroll module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Component\Render\PlainTextOutput;
@@ -274,4 +277,63 @@ function social_event_an_enroll_node_presave(EntityInterface $entity) {
  */
 function social_event_an_enroll_social_event_managers_action_social_event_an_enroll_send_email_action_finish($success) {
   return social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_event_an_enroll_node_access(NodeInterface $node, $operation, AccountInterface $account) {
+  // We only care about the `an_enroll` action.
+  if ($operation === 'an_enroll') {
+    return _social_event_an_enroll_node_an_enroll_access($node, $account);
+  }
+
+  // We don't care about anything else.
+  return AccessResult::neutral();
+}
+
+/**
+ * Access checking for `an_enroll` event for `node.event`.
+ *
+ * Implements the `an_enroll` action for nodes of the event bundle. This can be
+ * used to check whether users can enroll using an entity check.
+ *
+ * @param \Drupal\node\NodeInterface $node
+ *   The node to check.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The account trying to enroll.
+ *
+ * @return \Drupal\Core\Access\AccessResultInterface
+ *   The result for the access check.
+ */
+function _social_event_an_enroll_node_an_enroll_access(NodeInterface $node, AccountInterface $account) {
+  // We only care about events.
+  if ($node->getType() !== "event") {
+    return AccessResult::neutral();
+  }
+
+  // If the anonymous enrollment is disabled globally then this action is
+  // disallowed.
+  $config = \Drupal::config('social_event_an_enroll.settings');
+  if (!$config->get('event_an_enroll')) {
+    return AccessResult::forbidden("Anonymous event enrollment is disabled.");
+  }
+
+  // The user must be anonymous.
+  if (!$account->isAnonymous()) {
+    return AccessResult::forbidden("Authenticated users may not enroll anonymously.");
+  }
+
+  // The content trying to enroll to must be public.
+  if ($node->get('field_content_visibility')->getString() !== 'public') {
+    return AccessResult::forbidden("The content must be public for anonymous enrollment.");
+  }
+
+  // Anonymous enrollments must be enabled for the event.
+  if (empty($node->get('field_event_an_enroll')->value)) {
+    return AccessResult::forbidden("The event does not have anonymmous enrollment enabled.");
+  }
+
+  // If all those conditions are met then we allow access.
+  return AccessResult::allowed();
 }
