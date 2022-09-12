@@ -318,3 +318,40 @@ function social_album_update_11001(): void {
     ]
   );
 }
+
+/**
+ * Grant group albums permissions for anonymous users.
+ */
+function social_album_update_11002(): void {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_role_anonymous */
+  $group_role_anonymous = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-anonymous');
+  $group_role_anonymous->grantPermissions(['view group_node:album content', 'view group_node:album entity'])->save();
+}
+
+/**
+ * Grant group albums permissions for group outsiders.
+ */
+function social_album_update_11003(): void {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_role_outsider */
+  $group_role_outsider = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-outsider');
+  $group_role_outsider->grantPermissions(['view group_node:album content', 'view group_node:album entity'])->save();
+}
+
+/**
+ * Update Album permissions.
+ */
+function social_album_update_11004(): void {
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.album.field_content_visibility:public content',
+    ]
+  );
+
+  user_role_grant_permissions(
+    'verified',
+    [
+      'view node.album.field_content_visibility:community content',
+    ]
+  );
+}
