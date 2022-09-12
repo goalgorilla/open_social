@@ -111,11 +111,4 @@ class EnrollRequestDialogController extends ControllerBase {
     return $this->t('Request enrollment in @label Event', ['@label' => $node->label()]);
   }
 
-  /**
-   * Determines if user has access to enroll form.
-   */
-  public function enrollAccess(NodeInterface $node) {
-    return AccessResult::allowed();
-  }
-
 }
