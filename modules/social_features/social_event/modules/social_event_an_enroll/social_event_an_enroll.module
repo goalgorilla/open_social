@@ -103,8 +103,9 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
   if ($account->isAnonymous() && !empty($variables['event_enrollment'])) {
 
     $node = $variables['node'];
+    assert($node instanceof Node);
 
-    if ($variables['view_mode'] === 'hero' && social_event_an_enroll_is_enabled($node)) {
+    if ($variables['view_mode'] === 'hero' && $node->access('an_enroll', $account)) {
       $form = \Drupal::formBuilder()->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm', $node);
 
       $variables['event_enrollment'] = [
@@ -196,19 +197,6 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
   if (!$can_show_an_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
   }
-}
-
-/**
- * Check if anonymous enrollment is allowed for given event.
- */
-function social_event_an_enroll_is_enabled(Node $node) {
-  $config = \Drupal::config('social_event_an_enroll.settings');
-  $is_global_enabled = $config->get('event_an_enroll');
-  $is_event = $node->getType() === 'event';
-  $is_public = $node->get('field_content_visibility')->getString() === 'public';
-  $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
-  $is_event_enroll = \Drupal::service('social_event.enroll')->isEnabled($node);
-  return $is_global_enabled && $is_event && $is_public && $is_event_an_enroll && $is_event_enroll;
 }
 
 /**
