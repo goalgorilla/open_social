@@ -98,6 +98,7 @@ jobs:
         - ${{ github.workspace }}:/var/www
 
     strategy:
+      fail-fast: false
       matrix:
         feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
         with_optional:
