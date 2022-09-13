@@ -54,6 +54,12 @@ jobs:
       - name: Composer require current branch
         run: composer require goalgorilla/open_social:dev-$BRANCH_NAME
 
+      - name: Cache Docker Images
+        uses: actions/cache@v3
+        with:
+          path: /var/lib/docker/overlay2
+          key: docker-${{ hashFiles('docker-compose-ci.yml') }}
+
       # Install the docker.
       - name: Install Docker
         run: sh scripts/social/ci/install-docker.sh
@@ -94,6 +100,12 @@ jobs:
           php-version: 8.0
           coverage: none # disable xdebug, pcov
           tools: cs2pr
+
+      - name: Cache Docker Images
+        uses: actions/cache@v3
+        with:
+          path: /var/lib/docker/overlay2
+          key: docker-${{ hashFiles('docker-compose-ci.yml') }}
 
       - name: Download Site
         uses: actions/cache@v3
