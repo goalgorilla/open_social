@@ -68,10 +68,10 @@ jobs:
         run: docker exec -i social_ci_web drush sql:dump --result-file=../installation.sql
 
       - name: Package up site
-        uses: actions/upload-artifact@v3
+        uses: actions/cache@v3
         with:
-          name: test-setup{{ matrix.with_optional }}
           path: ${{ github.workspace }}
+          key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
 
   # This workflow contains a single job called "Running tests"
   tests:
@@ -95,9 +95,11 @@ jobs:
           coverage: none # disable xdebug, pcov
           tools: cs2pr
 
-      - uses: actions/download-artifact@v3
+      - name: Download Site
+        uses: actions/cache@v3
         with:
-          name: test-setup{{ matrix.with_optional }}
+          path: ${{ github.workspace }}
+          key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
 
       # Install the docker.
       - name: Install Docker
