@@ -97,10 +97,10 @@ jobs:
 
     strategy:
       matrix:
+        feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
         with_optional:
           - ""
           - "--with-optional"
-        feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
 
     services:
       db:
