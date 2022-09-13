@@ -5,6 +5,7 @@ namespace Drupal\social\Behat;
 
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Testwork\Tester\Result\TestResult;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -73,7 +74,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    $dir = '/var/www/travis_artifacts';
+    $dir = '/var/www/test_images';
     if (is_writeable($dir)) {
       $file_and_path = $dir . '/' . $filename . '.jpg';
       file_put_contents($file_and_path, $screenshot);
@@ -144,7 +145,7 @@ class SocialMinkContext extends MinkContext {
    */
   public function takeScreenShotAfterFailedStep(AfterStepScope $scope)
   {
-    if (99 === $scope->getTestResult()->getResultCode()) {
+    if (TestResult::FAILED === $scope->getTestResult()->getResultCode()) {
       $driver = $this->getSession()->getDriver();
       if (!($driver instanceof Selenium2Driver)) {
         return;

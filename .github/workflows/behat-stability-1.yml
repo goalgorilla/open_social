@@ -47,3 +47,10 @@ jobs:
 
       - name: Run Integration tests
         run: docker exec -i social_ci_web bash /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict --colors"
+
+      - name: Upload Behat Test Output
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: behat-output
+          path: html/profiles/contrib/social/tests/behat/logs
