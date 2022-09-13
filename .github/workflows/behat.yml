@@ -22,7 +22,7 @@ jobs:
 
       - name: Find feature files
         id: set-matrix
-        run: echo "::set-output name=features::$(ls tests/behat/features/capabilities/**/*.feature | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+        run: echo "::set-output name=features::$(ls tests/behat/features/capabilities | jq -R -s -c 'split("\n") | map(select(length > 0))')"
 
     outputs:
       features: ${{ steps.set-matrix.outputs.features }}
@@ -146,7 +146,7 @@ jobs:
         run: echo "127.0.0.1 web" >> /etc/hosts
 
       - name: Run Integration test
-        run: vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors html/profiles/contrib/social/${{ matrix.feature }}
+        run: vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}
 
       - name: Upload Behat Test Output
         if: failure()
