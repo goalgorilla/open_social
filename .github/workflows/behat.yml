@@ -30,19 +30,38 @@ jobs:
   install_open_social:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
+    container: goalgorilla/open_social_docker:ci
+
     strategy:
       matrix:
         with_optional:
           - ""
           - "--with-optional"
+
+    services:
+      db:
+        image: mariadb:10.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: social
+      mailcatcher:
+        image: schickling/mailcatcher
+        env:
+          VIRTUAL_HOST: mailcatcher.social.dev
+          VIRTUAL_PORT: 1080
+        ports:
+          - "1080"
+      redis:
+        image: redis:latest
+
+    defaults:
+      run:
+        working-directory: /var/www
+
     steps:
-      # Set PHP version to 8.0
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          coverage: none # disable xdebug, pcov
-          tools: cs2pr
+      #  Link the GitHub Workspace to /var/www since GitHub doesn't respect the
+      # working directory.
+      - run: rm -rf /var/www && ln -s $GITHUB_WORKSPACE /var/www
 
       # Checkout Drupal Social.
       - uses: actions/checkout@v3
@@ -54,24 +73,13 @@ jobs:
       - name: Composer require current branch
         run: composer require goalgorilla/open_social:dev-$BRANCH_NAME
 
-      - name: Cache Docker Images
-        uses: actions/cache@v3
-        with:
-          path: /var/lib/docker/overlay2
-          key: docker-${{ hashFiles('docker-compose-ci.yml') }}
-
-      # Install the docker.
-      - name: Install Docker
-        run: sh scripts/social/ci/install-docker.sh
-
-      - name: Run Docker containers
-        run: docker-compose -f docker-compose-ci.yml up -d
-
       - name: Install Open Social
-        run: docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh ${{ matrix.with_optional }} --localsettings
+        run: |
+          chmod +x scripts/social/install/install_script.sh
+          scripts/social/install/install_script.sh ${{ matrix.with_optional }} --localsettings
 
       - name: Dump Database
-        run: docker exec -i social_ci_web drush sql:dump --result-file=../installation.sql
+        run: drush sql:dump --result-file=../installation.sql
 
       - name: Package up site
         uses: actions/cache@v3
@@ -85,6 +93,8 @@ jobs:
 
     name: 'Tests'
     runs-on: ubuntu-22.04
+    container: goalgorilla/open_social_docker:ci
+
     strategy:
       matrix:
         with_optional:
@@ -92,20 +102,36 @@ jobs:
           - "--with-optional"
         feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
 
-    steps:
-      # Set PHP version to 8.0
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          coverage: none # disable xdebug, pcov
-          tools: cs2pr
+    services:
+      db:
+        image: mariadb:10.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: social
+      mailcatcher:
+        image: schickling/mailcatcher
+        env:
+          VIRTUAL_HOST: mailcatcher.social.dev
+          VIRTUAL_PORT: 1080
+        ports:
+          - "1080"
+      redis:
+        image: redis:latest
+      chrome:
+        # We use an image based on zenika/alpine-chrome:latest so we can add
+        # the start-up arguments that we need.
+        image: kingdutch/social-docker-chrome
+        ports:
+          - '9222:9222'
 
-      - name: Cache Docker Images
-        uses: actions/cache@v3
-        with:
-          path: /var/lib/docker/overlay2
-          key: docker-${{ hashFiles('docker-compose-ci.yml') }}
+    defaults:
+      run:
+        working-directory: /var/www
+
+    steps:
+      #  Link the GitHub Workspace to /var/www since GitHub doesn't respect the
+      # working directory.
+      - run: rm -rf /var/www && ln -s $GITHUB_WORKSPACE /var/www
 
       - name: Download Site
         uses: actions/cache@v3
@@ -113,18 +139,14 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
 
-      # Install the docker.
-      - name: Install Docker
-        run: sh scripts/social/ci/install-docker.sh
-
-      - name: Run Docker containers
-        run: docker-compose -f docker-compose-ci.yml up -d
-
       - name: Load Open Social Database
-        run: docker exec -i social_ci_web drush sqlc < installation.sql
+        run: drush sqlc < installation.sql
+
+      - name: Fix hostfile for behat configuration
+        run: echo "127.0.0.1 web" >> /etc/hosts
 
       - name: Run Integration test
-        run: docker exec -i social_ci_web vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors ${{ matrix.feature }}
+        run: vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors html/profiles/contrib/social/${{ matrix.feature }}
 
       - name: Upload Behat Test Output
         if: failure()
