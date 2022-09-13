@@ -149,11 +149,16 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
 
-      - name: Load Open Social Database
-        run: drush sqlc < installation.sql
-
+      # We could run all tests at once by passing the folder directly to behat
+      # however, by doing this manually in a loop we have the ability to ensure
+      # each test runs against a clean database cheaply.
       - name: Run Integration test
-        run: vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}
+        run: |
+          for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*; do
+            drush sql-drop -y
+            drush sqlc < installation.sql
+            vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+          done
 
       - name: Upload Behat Test Output
         if: failure()
