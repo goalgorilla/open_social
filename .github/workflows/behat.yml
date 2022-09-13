@@ -80,6 +80,9 @@ jobs:
       - name: Dump Database
         run: drush sql:dump --result-file=../installation.sql
 
+      - name: Fix owner of web files
+        run: chown -R www-data:www-data /var/www
+
       - name: Package up site
         uses: actions/cache@v3
         with:
