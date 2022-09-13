@@ -30,7 +30,10 @@ jobs:
   install_open_social:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
-    container: goalgorilla/open_social_docker:ci
+    container:
+      image: goalgorilla/open_social_docker:ci
+      volumes:
+        - ${{ github.workspace }}:/var/www
 
     strategy:
       matrix:
@@ -59,10 +62,6 @@ jobs:
         working-directory: /var/www
 
     steps:
-      #  Link the GitHub Workspace to /var/www since GitHub doesn't respect the
-      # working directory.
-      - run: rm -rf /var/www && ln -s $GITHUB_WORKSPACE /var/www
-
       # Checkout Drupal Social.
       - uses: actions/checkout@v3
         with:
@@ -93,7 +92,10 @@ jobs:
 
     name: 'Tests'
     runs-on: ubuntu-22.04
-    container: goalgorilla/open_social_docker:ci
+    container:
+      image: goalgorilla/open_social_docker:ci
+      volumes:
+        - ${{ github.workspace }}:/var/www
 
     strategy:
       matrix:
@@ -103,6 +105,14 @@ jobs:
           - "--with-optional"
 
     services:
+      web:
+        image: goalgorilla/open_social_docker:ci
+        env:
+          DRUPAL_SETTINGS: production
+        volumes:
+          - ${{ github.workspace }}:/var/www
+        ports:
+          - "80"
       db:
         image: mariadb:10.7
         env:
@@ -129,10 +139,6 @@ jobs:
         working-directory: /var/www
 
     steps:
-      #  Link the GitHub Workspace to /var/www since GitHub doesn't respect the
-      # working directory.
-      - run: rm -rf /var/www && ln -s $GITHUB_WORKSPACE /var/www
-
       - name: Download Site
         uses: actions/cache@v3
         with:
@@ -141,9 +147,6 @@ jobs:
 
       - name: Load Open Social Database
         run: drush sqlc < installation.sql
-
-      - name: Fix hostfile for behat configuration
-        run: echo "127.0.0.1 web" >> /etc/hosts
 
       - name: Run Integration test
         run: vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}
