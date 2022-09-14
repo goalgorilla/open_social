@@ -109,6 +109,7 @@ function _social_album_set_group_permissions() {
     ],
     'member' => [
       'create group_node:album entity',
+      'create group_node:album content',
       'delete own group_node:album entity',
       'view group_node:album entity',
       'view group_node:album content',
@@ -340,6 +341,10 @@ function social_album_update_11403(): void {
   /** @var \Drupal\group\Entity\GroupRoleInterface $group_role_outsider */
   $group_role_outsider = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-outsider');
   $group_role_outsider->grantPermissions(['view group_node:album content', 'view group_node:album entity'])->save();
+
+  /** @var \Drupal\group\Entity\GroupRoleInterface $group_role_member */
+  $group_role_member = \Drupal::entityTypeManager()->getStorage('group_role')->load('flexible_group-member');
+  $group_role_member->grantPermissions(['view group_node:album content', 'view group_node:album entity'])->save();
 }
 
 /**
@@ -359,4 +364,11 @@ function social_album_update_11404(): void {
       'view node.album.field_content_visibility:community content',
     ]
   );
+}
+
+/**
+ * Update Album permissions.
+ */
+function social_album_update_11405(): void {
+  _social_album_set_group_permissions();
 }
