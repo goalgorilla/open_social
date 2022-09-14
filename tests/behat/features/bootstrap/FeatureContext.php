@@ -143,25 +143,6 @@ class FeatureContext extends RawMinkContext implements Context
       $adminlink->click();
     }
 
-    /**
-     * @When I select post visibility :visibility
-     */
-    public function iSelectPostVisibility($visibility) {
-      // First make post visibility setting visible.
-      $this->iClickPostVisibilityDropdown();
-
-      // Click the label of the readio button with the visibility. The radio
-      // button itself can't be clicked because it's invisible.
-      $page = $this->getSession()->getPage();
-      $field = $page->findField($visibility);
-
-      if (null === $field) {
-        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $visibility);
-      }
-
-      $field->getParent()->click();
-    }
-
 
 
   /**
@@ -244,23 +225,6 @@ class FeatureContext extends RawMinkContext implements Context
 
     $element->click();
   }
-
-    /**
-     * @When /^I click the post visibility dropdown/
-     */
-    public function iClickPostVisibilityDropdown()
-    {
-      $locator = 'button#post-visibility';
-      $session = $this->getSession();
-      $element = $session->getPage()->find('css', $locator);
-
-      if ($element === NULL) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
-      }
-
-      // Now click the element.
-      $element->click();
-    }
 
     /**
      * @When I click radio button :label with the id :id
