@@ -2,156 +2,220 @@
 
 namespace Drupal\entity_access_by_field;
 
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\Group;
-use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\node\NodeInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Helper class for checking entity access.
  */
-class EntityAccessHelper {
+class EntityAccessHelper implements EntityAccessHelperInterface {
 
   /**
-   * Neutral status.
+   * The entity type manager.
    */
-  const NEUTRAL = 0;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
-   * Forbidden status.
+   * Constructs a new EntityAccessHelper instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity manager.
    */
-  const FORBIDDEN = 1;
-
-  /**
-   * Allowed status.
-   */
-  const ALLOW = 2;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
 
   /**
    * Array with values which need to be ignored.
    *
-   * @todo Add group to ignored values (when outsider role is working).
-   *
-   * @return array
-   *   An array containing a list of values to ignore.
+   * @deprecated in social:11.4.2 and is removed from social:12.0.0.
    */
-  public static function getIgnoredValues() {
+  public static function getIgnoredValues(): array {
     return [];
   }
 
   /**
    * NodeAccessCheck for given operation, node and user account.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node to check access to.
+   * @param string $operation
+   *   The operation that is to be performed on $entity. Usually one of:
+   *   - "view"
+   *   - "update"
+   *   - "delete"
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account trying to access the entity.
+   *
+   * @deprecated in social:11.4.2 and is removed from social:12.0.0. Use
+   *   process instead.
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
-    if ($op === 'view') {
-      // Check published status.
-      if (isset($node->status) && (int) $node->status->value === NodeInterface::NOT_PUBLISHED) {
-        $unpublished_own = $account->hasPermission('view own unpublished content');
-        if (
-          ($node->getOwnerId() !== $account->id() && !$account->hasPermission('administer nodes')) ||
-          ($node->getOwnerId() === $account->id() && !$unpublished_own)
-        ) {
-          return EntityAccessHelper::FORBIDDEN;
+  public static function nodeAccessCheck(
+    NodeInterface $node,
+    string $operation,
+    AccountInterface $account
+  ): int {
+    return \Drupal::classResolver(__CLASS__)->process($node, $operation, $account);
+  }
+
+  /**
+   * NodeAccessCheck for given operation, node and user account.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check access to.
+   * @param string $operation
+   *   The operation that is to be performed on $entity. Usually one of:
+   *   - "view"
+   *   - "update"
+   *   - "delete"
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account trying to access the entity.
+   */
+  protected function process(
+    EntityInterface $entity,
+    string $operation,
+    AccountInterface $account
+  ): int {
+    if ($operation !== 'view' || !$entity instanceof EntityOwnerInterface) {
+      return self::NEUTRAL;
+    }
+
+    // Check published status.
+    if ($entity instanceof EntityPublishedInterface && !$entity->isPublished()) {
+      if ($entity->getOwnerId() === $account->id()) {
+        if (!$account->hasPermission('view own unpublished content')) {
+          return self::FORBIDDEN;
         }
       }
+      else {
+        $definition = $this->entityTypeManager->getDefinition(
+          $entity->getEntityTypeId(),
+        );
 
-      $field_definitions = $node->getFieldDefinitions();
+        if (
+          $definition !== NULL &&
+          is_string($permission = $definition->getAdminPermission()) &&
+          !$account->hasPermission($permission)
+        ) {
+          return self::FORBIDDEN;
+        }
+      }
+    }
 
-      /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
-      foreach ($field_definitions as $field_name => $field_definition) {
-        if ($field_definition->getType() === 'entity_access_field') {
-          $field_values = $node->get($field_name)->getValue();
+    if (!$entity instanceof FieldableEntityInterface) {
+      return self::NEUTRAL;
+    }
 
-          if (!empty($field_values)) {
-            foreach ($field_values as $field_value) {
-              if (isset($field_value['value'])) {
+    $field_definitions = $entity->getFieldDefinitions();
+    $access = TRUE;
 
-                if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
-                  return EntityAccessHelper::NEUTRAL;
-                }
+    /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+    foreach ($field_definitions as $field_name => $field_definition) {
+      if (
+        $field_definition->getType() !== 'entity_access_field' ||
+        ($field = $entity->get($field_name))->isEmpty()
+      ) {
+        continue;
+      }
 
-                $permission_label = "node.{$node->bundle()}.{$field_definition->getName()}:{$field_value['value']}";
+      foreach (array_column($field->getValue(), 'value') as $field_value) {
+        $permission = sprintf(
+          'view %s.%s.%s:%s content',
+          $entity->getEntityTypeId(),
+          $entity->bundle(),
+          $field_name,
+          $field_value,
+        );
 
-                // When content is posted in a group and the account does not
-                // have permission we return Access::ignore.
-                if ($field_value['value'] === 'group') {
-                  // Don't look no further.
-                  if ($account->hasPermission('manage all groups')) {
-                    return EntityAccessHelper::NEUTRAL;
-                  }
-                  elseif (!$account->hasPermission('view ' . $permission_label . ' content')) {
-                    // If user doesn't have permission we just check user
-                    // membership in groups where the node attached as
-                    // group content.
-                    $group_contents = GroupContent::loadByEntity($node);
-                    // Check recursively - if user is a member at least in one
-                    // group we should allow to check access by gnode module.
-                    /* @see gnode_node_access() */
-                    foreach ($group_contents as $group_content) {
-                      $group = $group_content->getGroup();
-                      if ($group instanceof Group && $group->getMember($account)) {
-                        return EntityAccessHelper::NEUTRAL;
-                      }
-                    }
-                  }
-                }
-                if ($account->hasPermission('view ' . $permission_label . ' content')) {
-                  return EntityAccessHelper::ALLOW;
-                }
-                if (($account->id() !== 0) && ($account->id() === $node->getOwnerId())) {
-                  return EntityAccessHelper::ALLOW;
-                }
+        // When content is posted in a group and the account does not have
+        // permission we return Access::ignore.
+        if ($field_value === 'group') {
+          // Don't look no further.
+          if ($account->hasPermission('manage all groups')) {
+            return self::NEUTRAL;
+          }
+          elseif (
+            !$account->hasPermission($permission) &&
+            $entity instanceof ContentEntityInterface
+          ) {
+            // If user doesn't have permission we just check user membership in
+            // groups where the node attached as group content.
+            $group_contents = GroupContent::loadByEntity($entity);
 
+            // Check recursively - if user is a member at least in one group we
+            // should allow to check access by gnode module.
+            // @see gnode_node_access()
+            foreach ($group_contents as $group_content) {
+              if ($group_content->getGroup()->getMember($account)) {
+                return self::NEUTRAL;
               }
             }
           }
-          $access = FALSE;
+        }
+
+        if (
+          $account->hasPermission($permission) ||
+          $account->isAuthenticated() &&
+          $account->id() === $entity->getOwnerId()
+        ) {
+          return self::ALLOW;
         }
       }
-      if (isset($access) && $access === FALSE) {
-        return EntityAccessHelper::FORBIDDEN;
-      }
+
+      $access = FALSE;
     }
-    return EntityAccessHelper::NEUTRAL;
+
+    return 1 - (int) $access;
   }
 
   /**
    * Gets the Entity access for the given node.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node to check access to.
+   * @param string $operation
+   *   The operation that is to be performed on $entity. Usually one of:
+   *   - "view"
+   *   - "update"
+   *   - "delete"
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account trying to access the entity.
+   *
+   * @deprecated in social:11.4.2 and is removed from social:12.0.0. Use check
+   *   instead.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
-    $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
+  public static function getEntityAccessResult(
+    NodeInterface $node,
+    string $operation,
+    AccountInterface $account
+  ): AccessResultInterface {
+    return \Drupal::classResolver(__CLASS__)->check($node, $operation, $account);
+  }
 
-    $moduleHandler = \Drupal::service('module_handler');
-    // If the social_event_invite module is enabled and a person got invited
-    // then allow access to view the node.
-    // @todo Come up with a better solution for this code.
-    if ($moduleHandler->moduleExists('social_event_invite') && $node->id()) {
-      if ($op == 'view') {
-        $conditions = [
-          'field_account' => $account->id(),
-          'field_event' => $node->id(),
-        ];
+  /**
+   * {@inheritdoc}
+   */
+  public function check(
+    EntityInterface $entity,
+    string $operation,
+    AccountInterface $account
+  ): AccessResultInterface {
+    switch ($this->process($entity, $operation, $account)) {
+      case self::ALLOW:
+        return AccessResult::allowed()
+          ->cachePerPermissions()
+          ->addCacheableDependency($entity);
 
-        // Load the current Event enrollments so we can check duplicates.
-        $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
-        $enrollments = $storage->loadByProperties($conditions);
-
-        if ($enrollment = array_pop($enrollments)) {
-          if ((int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
-            && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED) {
-            $access = EntityAccessHelper::ALLOW;
-          }
-        }
-      }
-    }
-
-    switch ($access) {
-      case EntityAccessHelper::ALLOW:
-        return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($node);
-
-      case EntityAccessHelper::FORBIDDEN:
+      case self::FORBIDDEN:
         return AccessResult::forbidden();
     }
 

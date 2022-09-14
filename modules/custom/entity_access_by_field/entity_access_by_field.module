@@ -8,13 +8,13 @@
  * @todo Add support for multiple entity types.
  */
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -25,10 +25,17 @@ use Drupal\social_post\Entity\PostInterface;
 const ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM = 1;
 
 /**
- * Implements hook_node_access().
+ * Implements hook_ENTITY_TYPE_access().
  */
-function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  return EntityAccessHelper::getEntityAccessResult($node, $op, $account);
+function entity_access_by_field_node_access(
+  EntityInterface $entity,
+  string $operation,
+  AccountInterface $account
+): AccessResultInterface {
+  /** @var \Drupal\entity_access_by_field\EntityAccessHelperInterface $helper */
+  $helper = \Drupal::service('entity_access_by_field.helper');
+
+  return $helper->check($entity, $operation, $account);
 }
 
 /**

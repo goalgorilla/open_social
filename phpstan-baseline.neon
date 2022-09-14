@@ -1746,16 +1746,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
 		-
-			message: "#^Function entity_access_by_field_node_access\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_node_access\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
 			message: "#^Function entity_access_by_field_node_access_explain\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
@@ -1839,26 +1829,6 @@ parameters:
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessByFieldPermissions\\:\\:permissions\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:getEntityAccessResult\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:getEntityAccessResult\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
 
 		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\Form\\\\EntityVisibilityForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
@@ -17243,3 +17213,8 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: '#Call to deprecated method nodeAccessCheck\(\) of class Drupal\\entity_access_by_field\\EntityAccessHelper.#'
+			count: 4
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
