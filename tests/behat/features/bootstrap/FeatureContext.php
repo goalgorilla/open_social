@@ -55,11 +55,6 @@ class FeatureContext extends RawMinkContext implements Context
         $this->getSession()->start();
       }
 
-      // Since we enable Sky theme by default we should make sure we run our
-      // tests on the old theme. In another case, it will break all our tests.
-      // @see https://www.drupal.org/project/socialblue/issues/3251299
-      \Drupal::configFactory()->getEditable('socialblue.settings')->set('style', '')->save();
-
       /** @var \Behat\Testwork\Environment\Environment $environment */
       $environment = $scope->getEnvironment();
       $this->minkContext = $environment->getContext(SocialMinkContext::class);
