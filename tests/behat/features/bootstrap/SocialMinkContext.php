@@ -3,19 +3,7 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Mink\Element\NodeElement;
-use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit\Framework\Assert as PHPUnit;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Behat\Hook\Scope\AfterStepScope;
 
 /**
  * Defines application features from the specific context.
