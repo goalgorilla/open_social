@@ -1,8 +1,6 @@
 @api @book @perfect @critical @DS-1766 @book-create
 Feature: Create Book page
-  Benefit: In order to share useful information with users
-  Role: As an administrator
-  Goal/desire: I want to create a book page on the site
+  Goal: I want to create a book so I can share information with my community
 
   Scenario: Successfully create Book page
     Given I am logged in as an "administrator"
