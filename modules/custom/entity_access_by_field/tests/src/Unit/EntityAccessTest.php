@@ -2,18 +2,22 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
-use Prophecy\PhpUnit\ProphecyTrait;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\entity_access_by_field\EntityAccessHelperInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
-use Drupal\entity_access_by_field\EntityAccessHelper;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
+ *
+ * @coversDefaultClass \Drupal\entity_access_by_field\EntityAccessHelper
  */
 class EntityAccessTest extends UnitTestCase {
 
   use ProphecyTrait;
+
   /**
    * The field type random machinename.
    *
@@ -50,7 +54,29 @@ class EntityAccessTest extends UnitTestCase {
   protected $nodeOwnerId;
 
   /**
-   * Tests the EntityAccessHelper::nodeAccessCheck for Neutral Access.
+   * The helper.
+   *
+   * @var \Drupal\entity_access_by_field\EntityAccessHelperInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  private $helper;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+
+    $this->helper = $this->createMock('Drupal\entity_access_by_field\EntityAccessHelperInterface');
+
+    $container = new ContainerBuilder();
+    $container->set('entity_access_by_field.helper', $this->helper);
+    \Drupal::setContainer($container);
+  }
+
+  /**
+   * Tests the EntityAccessHelper::process for Neutral Access.
+   *
+   * @covers ::process
    */
   public function testNeutralAccess() {
 
@@ -68,14 +94,20 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class)->reveal();
-    $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(EntityAccessHelper::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
+
+    /** @var \Drupal\node\NodeInterface $node */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
+    $access_result = $this->helper->process($node, $op, $account);
+
+    $this->assertEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
   }
 
   /**
-   * Tests the EntityAccessHelper::nodeAccessCheck for Forbidden Access.
+   * Tests the EntityAccessHelper::process for Forbidden Access.
+   *
+   * @covers ::process
    */
   public function testForbiddenAccess() {
     $node = $this->prophesize(NodeInterface::class);
@@ -110,15 +142,20 @@ class EntityAccessTest extends UnitTestCase {
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
-    $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(EntityAccessHelper::FORBIDDEN, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
+    /** @var \Drupal\node\NodeInterface $node */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
+    $access_result = $this->helper->process($node, $op, $account);
+
+    $this->assertEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::ALLOW, $access_result);
 
   }
 
   /**
-   * Tests the EntityAccessHelper::nodeAccessCheck for Allowed Access.
+   * Tests the EntityAccessHelper::process for Allowed Access.
+   *
+   * @covers ::process
    */
   public function testAllowedAccess() {
     $node = $this->prophesize(NodeInterface::class);
@@ -157,14 +194,19 @@ class EntityAccessTest extends UnitTestCase {
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
-    $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
+    /** @var \Drupal\node\NodeInterface $node */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
+    $access_result = $this->helper->process($node, $op, $account);
+
+    $this->assertEquals(EntityAccessHelperInterface::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
   }
 
   /**
-   * Tests the EntityAccessHelper::nodeAccessCheck for Author Access Allowed.
+   * Tests the EntityAccessHelper::process for Author Access Allowed.
+   *
+   * @covers ::process
    */
   public function testAuthorAccessAllowed() {
     $node = $this->prophesize(NodeInterface::class);
@@ -201,10 +243,13 @@ class EntityAccessTest extends UnitTestCase {
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
-    $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
-    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
+    /** @var \Drupal\node\NodeInterface $node */
+    /** @var \Drupal\Core\Session\AccountInterface $account */
+    $access_result = $this->helper->process($node, $op, $account);
+
+    $this->assertEquals(EntityAccessHelperInterface::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
   }
 
 }

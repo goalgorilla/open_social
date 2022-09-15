@@ -15,7 +15,7 @@ class SocialEventInviteEntityAccessHelper extends EntityAccessHelper {
   /**
    * {@inheritdoc}
    */
-  protected function process(
+  public function process(
     EntityInterface $entity,
     string $operation,
     AccountInterface $account

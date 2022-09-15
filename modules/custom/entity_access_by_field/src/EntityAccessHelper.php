@@ -35,29 +35,14 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
   }
 
   /**
-   * Array with values which need to be ignored.
-   *
-   * @deprecated in social:11.4.2 and is removed from social:12.0.0.
+   * {@inheritdoc}
    */
   public static function getIgnoredValues(): array {
     return [];
   }
 
   /**
-   * NodeAccessCheck for given operation, node and user account.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The node to check access to.
-   * @param string $operation
-   *   The operation that is to be performed on $entity. Usually one of:
-   *   - "view"
-   *   - "update"
-   *   - "delete"
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The account trying to access the entity.
-   *
-   * @deprecated in social:11.4.2 and is removed from social:12.0.0. Use
-   *   process instead.
+   * {@inheritdoc}
    */
   public static function nodeAccessCheck(
     NodeInterface $node,
@@ -68,19 +53,9 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
   }
 
   /**
-   * NodeAccessCheck for given operation, node and user account.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to check access to.
-   * @param string $operation
-   *   The operation that is to be performed on $entity. Usually one of:
-   *   - "view"
-   *   - "update"
-   *   - "delete"
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The account trying to access the entity.
+   * {@inheritdoc}
    */
-  protected function process(
+  public function process(
     EntityInterface $entity,
     string $operation,
     AccountInterface $account
@@ -178,20 +153,7 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
   }
 
   /**
-   * Gets the Entity access for the given node.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The node to check access to.
-   * @param string $operation
-   *   The operation that is to be performed on $entity. Usually one of:
-   *   - "view"
-   *   - "update"
-   *   - "delete"
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The account trying to access the entity.
-   *
-   * @deprecated in social:11.4.2 and is removed from social:12.0.0. Use check
-   *   instead.
+   * {@inheritdoc}
    */
   public static function getEntityAccessResult(
     NodeInterface $node,

@@ -1906,16 +1906,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$node of static method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) expects Drupal\\\\node\\\\NodeInterface, object given\\.$#"
-			count: 4
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Parameter \\#3 \\$account of static method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, object given\\.$#"
-			count: 4
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
 			message: "#^Function grequest_group_content_insert\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/grequest/grequest.module
@@ -17213,8 +17203,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: '#Call to deprecated method nodeAccessCheck\(\) of class Drupal\\entity_access_by_field\\EntityAccessHelper.#'
-			count: 4
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
