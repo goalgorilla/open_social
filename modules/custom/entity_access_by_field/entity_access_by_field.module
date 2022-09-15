@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -75,6 +76,10 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     $gids = [];
     foreach ($memberships as $membership) {
       $gids[] = $membership->getGroup()->id();
+    }
+
+    if (($group = _social_group_get_current_group()) instanceof GroupInterface && !$group->hasField('field_flexible_group_visibility')) {
+      $gids[] = $group->id();
     }
 
     // Load node types.
