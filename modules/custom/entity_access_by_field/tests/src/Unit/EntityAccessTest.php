@@ -75,8 +75,6 @@ class EntityAccessTest extends UnitTestCase {
 
   /**
    * Tests the EntityAccessHelper::process for Neutral Access.
-   *
-   * @covers ::process
    */
   public function testNeutralAccess() {
 
@@ -84,7 +82,7 @@ class EntityAccessTest extends UnitTestCase {
 
     $this->fieldType = $this->randomMachineName();
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldDefinitionInterface');
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getType')
       ->willReturn($this->fieldType);
 
@@ -106,8 +104,6 @@ class EntityAccessTest extends UnitTestCase {
 
   /**
    * Tests the EntityAccessHelper::process for Forbidden Access.
-   *
-   * @covers ::process
    */
   public function testForbiddenAccess() {
     $node = $this->prophesize(NodeInterface::class);
@@ -117,10 +113,10 @@ class EntityAccessTest extends UnitTestCase {
     $this->fieldType = 'entity_access_field';
     $this->nodeOwnerId = 3;
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
@@ -154,8 +150,6 @@ class EntityAccessTest extends UnitTestCase {
 
   /**
    * Tests the EntityAccessHelper::process for Allowed Access.
-   *
-   * @covers ::process
    */
   public function testAllowedAccess() {
     $node = $this->prophesize(NodeInterface::class);
@@ -168,10 +162,10 @@ class EntityAccessTest extends UnitTestCase {
     $this->nodeOwnerId = 3;
 
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
@@ -205,8 +199,6 @@ class EntityAccessTest extends UnitTestCase {
 
   /**
    * Tests the EntityAccessHelper::process for Author Access Allowed.
-   *
-   * @covers ::process
    */
   public function testAuthorAccessAllowed() {
     $node = $this->prophesize(NodeInterface::class);
@@ -217,10 +209,10 @@ class EntityAccessTest extends UnitTestCase {
     $this->nodeOwnerId = 5;
 
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->once())
+    $fieldDefinitionInterface->expects($this->any())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
