@@ -1,0 +1,31 @@
+core.entity_view_display.profile.profile.teaser:
+  expected_config:
+    content:
+      field_profile_self_introduction:
+        label: hidden
+        region: content
+        settings:
+          trim_length: 140
+        third_party_settings: {  }
+        type: social_profile_text
+        weight: 6
+      field_profile_summary:
+        weight: 7
+  update_actions:
+    delete:
+      content:
+        field_profile_self_introduction:
+          label: hidden
+          region: content
+          settings:
+            trim_length: 140
+          third_party_settings: {  }
+          type: social_profile_text
+          weight: 6
+    add:
+      hidden:
+        field_profile_self_introduction: true
+    change:
+      content:
+        field_profile_summary:
+          weight: 6

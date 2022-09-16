@@ -21,82 +21,74 @@ dependencies:
     - profile.type.profile
   module:
     - image
-    - social_profile
 id: profile.profile.teaser
 targetEntityType: profile
 bundle: profile
 mode: teaser
 content:
   field_profile_first_name:
-    weight: 1
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 1
     region: content
   field_profile_function:
-    weight: 3
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 3
     region: content
   field_profile_image:
-    weight: 0
+    type: image
     label: hidden
     settings:
-      image_style: social_x_large
       image_link: ''
+      image_style: social_x_large
     third_party_settings: {  }
-    type: image
+    weight: 0
     region: content
   field_profile_last_name:
-    weight: 2
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 2
     region: content
   field_profile_organization:
-    weight: 4
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 4
     region: content
   field_profile_profile_tag:
     type: entity_reference_label
-    weight: 5
     label: hidden
     settings:
       link: false
     third_party_settings: {  }
+    weight: 5
     region: content
-  field_profile_self_introduction:
-    type: social_profile_text
-    weight: 6
-    region: content
-    label: hidden
-    settings:
-      trim_length: 140
-    third_party_settings: {  }
   field_profile_summary:
     type: string
-    weight: 7
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 6
+    region: content
 hidden:
   field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
   field_profile_interests: true
   field_profile_phone_number: true
+  field_profile_self_introduction: true
   field_profile_show_email: true
   search_api_excerpt: true
