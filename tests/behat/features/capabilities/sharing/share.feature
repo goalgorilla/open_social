@@ -4,6 +4,9 @@ Feature: Social Sharing
   Role: As a Verified
   Goal/desire: I want to share my public content
 
+  Background:
+    Given I enable the optional module social_sharing
+
   Scenario: Successfully create topic visible for community and public
     Given I am logged in as an "verified"
     And I am on "node/add/topic"

@@ -19,6 +19,7 @@ use PHPUnit\Framework\Assert;
  */
 class FeatureContext extends RawMinkContext implements Context
 {
+    use GroupTrait;
 
     protected $minkContext;
 

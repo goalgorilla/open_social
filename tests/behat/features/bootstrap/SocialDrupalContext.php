@@ -433,6 +433,18 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * Skip verify requirements if needed.
+   *
+   * @Then continue in verify requirements
+   */
+  public function skipVerifyRequirements() {
+    $page = $this->getSession()->getPage();
+    if ($page->hasContent("Requirements review")) {
+      $page->clickLink("continue anyway");
+    }
+  }
+
+  /**
    * Task is done.
    *
    * @Then /^task "([^"]*)" is done$/
@@ -471,8 +483,7 @@ class SocialDrupalContext extends DrupalContext {
    * @Given /^I wait for the installer to finish$/
    */
   public function iWaitForTheInstallerBatchJobToFinish() {
-    $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
+    $this->getSession()->wait(1800000, 'document.getElementById("updateprogress") === null');
   }
-
-
+  
 }

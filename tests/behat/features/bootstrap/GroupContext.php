@@ -17,6 +17,7 @@ use Drupal\group\Entity\GroupContentType;
 class GroupContext extends RawMinkContext {
 
   use GroupTrait;
+  use EntityTrait;
 
   /**
    * Keep track of all groups that are created so they can easily be removed.
@@ -249,6 +250,7 @@ class GroupContext extends RawMinkContext {
     unset($group['author']);
 
     // Let's create some groups.
+    $this->validateEntityFields('group', $group);
     $group_object = Group::create($group);
     $violations = $group_object->validate();
     if ($violations->count() !== 0) {

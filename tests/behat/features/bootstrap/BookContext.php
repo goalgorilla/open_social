@@ -19,6 +19,7 @@ class BookContext extends RawMinkContext {
 
   use NodeTrait;
   use GroupTrait;
+  use EntityTrait;
 
   private const CREATE_PAGE = "/node/add/book";
 
@@ -255,6 +256,9 @@ class BookContext extends RawMinkContext {
 
     $book['type'] = 'book';
 
+    // @todo Add this when we figure out how to properly plumb 'parent' and
+    // 'book' so it doesn't trigger in the function.
+//    $this->validateEntityFields('node', $book);
     $book_object = Node::create($book);
     $violations = $book_object->validate();
     if ($violations->count() !== 0) {

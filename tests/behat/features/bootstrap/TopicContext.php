@@ -4,6 +4,7 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
@@ -244,6 +245,55 @@ class TopicContext extends RawMinkContext {
         $this->minkContext->assertPageContainsText($value);
       }
     }
+  }
+
+  /**
+   * Upload an image on a topic form.
+   *
+   * @When I add image :image to the topic form
+   */
+  public function whenIaddImageToTheTopicForm(string $image) : void {
+    $uploaded = count($this->getSession()->getPage()->findAll('css', '.preview'));
+
+    $this->minkContext->attachFileToField("Image", $image);
+
+    // Wait for the number of previews to increase.
+    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded");
+  }
+
+  /**
+   * Upload a file on a topic form.
+   *
+   * @When I add file :file to the topic form
+   */
+  public function whenIaddFileToTheTopicForm(string $file) : void {
+    $element = $this->getSession()->getPage()->findField("Attachments");
+    if ($element === NULL) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), "field", NULL, "Attachments");
+    }
+
+    // This field could be in a collapsed details element that we must
+    // expand.
+    do {
+      $element = $element->getParent();
+    } while ($element->getTagName() !== "details" && $element->getTagName() !== "body");
+    if (!$element->hasAttribute("open")) {
+      $summary = $element->find('css', 'summary');
+      if ($summary === NULL) {
+        throw new \Exception("Attachments was in a closed details element but the details element did not contain a summary to expand it.");
+      }
+      // This should expand the details so that we can interact with the field.
+      $summary->click();
+    }
+
+    $uploaded = count($this->getSession()->getPage()->findAll('css', '.preview'));
+
+    $this->minkContext->attachFileToField("Attachments", $file);
+
+    // Wait for the number of previews to increase.
+    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded");
   }
 
   /**

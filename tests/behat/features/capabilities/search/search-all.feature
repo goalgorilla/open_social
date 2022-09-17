@@ -9,9 +9,9 @@ Feature: Search
       | name           | status | pass   |
       | tjakka user    | 1      | maxic  |
     Given groups:
-      | label             | description     | author        | type                  | language |
-      | Tjakka group      | Tjakka group    | tjakka user   | closed_group          | en       |
-      | Tjakka group two  | Tjakka group    | tjakka user   | open_group            | en       |
+      | label             | field_group_description | author        | type                  | langcode |
+      | Tjakka group      | Tjakka group            | tjakka user   | closed_group          | en       |
+      | Tjakka group two  | Tjakka group            | tjakka user   | open_group            | en       |
     Given "event" content:
       | title             | body          | status | field_content_visibility |
       | Tjakka event      | Description   | 1      | public                   |

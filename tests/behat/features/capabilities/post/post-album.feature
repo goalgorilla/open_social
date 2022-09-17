@@ -6,17 +6,14 @@ Feature: Create Post with Photo
 
   Scenario: Successfully create, edit and delete post
 
-    Given I enable the module "social_album"
-    Given users:
+    Given I enable the optional module "social_album"
+    And users:
       | name     | status | pass     | roles    |
       | PostUser |      1 | PostUser | verified |
     And I am logged in as "PostUser"
 
-    When I attach the file "/files/opensocial.jpg" to hidden field "edit-field-post-image-0-upload"
-    And I wait for AJAX to finish
-    Then I should see the text "Add image(s) to an album"
-
-    When I attach the file "/files/opensocial.jpg" to hidden field "files[field_post_image_1][]"
-    And I wait for AJAX to finish
+    When I add image "/files/opensocial.jpg" to the post form
+    And I add image "/files/opensocial.jpg" to the post form
     And I click the xth "1" element with the css "button[name=field_post_image_0_remove_button]"
+
     Then I should see the text "Add image(s) to an album"

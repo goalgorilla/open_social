@@ -19,10 +19,8 @@ Feature: Private files
     When I fill in the following:
       | Title | Private: topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Private: topic text"
-    And I attach the file "/files/opensocial.jpg" to "Image"
-    And I wait for AJAX to finish
-    And I attach the file "/files/humans.txt" to "edit-field-files-0-upload"
-    And I wait for AJAX to finish
+    And I add image "/files/opensocial.jpg" to the topic form
+    And I add file "/files/humans.txt" to the topic form
     And I press "Create topic"
     Then I should see "Topic Private: topic has been created."
     And I should see "Private: topic" in the "Hero block"
@@ -30,9 +28,7 @@ Feature: Private files
     # Upload a attachment to a comment.
     When I fill in the following:
       | Add a comment | This is a test comment |
-    And I press "Add attachment"
-    And I attach the file "/files/humans.txt" to "edit-field-comment-files-0-upload"
-    And I wait for AJAX to finish
+    And I add file "/files/humans.txt" to the comment form
     And I press "Comment"
     And I should see the success message "Your comment has been posted."
 
@@ -71,13 +67,7 @@ Feature: Private files
     And I check the box "News"
     When I fill in the following:
       | Title | Private WYSIWYG: topic |
-    And I click on the image icon in the WYSIWYG editor
-    And I wait for AJAX to finish
-    And I attach the file "/files/opensocial.jpg" to "files[fid]"
-    And I wait for AJAX to finish
-    And I fill in "Alternative text" with "Just a private image test"
-    And I click the xth "0" element with the css ".editor-image-dialog .form-actions .ui-button"
-    And I wait for AJAX to finish
+    And I add image "/files/opensocial.jpg" to the CKEditor with alt text "Just a private image test"
     And I press "Create topic"
     Then I should see "Topic Private WYSIWYG: topic has been created."
     And I should see "Private WYSIWYG: topic" in the "Hero block"

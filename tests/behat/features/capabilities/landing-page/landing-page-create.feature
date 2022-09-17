@@ -6,7 +6,7 @@ Feature: Create Landing Page
 
   Scenario: Successfully create Landing Page
 
-    Given I enable the module "social_landing_page"
+    Given I enable the optional module "social_landing_page"
     Given event content:
       | title          | field_event_date | status | field_content_visibility |
       | Featured Event | +10 minutes      | 1      | public                   |

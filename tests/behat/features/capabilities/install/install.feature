@@ -12,10 +12,8 @@
     And I press the "Save and continue" button
     And task "Choose language" is done
 
-#    Then I should see "Requirements review"
-#    And I should see "continue anyway"
-#    When I follow "continue anyway"
-    Then task "Verify requirements" is done
+    Then continue in verify requirements
+    And task "Verify requirements" is done
 
 #    This is already coming from our settings.php, no need to test it but for clarity:
 #    Then I fill in "edit-mysql-database" with "social"

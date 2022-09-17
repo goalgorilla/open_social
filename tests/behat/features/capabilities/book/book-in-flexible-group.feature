@@ -11,8 +11,8 @@ Feature: Book page in Flexible Group
   Scenario: Flexible group provides CTA for book creation
     Given I am logged in as a user with the contentmanager role
     And groups:
-      | label                 | description      | enable_books | type           | language | alias               | field_flexible_group_visibility | field_content_visibility |
-      | Test Flexible Group   | Description text | 1            | flexible_group | en       | test-flexible-group | public                          | public                   |
+      | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
     When I am viewing the group "Test Flexible Group"
     And I click "Books"
@@ -24,8 +24,8 @@ Feature: Book page in Flexible Group
   Scenario: Can create a book in a flexible Group
     Given I am logged in as a user with the contentmanager role
     And groups:
-      | label                 | description      | enable_books | type           | language | alias               | field_flexible_group_visibility | field_content_visibility |
-      | Test Flexible Group   | Description text | 1            | flexible_group | en       | test-flexible-group | public                          | public                   |
+      | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
     When I create a book using its creation page:
       | Title       | Book #1               |
@@ -39,11 +39,11 @@ Feature: Book page in Flexible Group
   Scenario: Can create a sub-book in a flexible group
     Given I am logged in as a user with the contentmanager role
     And groups:
-      | label                 | description      | enable_books | type           | language | alias               | field_flexible_group_visibility | field_content_visibility |
-      | Test Flexible Group   | Description text | 1            | flexible_group | en       | test-flexible-group | public                          | public                   |
+      | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | test-flexible-group | public                          | public                         |
     And books:
-      | title                 | description      | group               | field_content_visibility |
-      | Book #1               | It's the best    | Test Flexible Group | public                   |
+      | title                 | body          | group               | field_content_visibility |
+      | Book #1               | It's the best | Test Flexible Group | public                   |
 
     When I create a book using its creation page:
       | Title       | Sub-Book #1           |
@@ -60,10 +60,10 @@ Feature: Book page in Flexible Group
   Scenario: Group books overview only shows top-level books
     Given I am logged in as a user with the contentmanager role
     And groups:
-      | label                 | description      | enable_books | type           | language | alias               | field_flexible_group_visibility | field_content_visibility |
-      | Test Flexible Group   | Description text | 1            | flexible_group | en       | test-flexible-group | public                          | public                   |
+      | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
     And books:
-      | title    | description         | group               | book    | parent  | field_content_visibility |
+      | title    | body                | group               | book    | parent  | field_content_visibility |
       | Book #1  | It's the best       | Test Flexible Group |         |         | public                   |
       | Sub #1   | It's the best Again | Test Flexible Group | Book #1 | Book #1 | public                   |
 

@@ -11,8 +11,8 @@ Feature: Edit group type after creation
       | test_user_1 | 1234 | test_user_1@example.com | 1      | verified    |
       | test_user_2 | 1234 | test_user_2@example.com | 1      | sitemanager |
     Given groups:
-      | label     | description    | author       | type         | language |
-      | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       |
+      | label     | field_group_description | author       | type         | langcode |
+      | Nescafe   | Coffee time!!!          | test_user_2  | closed_group | en       |
     Given "topic_types" terms:
       | name      |
       | Blog      |
