@@ -9,7 +9,7 @@ Feature: Search
       | name           | status | pass   |
       | tjakka user    | 1      | maxic  |
     Given groups:
-      | title             | description     | author        | type                  | language |
+      | label             | description     | author        | type                  | language |
       | Tjakka group      | Tjakka group    | tjakka user   | closed_group          | en       |
       | Tjakka group two  | Tjakka group    | tjakka user   | open_group            | en       |
     Given "event" content:

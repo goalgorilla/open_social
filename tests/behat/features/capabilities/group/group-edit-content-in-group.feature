@@ -12,7 +12,7 @@ Feature: Move content after creation
       | sally | 1234 | sally@example.com | 1      | verified    |
       | smith | 1234 | sm@example.com    | 1      | sitemanager |
     Given groups:
-      | title      | description    | author | type         | language |
+      | label      | description    | author | type         | language |
       | Motorboats | Vroem vroem..  | sally  | open_group   | en       |
       | Kayaking   | Kayaking in NY | harry  | open_group   | en       |
       | Closed one | Kayaking in NY | harry  | closed_group | en       |

@@ -9,7 +9,7 @@ Feature: Search
       | name             | mail                     | status |
       | Group search One | group_user_1@example.com | 1      |
     Given groups:
-      | title                    | description            | author           | type        | language |
+      | label                    | description            | author           | type        | language |
       | Behat test group title 1 | My Behat description   | Group search One | open_group  | en       |
       | Behat test group title 2 | My Behat description 2 | Group search One | open_group  | en       |
       | Behat test group title 3 | No Behat descr         | Group search One | open_group  | en       |

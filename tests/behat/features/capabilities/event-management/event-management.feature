@@ -12,7 +12,7 @@ Feature: Event Management
       | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      | verified |
       | event_organiser_2 | eo_2@example.com | Drupal                     | 1      | verified |
     And groups:
-      | title                                    | description      | author            | type        | language |
+      | label                                    | description      | author            | type        | language |
       | Springfield local business collaboration | Description text | event_organiser_1 | open_group  | en       |
     And I am logged in as an "verified"
     And I am on "user"

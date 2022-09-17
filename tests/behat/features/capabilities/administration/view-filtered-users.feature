@@ -12,7 +12,7 @@ Feature: View filtered users as site manager
       | Behat Member 2 | behat_member_2@example.com | 1      |
       | Behat Member 3 | behat_member_3@example.com | 1      |
     Given groups:
-      | title         | description | author      | type         | language |
+      | label         | description | author      | type         | language |
       | Behat Group 1 |             | Behat Owner | closed_group | en       |
       | Behat Group 2 |             | Behat Owner | open_group   | en       |
       | Behat Group 3 |             | Behat Owner | open_group   | en       |
