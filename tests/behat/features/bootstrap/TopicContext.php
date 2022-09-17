@@ -16,6 +16,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class TopicContext extends RawMinkContext {
 
+  use NodeTrait;
+
   private const CREATE_PAGE = "/node/add/topic";
 
   /**
@@ -315,25 +317,8 @@ class TopicContext extends RawMinkContext {
    * @return int|null
    *   The integer ID of the topic or NULL if no topic could be found.
    */
-  private function getTopicIdFromTitle($topic_title) : ?int {
-    $query = \Drupal::entityQuery('node')
-      ->accessCheck(FALSE)
-      ->condition('type', 'topic')
-      ->condition('title', $topic_title);
-
-    $topic_ids = $query->execute();
-    $topics = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($topic_ids);
-
-    if (count($topics) !== 1) {
-      return NULL;
-    }
-
-    $topic_id = reset($topics)->id();
-    if ($topic_id !== 0) {
-      return $topic_id;
-    }
-
-    return NULL;
+  private function getTopicIdFromTitle(string $topic_title) : ?int {
+    return $this->getNodeIdFromTitle("topic", $topic_title);
   }
 
   /**

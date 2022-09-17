@@ -2,7 +2,9 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\social\Installer\OptionalModuleManager;
 
 /**
@@ -18,10 +20,26 @@ class ModuleContext extends RawMinkContext {
   private array $optionalModules;
 
   /**
+   * The Drupal context which gives us access to user management.
+   */
+  private DrupalContext $drupalContext;
+
+  /**
    * Create a new ModuleContext instance.
    */
   public function __construct() {
     $this->optionalModules = OptionalModuleManager::create(\Drupal::getContainer())->getOptionalModules();
+  }
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
   }
 
   /**
@@ -37,7 +55,7 @@ class ModuleContext extends RawMinkContext {
       throw new \Exception("$module is not an optional module, does it have a module.installer_options.yml file?");
     }
 
-    \Drupal::service('module_installer')->install([$module]);
+    $this->iEnableTheModule($module);
   }
 
   /**
@@ -47,6 +65,7 @@ class ModuleContext extends RawMinkContext {
    */
   public function iEnableTheModule(string $module) : void {
     \Drupal::service('module_installer')->install([$module]);
+    $this->drupalContext->assertCacheClear();
   }
 
   /**
