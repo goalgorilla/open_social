@@ -62,7 +62,9 @@ class CKEditorContext extends RawMinkContext {
     $element->click();
 
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $session->wait(1000 * $ajax_timeout, 'document.getElementById("editor-image-dialog-form") !== null');
+    if (!$session->wait(1000 * $ajax_timeout, 'document.getElementById("editor-image-dialog-form") !== null')) {
+      throw new \Exception("#editor-image-dialog-form did not open within $ajax_timeout seconds.");
+    }
   }
 
   /**
@@ -85,7 +87,9 @@ class CKEditorContext extends RawMinkContext {
     $element->click();
 
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.ui-dialog').length > 0");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.ui-dialog').length > 0")) {
+      throw new \Exception(".ui-dialog didn't open within $ajax_timeout seconds.");
+    }
   }
 
   /**
@@ -110,14 +114,18 @@ class CKEditorContext extends RawMinkContext {
 
     // Wait for the number of previews to increase.
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('#editor-image-dialog-form .preview').length > $uploaded");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('#editor-image-dialog-form .preview').length > $uploaded")) {
+      throw new \Exception("Preview for uploaded image did not render within $ajax_timeout seconds.");
+    }
 
     if ($alt !== NULL) {
       $dialog->fillField("Alternative text", $alt);
     }
 
     $dialog->pressButton("Save");
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.ui-dialog').length === 0");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.ui-dialog').length === 0")) {
+      throw new \Exception(".ui-dialog did not close within $ajax_timeout seconds.");
+    }
   }
 
   /**

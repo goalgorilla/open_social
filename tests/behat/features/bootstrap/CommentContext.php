@@ -35,7 +35,7 @@ class CommentContext extends RawMinkContext {
    *
    * @When I add file :file to the comment form
    */
-  public function whenIaddImageToThePostForm(string $file) : void {
+  public function whenIaddFileToThePostForm(string $file) : void {
     $this->minkContext->pressButton("Add attachment");
 
     $page = $this->getSession()->getPage();
@@ -48,7 +48,9 @@ class CommentContext extends RawMinkContext {
 
     // Wait for the number of previews to increase.
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.comment .file').length > $uploaded");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.comment .file').length > $uploaded")) {
+      throw new \Exception("Could not add file to post form: file preview was not rendered after $ajax_timeout seconds.");
+    }
   }
 
 }

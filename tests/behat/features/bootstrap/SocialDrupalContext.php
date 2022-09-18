@@ -317,7 +317,9 @@ class SocialDrupalContext extends DrupalContext {
    */
   public function iWaitForSeconds($seconds, $condition = 'false') {
     $milliseconds = (int) ($seconds * 1000);
-    $this->getSession()->wait($milliseconds, $condition);
+    if ($condition !== 'false' && !$this->getSession()->wait($milliseconds, $condition)) {
+      throw new \Exception("'$condition' did not return true after $seconds seconds.");
+    }
   }
 
   /**
@@ -483,7 +485,10 @@ class SocialDrupalContext extends DrupalContext {
    * @Given /^I wait for the installer to finish$/
    */
   public function iWaitForTheInstallerBatchJobToFinish() {
-    $this->getSession()->wait(1800000, 'document.getElementById("updateprogress") === null');
+    $timeout = 30 * 60;
+    if (!$this->getSession()->wait($timeout * 1000, 'document.getElementById("updateprogress") === null')) {
+      throw new \Exception("#updateprogress was still on screen after $timeout seconds.");
+    }
   }
-  
+
 }

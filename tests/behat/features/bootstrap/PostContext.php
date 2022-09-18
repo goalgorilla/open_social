@@ -106,7 +106,9 @@ class PostContext extends RawMinkContext {
 
     // Wait for the number of previews to increase.
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('#edit-field-post-image-wrapper .preview').length > $uploaded");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('#edit-field-post-image-wrapper .preview').length > $uploaded")) {
+      throw new \Exception("Failed to attach image to form, the preview was not rendered within $ajax_timeout seconds.");
+    }
   }
 
   /**

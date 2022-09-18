@@ -259,7 +259,9 @@ class TopicContext extends RawMinkContext {
 
     // Wait for the number of previews to increase.
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded")) {
+      throw new \Exception("Preview for image was not rendered after $ajax_timeout seconds.");
+    }
   }
 
   /**
@@ -293,7 +295,9 @@ class TopicContext extends RawMinkContext {
 
     // Wait for the number of previews to increase.
     $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-    $this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded");
+    if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('.preview').length > $uploaded")) {
+      throw new \Exception("Preview for file was not rendered after $ajax_timeout seconds.");
+    }
   }
 
   /**
