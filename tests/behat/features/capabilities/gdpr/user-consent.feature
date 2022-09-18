@@ -5,8 +5,8 @@ Feature: Give user consent
   Goal/desire: I want to know which users did (not) gave consent to the data policy
 
   Scenario: Successfully view user consent
-
-    Given users:
+    Given I enable the module "social_gdpr"
+    And users:
       | name             | mail                         | status | roles       |
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
       | behatuser1       | behatuser1@example.com       | 1      | verified    |
@@ -15,8 +15,6 @@ Feature: Give user consent
     And data_policies:
       | name               | field_description       |
       | Terms & Conditions | No rights in this test  |
-
-    Given I enable the module "social_gdpr"
     And I set the GDPR Consent Text to "I agree with the [id:1]"
     And I am logged in as "behatuser1"
 
