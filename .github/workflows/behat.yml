@@ -154,7 +154,9 @@ jobs:
       # each test runs against a clean database cheaply.
       - name: Run Integration test
         run: |
+          vendor/bin/behat --version
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*; do
+            echo $test
             drush sql-drop -y
             drush sqlc < installation.sql
             vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
