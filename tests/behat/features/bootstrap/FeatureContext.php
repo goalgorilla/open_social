@@ -5,9 +5,10 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Testwork\Tester\Result\TestResult;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\locale\SourceString;
@@ -843,4 +844,23 @@ class FeatureContext extends RawMinkContext implements Context
     public function setFrontPage() {
       \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/stream')->save();
     }
+
+  /**
+   * @AfterStep
+   */
+  public function logConsoleOutputForFailedStep(AfterStepScope $scope)
+  {
+    if (TestResult::FAILED === $scope->getTestResult()->getResultCode()) {
+      $driver = $this->getSession()->getDriver();
+      if (method_exists($driver, "getConsoleMessages")) {
+        /** @var array $console */
+        $console = $driver->getConsoleMessages();
+        $console = implode("\n", $console);
+        $path = sprintf("%s/behat-%s.%s", __DIR__ . '/../../logs', date('YmdHis'), "txt");
+        if (file_put_contents($path, $console) === false) {
+          throw new \RuntimeException(sprintf('Failed while trying to write log in "%s".', $path));
+        }
+      }
+    }
+  }
 }
