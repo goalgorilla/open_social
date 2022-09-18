@@ -848,15 +848,14 @@ class FeatureContext extends RawMinkContext implements Context
   /**
    * @AfterStep
    */
-  public function logConsoleOutputForFailedStep(AfterStepScope $scope)
-  {
+  public function logConsoleOutputForFailedStep(AfterStepScope $scope) : void {
     if (TestResult::FAILED === $scope->getTestResult()->getResultCode()) {
       $driver = $this->getSession()->getDriver();
       if (method_exists($driver, "getConsoleMessages")) {
         /** @var array $console */
         $console = $driver->getConsoleMessages();
         $console = implode("\n", $console);
-        $path = sprintf("%s/behat-%s.%s", __DIR__ . '/../../logs', date('YmdHis'), "txt");
+        $path = sprintf("%s/console-%s.%s", __DIR__ . '/../../logs', date('YmdHis'), "txt");
         if (file_put_contents($path, $console) === false) {
           throw new \RuntimeException(sprintf('Failed while trying to write log in "%s".', $path));
         }
