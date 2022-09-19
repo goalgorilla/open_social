@@ -2,17 +2,14 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
-use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\entity_access_by_field\EntityAccessHelperInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
+use Drupal\entity_access_by_field\EntityAccessHelper;
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
- *
- * @coversDefaultClass \Drupal\entity_access_by_field\EntityAccessHelper
  */
 class EntityAccessTest extends UnitTestCase {
 
@@ -54,35 +51,15 @@ class EntityAccessTest extends UnitTestCase {
   protected $nodeOwnerId;
 
   /**
-   * The helper.
-   *
-   * @var \Drupal\entity_access_by_field\EntityAccessHelperInterface|\PHPUnit\Framework\MockObject\MockObject
+   * Tests the EntityAccessHelper::entityAccessCheck for Neutral Access.
    */
-  private $helper;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
-
-    $this->helper = $this->createMock('Drupal\entity_access_by_field\EntityAccessHelperInterface');
-
-    $container = new ContainerBuilder();
-    $container->set('entity_access_by_field.helper', $this->helper);
-    \Drupal::setContainer($container);
-  }
-
-  /**
-   * Tests the EntityAccessHelper::process for Neutral Access.
-   */
-  public function testNeutralAccess() {
+  public function testNeutralAccess(): void {
 
     $node = $this->prophesize(NodeInterface::class);
 
     $this->fieldType = $this->randomMachineName();
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldDefinitionInterface');
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
 
@@ -95,28 +72,29 @@ class EntityAccessTest extends UnitTestCase {
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = $this->helper->process($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
 
-    $this->assertEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
+    $this->assertEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
   /**
-   * Tests the EntityAccessHelper::process for Forbidden Access.
+   * Tests the EntityAccessHelper::entityAccessCheck for Forbidden Access.
    */
-  public function testForbiddenAccess() {
+  public function testForbiddenAccess(): void {
     $node = $this->prophesize(NodeInterface::class);
+    $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
     $this->fieldValue = 'public';
     $this->fieldType = 'entity_access_field';
     $this->nodeOwnerId = 3;
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
@@ -135,24 +113,26 @@ class EntityAccessTest extends UnitTestCase {
     $account = $this->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
+    $account->isAuthenticated()->willReturn(TRUE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = $this->helper->process($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
 
-    $this->assertEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::ALLOW, $access_result);
+    $this->assertEquals(EntityAccessHelper::FORBIDDEN, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
 
   }
 
   /**
-   * Tests the EntityAccessHelper::process for Allowed Access.
+   * Tests the EntityAccessHelper::entityAccessCheck for Allowed Access.
    */
-  public function testAllowedAccess() {
+  public function testAllowedAccess(): void {
     $node = $this->prophesize(NodeInterface::class);
+    $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
     $this->fieldId = 'node.article.field_content_visibility';
@@ -162,10 +142,10 @@ class EntityAccessTest extends UnitTestCase {
     $this->nodeOwnerId = 3;
 
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
@@ -185,23 +165,25 @@ class EntityAccessTest extends UnitTestCase {
     $account = $this->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(TRUE);
+    $account->isAuthenticated()->willReturn(TRUE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = $this->helper->process($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
 
-    $this->assertEquals(EntityAccessHelperInterface::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
+    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
   /**
-   * Tests the EntityAccessHelper::process for Author Access Allowed.
+   * Tests the EntityAccessHelper::entityAccessCheck for Author Access Allowed.
    */
-  public function testAuthorAccessAllowed() {
+  public function testAuthorAccessAllowed(): void {
     $node = $this->prophesize(NodeInterface::class);
+    $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
     $this->fieldValue = 'nonexistant';
@@ -209,10 +191,10 @@ class EntityAccessTest extends UnitTestCase {
     $this->nodeOwnerId = 5;
 
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
       ->willReturn($this->fieldType);
-    $fieldDefinitionInterface->expects($this->any())
+    $fieldDefinitionInterface->expects($this->once())
       ->method('getName')
       ->willReturn('field_content_visibility');
 
@@ -232,16 +214,17 @@ class EntityAccessTest extends UnitTestCase {
     $account = $this->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
+    $account->isAuthenticated()->willReturn(TRUE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = $this->helper->process($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
 
-    $this->assertEquals(EntityAccessHelperInterface::ALLOW, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::NEUTRAL, $access_result);
-    $this->assertNotEquals(EntityAccessHelperInterface::FORBIDDEN, $access_result);
+    $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
+    $this->assertNotEquals(EntityAccessHelper::FORBIDDEN, $access_result);
   }
 
 }

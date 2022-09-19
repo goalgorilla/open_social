@@ -55,14 +55,11 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   /**
    * Array with values which need to be ignored.
    *
-   * @deprecated in social:11.4.2 and is removed from social:12.0.0. Since this
-   *   service is used only in hook_ENTITY_TYPE_access so specific entity type
-   *   will be selected.
-   *
-   * @see https://www.drupal.org/node/3309659
+   * @return array
+   *   An array containing a list of values to ignore.
    */
-  public static function getIgnoredValues(): array {
-    return [];
+  public static function getIgnoredValues() {
+    return EntityAccessHelper::getIgnoredValues();
   }
 
   /**
@@ -91,12 +88,14 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
 
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
-            // e.g. label = node.article.field_content_visibility:public.
-            $permission_label = "$entity_type.{$bundle->id()}.{$field->getName()}:$field_key";
-            $permission = 'view ' . $permission_label . ' content';
-            $permissions[$permission] = [
-              'title' => $this->t('View @label content', ['@label' => $permission_label]),
-            ];
+            if (!in_array($field_key, $this->getIgnoredValues())) {
+              // e.g. label = node.article.field_content_visibility:public.
+              $permission_label = "$entity_type.{$bundle->id()}.{$field->getName()}:$field_key";
+              $permission = 'view ' . $permission_label . ' content';
+              $permissions[$permission] = [
+                'title' => $this->t('View @label content', ['@label' => $permission_label]),
+              ];
+            }
           }
         }
       }

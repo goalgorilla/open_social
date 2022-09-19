@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
@@ -32,10 +33,7 @@ function entity_access_by_field_node_access(
   string $operation,
   AccountInterface $account
 ): AccessResultInterface {
-  /** @var \Drupal\entity_access_by_field\EntityAccessHelperInterface $helper */
-  $helper = \Drupal::service('entity_access_by_field.helper');
-
-  return $helper->check($entity, $operation, $account);
+  return EntityAccessHelper::getEntityAccessResult($entity, $operation, $account);
 }
 
 /**

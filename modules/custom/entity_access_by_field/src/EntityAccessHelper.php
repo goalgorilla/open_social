@@ -5,57 +5,59 @@ namespace Drupal\entity_access_by_field;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupContent;
-use Drupal\node\NodeInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
  * Helper class for checking entity access.
  */
-class EntityAccessHelper implements EntityAccessHelperInterface {
+class EntityAccessHelper {
 
   /**
-   * The entity type manager.
+   * Neutral status.
    */
-  protected EntityTypeManagerInterface $entityTypeManager;
+  const NEUTRAL = 0;
 
   /**
-   * Constructs a new EntityAccessHelper instance.
+   * Forbidden status.
+   */
+  const FORBIDDEN = 1;
+
+  /**
+   * Allowed status.
+   */
+  const ALLOW = 2;
+
+  /**
+   * Array with values which need to be ignored.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   * @todo Add group to ignored values (when outsider role is working).
+   *
+   * @return array
+   *   An array containing a list of values to ignore.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
-    $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getIgnoredValues(): array {
+  public static function getIgnoredValues() {
     return [];
   }
 
   /**
-   * {@inheritdoc}
+   * EntityAccessCheck for given operation, entity and user account.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check access to.
+   * @param string $operation
+   *   The operation that is to be performed on $entity. Usually one of:
+   *   - "view".
+   *   - "update".
+   *   - "delete".
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account trying to access the entity.
    */
-  public static function nodeAccessCheck(
-    NodeInterface $node,
-    string $operation,
-    AccountInterface $account
-  ): int {
-    return \Drupal::classResolver(__CLASS__)->process($node, $operation, $account);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function process(
+  public static function entityAccessCheck(
     EntityInterface $entity,
     string $operation,
     AccountInterface $account
@@ -65,14 +67,14 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
     }
 
     // Check published status.
-    if ($entity instanceof EntityPublishedInterface && !$entity->isPublished()) {
+    if (isset($entity->status) && !$entity->status->value) {
       if ($entity->getOwnerId() === $account->id()) {
         if (!$account->hasPermission('view own unpublished content')) {
           return self::FORBIDDEN;
         }
       }
       else {
-        $definition = $this->entityTypeManager->getDefinition(
+        $definition = \Drupal::entityTypeManager()->getDefinition(
           $entity->getEntityTypeId(),
         );
 
@@ -93,7 +95,6 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
     $field_definitions = $entity->getFieldDefinitions();
     $access = TRUE;
 
-    /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
     foreach ($field_definitions as $field_name => $field_definition) {
       if (
         $field_definition->getType() !== 'entity_access_field' ||
@@ -103,11 +104,15 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
       }
 
       foreach (array_column($field->getValue(), 'value') as $field_value) {
+        if (in_array($field_value, EntityAccessHelper::getIgnoredValues())) {
+          return self::NEUTRAL;
+        }
+
         $permission = sprintf(
           'view %s.%s.%s:%s content',
           $entity->getEntityTypeId(),
           $entity->bundle(),
-          $field_name,
+          $field_definition->getName(),
           $field_value,
         );
 
@@ -153,25 +158,60 @@ class EntityAccessHelper implements EntityAccessHelperInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the Entity access for the given entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check access to.
+   * @param string $operation
+   *   The operation that is to be performed on $entity. Usually one of:
+   *   - "view".
+   *   - "update".
+   *   - "delete".
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account trying to access the entity.
    */
   public static function getEntityAccessResult(
-    NodeInterface $node,
-    string $operation,
-    AccountInterface $account
-  ): AccessResultInterface {
-    return \Drupal::classResolver(__CLASS__)->check($node, $operation, $account);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function check(
     EntityInterface $entity,
     string $operation,
     AccountInterface $account
   ): AccessResultInterface {
-    switch ($this->process($entity, $operation, $account)) {
+    $access = self::entityAccessCheck($entity, $operation, $account);
+
+    // If the social_event_invite module is enabled and a person got invited
+    // then allow access to view the node.
+    // @todo Come up with a better solution for this code.
+    if (
+      \Drupal::moduleHandler()->moduleExists('social_event_invite') &&
+      $entity->getEntityTypeId() === 'node' &&
+      !$entity->isNew() &&
+      $operation === 'view'
+    ) {
+      $ids = \Drupal::entityQuery('event_enrollment')
+        ->accessCheck()
+        ->condition('field_account', $account->id())
+        ->condition('field_event', $entity->id())
+        ->range(0, 1)
+        ->execute();
+
+      if (!empty($ids)) {
+        $enrollment = \Drupal::entityTypeManager()
+          ->getStorage('event_enrollment')
+          ->load(reset($ids));
+
+        if ($enrollment !== NULL) {
+          $status = (int) $enrollment->field_request_or_invite_status->value;
+
+          if (
+            $status !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED &&
+            $status !== EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED
+          ) {
+            $access = self::ALLOW;
+          }
+        }
+      }
+    }
+
+    switch ($access) {
       case self::ALLOW:
         return AccessResult::allowed()
           ->cachePerPermissions()
