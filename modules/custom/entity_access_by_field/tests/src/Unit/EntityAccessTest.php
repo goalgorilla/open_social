@@ -72,7 +72,12 @@ class EntityAccessTest extends UnitTestCase {
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck(
+      $node,
+      $op,
+      $account,
+      'administer nodes',
+    );
 
     $this->assertEquals(EntityAccessHelper::NEUTRAL, $access_result);
     $this->assertNotEquals(EntityAccessHelper::ALLOW, $access_result);
@@ -119,7 +124,12 @@ class EntityAccessTest extends UnitTestCase {
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck(
+      $node,
+      $op,
+      $account,
+      'administer nodes',
+    );
 
     $this->assertEquals(EntityAccessHelper::FORBIDDEN, $access_result);
     $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
@@ -171,7 +181,12 @@ class EntityAccessTest extends UnitTestCase {
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck(
+      $node,
+      $op,
+      $account,
+      'administer nodes',
+    );
 
     $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
     $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);
@@ -220,7 +235,12 @@ class EntityAccessTest extends UnitTestCase {
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
-    $access_result = EntityAccessHelper::entityAccessCheck($node, $op, $account);
+    $access_result = EntityAccessHelper::entityAccessCheck(
+      $node,
+      $op,
+      $account,
+      'administer nodes',
+    );
 
     $this->assertEquals(EntityAccessHelper::ALLOW, $access_result);
     $this->assertNotEquals(EntityAccessHelper::NEUTRAL, $access_result);

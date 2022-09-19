@@ -33,7 +33,12 @@ function entity_access_by_field_node_access(
   string $operation,
   AccountInterface $account
 ): AccessResultInterface {
-  return EntityAccessHelper::getEntityAccessResult($entity, $operation, $account);
+  return EntityAccessHelper::getEntityAccessResult(
+    $entity,
+    $operation,
+    $account,
+    'administer nodes',
+  );
 }
 
 /**

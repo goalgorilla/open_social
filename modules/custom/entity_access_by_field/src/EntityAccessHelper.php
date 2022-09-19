@@ -56,11 +56,14 @@ class EntityAccessHelper {
    *   - "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account trying to access the entity.
+   * @param string|null $permission
+   *   (optional) The admin permission. Defaults to NULL.
    */
   public static function entityAccessCheck(
     EntityInterface $entity,
     string $operation,
-    AccountInterface $account
+    AccountInterface $account,
+    string $permission = NULL
   ): int {
     if ($operation !== 'view' || !$entity instanceof EntityOwnerInterface) {
       return self::NEUTRAL;
@@ -74,13 +77,19 @@ class EntityAccessHelper {
         }
       }
       else {
-        $definition = \Drupal::entityTypeManager()->getDefinition(
-          $entity->getEntityTypeId(),
-        );
+        if ($permission === NULL) {
+          $definition = \Drupal::entityTypeManager()->getDefinition(
+            $entity->getEntityTypeId(),
+          );
+
+          if ($definition !== NULL) {
+            $permission = $definition->getAdminPermission();
+          }
+        }
 
         if (
-          $definition !== NULL &&
-          is_string($permission = $definition->getAdminPermission()) &&
+          !empty($permission) &&
+          is_string($permission) &&
           !$account->hasPermission($permission)
         ) {
           return self::FORBIDDEN;
@@ -169,13 +178,21 @@ class EntityAccessHelper {
    *   - "delete".
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account trying to access the entity.
+   * @param string|null $permission
+   *   (optional) The admin permission. Defaults to NULL.
    */
   public static function getEntityAccessResult(
     EntityInterface $entity,
     string $operation,
-    AccountInterface $account
+    AccountInterface $account,
+    string $permission = NULL
   ): AccessResultInterface {
-    $access = self::entityAccessCheck($entity, $operation, $account);
+    $access = self::entityAccessCheck(
+      $entity,
+      $operation,
+      $account,
+      $permission,
+    );
 
     // If the social_event_invite module is enabled and a person got invited
     // then allow access to view the node.
