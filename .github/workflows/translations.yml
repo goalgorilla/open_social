@@ -5,8 +5,14 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   extract:
+    permissions:
+      contents: write # to make pull request (goalgorilla/create-pull-request)
+      pull-requests: write # to make pull request (goalgorilla/create-pull-request)
+
     name: Extract
     runs-on: ubuntu-latest
     steps:
