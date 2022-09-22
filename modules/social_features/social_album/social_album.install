@@ -14,6 +14,12 @@ use Drupal\user\RoleInterface;
 function social_album_install() {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.album.field_content_visibility:public content',
+    ]
+  );
+  user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
     [
       'view node.album.field_content_visibility:public content',
@@ -50,6 +56,8 @@ function social_album_install() {
       'administer social_album settings',
     ]
   );
+
+  _social_album_set_group_permissions();
 
   module_set_weight('social_album', 5);
 
@@ -93,12 +101,18 @@ function social_album_uninstall() {
  */
 function _social_album_set_group_permissions() {
   $common_permissions = [
-    'anonymous' => [],
+    'anonymous' => [
+      'view group_node:album content',
+      'view group_node:album entity',
+    ],
     'outsider' => [
       'update own group_node:album entity',
+      'view group_node:album content',
+      'view group_node:album entity',
     ],
     'member' => [
       'create group_node:album entity',
+      'create group_node:album content',
       'delete own group_node:album entity',
       'view group_node:album entity',
       'view group_node:album content',
@@ -317,4 +331,30 @@ function social_album_update_11001(): void {
       'view node.album.field_content_visibility:public content',
     ]
   );
+}
+
+/**
+ * Update Album permissions.
+ */
+function social_album_update_11301(): void {
+  user_role_grant_permissions(
+    RoleInterface::ANONYMOUS_ID,
+    [
+      'view node.album.field_content_visibility:public content',
+    ]
+  );
+
+  user_role_grant_permissions(
+    'verified',
+    [
+      'view node.album.field_content_visibility:community content',
+    ]
+  );
+}
+
+/**
+ * Update Album permissions.
+ */
+function social_album_update_11302(): void {
+  _social_album_set_group_permissions();
 }
