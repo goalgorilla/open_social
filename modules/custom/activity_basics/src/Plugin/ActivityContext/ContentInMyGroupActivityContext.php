@@ -6,13 +6,14 @@ use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\node\NodeInterface;
 use Drupal\social_group\GroupMuteNotify;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -120,12 +121,15 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           return $recipients;
         }
 
-        $node = $group_content->getEntity();
+        $entity = $group_content->getEntity();
 
-        if ($node instanceof NodeInterface) {
-          $owner_id = $node->getOwnerId();
+        if ($entity instanceof EntityOwnerInterface) {
+          $owner_id = $entity->getOwnerId();
 
-          if (!$node->isPublished()) {
+          if (
+            $entity instanceof EntityPublishedInterface &&
+            !$entity->isPublished()
+          ) {
             return $recipients;
           }
         }
