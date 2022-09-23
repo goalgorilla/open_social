@@ -157,9 +157,13 @@ jobs:
           vendor/bin/behat --version
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*; do
             echo $test
-            drush sql-drop -y
-            drush sqlc < installation.sql
-            vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+            if head -n1 $test | grep -q "@disabled"; then
+              echo "Skipping disabled test"
+            else
+              drush sql-drop -y
+              drush sqlc < installation.sql
+              vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+            fi
           done
 
       - name: Upload Behat Test Output

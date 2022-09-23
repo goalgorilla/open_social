@@ -1,4 +1,4 @@
-@api @book @perfect @critical @DS-1766 @book-create
+@disabled @api @book @perfect @critical @DS-1766 @book-create
 Feature: Create Book page
   Benefit: In order to share useful information with users
   Role: As an administrator
