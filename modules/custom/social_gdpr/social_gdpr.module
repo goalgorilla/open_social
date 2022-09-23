@@ -6,9 +6,11 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\social_gdpr\SocialGDPRHelper;
 
 /**
  * Implements hook_help().
@@ -47,6 +49,84 @@ function social_gdpr_form_user_register_form_alter(&$form, FormStateInterface $f
     // user registration form fields.
     $form['account']['data_policy']['#weight'] = 100;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for "user_form".
+ *
+ * Make possible to revoke or give consent of policies for user.
+ */
+function social_gdpr_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
+  // Do not apply for register form.
+  if ($form['#form_id'] === 'user_register_form') {
+    return;
+  }
+
+  // "Data policies" are build by data policy module on user register form.
+  // See data_policy_form_user_register_form_alter().
+  // The alter function perform a "data policy" form element build and
+  // do all other stuff (submit, validating etc.).
+  // Unfortunately, we can't just reuse the function, because it adds submit
+  // handler that will add new consents rather than edit existed.
+  // Reuse only needed code.
+  /** @var \Drupal\data_policy\DataPolicyConsentManagerInterface $data_policy_manager */
+  $data_policy_manager = \Drupal::service('data_policy.manager');
+  if (!$data_policy_manager->isDataPolicy()) {
+    return;
+  }
+
+  if (\Drupal::routeMatch()->getRouteName() === 'user.admin_create') {
+    return;
+  }
+
+  $data_policy_manager->addCheckbox($form);
+
+  array_unshift($form['#validate'], '_data_policy_user_register_form_validate');
+
+  if (!isset($form['data_policy']) && !isset($form['account']['data_policy'])) {
+    return;
+  }
+
+  // Revoke form element from "account" fieldgroup if exists.
+  if (!empty($form['account']['data_policy'])) {
+    $form['data_policy'] = $form['account']['data_policy'];
+    unset($form['account']['data_policy']);
+  }
+
+  // Build a separate section for "Data policies".
+  $form['data_policy_wrapper'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Data privacy'),
+    // Show fieldset if children is visible.
+    '#access' => Element::getVisibleChildren($form['data_policy']) &&
+      // @codingStandardsIgnoreLine
+      Element::isVisibleElement($form['data_policy']),
+    '#attached' => ['library' => ['social_gdpr/gdpr']],
+  ];
+
+  // Move form element to "Data policies" section.
+  $form['data_policy']['#group'] = 'data_policy_wrapper';
+
+  // Disable ability to revoke required consents of policies,
+  // or it's unchecked (for new data policies).
+  foreach ($form['data_policy'] as &$element) {
+    if (
+      !is_array($element) ||
+      $element['#type'] !== 'checkbox' ||
+      // This condition is useful for new data policies.
+      $element['#default_value'] === FALSE ||
+      $element['#required'] === FALSE
+    ) {
+      continue;
+    }
+
+    $element['#disabled'] = TRUE;
+  }
+
+  $form['actions']['submit']['#submit'][] = [
+    SocialGDPRHelper::class,
+    'userChangeDataPoliciesSubmit',
+  ];
 }
 
 /**
