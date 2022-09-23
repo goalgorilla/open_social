@@ -93,7 +93,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
         try {
-          $post = $this->entityTypeManager->getStorage('post')
+          $entity = $this->entityTypeManager->getStorage('post')
             ->load($referenced_entity['target_id']);
         }
         catch (PluginNotFoundException $exception) {
@@ -103,12 +103,12 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if ($post === NULL) {
+        if ($entity === NULL) {
           return $recipients;
         }
 
-        $gid = $post->get('field_recipient_group')->getValue();
-        $owner_id = $post->getOwnerId();
+        $gid = $entity->get('field_recipient_group')->getValue();
+        $owner_id = $entity->getOwnerId();
       }
       else {
         $group_content = $this->entityTypeManager->getStorage('group_content')
@@ -169,7 +169,8 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           if (
             $group_user !== NULL &&
             $owner_id != $membership->getUser()->id() &&
-            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())
+            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser()) &&
+            $entity->access('view', $group_user)
           ) {
             $recipients[] = [
               'target_type' => 'user',
