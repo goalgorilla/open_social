@@ -115,6 +115,7 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       $builder->produce('media_bridge')
         ->map('value', $builder->fromParent())
         ->map('field', $builder->fromValue('url'))
+        ->map('transform', $builder->fromArgument('transform'))
     );
 
     // Image fields.

@@ -171,6 +171,19 @@ interface Actor implements Node {
 # audio and files).                                                            #
 ################################################################################
 """
+A valid Data URI.
+"""
+# See https://en.wikipedia.org/wiki/Data_URI_scheme
+scalar DataUri
+
+"""
+BlurHash is a compact representation of a placeholder for an image.
+
+See https://blurha.sh/
+"""
+scalar BlurHash
+
+"""
 Media managed by the Open Social platform.
 """
 interface Media implements Node {
@@ -184,12 +197,15 @@ interface Media implements Node {
 type Image implements Media & Node {
   id: ID!
   """
-  The url at which the original image can be downloaded.
+  The location of the image as a URL.
 
-  Applications requesting the image for display to users should use one of the
-  dedicated selectors to select a suitable image format instead.
+  If no transform options are specified, then the original image will be preserved including any pre-applied transforms.
+
+  All transformation options are considered "best-effort". Any transformation that the original image type doesn't support will be ignored.
+
+  If you need multiple variations of the same image, then you can use [GraphQL aliases](https://graphql.org/learn/queries/#aliases).
   """
-  url: Url!
+  url(transform: ImageTransformInput): Url!
   """
   Image Title
   """
@@ -202,6 +218,76 @@ type Image implements Media & Node {
   """
   alt: String!
   # @todo https://www.drupal.org/project/social/issues/3191640
+  """
+  The primary color in the image.
+
+  Can be used to create a single-color placeholder while the image loads.
+  """
+  primaryColor: Color!
+  """
+  A blurred low quality version of the image in data uri format.
+
+  Can be used to create a placeholder while the image loads.
+  """
+  blurUpThumb: DataUri!
+}
+
+"""
+Available transform modes to scale images to the desired resolution.
+"""
+# This is a parameter that DatoCMS offered based on options available in imgix.
+# I think providing control over how an image should be resized to fit the use-case is more
+# powerful than a simple maxHeight and maxWidth that shopify did (that's why I chose `height`
+# and `width`). I do think we should not offer all of their options. Since we want to keep
+# control over what cropping experience we want to offer (and offer something predictable to
+# users uploading images) we should omit any fit modes that affect how images are cropped.
+# This leaves the following set of transforms (we can debate which one if any we want implement
+# immediately and which one we want to implement later).
+# See https://docs.imgix.com/apis/rendering/size/fit for all options
+# Fill has been omitted since we don't have a fill color.
+# Scale has been omitted because it distorts the image.
+enum ImageTransformFit {
+  """
+  Resizes the image to fit within the width and height boundaries without cropping or distorting the image. The resulting image will match one of the constraining dimensions, while the other dimension is altered to maintain the same aspect ratio of the input image.
+  """
+  CLIP
+}
+
+"""
+The available options for transforming an image.
+
+All transformation options are considered "best-effort". Any transformation that the original image type doesn't support will be ignored.
+"""
+input ImageTransformInput {
+  """
+  Image height in pixels between 1 and 5760.
+  """
+  # Maximum  copied from Shopify. We can determine whether we want to copy their upper limit but enforcing one is a good idea.
+  width: Int
+  """
+  Image width in pixels between 1 and 5760.
+  """
+  # Maximum  copied from Shopify. We can determine whether we want to copy their upper limit but enforcing one is a good idea.
+  height: Int
+  """
+  Controls how the output image is fit to its target dimensions after resizing, and how any background areas will be filled.
+  """
+  fit: ImageTransformFit = CLIP
+  """
+  Convert the source image into the preferred content type. Supported conversions: .svg to .png, any file type to .jpg, and any file type to .webp.
+  """
+  # We can debate whether we want this. I do think Shopify's idea of limiting what transforms are supported is a good idea.
+  preferredContentType: ImageContentType
+  """
+  Image size multiplier for high-resolution retina displays. Must be within 1..3.
+  """
+  scale: Int
+}
+
+enum ImageContentType {
+  PNG
+  JPG
+  WEBP
 }
 
 """

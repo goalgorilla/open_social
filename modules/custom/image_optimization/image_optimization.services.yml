@@ -1,0 +1,4 @@
+services:
+  image_optimization.image_url_generator:
+    class: 'Drupal\image_optimization\ImageUrlGenerator'
+    arguments: [ '@file_system', '@config.factory' ]

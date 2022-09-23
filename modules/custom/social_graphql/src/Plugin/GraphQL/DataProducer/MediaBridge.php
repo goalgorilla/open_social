@@ -7,6 +7,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\file\Plugin\Field\FieldType\FileItem;
 use Drupal\graphql\GraphQL\Buffers\EntityBuffer;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
+use Drupal\image_optimization\ImageUrlGeneratorInterface;
 use Drupal\media\MediaInterface;
 use GraphQL\Deferred;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,6 +44,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     ),
  *     "field" = @ContextDefinition("string",
  *       label = @Translation("Field name")
+ *     ),
+ *    "transform" = @ContextDefinition("any",
+ *       label = @Translation("Transform arguments"),
+ *       required = FALSE
  *     )
  *   }
  * )
@@ -57,6 +62,13 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
   protected $entityBuffer;
 
   /**
+   * The image url generator service.
+   *
+   * @var \Drupal\image_optimization\ImageUrlGeneratorInterface
+   */
+  protected ImageUrlGeneratorInterface $imageUrlGenerator;
+
+  /**
    * {@inheritdoc}
    *
    * @codeCoverageIgnore
@@ -66,7 +78,8 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('graphql.buffer.entity')
+      $container->get('graphql.buffer.entity'),
+      $container->get('image_optimization.image_url_generator')
     );
   }
 
@@ -81,6 +94,8 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The plugin definition array.
    * @param \Drupal\graphql\GraphQL\Buffers\EntityBuffer $entityBuffer
    *   The entity buffer service.
+   * @param \Drupal\image_optimization\ImageUrlGeneratorInterface $image_url_generator
+   *   The image url generator service.
    *
    * @codeCoverageIgnore
    */
@@ -88,10 +103,12 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
     array $configuration,
     $pluginId,
     array $pluginDefinition,
-    EntityBuffer $entityBuffer
+    EntityBuffer $entityBuffer,
+    ImageUrlGeneratorInterface $image_url_generator
   ) {
     parent::__construct($configuration, $pluginId, $pluginDefinition);
     $this->entityBuffer = $entityBuffer;
+    $this->imageUrlGenerator = $image_url_generator;
   }
 
   /**
@@ -101,11 +118,15 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *   The media source or file item.
    * @param string $field
    *   The name of the data to return.
+   * @param array|null $transform
+   *   The image transform input.
    *
    * @return \GraphQL\Deferred|null
    *   The resolved value for a File Item.
    */
-  public function resolve($value, $field) {
+  public function resolve($value, string $field, ?array $transform) {
+    // @todo: if transform arguments are available, use the imageUrlGenerator service.
+
     // To make consuming fields easier we convert field item lists to field
     // items.
     if ($value instanceof FieldItemListInterface) {
