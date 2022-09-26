@@ -21,6 +21,7 @@ use Drupal\group\Entity\GroupContentTypeInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\message\Entity\Message;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_ENTITY_TYPE_insert() for group_content_type.
@@ -185,8 +186,10 @@ function social_group_request_preprocess_group(array &$variables): void {
       /** @var \Drupal\taxonomy\TermInterface $term */
       $term = $field->entity;
 
-      $variables['group_type'] = $term->getName();
-      $variables['group_type_icon'] = $term->field_group_type_icon->value;
+      if ($term instanceof Term) {
+        $variables['group_type'] = $term->getName();
+        $variables['group_type_icon'] = $term->field_group_type_icon->value;
+      }
     }
   }
 }
