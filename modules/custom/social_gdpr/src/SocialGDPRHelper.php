@@ -54,7 +54,13 @@ class SocialGDPRHelper {
 
     // We need only consents that can be changed.
     if (empty($user_consents_ids)) {
-      return;
+      // Usually, user should make policy agreement on register page, but in
+      // case when it appears on settings page, let's add them.
+      if (function_exists('_data_policy_user_register_form_submit')) {
+        _data_policy_user_register_form_submit($form, $form_state);
+        // Nothing to edit, consents were created from scratch.
+        return;
+      }
     }
 
     /** @var \Drupal\data_policy\Entity\UserConsent[] $user_consents */
