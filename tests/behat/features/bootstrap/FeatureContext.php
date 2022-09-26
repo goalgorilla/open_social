@@ -3,10 +3,8 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
@@ -17,8 +15,9 @@ use PHPUnit\Framework\Assert;
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawMinkContext implements Context
-{
+class FeatureContext extends RawMinkContext {
+
+    use GroupTrait;
 
     protected $minkContext;
 

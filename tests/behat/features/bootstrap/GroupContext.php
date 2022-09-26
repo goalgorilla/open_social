@@ -12,6 +12,9 @@ use Drupal\group\Entity\GroupContentType;
  * Defines test steps around the usage of groups.
  */
 class GroupContext extends RawMinkContext {
+
+  use GroupTrait;
+
   /**
    * Keep track of all groups that are created so they can easily be removed.
    */
@@ -199,35 +202,6 @@ class GroupContext extends RawMinkContext {
     $group_object->save();
 
     return $group_object;
-  }
-
-  /**
-   * Get the group from a group title.
-   *
-   * @param string $group_title
-   *   The title of the group.
-   *
-   * @return int|null
-   *   The integer ID of the group or NULL if no group could be found.
-   */
-  private function getGroupIdFromTitle($group_title) {
-    $query = \Drupal::entityQuery('group')
-      ->accessCheck(FALSE)
-      ->condition('label', $group_title);
-
-    $group_ids = $query->execute();
-    $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple($group_ids);
-
-    if (count($groups) !== 1) {
-      return NULL;
-    }
-
-    $group_id = (int) reset($groups)->id();
-    if ($group_id !== 0) {
-      return $group_id;
-    }
-
-    return NULL;
   }
 
   /**
