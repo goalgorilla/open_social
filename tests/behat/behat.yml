@@ -15,14 +15,17 @@ default:
       filters:
         tags: "~@disabled"
       contexts:
+        - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\social\Behat\CKEditorContext
+        - Drupal\social\Behat\EmailContext
+        - Drupal\social\Behat\GroupContext
+        - Drupal\social\Behat\PostContext
         - Drupal\social\Behat\FeatureContext
         - Drupal\social\Behat\SocialDrupalContext
         - Drupal\social\Behat\SocialMessageContext
         - Drupal\social\Behat\SocialMinkContext
-        - Drupal\DrupalExtension\Context\BatchContext
-        - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\social\Behat\PostContext
-        - Drupal\social\Behat\EmailContext
+        - Drupal\social\Behat\ThemeContext
   extensions:
     DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~
     Drupal\MinkExtension:
