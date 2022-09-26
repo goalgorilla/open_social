@@ -27,6 +27,13 @@ mergeable:
       - do: author
         must_exclude:
           regex: 'dependabot'
+      # Ignore pull requests with the 'automated' label.
+      - do: payload
+        pull_request:
+          labels:
+            must_exclude:
+              regex: 'automated'
+              key: name
     pass:
       - do: comment
         payload:

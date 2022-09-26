@@ -1,4 +1,4 @@
-@install @stability @javascript
+@disabled @install @stability @javascript
   Feature: Install through web UI
   Benefit: In order to let our Drupal users install through the interface
   Role: AN

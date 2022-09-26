@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Action(
  *   id = "social_event_an_enroll_enrolments_export_action",
- *   label = @Translation("Export the selected enrollments to CSV"),
+ *   label = @Translation("Export the selected enrollments to CSV including anonymous"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
  *   confirm_form_route_name = "social_event_managers.vbo.confirm",

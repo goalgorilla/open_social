@@ -1,4 +1,4 @@
-@api @group @book @book-in-flexible-group
+@disabled @api @group @book @book-in-flexible-group
 Feature: Book page in Flexible Group
   Benefit: Correct behaviour for books in flexible groups
   Role: As a verified

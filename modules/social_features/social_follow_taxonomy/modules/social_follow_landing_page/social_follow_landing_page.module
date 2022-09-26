@@ -60,11 +60,11 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
               $parent = reset($parents);
               $category = $parent->getName();
               // Use the name of parent term as id of the filter parameter.
-              $parameter = social_tagging_to_machine_name($category);
+              $parameter = \Drupal::service('social_core.machine_name')->transform($category);
             }
             elseif ($tag_service->useCategoryParent()) {
               $category = $term->getName();
-              $parameter = social_tagging_to_machine_name($category);
+              $parameter = \Drupal::service('social_core.machine_name')->transform($category);
             }
           }
           $url = Url::fromRoute($route, [
@@ -232,7 +232,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
       $categories = $tag_service->getCategories();
       // Loop over the categories.
       foreach ($categories as $tid => $category) {
-        $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
+        $field_name = 'social_tagging_' . \Drupal::service('social_core.machine_name')->transform($category);
         // Get the corresponding items.
         $options = $tag_service->getChildren($tid);
         // Only add a field if the category has any options.
@@ -295,8 +295,9 @@ function _social_follow_landing_page_entity_validate($element, FormStateInterfac
 
       // Loop over the categories.
       foreach ($categories as $category) {
-        if (!empty($tag_value['social_tagging_' . social_tagging_to_machine_name($category)])) {
-          foreach ($tag_value['social_tagging_' . social_tagging_to_machine_name($category)] as $selected) {
+        $machine_name = \Drupal::service('social_core.machine_name')->transform($category);
+        if (!empty($tag_value['social_tagging_' . $machine_name])) {
+          foreach ($tag_value['social_tagging_' . $machine_name] as $selected) {
             $tagging_values[] = [
               'target_id' => $selected,
               '_weight' => (string) $counter,

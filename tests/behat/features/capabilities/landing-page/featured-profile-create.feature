@@ -1,4 +1,4 @@
-@api @landing-page @stability @javascript @perfect @critical @YANG-4800 @stability-4 @landing-page-create-featured-profile
+@disabled @api @landing-page @stability @javascript @perfect @critical @YANG-4800 @stability-4 @landing-page-create-featured-profile
 Feature: Create Landing Page and add Featured Content section with user profile
   Benefit: In order to share useful information with users
   Role: AN

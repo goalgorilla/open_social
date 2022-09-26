@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
@@ -1588,4 +1589,39 @@ function social_core_update_11402(array &$sandbox): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Add "Convert to WebP" image effect on all Social Core image styles.
+ */
+function social_core_update_11403(array &$sandbox): void {
+  $image_styles_to_update = [
+    'crop_thumbnail',
+    'social_medium',
+    'social_an_hero',
+    'social_hero_small',
+    'social_small',
+    'social_file_thumbnails',
+    'social_xx_large',
+    'social_large',
+    'social_x_large',
+    'social_tiny',
+  ];
+
+  foreach ($image_styles_to_update as $image_style_name) {
+    $style = ImageStyle::load($image_style_name);
+
+    if ($style instanceof ImageStyle) {
+      $style->addImageEffect([
+        'id' => 'image_convert',
+        // Set "Convert to WebP" as the last effect.
+        'weight' => count($style->getEffects()) + 1,
+        'data' => [
+          'extension' => 'webp',
+        ],
+      ]);
+      $style->save();
+      $style->flush();
+    }
+  }
 }
