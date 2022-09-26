@@ -12,6 +12,8 @@ default:
       paths:
         features: '%paths.base%/features'
         bootstrap: '%paths.base%/features/bootstrap'
+      filters:
+        tags: "~@disabled"
       contexts:
         - Drupal\social\Behat\FeatureContext
         - Drupal\social\Behat\SocialDrupalContext
