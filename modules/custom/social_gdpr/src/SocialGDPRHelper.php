@@ -34,7 +34,7 @@ class SocialGDPRHelper {
       return;
     }
 
-    /** @var \Drupal\data_policy\DataPolicyConsentManagerInterface $data_policy_manager */
+    /** @var \Drupal\data_policy\DataPolicyConsentManager $data_policy_manager */
     $data_policy_manager = \Drupal::service('data_policy.manager');
 
     // Get user that made consents.
@@ -73,8 +73,13 @@ class SocialGDPRHelper {
       $data_policy_id = (int) filter_var($name, FILTER_SANITIZE_NUMBER_INT);
       $data_policy = DataPolicy::load($data_policy_id);
       if (empty($data_policy)) {
+        // Data policy doesn't exist.
         continue;
       }
+
+      $mapping[$name]['value'] = $value;
+      $mapping[$name]['is_required'] = $data_policy_manager->isRequiredEntity($name);
+      $mapping[$name]['data_policy'] = $data_policy;
 
       foreach ($user_consents as $consent) {
         // We don't need newly created consent.
@@ -82,31 +87,57 @@ class SocialGDPRHelper {
           continue;
         }
 
-        $data_policy_revision_id = (int) $consent->get('data_policy_revision_id')->getString();
+        $data_policy_revision_id = (int) $consent->get('data_policy_revision_id')
+          ->getString();
         // Make sure the consent belongs to the current data policy revision.
-        if ((int) $data_policy->getRevisionId() !== $data_policy_revision_id) {
-          continue;
+        if ((int) $data_policy->getRevisionId() === $data_policy_revision_id) {
+          $mapping[$name]['consent'] = $consent;
         }
-
-        $previous_state = (int) $consent->get('state')->getString();
-        $agreed = $previous_state === UserConsentInterface::STATE_AGREE;
-
-        // Make sure user made changes otherwise nothing to update.
-        if ($agreed === (bool) $value) {
-          continue;
-        }
-
-        // Why we don't take into account UserConsentInterface::STATE_UNDECIDED?
-        // Because here we just edit already existed consents, which mean
-        // the user visited policies previously and this state can't
-        // be applied anymore.
-        $new_state = $value
-          ? UserConsentInterface::STATE_AGREE
-          : UserConsentInterface::STATE_NOT_AGREE;
-
-        $consent->set('state', $new_state)
-          ->save();
       }
+    }
+
+    foreach (($mapping ?? []) as $item) {
+      /** @var \Drupal\data_policy\Entity\DataPolicy $data_policy */
+      $data_policy = $item['data_policy'];
+      $value = $item['value'];
+      $required = $item['is_required'];
+      $consent = $item['consent'] ?? NULL;
+
+      if (empty($consent)) {
+        // Seems like a new consent was added. Let's create it for user.
+        /** @var \Drupal\data_policy\Entity\UserConsent $consent */
+        $consent = \Drupal::entityTypeManager()->getStorage('user_consent')
+          ->create();
+        $consent->setRevision($data_policy)
+          ->setOwnerId($uid)
+          ->set('state', empty($value)
+            ? UserConsentInterface::STATE_UNDECIDED
+            : UserConsentInterface::STATE_AGREE)
+          ->set('required', $required)
+          ->save();
+
+        // Nothing to change farther.
+        continue;
+      }
+
+      $previous_state = (int) $consent->get('state')->getString();
+      $agreed = $previous_state === UserConsentInterface::STATE_AGREE;
+
+      // Make sure user made changes otherwise nothing to update.
+      if ($agreed === (bool) $value) {
+        continue;
+      }
+
+      // Why we don't take into account UserConsentInterface::STATE_UNDECIDED?
+      // Because here we just edit already existed consents, which mean
+      // the user visited policies previously and this state can't
+      // be applied anymore.
+      $new_state = $value
+        ? UserConsentInterface::STATE_AGREE
+        : UserConsentInterface::STATE_NOT_AGREE;
+
+      $consent->set('state', $new_state)
+        ->save();
     }
   }
 
