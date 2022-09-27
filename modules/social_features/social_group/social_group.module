@@ -970,7 +970,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       if (in_array($form['#entity_type'], $entity_types)) {
         $form['actions']['submit']['#submit'] = array_filter(
           $form['actions']['submit']['#submit'],
-          fn (string $callback): bool => $callback !== 'group_content_entity_submit',
+          fn ($callback): bool => $callback !== 'group_content_entity_submit',
         );
       }
     }
