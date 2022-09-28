@@ -1,4 +1,4 @@
-@disabled @api @share @perfect @critical @DS-1829
+@api @share @perfect @critical @DS-1829
 Feature: Social Sharing
   Benefit: In order to share my page with external people
   Role: As a Verified
