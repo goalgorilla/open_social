@@ -16,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class TopicContext extends RawMinkContext {
 
+  use EntityTrait;
   use NodeTrait;
 
   private const CREATE_PAGE = "/node/add/topic";
@@ -298,6 +299,7 @@ class TopicContext extends RawMinkContext {
       $topic['field_topic_type'] = $type_id;
     }
 
+    $this->validateEntityFields("node", $topic);
     $topic_object = Node::create($topic);
     $violations = $topic_object->validate();
     if ($violations->count() !== 0) {
