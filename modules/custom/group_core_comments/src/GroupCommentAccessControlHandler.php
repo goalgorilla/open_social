@@ -52,6 +52,9 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
       if (!empty($group_contents)) {
         switch ($operation) {
           case 'view':
+            if (!empty(\Drupal::request()->get('file')) && $entity->getCommentedEntity()->access($operation, $account, FALSE)) {
+              return AccessResult::allowed()->cachePerUser();
+            }
             return $this->getPermissionInGroups('access comments', $account, $group_contents);
 
           case 'update':
