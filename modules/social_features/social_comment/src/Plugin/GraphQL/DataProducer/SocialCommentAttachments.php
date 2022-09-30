@@ -141,7 +141,7 @@ class SocialCommentAttachments extends EntityDataProducerPluginBase {
    *   An entity connection with results and data about the paginated results.
    */
   public function resolve(EntityInterface $parent, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata): ConnectionInterface {
-    $query_helper = new CommentAttachmentsQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer, $this->database, $parent);
+    $query_helper = new CommentAttachmentsQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->database, $parent);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper, $this->renderer);

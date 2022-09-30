@@ -154,7 +154,7 @@ class QueryUser extends EntityDataProducerPluginBase implements ContainerFactory
       return new EmptyEntityConnection();
     }
 
-    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer);
+    $query_helper = new UserQueryHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper, $this->renderer);

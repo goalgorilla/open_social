@@ -77,7 +77,7 @@ class QueryTopicByType extends EntityDataProducerPluginBase {
    *   An entity connection with results and data about the paginated results.
    */
   public function resolve(string $type, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $query_helper = new TopicQueryByTypeHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $this->renderer, $type);
+    $query_helper = new TopicQueryByTypeHelper($sortKey, $this->entityTypeManager, $this->graphqlEntityBuffer, $type);
     $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper, $this->renderer);
