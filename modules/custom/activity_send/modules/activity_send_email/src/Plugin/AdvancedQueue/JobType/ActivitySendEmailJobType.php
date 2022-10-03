@@ -157,7 +157,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
             if ($is_multilingual) {
               // We also want to send emails to users per language in a given
               // frequency.
-              foreach ($languages = $this->languageManager->getLanguages() as $language) {
+              foreach ($this->languageManager->getLanguages() as $language) {
                 $langcode = $language->getId();
                 // Load all user by given language.
                 $user_ids_per_language = $this->database->select('users_field_data', 'ufd')
