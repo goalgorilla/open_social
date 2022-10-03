@@ -34,6 +34,19 @@ class Immediately extends EmailFrequencyBase {
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
+
+      // Get the language manager object.
+      $language_manager = \Drupal::languageManager();
+
+      // Get the language object.
+      $language = $language_manager->getLanguage($langcode);
+
+      // Save the original language to be reversed later.
+      $original_language = $language_manager->getConfigOverrideLanguage();
+
+      // Ask our Drupal to load configuration in user's preferred language.
+      $language_manager->setConfigOverrideLanguage($language);
+
       $subject = '';
       // If configured grab the email subject.
       $template = $message->getTemplate();
@@ -43,6 +56,9 @@ class Immediately extends EmailFrequencyBase {
           $subject = $settings['email_subject'];
         }
       }
+
+      // Reset the language override.
+      $language_manager->setConfigOverrideLanguage($original_language);
 
       // If no body text is provided, get it from message for given language.
       if (!$body_text) {
@@ -82,7 +98,7 @@ class Immediately extends EmailFrequencyBase {
         '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
-      ['langcode' => $langcode]),
+        ['langcode' => $langcode]),
     ];
 
     // Construct the body & subject for email sending.
