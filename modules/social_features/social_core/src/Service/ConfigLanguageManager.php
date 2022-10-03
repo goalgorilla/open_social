@@ -101,7 +101,7 @@ class ConfigLanguageManager {
    *   The language code.
    */
   public function configOverrideLanguageStart(string $langcode): void {
-    if (!empty($this->translationLanguage = $this->languageManager->getLanguage($langcode))) {
+    if (empty($this->translationLanguage = $this->languageManager->getLanguage($langcode))) {
       $this->translationLanguage = $this->languageManager->getCurrentLanguage();
     }
     $this->originalLanguage = $this->languageManager->getConfigOverrideLanguage();
