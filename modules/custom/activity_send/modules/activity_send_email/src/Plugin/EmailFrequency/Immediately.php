@@ -168,7 +168,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
         '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
-      ['langcode' => $langcode]),
+        ['langcode' => $langcode]),
     ];
 
     // Construct the body & subject for email sending.
