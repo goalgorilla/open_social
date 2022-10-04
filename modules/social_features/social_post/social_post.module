@@ -16,7 +16,7 @@ use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter() for "post_form".
  */
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
@@ -50,6 +50,10 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
       $title = t('Say something to the Community');
       $form['field_post']['widget'][0]['#title'] = $title;
       $form['field_post']['widget'][0]['#placeholder'] = $title;
+    }
+
+    if (empty($form['field_post']['widget'][0]['#format'])) {
+      $form['field_post']['widget'][0]['#format'] = 'basic_html';
     }
   }
 }
