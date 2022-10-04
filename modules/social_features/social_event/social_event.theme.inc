@@ -30,11 +30,11 @@ function template_preprocess_event_date_advanced(array &$variables): void {
     $variables['date'] = _social_event_format_date($node, $view_mode);
   }
 
-  // Add an icon.
-  $module_path = \Drupal::service('extension.list.module')
-    ->getPath('social_event');
-
-  $variables['icon'] = "/{$module_path}/assets/icons/time.svg";
+  // We want to use icon from the loaded file rather than embed it. Because
+  // it causes performance issue on some pages (event listing, for example).
+  // Conversely, in the email we can't get svg icons by id because the file
+  // with svg bulk can't be loaded (so, we embed icon directly in the template).
+  $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
   $variables['#attached']['library'][] = 'social_event/event';
   $variables['#cache']['contexts'][] = 'timezone';
@@ -66,11 +66,11 @@ function template_preprocess_event_location_address(array &$variables): void {
       : NULL;
   }
 
-  // Add an icon.
-  $module_path = \Drupal::service('extension.list.module')
-    ->getPath('social_event');
-
-  $variables['icon'] = "/{$module_path}/assets/icons/location.svg";
+  // We want to use icon from the loaded file rather than embed it. Because
+  // it causes performance issue on some pages (event listing, for example).
+  // Conversely, in the email we can't get svg icons by id because the file
+  // with svg bulk can't be loaded (so, we embed icon directly in the template).
+  $variables['icon_loaded'] = $variables['view_mode'] !== 'email_card';
 
   $variables['#attached']['library'][] = 'social_event/event';
 }

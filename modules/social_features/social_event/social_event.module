@@ -1393,3 +1393,17 @@ function social_event_social_core_title_alter(array &$titles): void {
     $titles[$entity_type]['bundles']['event'] = 'an';
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for "html".
+ */
+function social_event_preprocess_html(array &$variables): void {
+  // Make event icons to be available for themes.
+  $icons = file_get_contents(\Drupal::service('extension.list.module')->getPath('social_event') . '/assets/icons/icons.svg');
+
+  // Add a new render array to page_bottom so the icons get added to the page.
+  $variables['page_bottom']['event_icons'] = [
+    '#type' => 'inline_template',
+    '#template' => '<span class="hidden">' . $icons . '</span>',
+  ];
+}
