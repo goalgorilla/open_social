@@ -51,10 +51,6 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
       $form['field_post']['widget'][0]['#title'] = $title;
       $form['field_post']['widget'][0]['#placeholder'] = $title;
     }
-
-    if (empty($form['field_post']['widget'][0]['#format'])) {
-      $form['field_post']['widget'][0]['#format'] = 'basic_html';
-    }
   }
 }
 

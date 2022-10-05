@@ -748,6 +748,19 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
     $default_country = \Drupal::config('system.date')->get('country.default');
     $element['address']['#default_value']['country_code'] = $element['address']['#default_value']['country_code'] ?? $default_country;
   }
+
+  // In some cases users are not allowed to choose "text format" in the text
+  // fields (because the list of text formats is hidden from UI).
+  // This cause issues with unexpected displaying the field value during a time.
+  // If "text format" isn't specified a text field get the "text format" with
+  // the highest weight in the list on "/admin/config/content/formats".
+  // To avoid this unexpected behaviour we hardly specify "basic_html"
+  // text format as default for "text" and "text_long" field types.
+  if (in_array($field_definition->getType(), ['text', 'text_long'])) {
+    if (empty($element['#format'])) {
+      $element['#format'] = 'basic_html';
+    }
+  }
 }
 
 /**
