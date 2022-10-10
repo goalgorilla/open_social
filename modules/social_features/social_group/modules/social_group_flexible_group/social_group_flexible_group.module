@@ -501,7 +501,7 @@ function social_group_flexible_group_can_be_added(SocialGroupInterface $group): 
  *   TRUE when users can join.
  */
 function social_group_flexible_group_public_enabled(GroupInterface $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_flexible_group_visibility')->getValue();
 
   if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
@@ -520,7 +520,7 @@ function social_group_flexible_group_public_enabled(GroupInterface $group) {
  *   TRUE when users can join.
  */
 function social_group_flexible_group_community_enabled(GroupInterface $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_flexible_group_visibility')->getValue();
 
   if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
@@ -539,7 +539,7 @@ function social_group_flexible_group_community_enabled(GroupInterface $group) {
  *   TRUE when users can join.
  */
 function social_group_flexible_group_members_enabled(Group $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_flexible_group_visibility')->getValue();
 
   if (!in_array('group', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
