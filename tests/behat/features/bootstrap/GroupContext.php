@@ -10,6 +10,8 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContentType;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Defines test steps around the usage of groups.
@@ -54,6 +56,31 @@ class GroupContext extends RawMinkContext {
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->label()] = $group;
     }
+  }
+
+  /**
+   * Makes the current LU a member of a group by a given title.
+   *
+   * @param string $group_title
+   *   The title of the group to make the current user a member of.
+   *
+   * @Given I am a member of :group
+   */
+  public function iAmMemberOf(string $group_title) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    assert($current_user !== FALSE, "Must be logged in before adding a user to a group in a test step.");
+    $current_user = User::load($current_user->uid);
+    assert($current_user instanceof UserInterface, "Could not load the current user.");
+
+    $group_id = $this->getGroupIdFromTitle($group_title);
+    if ($group_id === NULL) {
+      throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group_title));
+    }
+
+    $group = Group::load($group_id);
+    assert($group !== NULL);
+
+    $group->addMember($current_user);
   }
 
   /**
@@ -139,6 +166,9 @@ class GroupContext extends RawMinkContext {
    */
   public function openGroupStreamPage($group_title) {
     $group_id = $this->getGroupIdFromTitle($group_title);
+    if ($group_id === NULL) {
+      throw new \InvalidArgumentException("Group '$group_title' does not exist.");
+    }
     $page = '/group/' . $group_id . '/stream';
 
     $this->visitPath($page);

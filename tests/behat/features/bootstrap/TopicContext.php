@@ -6,8 +6,10 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
 
@@ -18,6 +20,7 @@ class TopicContext extends RawMinkContext {
 
   use EntityTrait;
   use NodeTrait;
+  use GroupTrait;
 
   private const CREATE_PAGE = "/node/add/topic";
 
@@ -289,6 +292,14 @@ class TopicContext extends RawMinkContext {
     }
     unset($topic['author']);
 
+    if (isset($topic['group'])) {
+      $group_id = $this->getGroupIdFromTitle($topic['group']);
+      if ($group_id === NULL) {
+        throw new \Exception("Group '{$topic['group']}' does not exist.");
+      }
+      unset($topic['group']);
+    }
+
     $topic['type'] = 'topic';
 
     if (isset($topic['field_topic_type'])) {
@@ -306,6 +317,17 @@ class TopicContext extends RawMinkContext {
       throw new \Exception("The topic you tried to create is invalid: $violations");
     }
     $topic_object->save();
+
+    // Adding to group usually happens in a form handler so for initialization
+    // we must do that ourselves.
+    if (isset($group_id)) {
+      try {
+        Group::load($group_id)?->addContent($topic_object, "group_node:topic");
+      }
+      catch (PluginNotFoundException $_) {
+        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+      }
+    }
 
     return $topic_object;
   }
