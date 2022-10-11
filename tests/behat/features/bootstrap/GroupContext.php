@@ -72,7 +72,7 @@ class GroupContext extends RawMinkContext {
     $current_user = User::load($current_user->uid);
     assert($current_user instanceof UserInterface, "Could not load the current user.");
 
-    $group_id = $this->getGroupIdFromTitle($group_title);
+    $group_id = $this->getNewestGroupIdFromTitle($group_title);
     if ($group_id === NULL) {
       throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group_title));
     }
@@ -94,7 +94,7 @@ class GroupContext extends RawMinkContext {
     }
 
     if ($group !== "- None -") {
-      $option = $this->getGroupIdFromTitle($group);
+      $option = $this->getNewestGroupIdFromTitle($group);
     }
 
     if (!$option) {
@@ -129,7 +129,7 @@ class GroupContext extends RawMinkContext {
    * @When /^(?:|I )am viewing the group "(?P<group>[^"]+)"$/
    */
   public function viewinGroup(string $group) : void {
-    $group_id = $this->getGroupIdFromTitle($group);
+    $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
       throw new \Exception("Group '${group}' does not exist.");
     }
@@ -147,7 +147,7 @@ class GroupContext extends RawMinkContext {
       throw new ElementNotFoundException($this->getSession()->getDriver(), "select", NULL, "Group");
     }
 
-    $group_id = $this->getGroupIdFromTitle($group);
+    $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
       throw new \Exception("Group '${group}' does not exist.");
     }
@@ -165,7 +165,7 @@ class GroupContext extends RawMinkContext {
    * @When /^(?:|I )go to the stream of group "(?P<group_title>[^"]+)"$/
    */
   public function openGroupStreamPage($group_title) {
-    $group_id = $this->getGroupIdFromTitle($group_title);
+    $group_id = $this->getNewestGroupIdFromTitle($group_title);
     if ($group_id === NULL) {
       throw new \InvalidArgumentException("Group '$group_title' does not exist.");
     }

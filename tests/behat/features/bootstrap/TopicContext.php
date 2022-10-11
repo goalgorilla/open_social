@@ -293,7 +293,7 @@ class TopicContext extends RawMinkContext {
     unset($topic['author']);
 
     if (isset($topic['group'])) {
-      $group_id = $this->getGroupIdFromTitle($topic['group']);
+      $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
       if ($group_id === NULL) {
         throw new \Exception("Group '{$topic['group']}' does not exist.");
       }

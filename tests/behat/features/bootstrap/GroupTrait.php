@@ -18,23 +18,19 @@ trait GroupTrait {
    * @return int|null
    *   The integer ID of the group or NULL if no group could be found.
    */
-  protected function getGroupIdFromTitle($group_title) : ?int {
+  protected function getNewestGroupIdFromTitle($group_title) : ?int {
     $query = \Drupal::entityQuery('group')
       ->accessCheck(FALSE)
       ->condition('label', $group_title);
 
     $group_ids = $query->execute();
-    $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple($group_ids);
 
-    if (count($groups) !== 1) {
-      return NULL;
-    }
-
-    $group_id = (int) reset($groups)->id();
-    if ($group_id !== 0) {
-      return $group_id;
-    }
-
-    return NULL;
+    // We always return the last group with the title in case of duplicates.
+    // This is almost always the intention and more often so than not finding
+    // anything in case of duplicates. Tests should prefer not having duplicate
+    // titles, but testing that duplicate titles are allowed (and e.g. how path
+    // aliases handles that) is a legitimate use case.
+    return end($group_ids) ?: NULL;
   }
+
 }

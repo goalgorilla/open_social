@@ -405,7 +405,7 @@ class FeatureContext extends RawMinkContext {
     public function getGroupContentIdFromGroupTitle($group_title, $mail) {
 
       $properties = [
-        'gid' => $this->getGroupIdFromTitle($group_title),
+        'gid' => $this->getNewestGroupIdFromTitle($group_title),
         'invitation_status' => 0,
         'invitee_mail' => $mail
       ];

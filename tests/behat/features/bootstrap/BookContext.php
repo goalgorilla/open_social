@@ -113,7 +113,7 @@ class BookContext extends RawMinkContext {
         $this->cKEditorContext->iFillInTheWysiwygEditor($field, $value);
       }
       elseif ($key === "group") {
-        $group_id = $this->getGroupIdFromTitle($value);
+        $group_id = $this->getNewestGroupIdFromTitle($value);
         if ($group_id === NULL) {
           throw new \Exception("Group '${$value}' does not exist.");
         }
@@ -232,7 +232,7 @@ class BookContext extends RawMinkContext {
     unset($book['author']);
 
     if (isset($book['group'])) {
-      $group_id = $this->getGroupIdFromTitle($book['group']);
+      $group_id = $this->getNewestGroupIdFromTitle($book['group']);
       if ($group_id === NULL) {
         throw new \Exception("Group '{$book['group']}' does not exist.");
       }
