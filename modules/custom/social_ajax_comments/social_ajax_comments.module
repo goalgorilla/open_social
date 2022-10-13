@@ -34,7 +34,7 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
       // Check that this comment field uses Ajax Comments.
       /** @var \Drupal\ajax_comments\FieldSettingsHelper $field_settings_helper */
       $field_settings_helper = \Drupal::service('ajax_comments.field_settings_helper');
-      $field_config = $build[$field_name]['#items']->getFieldDefinition();
+      $field_config = $field['#items']->getFieldDefinition();
       $field_formatter = $field_settings_helper->getFieldFormatter($context['display'], $field['#field_name'], $field_config, $context['display']->getMode());
       if ($field_settings_helper->isEnabled($field_formatter)) {
         // Check if this ID is being generated in response to an Ajax request.
@@ -46,17 +46,10 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
           Html::setIsAjax(TRUE);
         }
 
-        $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'];
-        if ($context['entity'] instanceof Post) {
-          // It will also run on AJAX commands so cant do a .=
-          // otherwise it will keep on adding the id.
-          $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'] . '_' . $context['entity']->id();
-        }
-        if (isset($build[$field_name])) {
-          $build['#cache']['contexts'][] = 'url';
-          $build[$field_name]['#attributes']['id'] = Html::getId($html_id);
-          Utility::setEntityRenderArray($build, $context['entity'], $context['display']->getMode());
-        }
+        $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'] . '_' . $context['entity']->id();
+        $build['#cache']['contexts'][] = 'url';
+        $build[$field_name]['#attributes']['id'] = Html::getId($html_id);
+        Utility::setEntityRenderArray($build, $context['entity'], $context['display']->getMode());
       }
     }
   }
