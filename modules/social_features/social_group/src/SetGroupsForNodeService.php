@@ -145,7 +145,13 @@ class SetGroupsForNodeService {
     if ($moved && !$is_new) {
       $hook = 'social_group_move';
 
-      foreach ($this->moduleHandler->getImplementations($hook) as $module) {
+      // Get a list of hook implementors.
+      $implementors = [];
+      $this->moduleHandler->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+        $implementors[] = $module;
+      });
+
+      foreach ($implementors as $module) {
         $function = $module . '_' . $hook;
         $function($node);
       }
