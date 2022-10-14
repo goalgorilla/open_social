@@ -405,7 +405,7 @@ function social_core_preprocess_block(&$variables) {
           'user' => $account->id(),
         ]);
         $variables['button_text'] = t('All @label', [
-          '@label' => $variables['label']['#markup'],
+          '@label' => $variables['label']['#markup'] ?? 'Events',
         ]);
       }
       break;
