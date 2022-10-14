@@ -54,7 +54,9 @@ class CommentQueryAccessHandler extends QueryAccessHandlerBase {
         $published_conditions = new ConditionGroup('AND');
         $published_conditions->addCacheContexts(['user.permissions']);
         $published_conditions->addCondition($entity_conditions);
-        $published_conditions->addCondition($published_key, '1');
+        if ($published_key !== FALSE) {
+          $published_conditions->addCondition($published_key, '1');
+        }
       }
 
       if ($published_conditions) {

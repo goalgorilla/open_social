@@ -106,14 +106,6 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       // Tags to skip and not recurse into.
       $ignore_tags = 'a|script|style|code|pre';
 
-      // Create an array which contains the regexps for each type of link.
-      // The key to the regexp is the name of a function that is used as
-      // callback function to process matches of the regexp.
-      // The callback function is to return the replacement for the match.
-      // The array is used and matching/replacement done below inside some
-      // loops.
-      $tasks = [];
-
       // Prepare protocols pattern for absolute URLs.
       // \Drupal\Component\Utility\UrlHelper::stripDangerousProtocols()
       // will replace any bad protocols with HTTP, so we need to support the
@@ -123,6 +115,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       // optional for all protocols.
       // @see \Drupal\Component\Utility\UrlHelper::stripDangerousProtocols()
       $protocols = \Drupal::getContainer()->getParameter('filter_protocols');
+      assert(is_string($protocols) || is_array($protocols), "Invalid filter_protocols parameter configuration, must be either array or string");
       $protocols = is_array($protocols) ? implode(':(?://)?|', $protocols) . ':(?://)?' : $protocols;
 
       $valid_url_path_characters = "[\p{L}\p{M}\p{N}!\*\';:=\+,\.\$\/%#\[\]\-_~@&]";
@@ -155,7 +148,6 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       // Match absolute URLs.
       $url_pattern = "(?:$auth)?(?:$domain|$ip)/?(?:$trail)?";
       $pattern = "`$url_prefix((?:$protocols)(?:$url_pattern))`u";
-      $tasks['replaceFullLinks'] = $pattern;
 
       // HTML comments need to be handled separately, as they may contain HTML
       // markup, especially a '>'. Therefore, remove all comment contents
