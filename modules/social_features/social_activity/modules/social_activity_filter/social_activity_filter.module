@@ -31,14 +31,14 @@ function social_activity_filter_views_data() {
 /**
  * Gets default activity views list for filtering.
  */
-function social_activity_default_views_list() {
+function social_activity_filter_default_activity_views_list() {
   $default_views_list = [
     'community_activities',
     'activity_stream',
   ];
 
   \Drupal::moduleHandler()
-    ->alter('social_activity_default_views_list', $default_views_list);
+    ->alter('social_activity_filter_default_activity_views_list', $default_views_list);
 
   return $default_views_list;
 }
@@ -46,7 +46,7 @@ function social_activity_default_views_list() {
 /**
  * Gets tags filter views data.
  */
-function social_activity_get_tag_filter_data() {
+function social_activity_filter_get_tag_filter_data() {
   return [
     'id' => 'activity_filter_tags',
     'table' => 'activity',

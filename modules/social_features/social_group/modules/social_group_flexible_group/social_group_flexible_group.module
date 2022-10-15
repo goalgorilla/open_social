@@ -68,7 +68,7 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
   $form['field_flexible_group_visibility']['#prefix'] =
     t('Altering the visibility options could result in changes in access for content within this group and the group itself.');
 
-  $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
+  $form['actions']['submit']['#submit'][] = 'social_group_flexible_group_edit_submit';
 }
 
 /**
@@ -391,7 +391,7 @@ function social_group_flexible_group_social_group_join_method_usage(): array {
  *
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
-function _social_flexible_group_edit_submit(array $form, FormStateInterface $form_state) {
+function social_group_flexible_group_edit_submit(array $form, FormStateInterface $form_state) {
   // Check if the visibility changed.
   $default_visibility = $form['field_group_allowed_visibility']['widget']['#default_value'];
   $new_visibility = $form_state->getValue('field_group_allowed_visibility');

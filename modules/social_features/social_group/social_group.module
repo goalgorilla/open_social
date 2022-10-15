@@ -860,7 +860,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $membership_delete_forms)) {
-    $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
+    $form['actions']['submit']['#submit'][] = 'social_group_membership_delete_form_submit';
 
     [$name, $group] = _social_group_get_group_labels();
 
@@ -1297,7 +1297,7 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
 /**
  * Form submit for removing members from a group so we can clear caches.
  */
-function _social_membership_delete_form_submit($form, FormStateInterface $form_state) {
+function social_group_membership_delete_form_submit($form, FormStateInterface $form_state) {
   $group = _social_group_get_current_group();
 
   if (is_object($group)) {

@@ -314,7 +314,7 @@ function social_follow_taxonomy_terms_list(EntityInterface $entity) {
 /**
  * Implements hook_activity_send_email_notifications_alter().
  */
-function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+function social_follow_taxonomy_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
   if (isset($email_message_templates['create_node_following_tag'])) {
     $items['what_follow']['templates'][] = 'create_node_following_tag';
   }

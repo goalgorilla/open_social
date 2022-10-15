@@ -81,9 +81,12 @@ class TopicContext extends RawMinkContext {
    * Create multiple topics at the start of a test.
    *
    * Creates topics provided in the form:
+   *
+   * @code
    * | title    | body            | author   | field_content_visibility | field_topic_type | language  | status |
    * | My title | My description  | username | public                   | News             | en        | 1         |
    * | ...      | ...             | ...      | ...                      | ...              | ...       |
+   * @endcode
    *
    * @Given topics:
    */
@@ -106,7 +109,7 @@ class TopicContext extends RawMinkContext {
    *
    * @When /^(?:|I )create a topic using its creation page:$/
    */
-  public function whenICreateATopicUsingTheForm(TableNode $fields) : void {
+  public function whenIcreateAtopicUsingTheForm(TableNode $fields) : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->updatedTopicData = $this->fillOutTopicForm($fields);
     $this->getSession()->getPage()->pressButton("Create topic");
@@ -121,7 +124,7 @@ class TopicContext extends RawMinkContext {
    *
    * @When /^(?:|I )edit topic "(?P<title>(?:[^"]|\\")*)" using its edit page:$/
    */
-  public function whenIEditTopicUsingTheForm(string $title, TableNode $fields) : void {
+  public function whenIeditTopicUsingTheForm(string $title, TableNode $fields) : void {
     $topic_id = $this->getTopicIdFromTitle($title);
     if ($topic_id === NULL) {
       throw new \Exception("Topic with title '${title}' does not exist. Did you create it in the test?");
@@ -225,7 +228,7 @@ class TopicContext extends RawMinkContext {
    *
    * @Then /^(?:|I )should see the topic I just (?P<action>(created|updated))$/
    */
-  public function thenIShouldSeeTheTopicIJustUpdated(string $action) : void {
+  public function thenIshouldSeeTheTopicIjustUpdated(string $action) : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',

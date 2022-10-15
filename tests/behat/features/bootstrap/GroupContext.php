@@ -39,6 +39,7 @@ class GroupContext extends RawMinkContext {
 
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
   }
+
   /**
    * Create multiple groups at the start of a test.
    *

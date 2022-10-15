@@ -117,7 +117,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $this->moduleHandler->alter('activity_send_email_notifications', $items, $email_message_templates);
 
     // Sort a list of email frequencies by weight.
-    $email_frequencies = sort_email_frequency_options();
+    $email_frequencies = activity_send_email_sort_email_frequency_options();
 
     $notification_options = [];
     // Place the sorted data in an actual form option.

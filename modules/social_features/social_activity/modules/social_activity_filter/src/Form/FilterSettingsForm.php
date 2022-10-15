@@ -88,7 +88,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     ];
 
     $displays = [];
-    foreach (social_activity_default_views_list() as $views_id) {
+    foreach (social_activity_filter_default_activity_views_list() as $views_id) {
       $displays = array_merge($displays, $this->getDisplayBlocks($views_id));
     }
 
@@ -228,7 +228,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     if ($enabled) {
       $config->set($override_tags_filter, 1);
-      $config->set($activity_filter_tags, social_activity_get_tag_filter_data());
+      $config->set($activity_filter_tags, social_activity_filter_get_tag_filter_data());
     }
     else {
       $config->clear($override_tags_filter);

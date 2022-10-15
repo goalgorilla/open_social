@@ -11,7 +11,7 @@ use Behat\Behat\Hook\Scope\AfterScenarioScope;
  */
 class PostContext extends RawMinkContext {
 
-  // TODO: Keep track of created posts and clean them up after the fact.
+  // @todo Keep track of created posts and clean them up after the fact.
 
   /**
    * Select a post visibility.

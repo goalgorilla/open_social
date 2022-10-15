@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+/**
+ * Trait for returning a node.
+ */
 trait NodeTrait {
 
   /**

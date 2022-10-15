@@ -148,7 +148,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
   \Drupal::moduleHandler()->alter('activity_send_email_notifications', $items, $context);
 
   // Sort a list of email frequencies by weight.
-  $email_frequencies = sort_email_frequency_options();
+  $email_frequencies = activity_send_email_sort_email_frequency_options();
 
   $notification_options = [];
 
@@ -236,7 +236,7 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
  * @return array
  *   A sorted array of frequency options by weight.
  */
-function sort_email_frequency_options() {
+function activity_send_email_sort_email_frequency_options() {
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
 

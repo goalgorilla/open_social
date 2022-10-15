@@ -37,4 +37,5 @@ trait GroupTrait {
 
     return NULL;
   }
+
 }

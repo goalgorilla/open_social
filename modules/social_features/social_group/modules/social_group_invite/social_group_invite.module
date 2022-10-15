@@ -197,7 +197,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
       /** @var \Drupal\group\Entity\GroupContent $entity */
       $entity = $variables['row']->_entity;
       // If we have a invite we check it's status.
-      $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
+      $field_value = social_group_invite_get_group_invite_value($entity, 'invitation_status');
       if (NULL !== $field_value) {
         // Field values are always returned as string,
         // so lets typecast them for now.
@@ -226,7 +226,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
     // If user accepted the invite, don't render the actions.
     if ($variables['field']->field === 'dropbutton' && !empty($variables['row']->_entity)) {
       $entity = $variables['row']->_entity;
-      $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
+      $field_value = social_group_invite_get_group_invite_value($entity, 'invitation_status');
       // Field values are always returned as string,
       // so lets typecast them for now.
       if (NULL !== $field_value) {
@@ -250,7 +250,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
  * @return string|null
  *   The field value or NULL if there isn't any.
  */
-function _social_group_get_group_invite_value(GroupContent $entity, $field_name) {
+function social_group_invite_get_group_invite_value(GroupContent $entity, $field_name) {
   $field_value = NULL;
   if ($entity->hasField($field_name)) {
     try {

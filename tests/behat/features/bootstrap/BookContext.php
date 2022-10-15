@@ -58,11 +58,12 @@ class BookContext extends RawMinkContext {
   /**
    * Create multiple books at the start of a test.
    *
-   * Creates books provided in the form:
+   * Creates book provided in the form:
+   * @code
    * | title    | body            | author   | field_content_visibility |  language  | status |
    * | My title | My description  | username | public                   |  en        | 1      |
    * | ...      | ...             | ...      | ...                      |  ...       | ...    |
-   *
+   * @endcode
    * @Given books:
    */
   public function createTopics(TableNode $topicsTable) : void {
@@ -84,7 +85,7 @@ class BookContext extends RawMinkContext {
    *
    * @When /^(?:|I )create a book using its creation page:$/
    */
-  public function whenICreateABookUsingTheForm(TableNode $fields): void {
+  public function whenIcreateAbookUsingTheForm(TableNode $fields): void {
     // Go to the form.
     $this->visitPath(self::CREATE_PAGE);
     $page = $this->getSession()->getPage();
@@ -147,7 +148,7 @@ class BookContext extends RawMinkContext {
    *
    * @Then /^(?:|I )should see the book I just created$/
    */
-  public function thenIShouldSeeTheBookIJustCreated() : void {
+  public function thenIshouldSeeTheBookIjustCreated() : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
@@ -179,7 +180,7 @@ class BookContext extends RawMinkContext {
    *
    * @Then it should not show author information
    */
-  public function  itShouldNotShowAuthorInformation() : void {
+  public function itShouldNotShowAuthorInformation() : void {
     $this->minkContext->assertNotRegionText("By", "Hero block");
     $this->minkContext->assertNotRegionText(" on ", "Hero block");
   }
