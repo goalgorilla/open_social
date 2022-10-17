@@ -2,7 +2,7 @@
  * @file
  */
 
-(function ($) {
+(function ($, once) {
 
   "use strict";
 
@@ -38,7 +38,7 @@
 
   // Adds mention input config for the textarea.
   var initMentions = function(element, context, settings) {
-    $(element).mentionsInput({
+    const $textarea = $(element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
         renderItem: function(ul, item) {
@@ -72,8 +72,18 @@
       }
     });
 
+    // Init existing mentions.
+    if (settings.socialMentions.initMentions?.mentions?.length) {
+      const mentionsInput = $textarea.data("mentionsInput");
+      $(settings.socialMentions.initMentions.mentions).each(function () {
+        mentionsInput._addMention(this);
+      });
+      mentionsInput._setValue(settings.socialMentions.initMentions.text);
+      mentionsInput.input.trigger('change.mentionsInput');
+    }
+
     // Hook up the autogrow resize event to the highligher resize event handler.
-    $(element).on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
+    $textarea.on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
   };
 
   // Adds mention input config for the textarea.
@@ -121,7 +131,8 @@
       var formIds = ".comment-form, #social-post-entity-form";
       var CKEDITOR = getCkeditor();
       CKEDITOR.on("instanceReady", function () {
-        $(formIds).once("socialMentions").each(function (i, element) {
+        const $socialMentionsOnce = $(once('socialMentions', formIds));
+        $socialMentionsOnce.each(function (i, element) {
           $.each($(".form-textarea", element), function (i, textarea) {
             if (typeof CKEDITOR.instances[$(textarea).attr('id')] === 'undefined') {
               initMentions(textarea, context, settings);
@@ -140,7 +151,8 @@
     attach: function (context, settings) {
       var CKEDITOR = getCkeditor();
       CKEDITOR.on("instanceReady", function () {
-        $(".comment-form").once("socialMentionsReply").each(function (i, e) {
+        const $socialMentionsReplyOnce =  $(once('socialMentionsReply', '.comment-form', context));
+        $socialMentionsReplyOnce.each(function (i, e) {
           var form = e,
             $textarea = $(".form-textarea", form),
             mentionsInput = $textarea.data("mentionsInput"),
@@ -159,7 +171,8 @@
           // we ensure this class is only added to reply forms in
           // socialbase/includes/form.inc.
           $(".js-comment .comment__reply-btn a").on("click", function () {
-            $(".ajax-comments-form-reply").once("socialMentionsReplyFormClose").each(function (i, e) {
+            const $socialMentionsReplyFormCloseOnce = $(once('socialMentionsReplyFormClose', '.ajax-comments-form-reply'));
+            $socialMentionsReplyFormCloseOnce.each(function (i, e) {
               $(this).parent('.comments').remove();
               $(this).remove();
             });
@@ -171,7 +184,8 @@
             // we want to add "replying" to main comment form.
             // we ensure this class is only added to reply forms in
             // socialbase/includes/form.inc.
-            $(".ajax-comments-form-reply").once("socialMentionsReplyOnReplyFormClose").each(function (i, e) {
+            const $socialMentionsReplyOnReplyFormCloseOnce = $(once('socialMentionsReplyOnReplyFormClose', '.ajax-comments-form-reply'));
+            $socialMentionsReplyOnReplyFormCloseOnce.each(function (i, e) {
               $(this).remove();
             });
 
@@ -232,4 +246,4 @@
     }
   };
 
-})(jQuery);
+})(jQuery, once);

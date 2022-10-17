@@ -33,6 +33,7 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
    */
   protected function getTranslationOverrides() {
     return [
+      // Translations for "Topic" node type.
       'language.content_settings.node.topic' => [
         'third_party_settings' => [
           'content_translation' => [
@@ -53,6 +54,24 @@ class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigO
         'translatable' => TRUE,
       ],
       'core.base_field_override.node.topic.status' => [
+        'translatable' => TRUE,
+      ],
+
+      // Translations for "Topic Types" vocabulary.
+      'language.content_settings.taxonomy_term.topic_types' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
+      'core.base_field_override.taxonomy_term.topic_types.name' => [
+        'translatable' => TRUE,
+      ],
+      'core.base_field_override.taxonomy_term.topic_types.changed' => [
+        'translatable' => TRUE,
+      ],
+      'core.base_field_override.taxonomy_term.topic_types.description' => [
         'translatable' => TRUE,
       ],
     ];

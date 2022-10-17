@@ -118,7 +118,8 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     if ($this->tagService->allowSplit()) {
       foreach ($this->tagService->getCategories() as $tid => $value) {
         if (!empty($this->tagService->getChildren($tid))) {
-          $identifiers[] = social_tagging_to_machine_name($value);
+          // @todo Replace with dependency injection in Open Social 12.0.0.
+          $identifiers[] = \Drupal::service('social_core.machine_name')->transform($value);
         }
       }
     }
@@ -134,15 +135,13 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     }
 
     $tags = [];
-    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
     $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    foreach ($term_ids as $term_id) {
-      /** @var \Drupal\taxonomy\Entity\Term $term */
-      $term = $term_storage->load($term_id);
+    $terms = $term_storage->loadMultiple($term_ids);
+    foreach ($terms as $term) {
 
       // Show only tags followed by user.
-      if ($term && social_follow_taxonomy_term_followed($term)) {
-        $tags[$term_id] = [
+      if (social_follow_taxonomy_term_followed($term)) {
+        $tags[$term->id()] = [
           'name' => $term->getName(),
           'flag' => social_follow_taxonomy_flag_link($term),
           'related_entity_count' => social_follow_taxonomy_related_entity_count($term, 'social_tagging'),

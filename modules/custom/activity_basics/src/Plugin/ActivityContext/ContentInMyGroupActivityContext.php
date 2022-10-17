@@ -8,9 +8,11 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\GroupMuteNotify;
+use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -80,7 +82,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -90,7 +92,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
         try {
-          /** @var \Drupal\social_post\Entity\PostInterface $post */
           $post = $this->entityTypeManager->getStorage('post')
             ->load($referenced_entity['target_id']);
         }
@@ -101,7 +102,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$post) {
+        if ($post === NULL) {
           return $recipients;
         }
 
@@ -109,14 +110,13 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
         $group_content = $this->entityTypeManager->getStorage('group_content')
           ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$group_content) {
+        if ($group_content === NULL) {
           return $recipients;
         }
 
@@ -155,9 +155,18 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
         /** @var \Drupal\group\GroupMembership $membership */
         foreach ($memberships as $membership) {
-          // Check if this not the created user and didn't mute the group
+          // Check if this is not the created user and didn't mute the group
           // notifications.
-          if ($owner_id != $membership->getUser()->id() && !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())) {
+          // There can be incidences where even if the user was deleted
+          // its membership data was left in the table
+          // group_content_field_data, so, it is necessary to check
+          // if the user actually exists in system.
+          $group_user = $membership->getUser();
+          if (
+            $group_user !== NULL &&
+            $owner_id != $membership->getUser()->id() &&
+            !$this->groupMuteNotify->groupNotifyIsMuted($group, $membership->getUser())
+          ) {
             $recipients[] = [
               'target_type' => 'user',
               'target_id' => $membership->getUser()->id(),
@@ -173,17 +182,16 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
-    switch ($entity->getEntityTypeId()) {
-      case 'group_content':
-        return TRUE;
-
-      case 'post':
-        return !$entity->field_recipient_group->isEmpty();
-
-      default:
-        return FALSE;
+  public function isValidEntity(EntityInterface $entity): bool {
+    if ($entity instanceof GroupContentInterface) {
+      return TRUE;
     }
+
+    if ($entity instanceof PostInterface) {
+      return $entity->hasField("field_recipient_group") && !$entity->get("field_recipient_group")->isEmpty();
+    }
+
+    return FALSE;
   }
 
 }

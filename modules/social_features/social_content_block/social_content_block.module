@@ -182,10 +182,11 @@ function _social_content_block_allowed_values_callback(FieldStorageDefinitionInt
   }
 
   foreach ($plugin_ids as $plugin_id) {
-    $plugin = $manager->createInstance($plugin_id);
-
-    foreach ($plugin->supportedSortOptions() as $name => $settings) {
-      $values[$name] = is_array($settings) ? $settings['label'] : $settings;
+    if ($manager->hasDefinition($plugin_id)) {
+      $plugin = $manager->createInstance($plugin_id);
+      foreach ($plugin->supportedSortOptions() as $name => $settings) {
+        $values[$name] = is_array($settings) ? $settings['label'] : $settings;
+      }
     }
   }
 

@@ -77,7 +77,7 @@ function social_activity_update_8002() {
           $config = \Drupal::service('config.factory')
             ->getEditable($config_name);
 
-          if (!empty($config)) {
+          if (!$config->isNew()) {
             $config->set('text', $new_text);
             $config->save();
           }
@@ -97,7 +97,7 @@ function social_activity_update_8003() {
     ->getEditable('core.entity_view_display.activity.activity.default');
 
   // Only update if config exists and this is not a fresh install.
-  if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
+  if (!$config->isNew() && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
     if (!empty($settings['view_mode'])) {
       $config->clear('content.field_activity_entity.settings');
 
@@ -310,7 +310,7 @@ function social_activity_update_10302() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_activity') . '/config/static/';
   $source = new FileStorage($config_path);
   foreach ($config_files as $origin_name => $update_name) {
     // Add new message templates.
@@ -338,7 +338,7 @@ function social_activity_update_10302() {
  */
 function social_activity_update_10303() {
   // Prepare the path.
-  $path = drupal_get_path('module', 'social_activity') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_activity') . '/config/static/';
 
   $message_templates = [
     'message.template.create_comment_author_node_post' => $path . 'message.template.create_comment_author_node_post_10303.yml',
@@ -364,4 +364,32 @@ function social_activity_update_10303() {
       }
     }
   }
+}
+
+/**
+ * Updating  configuration keys as per underlying schema.
+ */
+function social_activity_update_11001() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_activity', 'social_activity_update_11001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_activity_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

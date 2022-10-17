@@ -10,9 +10,9 @@ Feature: Mute/Unmute group notifications
       | dude_1st | 1234 | dude_1st@example.com | 1      | verified    |
       | dude_2nd | 1234 | dude_1st@example.com | 1      | sitemanager |
     Given groups:
-      | title                | description            | author       | type           | language |
-      | Ressinel's group 1st | Good nickname, dude!!! | dude_1st     | open_group     | en       |
-      | Ressinel's group 2nd | Good nickname, dude!!! | dude_1st     | closed_group   | en       |
+      | label                | field_group_description | author       | type           | langcode |
+      | Ressinel's group 1st | Good nickname, dude!!!  | dude_1st     | open_group     | en       |
+      | Ressinel's group 2nd | Good nickname, dude!!!  | dude_1st     | closed_group   | en       |
 
   @group-mute-group-notifications-group-page
   Scenario: LU able to mute/umute group notifications
@@ -45,11 +45,11 @@ Feature: Mute/Unmute group notifications
     When I am on "/my-groups"
     Then I should see "Ressinel's group 2nd"
     When I select "My muted groups" from "Muted groups"
-      And I press the "Apply" button
+      And I press the "Filter" button
     Then I should not see "Ressinel's group 2nd"
       But I should see "Ressinel's group 1st"
     When I select "My unmuted groups" from "Muted groups"
-      And I press the "Apply" button
+      And I press the "Filter" button
     Then I should not see "Ressinel's group 1st"
       But I should see "Ressinel's group 2nd"
     When I press the "Reset" button

@@ -1,0 +1,233 @@
+# This file is a configuration file of github bot called mergeables.
+# See: https://github.com/apps/mergeable
+#
+# The bot help us to enforce standards and conventions on our repository.
+# See: https://mergeable.readthedocs.io/en/latest/usage.html
+#
+# This contains the following checks.
+#    1. Welcomes a pull request contributor.
+#    2. Validates the title in a given format.
+#    3. Validates that certain labels are added on pull request.
+#    4. Adds 'status: needs work' label when reviews request changes in pull request, and also removed 'status: needs review' label.
+#    5. Adds 'status: needs review' label when a pull request review is requested.
+#    6. Requests maintainers for review when the label 'optional: review requested' label is added.
+#    7. Performs check for backport after 24 hours of pull request merged.
+#    8. Performs check on pull request being open for more than 30 days and informs the maintainers about it.
+#
+# Please read documentation of mergeable at
+# https://mergeable.readthedocs.io/en/latest/configuration.html#basics
+
+version: 2
+mergeable:
+  # Let's welcome contributors.
+  - when: pull_request.opened
+    name: "Hola!"
+    validate: []
+    filter:
+      - do: author
+        must_exclude:
+          regex: 'dependabot'
+      # Ignore pull requests with the 'automated' label.
+      - do: payload
+        pull_request:
+          labels:
+            must_exclude:
+              regex: 'automated'
+              key: name
+    pass:
+      - do: comment
+        payload:
+          body: >
+            Thanks for contributing towards Open Social! A maintainer from the @goalgorilla/maintainers group might not
+            review all changes from all teams/contributors. Please don't be discouraged if it takes a while. In the meantime,
+            we have some automated checks running and it might be that you will see our comments with some tips or requests
+            to speed up the review process. :blush:
+        leave_old_comment: true
+
+  # Check for a valid title.
+  # See: https://mergeable.readthedocs.io/en/latest/validators/title.html
+  - when: pull_request.opened, pull_request.reopened, pull_request.edited
+    name: "Valid issue title"
+    validate:
+      # The pull request should have the title in following formats
+      - do: title
+        # It must start with following keywords.
+        begins_with:
+          match: ['Issue #', 'Internal:', 'Updates:', 'Hotfix:']
+          message: 'A pull request title should start with either Issue #, Internal:, Updates: or Hotfix:'
+    fail:
+      - do: labels
+        add: 'blocked: mergeable'
+      - do: checks
+        status: 'failure'
+    pass:
+      - do: labels
+        delete: 'blocked: mergeable'
+      - do: checks
+        status: 'success'
+
+  # Let's make sure that the proper labels are added.
+  # See: https://mergeable.readthedocs.io/en/latest/validators/label.html
+  - when: pull_request.opened, pull_request.reopened, pull_request.labeled, pull_request.unlabeled
+    name: "Valid labels"
+    validate:
+      # The pull request must have the following labels.
+      - do: label
+        and:
+          - must_include:
+              regex: 'team'
+              message: 'Please, add "team" label'
+          - must_include:
+              regex: 'status'
+              message: 'Please, add "status" label'
+          - must_include:
+              regex: 'prio'
+              message: 'Please, add "prio" label'
+          - must_include:
+              regex: 'type'
+              message: 'Please, add "type" label'
+    fail:
+      - do: labels
+        add: 'blocked: mergeable'
+      - do: checks
+        status: 'failure'
+    pass:
+      - do: labels
+        delete: 'blocked: mergeable'
+      - do: checks
+        status: 'success'
+
+  # Remove label 'status: needs review' once pull request is approved.
+  # See: https://mergeable.readthedocs.io/en/latest/filters/payload.html
+  - when: 'pull_request_review.*'
+    name: 'Status check'
+    filter:
+      # If the pull request is approved by reviewer.
+      - do: payload
+        review:
+          state:
+            must_include:
+              regex: 'approved'
+    validate:
+      - do: label
+        must_include:
+          regex: 'status: needs review'
+    pass:
+      - do: labels
+        delete: 'status: needs review'
+      - do: checks
+        status: neutral
+
+  # Add label 'status: needs work' if reviewer requested changes.
+  - when: 'pull_request_review.*'
+    name: 'Status check'
+    filter:
+      # The author should have requested review.
+      - do: payload
+        review:
+          state:
+            must_include:
+              regex: 'changes_requested'
+    validate:
+      # The pull request should contain the needs review label.
+      - do: label
+        must_include:
+          regex: 'status: needs review'
+    pass:
+      # If it has the needs review label, remove it and add needs work.
+      - do: labels
+        add: 'status: needs work'
+        delete: 'status: needs review'
+
+  # Let's add "maintainers" team as reviewer once, 'optional: review requested' label is added.
+  - when: 'pull_request_review.*'
+    name: 'Request mainatainer for review'
+    filter:
+      # The pull request should have status request for review.
+      - do: payload
+        review:
+          state:
+            must_include:
+              regex: 'review_requested'
+    validate:
+      # If the pull request has the following label.
+      - do: label
+        begins_with:
+          match: 'optional: review requested'
+    pass:
+      # Request the maintainers for the review.
+      - do: request_review
+        teams: ['maintainers']
+
+  # We want to make sure that the cherry-pick was completed after the pull request was merged.
+  # This check will run after 24 hours of pull request merging.
+  # see: https://mergeable.readthedocs.io/en/latest/recipes.html?highlight=stale#check-stale-pr-and-issues
+  - when: schedule.repository
+    name: 'Check backport'
+    type: pull_request
+    filter:
+      # see: https://mergeable.readthedocs.io/en/latest/operators/or.html
+      - do: and
+        filter:
+          # One of the following filters.
+          - do: or
+            filter:
+              # Pull request contains backport label.
+              - do: payload
+                pull_request:
+                  labels:
+                    must_include:
+                      regex: 'status: needs backport'
+                      key: 'name'
+              # Or, it contains a milestone.
+              - do: milestone
+                no_empty:
+                  enabled: true
+          # And, is definitely the pull request is merged.
+          - do: payload
+            pull_request:
+              merged:
+                boolean:
+                  match: true
+    validate:
+      # We want to check that the pull request is 24 hours old.
+      - do: stale
+        days: 1
+        type: pull_request
+        time_constraint:
+          time_zone: 'Europe/Amsterdamn'
+          hours_between: [ '9', '17' ]
+          days_of_week: [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]
+      # It should contain the 'verified-cherry-picks'
+      - do: label
+        must_include:
+          regex: 'verified-cherry-picks'
+          message: 'Cherry pick flag is required'
+    fail:
+      - do: comment
+        payload:
+          body: >
+            We see that this pull request has a 'status: needs backport' label. Please review the backport (cherry-pick)
+            status of this pull request.
+      - do: checks
+        status: 'action_required'
+
+  # We want to remind about PRs older than 30 days
+  # See: https://mergeable.readthedocs.io/en/latest/validators/stale.html
+  - when: schedule.repository
+    name: "Validate stale pull request"
+    type: pull_request
+    validate:
+      - do: stale
+        days: 30
+        type: pull_request
+        time_constraint:
+          time_zone: 'Europe/Amsterdamn'
+          hours_between: [ '9', '17' ]
+          days_of_week: [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]
+    pass:
+      - do: comment
+        payload:
+          body: >
+            We see this pull request has no changes for 30 or more days. Do you think it can be closed?
+            Let me ping @goalgorilla/maintainers so they might be able to assist :)

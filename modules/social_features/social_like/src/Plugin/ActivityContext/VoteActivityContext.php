@@ -80,7 +80,7 @@ class VoteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -100,11 +100,10 @@ class VoteActivityContext extends ActivityContextBase {
           if ($entity instanceof EntityOwnerInterface) {
             /** @var \Drupal\Core\Session\AccountInterface $account */
             $account = $entity->getOwner();
-            /** @var \Drupal\group\Entity\GroupInterface $group */
             $group = $this->groupMuteNotify->getGroupByContent($entity);
             // Check if we have $group set which means that this content was
             // posted in a group.
-            if (!empty($group) && $group instanceof GroupInterface) {
+            if ($group instanceof GroupInterface) {
               // Skip the notification for users which have muted the group
               // notification in which this content was posted.
               if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
@@ -132,7 +131,7 @@ class VoteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return $entity->getEntityTypeId() === 'vote';
   }
 

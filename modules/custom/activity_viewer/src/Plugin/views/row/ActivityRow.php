@@ -83,10 +83,12 @@ class ActivityRow extends EntityRow {
         $entity = $row->_entity;
 
         foreach ($entity->field_activity_destinations as $destination) {
-          /** @var \Drupal\activity_creator\Plugin\ActivityDestinationBase $plugin */
-          $plugin = $this->activityDestinationManager->createInstance($destination->value);
-          if ($plugin->isActiveInView($this->view)) {
-            $this->options['view_mode'] = $plugin->getViewMode($view_mode, $entity);
+          if ($this->activityDestinationManager->hasDefinition($destination->value)) {
+            /** @var \Drupal\activity_creator\Plugin\ActivityDestinationBase $plugin */
+            $plugin = $this->activityDestinationManager->createInstance($destination->value);
+            if ($plugin->isActiveInView($this->view)) {
+              $this->options['view_mode'] = $plugin->getViewMode($view_mode, $entity);
+            }
           }
         }
         $this->getEntityTranslationRenderer()->preRender($render_result);

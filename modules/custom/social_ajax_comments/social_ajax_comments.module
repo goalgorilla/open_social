@@ -36,7 +36,7 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
       $field_settings_helper = \Drupal::service('ajax_comments.field_settings_helper');
       $field_config = $build[$field_name]['#items']->getFieldDefinition();
       $field_formatter = $field_settings_helper->getFieldFormatter($context['display'], $field['#field_name'], $field_config, $context['display']->getMode());
-      if (!empty($field_formatter) && $field_settings_helper->isEnabled($field_formatter)) {
+      if ($field_settings_helper->isEnabled($field_formatter)) {
         // Check if this ID is being generated in response to an Ajax request.
         if (Utility::isAjaxRequest(\Drupal::request())) {
           // Note that setting ajax as TRUE on Html here also fixes issue
@@ -193,7 +193,13 @@ function social_ajax_comments_ajax_render_alter(array &$data) {
         preg_match('/^#([a-z\-]+)$/', $item['selector'], $matches)
       ) {
         $content = &$item['data'];
-        $content = substr($content, strrpos(substr($content, 0, strpos($content, $matches[1])), '<'));
+
+        $strpos_matches = strpos($content, $matches[1]);
+        $strpos_substrng = strrpos(substr($content, 0, (int) $strpos_matches), '<');
+
+        if ($strpos_matches !== FALSE && $strpos_substrng !== FALSE) {
+          $content = substr($content, $strpos_substrng);
+        }
         return;
       }
     }
@@ -227,5 +233,25 @@ function _social_ajax_comments_pager(array &$items) {
       $attributes->addClass('use-ajax');
       $item['attributes'] = $attributes;
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_ajax_comments_form_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id) :void {
+  // The comment below is copied from "ajax_comments" module version
+  // "8.x-1.0-beta4". Comment is located at
+  // "ajax_comments/src/Form/AjaxCommentsForm.php" in "buildForm()" method.
+  // In case the logic of contrib module will be changed in the future,
+  // the logic below should follow accordingly.
+  //
+  // Ajax replies to other comments should happen on the canonical entity page
+  // (note this functionality has not been ported to D8, yet).
+  // If the user is on the standalone comment reply page or comment edit page,
+  // it means JavaScript is disabled or the ajax functionality is not working.
+  // Do not proceed with the form alter.
+  if (in_array(\Drupal::routeMatch()->getRouteName(), ['comment.reply', 'entity.comment.edit_form'])) {
+    unset($form['actions']['submit']['#ajax']);
   }
 }

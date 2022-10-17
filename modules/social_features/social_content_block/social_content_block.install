@@ -268,7 +268,7 @@ function social_content_block_update_8001(&$sandbox) {
   }
 
   $names = array_keys($sandbox['configs']);
-  $name = $names[$sandbox['current']++];
+  $name = (string) $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
   $parts = explode('.', $name);
 
@@ -449,7 +449,7 @@ function social_content_block_update_10301() {
     'field.field.block_content.custom_content_list' => 'field_config',
   ];
 
-  $path = drupal_get_path('module', 'social_content_block') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_content_block') . '/config/static/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
     $config_file = $path . $prefix . '.field_duration_10301.yml';
@@ -514,9 +514,12 @@ function social_content_block_update_10302(&$sandbox) {
     $sort_by = $entity->field_sorting->getValue()[0]['value'];
 
     if ($sort_by !== $sandbox['sort_by']) {
+      $settings = NULL;
       $plugin_id = $entity->field_plugin_id->getValue()[0]['value'];
-      $plugin = $manager->createInstance($plugin_id);
-      $settings = $plugin->supportedSortOptions()[$sort_by];
+      if ($manager->hasDefinition($plugin_id)) {
+        $plugin = $manager->createInstance($plugin_id);
+        $settings = $plugin->supportedSortOptions()[$sort_by];
+      }
 
       if (is_array($settings) && isset($settings['limit']) && !$settings['limit']) {
         $sandbox['duration'] = NULL;

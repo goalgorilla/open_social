@@ -306,8 +306,10 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
               );
             }
             // Send item to EmailFrequency instance.
-            $instance = $this->frequencyManager->createInstance($parameters['frequency']);
-            $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+            if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
+              $instance = $this->frequencyManager->createInstance($parameters['frequency']);
+              $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+            }
           }
         }
       }

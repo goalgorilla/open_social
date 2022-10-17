@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Provides a 'PostGroupBlock' block.
@@ -51,8 +52,13 @@ class PostGroupBlock extends PostBlock {
    */
   protected function blockAccess(AccountInterface $account) {
     $group = _social_group_get_current_group();
+    $cache_contexts = [
+      'route.group',
+      'user.group_permissions',
+    ];
+    $access = AccessResult::forbidden()->addCacheContexts($cache_contexts);
 
-    if (is_object($group)) {
+    if ($group instanceof GroupInterface) {
       if (
         $group->hasPermission('add post entities in group', $account) &&
         (
@@ -62,18 +68,28 @@ class PostGroupBlock extends PostBlock {
       ) {
         $membership = $group->getMember($account);
         $context = [];
-        if (!empty($membership)) {
+        if ($membership) {
           $group_content = $membership->getGroupContent();
           $context = ['group_content' => $group_content];
+          if (
+            $group->hasField('field_group_posts_enabled') &&
+            !$group->get('field_group_posts_enabled')->isEmpty() &&
+            !(bool) $group->get('field_group_posts_enabled')->getString() &&
+            !$group->hasPermission('edit group', $account)
+          ) {
+            return AccessResult::forbidden()->addCacheContexts($cache_contexts)->addCacheTags(['group:' . $group->id()]);
+          }
         }
-        return $this->entityTypeManager
+        $access = $this->entityTypeManager
           ->getAccessControlHandler($this->entityType)
-          ->createAccess($this->bundle, $account, $context, TRUE);
+          ->createAccess($this->bundle, $account, $context, TRUE)
+          ->addCacheContexts($cache_contexts)
+          ->addCacheTags(['group:' . $group->id()]);
       }
     }
 
     // By default, the block is not visible.
-    return AccessResult::forbidden()->setCacheMaxAge(0);
+    return $access;
   }
 
 }

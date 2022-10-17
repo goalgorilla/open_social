@@ -3,13 +3,12 @@
 namespace Drupal\social_group_flexible_group\Access;
 
 use Drupal\group\Access\GroupAccessResult;
-use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\social_group\SocialGroupInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -47,9 +46,11 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
 
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
-    if (!$group instanceof GroupInterface) {
+
+    if (!$group instanceof SocialGroupInterface) {
       $group = _social_group_get_current_group();
-      if (!$group instanceof GroupInterface) {
+
+      if (!$group instanceof SocialGroupInterface) {
         return AccessResult::neutral();
       }
     }
@@ -105,7 +106,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    *
    * @param string $permission
    *   The permission we need to check access for.
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\social_group\SocialGroupInterface $group
    *   The Group we are on.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account to check access for.
@@ -113,9 +114,14 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    *   The parametrized route.
    *
    * @return bool
-   *   FALSE if its not allowed.
+   *   FALSE if it's not allowed.
    */
-  private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match) {
+  private function calculateJoinPermission(
+    string $permission,
+    SocialGroupInterface $group,
+    AccountInterface $account,
+    RouteMatchInterface $route_match
+  ): bool {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
 
@@ -129,13 +135,13 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     if (!$direct_option &&
       $route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members' &&
       $account->isAuthenticated() &&
-      !$group->getMember($account) &&
+      !$group->hasMember($account) &&
       !$group->hasPermission('administer members', $account)) {
       return FALSE;
     }
 
     // There is no direct join method so it's not allowed to go to /join.
-    if ($permission === 'join direct' && !$direct_option && !$group->getMember($account)) {
+    if ($permission === 'join direct' && !$direct_option && !$group->hasMember($account)) {
       return FALSE;
     }
 

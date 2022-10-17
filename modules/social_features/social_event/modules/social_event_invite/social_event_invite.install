@@ -157,7 +157,7 @@ function social_event_invite_update_10301() {
  * Add a new field to event.
  */
 function social_event_invite_update_11001(): void {
-  $config_path = drupal_get_path('module', 'social_event_invite') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_event_invite') . '/config/static';
   $source = new FileStorage($config_path);
   $entity_type_manager = \Drupal::entityTypeManager();
 
@@ -182,4 +182,18 @@ function social_event_invite_update_11001(): void {
   if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
     $field_config_storage->create($data)->save();
   }
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_event_invite_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

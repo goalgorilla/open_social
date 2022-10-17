@@ -90,27 +90,26 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     if (!empty($data['related_object'])) {
       $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
-      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
       $group_content = $this->entityTypeManager->getStorage('group_content')
         ->load($referenced_entity['target_id']);
 
       // It could happen that a notification has been queued but the content
       // has since been deleted. In that case we can find no additional
       // recipients.
-      if (!$group_content) {
+      if ($group_content === NULL) {
         return $recipients;
       }
 
-      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $group_content->getGroup();
 
       $memberships = $group->getMembers($group->bundle() . '-group_manager');
+      $memberships = array_merge($memberships, $group->getMembers($group->bundle() . '-group_admin'));
 
       // List of managers which shouldn't receive notifications.
       $account_ids = [
@@ -137,7 +136,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return $entity->getEntityTypeId() === 'group_content';
   }
 

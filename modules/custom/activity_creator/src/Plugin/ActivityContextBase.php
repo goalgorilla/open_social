@@ -19,6 +19,12 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * The entity query.
    *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
+   *
+   * The unused private variable is ignored here. Removing it would be a BC
+   * break but most classes extending the base class also don't use it so making
+   * it protected would cause more code to maintain. We should remove this in a
+   * major version and update the constructor.
+   * @phpstan-ignore-next-line
    */
   private $entityQuery;
 
@@ -84,14 +90,14 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     return TRUE;
   }
 
@@ -106,8 +112,11 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *   pairs:
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getRecipientsFromPost(array $referenced_entity) {
+  public function getRecipientsFromPost(array $referenced_entity): array {
     $recipients = [];
 
     $post = $this->entityTypeManager->getStorage('post')

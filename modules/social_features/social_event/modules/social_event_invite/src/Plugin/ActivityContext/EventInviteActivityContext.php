@@ -77,7 +77,7 @@ class EventInviteActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -86,12 +86,11 @@ class EventInviteActivityContext extends ActivityContextBase {
         // Get the enrollment id.
         $enrollment_id = $data['related_object'][0]['target_id'];
 
-        /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
           ->load($enrollment_id);
 
         // Send out the notification if the user is pending.
-        if (!empty($event_enrollment)) {
+        if ($event_enrollment !== NULL) {
           if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
             && $event_enrollment->get('field_enrollment_status')->value === '0'
             && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()

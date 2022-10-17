@@ -3,8 +3,7 @@
 
 namespace Drupal\social\Behat;
 
-use Drupal\advancedqueue\Annotation\AdvancedQueueJobType;
-use Drupal\advancedqueue\Commands\AdvancedQueueCommands;
+use Behat\Mink\Element\NodeElement;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\user\Entity\User;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
@@ -26,7 +25,7 @@ class SocialDrupalContext extends DrupalContext {
    * Original PR here:
    * https://github.com/jhedstrom/drupalextension/pull/325
    *
-   * @BeforeScenario
+   * @BeforeScenario @api
    */
   public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope) {
     // Start a session if not already done.
@@ -312,19 +311,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * @Given I reset tour :tour_id
-   *
-   * @param $tour_id
-   */
-  public function iResetTour($tour_id)
-  {
-    $query = \Drupal::database()->delete('users_data');
-    $query->condition('module', 'social_tour');
-    $query->condition('name', 'social-home');
-    $query->execute();
-  }
-
-  /**
    * I wait for (seconds) seconds.
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
@@ -332,35 +318,6 @@ class SocialDrupalContext extends DrupalContext {
   public function iWaitForSeconds($seconds, $condition = 'false') {
     $milliseconds = (int) ($seconds * 1000);
     $this->getSession()->wait($milliseconds, $condition);
-  }
-
-  /**
-   * I enable the module :module_name.
-   *
-   * @When /^(?:|I )enable the module "([^"]*)"/
-   */
-  public function iEnableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->install($modules);
-  }
-
-  /**
-   * I disable the module :module_name.
-   *
-   * @When /^(?:|I )disable the module "([^"]*)"/
-   */
-  public function iDisableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->uninstall($modules);
-  }
-
-  /**
-   * I enable the tour setting.
-   *
-   * @When I enable the tour setting
-   */
-  public function iEnableTheTourSetting() {
-    \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
   }
 
   /**
@@ -422,6 +379,20 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @Given I reset the Open Social install
+   */
+  public function iResetOpenSocial()
+  {
+    $schema = \Drupal::database()->schema();
+    $tables = $schema->findTables('%');
+    if ($tables) {
+      foreach ($tables as $key => $table_name) {
+        $schema->dropTable($table_name);
+      }
+    }
+  }
+
+  /**
    * @Given I am logged in as :name with the :permissions permission(s)
    */
   public function assertLoggedInWithPermissionsByName($name, $permissions) {
@@ -460,5 +431,48 @@ class SocialDrupalContext extends DrupalContext {
   public function iDisableVerifiedImmediately() {
     \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', FALSE)->save();
   }
+
+  /**
+   * Task is done.
+   *
+   * @Then /^task "([^"]*)" is done$/
+   */
+  public function taskIsDone($text) {
+    $doneTask = [
+      'Choose language'                        => 'body > div > div > aside > ol > li:nth-child(1)',
+      'Verify requirements'                    => 'body > div > div > aside > ol > li:nth-child(2)',
+      'Set up database'                        => 'body > div > div > aside > ol > li:nth-child(3)',
+      'Select optional modules'                => 'body > div > div > aside > ol > li:nth-child(4)',
+      'Install site'                           => 'body > div > div > aside > ol > li:nth-child(5)',
+      'Configure site'                         => 'body > div > div > aside > ol > li:nth-child(6)',
+    ];
+
+    // En sure we have our task set.
+    $task = $this->getSession()->getPage()->findAll('css', $doneTask[$text]);
+
+    if ($task === NULL) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $doneTask[$text]));
+    }
+
+    /** @var NodeElement $result */
+    foreach ($task as $result) {
+      if ($result->hasClass('done')) {
+        break;
+      }
+    }
+  }
+
+  /**
+   * Wait for the Batch API to finish.
+   *
+   * Wait until the id="updateprogress" element is gone,
+   * or timeout after 30 minutes (1800000 ms).
+   *
+   * @Given /^I wait for the installer to finish$/
+   */
+  public function iWaitForTheInstallerBatchJobToFinish() {
+    $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
+  }
+
 
 }

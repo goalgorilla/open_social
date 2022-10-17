@@ -3,8 +3,9 @@
 namespace Drupal\social_post_album\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Url;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\social_post\Entity\PostInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for Post Album routes.
@@ -12,6 +13,38 @@ use Drupal\social_post\Entity\PostInterface;
  * @package Drupal\social_post_album\Controller
  */
 class ImagePopupController extends ControllerBase {
+
+  /**
+   * The file url generator service.
+   *
+   * @var \Drupal\Core\File\FileUrlGenerator
+   */
+  protected FileUrlGenerator $fileUrlGenerator;
+
+  /**
+   * Construct a ImagePopupController object.
+   *
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
+   */
+  public function __construct(FileUrlGenerator $file_url_generator) {
+    $this->fileUrlGenerator = $file_url_generator;
+  }
+
+  /**
+   * Instantiates a new instance of this class.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container object.
+   *
+   * @return \Drupal\social_post_album\Controller\ImagePopupController|static
+   *   Instance of the class.
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('file_url_generator')
+    );
+  }
 
   /**
    * Render images and post in pop-up.
@@ -42,7 +75,7 @@ class ImagePopupController extends ControllerBase {
       /** @var \Drupal\file\FileInterface $file */
       $file = $storage->load($file['target_id']);
 
-      $items[$found][] = Url::fromUri(file_create_url($file->getFileUri()))->setAbsolute()->toString();
+      $items[$found][] = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
     }
 
     return [

@@ -4,6 +4,7 @@ namespace Drupal\social_mentions\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
@@ -78,7 +79,7 @@ class MentionActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
     $mentions = [];
 
@@ -93,7 +94,9 @@ class MentionActivityContext extends ActivityContextBase {
       else {
         $entity_storage = $this->entityTypeManager->getStorage($related_object['target_type']);
         $entity = $entity_storage->load($related_object['target_id']);
-        $mentions = $this->getMentionsFromRelatedEntity($entity);
+        if ($entity !== NULL) {
+          $mentions = $this->getMentionsFromRelatedEntity($entity);
+        }
       }
 
       if (!empty($mentions)) {
@@ -113,12 +116,11 @@ class MentionActivityContext extends ActivityContextBase {
             /** @var \Drupal\user\UserInterface $account */
             $account = $mention->uid->entity;
 
-            if ($mentioned_entity->access('view', $account)) {
-              /** @var \Drupal\group\Entity\GroupInterface $group */
+            if ($mentioned_entity !== NULL && $mentioned_entity->access('view', $account)) {
               $group = $this->groupMuteNotify->getGroupByContent($mentioned_entity);
               // Check if we have $group set which means that this content was
               // posted in a group.
-              if (!empty($group) && $group instanceof GroupInterface) {
+              if ($group instanceof GroupInterface) {
                 // Skip the notification for users which have muted the group
                 // notification in which this content was posted.
                 if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
@@ -143,7 +145,7 @@ class MentionActivityContext extends ActivityContextBase {
   /**
    * Check for valid entity.
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     if ($entity->getEntityTypeId() === 'mentions') {
       return TRUE;
     }
@@ -172,19 +174,22 @@ class MentionActivityContext extends ActivityContextBase {
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   The mentions.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getMentionsFromRelatedEntity(EntityInterface $entity) {
-    if ($entity->getEntityTypeId() === 'comment') {
+  public function getMentionsFromRelatedEntity(EntityInterface $entity): array {
+    if ($entity->getEntityTypeId() === 'comment' && $entity instanceof CommentInterface) {
       if ($entity->hasParentComment()) {
         $entity = $entity->getParentComment();
       }
     }
 
     // Mention entity can't be loaded at time of new post or comment creation.
-    return $this->entityTypeManager->getStorage('mentions')->loadByProperties([
+    return $entity !== NULL ? $this->entityTypeManager->getStorage('mentions')->loadByProperties([
       'entity_type' => $entity->getEntityTypeId(),
       'entity_id' => $entity->id(),
-    ]);
+    ]) : [];
   }
 
 }

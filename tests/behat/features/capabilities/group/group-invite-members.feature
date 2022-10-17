@@ -1,4 +1,4 @@
-@api @notifications @stability @stability-3 @YANG-4199 @group-invite-members
+@api @notifications @javascript @stability @stability-3 @YANG-4199 @group-invite-members
 Feature: Send invite group email notifications
   Benefit: Email notifications attract users to the platform
   Role: As a SM
@@ -14,8 +14,8 @@ Feature: Send invite group email notifications
       | site_manager_1  | site_manager_1@example.com  | 1      | sitemanager |
       | existing_user_1 | existing_user_1@example.com | 1      | verified    |
     Given groups:
-      | title             | description                    | author          | type           | language |
-      | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       |
+      | label             | field_group_description        | author          | type           | langcode | field_flexible_group_visibility |
+      | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       | public                          |
 
     # Lets first check if sending mail works properly
     Given I am logged in as an "administrator"

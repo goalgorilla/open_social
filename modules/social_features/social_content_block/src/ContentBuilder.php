@@ -86,95 +86,95 @@ class ContentBuilder implements ContentBuilderInterface {
       ->load($block_id);
 
     $plugin_id = $block_content->field_plugin_id->getValue()[0]['value'];
-    $definition = $this->contentBlockManager->getDefinition($plugin_id);
-
-    // When the user didn't select any filter in the "Content selection" field
-    // then the block base query will be built based on all filled filterable
-    // fields.
-    if (($field = $block_content->field_plugin_field)->isEmpty()) {
-      // It could be that the plugin supports more fields than are currently
-      // available, those are removed.
-      $field_names = array_filter(
-        $definition['fields'],
-        static function ($field_name) use ($block_content) {
-          return $block_content->hasField($field_name);
-        }
-      );
-    }
-    // When the user selected some filter in the "Content selection" field then
-    // only condition based on this filter field will be added to the block base
-    // query.
-    else {
-      $field_names = array_column($field->getValue(), 'value');
-    }
-
-    $fields = [];
-
-    foreach ($field_names as $field_name) {
-      $field = $block_content->get($field_name);
-
-      if (!$field->isEmpty()) {
-        $fields[$field_name] = $field->getValue();
-
-        // Make non-empty entity reference fields easier to use.
-        if ($field instanceof EntityReferenceFieldItemListInterface) {
-          $fields[$field_name] = array_column($fields[$field_name], 'target_id');
-        }
-      }
-    }
-
-    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
-
-    $table = $entity_type->getDataTable();
-    if (!empty($table) && is_string($table)) {
-      $query = $this->connection->select($table, 'base_table')
-        ->addTag('social_content_block')
-        ->addMetaData('block_content', $block_content)
-        ->fields('base_table', [$entity_type->getKey('id')]);
-
-      if (isset($definition['bundle'])) {
-        $query->condition(
-          'base_table.' . $entity_type->getKey('bundle'),
-          $definition['bundle']
+    if ($definition = $this->contentBlockManager->getDefinition($plugin_id)) {
+      // When the user didn't select any filter in the "Content selection" field
+      // then the block base query will be built based on all filled filterable
+      // fields.
+      if (($field = $block_content->field_plugin_field)->isEmpty()) {
+        // It could be that the plugin supports more fields than are currently
+        // available, those are removed.
+        $field_names = array_filter(
+          $definition['fields'],
+          static function ($field_name) use ($block_content) {
+            return $block_content->hasField($field_name);
+          }
         );
       }
-
-      $plugin = $this->contentBlockManager->createInstance($plugin_id);
-
-      if ($fields) {
-        $plugin->query($query, $fields);
+      // When the user selected some filter in the "Content selection" field
+      // then only condition based on this filter field will be added to the
+      // block base query.
+      else {
+        $field_names = array_column($field->getValue(), 'value');
       }
 
-      // Apply our sorting logic.
-      $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
+      $fields = [];
 
-      // Add range.
-      $query->range(0, $block_content->field_item_amount->value);
+      foreach ($field_names as $field_name) {
+        $field = $block_content->get($field_name);
 
-      // Execute the query to get the results.
-      $result = $query->execute();
-      $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
+        if (!$field->isEmpty()) {
+          $fields[$field_name] = $field->getValue();
 
-      if ($entities) {
-        // Load all the topics so we can give them back.
-        $entities = $this->entityTypeManager
-          ->getStorage($definition['entityTypeId'])
-          ->loadMultiple($entities);
-
-        foreach ($entities as $key => $entity) {
-          if ($entity->access('view') === FALSE) {
-            unset($entities[$key]);
-          }
-          else {
-            // Get entity translation if exists.
-            $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+          // Make non-empty entity reference fields easier to use.
+          if ($field instanceof EntityReferenceFieldItemListInterface) {
+            $fields[$field_name] = array_column($fields[$field_name], 'target_id');
           }
         }
+      }
 
-        return $this->entityTypeManager
-          ->getViewBuilder($definition['entityTypeId'])
-          ->viewMultiple($entities, 'small_teaser');
+      /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+      $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
+
+      $table = $entity_type->getDataTable();
+      if (!empty($table) && is_string($table)) {
+        $query = $this->connection->select($table, 'base_table')
+          ->addTag('social_content_block')
+          ->addMetaData('block_content', $block_content)
+          ->fields('base_table', [$entity_type->getKey('id')]);
+
+        if (isset($definition['bundle'])) {
+          $query->condition(
+            'base_table.' . $entity_type->getKey('bundle'),
+            $definition['bundle']
+          );
+        }
+
+        $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+        if ($fields) {
+          $plugin->query($query, $fields);
+        }
+
+        // Apply our sorting logic.
+        $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
+
+        // Add range.
+        $query->range(0, $block_content->field_item_amount->value);
+
+        // Execute the query to get the results.
+        $result = $query->execute();
+        $entities = $result !== NULL ? $result->fetchAllKeyed(0, 0) : NULL;
+
+        if ($entities) {
+          // Load all the topics so we can give them back.
+          $entities = $this->entityTypeManager
+            ->getStorage($definition['entityTypeId'])
+            ->loadMultiple($entities);
+
+          foreach ($entities as $key => $entity) {
+            if ($entity->access('view') === FALSE) {
+              unset($entities[$key]);
+            }
+            else {
+              // Get entity translation if exists.
+              $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
+            }
+          }
+
+          return $this->entityTypeManager
+            ->getViewBuilder($definition['entityTypeId'])
+            ->viewMultiple($entities, 'small_teaser');
+        }
       }
     }
 
@@ -333,9 +333,8 @@ class ContentBuilder implements ContentBuilderInterface {
       }
     }
 
-    $field = $element['field_sorting']['#group'];
-    $element[$field]['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
-    $element[$field]['#suffix'] = '</div>';
+    $element['field_sorting']['#prefix'] = '<div id="' . $element['field_plugin_id']['widget'][0]['value']['#ajax']['wrapper'] . '">';
+    $element['field_sorting']['#suffix'] = '</div>';
 
     if (!$selected_plugin) {
       return $element;
@@ -384,12 +383,8 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
+  public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
     $parents = ['field_sorting'];
-
-    if ($form_state->has('layout_builder__component')) {
-      $parents = array_merge(['settings', 'block_form'], $parents);
-    }
 
     // Check that the currently selected value is valid and change it otherwise.
     $value_parents = array_merge($parents, ['0', 'value']);
@@ -405,8 +400,6 @@ class ContentBuilder implements ContentBuilderInterface {
       $form_state->clearErrors();
       $form_state->setValue($value_parents, key($options));
     }
-
-    $parents = [NestedArray::getValue($form, array_merge($parents, ['#group']))];
 
     if ($form_state->has('layout_builder__component')) {
       $parents = array_merge(['settings', 'block_form'], $parents);
@@ -587,6 +580,7 @@ class ContentBuilder implements ContentBuilderInterface {
         $query->condition($conditions);
       }
 
+      /** @var array<array|string> $option */
       $option = $options[$sort_by];
 
       if (

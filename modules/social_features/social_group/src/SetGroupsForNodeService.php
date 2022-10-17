@@ -145,7 +145,13 @@ class SetGroupsForNodeService {
     if ($moved && !$is_new) {
       $hook = 'social_group_move';
 
-      foreach ($this->moduleHandler->getImplementations($hook) as $module) {
+      // Get a list of hook implementors.
+      $implementors = [];
+      $this->moduleHandler->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+        $implementors[] = $module;
+      });
+
+      foreach ($implementors as $module) {
         $function = $module . '_' . $hook;
         $function($node);
       }
@@ -181,12 +187,10 @@ class SetGroupsForNodeService {
    */
   public static function removeGroupContent(NodeInterface $node, Group $group) {
     // Try to load group content from entity.
-    if (($group_contents = GroupContent::loadByEntity($node)) && !empty($group_contents)) {
-      /** @var @param \Drupal\group\Entity\GroupContent $group_content */
-      foreach ($group_contents as $group_content) {
-        if ($group->id() === $group_content->getGroup()->id()) {
-          $group_content->delete();
-        }
+    $group_contents = GroupContent::loadByEntity($node);
+    foreach ($group_contents as $group_content) {
+      if ($group->id() === $group_content->getGroup()->id()) {
+        $group_content->delete();
       }
     }
   }

@@ -195,6 +195,7 @@ class PostViewBuilder extends EntityViewBuilder {
     ];
 
     if (!$is_in_preview) {
+      /** @var \Drupal\social_post\Entity\Post $entity */
       $entity = Post::load($post_entity_id)->getTranslation($langcode);
       $links['post'] = static::buildLinks($entity, $view_mode);
 

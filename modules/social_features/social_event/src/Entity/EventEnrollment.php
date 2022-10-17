@@ -109,6 +109,17 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
+  public function label() {
+    $label = $this->getName();
+    if (empty($label)) {
+      $label = $this->get('field_account')->entity->label();
+    }
+    return $label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setName($name) {
     $this->set('name', $name);
     return $this;
@@ -146,7 +157,7 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   /**
    * {@inheritdoc}
    */
-  public function getAccount() {
+  public function getAccount(): ?string {
     return $this->get('field_account')->target_id;
   }
 
@@ -164,6 +175,27 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
   public function setOwner(UserInterface $account) {
     $this->set('user_id', $account->id());
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEvent(): ?NodeInterface {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $this->get('field_event')->entity;
+    return $node;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEventStandaloneEnrollConfirmationStatus(): bool {
+    $event = $this->getEvent();
+    if ($event instanceof NodeInterface) {
+      return (bool) $event->get('field_event_send_confirmation')->getString();
+    }
+
+    return FALSE;
   }
 
   /**

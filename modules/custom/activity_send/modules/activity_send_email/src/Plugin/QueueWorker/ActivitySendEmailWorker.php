@@ -292,7 +292,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           }
           // Check if we have $group set which means that this content was
           // posted in a group.
-          if (!empty($group) && $group instanceof GroupInterface) {
+          if ($group instanceof GroupInterface) {
             // Skip the notification for users which have muted the group
             // notification in which this content was posted.
             if ($this->groupMuteNotify->groupNotifyIsMuted($group, $target_account)) {
@@ -312,9 +312,12 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
                 $target_account->getPreferredLangcode()
               );
             }
-            // Send item to EmailFrequency instance.
-            $instance = $this->frequencyManager->createInstance($parameters['frequency']);
-            $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+
+            if ($this->frequencyManager->hasDefinition($parameters['frequency'])) {
+              // Send item to EmailFrequency instance.
+              $instance = $this->frequencyManager->createInstance($parameters['frequency']);
+              $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $body_text);
+            }
           }
         }
       }

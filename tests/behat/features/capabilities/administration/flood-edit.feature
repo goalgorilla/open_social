@@ -7,9 +7,7 @@ Feature: Edit flood settings
   @perfect
   Scenario: Successfully modify and see flood settings
     Given I am logged in as an "administrator"
-      And I click "Configuration"
-      And I click admin link "Account settings"
-      And I click "Flood settings"
+      And I am on "/admin/config/people/accounts/flood"
      Then I should see "IP limit"
       And I should see "IP window"
       And I should see "User limit"

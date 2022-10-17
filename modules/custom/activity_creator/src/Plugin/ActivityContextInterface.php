@@ -26,7 +26,7 @@ interface ActivityContextInterface extends PluginInspectionInterface {
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getRecipients(array $data, $last_id, $limit);
+  public function getRecipients(array $data, int $last_id, int $limit): array;
 
   /**
    * Determines if the entity is valid for this context.
@@ -37,6 +37,6 @@ interface ActivityContextInterface extends PluginInspectionInterface {
    * @return bool
    *   TRUE if it's valid entity.
    */
-  public function isValidEntity(EntityInterface $entity);
+  public function isValidEntity(EntityInterface $entity): bool;
 
 }

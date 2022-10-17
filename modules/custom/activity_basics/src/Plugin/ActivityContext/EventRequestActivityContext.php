@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -77,7 +78,7 @@ class EventRequestActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -142,7 +143,7 @@ class EventRequestActivityContext extends ActivityContextBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getRecipientOrganizerFromEntity(array $related_entity, array $data) {
+  public function getRecipientOrganizerFromEntity(array $related_entity, array $data): array {
     $recipients = [];
 
     // Don't return recipients if user enrolls to own Event.
@@ -153,7 +154,7 @@ class EventRequestActivityContext extends ActivityContextBase {
       $storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
       $event = $storage->load($related_entity['target_id']);
 
-      if ($event === NULL) {
+      if (!$event instanceof EntityOwnerInterface) {
         return $recipients;
       }
 
@@ -184,7 +185,7 @@ class EventRequestActivityContext extends ActivityContextBase {
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
    */
-  public function getEventEnrollmentOwner(EventEnrollmentInterface $event_enrollment, array $data) {
+  public function getEventEnrollmentOwner(EventEnrollmentInterface $event_enrollment, array $data): array {
     $recipients[] = [
       'target_type' => 'user',
       'target_id' => $event_enrollment->get('field_account')->getValue()[0]['target_id'],

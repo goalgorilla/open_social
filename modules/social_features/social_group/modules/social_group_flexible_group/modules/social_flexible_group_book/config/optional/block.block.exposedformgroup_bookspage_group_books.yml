@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.group_books
+  module:
+    - system
+    - views
+  theme:
+    - socialbase
+  enforced:
+    module:
+      - social_flexible_group_book
+id: exposedformgroup_bookspage_group_books
+theme: socialbase
+region: complementary_top
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:group_books-page_group_books'
+settings:
+  id: 'views_exposed_filter_block:group_books-page_group_books'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/books'
+    negate: false

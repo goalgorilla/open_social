@@ -1,0 +1,11 @@
+{% extends 'event-enrollment-confirmation.html.twig' %}
+{% block footer %}
+  {{ who_going_link }}
+
+  {{ attach_library('social_event_addtocal/event_addtocal') }}
+
+  {% if add_to_cal %}
+    <p class='addtocal-title'>{{ 'Add to calendar'|t }}</p>
+    {{ calendar_items }}
+  {% endif %}
+{% endblock %}

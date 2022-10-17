@@ -80,7 +80,7 @@ class FollowContentActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -124,7 +124,6 @@ class FollowContentActivityContext extends ActivityContextBase {
     $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
     $original_related_entity = $storage->load($original_related_object['target_id']);
 
-    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = $this->groupMuteNotify->getGroupByContent($original_related_entity);
 
     foreach ($flaggings as $flagging) {
@@ -150,7 +149,7 @@ class FollowContentActivityContext extends ActivityContextBase {
 
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
+      if ($group instanceof GroupInterface) {
         // Skip the notification for users which have muted the group
         // notification in which this content was posted.
         if ($this->groupMuteNotify->groupNotifyIsMuted($group, $recipient)) {

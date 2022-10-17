@@ -93,15 +93,17 @@ class SocialUserController extends ControllerBase {
    *   The access result.
    */
   public function accessUsersPages(AccountInterface $account, RouteMatch $routeMatch) {
-    /** @var \Drupal\user\UserInterface $user */
     $user = $routeMatch->getParameter('user');
-    if (isset($user)) {
-      if (!$user instanceof UserInterface) {
-        $user = $this->entityTypeManager->getStorage('user')
-          ->load($user);
-      }
+    if ($user === NULL) {
+      return AccessResult::neutral();
     }
-    else {
+
+    if (is_numeric($user)) {
+      $user = $this->entityTypeManager->getStorage('user')
+        ->load($user);
+    }
+
+    if (!$user instanceof UserInterface) {
       return AccessResult::neutral();
     }
 

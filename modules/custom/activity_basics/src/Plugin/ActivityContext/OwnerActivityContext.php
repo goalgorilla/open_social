@@ -78,7 +78,7 @@ class OwnerActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -140,13 +140,11 @@ class OwnerActivityContext extends ActivityContextBase {
     }
 
     if ($entity instanceof EntityOwnerInterface) {
-      /** @var \Drupal\Core\Session\AccountInterface $account */
       $account = $entity->getOwner();
-      /** @var \Drupal\group\Entity\GroupInterface $group */
       $group = $this->groupMuteNotify->getGroupByContent($entity);
       // Check if we have $group set which means that this content was
       // posted in a group.
-      if (!empty($group) && $group instanceof GroupInterface) {
+      if ($group instanceof GroupInterface) {
         // Skip the notification for users which have muted the group
         // notification in which this content was posted.
         if ($this->groupMuteNotify->groupNotifyIsMuted($group, $account)) {
@@ -159,6 +157,12 @@ class OwnerActivityContext extends ActivityContextBase {
       $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
+      // This can happen if the entity is removed before the activity is
+      // processed.
+      if ($original_related_entity === NULL) {
+        return $recipients;
+      }
+
       // In the case where a user is added by an event manager we'll need to
       // check on the enrollment status. If the user is not really enrolled we
       // should skip sending the notification.
@@ -166,7 +170,7 @@ class OwnerActivityContext extends ActivityContextBase {
         return $recipients;
       }
 
-      if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {
+      if ($original_related_entity->getAccount() !== NULL) {
         $recipients[] = [
           'target_type' => 'user',
           'target_id' => $original_related_entity->getAccount(),

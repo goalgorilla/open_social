@@ -637,7 +637,7 @@ function social_group_update_8801() {
  * Update helper did not update all fields correctly.
  */
 function social_group_update_8802() {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/update/social_group_update_8802.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -803,7 +803,7 @@ function social_group_update_10303() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -855,7 +855,7 @@ function social_group_update_10306() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static/';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/';
   $source = new FileStorage($config_path);
 
   foreach ($configs as $origin_name => $update_name) {
@@ -903,7 +903,7 @@ function social_group_update_10308() {
   ];
 
   $config_storage = \Drupal::service('config.storage');
-  $config_path = drupal_get_path('module', 'social_group') . '/config/static';
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static';
   $source = new FileStorage($config_path);
 
   foreach ($config_files as $origin_name => $update_name) {
@@ -933,7 +933,7 @@ function social_group_update_11001(): string {
  * Update 'views.view.group_manage_members' after VBO module updates.
  */
 function social_group_update_11002(array &$sandbox): void {
-  $config_file = drupal_get_path('module', 'social_group') . '/config/static/views.view.group_manage_members_11002.yml';
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static/views.view.group_manage_members_11002.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse((string) file_get_contents($config_file));
@@ -947,16 +947,57 @@ function social_group_update_11002(array &$sandbox): void {
 }
 
 /**
+ * The emptied hook.
+ */
+function social_group_update_11003(array &$sandbox): void {
+  // Moved to separate sequential update hook.
+  // @see: social_group_update_11005
+}
+
+/**
+ * Change Rendering Language settings for Group Events (Group content) view.
+ */
+function social_group_update_11004(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Add 'social_group_add_members_to_group_action'.
  *
  * Update 'views.view.user_admin_people' after VBO module updates.
  */
-function social_group_update_11003(array &$sandbox): void {
+function social_group_update_11005(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
   $selected_actions = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions');
-  $selected_actions[] = [
-    'action_id' => 'social_group_add_members_to_group_action',
-  ];
-  $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
-  $config->save();
+  // We have to check if action is already added.
+  $action = array_search('social_group_add_members_to_group_action', array_column($selected_actions, 'action_id'), FALSE);
+  // If action is not added we add it.
+  if ($action === FALSE) {
+    $selected_actions[] = [
+      'action_id' => 'social_group_add_members_to_group_action',
+    ];
+    $config->set('display.default.display_options.fields.views_bulk_operations_bulk_form.selected_actions', $selected_actions);
+    $config->save();
+  }
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_group_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

@@ -1,0 +1,40 @@
+{#
+/**
+ * @file event-location-address.html.twig
+ * Default theme implementation to present Event location and address.
+ *
+ * This template is used for correct displaying Event location on Event view modes.
+ *
+ *
+ * Available variables:
+ * - icon: an icon before the main content
+ * - location: a location name
+ * - address: an address
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_event_location_address()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {% if location or address %}
+    {% if icon_loaded %}
+      <svg class="icon no-b-lazy" aria-hidden="true">
+        <title>{% trans %}Event location{% endtrans %}</title>
+        <use xlink:href="#icon-location"></use>
+      </svg>
+    {% else %}
+      <svg class="icon no-b-lazy" width="14" height="20" viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg">
+        <title>{% trans %}Event location{% endtrans %}</title>
+        <path d="M7 0C3.13 0 0 3.13 0 7C0 12.25 7 20 7 20C7 20 14 12.25 14 7C14 3.13 10.87 0 7 0ZM7 9.5C5.62 9.5 4.5 8.38 4.5 7C4.5 5.62 5.62 4.5 7 4.5C8.38 4.5 9.5 5.62 9.5 7C9.5 8.38 8.38 9.5 7 9.5Z"/>
+      </svg>
+    {% endif %}
+  {% endif %}
+  <span class="sr-only">{{ 'Event location'|t }}</span>
+  <span class="inline-center location">
+    {{ location }}
+    {% if address is not empty and location is not empty %} • {% endif %}
+    {{ address }}
+  </span>
+</div>

@@ -16,8 +16,12 @@ dependencies:
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
+    - field.field.profile.profile.field_profile_summary
     - image.style.social_medium
     - profile.type.profile
+  enforced:
+    module:
+      - social_profile
   module:
     - image
 id: profile.profile.compact
@@ -26,13 +30,13 @@ bundle: profile
 mode: compact
 content:
   field_profile_image:
-    weight: 7
+    weight: 0
     label: hidden
     settings:
       image_style: social_medium
-      image_link: ''
+      image_link: owner
     third_party_settings: {  }
-    type: image
+    type: social_profile_avatar
     region: content
 hidden:
   field_profile_address: true
@@ -47,4 +51,5 @@ hidden:
   field_profile_profile_tag: true
   field_profile_self_introduction: true
   field_profile_show_email: true
+  field_profile_summary: true
   search_api_excerpt: true

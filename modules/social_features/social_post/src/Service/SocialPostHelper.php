@@ -48,15 +48,13 @@ class SocialPostHelper implements SocialPostHelperInterface {
   public function buildCurrentUserImage() {
     $storage = $this->entityTypeManager->getStorage('profile');
 
-    if (!empty($storage)) {
-      // Load current user.
-      $account = $this->currentUser->getAccount();
+    // Load current user.
+    $account = $this->currentUser->getAccount();
 
-      if ($user_profile = $storage->loadByUser($account, 'profile')) {
-        // Load compact notification view mode of the attached profile.
-        return $this->entityTypeManager->getViewBuilder('profile')
-          ->view($user_profile, 'compact_notification');
-      }
+    if ($user_profile = $storage->loadByUser($account, 'profile')) {
+      // Load compact notification view mode of the attached profile.
+      return $this->entityTypeManager->getViewBuilder('profile')
+        ->view($user_profile, 'compact_notification');
     }
 
     return NULL;

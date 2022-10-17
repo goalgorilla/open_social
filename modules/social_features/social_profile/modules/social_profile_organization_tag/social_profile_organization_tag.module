@@ -54,10 +54,8 @@ function social_profile_organization_tag_preprocess_username(&$variables) {
 
   if ($account instanceof User) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-        $variables['extra'] = social_profile_organization_tag_fetch($user_profile);
-      }
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $variables['extra'] = social_profile_organization_tag_fetch($user_profile);
     }
   }
 }
@@ -81,7 +79,7 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
   if ($context['type'] === 'social_mentions' && array_key_exists('user_name', $context['tokens']) && count($replacements) > 0) {
     $profile = $context['data']['profile'];
     $displayname = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($profile, 'name_raw');
-    $replacements['[social_mentions:user_name]'] = render($displayname);
+    $replacements['[social_mentions:user_name]'] = \Drupal::service('renderer')->render($displayname);
   }
 }
 

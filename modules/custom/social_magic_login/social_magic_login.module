@@ -85,7 +85,7 @@ function social_magic_login_data_policy_destination_alter(AccountProxyInterface 
     $user_storage = \Drupal::service('entity_type.manager')->getStorage('user');
     /** @var \Drupal\user\UserInterface $account */
     $account = $user_storage->load($current_user->id());
-    if (NULL === $account->getPassword()) {
+    if ($account->get('pass')->isEmpty()) {
       // This mirrors the UserController::resetPassLogin redirect which
       // allows a user to set a password without the current password check.
       $token = Crypt::randomBytesBase64(55);

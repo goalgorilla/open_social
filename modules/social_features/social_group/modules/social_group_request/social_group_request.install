@@ -42,7 +42,7 @@ function _social_group_request_set_permissions() {
  */
 function social_group_request_update_10301() {
   // Prepare the path.
-  $path = drupal_get_path('module', 'social_group_request') . '/config/static/';
+  $path = \Drupal::service('extension.list.module')->getPath('social_group_request') . '/config/static/';
 
   $message_templates = [
     'message.template.approve_request_join_group' => $path . 'message.template.approve_request_join_group_10301.yml',

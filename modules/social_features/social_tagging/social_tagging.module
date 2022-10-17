@@ -18,6 +18,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Database\Database;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\select2\Element\Select2;
 
 /**
  * Implements hook_help().
@@ -37,7 +38,7 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
       if ($tag_service->allowSplit()) {
         /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
         $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
-        if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
+        if ($vocabulary->id() === 'social_tagging') {
           return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
         }
       }
@@ -157,6 +158,11 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
         break;
 
+      case 'media':
+        $type = $form_entity->bundle();
+        $tag_enabled = $tag_settings->get('tag_media_type_' . $type);
+        break;
+
       default:
         $tag_enabled = FALSE;
         break;
@@ -228,7 +234,7 @@ function social_tagging_social_tagging_field_form_alter(array &$form, FormStateI
         $categories = $tag_service->getCategories();
         // Loop over the categories.
         foreach ($categories as $tid => $category) {
-          $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
+          $field_name = 'social_tagging_' . \Drupal::service('social_core.machine_name')->transform($category);
           // Get the corresponding items.
           $options = $tag_service->getChildren($tid);
 
@@ -293,8 +299,9 @@ function _social_tagging_entity_validate($form, FormStateInterface $form_state) 
   $counter = 0;
   // Loop over the categories.
   foreach ($categories as $category) {
-    if (!empty($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)))) {
-      foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
+    $machine_name = \Drupal::service('social_core.machine_name');
+    if (!empty($form_state->getValue('social_tagging_' . $machine_name->transform($category)))) {
+      foreach ($form_state->getValue('social_tagging_' . $machine_name->transform($category)) as $selected) {
         $tagging_values[] = [
           'target_id' => $selected,
           '_weight' => (string) $counter,
@@ -336,6 +343,10 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
     'group',
     'profile',
   ];
+
+  if (\Drupal::moduleHandler()->moduleExists('media')) {
+    $entity_types[] = 'media';
+  }
 
   // Add a Tagging base field.
   if (in_array($entity_type->id(), $entity_types)) {
@@ -490,6 +501,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-events-events-overview',
     'views-exposed-form-group-topics-page-group-topics',
     'views-exposed-form-group-events-page-group-events',
+    'views-exposed-form-group-books-page-group-books',
     'views-exposed-form-newest-groups-page-all-groups',
     'views-exposed-form-newest-users-page-newest-users',
   ];
@@ -507,7 +519,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   }
   if ($tag_service->allowSplit()) {
     foreach ($tag_service->getCategories() as $tid => $term_name) {
-      $label = social_tagging_to_machine_name($term_name);
+      $label = \Drupal::service('social_core.machine_name')->transform($term_name);
 
       if (isset($form[$label])) {
         $form[$label]['#options'] = [];
@@ -521,6 +533,18 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         $form[$label]['#options'] += $tag_service->getChildren($tid);
         $form[$label]['#type'] = 'select2';
         $form[$label]['#size'] = NULL;
+
+        if (isset($form[$label]['#context']['#plugin_type']) && $form[$label]['#context']['#plugin_type'] === 'bef') {
+          $form[$label]['#select2'] = [];
+          $form[$label]['#process'] = [
+            [Select2::class, 'processSelect'],
+          ];
+          $form[$label]['#pre_render'] = [
+            [Select2::class, 'preRenderSelect'],
+            [Select2::class, 'preRenderAutocomplete'],
+            [Select2::class, 'preRenderOverwrites'],
+          ];
+        }
 
         /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
         $query = \Drupal::request()->query;
@@ -559,9 +583,15 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  *   A node.
  *
  * @return mixed|string
- *   A machine name so it can be used pogrammatically.
+ *   A machine name so it can be used programmatically.
+ *
+ * @deprecated in social:11.3.10 and is removed from social:12.0.0. Use
+ *   \Drupal::service('social_core.machine_name')->transform() instead.
+ *
+ * @see https://www.drupal.org/node/3306214
  */
 function social_tagging_to_machine_name($text) {
+  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.3.10 and is removed from social:12.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
   return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 
@@ -595,7 +625,7 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
   /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
   $tag_service = \Drupal::service('social_tagging.tag_service');
 
-  if ($tag_service->queryCondition() == 'OR') {
+  if ($tag_service->queryCondition() === 'OR') {
     return;
   }
 
@@ -606,11 +636,12 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
     'events' => 'events_overview',
     'group_topics' => 'default',
     'group_events' => 'default',
+    'group_books' => 'default',
     'newest_groups' => 'page_all_groups',
     'newest_users' => 'page',
   ];
 
-  if (in_array($view->id(), array_keys($tagging_views)) && in_array($view->getDisplay()->getBaseId(), $tagging_views)) {
+  if (array_key_exists((string) $view->id(), $tagging_views) && in_array($view->getDisplay()->getBaseId(), $tagging_views, TRUE)) {
     /** @var \Drupal\views\Plugin\views\query\Sql $query */
     $org_query = $query->where['2'];
     $conditions = $org_query['conditions'] ?? [];
@@ -642,5 +673,31 @@ function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase 
       "COUNT(DISTINCT($field)) = $count_conditions",
       [],
     );
+  }
+
+  /** @var \Drupal\search_api\Plugin\views\query\SearchApiQuery $query */
+  if ($view->id() === 'search_content' && isset($query->getWhere()[2]['type'])) {
+    $query->getWhere()[2]['type'] = 'AND';
+  }
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function social_tagging_modules_installed(array $modules): void {
+  if (in_array('media', $modules)) {
+    $entity_type = \Drupal::entityTypeManager()
+      ->getStorage('media')
+      ->getEntityType();
+
+    $fields = \Drupal::moduleHandler()
+      ->invokeAll('entity_base_field_info', [$entity_type]);
+
+    if (!isset($fields['social_tagging'])) {
+      return;
+    }
+
+    \Drupal::entityDefinitionUpdateManager()
+      ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $fields['social_tagging']);
   }
 }

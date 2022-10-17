@@ -8,6 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -89,10 +90,9 @@ class MagicLoginController extends ControllerBase {
    * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
   public function login($uid, $timestamp, $hash, $destination): ?RedirectResponse {
-    /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
     // Verify that the user exists and is active.
-    if ($user === NULL || !$user->isActive() || $user->isAnonymous()) {
+    if (!$user instanceof UserInterface || !$user->isActive() || $user->isAnonymous()) {
       throw new AccessDeniedHttpException();
     }
 
@@ -143,7 +143,7 @@ class MagicLoginController extends ControllerBase {
     // When the user hasn't set a password, redirect the user to
     // the set passwords page. This now includes users that have
     // registered through social login possibilities.
-    if (NULL === $user->getPassword()) {
+    if ($user->get('pass')->isEmpty()) {
       $message_set_password = $this->t('You need to set your password in order to log in.');
       if ($this->dataPolicyConsensus()) {
         // Set a different text when the user still needs to comply to

@@ -58,6 +58,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.events',
       'views.view.group_topics',
       'views.view.group_events',
+      'views.view.group_books',
       'views.view.newest_groups',
       'views.view.newest_users',
       'core.entity_view_display.profile.profile.default',
@@ -87,6 +88,10 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
     $tag_service = \Drupal::service('social_tagging.tag_service');
+
+    /** @var \Drupal\social_core\Service\MachineName $machine_name */
+    $machine_name_service = \Drupal::service('social_core.machine_name');
+
     $config = $this->configFactory;
 
     // Check if tagging is active.
@@ -126,14 +131,16 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
         // Display parent of tags.
         elseif ($tag_service->useCategoryParent()) {
           $fields['social_tagging_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
@@ -237,7 +244,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_target_id_' . $tid] = [
-            'identifier' => social_tagging_to_machine_name($value),
+            // @todo Replace with dependency injection in Open Social 12.0.0.
+            'identifier' => $machine_name_service->transform($value),
             'label' => $value,
           ];
         }
@@ -252,11 +260,12 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.events' => 'events_overview',
       'views.view.group_topics' => 'default',
       'views.view.group_events' => 'default',
+      'views.view.group_books' => 'default',
       'views.view.newest_groups' => 'page_all_groups',
     ];
 
     if ($tag_service->profileActive()) {
-      $config_overviews['views.view.newest_users'] = 'default';
+      $config_overviews['views.view.newest_users'] = 'page_newest_users';
     }
 
     foreach ($config_overviews as $config_name => $display) {
@@ -273,7 +282,9 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
           $group++;
         }
 
-        $relationship = ($config_name === 'views.view.group_topics' || $config_name === 'views.view.group_events') ? 'gc__node' : 'none';
+        $relationship = in_array($config_name, ['views.view.group_topics', 'views.view.group_events', 'views.view.group_books'])
+          ? 'gc__node'
+          : 'none';
 
         // Select the correct table, based on the config.
         switch ($config_name) {

@@ -11,25 +11,26 @@ use Symfony\Contracts\EventDispatcher\Event;
 use Drupal\mentions\Plugin\Filter\MentionsFilter;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Implements hook_help().
  */
-function mentions_help($route_name, RouteMatchInterface $route_match) {
+function mentions_help(string $route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'entity.mentions_type.list':
       $text_format_url = Url::fromRoute('filter.admin_overview');
       $text_format_link = Link::fromTextAndUrl(t('text formats'), $text_format_url)->toString();
-      $output = t("You can enable 'Mentions Filter' for the mentions type below for the appropriate @text_format", ['@text_format' => $text_format_link]);
-      return $output;
+      return t("You can enable 'Mentions Filter' for the mentions type below for the appropriate @text_format", ['@text_format' => $text_format_link]);
   }
 }
 
 /**
  * Implements hook_theme().
  */
-function mentions_theme() {
-  $items = [
+function mentions_theme(): array {
+  return [
     'mention_link' => [
       'variables' => [
         'mention_id' => NULL,
@@ -40,13 +41,12 @@ function mentions_theme() {
       ],
     ],
   ];
-  return $items;
 }
 
 /**
  * Implements hook_entity_insert().
  */
-function mentions_entity_insert(EntityInterface $entity) {
+function mentions_entity_insert(EntityInterface $entity): void {
   if (PHP_SAPI !== 'cli') {
     mentions_insert_or_update($entity, FALSE);
   }
@@ -55,7 +55,7 @@ function mentions_entity_insert(EntityInterface $entity) {
 /**
  * Implements hook_entity_update().
  */
-function mentions_entity_update(EntityInterface $entity) {
+function mentions_entity_update(EntityInterface $entity): void {
   if (PHP_SAPI !== 'cli') {
     mentions_insert_or_update($entity, TRUE);
   }
@@ -64,7 +64,7 @@ function mentions_entity_update(EntityInterface $entity) {
 /**
  * Handling mentions crud operations.
  */
-function mentions_insert_or_update(EntityInterface $entity, $update) {
+function mentions_insert_or_update(EntityInterface $entity, bool $update): void {
   $config = \Drupal::config('mentions.settings');
   $supported_entities = $config->get('supported_entity_types');
   if (empty($supported_entities) || !in_array($entity->getEntityTypeId(), $supported_entities)) {
@@ -72,13 +72,14 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
   }
 
   $type = $entity->getEntityTypeId();
+  assert($entity instanceof FieldableEntityInterface);
   $field_definitions = $entity->getFieldDefinitions();
   $fields_with_text = [];
   $supported_field_types = ['text_with_summary', 'text_long', 'text'];
   foreach ($field_definitions as $field_definition) {
     $field_type = $field_definition->getType();
-    if (isset($field_type) && in_array($field_type, $supported_field_types)) {
-      array_push($fields_with_text, $field_definition->getName());
+    if (!empty($field_type) && in_array($field_type, $supported_field_types)) {
+      $fields_with_text[] = $field_definition->getName();
     }
   }
 
@@ -93,7 +94,7 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
     if ($filter_mentions->shouldApplyFilter()) {
       $mentions = $filter_mentions->getMentions($value);
       $auid = \Drupal::currentUser()->id();
-      mentions_crud_update($type, $mentions, $entity->id(), $auid);
+      mentions_crud_update($type, $mentions, (int) $entity->id(), $auid);
     }
   }
 }
@@ -101,7 +102,7 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
 /**
  * Implements hook_entity_delete().
  */
-function mentions_entity_delete(EntityInterface $entity) {
+function mentions_entity_delete(EntityInterface $entity): void {
   $mention_ids = \Drupal::entityQuery('mentions')
     ->condition('entity_id', $entity->id())
     ->condition('entity_type', $entity->getEntityTypeId())
@@ -118,7 +119,7 @@ function mentions_entity_delete(EntityInterface $entity) {
 /**
  * Insert mentions into DB.
  */
-function mentions_crud_update($type, $mentions, $id, $author) {
+function mentions_crud_update(string $type, array $mentions, int $id, int $author): void {
   $mentions_storage = \Drupal::entityTypeManager()->getStorage('mentions');
 
   // Build old array of mentions.
@@ -128,14 +129,12 @@ function mentions_crud_update($type, $mentions, $id, $author) {
     ->condition('entity_type', $type)
     ->condition('entity_id', $id)
     ->execute();
-  foreach ($mention_ids as $mention) {
-    $entity = $mentions_storage->load($mention);
-
+  foreach ($mentions_storage->loadMultiple($mention_ids) as $entity) {
     // Make sure the uid value is available.
     if (isset($entity->get('uid')->getValue()[0]['value'])) {
       $old_user = $entity->get('uid')->getValue()[0]['value'];
       $old_users[] = $old_user;
-      $old_mids[$old_user] = $mention;
+      $old_mids[$old_user] = $entity->id();
     }
   }
 
@@ -146,7 +145,9 @@ function mentions_crud_update($type, $mentions, $id, $author) {
       $storage = \Drupal::entityTypeManager()
         ->getStorage($mention['target']['entity_type']);
       $profile = $storage->load($mention['target']['entity_id']);
-      $new_users[] = $profile->getOwnerId();
+      if ($profile instanceof ProfileInterface) {
+        $new_users[] = $profile->getOwnerId();
+      }
     }
     else {
       $new_users[] = $mention['target']['entity_id'];
@@ -172,6 +173,11 @@ function mentions_crud_update($type, $mentions, $id, $author) {
   // Update existing mentions.
   foreach (array_intersect($new_users, $old_users) as $uid) {
     $entity = $mentions_storage->load($old_mids[$uid]);
+    // Entity was deleted elsewhere while we were processing.
+    if ($entity === NULL) {
+      continue;
+    }
+
     $entity->set('created', \Drupal::time()->getRequestTime());
     $entity->save();
     $event_dispatcher->dispatch(new Event(), 'mentions.update');
@@ -180,6 +186,10 @@ function mentions_crud_update($type, $mentions, $id, $author) {
   // Delete old mentions.
   foreach (array_diff($old_users, $new_users) as $uid) {
     $entity = $mentions_storage->load($old_mids[$uid]);
+    // Entity was deleted elsewhere while we were processing.
+    if ($entity === NULL) {
+      continue;
+    }
     $entity->delete();
     $event_dispatcher->dispatch(new Event(), 'mentions.delete');
   }

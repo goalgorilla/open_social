@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @YANG-4860 @database @stability-3 @album @post-album
+@disabled @api @post @stability @perfect @critical @YANG-4860 @database @stability-3 @album @post-album
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
   Role: As a Verified

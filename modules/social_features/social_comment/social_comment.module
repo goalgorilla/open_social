@@ -7,6 +7,7 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -26,6 +27,27 @@ function social_comment_entity_type_alter(array &$entity_types) {
     $entity_types['comment']->setClass(Comment::class);
     $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
     $entity_types['comment']->setHandlerClass('query_access', CommentQueryAccessHandler::class);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // This code will move the comments' field to the "Settings" field group
+  // only if $form['advanced'] does not exist.
+  if (method_exists($form_state->getFormObject(), 'getEntity')) {
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity instanceof ContentEntityInterface) {
+      // Move comments field to "group_settings" field group.
+      $comments_field = "field_{$entity->bundle()}_comments";
+      if (!empty($form[$comments_field])) {
+        if (!empty($form['#fieldgroups']['group_settings'])) {
+          $form[$comments_field]['#group'] = 'group_settings';
+          $form['#group_children']['group_settings'] = $comments_field;
+        }
+      }
+    }
   }
 }
 
@@ -237,17 +259,13 @@ function social_comment_preprocess_comment(&$variables) {
   $variables['#cache']['max-age'] = $created_time_ago->getCacheMaxAge();
 
   $account = $comment->getOwner();
-  if ($account) {
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      $user_profile = $storage->loadByUser($account, 'profile');
-      if ($user_profile) {
-        $content = \Drupal::entityTypeManager()
-          ->getViewBuilder('profile')
-          ->view($user_profile, 'compact');
-        $variables['author_picture'] = $content;
-      }
-    }
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $user_profile = $storage->loadByUser($account, 'profile');
+  if ($user_profile) {
+    $content = \Drupal::entityTypeManager()
+      ->getViewBuilder('profile')
+      ->view($user_profile, 'compact');
+    $variables['author_picture'] = $content;
   }
 
   // Add node ID attribute for comment "new" indicator.

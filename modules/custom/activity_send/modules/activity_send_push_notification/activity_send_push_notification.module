@@ -32,7 +32,7 @@ function activity_send_push_notification_form_user_form_alter(&$form, FormStateI
         '#attributes' => [
           'class' => ['form-fieldset'],
         ],
-        '#prefix' => $definition['description'],
+        '#prefix' => $definition['description'] ?? '',
       ] + $plugin->buildForm();
     }
   }

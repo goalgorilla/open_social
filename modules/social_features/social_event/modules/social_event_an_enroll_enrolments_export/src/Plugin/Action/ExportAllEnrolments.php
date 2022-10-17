@@ -4,8 +4,10 @@ namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\file\FileRepository;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_enrolments_export\Plugin\Action\ExportEnrolments;
@@ -18,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Action(
  *   id = "social_event_an_enroll_enrolments_export_action",
- *   label = @Translation("Export the selected enrollments to CSV"),
+ *   label = @Translation("Export the selected enrollments to CSV including anonymous"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
  *   confirm_form_route_name = "social_event_managers.vbo.confirm",
@@ -57,6 +59,10 @@ class ExportAllEnrolments extends ExportEnrolments {
    *   The current user account.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory for the export plugin access.
+   * @param \Drupal\file\FileRepository $file_repository
+   *   The file repository service.
+   * @param \Drupal\Core\File\FileUrlGenerator $file_url_generator
+   *   The file url generator service.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -68,9 +74,21 @@ class ExportAllEnrolments extends ExportEnrolments {
     LoggerInterface $logger,
     AccountProxyInterface $currentUser,
     ConfigFactoryInterface $configFactory,
+    FileRepository $file_repository,
+    FileUrlGenerator $file_url_generator,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $userExportPlugin, $logger, $currentUser, $configFactory);
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $userExportPlugin,
+      $logger,
+      $currentUser,
+      $configFactory,
+      $file_url_generator,
+      $file_repository
+    );
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
 
@@ -100,6 +118,8 @@ class ExportAllEnrolments extends ExportEnrolments {
       $container->get('logger.factory')->get('action'),
       $container->get('current_user'),
       $container->get('config.factory'),
+      $container->get('file.repository'),
+      $container->get('file_url_generator'),
       $container->get('social_event_an_enroll.manager')
     );
   }
@@ -110,7 +130,7 @@ class ExportAllEnrolments extends ExportEnrolments {
   public function executeMultiple(array $entities) {
     $this->entities = $entities;
 
-    parent::executeMultiple($entities);
+    return parent::executeMultiple($entities);
   }
 
   /**

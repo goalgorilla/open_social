@@ -1,4 +1,4 @@
-@api @notifications @stability @DS-4323 @notification-emails
+@disabled @api @notifications @stability @DS-4323 @notification-emails
 Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
   Role: As a Verified

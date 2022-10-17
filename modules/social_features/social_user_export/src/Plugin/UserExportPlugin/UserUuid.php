@@ -27,7 +27,7 @@ class UserUuid extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    return $entity->uuid();
+    return $entity->uuid() ?? "";
   }
 
 }

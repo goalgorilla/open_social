@@ -5,9 +5,22 @@
     "license": "UNLICENSED",
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "drupal/core-composer-scaffold": true,
+            "oomphinc/composer-installers-extender": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true,
+            "drupal/console-extend-plugin": true,
+            "zaporylie/composer-drupal-optimizations": true
+        }
+    },
     "require": {},
     "require-dev": {
-        "drush/drush": "10.*@stable"
+        "drush/drush": "11.*@stable"
     },
     "repositories": [
         {
