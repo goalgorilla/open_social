@@ -154,7 +154,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildHierarchy(array $term_ids, $vocabulary = 'profile_tag') {
+  public function buildHierarchy(array $term_ids, string $vocabulary = 'profile_tag') {
     $tree = [];
     $terms = $this->taxonomyStorage->loadMultiple(array_column($term_ids, 'target_id'));
     if (empty($terms)) {
