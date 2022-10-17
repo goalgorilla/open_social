@@ -46,7 +46,7 @@ function activity_basics_entity_presave(EntityInterface $entity): void {
     // @phpstan-ignore-next-line
     $original = $entity->original;
     if (!$original->isPublished() && $entity->isPublished()) {
-      if ($entity InstanceOf Node) {
+      if ($entity instanceof Node) {
         $entity->setCreatedTime($entity->getChangedTime());
       }
       _activity_basics_entity_action($entity, 'create_entitiy_action');
