@@ -8,6 +8,7 @@
 use Drupal\activity_creator\Plugin\ActivityActionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 
@@ -15,13 +16,16 @@ use Drupal\group\Entity\GroupContent;
  * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity): void {
-  _activity_basics_entity_action($entity, 'create_entitiy_action');
 
   // Check if the entity created with "published" status.
   if ($entity instanceof EntityPublishedInterface) {
     if ($entity->isPublished()) {
+      _activity_basics_entity_action($entity, 'create_entitiy_action');
       _activity_basics_entity_action($entity, 'publish_entity_action');
     }
+  }
+  else {
+    _activity_basics_entity_action($entity, 'create_entitiy_action');
   }
 }
 
@@ -42,6 +46,10 @@ function activity_basics_entity_presave(EntityInterface $entity): void {
     // @phpstan-ignore-next-line
     $original = $entity->original;
     if (!$original->isPublished() && $entity->isPublished()) {
+      if ($entity InstanceOf Node) {
+        $entity->setCreatedTime($entity->getChangedTime());
+      }
+      _activity_basics_entity_action($entity, 'create_entitiy_action');
       _activity_basics_entity_action($entity, 'publish_entity_action');
     }
   }
