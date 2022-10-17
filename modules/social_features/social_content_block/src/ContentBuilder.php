@@ -73,7 +73,7 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return ['getEntities', 'build'];
   }
 
@@ -129,6 +129,7 @@ class ContentBuilder implements ContentBuilderInterface {
       if (!empty($table) && is_string($table)) {
         $query = $this->connection->select($table, 'base_table')
           ->addTag('social_content_block')
+          ->addTag($entity_type->id() . '_access')
           ->addMetaData('block_content', $block_content)
           ->fields('base_table', [$entity_type->getKey('id')]);
 
@@ -147,7 +148,6 @@ class ContentBuilder implements ContentBuilderInterface {
 
         // Apply our sorting logic.
         $this->sortBy($query, $entity_type, $block_content, $plugin->supportedSortOptions());
-
         // Add range.
         $query->range(0, $block_content->field_item_amount->value);
 
@@ -162,13 +162,7 @@ class ContentBuilder implements ContentBuilderInterface {
             ->loadMultiple($entities);
 
           foreach ($entities as $key => $entity) {
-            if ($entity->access('view') === FALSE) {
-              unset($entities[$key]);
-            }
-            else {
-              // Get entity translation if exists.
-              $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
-            }
+            $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
           }
 
           return $this->entityTypeManager
