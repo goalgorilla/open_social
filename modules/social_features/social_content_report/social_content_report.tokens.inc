@@ -56,12 +56,15 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
           /** @var \Drupal\flag\FlaggingInterface $flagging */
           $flagging = $storage->load($flagging_id);
 
-          // Load the flagged entity.
-          /** @var \Drupal\Core\Entity\EntityInterface $entity */
-          $entity = $flagging->getFlaggable();
+          // Check if the flagging entity exists in database.
+          if ($flagging !== NULL) {
+            // Load the flagged entity.
+            /** @var \Drupal\Core\Entity\EntityInterface $entity */
+            $entity = $flagging->getFlaggable();
 
-          // Set the URL for the entity.
-          $replacements[$original] = $entity->toUrl()->setAbsolute()->toString();
+            // Set the URL for the entity.
+            $replacements[$original] = $entity->toUrl()->setAbsolute()->toString();
+          }
         }
       }
     }
