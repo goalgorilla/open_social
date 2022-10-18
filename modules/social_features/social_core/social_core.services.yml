@@ -30,3 +30,7 @@ services:
   social_core.machine_name:
     class: Drupal\social_core\Service\MachineName
     arguments: ['@transliteration']
+
+  social_core.config_language_manager:
+    class:  Drupal\social_core\Service\ConfigLanguageManager
+    arguments: ['@language_manager']

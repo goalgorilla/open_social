@@ -432,9 +432,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
 
   $hook = 'social_event_managers_action_' . $results['action'] . '_finish';
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-    $function = $module . '_' . $hook;
-    $messages = $function($success);
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook) use ($success) {
+    $messages = $hook($success);
 
     if (is_array($messages)) {
       $fields = 0;
@@ -448,12 +447,12 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       if ($fields === 2) {
         // @todo source strings will never be translatable when we use
         // variables. This should be refactored.
-        $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
+        $message = \Drupal::translation()->formatPlural(count($messages), $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
         \Drupal::messenger()->addMessage($message, $type);
       }
     }
-  }
+  });
 }
 
 /**

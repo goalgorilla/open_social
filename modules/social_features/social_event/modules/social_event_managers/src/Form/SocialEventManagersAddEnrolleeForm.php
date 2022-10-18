@@ -232,12 +232,17 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     // on the message object which we don't have in the preview.
     $add_directly_config['text'][2]['value'] = str_replace('[message:author:display-name]', '[user:display-name]', $add_directly_config['text'][2]['value']);
     $add_directly_config['text'][2]['value'] = str_replace('[social_event:event_iam_organizing]', '[node:title]', $add_directly_config['text'][2]['value']);
+    $value = $add_directly_config['text'][2]['value'];
 
     // Cleanup message body and replace any links on invite preview page.
-    $body = $this->token->replace($add_directly_config['text'][2]['value'], $params);
-    $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
+    $body = '';
+    if (is_string($value)) {
+      $body = $this->token->replace($value, $params);
+      $body = preg_replace('/href="([^"]*)"/', 'href="#"', $body);
+    }
 
-    // Get default logo image and replace if it overridden with email settings.
+    // Get default logo image and replace if it has overridden with
+    // email settings.
     $theme_id = $this->configFactory->get('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
     $email_logo = theme_get_setting('email_logo', $theme_id);
