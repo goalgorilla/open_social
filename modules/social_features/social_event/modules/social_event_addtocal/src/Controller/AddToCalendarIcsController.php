@@ -65,7 +65,7 @@ class AddToCalendarIcsController extends ControllerBase {
 
     // Create ICS filename.
     $name = md5(serialize($this->request->query->all()));
-    $filename = $name . '6.ics';
+    $filename = $name . '.ics';
 
     // ICS file destination.
     $file = 'temporary://' . $filename;
