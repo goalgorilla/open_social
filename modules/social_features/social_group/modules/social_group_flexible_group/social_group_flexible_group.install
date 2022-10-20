@@ -516,3 +516,17 @@ function social_group_flexible_group_update_11401(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Allow extending list of allowed join methods dynamically.
+ */
+function social_group_flexible_group_update_11402(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_group_flexible_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
