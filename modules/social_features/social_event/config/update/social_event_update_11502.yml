@@ -1,0 +1,17 @@
+core.entity_form_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    add:
+      content:
+        field_hide_enrollments:
+          type: boolean_checkbox
+          weight: 127
+          region: content
+          settings:
+            display_label: true
+          third_party_settings: { }
+      third_party_settings:
+        field_group:
+          group_enrollment_methods:
+            children:
+              - field_hide_enrollments

@@ -81,11 +81,6 @@ parameters:
 			path: modules/custom/activity_creator/activity.page.inc
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
-			count: 1
-			path: modules/custom/activity_creator/activity.page.inc
-
-		-
 			message: "#^Cannot call method getFileUri\\(\\) on Drupal\\\\file\\\\Entity\\\\File\\|null\\.$#"
 			count: 1
 			path: modules/custom/activity_creator/activity.page.inc
@@ -1731,16 +1726,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
 		-
-			message: "#^Function entity_access_by_field_node_access\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_node_access\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
 			message: "#^Function entity_access_by_field_node_access_explain\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
@@ -1826,26 +1811,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
 
 		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:getEntityAccessResult\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:getEntityAccessResult\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) has parameter \\$op with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessHelper.php
-
-		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\Form\\\\EntityVisibilityForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php
@@ -1881,6 +1846,11 @@ parameters:
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getEntityTypeId\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
+
+		-
 			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:getFieldDefinitions\\(\\)\\.$#"
 			count: 4
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
@@ -1901,33 +1871,8 @@ parameters:
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testAllowedAccess\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testAuthorAccessAllowed\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testForbiddenAccess\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\Tests\\\\EntityAccessTest\\:\\:testNeutralAccess\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of static method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) expects Drupal\\\\node\\\\NodeInterface, object given\\.$#"
-			count: 4
-			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
-
-		-
-			message: "#^Parameter \\#3 \\$account of static method Drupal\\\\entity_access_by_field\\\\EntityAccessHelper\\:\\:nodeAccessCheck\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, object given\\.$#"
-			count: 4
+			message: "#^Call to an undefined method Prophecy\\\\Prophecy\\\\ObjectProphecy\\:\\:isAuthenticated\\(\\)\\.$#"
+			count: 3
 			path: modules/custom/entity_access_by_field/tests/src/Unit/EntityAccessTest.php
 
 		-
@@ -6885,6 +6830,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
 
 		-
+			message: "#^The \"social_event\\.enroll\" service is deprecated in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. See https\\://www\\.drupal\\.org/project/social/issues/3306568$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EnrollInviteUserForm\\:\\:cancelForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php
@@ -6898,6 +6848,15 @@ parameters:
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EnrollInviteUserForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php
+
+		-
+			message: """
+				#^Call to deprecated method isEnabled\\(\\) of class Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  bundled node object itself `\\$event\\-\\>isEnrollmentEnabled\\(\\)` instead\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php
 
 		-
 			message: "#^Method Drupal\\\\social_event_invite\\\\Form\\\\EventInviteEnrollActionForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
@@ -7636,6 +7595,15 @@ parameters:
 
 		-
 			message: "#^Binary operation \"\\-\" between string and int results in an error\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_max_enroll/src/Service/EventMaxEnrollService.php
+
+		-
+			message: """
+				#^Call to deprecated method isEnabled\\(\\) of class Drupal\\\\social_event\\\\Service\\\\SocialEventEnrollServiceInterface\\:
+				in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. Use
+				  bundled node object itself `\\$event\\-\\>isEnrollmentEnabled\\(\\)` instead\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_max_enroll/src/Service/EventMaxEnrollService.php
 
@@ -8511,6 +8479,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_event\\\\Form\\\\EnrollActionForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
+
+		-
+			message: "#^The \"social_event\\.enroll\" service is deprecated in social\\:11\\.5\\.0 and is removed from social\\:12\\.0\\.0\\. See https\\://www\\.drupal\\.org/project/social/issues/3306568$#"
 			count: 1
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
 
@@ -10101,16 +10074,6 @@ parameters:
 
 		-
 			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$configFactory \\(Drupal\\\\Core\\\\Config\\\\ConfigFactory\\) does not accept Drupal\\\\Core\\\\Config\\\\ConfigFactoryInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$groupInvitationLoader \\(Drupal\\\\ginvite\\\\GroupInvitationLoader\\) does not accept Drupal\\\\group\\\\GroupMembershipLoaderInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
-
-		-
-			message: "#^Property Drupal\\\\social_group_invite\\\\Form\\\\SocialBulkGroupInvitation\\:\\:\\$groupMembershipLoader \\(Drupal\\\\group\\\\GroupMembershipLoaderInterface\\) does not accept Drupal\\\\ginvite\\\\GroupInvitationLoader\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php
 

@@ -9,6 +9,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -96,11 +97,24 @@ class SocialEventInviteAccessHelper {
     }
 
     // Get the group of this node.
-    $node = $this->routeMatch->getRawParameter('node');
-    $node = Node::load($node);
-    if ($node instanceof NodeInterface) {
-      $node = $node->id();
+    $node = $this->routeMatch->getParameter('node');
+    if (!$node instanceof NodeInterface) {
+      // On views url parameters node can be provided as raw parameter.
+      $nid = $this->routeMatch->getRawParameter('node');
+      // Node can't be loaded.
+      if (empty($nid)) {
+        return AccessResult::forbidden();
+      }
+
+      $node = Node::load($nid);
     }
+
+    // We need only event node type.
+    if (!$node instanceof Event) {
+      return AccessResult::forbidden();
+    }
+
+    $node = $node->id();
     $gid_from_entity = $this->groupHelperService->getGroupFromEntity([
       'target_type' => 'node',
       'target_id' => $node,
