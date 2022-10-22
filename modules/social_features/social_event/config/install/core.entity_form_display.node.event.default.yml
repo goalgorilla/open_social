@@ -120,6 +120,7 @@ third_party_settings:
       children:
         - field_enroll_method
         - field_event_enroll_outside_group
+        - field_hide_enrollments
       parent_name: group_enrollment
       weight: 20
       format_type: details
@@ -258,6 +259,13 @@ content:
     third_party_settings: {  }
     type: file_generic
     region: content
+  field_hide_enrollments:
+    type: boolean_checkbox
+    weight: 127
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: { }
   field_event_all_day:
     weight: 9
     settings:
