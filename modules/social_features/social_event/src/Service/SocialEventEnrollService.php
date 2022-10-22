@@ -4,7 +4,7 @@ namespace Drupal\social_event\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\Entity\Node\Event;
 
 /**
  * Class SocialEventEnrollService.
@@ -34,28 +34,9 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
    * {@inheritdoc}
    */
   public function isEnabled(NodeInterface $node) {
-    if (
-      $this->eventSettings->get('disable_event_enroll') ||
-      $node->bundle() !== 'event' ||
-      !$node->hasField('field_event_enroll') ||
-      (!$node->get('field_event_enroll')->isEmpty() && !(bool) $node->get('field_event_enroll')->getString())
-    ) {
-      return FALSE;
-    }
-
-    $was_not_changed = $node->get('field_event_enroll')->isEmpty();
-    $is_enabled = (bool) $node->get('field_event_enroll')->getString();
-
-    // Make an exception for the invite enroll method.
-    // This doesn't allow people to enroll themselves, but get invited.
-    if (
-      !$node->get('field_enroll_method')->isEmpty() &&
-      (int) $node->get('field_enroll_method')->getString() === EventEnrollmentInterface::ENROLL_METHOD_INVITE
-    ) {
-      $is_enabled = TRUE;
-    }
-
-    return $was_not_changed || $is_enabled;
+    @trigger_error(__METHOD__ . '() is deprecated in social:11.5.0 and is removed from social:12.0.0. Use bundled node object itself `$event->isEnrollmentEnabled()` instead. See https://www.drupal.org/project/social/issues/3306568', E_USER_DEPRECATED);
+    return $node instanceof Event &&
+      $node->isEnrollmentEnabled();
   }
 
 }

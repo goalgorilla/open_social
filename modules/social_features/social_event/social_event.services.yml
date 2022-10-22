@@ -19,3 +19,8 @@ services:
     class: Drupal\social_event\Service\SocialEventEnrollService
     arguments:
       - '@config.factory'
+    deprecated: The "%service_id%" service is deprecated in social:11.5.0 and is removed from social:12.0.0. See https://www.drupal.org/project/social/issues/3306568
+  social_event.enrollments_access:
+    class: Drupal\social_event\Access\EventEnrollmentsAccessCheck
+    tags:
+      - { name: access_check, applies_to: _social_event_enrollments_access }

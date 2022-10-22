@@ -252,7 +252,7 @@ function improved_theme_settings_get_setting($setting, $themename) {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename));
   // In this case '' is something different than 0.
-  if (is_numeric($themevar)) {
+  if ($themevar !== trim((string) ((int) $themevar))) {
     return FALSE;
   }
   return $themevar;

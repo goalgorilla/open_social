@@ -315,6 +315,19 @@ function social_profile_preprocess_form_element_label(&$variables) {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function social_profile_theme(): array {
+  return [
+    'profile__profile__name' => [
+      'template' => 'profile--profile--name',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  *
  * Allows modifying link attributes by modules instead of using hardcoded
