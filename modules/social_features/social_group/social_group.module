@@ -770,13 +770,18 @@ function social_group_allowed_join_method_description(
 
   $hook = 'social_group_join_method_info';
 
-  if (!($modules = \Drupal::moduleHandler()->getImplementations($hook))) {
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+    // There is minimal overhead since the hook is not invoked.
+    $implementors[] = $module;
+  });
+
+  if (!$implementors) {
     return $description;
   }
 
   $found = FALSE;
 
-  foreach ($modules as $module) {
+  foreach ($implementors as $module) {
     /** @var callable $function */
     $function = $module . '_' . $hook;
 
@@ -1002,7 +1007,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       if (in_array($form['#entity_type'], $entity_types)) {
         $form['actions']['submit']['#submit'] = array_filter(
           $form['actions']['submit']['#submit'],
-          fn (string $callback): bool => $callback !== 'group_content_entity_submit',
+          fn ($callback): bool => $callback !== 'group_content_entity_submit',
         );
       }
     }
@@ -1145,15 +1150,22 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $hook = 'social_group_join_method_info';
         $join_methods = [];
 
-        foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-          /** @var callable $function */
-          $function = $module . '_' . $hook;
+        \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+          // There is minimal overhead since the hook is not invoked.
+          $implementors[] = $module;
+        });
 
-          foreach ($function() as $id => $join_method) {
-            $join_methods[] = [
-              'id' => $id,
-              'weight' => $join_method['weight'],
-            ];
+        if (is_array($implementors) && !empty($implementors)) {
+          foreach ($implementors as $module) {
+            /** @var callable $function */
+            $function = $module . '_' . $hook;
+
+            foreach ($function() as $id => $join_method) {
+              $join_methods[] = [
+                'id' => $id,
+                'weight' => $join_method['weight'],
+              ];
+            }
           }
         }
 
@@ -2783,7 +2795,13 @@ function _social_group_action_batch_finish($success, array $results, array $oper
 
   $hook = 'social_group_action_' . $results['action'] . '_finish';
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+  // Get a list of hook implementors.
+  $implementors = [];
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+    $implementors[] = $module;
+  });
+
+  foreach ($implementors as $module) {
     $function = $module . '_' . $hook;
     $messages = $function($success);
 

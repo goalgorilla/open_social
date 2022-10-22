@@ -14,6 +14,10 @@
   padding: 1rem 1.5rem;
 }
 
+.avatar > a {
+  cursor: pointer;
+}
+
 .teaser-profile-preview {
   padding: 0.5rem 0 1rem;
 }
@@ -52,6 +56,9 @@
   line-height: 22px;
   color: #4d4e4d;
 }
+.teaser-profile-preview .field--name-uid .field--item a:hover {
+  text-decoration: underline;
+}
 .teaser-profile-preview .field--name-field-profile-self-introduction .field--item > *:last-child {
   margin-bottom: 0;
 }
@@ -69,6 +76,27 @@
 .teaser-profile-preview .badge__label.badge__label--description {
   font-weight: 500;
   color: #777876;
+}
+
+.profile-preview-link {
+  position: relative;
+  display: block;
+}
+.profile-preview-link:before {
+  content: "";
+  position: absolute;
+  height: calc(100% + 6px);
+  width: calc(100% + 6px);
+  border: 1px solid transparent;
+  top: -3px;
+  left: -3px;
+  border-radius: 50%;
+}
+.profile-preview-link:hover:before {
+  border-color: #777;
+}
+.profile-preview-link:hover img {
+  filter: brightness(80%);
 }
 
 @keyframes dialog_opacity {

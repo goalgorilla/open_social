@@ -405,7 +405,7 @@ function social_core_preprocess_block(&$variables) {
           'user' => $account->id(),
         ]);
         $variables['button_text'] = t('All @label', [
-          '@label' => $variables['label']['#markup'],
+          '@label' => $variables['label']['#markup'] ?? 'Events',
         ]);
       }
       break;
@@ -919,9 +919,33 @@ function social_core_form_alter(
           unset($form['status']);
         }
 
-        if (Element::isVisibleElement($form['uid']) || Element::isVisibleElement($form['created'])) {
+        // Move author uid and/or created to the new author info fieldset,
+        // and remove descriptive text.
+        foreach (['uid', 'created'] as $key) {
+          if (isset($form[$key]) && Element::isVisibleElement($form[$key])) {
+            $field = &$form[$key];
+            $field['#group'] = 'author_info';
+            $field['widget']['#description'] = '';
+
+            if ($key === 'uid') {
+              if (!empty($field['widget'][0]['target_id'])) {
+                $field['widget'][0]['target_id']['#description'] = '';
+              }
+            }
+            else {
+              $field['widget'][0]['#description'] = '';
+              $field['widget'][0]['value']['#description'] = '';
+            }
+
+            $form['author_info'][$key] = $form[$key];
+
+            unset($form[$key]);
+          }
+        }
+
+        if (isset($form['author_info'])) {
           // Node author information for administrators.
-          $form['author_info'] = [
+          $form['author_info'] += [
             '#type' => 'details',
             '#title' => t('Author Information'),
             '#description' => '',
@@ -929,29 +953,6 @@ function social_core_form_alter(
             '#weight' => 100,
             '#group' => 'group_settings',
           ];
-        }
-
-        // Move author uid to the new author info fieldset,
-        // and remove descriptive text.
-        if (isset($form['uid'])) {
-          $form['uid']['#group'] = 'author_info';
-          $form['uid']['widget']['#description'] = '';
-          if (!empty($form['uid']['widget'][0]['target_id'])) {
-            $form['uid']['widget'][0]['target_id']['#description'] = '';
-          }
-          $form['author_info']['uid'] = $form['uid'];
-          unset($form['uid']);
-        }
-
-        // Move created to the new author info fieldset,
-        // and remove descriptive text.
-        if (isset($form['created'])) {
-          $form['created']['#group'] = 'author_info';
-          $form['created']['widget']['#description'] = '';
-          $form['created']['widget'][0]['#description'] = '';
-          $form['created']['widget'][0]['value']['#description'] = '';
-          $form['author_info']['created'] = $form['created'];
-          unset($form['created']);
         }
 
         // Add validation for created date.

@@ -315,6 +315,19 @@ function social_profile_preprocess_form_element_label(&$variables) {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function social_profile_theme(): array {
+  return [
+    'profile__profile__name' => [
+      'template' => 'profile--profile--name',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  *
  * Allows modifying link attributes by modules instead of using hardcoded
@@ -338,39 +351,6 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
 
     $element['#item_attributes']['alt'] = $name;
   }
-}
-
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
-function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
-  // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
-  $original = $variables['theme_hook_original'];
-  $entity = $variables['elements']['#profile'];
-  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
-
-  $suggestions = [];
-  $suggestions[] = $original;
-  $suggestions[] = $original . '__' . $sanitized_view_mode;
-  $suggestions[] = $original . '__' . $entity->bundle();
-  $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
-  $suggestions[] = $original . '__' . $entity->id();
-  $suggestions[] = $original . '__' . $entity->id() . '__' . $sanitized_view_mode;
-
-  return $suggestions;
-}
-
-/**
- * Implements hook_theme().
- */
-function social_profile_theme(): array {
-  return [
-    'profile__profile__name' => [
-      'template' => 'profile--profile--name',
-      'render element' => 'elements',
-      'base hook' => 'profile',
-    ],
-  ];
 }
 
 /**
@@ -608,23 +588,8 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     $show_email = $profile->field_profile_show_email->value;
     $form['profile_privacy'] = [
       '#type' => 'fieldset',
-      '#title' => [
-        'text' => [
-          '#markup' => t('Privacy settings'),
-        ],
-        'icon' => [
-          '#markup' => '<svg class="icon icon-expand_less"><use xlink:href="#icon-expand-less" /></svg>',
-          '#allowed_tags' => ['svg', 'use'],
-        ],
-      ],
+      '#title' => t('Privacy settings'),
       '#tree' => TRUE,
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
-      '#attributes' => [
-        'class' => [
-          'form-collapse',
-        ],
-      ],
     ];
     $form['profile_privacy']['social_profile_show_email'] = [
       '#type' => 'checkbox',

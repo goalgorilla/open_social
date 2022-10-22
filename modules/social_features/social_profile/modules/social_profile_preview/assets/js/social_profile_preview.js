@@ -3,13 +3,21 @@
     attach: function attach(context) {
       var timeouts = [], dialogs = [], profiles = [];
       var refresh = -1;
-      var delay = 200;
+      var delayOpen = 1000;
+      var delayClose = 200;
       var delta = 0;
 
       $(context).find('.profile-preview')
         .each(function () {
           if ($(this).attr('id') === undefined) {
             $(this).attr('id', 'profile-preview-' + delta++);
+
+            // Add extra class to the parent link.
+            if ($('img').hasClass('profile-preview')) {
+              $('img.profile-preview')
+              .closest('a')
+              .addClass('profile-preview-link');
+            }
           }
         })
         .on('mouseover', function () {
@@ -47,7 +55,7 @@
                             cleanupUserData(dialogs);
                             cleanupUserData(profiles);
                           }
-                        }, delay);
+                        }, delayOpen);
                       })
                       .find('.ui-dialog-titlebar-close').remove();
 
@@ -121,7 +129,7 @@
               isActualUserData(dialogs, selector, refresh);
               isActualUserData(profiles, identifier, refresh);
             });
-          }, delay);
+          }, delayOpen);
         })
         .on('mouseout', function () {
           var selector = $(this).attr('id');
@@ -132,7 +140,7 @@
             if (dialogs[selector] !== undefined && dialogs[selector].open) {
               dialogs[selector].close();
             }
-          }, delay);
+          }, delayClose);
         });
     }
   };

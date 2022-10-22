@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @YANG-4830 @database @stability @post-modal-comments
+@disabled @api @post @stability @perfect @critical @YANG-4830 @database @stability @post-modal-comments
 Feature: Comment on a Post with an Image
   Benefit: In order to give my opinion on a post with an image
   Role: As a Verified

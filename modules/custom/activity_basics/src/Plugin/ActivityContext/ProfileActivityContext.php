@@ -20,7 +20,7 @@ class ProfileActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit) {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -38,7 +38,7 @@ class ProfileActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity(EntityInterface $entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     // Special cases for comments.
     if ($entity instanceof CommentInterface) {
       $comment_owner_id = $entity->getOwnerId();
