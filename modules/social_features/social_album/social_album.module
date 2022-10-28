@@ -559,3 +559,10 @@ function social_album_social_core_compatible_content_forms_alter(&$compatible_co
   $compatible_content_type_forms[] = 'node_album_form';
   $compatible_content_type_forms[] = 'node_album_edit_form';
 }
+
+/**
+ * Implements hook_social_group_cross_posting_alter().
+ */
+function social_album_social_group_cross_posting_alter(array &$content_types) {
+  $content_types[] = 'album';
+}
