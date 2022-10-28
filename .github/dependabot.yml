@@ -8,7 +8,8 @@ updates:
       day: "saturday"
     labels:
       - "type: update"
-      - "team: nucleus"
+      - "status: needs review"
+      - "team: guardians"
 
   # Maintain dependencies for Composer.
   - package-ecosystem: "composer"
@@ -20,7 +21,8 @@ updates:
       timezone: "Europe/Amsterdam"
     labels:
       - "type: update"
-      - "team: nucleus"
+      - "status: needs review"
+      - "team: guardians"
     # Let core team maintainers review it.
     reviewers:
       - "goalgorilla/maintainers"
@@ -35,4 +37,4 @@ updates:
       prefix: "Updates: "
       include: "scope"
     # Allow up to 5 open pull requests for Drupal dependencies as we have some to go.
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
