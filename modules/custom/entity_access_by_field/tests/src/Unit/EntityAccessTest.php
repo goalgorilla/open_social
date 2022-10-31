@@ -2,18 +2,16 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
-use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\entity_access_by_field\EntityAccessHelper;
+use Prophecy\Prophet;
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
  */
 class EntityAccessTest extends UnitTestCase {
-
-  use ProphecyTrait;
 
   /**
    * The field type random machinename.
@@ -51,11 +49,33 @@ class EntityAccessTest extends UnitTestCase {
   protected $nodeOwnerId;
 
   /**
+   * The prophecy object.
+   *
+   * @var \Prophecy\Prophet
+   */
+  private $prophet;
+
+  /**
+   * Set up.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->prophet = new Prophet();
+  }
+
+  /**
+   * Tear down.
+   */
+  protected function tearDown(): void {
+    $this->prophet->checkPredictions();
+  }
+
+  /**
    * Tests the EntityAccessHelper::entityAccessCheck for Neutral Access.
    */
   public function testNeutralAccess(): void {
 
-    $node = $this->prophesize(NodeInterface::class);
+    $node = $this->prophet->prophesize(NodeInterface::class);
 
     $this->fieldType = $this->randomMachineName();
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldDefinitionInterface');
@@ -68,7 +88,7 @@ class EntityAccessTest extends UnitTestCase {
 
     $op = 'view';
 
-    $account = $this->prophesize(AccountInterface::class)->reveal();
+    $account = $this->prophet->prophesize(AccountInterface::class)->reveal();
 
     /** @var \Drupal\node\NodeInterface $node */
     /** @var \Drupal\Core\Session\AccountInterface $account */
@@ -88,7 +108,7 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::entityAccessCheck for Forbidden Access.
    */
   public function testForbiddenAccess(): void {
-    $node = $this->prophesize(NodeInterface::class);
+    $node = $this->prophet->prophesize(NodeInterface::class);
     $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
@@ -115,7 +135,7 @@ class EntityAccessTest extends UnitTestCase {
 
     $op = 'view';
 
-    $account = $this->prophesize(AccountInterface::class);
+    $account = $this->prophet->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
     $account->isAuthenticated()->willReturn(TRUE);
@@ -141,7 +161,7 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::entityAccessCheck for Allowed Access.
    */
   public function testAllowedAccess(): void {
-    $node = $this->prophesize(NodeInterface::class);
+    $node = $this->prophet->prophesize(NodeInterface::class);
     $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
@@ -172,7 +192,7 @@ class EntityAccessTest extends UnitTestCase {
 
     $op = 'view';
 
-    $account = $this->prophesize(AccountInterface::class);
+    $account = $this->prophet->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(TRUE);
     $account->isAuthenticated()->willReturn(TRUE);
@@ -197,7 +217,7 @@ class EntityAccessTest extends UnitTestCase {
    * Tests the EntityAccessHelper::entityAccessCheck for Author Access Allowed.
    */
   public function testAuthorAccessAllowed(): void {
-    $node = $this->prophesize(NodeInterface::class);
+    $node = $this->prophet->prophesize(NodeInterface::class);
     $node->getEntityTypeId()->willReturn('node');
     $node->bundle()->willReturn('article');
 
@@ -226,7 +246,7 @@ class EntityAccessTest extends UnitTestCase {
 
     $op = 'view';
 
-    $account = $this->prophesize(AccountInterface::class);
+    $account = $this->prophet->prophesize(AccountInterface::class);
     $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
     $account->isAuthenticated()->willReturn(TRUE);
