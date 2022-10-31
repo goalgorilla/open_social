@@ -563,6 +563,6 @@ function social_album_social_core_compatible_content_forms_alter(&$compatible_co
 /**
  * Implements hook_social_group_cross_posting_alter().
  */
-function social_album_social_group_cross_posting_alter(array &$content_types) {
+function social_album_social_group_cross_posting_alter(array &$content_types): void {
   $content_types[] = 'album';
 }
