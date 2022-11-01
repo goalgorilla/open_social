@@ -41,6 +41,7 @@ Feature: Group management for CM+
     Examples:
       | role           | allow_request |
       # @todo The "request to join" functionality causes CM/SM no longer to be able to join closed groups directly, this is a bug.
+      # https://www.drupal.org/project/social/issues/3314736
       # | contentmanager | 1             |
       | contentmanager | 0             |
       # | sitemanager    | 1             |

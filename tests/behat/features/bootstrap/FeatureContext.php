@@ -52,6 +52,33 @@ class FeatureContext extends RawMinkContext {
     }
 
     /**
+     * Check that a user sees an access denied page.
+     *
+     * @Then I should be denied access
+     */
+    public function iShouldBeDeniedAccess() : void {
+      $this->assertSession()->statusCodeEquals(403);
+
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied");
+      $page->hasContent("You are not authorized to access this page.");
+    }
+
+    /**
+     * Check that an anonymous user is asked to login to view a page.
+     *
+     * @Then I should be asked to login
+     */
+    public function iShouldBeAskedToLogin() : void {
+      $this->assertSession()->statusCodeEquals(200);
+      $this->assertSession()->addressEquals("/user/login");
+
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied. You must log in to view this page.");
+
+    }
+
+    /**
      * @Then /^The iframe in the body description should have the src "([^"]*)"$/
      */
     public function iFrameInBodyDescriptionShouldHaveTheSrc($src) {

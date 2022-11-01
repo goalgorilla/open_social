@@ -14,22 +14,22 @@ use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Defines test steps around the usage of topics.
+ * Defines test steps around the usage of events.
  */
-class TopicContext extends RawMinkContext {
+class EventContext extends RawMinkContext {
 
   use EntityTrait;
   use NodeTrait;
   use GroupTrait;
 
-  private const CREATE_PAGE = "/node/add/topic";
+  private const CREATE_PAGE = "/node/add/event";
 
   /**
-   * Keep track of the topics that were created.
+   * Keep track of the events that were created.
    *
    * This allows us to clean up at the end of the scenario. The array contains
    * the ID if we already have it in the step or the title otherwise. We avoid
-   * looking up the topic because a user may be testing an error state.
+   * looking up the event because a user may be testing an error state.
    *
    * @var array
    * @phpstan-var array<int|string>
@@ -37,11 +37,11 @@ class TopicContext extends RawMinkContext {
   private array $created = [];
 
   /**
-   * Topic data that was changed in a previous step.
+   * Event data that was changed in a previous step.
    *
    * @phpstan-var array<string, mixed>
    */
-  private array $updatedTopicData = [];
+  private array $updatedEventData = [];
 
   /**
    * Provide help filling in the WYSIWYG editor.
@@ -72,98 +72,98 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * View the topic overview.
+   * View the event overview.
    *
-   * @Given I am on the topic overview
+   * @Given I am on the event overview
    */
-  public function viewTopicOverview() : void {
-    $this->visitPath("/all-topics");
+  public function viewEventOverview() : void {
+    $this->visitPath("/all-events");
   }
 
   /**
-   * View a specific topic.
+   * View a specific event.
    *
-   * @When I am viewing the topic :topic
-   * @When am viewing the topic :topic
+   * @When I am viewing the event :event
+   * @When am viewing the event :event
    */
-  public function viewingTopic(string $topic) : void {
-    $topic_id = $this->getTopicIdFromTitle($topic);
-    if ($topic_id === NULL) {
-      throw new \Exception("Topic '${topic}' does not exist.");
+  public function viewingEvent(string $event) : void {
+    $event_id = $this->getEventIdFromTitle($event);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${event}' does not exist.");
     }
-    $this->visitPath("/node/${topic_id}");
+    $this->visitPath("/node/${event_id}");
   }
 
   /**
-   * Create multiple topics at the start of a test.
+   * Create multiple events at the start of a test.
    *
-   * Creates topics provided in the form:
-   * | title    | body            | author   | field_content_visibility | field_topic_type | language  | status |
+   * Creates events provided in the form:
+   * | title    | body            | author   | field_content_visibility | field_event_type | language  | status |
    * | My title | My description  | username | public                   | News             | en        | 1         |
    * | ...      | ...             | ...      | ...                      | ...              | ...       |
    *
-   * @Given topics:
+   * @Given events:
    */
-  public function createTopics(TableNode $topicsTable) : void {
-    foreach ($topicsTable->getHash() as $topicHash) {
-      $topic = $this->topicCreate($topicHash);
-      $this->created[] = $topic->id();
+  public function createEvents(TableNode $eventsTable) : void {
+    foreach ($eventsTable->getHash() as $eventHash) {
+      $event = $this->eventCreate($eventHash);
+      $this->created[] = $event->id();
     }
   }
 
   /**
-   * Fill out the topic creation form and submit.
+   * Fill out the event creation form and submit.
    *
-   * Example: When I create a topic using its creation page:
+   * Example: When I create a event using its creation page:
    *              | Title       | Llama |
    *              | Description | Llama's are really misunderstood animals. |
-   * Example: And create a topic using its creation page:
+   * Example: And create a event using its creation page:
    *              | Title       | Cheese |
    *              | Description | There are all kinds of cheese <3 |
    *
-   * @When /^(?:|I )create a topic using its creation page:$/
+   * @When /^(?:|I )create a event using its creation page:$/
    */
-  public function whenICreateATopicUsingTheForm(TableNode $fields) : void {
+  public function whenICreateAEventUsingTheForm(TableNode $fields) : void {
     $this->visitPath(self::CREATE_PAGE);
-    $this->updatedTopicData = $this->fillOutTopicForm($fields);
-    $this->getSession()->getPage()->pressButton("Create topic");
-    $this->created[] = $this->updatedTopicData['title'];
+    $this->updatedEventData = $this->fillOutEventForm($fields);
+    $this->getSession()->getPage()->pressButton("Create event");
+    $this->created[] = $this->updatedEventData['title'];
   }
 
   /**
-   * View the topic creation page.
+   * View the event creation page.
    *
-   * @When /^(?:|I )view the topic creation page$/
+   * @When /^(?:|I )view the event creation page$/
    */
-  public function whenIViewTheTopicCreationPage() : void {
+  public function whenIViewTheEventCreationPage() : void {
     $this->visitPath(self::CREATE_PAGE);
     $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
-   * Fill out the topic edit form and submit.
+   * Fill out the event edit form and submit.
    *
-   * Example: When I edit topic "Some Topic" using its edit page:
+   * Example: When I edit event "Some Event" using its edit page:
    *              | Title       | New Title |
    *
-   * @When /^(?:|I )edit topic "(?P<title>(?:[^"]|\\")*)" using its edit page:$/
+   * @When /^(?:|I )edit event "(?P<title>(?:[^"]|\\")*)" using its edit page:$/
    */
-  public function whenIEditTopicUsingTheForm(string $title, TableNode $fields) : void {
-    $topic_id = $this->getTopicIdFromTitle($title);
-    if ($topic_id === NULL) {
-      throw new \Exception("Topic with title '${title}' does not exist. Did you create it in the test?");
+  public function whenIEditEventUsingTheForm(string $title, TableNode $fields) : void {
+    $event_id = $this->getEventIdFromTitle($title);
+    if ($event_id === NULL) {
+      throw new \Exception("Event with title '${title}' does not exist. Did you create it in the test?");
     }
-    $this->visitPath("/node/${topic_id}/edit");
+    $this->visitPath("/node/${event_id}/edit");
 
-    $this->minkContext->saveScreenshot("edit-topic.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
+    $this->minkContext->saveScreenshot("edit-event.png", "/var/www/html/profiles/contrib/social/tests/behat/logs");
 
-    $this->updatedTopicData = $this->fillOutTopicForm($fields);
+    $this->updatedEventData = $this->fillOutEventForm($fields);
     $this->getSession()->getPage()->pressButton("Save");
 
     // If the title wasn't updated then we want to add the original title to our
     // data so that it can be used in checking the update message.
-    if (!isset($this->updatedTopicData['title'])) {
-      $this->updatedTopicData['title'] = $title;
+    if (!isset($this->updatedEventData['title'])) {
+      $this->updatedEventData['title'] = $title;
     }
   }
 
@@ -177,7 +177,7 @@ class TopicContext extends RawMinkContext {
    *   The array of normalised data, the keys are lowercase field names,
    *   the values are as they would be stored in the database.
    */
-  protected function fillOutTopicForm(TableNode $fields) : array {
+  protected function fillOutEventForm(TableNode $fields) : array {
     $normalized_data = [];
     $page = $this->getSession()->getPage();
     foreach ($fields->getRowsHash() as $field => $value) {
@@ -248,19 +248,19 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Check that a topic that was just created is properly shown.
+   * Check that a event that was just created is properly shown.
    *
-   * @Then /^(?:|I )should see the topic I just (?P<action>(created|updated))$/
+   * @Then /^(?:|I )should see the event I just (?P<action>(created|updated))$/
    */
-  public function thenIShouldSeeTheTopicIJustUpdated(string $action) : void {
+  public function thenIShouldSeeTheEventIJustUpdated(string $action) : void {
     $regions = [
       'title' => "Hero block",
       'description' => 'Main content',
     ];
 
-    $this->minkContext->assertPageContainsText("Topic {$this->updatedTopicData['title']} has been $action.");
+    $this->minkContext->assertPageContainsText("Event {$this->updatedEventData['title']} has been $action.");
 
-    foreach ($this->updatedTopicData as $field => $value) {
+    foreach ($this->updatedEventData as $field => $value) {
       if (isset($regions[$field])) {
         $this->minkContext->assertRegionText($value, $regions[$field]);
       }
@@ -280,28 +280,28 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Assert that we landed on the topic creation form.
+   * Assert that we landed on the event creation form.
    *
-   * @Then I should be on the topic creation form
+   * @Then I should be on the event creation form
    */
-  public function shouldBeOnTopicCreationForm() : void {
+  public function shouldBeOnEventCreationForm() : void {
     $status_code = $this->getSession()->getStatusCode();
     if ($status_code !== 200) {
       throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
     }
 
-    $this->minkContext->assertPageContainsText("Create a topic");
+    $this->minkContext->assertPageContainsText("Create an event");
   }
 
   /**
-   * Clean up any topics created in this scenario.
+   * Clean up any events created in this scenario.
    *
    * @AfterScenario
    */
-  public function cleanUpTopics() : void {
+  public function cleanUpEvents() : void {
     foreach ($this->created as $idOrTitle) {
       // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
-      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getTopicIdFromTitle($idOrTitle);
+      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getEventIdFromTitle($idOrTitle);
       // Ignore already deleted nodes, they may have been deleted in the test.
       if ($nid !== NULL) {
         Node::load($nid)?->delete();
@@ -310,93 +310,93 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Create a topic.
+   * Create a event.
    *
    * @return \Drupal\node\Entity\Node
-   *   The topic values.
+   *   The event values.
    */
-  private function topicCreate($topic) : Node {
-    if (!isset($topic['author'])) {
+  private function eventCreate($event) : Node {
+    if (!isset($event['author'])) {
       $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $topic['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      $event['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
     }
     else {
-      $account = user_load_by_name($topic['author']);
+      $account = user_load_by_name($event['author']);
       if ($account->id() !== 0) {
-        $topic['uid'] = $account->id();
+        $event['uid'] = $account->id();
       }
       else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
       }
     }
-    unset($topic['author']);
+    unset($event['author']);
 
-    if (isset($topic['group'])) {
-      $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
+    if (isset($event['group'])) {
+      $group_id = $this->getNewestGroupIdFromTitle($event['group']);
       if ($group_id === NULL) {
-        throw new \Exception("Group '{$topic['group']}' does not exist.");
+        throw new \Exception("Group '{$event['group']}' does not exist.");
       }
-      unset($topic['group']);
+      unset($event['group']);
     }
 
-    $topic['type'] = 'topic';
+    $event['type'] = 'event';
 
-    if (isset($topic['field_topic_type'])) {
-      $type_id = $this->getTopicTypeIdFromLabel($topic['field_topic_type']);
+    if (isset($event['field_event_type'])) {
+      $type_id = $this->getEventTypeIdFromLabel($event['field_event_type']);
       if ($type_id === NULL) {
-        throw new \Exception("Topic Type with label '{$topic['field_topic_type']}' does not exist.");
+        throw new \Exception("Event Type with label '{$event['field_event_type']}' does not exist.");
       }
-      $topic['field_topic_type'] = $type_id;
+      $event['field_event_type'] = $type_id;
     }
 
-    $this->validateEntityFields("node", $topic);
-    $topic_object = Node::create($topic);
-    $violations = $topic_object->validate();
+    $this->validateEntityFields("node", $event);
+    $event_object = Node::create($event);
+    $violations = $event_object->validate();
     if ($violations->count() !== 0) {
-      throw new \Exception("The topic you tried to create is invalid: $violations");
+      throw new \Exception("The event you tried to create is invalid: $violations");
     }
-    $topic_object->save();
+    $event_object->save();
 
     // Adding to group usually happens in a form handler so for initialization
     // we must do that ourselves.
     if (isset($group_id)) {
       try {
-        Group::load($group_id)?->addContent($topic_object, "group_node:topic");
+        Group::load($group_id)?->addContent($event_object, "group_node:event");
       }
       catch (PluginNotFoundException $_) {
         throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
       }
     }
 
-    return $topic_object;
+    return $event_object;
   }
 
   /**
-   * Get the topic from a topic title.
+   * Get the event from a event title.
    *
-   * @param string $topic_title
-   *   The title of the topic.
+   * @param string $event_title
+   *   The title of the event.
    *
    * @return int|null
-   *   The integer ID of the topic or NULL if no topic could be found.
+   *   The integer ID of the event or NULL if no event could be found.
    */
-  private function getTopicIdFromTitle(string $topic_title) : ?int {
-    return $this->getNodeIdFromTitle("topic", $topic_title);
+  private function getEventIdFromTitle(string $event_title) : ?int {
+    return $this->getNodeIdFromTitle("event", $event_title);
   }
 
   /**
-   * Get the Term ID for a topic type from its label.
+   * Get the Term ID for a event type from its label.
    *
    * @param string $label
    *   The label.
    *
    * @return int|null
-   *   The topic type ID or NULL if it can't be found.
+   *   The event type ID or NULL if it can't be found.
    */
-  private function getTopicTypeIdFromLabel(string $label) : ?int {
+  private function getEventTypeIdFromLabel(string $label) : ?int {
     $query = \Drupal::entityQuery('taxonomy_term')
       ->accessCheck(FALSE)
-      ->condition('vid', 'topic_types')
+      ->condition('vid', 'event_types')
       ->condition('name', $label);
 
     $term_ids = $query->execute();

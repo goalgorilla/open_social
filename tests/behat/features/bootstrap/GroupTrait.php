@@ -30,7 +30,7 @@ trait GroupTrait {
     // anything in case of duplicates. Tests should prefer not having duplicate
     // titles, but testing that duplicate titles are allowed (and e.g. how path
     // aliases handles that) is a legitimate use case.
-    return end($group_ids) ?: NULL;
+    return ((int) end($group_ids)) ?: NULL;
   }
 
 }

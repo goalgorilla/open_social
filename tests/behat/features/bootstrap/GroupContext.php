@@ -8,8 +8,10 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -27,6 +29,21 @@ class GroupContext extends RawMinkContext {
   private array $groups = [];
 
   /**
+   * Keep track of the last created group so that it can be validated.
+   */
+  private ?array $lastCreatedValues = NULL;
+
+  /**
+   * The Drupal mink context is useful for validation of content.
+   */
+  private MinkContext $minkContext;
+
+  /**
+   * Provide help filling in the WYSIWYG editor.
+   */
+  private CKEditorContext $cKEditorContext;
+
+  /**
    * The Drupal context which gives us access to user management.
    */
   private DrupalContext $drupalContext;
@@ -39,8 +56,11 @@ class GroupContext extends RawMinkContext {
   public function gatherContexts(BeforeScenarioScope $scope) {
     $environment = $scope->getEnvironment();
 
+    $this->cKEditorContext = $environment->getContext(CKEditorContext::class);
+    $this->minkContext = $environment->getContext(SocialMinkContext::class);
     $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
   }
+
   /**
    * Create multiple groups at the start of a test.
    *
@@ -54,7 +74,172 @@ class GroupContext extends RawMinkContext {
   public function createGroups(TableNode $groupsTable) {
     foreach ($groupsTable->getHash() as $groupHash) {
       $group = $this->groupCreate($groupHash);
-      $this->groups[$group->label()] = $group;
+      $this->groups[$group->id()] = $group;
+    }
+  }
+
+  /**
+   * Add members to a group.
+   *
+   * Adds users to a specific group
+   * | group    | user      |
+   * | My group | Jane Doe  |
+   * | ...      | ...       |
+   *
+   * @Given group members:
+   */
+  public function createGroupMembers(TableNode $groupMembersTable) {
+    foreach ($groupMembersTable->getHash() as $groupMemberHash) {
+      $group_id = $this->getNewestGroupIdFromTitle($groupMemberHash['group']);
+      if ($group_id === NULL) {
+        throw new \InvalidArgumentException("Group '{$groupMemberHash['group']}' not found.");
+      }
+      $group = Group::load($group_id);
+      assert($group instanceof GroupInterface);
+
+      $user = User::load($this->drupalContext->getUserManager()->getUser($groupMemberHash['user'])->uid);
+      assert($user instanceof UserInterface);
+
+      $group->addMember($user);
+    }
+  }
+
+  /**
+   * Fill out the group creation form and submit.
+   *
+   * The order of the fields may matter since some fields depend on other
+   * fields, e.g. content visibility or join methods depend on group visibility
+   * and address sub fields depend on country.
+   *
+   * Example: When I create a flexible group using its creation page:
+   *              | Title       | My Book Page  |
+   *              | Description | It's the best |
+   *
+   * @When I create a :group_type group using its creation page:
+   * @When create a :group_type group using its creation page:
+   */
+  public function whenICreateAGroupUsingTheForm(string $group_type, TableNode $fields): void {
+    $group_types = [
+      'public' => 'public_group',
+      'open' => 'open_group',
+      'closed' => 'closed_group',
+      'flexible' => 'flexible_group',
+    ];
+    $group_type_selector = $group_types[$group_type] ?? NULL;
+    if ($group_type_selector === NULL) {
+      $type_names = "'" . implode("', '", array_keys($group_types)) . "'";
+      throw new \Exception("Group type must be one of $type_names but got '$group_type'");
+    }
+
+    $this->visitPath("/group/add");
+    if ($this->getSession()->getStatusCode() !== 200) {
+      throw new \Exception("Could not go to `/group/add` page.");
+    }
+
+    $page = $this->getSession()->getPage();
+
+    $page->selectFieldOption("group_type", $group_type_selector);
+    $page->pressButton("Continue");
+
+    $group = ['type' => $group_type];
+    foreach ($fields->getRowsHash() as $field => $value) {
+      $key = strtolower($field);
+      $group[$key] = $value;
+
+      // We must be more specific for the title field since there could be more
+      // than one on the page (e.g. the menu title).
+      if ($key === "title") {
+        $fieldset = $page
+          ->find("named", ["fieldset", "Basic information"]);
+
+        if ($fieldset === NULL) {
+          throw new ElementNotFoundException($this->getSession()->getDriver(), "fieldset", "named", "Basic Information");
+        }
+
+        $fieldset->fillField($field, $value);
+      }
+      // For the description we're using CKEditor so we must fill in the editor
+      // rather than the hidden form field.
+      // @todo Not being able to click the label shows an a11y issue.
+      elseif ($key === "description") {
+        $this->cKEditorContext->iFillInTheWysiwygEditor($field, $value);
+      }
+      elseif ($key === "group visibility" && $group_type === "flexible") {
+        $page->selectFieldOption("field_flexible_group_visibility", $value);
+      }
+      elseif ($key === "join method" && $group_type === "flexible") {
+        $page->selectFieldOption("field_group_allowed_join_method", $value);
+      }
+      elseif ($key === "country") {
+        $page->selectFieldOption($field, $value);
+      }
+      else {
+        $page->fillField($field, $value);
+      }
+
+      // Wait until the address form has changed due to country selection before
+      // continuing. We assume the "City" is present for any country.
+      if ($key === "country") {
+        $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+        if (!$this->getSession()->getDriver()->wait(1000 * $ajax_timeout, "document.querySelectorAll('[name=\"field_group_address[0][address][locality]\"').length > 0")) {
+          throw new \Exception("Address field did not update within $ajax_timeout seconds after country selection.");
+        }
+      }
+    }
+
+    // Submit the page.
+    $page->pressButton("Save");
+
+    // Keep track of the group we just created so that we can delete it after
+    // the test but also so that we can validate what things are in there.
+    $group_id = $this->getNewestGroupIdFromTitle($group['title']);
+    if ($group_id === NULL) {
+      throw new \Exception("Could not find created group by title, perhaps creation failed or there are multiple groups with the same title.");
+    }
+
+    $this->lastCreatedValues = $group;
+
+    $created_group = Group::load($group_id);
+    assert($created_group instanceof Group);
+    $this->groups[$group_id] = $created_group;
+  }
+
+  /**
+   * Check that a book that was just created is properly shown.
+   *
+   * @Then I should see the group I just created
+   * @Then should see the group I just created
+   */
+  public function thenIShouldSeeTheGroupIJustCreated() : void {
+    $regions = [
+      'title' => "Hero block",
+      'description' => 'Main content',
+    ];
+
+    $this->minkContext->assertPageContainsText("Group {$this->lastCreatedValues['title']} has been created.");
+
+    foreach ($this->lastCreatedValues as $field => $value) {
+      if (isset($regions[$field])) {
+        $this->minkContext->assertRegionText($value, $regions[$field]);
+      }
+      elseif ($field === "type") {
+        $group_type_label = [
+          'public' => 'Public group',
+          'open' => 'Open group',
+          'closed' => 'Closed group',
+          'flexible' => 'Flexible group',
+        ][$value];
+        $this->minkContext->assertRegionText($group_type_label, "Hero block");
+      }
+      elseif ($field === "group visibility") {
+        @trigger_error("The 'group visibility' field is not accessibly displayed and can not be tested.", E_USER_WARNING);
+      }
+      elseif ($field === "join method") {
+        @trigger_error("The 'join method' field is not accessibly displayed and can not be tested.", E_USER_WARNING);
+      }
+      else {
+        $this->minkContext->assertPageContainsText($value);
+      }
     }
   }
 
@@ -124,16 +309,41 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
+   * Open the group overview.
+   *
+   * @When I am viewing the groups overview
+   * @When am viewing the groups overview
+   */
+  public function viewGroupOverview() : void {
+    $this->visitPath("/all-groups");
+  }
+
+  /**
    * Open the group on its default page.
    *
-   * @When /^(?:|I )am viewing the group "(?P<group>[^"]+)"$/
+   * @When I am viewing the group :group
+   * @When am viewing the group :group
    */
-  public function viewinGroup(string $group) : void {
+  public function viewingGroup(string $group) : void {
     $group_id = $this->getNewestGroupIdFromTitle($group);
     if ($group_id === NULL) {
       throw new \Exception("Group '${group}' does not exist.");
     }
     $this->visitPath("/group/${group_id}");
+  }
+
+  /**
+   * Open the group on a specific page.
+   *
+   * @When I am viewing the :group_page page of group :group
+   * @When am viewing the :group_page page of group :group
+   */
+  public function viewPageInGroup(string $group_page, string $group) : void {
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+    $this->visitPath("/group/${group_id}/$group_page");
   }
 
   /**
@@ -155,6 +365,52 @@ class GroupContext extends RawMinkContext {
     $selected = $field->getValue();
     if ($selected !== (string) $group_id) {
       throw new \Exception("Expected group select to be set to '$group_id' but instead found '$selected'.");
+    }
+  }
+
+  /**
+   * Check that a specific group is selectable in the group selector.
+   *
+   * @Then I should be able to select the group :group
+   * @Then should be able to select the group :group
+   */
+  public function shouldBeAbleToSelectGroup(string $group) : void {
+    $field = $this->getSession()->getPage()->findField('Group');
+    if ($field === NULL) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), "select", NULL, "Group");
+    }
+
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+
+    $option = $field->find('named', ['option', $group_id]);
+    if ($option === NULL) {
+      throw new \Exception("Expected '$group' to be an option for the group selector but it was not.");
+    }
+  }
+
+  /**
+   * Check that a specific group is not selectable in the group selector.
+   *
+   * @Then I should not be able to select the group :group
+   * @Then should not be able to select the group :group
+   */
+  public function shouldNotBeAbleToSelectGroup(string $group) : void {
+    $field = $this->getSession()->getPage()->findField('Group');
+    if ($field === NULL) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), "select", NULL, "Group");
+    }
+
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+
+    $option = $field->find('named', ['option', $group_id]);
+    if ($option !== NULL) {
+      throw new \Exception("Expected '$group' not to be an option for the group selector but it was.");
     }
   }
 
@@ -238,6 +494,18 @@ class GroupContext extends RawMinkContext {
         throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
       }
     }
+  }
+
+  /**
+   * View the form for a specific group type.
+   *
+   * @param string $group_type
+   *   The group type (i.e. open, closed, secret, or flexible).
+   *
+   * @When I visit the :group_type group create form
+   */
+  public function iVisitTheGroupCreateForm(string $group_type) : void {
+    $this->visitPath("/group/add/{$group_type}_group");
   }
 
   /**
