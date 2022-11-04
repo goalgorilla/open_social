@@ -199,7 +199,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $or->condition($node_access);
 
     // Posts: retrieve all the posts in groups the user is a member of.
-    if ($account->isAuthenticated() && count($groups_unique) > 0) {
+    if ($account->isAuthenticated()) {
       $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
@@ -238,12 +238,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
       // For comments in groups, the user must be a member of at least 1 group.
-      if (count($groups_unique) > 0) {
-        $comments_on_content_in_groups = new Condition('AND');
-        $comments_on_content_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment');
-        $comments_on_content_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
-        $or->condition($comments_on_content_in_groups);
-      }
+      $comments_on_content_in_groups = new Condition('AND');
+      $comments_on_content_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment');
+      $comments_on_content_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
+      $or->condition($comments_on_content_in_groups);
 
       $comments_on_content = new Condition('AND');
       $comments_on_content->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment');
@@ -255,7 +253,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     // to check what groups user has access.
     $membership_access = new Condition('AND');
     $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
-    $membership_access->condition('group_content.gid', $groups_unique ?: [0], 'IN');
+    $membership_access->condition('group_content.gid', $groups_unique, 'IN');
     $or->condition($membership_access);
 
     // Lets add all the or conditions to the Views query.
