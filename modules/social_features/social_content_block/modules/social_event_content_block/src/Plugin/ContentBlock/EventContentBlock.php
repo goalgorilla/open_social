@@ -91,76 +91,75 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
         case 'field_event_date':
           $query->innerJoin('node__field_event_date', 'nfed', "nfed.entity_id = base_table.nid AND nfed.bundle = 'event'");
           $range = ['start' => NULL, 'end' => NULL];
-          $timezone = new \DateTimeZone(date_default_timezone_get());
 
           $start_operator = '>=';
           $end_operator = '<';
           // Apply a range based on a value.
           switch ($field_value[0]['value']) {
             case 'future':
-              $range['start'] = new \DateTime('now', $timezone);
+              $range['start'] = new \DateTime();
               break;
 
             case 'past':
-              $range['end'] = new \DateTime('now', $timezone);
+              $range['end'] = new \DateTime();
               break;
 
             case 'last_month':
-              $range['start'] = new \DateTime('first day of last month 00:00', $timezone);
-              $range['end'] = new \DateTime('last day of last month 23:59', $timezone);
+              $range['start'] = new \DateTime('first day of last month 00:00');
+              $range['end'] = new \DateTime('last day of last month 23:59');
               break;
 
             case 'current_month':
-              $range['start'] = new \DateTime('first day of this month 00:00', $timezone);
-              $range['end'] = new \DateTime('last day of this month 23:59', $timezone);
+              $range['start'] = new \DateTime('first day of this month 00:00');
+              $range['end'] = new \DateTime('last day of this month 23:59');
               break;
 
             case 'next_month':
-              $range['start'] = new \DateTime('first day of next month 00:00', $timezone);
-              $range['end'] = new \DateTime('last day of next month 23:59', $timezone);
+              $range['start'] = new \DateTime('first day of next month 00:00');
+              $range['end'] = new \DateTime('last day of next month 23:59');
               break;
 
             case 'ongoing':
-              $range['start'] = new \DateTime('-30 days', $timezone);
-              $range['end'] = new \DateTime('now', $timezone);
+              $range['start'] = new \DateTime('-30 days');
+              $range['end'] = new \DateTime();
               $end_operator = '>';
-              $query->condition('nfed.field_event_date_value', (new \DateTime('now', $timezone))->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
+              $query->condition('nfed.field_event_date_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
               break;
 
             case 'future_ongoing':
-              $range['start'] = new \DateTime('-30 days', $timezone);
+              $range['start'] = new \DateTime('-30 days');
               $query->innerJoin('node__field_event_date_end', 'nfede', "nfede.entity_id = base_table.nid AND nfede.bundle = 'event'");
-              $query->condition('nfede.field_event_date_end_value', (new \DateTime('now', $timezone))->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>');
+              $query->condition('nfede.field_event_date_end_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>');
               break;
 
             case 'last_30':
-              $range['start'] = new \DateTime('-30 days', $timezone);
-              $range['end'] = new \DateTime('now', $timezone);
+              $range['start'] = new \DateTime('-30 days');
+              $range['end'] = new \DateTime();
               break;
 
             case 'next_30':
-              $range['start'] = new \DateTime('now', $timezone);
-              $range['end'] = new \DateTime('+30 days', $timezone);
+              $range['start'] = new \DateTime();
+              $range['end'] = new \DateTime('+30 days');
               break;
 
             case 'last_14':
-              $range['start'] = new \DateTime('-14 days', $timezone);
-              $range['end'] = new \DateTime('now', $timezone);
+              $range['start'] = new \DateTime('-14 days');
+              $range['end'] = new \DateTime();
               break;
 
             case 'next_14':
-              $range['start'] = new \DateTime('now', $timezone);
-              $range['end'] = new \DateTime('+14 days', $timezone);
+              $range['start'] = new \DateTime();
+              $range['end'] = new \DateTime('+14 days');
               break;
 
             case 'last_7':
-              $range['start'] = new \DateTime('-7 days', $timezone);
-              $range['end'] = new \DateTime('now', $timezone);
+              $range['start'] = new \DateTime('-7 days');
+              $range['end'] = new \DateTime();
               break;
 
             case 'next_7':
-              $range['start'] = new \DateTime('now', $timezone);
-              $range['end'] = new \DateTime('+7 days', $timezone);
+              $range['start'] = new \DateTime();
+              $range['end'] = new \DateTime('+7 days');
               break;
 
             default:
@@ -169,11 +168,11 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
           }
           // Only apply range constraints if any were actually set.
           if (isset($range['start'])) {
-            $query->condition('nfed.field_event_date_value', $range['start'] instanceof \DateTime ? $range['start']->setTimezone(new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['start'], $start_operator);
+            $query->condition('nfed.field_event_date_value', $range['start'] instanceof \DateTime ? $range['start']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['start'], $start_operator);
           }
           if (isset($range['end'])) {
             $query->innerJoin('node__field_event_date_end', 'nfede', "nfede.entity_id = base_table.nid AND nfede.bundle = 'event'");
-            $query->condition('nfede.field_event_date_end_value', $range['end'] instanceof \DateTime ? $range['end']->setTimezone(new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE))->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['end'], $end_operator);
+            $query->condition('nfede.field_event_date_end_value', $range['end'] instanceof \DateTime ? $range['end']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['end'], $end_operator);
           }
           break;
       }
