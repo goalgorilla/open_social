@@ -119,6 +119,18 @@ class LogContext implements Context {
       // Ignore page not found warnings since they may be part of tests and
       // should be asserted.
       || ($row->type === 'page not found' && (int) $row->severity === RfcLogLevel::WARNING)
+      // Ignore an existing bug.
+      // @todo https://www.drupal.org/project/social/issues/3319407
+      || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, 'Undefined array key "arguments"') && str_contains($row->variables, "ViewsBulkOperationsBulkForm"))
+      // Ignore an existing bug.
+      // @todo https://www.drupal.org/project/social/issues/3319408
+      || ($row->type === 'search_api' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, 'Social Groups') && str_contains($row->variables, "rendered_item"))
+      // Ignore an existing bug.
+      // @todo https://www.drupal.org/project/social/issues/3319409
+      || ($row->type === 'search_api_db' && (int) $row->severity === RfcLogLevel::WARNING && str_contains($row->variables, "field_group_allowed_join_method") && str_contains($row->message, "Unknown field @field: please check (and re-save) the index's fields settings."))
+      // Ignore an existing bug.
+      // @todo https://www.drupal.org/project/social/issues/3319526
+      || ($row->type === 'activity_send_email_worker' && (int) $row->severity === RfcLogLevel::NOTICE && str_contains($row->message, "The activity was already deleted. We marked it as successful."))
       ;
   }
 
