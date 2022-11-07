@@ -1,4 +1,8 @@
 .region--complementary {
+  z-index: 5;
+}
+
+.region--hero {
   z-index: 2;
 }
 
@@ -92,7 +96,7 @@
 
   .popup-info {
     position: absolute;
-    width: 365px;
+    width: 384px;
     top: 0;
     left: 50%;
     text-align: left;
@@ -117,28 +121,6 @@
       pointer-events: auto;
     }
 
-    &:before,
-    &:after {
-      right: 100%;
-      border: solid transparent;
-      content: " ";
-      height: 0;
-      width: 0;
-      position: absolute;
-      left: 50%;
-      pointer-events: none;
-      transform: translateX(-50%);
-
-      @media(max-width: 899px) {
-        left: 10px;
-        transform: none;
-      }
-
-      @media(max-width: 599px) {
-        display: none;
-      }
-    }
-
     &:before {
       border-top-color: rgba(0, 0, 0, .12);
       border-width: 11px;
@@ -156,13 +138,55 @@
     }
 
     .actions {
-      > * + .btn {
-        flex: 1;
+      .flag,
+      .btn {
+        flex: auto;
+        max-width: none;
       }
 
       .dropdown-menu {
         .btn {
           border: none;
+        }
+      }
+    }
+
+    .card {
+      border-radius: 4px;
+      box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .teaser {
+      .teaser__body {
+        flex: 0 0 100%;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .teaser__title {
+        margin-bottom: .25rem;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 27px;
+        letter-spacing: -.02em;
+
+        a {
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .teaser__related-content {
+        display: inline-block;
+        font-size: 14px;
+        line-height: 18px;
+        margin-right: 14px;
+
+        b {
+          display: inline-block;
+          margin-left: 0.125rem;
+          color: #4d4d4d;
         }
       }
     }
@@ -211,16 +235,13 @@
     align-items: center;
     justify-content: space-between;
     margin-top: .75rem;
-
     > * + * {
-      margin-left: 16px;
-
-      @media(max-width: 599px) {
-        margin-left: 10px;
-      }
+      margin-left: 10px;
     }
 
     .btn {
+      border-radius: 4px;
+
       @media(max-width: 599px) {
         font-size: 12px;
       }

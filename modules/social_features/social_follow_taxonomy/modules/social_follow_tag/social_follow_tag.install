@@ -335,3 +335,93 @@ function social_follow_tag_update_11301(): void {
     $config->save();
   }
 }
+
+/**
+ * Creates a new block content type.
+ */
+function social_follow_tag_update_11401(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_follow_tag') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  // Create new block content type.
+  $block_content_type_storage = $entity_type_manager->getStorage('block_content_type');
+  $data = $source->read('block_content.type.most_followed_tags_11401');
+  if (is_array($data)) {
+    if (is_null($block_content_type = $block_content_type_storage->load($data['id']))) {
+      $block_content_type_storage->create($data)->save();
+    }
+    else {
+      /** @var \Drupal\block_content\BlockContentTypeInterface $block_content_type */
+      $block_content_type->set('dependencies', $data['dependencies'])->save();
+    }
+  }
+
+  // Create field storages.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.block_content.field_terms_11401');
+  if (is_array($data)) {
+    /** @var \Drupal\Core\Field\FieldItemInterface $class */
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config = $field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
+    else {
+      /** @var \Drupal\field\FieldStorageConfigInterface $field_storage_config */
+      $field_storage_config->set('dependencies', $data['dependencies'])->save();
+    }
+  }
+
+  // Create field settings.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $data = $source->read('field.field.block_content.most_followed_tags.field_terms_11401');
+  if (is_array($data)) {
+    if (is_null($field_config = $field_config_storage->load($data['id']))) {
+      $field_config_storage->create($data)->save();
+    }
+    else {
+      /** @var \Drupal\field\FieldConfigInterface $field_config */
+      $field_config->set('dependencies', $data['dependencies'])->save();
+    }
+  }
+
+  // Create new view mode for terms.
+  $entity_view_mode_storage = $entity_type_manager->getStorage('entity_view_mode');
+  $data = $source->read('core.entity_view_mode.taxonomy_term.followers_count_11401');
+  if (is_array($data)) {
+    if (is_null($entity_view_mode = $entity_view_mode_storage->load($data['id']))) {
+      $entity_view_mode_storage->create($data)->save();
+    }
+    else {
+      /** @var \Drupal\Core\Entity\EntityViewModeInterface $entity_view_mode */
+      $entity_view_mode->set('dependencies', $data['dependencies'])->save();
+    }
+  }
+
+  // Create/update a form/view display for the 'Most followed tags' blocks.
+  $displays = [
+    'entity_form_display',
+    'entity_view_display',
+  ];
+
+  foreach ($displays as $display) {
+    $display_storage = $entity_type_manager->getStorage($display);
+    $data = $source->read("core.$display.block_content.most_followed_tags.default_11401");
+    if (is_array($data)) {
+      if (is_null($view_display = $display_storage->load($data['id']))) {
+        $display_storage->create($data)->save();
+      }
+      else {
+        /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $view_display */
+        $view_display->setComponent('field_terms', $data['content']['field_terms']);
+        $view_display->set('dependencies', $data['dependencies'])->save();
+      }
+    }
+  }
+}

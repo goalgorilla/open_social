@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.most_followed_tags
+    - field.field.block_content.most_followed_tags.field_terms
+  module:
+    - select2
+  enforced:
+    module:
+      - social_follow_tag
+id: block_content.most_followed_tags.default
+targetEntityType: block_content
+bundle: most_followed_tags
+mode: default
+content:
+  field_terms:
+    type: select2_entity_reference
+    weight: 1
+    region: content
+    settings:
+      width: 100%
+      match_operator: CONTAINS
+      match_limit: 10
+      autocomplete: false
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

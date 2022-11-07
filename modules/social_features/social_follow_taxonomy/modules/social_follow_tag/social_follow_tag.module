@@ -5,8 +5,11 @@
  * Contains social_follow_tag.module.
  */
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter;
 use Drupal\taxonomy\TermInterface;
@@ -32,11 +35,19 @@ function social_follow_tag_theme() {
     'social_tagging_popup' => [
       'variables' => [
         'url' => NULL,
+        'action_label' => NULL,
+        'action_url' => NULL,
         'name' => NULL,
         'flag' => NULL,
         'followers_count' => NULL,
         'related_entity_count' => NULL,
       ],
+    ],
+    'block__most_followed_tags' => [
+      'base hook' => 'block',
+    ],
+    'taxonomy_term__followers_count' => [
+      'base hook' => 'taxonomy_term',
     ],
   ];
 
@@ -198,6 +209,50 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_tag_preprocess_block__most_followed_tags(array &$variables): void {
+  $variables['card'] = TRUE;
+  $variables['#attached']['library'][] = 'social_follow_tag/most_followed_tags_block';
+  $variables['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_tag_preprocess_taxonomy_term__followers_count(array &$variables): void {
+  /** @var \Drupal\taxonomy\TermInterface $taxonomy_term */
+  $taxonomy_term = $variables['term'];
+  $term_id = $taxonomy_term->id();
+
+  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+  if ($tag_service->allowSplit()) {
+    $tag_info = $tag_service->buildHierarchy([['target_id' => $term_id]], 'node');
+    $url = reset($tag_info)['tags'][$term_id]['url'];
+  }
+  else {
+    $route = 'view.search_content.page_no_value';
+    $url = Url::fromRoute($route, [
+      'tag[]' => $taxonomy_term->id(),
+    ])->toString();
+  }
+
+  $variables['popup'] = [
+    '#create_placeholder' => TRUE,
+    '#lazy_builder' => [
+      'social_follow_tag.lazy_builder:popupLazyBuild',
+      [
+        $url,
+        $term_id,
+        'social_tagging',
+        'node',
+      ],
+    ],
+  ];
+}
+
+/**
  * Create a notification when tags followed by a user are added to the node.
  *
  * Implements hook_entity_update().
@@ -272,6 +327,69 @@ function social_follow_tag_form_views_exposed_form_alter(array &$form, FormState
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function social_follow_tag_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  if (in_array($form_id, [
+    'block_content_most_followed_tags_form',
+    'block_content_most_followed_tags_edit_form',
+  ])) {
+    $form['#process'][] = '_social_follow_tag_get_process_form';
+  }
+
+  if (in_array($form_id, [
+    'layout_builder_add_block',
+    'layout_builder_update_block',
+  ])) {
+    $block_form = &$form['settings']['block_form'];
+  }
+
+  if (
+    !isset($block_form) ||
+    !($block_form['#block'] instanceof BlockContentInterface) ||
+    $block_form['#block']->bundle() !== 'most_followed_tags'
+  ) {
+    return;
+  }
+
+  $block_form['#process'][] = '_social_follow_tag_get_process_form';
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_follow_tag_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+
+  if ($field_definition->getName() == 'field_term_page_url') {
+    $element['title']['#title'] = t('URL label');
+    // The amount of characters is limited to 18 characters (1 line of text)
+    // in the button.
+    $element['title']['#maxlength'] = 18;
+    // The description to the URL field for taxonomy term is divided by the
+    // URL label (Link text) field, so we want to fix it.
+    $element['uri']['#description'] .= '<p>' . $element['#description'] . '</p>';
+    unset($element['#description']);
+
+    // By default, the URL field is required when the URL title field is
+    // specified, but in our case, we have a default value for URL (search
+    // page filtered by tag), so it can be empty in our case and just the URL
+    // title can be replaced.
+    $element['#element_validate'][] = 'validate_title_no_link_content_tags';
+  }
+}
+
+/**
+ * Validate function that overrides the tagging field with new values.
+ */
+function validate_title_no_link_content_tags($element, FormStateInterface $form_state) {
+  if ($element['uri']['#value'] === '' && $element['title']['#value'] !== '') {
+    $form_state->clearErrors();
+    $form_state->setValue(['field_term_page_url', '0', 'uri'], '<nolink>');
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete() for "flagging".
  */
 function social_follow_tag_flagging_delete(EntityInterface $entity): void {
@@ -292,5 +410,198 @@ function social_follow_tag_flagging_create(EntityInterface $entity): void {
     // for the filter "FollowTaxonomyViewsFilter".
     /* @see \Drupal\social_follow_taxonomy\Plugin\views\filter\FollowTaxonomyViewsFilter::getCacheTags */
     Cache::invalidateTags(['config:views.view.user_admin_people']);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_follow_tag_taxonomy_term_view_alter(array &$build, TermInterface $term, EntityViewDisplayInterface $display): void {
+  /** @var \Drupal\flag\FlagCountManagerInterface $flag_count */
+  $flag_count = \Drupal::service('flag.count');
+  $follower_count = !empty($result = $flag_count->getEntityFlagCounts($term)) ?
+    (float) $result['follow_term'] : 0;
+  $build['follower_count'] = [
+    '#type' => 'markup',
+    '#markup' => number_format($follower_count),
+  ];
+
+  if ($build['#view_mode'] === 'followers_count') {
+    $build['#cache']['tags'][] = "flagging_list:follow_term";
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_follow_tag_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables): void {
+  $suggestions[] = $variables['elements']['#theme'] . '__' . $variables['elements']['#view_mode'];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_build_defaults_alter().
+ */
+function social_follow_tag_block_content_build_defaults_alter(array &$build, BlockContentInterface $block_content): void {
+  if (
+    $block_content->bundle() !== 'most_followed_tags' ||
+    !$block_content->hasField('field_terms') ||
+    $block_content->get('field_terms')->isEmpty()
+  ) {
+    return;
+  }
+
+  $follower_count = [];
+
+  /** @var \Drupal\flag\FlagCountManagerInterface $flag_count */
+  $flag_count = \Drupal::service('flag.count');
+
+  /** @var \Drupal\block_content\BlockContentInterface $block */
+  $block = &$build['#block_content'];
+
+  /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $terms_field */
+  $terms_field = $block->get('field_terms');
+
+  /** @var \Drupal\taxonomy\TermInterface $term */
+  foreach ($terms_field->referencedEntities() as $term) {
+    $follower_count[$term->id()] = !empty($result = $flag_count->getEntityFlagCounts($term)) ?
+      (int) $result['follow_term'] : 0;
+  }
+
+  arsort($follower_count);
+
+  $block->set('field_terms', array_map(static function ($tag_id) {
+    return ['target_id' => $tag_id];
+  }, array_keys($follower_count)));
+}
+
+/**
+ * Process callback for block configuration form.
+ *
+ * @param array $form
+ *   Form element.
+ *
+ * @return array
+ *   Processed element.
+ */
+function _social_follow_tag_get_process_form(array $form, FormStateInterface $form_state): array {
+  // Vocabularies for tag filter.
+  $bundles = [
+    'social_tagging',
+  ];
+
+  \Drupal::moduleHandler()
+    ->alter('social_follow_tag_vocabulary_list', $bundles);
+
+  // Do not add vocabulary selector if less than 2.
+  if (count($bundles) < 2) {
+    return $form;
+  }
+
+  // Get all available vocabularies.
+  $vocabularies = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_vocabulary')
+    ->loadByProperties([
+      'vid' => $bundles,
+    ]);
+
+  // Generate vocabulary options.
+  $vocabulary_options = array_map(static fn($value): ?string => $value->label(), $vocabularies);
+
+  // Get default vocabulary.
+  $default_vocabulary = array_keys($vocabulary_options)[0];
+  $user_input = $form_state->getUserInput();
+  if (isset($user_input['vocabulary'])) {
+    $default_vocabulary = $user_input['vocabulary'];
+  }
+  elseif (isset($user_input['settings']['block_form']['vocabulary'])) {
+    $default_vocabulary = $user_input['settings']['block_form']['vocabulary'];
+  }
+  elseif (!empty($form['field_terms']['widget']['#default_value'])) {
+    $term_id = reset($form['field_terms']['widget']['#default_value']);
+
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    $term = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->load($term_id);
+    $default_vocabulary = $term->bundle();
+  }
+
+  // Get terms options.
+  $term_options = _social_follow_tag_get_terms_options($default_vocabulary);
+  $form['vocabulary'] = [
+    '#type' => 'select',
+    '#title' => t('Vocabulary'),
+    '#options' => $vocabulary_options,
+    '#default_value' => $default_vocabulary,
+    '#value' => $default_vocabulary,
+    '#weight' => $form['field_terms']['#weight'] - 0.5,
+    '#limit_validation_errors' => [],
+    '#ajax' => [
+      'event' => 'change',
+      'callback' => '_social_follow_tag_update_term_list',
+      'wrapper' => 'field-terms-wrapper',
+    ],
+    '#required' => TRUE,
+  ];
+
+  $form['field_terms']['widget']['#options'] = $term_options;
+  $form['field_terms']['#prefix'] = '<div id="field-terms-wrapper">';
+  $form['field_terms']['#suffix'] = '</div>';
+
+  // Update default terms oon switching vocabulary to avoid errors.
+  $default_terms = [];
+  if (isset($user_input['field_terms'])) {
+    $default_terms = $user_input['field_terms'];
+  }
+  elseif (isset($user_input['settings']['block_form']['field_terms'])) {
+    $default_terms = $user_input['settings']['block_form']['field_terms'];
+  }
+
+  if (
+    !empty($form['field_terms']['widget']['#default_value']) &&
+    empty(array_intersect($form['field_terms']['widget']['#default_value'], array_keys($term_options)))
+  ) {
+    $form['field_terms']['widget']['#default_value'] = $default_terms;
+    $form['field_terms']['widget']['#value'] = $default_terms;
+  }
+
+  return $form;
+}
+
+/**
+ * Returns the list of terms as select options based on selected vocabulary.
+ *
+ * @param string $vocabulary
+ *   Vocabulary ID.
+ *
+ * @return array
+ *   The list of term options.
+ */
+function _social_follow_tag_get_terms_options(string $vocabulary): array {
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties([
+      'vid' => $vocabulary,
+      'status' => 1,
+    ]);
+  if (!empty($terms)) {
+    return array_map(static fn($value): ?string => $value->label(), $terms);
+  }
+
+  return [];
+}
+
+/**
+ * Ajax callback on switching vocabulary.
+ *
+ * @param array $form
+ *   Form element.
+ */
+function _social_follow_tag_update_term_list(array &$form): array {
+  if (isset($form['settings'])) {
+    return $form['settings']['block_form']['field_terms'];
+  }
+  else {
+    return $form['field_terms'];
   }
 }

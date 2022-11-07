@@ -1,4 +1,8 @@
 .region--complementary {
+  z-index: 5;
+}
+
+.region--hero {
   z-index: 2;
 }
 
@@ -72,7 +76,7 @@
 }
 .social_follow_tax .popup-info {
   position: absolute;
-  width: 365px;
+  width: 384px;
   top: 0;
   left: 50%;
   text-align: left;
@@ -97,28 +101,6 @@
   opacity: 1;
   pointer-events: auto;
 }
-.social_follow_tax .popup-info:before, .social_follow_tax .popup-info:after {
-  right: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  left: 50%;
-  pointer-events: none;
-  transform: translateX(-50%);
-}
-@media (max-width: 899px) {
-  .social_follow_tax .popup-info:before, .social_follow_tax .popup-info:after {
-    left: 10px;
-    transform: none;
-  }
-}
-@media (max-width: 599px) {
-  .social_follow_tax .popup-info:before, .social_follow_tax .popup-info:after {
-    display: none;
-  }
-}
 .social_follow_tax .popup-info:before {
   border-top-color: rgba(0, 0, 0, 0.12);
   border-width: 11px;
@@ -132,11 +114,43 @@
 .social_follow_tax .popup-info .card {
   flex-direction: row;
 }
-.social_follow_tax .popup-info .actions > * + .btn {
-  flex: 1;
+.social_follow_tax .popup-info .actions .flag,
+.social_follow_tax .popup-info .actions .btn {
+  flex: auto;
+  max-width: none;
 }
 .social_follow_tax .popup-info .actions .dropdown-menu .btn {
   border: none;
+}
+.social_follow_tax .popup-info .card {
+  border-radius: 4px;
+  box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.2);
+}
+.social_follow_tax .popup-info .teaser .teaser__body {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+.social_follow_tax .popup-info .teaser .teaser__title {
+  margin-bottom: 0.25rem;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 27px;
+  letter-spacing: -0.02em;
+}
+.social_follow_tax .popup-info .teaser .teaser__title a:hover {
+  text-decoration: underline;
+}
+.social_follow_tax .popup-info .teaser .teaser__related-content {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 18px;
+  margin-right: 14px;
+}
+.social_follow_tax .popup-info .teaser .teaser__related-content b {
+  display: inline-block;
+  margin-left: 0.125rem;
+  color: #4d4d4d;
 }
 .social_follow_tax .teaser {
   height: auto;
@@ -176,12 +190,10 @@
   margin-top: 0.75rem;
 }
 .social_follow_tax .actions > * + * {
-  margin-left: 16px;
+  margin-left: 10px;
 }
-@media (max-width: 599px) {
-  .social_follow_tax .actions > * + * {
-    margin-left: 10px;
-  }
+.social_follow_tax .actions .btn {
+  border-radius: 4px;
 }
 @media (max-width: 599px) {
   .social_follow_tax .actions .btn {

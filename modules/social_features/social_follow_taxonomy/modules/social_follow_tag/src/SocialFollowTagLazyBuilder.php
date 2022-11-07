@@ -23,52 +23,38 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
 
   /**
    * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $formBuilder;
+  protected FormBuilderInterface $formBuilder;
 
   /**
    * The route match.
-   *
-   * @var \Drupal\social_tagging\SocialTaggingService
    */
-  protected $tagService;
+  protected SocialTaggingService $tagService;
 
   /**
    * Flag service.
-   *
-   * @var \Drupal\flag\FlagServiceInterface
    */
-  protected $flagService;
+  protected FlagServiceInterface $flagService;
 
   /**
    * The renderer service.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
    */
-  protected $renderer;
+  protected RendererInterface $renderer;
 
   /**
    * The builder for flag links.
-   *
-   * @var \Drupal\flag\FlagLinkBuilderInterface
    */
-  protected $flagLinkBuilder;
+  protected FlagLinkBuilderInterface $flagLinkBuilder;
 
   /**
    * The Current User object.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  protected AccountInterface $currentUser;
 
   /**
    * SocialFollowTagLazyBuilder constructor.
@@ -109,7 +95,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
   /**
    * Returns tags for lazy builder.
    */
-  public function lazyBuild() {
+  public function lazyBuild(): array {
     $identifiers = [];
 
     // Get the tag category identifier that is used as a parameter in the URL.
@@ -135,13 +121,15 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     }
 
     $tags = [];
+    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
     $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    $terms = $term_storage->loadMultiple($term_ids);
-    foreach ($terms as $term) {
+    foreach ($term_ids as $term_id) {
+      /** @var \Drupal\taxonomy\Entity\Term $term */
+      $term = $term_storage->load($term_id);
 
       // Show only tags followed by user.
-      if (social_follow_taxonomy_term_followed($term)) {
-        $tags[$term->id()] = [
+      if ($term && social_follow_taxonomy_term_followed($term)) {
+        $tags[$term_id] = [
           'name' => $term->getName(),
           'flag' => social_follow_taxonomy_flag_link($term),
           'related_entity_count' => social_follow_taxonomy_related_entity_count($term, 'social_tagging'),
@@ -183,12 +171,26 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    * @return array
    *   Render array.
    */
-  public function popupLazyBuild($url, $term_id, $field, $entity_type) {
+  public function popupLazyBuild(string $url, $term_id, string $field, string $entity_type): array {
     /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
+
+    if (
+      $term->hasField('field_term_page_url') &&
+      !$term->get('field_term_page_url')->isEmpty()
+    ) {
+      /** @var \Drupal\link\LinkItemInterface $link */
+      $link = $term->get('field_term_page_url')->first();
+
+      $action_label = $link->get('title')->getValue();
+      $action_url = $link->getUrl()->toString();
+    }
+
     return [
       '#theme' => 'social_tagging_popup',
       '#url' => $url,
+      '#action_label' => !empty($action_label) ? $action_label : NULL,
+      '#action_url' => !empty($action_url) ? $action_url : NULL,
       '#name' => $term->label(),
       '#flag' => social_follow_taxonomy_flag_link($term),
       '#followers_count' => social_follow_taxonomy_term_followers_count($term),
@@ -199,7 +201,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
   /**
    * {@inheritdoc}
    */
-  public static function trustedCallbacks() {
+  public static function trustedCallbacks(): array {
     return [
       'lazyBuild',
       'popupLazyBuild',
