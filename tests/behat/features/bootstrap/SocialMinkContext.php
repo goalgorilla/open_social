@@ -3,19 +3,7 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Mink\Element\NodeElement;
-use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit\Framework\Assert as PHPUnit;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Behat\Hook\Scope\AfterStepScope;
 
 /**
  * Defines application features from the specific context.
@@ -60,23 +48,16 @@ class SocialMinkContext extends MinkContext {
     parent::assertCheckBox($checkbox);
   }
 
-
-  /**
-   * @Given /^I make a screenshot$/
-   */
-  public function iMakeAScreenshot() {
-    $this->iMakeAScreenshotWithFileName('screenshot');
-  }
-
   /**
    * @Given /^I make a screenshot with the name "([^"]*)"$/
    */
   public function iMakeAScreenshotWithFileName($filename) {
-    $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    $dir = '/var/www/travis_artifacts';
+    $dir = __DIR__ . '/../../logs';
     if (is_writeable($dir)) {
-      $file_and_path = $dir . '/' . $filename . '.jpg';
-      file_put_contents($file_and_path, $screenshot);
+      file_put_contents(
+        "$dir/$filename.jpg",
+        $this->getSession()->getScreenshot()
+      );
     }
   }
 
@@ -137,33 +118,6 @@ class SocialMinkContext extends MinkContext {
 
     $clearButton->click();
   }
-
-
-  /**
-   * @AfterStep
-   */
-  public function takeScreenShotAfterFailedStep(AfterStepScope $scope)
-  {
-    if (99 === $scope->getTestResult()->getResultCode()) {
-      $driver = $this->getSession()->getDriver();
-      if (!($driver instanceof Selenium2Driver)) {
-        return;
-      }
-      $feature = $scope->getFeature();
-      $title = $feature->getTitle();
-
-      $filename = date("Ymd-H_i_s");
-
-      if (!empty($title)) {
-        $filename .= '-' . str_replace(' ', '-', strtolower($title));
-      }
-
-      $filename .= '-error';
-
-      $this->iMakeAScreenshotWithFileName($filename);
-    }
-  }
-
 
   /**
    * Attaches file to field with specified name.

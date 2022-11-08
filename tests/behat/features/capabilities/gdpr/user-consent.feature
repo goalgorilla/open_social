@@ -5,34 +5,19 @@ Feature: Give user consent
   Goal/desire: I want to know which users did (not) gave consent to the data policy
 
   Scenario: Successfully view user consent
-
-    Given users:
+    Given I enable the module "social_gdpr"
+    And users:
       | name             | mail                         | status | roles       |
       | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
       | behatuser1       | behatuser1@example.com       | 1      | verified    |
       | behatuser2       | behatuser2@example.com       | 1      | verified    |
       | behatuser3       | behatuser3@example.com       | 1      | verified    |
+    And data_policies:
+      | name               | field_description       |
+      | Terms & Conditions | No rights in this test  |
+    And I set the GDPR Consent Text to "I agree with the [id:1]"
+    And I am logged in as "behatuser1"
 
-    Given I enable the module "social_gdpr"
-
-    Given I am logged in as "behatsitemanager" with the "without consent" permission
-    When I am on "admin/config/people/data-policy/settings"
-    Then I should see the heading "Data policy settings" in the "Admin page title block" region
-    And the response should contain "I agree with the [id:1*]"
-    When I fill in "Consent text" with "I agree with the [id:1]"
-    Then I press "Save configuration"
-    And I should see the text "The configuration options have been saved."
-    And the response should contain "I agree with the [id:1]"
-
-    When I am on "admin/reports/data-policy-agreements"
-    Then I should see the heading "Data Policy Agreements" in the "Admin page title block" region
-    And I should see the text "Data policy revision"
-    And I should see unchecked the box "Agree"
-    And I should see unchecked the box "Not agree"
-    And I should see unchecked the box "Undecided"
-    And I should see the text "User consents not found."
-
-    Given I am logged in as "behatuser1"
     Then I should be on the homepage
     And I should see the success message "We published a new version of the data policy. You can review the data policy here."
 

@@ -4,63 +4,71 @@ Feature: Book page in Flexible Group
   Role: As a verified
   Goal/desire: I want to add and see books in flexible groups
 
-  Scenario: See public book in a flexible group
+  Background:
     Given I enable the module "social_flexible_group_book"
-    Then the cache has been cleared
-    Given users:
-      | name        | status | pass        | roles          |
-      | Creator     | 1      | Creator     | contentmanager |
-      | SeeUser     | 1      | SeeUser     | verified       |
-    Given groups:
-      | title                 | description      | author   | type           | language | alias               | field_content_visibility |
-      | Test Flexible Group   | Description text | Creator  | flexible_group | en       | test-flexible-group | public                   |
+    And the cache has been cleared
 
-    And I am logged in as "Creator"
-    Then I go to "/my-groups"
-    Then I click "Test Flexible Group"
+  Scenario: Flexible group provides CTA for book creation
+    Given I am logged in as a user with the contentmanager role
+    And groups:
+      | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
-    # Create book page in flexible group.
-    Then I click "Books"
+    When I am viewing the group "Test Flexible Group"
+    And I click "Books"
     And I click "Create Book"
-    When I fill in the following:
-      | title[0][value]          | Book #1 |
-      | field_content_visibility | public  |
-    And I select "- Create a new book -" from "Book"
-    And I wait for AJAX to finish
-    And I press "Create book page"
-      Then I should see "Book #1"
 
-    # Create a sub-book page in flexible group.
-    When I go to "/my-groups"
-    And I click "Test Flexible Group"
-    Then I click "Books"
-    Then I click "Create Book"
-    And I fill in the following:
-      | title[0][value]          | Sub-Book #1-1 |
-      | field_content_visibility | public    |
-    And I select "Book #1" from "Book"
-    And I wait for AJAX to finish
-    And I press "Create book page"
-      Then I should see "Sub-Book #1-1"
+    Then I should be on the book creation form
+    And the group "Test Flexible Group" should be preselected
 
-    # Check view for verified user.
-    Given I am logged in as "SeeUser"
-    Then I go to "/all-groups"
-    Then I click "Test Flexible Group"
-    When I click "Books"
-      Then I should see "Book #1"
-      And I should not see "Sub-Book #1-1"
-    When I click "Book #1"
-      Then I should see "Book #1"
-      And I should see "Sub-Book #1-1"
+  Scenario: Can create a book in a flexible Group
+    Given I am logged in as a user with the contentmanager role
+    And groups:
+      | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
-    # Check view for anonymous user.
-    Given I am an anonymous user
-    Then I go to "/all-groups"
-    Then I click "Test Flexible Group"
-    When I click "Books"
-      Then I should see "Book #1"
-      And I should not see "Sub-Book #1-1"
-    When I click "Book #1"
-      Then I should see "Book #1"
-      And I should see "Sub-Book #1-1"
+    When I create a book using its creation page:
+      | Title       | Book #1               |
+      | Description | It's the best         |
+      | Group       | Test Flexible Group   |
+      | Visibility  | Public                |
+      | Book        | - Create a new book - |
+
+    Then I should see the book I just created
+
+  Scenario: Can create a sub-book in a flexible group
+    Given I am logged in as a user with the contentmanager role
+    And groups:
+      | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
+    And books:
+      | title                 | description      | group               | field_content_visibility |
+      | Book #1               | It's the best    | Test Flexible Group | public                   |
+
+    When I create a book using its creation page:
+      | Title       | Sub-Book #1           |
+      | Description | Just a tribute        |
+      | Group       | Test Flexible Group   |
+      | Visibility  | Public                |
+      | Book        | Book #1               |
+
+    # @todo This should be "Then I should see the book I just created"
+    # but there's a bug that causes the success message not to be shown.
+    Then I should see "Sub-Book #1" in the "Hero block"
+#    Then I should see the book I just created
+
+  Scenario: Group books overview only shows top-level books
+    Given I am logged in as a user with the contentmanager role
+    And groups:
+      | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
+      | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
+    And books:
+      | title    | description         | group               | book    | parent  | field_content_visibility |
+      | Book #1  | It's the best       | Test Flexible Group |         |         | public                   |
+      | Sub #1   | It's the best Again | Test Flexible Group | Book #1 | Book #1 | public                   |
+
+    When I am viewing the group "Test Flexible Group"
+    And I click "Books"
+
+    Then I should see "Book #1"
+    And I should not see "Sub #1"

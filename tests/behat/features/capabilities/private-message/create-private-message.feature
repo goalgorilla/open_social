@@ -1,4 +1,4 @@
-@api @private-message @DS-4372 @DS-5206 @stability-3 @create-private-message
+@disabled @api @private-message @DS-4372 @DS-5206 @stability-3 @create-private-message
   Feature: Create Private Message
     Benefit: Sending private messages to other users on the platform.
     Role: As a Verified

@@ -321,26 +321,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * I enable the module :module_name.
-   *
-   * @When /^(?:|I )enable the module "([^"]*)"/
-   */
-  public function iEnableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->install($modules);
-  }
-
-  /**
-   * I disable the module :module_name.
-   *
-   * @When /^(?:|I )disable the module "([^"]*)"/
-   */
-  public function iDisableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->uninstall($modules);
-  }
-
-  /**
    * I enable the nickname field on profiles
    *
    * @When /^(?:|I )enable the nickname field on profiles/

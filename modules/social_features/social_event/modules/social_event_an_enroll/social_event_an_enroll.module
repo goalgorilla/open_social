@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Component\Render\PlainTextOutput;
@@ -201,10 +202,10 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
 function social_event_an_enroll_is_enabled(Node $node) {
   $config = \Drupal::config('social_event_an_enroll.settings');
   $is_global_enabled = $config->get('event_an_enroll');
-  $is_event = $node->getType() === 'event';
+  $is_event = $node instanceof Event;
   $is_public = $node->get('field_content_visibility')->getString() === 'public';
   $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
-  $is_event_enroll = \Drupal::service('social_event.enroll')->isEnabled($node);
+  $is_event_enroll = $is_event && $node->isEnrollmentEnabled();
   return $is_global_enabled && $is_event && $is_public && $is_event_an_enroll && $is_event_enroll;
 }
 
