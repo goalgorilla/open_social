@@ -265,7 +265,7 @@ function social_tagging_update_11401(): void {
 /**
  * Remove filters from the views config so that it can be added in an overrider.
  */
-function social_tagging_update_11801(): void {
+function social_tagging_update_11402(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.newest_users');
 
   if ($filters = $config->get('display.default.display_options.filters')) {

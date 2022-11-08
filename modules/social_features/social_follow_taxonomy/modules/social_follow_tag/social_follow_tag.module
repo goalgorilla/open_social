@@ -358,7 +358,7 @@ function social_follow_tag_form_alter(array &$form, FormStateInterface $form_sta
 /**
  * Implements hook_field_widget_form_alter().
  */
-function social_follow_tag_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_follow_tag_field_widget_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getName() == 'field_term_page_url') {
@@ -382,7 +382,7 @@ function social_follow_tag_field_widget_form_alter(&$element, FormStateInterface
 /**
  * Validate function that overrides the tagging field with new values.
  */
-function validate_title_no_link_content_tags($element, FormStateInterface $form_state) {
+function validate_title_no_link_content_tags(array $element, FormStateInterface $form_state): void {
   if ($element['uri']['#value'] === '' && $element['title']['#value'] !== '') {
     $form_state->clearErrors();
     $form_state->setValue(['field_term_page_url', '0', 'uri'], '<nolink>');

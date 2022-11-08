@@ -124,7 +124,7 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
     $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     foreach ($term_ids as $term_id) {
-      /** @var \Drupal\taxonomy\Entity\Term $term */
+      /** @var \Drupal\taxonomy\TermInterface|null $term */
       $term = $term_storage->load($term_id);
 
       // Show only tags followed by user.
