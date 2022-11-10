@@ -6,7 +6,7 @@ Feature: Create content in flexible groups
     And I disable that the registered users to be verified immediately
 
   Scenario Outline: Anonymous users can not create content in public groups
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
     And I am an anonymous user
@@ -22,7 +22,7 @@ Feature: Create content in flexible groups
       | public     | events     | "Create Event"             |
 
   Scenario Outline: Non-platform manager members can not create content in any groups they can see if they're not a member
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
     And I am logged in as a user with the <role> role
@@ -41,7 +41,7 @@ Feature: Create content in flexible groups
       | verified       | community  | events     | "Create Event"             |
 
     Scenario Outline: Platform managers can create content in all groups they can see if they're not a member
-      Given groups:
+      Given groups with non-anonymous owner:
         | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
         | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
       And I am logged in as a user with the <role> role
@@ -67,7 +67,7 @@ Feature: Create content in flexible groups
         | sitemanager    | members    | events     | "Create Event"             |
 
   Scenario Outline: Non-platform manager members can not select a group on a content creation form for a group they can see if they're not a member
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
     And I am logged in as a user with the <role> role
@@ -85,7 +85,7 @@ Feature: Create content in flexible groups
       | verified       | community  | event        |
 
   Scenario Outline: Platform managers can select a group on a content creation form for all groups they can see if they're not a member
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
     And I am logged in as a user with the <role> role

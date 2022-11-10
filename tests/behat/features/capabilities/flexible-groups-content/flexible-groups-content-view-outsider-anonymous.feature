@@ -1,7 +1,5 @@
 @api @javascript @flexible-groups-content
 Feature: Flexible groups content view access for anonymous users
-  # @todo Should this test non-public content too or do we consider this covered
-  # by non-group content visibility?
 
   Background:
     Given I enable the module "social_group_flexible_group"
