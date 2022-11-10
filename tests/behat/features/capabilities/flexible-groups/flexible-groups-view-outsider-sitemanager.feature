@@ -5,7 +5,7 @@ Feature: Flexible groups view access for sitemanager users
     And I disable that the registered users to be verified immediately
 
   Scenario: As sitemanager user I can view a public group I'm not a member of
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And Search indexes are up to date
@@ -16,7 +16,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a community group I'm not a member of
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And Search indexes are up to date
@@ -27,7 +27,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a secret group I'm not a member of
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And Search indexes are up to date
@@ -38,7 +38,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a public group I'm not a member of on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And Search indexes are up to date
@@ -49,7 +49,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a community group I'm not a member of on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And Search indexes are up to date
@@ -60,7 +60,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a secret group I'm not a member of on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And Search indexes are up to date
@@ -71,7 +71,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a public group I'm not a member of on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And I am logged in as a user with the sitemanager role
@@ -81,7 +81,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a community group I'm not a member of on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And I am logged in as a user with the sitemanager role
@@ -91,7 +91,7 @@ Feature: Flexible groups view access for sitemanager users
     Then I should see "Test group"
 
   Scenario: As sitemanager user I can view a secret group I'm not a member of on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And I am logged in as a user with the sitemanager role

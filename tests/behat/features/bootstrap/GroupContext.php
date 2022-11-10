@@ -65,14 +65,78 @@ class GroupContext extends RawMinkContext {
    * Create multiple groups at the start of a test.
    *
    * Creates group of a given type provided in the form:
-   * | title    | description     | author   | type        | language
-   * | My title | My description  | username | open_group  | en
-   * | ...      | ...             | ...      | ...         | ...
+   * | author | title    | description     | author   | type        | language
+   * | user-1 | My title | My description  | username | open_group  | en
+   * | ...    | ...      | ...             | ...      | ...         | ...
    *
    * @Given groups:
    */
   public function createGroups(TableNode $groupsTable) {
     foreach ($groupsTable->getHash() as $groupHash) {
+      $group = $this->groupCreate($groupHash);
+      $this->groups[$group->id()] = $group;
+    }
+  }
+
+  /**
+   * Create multiple groups at the start of a test.
+   *
+   * Creates group of a given type provided in the form:
+   * | title    | description     | author   | type        | language
+   * | My title | My description  | username | open_group  | en
+   * | ...      | ...             | ...      | ...         | ...
+   *
+   * @Given groups with non-anonymous owner:
+   */
+  public function createGroupsWithOwner(TableNode $groupsTable) {
+    // Create a new random user to own our groups, this ensures the author
+    // isn't anonymous.
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => "authenticated",
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+
+    foreach ($groupsTable->getHash() as $groupHash) {
+      if (isset($groupHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'groups with non-anonymous owner:' step, use 'groups:' instead.");
+      }
+
+      // We specify the owner for each group to be the current user.
+      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
+      // if the current user isn't logged in.
+      $groupHash['author'] = $user->name;
+
+      $group = $this->groupCreate($groupHash);
+      $this->groups[$group->id()] = $group;
+    }
+  }
+
+  /**
+   * Create multiple groups at the start of a test.
+   *
+   * Creates group of a given type provided in the form:
+   * | title    | description     | author   | type        | language
+   * | My title | My description  | username | open_group  | en
+   * | ...      | ...             | ...      | ...         | ...
+   *
+   * @Given groups owned by current user:
+   */
+  public function createGroupsOwnedByCurrentUser(TableNode $groupsTable) {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    foreach ($groupsTable->getHash() as $groupHash) {
+      if (isset($groupHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'groups owned by current user:' step, use 'groups:' instead.");
+      }
+
+      // We specify the owner for each group to be the current user.
+      // `groupCreate` will load the user by name so we fall back to 'anyonmous'
+      // if the current user isn't logged in.
+      $groupHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
+
       $group = $this->groupCreate($groupHash);
       $this->groups[$group->id()] = $group;
     }
@@ -533,18 +597,14 @@ class GroupContext extends RawMinkContext {
    */
   private function groupCreate(array $group) {
     if (!isset($group['author'])) {
-      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $group['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      throw new \Exception("You must specify an `author` when creating a group. Specify the `author` field if using `@Given groups:` or use one of `@Given groups with non-anonymous owner:` or `@Given groups owned by current user:` instead.");
     }
-    else {
-      $account = user_load_by_name($group['author']);
-      if ($account->id() !== 0) {
-        $group['uid'] = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $group['author']));
-      }
+
+    $account = user_load_by_name($group['author']);
+    if ($account === FALSE) {
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $group['author']));
     }
+    $group['uid'] = $account->id();
     unset($group['author']);
 
     // Let's create some groups.

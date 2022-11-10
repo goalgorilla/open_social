@@ -5,7 +5,7 @@ Feature: Group management for CM+
   Goal/desire: Control groups and their content
 
   Scenario Outline: As a outsider with the role CM+ I should be able to see and manage content from a closed group
-    Given groups:
+    Given groups with non-anonymous owner:
       | label             | type         | field_group_description |
       | Test closed group | closed_group | Description text        |
     And topics:
@@ -27,7 +27,7 @@ Feature: Group management for CM+
       | sitemanager    |
 
   Scenario Outline: As a CM+ I want to join a group regardless of join method
-    Given groups:
+    Given groups with non-anonymous owner:
       | label             | type         | field_group_description | allow_request   |
       | Test closed group | closed_group | Description text        | <allow_request> |
     And I am logged in as a user with the <role> role
@@ -48,7 +48,7 @@ Feature: Group management for CM+
       | sitemanager    | 0             |
 
   Scenario Outline: As a closed group member with the role CM+ I should be able to see and manage content from a closed group
-    Given groups:
+    Given groups with non-anonymous owner:
       | label             | type         | field_group_description |
       | Test closed group | closed_group | Description text        |
     And topics:
@@ -66,7 +66,7 @@ Feature: Group management for CM+
 
   Scenario Template:  Add a user with CM+ role (that has 'manage all groups' permission) on the Manage members tab so he gets the group admin role.
     Given I am logged in as a user with the verified role
-    And groups:
+    And groups owned by current user:
       | label             | type         | field_group_description |
       | Test closed group | closed_group | Description text        |
     And users:

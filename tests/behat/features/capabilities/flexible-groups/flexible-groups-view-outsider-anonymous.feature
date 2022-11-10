@@ -5,7 +5,7 @@ Feature: Flexible groups view access for anonymous users
     And I disable that the registered users to be verified immediately
 
   Scenario: As anonymous user view a public group
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And I am an anonymous user
@@ -15,7 +15,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should see "Test group"
 
   Scenario: As anonymous user I can't view a community group
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And Search indexes are up to date
@@ -26,7 +26,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should not see "Test group"
 
   Scenario: As anonymous user I can't view a secret group
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And Search indexes are up to date
@@ -37,7 +37,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should not see "Test group"
 
   Scenario: As anonymous user view a public group on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And Search indexes are up to date
@@ -48,7 +48,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should see "Test group"
 
   Scenario: As anonymous user I can't view a community group on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And Search indexes are up to date
@@ -59,7 +59,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should not see "Test group"
 
   Scenario: As anonymous user I can't view a secret group on the groups search
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And Search indexes are up to date
@@ -70,7 +70,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should not see "Test group"
 
   Scenario: As anonymous user view a public group on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Public visibility       | flexible_group | en       | public                          |
     And I am an anonymous user
@@ -80,7 +80,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should see "Test group"
 
   Scenario: As anonymous user I can't view a community group on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
     And I am an anonymous user
@@ -90,7 +90,7 @@ Feature: Flexible groups view access for anonymous users
     Then I should not see "Test group"
 
   Scenario: As anonymous user I can't view a secret group on the groups overview
-    Given groups:
+    Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
     And I am an anonymous user
