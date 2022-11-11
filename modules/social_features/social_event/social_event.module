@@ -424,9 +424,9 @@ function social_event_preprocess_node(array &$variables) {
 }
 
 /**
- * Implements theme_preprocess_HOOK() for "swiftmailer".
+ * Implements theme_preprocess_HOOK() for email.
  */
-function social_event_preprocess_swiftmailer(array &$variables): void {
+function social_event_preprocess_email(array &$variables): void {
   // Add library with styles for event.
   $variables['#attached']['library'][] = 'social_event/event';
 }
