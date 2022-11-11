@@ -188,7 +188,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#open' => TRUE,
     ];
 
-    $mail_configs = Drupal::config('social_swiftmail.settings');
+    $mail_configs = Drupal::config('social_mailer.settings');
     $template_frequencies = $mail_configs->get('template_frequencies') ?: [];
 
     foreach ($item['templates'] as $template) {

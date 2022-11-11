@@ -60,7 +60,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
    *
    * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $swiftmailSettings;
+  protected $socialMailerSettings;
 
   /**
    * The entity type manager.
@@ -102,7 +102,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $this->frequencyManager = $frequency_manager;
     $this->database = $connection;
     $this->activityNotifications = $activity_notifications;
-    $this->swiftmailSettings = $config_factory->get('social_swiftmail.settings');
+    $this->socialMailerSettings = $config_factory->get('social_mailer.settings');
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
@@ -237,7 +237,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
           // manager. If SM has also not set, take 'immediately' as frequency.
           if ($remaining_users = array_diff($recipients, $processed_users)) {
             // Grab the platform default "Email notification frequencies".
-            $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
+            $template_frequencies = $this->socialMailerSettings->get('template_frequencies') ?: [];
             // Determine email frequency to use, defaults to immediately.
             $parameters['frequency'] = $template_frequencies[$message_template_id] ?? FREQUENCY_IMMEDIATELY;
             $parameters['target_recipients'] = $remaining_users;
@@ -290,7 +290,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
           // If a site manager decides emails should not be sent to users
           // who have never logged in. We need to verify last accessed time,
           // so those users are not processed.
-          if ($this->swiftmailSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
+          if ($this->socialMailerSettings->get('do_not_send_emails_new_users') && (int) $target_account->getLastAccessedTime() === 0) {
             continue;
           }
           // Only for users that have access to related content.

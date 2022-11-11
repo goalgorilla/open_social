@@ -263,9 +263,9 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
 }
 
 /**
- * Implements theme_preprocess_HOOK() for "swiftmailer".
+ * Implements theme_preprocess_HOOK() for email.
  */
-function social_event_addtocal_preprocess_swiftmailer(array &$variables): void {
+function social_event_addtocal_preprocess_email(array &$variables): void {
   // Add library with styles for event.
   $variables['#attached']['library'][] = 'social_event_addtocal/event_addtocal';
 
