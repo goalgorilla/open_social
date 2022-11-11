@@ -721,8 +721,11 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
         // Or disabled in the event.
         !$node->showEnrollments()
       ) {
-        // Return forbidden, since access was not explicitly granted.
-        return AccessResult::forbidden();
+        // Block should be visible for authors.
+        if ($node->getOwnerId() !== $account->id()) {
+          // Return forbidden, since access was not explicitly granted.
+          return AccessResult::forbidden();
+        }
       }
     }
   }
