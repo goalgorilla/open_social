@@ -171,9 +171,14 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
     }
 
     // Attempt sending mail.
-    $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
-      'context' => $context,
-    ], $mail_params->get('field_reply_to')->value);
+    $this->mailManager->mail(
+      'system',
+      'action_send_email',
+      $user_mail,
+      $langcode,
+      ['context' => $context],
+      $mail_params->get('field_reply_to')->value,
+    );
   }
 
   /**

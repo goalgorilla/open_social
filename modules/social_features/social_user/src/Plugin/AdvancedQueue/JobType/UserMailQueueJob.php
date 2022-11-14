@@ -184,9 +184,14 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
     }
 
     // Attempt sending mail.
-    $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
-      'context' => $context,
-    ], $reply);
+    $this->mailManager->mail(
+      'system',
+      'action_send_email',
+      $user_mail,
+      $langcode,
+      ['context' => $context],
+      $reply,
+    );
   }
 
   /**

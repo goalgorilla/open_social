@@ -2,8 +2,9 @@
 
 namespace Drupal\activity_send_email\Plugin\EmailBuilder;
 
+use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
-use Drupal\symfony_mailer\Processor\EmailProcessorBase;
+use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,10 +17,12 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  *   id = "activity_send_email",
  *   sub_types = {
  *     "activity_send_email" = @Translation("Activity notification")
- *   }
+ *   },
+ *   common_adjusters = {},
+ *   import = @Translation("Activity notification"),
  * )
  */
-class ActivitySendEmailBuilder extends EmailProcessorBase implements ContainerFactoryPluginInterface {
+class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
 
@@ -74,6 +77,20 @@ class ActivitySendEmailBuilder extends EmailProcessorBase implements ContainerFa
     }
 
     $email->setBody($email->getParam('body'));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function fromArray(EmailFactoryInterface $factory, array $message) {
+    // Left blank intentionally to override parent.
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function import() {
+    // Left blank intentionally to override parent.
   }
 
 }
