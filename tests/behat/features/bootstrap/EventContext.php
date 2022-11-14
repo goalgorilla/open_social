@@ -95,6 +95,20 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Edit a specific event.
+   *
+   * @When I am editing the event :event
+   * @When am editing the event :event
+   */
+  public function editingEvent(string $event) : void {
+    $event_id = $this->getEventIdFromTitle($event);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${event}' does not exist.");
+    }
+    $this->visitPath("/node/${event_id}/edit");
+  }
+
+  /**
    * Create multiple events at the start of a test.
    *
    * Creates events provided in the form:

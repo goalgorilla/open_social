@@ -95,6 +95,20 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * Edit a specific topic.
+   *
+   * @When I am editing the topic :topic
+   * @When am editing the topic :topic
+   */
+  public function editingTopic(string $topic) : void {
+    $topic_id = $this->getTopicIdFromTitle($topic);
+    if ($topic_id === NULL) {
+      throw new \Exception("Topic '${topic}' does not exist.");
+    }
+    $this->visitPath("/node/${topic_id}/edit");
+  }
+
+  /**
    * Create multiple topics at the start of a test.
    *
    * Creates topics provided in the form:

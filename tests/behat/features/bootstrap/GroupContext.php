@@ -12,6 +12,7 @@ use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRole;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -330,6 +331,37 @@ class GroupContext extends RawMinkContext {
     assert($group !== NULL);
 
     $group->addMember($current_user);
+  }
+
+  /**
+   * Makes the current LU a member of a group by a given title.
+   *
+   * @param string $group_title
+   *   The title of the group to make the current user a member of.
+   * @param string $group_role
+   *   The role in the group of the member.
+   *
+   * @Given I am a member of :group with the :group_role role
+   */
+  public function iAmMemberOfWithRole(string $group_title, string $group_role) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    assert($current_user !== FALSE, "Must be logged in before adding a user to a group in a test step.");
+    $current_user = User::load($current_user->uid);
+    assert($current_user instanceof UserInterface, "Could not load the current user.");
+
+    $group_id = $this->getNewestGroupIdFromTitle($group_title);
+    if ($group_id === NULL) {
+      throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group_title));
+    }
+
+    $group = Group::load($group_id);
+    assert($group !== NULL);
+
+    if (GroupRole::load($group_role) === NULL) {
+      throw new \InvalidArgumentException(sprintf('Could not find group role "%s"', $group_role));
+    }
+
+    $group->addMember($current_user, ['group_roles' => [$group_role]]);
   }
 
   /**
