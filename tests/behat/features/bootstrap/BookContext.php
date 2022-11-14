@@ -73,6 +73,23 @@ class BookContext extends RawMinkContext {
   }
 
   /**
+   * @Given Book structure is enabled for topics
+   */
+  public function enableBookStructureForTopics() : void {
+
+    $config = \Drupal::configFactory()->getEditable('book.settings');
+
+    if ($config->isNew()) {
+      throw new \Exception("The book.settings configuration did not yet exist, is the 'book' module enabled?");
+    }
+
+    $allowed_types = $config->get('allowed_types');
+    $allowed_types[] = 'topic';
+
+    $config->set('allowed_types', $allowed_types)->save();
+  }
+
+  /**
    * Fill out the book creation form and submit.
    *
    * Example: When I create a book using its creation page:

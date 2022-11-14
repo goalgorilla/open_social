@@ -15,3 +15,16 @@ Feature: Create Book page
     Then I should see the book I just created
     And it should not show author information
 
+
+  Scenario: User can create "book" node as book by default
+    Given I am logged in as an "administrator"
+
+    When I am on "node/add/book"
+    Then I should see "- Create a new book -" in the "#edit-book-bid" element
+
+  Scenario: User can create a topic as a book
+    Given I am logged in as an "administrator"
+    Given Book structure is enabled for topics
+
+    When I am on "node/add/topic"
+    Then I should see "- None -" in the "#edit-book-bid" element
