@@ -164,8 +164,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     $notification = [
       '#theme' => 'directmail',
       '#notification' => $body_text,
-      '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
-        '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
+      '#notification_settings' => $this->t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
+        '@settings' => Link::fromTextAndUrl($this->t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('activity_send_email.user_edit_page')->setAbsolute())->toString(),
         ':frequency' => $frequency_translated,
       ],
       ['langcode' => $langcode]),
@@ -176,7 +176,7 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
     if ($subject !== '') {
       // We don't support tokens in our subject at the moment, if needs be
       // we can check out how the ActivityFactory processTokens method does it.
-      $params['subject'] = t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
+      $params['subject'] = $this->t('%subject', ['%subject' => $subject], ['langcode' => $langcode])->render();
     }
 
     if (!empty($target->getEmail())) {
@@ -186,13 +186,11 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
         'activity_send_email',
         $target->getEmail(),
         $langcode,
-        $params,
-        NULL,
-        TRUE
+        $params
       );
     }
     else {
-      $this->getLogger('activity_send')->alert(t('Email of the @id is missing', [
+      $this->getLogger('activity_send')->alert($this->t('Email of the @id is missing', [
         '@id' => $target->id(),
       ])->render());
     }
