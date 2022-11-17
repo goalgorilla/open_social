@@ -9,22 +9,30 @@ Feature: Create Book page
     Given I am logged in as an "administrator"
 
     When I create a book using its creation page:
-      | Title        | This is my first novel                                     |
+      | Title        | This is my first novel                                      |
       | Description  | This is a book all about me. An autobiography so to speak! |
 
     Then I should see the book I just created
     And it should not show author information
 
+  Scenario: A book type node can not be outside of a book structure
+    Given I am logged in as an "contentmanager"
 
-  Scenario: User can create "book" node as book by default
-    Given I am logged in as an "administrator"
+    When I view the book creation page
 
-    When I am on "node/add/book"
-    Then I should see "- Create a new book -" in the "#edit-book-bid" element
+    And should not see "- None -" in the Book select field
 
-  Scenario: User can create a topic as a book
-    Given I am logged in as an "administrator"
-    Given Book structure is enabled for topics
+  Scenario: A new book is created by default
+    Given I am logged in as an "contentmanager"
+
+    When I view the book creation page
+
+    Then I should see "- Create a new book -" selected in the Book select field
+
+  Scenario: Enabling core book functionality for other node types allows the content to still be placed outside of a book
+    Given I am logged in as an "contentmanager"
+    And book structure is enabled for topic
 
     When I am on "node/add/topic"
-    Then I should see "- None -" in the "#edit-book-bid" element
+
+    Then I should see "- None -" selected in the Book select field
