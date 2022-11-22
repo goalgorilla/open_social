@@ -6,40 +6,34 @@ Feature: Un/publish a node
 
   Scenario: Successfully create unpublished topic
     Given I am logged in as an "verified"
-      And I am on "node/add/topic"
-    When I fill in "Title" with "This is a test topic"
-      And I fill in the following:
-        | Title | This is a test topic |
-      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-      And I check the box "News"
-      And I click the element with css selector "#edit-group-settings .card__title"
-      Then I should see "Publish status"
-      And I should see "Published"
-      And I uncheck the box "Published"
-      And I press "Create topic"
-    Then I should see "Topic This is a test topic has been created."
-      And I should see "This is a test topic" in the "Hero block"
-      And I should see "News"
-      And I should see "Body description text" in the "Main content"
 
-    When I click "Edit content"
-      And I click the element with css selector "#edit-group-settings .card__title"
-      And I wait for "3" seconds
-      Then I should see "Publish status"
-      And I should see "Published"
-      And I show hidden checkboxes
-      And I check the box "Published"
-      And I press "Save"
-      Then I should see "This is a test topic" in the "Hero block"
+    When I create a topic using its creation page:
+      | Title        | This is a test topic   |
+      | Description  | Body description text  |
+      | Type         | News                   |
+      | Published    | False                  |
 
-    When I am on "user"
-      And I click "Topics"
-      Then I should see "This is a test topic"
-      And I should see "News"
+    Then I should see the topic I just created
 
-    Given I disable that the registered users to be verified immediately
-      And I am logged in as an "authenticated user"
-      And I am on "node/add/topic"
-    Then I should see "Access denied"
-      And I should see "You are not authorized to access this page."
-      And I enable that the registered users to be verified immediately
+  Scenario: Successfully publish an unpublished topic
+    Given I am logged in as an "verified"
+    And topics:
+      | title    | body            | field_content_visibility | field_topic_type | langcode    | status |
+      | My title | My description  | public                   | News             | en          | 0         |
+
+    When I edit topic "My title" using its edit page:
+      | Published    | True                   |
+
+    Then I should see the topic I just updated
+
+  Scenario: Normal user only sees published topics
+    Given topics:
+      | title                     | body            | field_content_visibility | field_topic_type | langcode    | status |
+      | This topic is published   | My description  | public                   | News             | en          | 1         |
+      | This topic is unpublished | My description  | public                   | News             | en          | 0         |
+    And I am logged in as a user with the "authenticated" role
+
+    When I am on the topic overview
+
+    Then I should see "This topic is published"
+    And I should not see "This topic is unpublished"
