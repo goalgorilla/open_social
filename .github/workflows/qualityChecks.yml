@@ -86,7 +86,7 @@ jobs:
 
       # Run PHPStan
       - name: Run PHPStan analysis
-        run: $GITHUB_WORKSPACE/vendor/bin/phpstan analyse -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpstan.neon --error-format=checkstyle | cs2pr
+        run: $GITHUB_WORKSPACE/vendor/bin/phpstan analyse -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpstan.neon
 
   phpcs:
     needs: setup
