@@ -24,4 +24,27 @@ function social_install() {
   $user = User::load(1);
   $user->roles[] = 'administrator';
   $user->save();
+
+  // Disable secondary toolbar on frontend in Gin theme.
+  _social_core_disable_secondary_gin_toolbar();
+}
+
+/**
+ * Disable secondary toolbar on frontend in Gin theme.
+ */
+function _social_core_disable_secondary_gin_toolbar() {
+  $config = \Drupal::configFactory()->getEditable('gin.settings');
+  if (!empty($config->getRawData())) {
+    \Drupal::configFactory()
+      ->getEditable('gin.settings')
+      ->set('secondary_toolbar_frontend', FALSE)
+      ->save(TRUE);
+  }
+}
+
+/**
+ * Disable secondary toolbar on frontend in Gin theme.
+ */
+function social_update_11501() {
+  _social_core_disable_secondary_gin_toolbar();
 }
