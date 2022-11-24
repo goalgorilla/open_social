@@ -97,8 +97,8 @@ function social_search_alter_content_exposed_filter_block(&$form, FormStateInter
     $form['type']['#weight'] = '-100';
   }
 
-  if (!empty($form['field_event_date_wrapper']['field_event_date'])
-    && !empty($form['field_event_date_wrapper']['field_event_date_op'])) {
+  if (!empty($form['field_event_date_wrapper']['field_event_date_wrapper']['field_event_date'])
+    && !empty($form['field_event_date_wrapper']['field_event_date_wrapper']['field_event_date_op'])) {
     if (!empty($form['settings'])) {
       $form['settings']['#states'] = [
         'visible' => [
@@ -110,8 +110,8 @@ function social_search_alter_content_exposed_filter_block(&$form, FormStateInter
 
     }
 
-    $form['settings']['field_event_date_op'] = $form['field_event_date_wrapper']['field_event_date_op'];
-    $form['settings']['field_event_date'] = $form['field_event_date_wrapper']['field_event_date'];
+    $form['settings']['field_event_date_op'] = $form['field_event_date_wrapper']['field_event_date_wrapper']['field_event_date_op'];
+    $form['settings']['field_event_date'] = $form['field_event_date_wrapper']['field_event_date_wrapper']['field_event_date'];
     unset($form['field_event_date_wrapper']);
   }
 
