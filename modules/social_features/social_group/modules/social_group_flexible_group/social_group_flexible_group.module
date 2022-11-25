@@ -345,25 +345,37 @@ function social_group_flexible_group_preprocess_fieldset(array &$variables): voi
   }
 
   $fields = [
-    'field_flexible_group_visibility' => t('Group Visibility'),
-    'field_group_allowed_visibility' => t('Group content visibility'),
+    'field_flexible_group_visibility' => [
+      'title' => t('Group Visibility'),
+      'hook' => 'social_group_group_visibility_description',
+    ],
+    'field_group_allowed_visibility' => [
+      'title' => t('Group content visibility'),
+      'hook' => 'social_group_content_visibility_description',
+    ],
   ];
 
   if (!isset($fields[$element['#field_name']])) {
     return;
   }
 
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
+
   $description = '';
 
   foreach ($element['#options'] as $key => $label) {
-    $description .= social_group_group_visibility_description($key);
+    $description .= $helper->description(
+      $key,
+      $fields[$element['#field_name']]['hook'],
+    );
   }
 
   // Render a specific tooltip based on a field name and description.
   // This is done in the fieldset, next to the <legend>.
   $variables['popover'] = social_group_render_tooltip(
     $element['#field_name'],
-    $fields[$element['#field_name']],
+    $fields[$element['#field_name']]['title'],
     $description,
   );
 }
