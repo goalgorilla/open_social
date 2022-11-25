@@ -1431,6 +1431,13 @@ function social_event_social_core_title_alter(array &$titles): void {
 }
 
 /**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_event_social_tagging_type_alter(array &$items): void {
+  $items['node'][] = 'event';
+}
+
+/**
  * Implements hook_preprocess_HOOK() for "html".
  */
 function social_event_preprocess_html(array &$variables): void {

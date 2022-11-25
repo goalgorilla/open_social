@@ -24,17 +24,15 @@ use Drupal\Core\Language\LanguageInterface;
  * This class is inspiration from the class
  * @link https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21process%21MachineName.php/class/MachineName/9.4.x @endlink
  */
-class MachineName {
+class MachineName implements MachineNameInterface {
 
   /**
    * The transliteration service.
-   *
-   * @var \Drupal\Component\Transliteration\TransliterationInterface
    */
   protected TransliterationInterface $transliteration;
 
   /**
-   * SocialTaggingService constructor.
+   * MachineName constructor.
    *
    * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
    *   The transliteration service.
@@ -44,27 +42,25 @@ class MachineName {
   }
 
   /**
-   * Transforms given string to machine name.
-   *
-   * @param string $value
-   *   The value to be transformed.
-   * @param string $replacePattern
-   *   The replacement pattern for regex.
-   *
-   * @return string
-   *   The newly transformed value.
+   * {@inheritdoc}
    */
-  public function transform(string $value, string $replacePattern = '/[^a-z0-9_]+/'): string {
-    $new_value = $this->transliteration->transliterate($value, LanguageInterface::LANGCODE_DEFAULT, '_');
-    $new_value = strtolower($new_value);
-    $replaced_special = preg_replace($replacePattern, '_', $new_value);
-    $replaced_underscores = '';
-    if (!is_null($replaced_special)) {
-      $replaced_underscores = preg_replace('/_+/', '_', $replaced_special);
+  public function transform(
+    string $value,
+    string $pattern = '/[^a-z0-9_]+/'
+  ): string {
+    $value = $this->transliteration->transliterate(
+      $value,
+      LanguageInterface::LANGCODE_DEFAULT,
+      '_',
+    );
+
+    if (
+      ($value = preg_replace($pattern, '_', strtolower($value))) !== NULL &&
+      ($value = preg_replace('/_+/', '_', $value)) !== NULL
+    ) {
+      return $value;
     }
-    if (!is_null($replaced_underscores)) {
-      return $replaced_underscores;
-    }
+
     return '';
   }
 
