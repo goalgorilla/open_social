@@ -117,7 +117,7 @@ function social_album_preprocess_node(&$variables) {
 
   if (
     $node->bundle() === 'album' &&
-    $variables['view_mode'] === 'teaser' &&
+    in_array($variables['view_mode'], ['teaser', 'activity_comment', 'featured']) &&
     views_get_view_result('albums', 'embed_album_cover', $node->id())
   ) {
     $variables['node_image'] = views_embed_view('albums', 'embed_album_cover', $node->id());
@@ -141,6 +141,10 @@ function social_album_preprocess_views_view(&$variables) {
 
     if (isset($library[$view->current_display])) {
       $variables['#attached']['library'][] = $library[$view->current_display];
+    }
+
+    if ($view->current_display == 'embed_album_cover') {
+      $variables['#attached']['library'][] = 'social_album/social_album_teaser';
     }
   }
 }
