@@ -75,7 +75,7 @@ class SocialEmbedHelper {
 
     // We want to vary cache per user so the user settings can also be taken
     // into consent.
-    $result->addCacheContexts(['user']);
+    $result->addCacheContexts(['user', 'cookies:cookie-agreed', 'cookies:cookie-agreed-categories']);
 
     // We need this library to be attached as we are using 'use-ajax'
     // class in the show consent button markup.
