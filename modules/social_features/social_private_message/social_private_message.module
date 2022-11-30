@@ -363,7 +363,8 @@ function social_private_message_thread_view_alter(array &$build, EntityInterface
   if (
     $display->getComponent('delete_link') &&
     $current_user->hasPermission('use private messaging system') &&
-    $current_user->hasPermission('delete private messages thread')
+    $current_user->hasPermission('delete private messages thread') &&
+    $entity->isMember($current_user->id())
   ) {
     $url = Url::fromRoute('entity.private_message_thread.delete_form', ['private_message_thread' => $entity->id()]);
     $build['delete_link'] = [
@@ -623,7 +624,8 @@ function social_private_message_private_message_thread_access(PrivateMessageThre
   if ($operation === 'delete') {
     if (
       $account->hasPermission('use private messaging system') &&
-      $account->hasPermission('delete private messages thread')
+      $account->hasPermission('delete private messages thread') &&
+      $entity->isMember($account->id())
     ) {
       return AccessResult::allowed();
     }
