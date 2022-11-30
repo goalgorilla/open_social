@@ -21,6 +21,8 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
+use Drupal\social_user\VerifyableUserInterface;
+use Drupal\user\Entity\User;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
@@ -611,7 +613,8 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     return;
   }
 
-  $account = \Drupal::currentUser();
+  $account = User::load(\Drupal::currentUser()->id());
+  assert($account instanceof VerifyableUserInterface);
 
   if (!$account->isAnonymous()) {
     // Don't trigger page cache, this will cache it for AN
@@ -664,18 +667,19 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // Get all hidden groups that the current user is not a member of
   // and remove them from showing in the view.
   $ids = array_diff(array_keys($hidden_groups), $my_groups);
+
+  // Anonymous or unverified users should only see 'public' groups.
+  if ($account->isAnonymous() || !$account->isVerified()) {
+    $community_groups = \Drupal::entityTypeManager()->getStorage('group')->loadByProperties([
+      'field_flexible_group_visibility' => 'community',
+    ]);
+    $ids = array_merge($ids, array_keys($community_groups));
+
+    // Add context so for AN it will have a different cache.
+    $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
+  }
+
   if ($ids) {
-    // Anonymous user should only see 'public' groups.
-    if ($account->isAnonymous()) {
-      $community_groups = \Drupal::entityTypeManager()->getStorage('group')->loadByProperties([
-        'field_flexible_group_visibility' => 'community',
-      ]);
-      $ids = array_merge($ids, array_keys($community_groups));
-
-      // Add context so for AN it will have a different cache.
-      $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
-    }
-
     $query->addWhere($new_where, 'groups_field_data.id', $ids, 'NOT IN');
   }
 
