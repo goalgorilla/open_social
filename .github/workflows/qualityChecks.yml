@@ -2,24 +2,11 @@ name: Quality checks
 
 on:
   pull_request: { }
-  # Trigger workflow for release branches. We use branches-ignore to filter out
-  # development branches so that we're ensured we run on things like `main`,
-  # `11.6.**`, etc. It's preferable to do some extra work for misnamed
-  # development branches than to miss execution on a release branch.
+  # Trigger workflow for release branches.
   push:
-    # These are not all "valid" branch names, but they're branches we've seen by
-    # looking at the history. Look at mergeable for what we consider a proper
-    # branch name.
-    branches-ignore:
-      - internal/**
-      - automation/**
-      - bug/**
-      - bugfix/**
-      - feature/**
-      - issue/**
-      - support/**
-      - update/**
-      - dependabot/**
+    branches:
+      - main
+      - [0-9]+.[0-9]+.x
 
 jobs:
   setup:
