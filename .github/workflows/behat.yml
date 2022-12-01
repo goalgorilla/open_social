@@ -4,9 +4,24 @@ name: 'Behat'
 on:
   # Triggers the workflow on all pull request events
   pull_request: { }
+  # Trigger workflow for release branches. We use branches-ignore to filter out
+  # development branches so that we're ensured we run on things like `main`,
+  # `11.6.**`, etc. It's preferable to do some extra work for misnamed
+  # development branches than to miss execution on a release branch.
   push:
-    branches:
-      - main
+    # These are not all "valid" branch names, but they're branches we've seen by
+    # looking at the history. Look at mergeable for what we consider a proper
+    # branch name.
+    branches-ignore:
+      - internal/**
+      - automation/**
+      - bug/**
+      - bugfix/**
+      - feature/**
+      - issue/**
+      - support/**
+      - update/**
+      - dependabot/**
 
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
