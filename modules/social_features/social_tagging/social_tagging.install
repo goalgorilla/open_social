@@ -69,21 +69,6 @@ function _social_tagging_search_api_fields(): array {
 }
 
 /**
- * Install a base field for an entity type.
- *
- * @param string $entity_type
- *   The entity type identifier.
- */
-function _social_tagging_add_base_field(string $entity_type): void {
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
-    'social_tagging',
-    $entity_type,
-    'social_tagging',
-    _social_tagging_field(),
-  );
-}
-
-/**
  * Add fields to search API.
  */
 function _social_tagging_add_fields_search_api(): void {
@@ -257,9 +242,34 @@ function social_tagging_update_11201(): void {
  * Install Tagging base field to the media entity type.
  */
 function social_tagging_update_11401(): void {
-  if (\Drupal::moduleHandler()->moduleExists('media')) {
-    _social_tagging_add_base_field('media');
+  if (!\Drupal::moduleHandler()->moduleExists('media')) {
+    return;
   }
+
+  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'region' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $field_storage_definition);
 }
 
 /**
@@ -275,17 +285,5 @@ function social_tagging_update_11402(): void {
     $config->set('display.page_newest_users.display_options.defaults.filters', FALSE);
     $config->set('display.block_newest_users.display_options.defaults.filters', FALSE);
     $config->save(TRUE);
-  }
-}
-
-/**
- * Install a base field for supported entity types.
- */
-function social_tagging_update_11501(): void {
-  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
-  $helper = \Drupal::service('social_tagging.tag_service');
-
-  foreach ($helper->types(TRUE) as $entity_type) {
-    _social_tagging_add_base_field($entity_type);
   }
 }

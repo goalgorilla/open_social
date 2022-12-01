@@ -35,13 +35,6 @@ function social_page_node_links_alter(array &$links, NodeInterface $entity, arra
 }
 
 /**
- * Implements hook_social_tagging_type_alter().
- */
-function social_page_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'page';
-}
-
-/**
  * Implements hook_social_user_account_header_create_links().
  *
  * Adds the "Create Page" link to the content creation menu.

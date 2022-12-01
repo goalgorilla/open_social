@@ -15703,6 +15703,11 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
+			message: "#^Function social_tagging_entity_base_field_info\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/social_tagging.module
+
+		-
 			message: "#^Function social_tagging_entity_delete\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -15798,6 +15803,11 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
+			message: "#^Function social_tagging_social_tagging_field_form_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/social_tagging.module
+
+		-
 			message: "#^Function social_tagging_theme\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -15833,8 +15843,33 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
+			path: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php
+
+		-
+			message: "#^Method Drupal\\\\social_tagging\\\\Form\\\\SocialTaggingSettingsForm\\:\\:create\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php
+
+		-
+			message: "#^Method Drupal\\\\social_tagging\\\\Form\\\\SocialTaggingSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php
+
+		-
+			message: "#^Method Drupal\\\\social_tagging\\\\SocialTaggingOverrides\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
+
+		-
+			message: "#^Variable \\$machine_name in PHPDoc tag @var does not match assigned variable \\$machine_name_service\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
