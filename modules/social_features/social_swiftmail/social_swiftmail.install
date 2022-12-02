@@ -90,3 +90,11 @@ function social_swiftmail_update_8003() {
     user_role_grant_permissions($role, ['use text format mail_html']);
   }
 }
+
+/**
+ * Add a new module setting.
+ */
+function social_swiftmail_update_9000() {
+  $settings = \Drupal::configFactory()->getEditable('social_swiftmail.settings');
+  $settings->set('disabled_user_greeting_key', 'register_no_approval_required')->save();
+}
