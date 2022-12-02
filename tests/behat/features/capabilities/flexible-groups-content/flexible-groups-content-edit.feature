@@ -249,6 +249,7 @@ Feature: Test edit access for content in groups
     | verified       | members          | group              |
 
     # @todo It appears there's currently custom access handling for events which prevents any of this from working.
+    # https://www.drupal.org/project/social/issues/3324968
 #  Scenario Outline: Can edit events I don't own in a group as group admin
 #    Given groups with non-anonymous owner:
 #      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |

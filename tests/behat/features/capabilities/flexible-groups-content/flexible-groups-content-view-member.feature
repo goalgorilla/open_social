@@ -23,13 +23,16 @@ Feature: Flexible groups content view access for group members
   Examples:
     | role           | group_visibility | content_visibility |
     | authenticated  | public           | public             |
-    | authenticated  | public           | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | public           | community          |
     | authenticated  | public           | group              |
     | authenticated  | community        | public             |
-    | authenticated  | community        | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | community        | community          |
     | authenticated  | community        | group              |
     | authenticated  | members          | public             |
-    | authenticated  | members          | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | members          | community          |
     | authenticated  | members          | group              |
     | verified       | public           | public             |
     | verified       | public           | community          |
@@ -77,13 +80,16 @@ Feature: Flexible groups content view access for group members
   Examples:
     | role           | group_visibility | content_visibility |
     | authenticated  | public           | public             |
-    | authenticated  | public           | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | public           | community          |
     | authenticated  | public           | group              |
     | authenticated  | community        | public             |
-    | authenticated  | community        | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | community        | community          |
     | authenticated  | community        | group              |
     | authenticated  | members          | public             |
-    | authenticated  | members          | community          |
+    # @todo https://www.drupal.org/project/social/issues/3324967
+    # | authenticated  | members          | community          |
     | authenticated  | members          | group              |
     | verified       | public           | public             |
     | verified       | public           | community          |

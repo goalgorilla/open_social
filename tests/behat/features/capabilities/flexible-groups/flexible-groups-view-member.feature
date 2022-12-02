@@ -75,7 +75,8 @@ Feature: Flexible groups view access for members
       | public     | verified       |
       | public     | contentmanager |
       | public     | sitemanager    |
-      | community  | authenticated  |
+      # @todo https://www.drupal.org/project/social/issues/3324969
+      # | community  | authenticated  |
       | community  | verified       |
       | community  | contentmanager |
       | community  | sitemanager    |
