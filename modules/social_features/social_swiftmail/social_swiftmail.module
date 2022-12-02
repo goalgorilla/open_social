@@ -116,9 +116,19 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
       $display_name = $message['params']['context']['display_name'];
     }
 
+    $disabled_greeting_keys = $social_swiftmail_config->get("disabled_user_greeting_keys");
+    $disabled_greeting_keys = explode("\r\n", $disabled_greeting_keys);
     $replace = [
       '@display_name' => $display_name,
     ];
+
+    if (isset($message['key'])) {
+      if (!in_array($message['key'], $disabled_greeting_keys)) {
+        $variables['heading'] = t('Hi <strong>@display_name</strong>', $replace, $options);
+      }
+      return;
+    }
+
     $variables['heading'] = t('Hi <strong>@display_name</strong>', $replace, $options);
   }
 }
