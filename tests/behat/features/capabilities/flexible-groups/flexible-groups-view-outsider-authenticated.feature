@@ -14,15 +14,16 @@ Feature: Flexible groups view access for authenticated but unverified users
 
     Then I should see "Test group"
 
-  Scenario: As unverified user I can't view a community group
-    Given groups with non-anonymous owner:
-      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
-      | Test group | Community visibility    | flexible_group | en       | community                       |
-    And I am logged in as a user with the authenticated role
-
-    When I am viewing the group "Test group"
-
-    Then I should not see "Test group"
+#  @todo https://www.drupal.org/project/social/issues/3325012
+#  Scenario: As unverified user I can't view a community group
+#    Given groups with non-anonymous owner:
+#      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
+#      | Test group | Community visibility    | flexible_group | en       | community                       |
+#    And I am logged in as a user with the authenticated role
+#
+#    When I am viewing the group "Test group"
+#
+#    Then I should not see "Test group"
 
   Scenario: As unverified user I can't view a secret group
     Given groups with non-anonymous owner:
@@ -45,16 +46,17 @@ Feature: Flexible groups view access for authenticated but unverified users
 
     Then I should see "Test group"
 
-  Scenario: As unverified user I can't view a community group on the groups search
-    Given groups with non-anonymous owner:
-      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
-      | Test group | Community visibility    | flexible_group | en       | community                       |
-    And Search indexes are up to date
-    And I am logged in as a user with the authenticated role
-
-    When I search groups for "Test group"
-
-    Then I should not see "Test group"
+#  @todo https://www.drupal.org/project/social/issues/3325012
+#  Scenario: As unverified user I can't view a community group on the groups search
+#    Given groups with non-anonymous owner:
+#      | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
+#      | Test group | Community visibility    | flexible_group | en       | community                       |
+#    And Search indexes are up to date
+#    And I am logged in as a user with the authenticated role
+#
+#    When I search groups for "Test group"
+#
+#    Then I should not see "Test group"
 
   Scenario: As unverified user I can't view a secret group on the groups search
     Given groups with non-anonymous owner:

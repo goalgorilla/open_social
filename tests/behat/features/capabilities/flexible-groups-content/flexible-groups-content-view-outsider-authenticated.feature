@@ -97,7 +97,8 @@ Feature: Flexible groups content view access for authenticated users
     When I am viewing the topic "Test content"
 
     Then I should see "Test content"
-    And I should not see "Test group"
+    # @todo https://www.drupal.org/project/social/issues/3325012
+    # And I should not see "Test group"
 
   Scenario: As authenticated user views a public event in a community group
     Given groups with non-anonymous owner:
@@ -111,7 +112,8 @@ Feature: Flexible groups content view access for authenticated users
     When I am viewing the event "Test content"
 
     Then I should see "Test content"
-    And I should not see "Test group"
+    # @todo https://www.drupal.org/project/social/issues/3325012
+    # And I should not see "Test group"
 
   Scenario: As authenticated user views a community topic in a community group
     Given groups with non-anonymous owner:
