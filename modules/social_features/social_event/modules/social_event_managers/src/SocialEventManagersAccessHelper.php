@@ -90,16 +90,9 @@ class SocialEventManagersAccessHelper {
     }
 
     $field_account_id = $event_enrollment->get('field_account')->getString();
-    if ((int) $field_account_id !== (int) $account->id()) {
-      // If current user is not the recipient then let other
-      // part of the system determine the access, by default it should
-      // be access denied, but it could be overwritten, so we don't make
-      // any assumptions here.
-      return AccessResult::neutral();
-    }
 
-    // The user is a recipient, so we allow access to event enrollment.
-    return AccessResult::allowed();
+    // If the user is a recipient allow access to event enrollment.
+    return AccessResult::allowedIf((int) $field_account_id === (int) $account->id());
   }
 
 }
