@@ -84,7 +84,7 @@ Feature: Flexible groups view access for verified users
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Community visibility    | flexible_group | en       | community                       |
-    And I am logged in as a user with the authenticated role
+    And I am logged in as a user with the verified role
 
     When I am viewing the groups overview
 
@@ -94,7 +94,7 @@ Feature: Flexible groups view access for verified users
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Secret visibility       | flexible_group | en       | members                         |
-    And I am logged in as a user with the authenticated role
+    And I am logged in as a user with the verified role
 
     When I am viewing the groups overview
 
