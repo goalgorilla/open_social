@@ -164,13 +164,14 @@ jobs:
         run: |
           vendor/bin/behat --version
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
-            echo $test
             if head -n1 $test | grep -q "@disabled"; then
-              echo "Skipping disabled test"
+              echo "$test - Skipping disabled test"
             else
+              echo "::group::$test"
               drush sql-drop -y
               drush sqlc < installation.sql
               vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+              echo "::endgroup::"
             fi
           done
 
