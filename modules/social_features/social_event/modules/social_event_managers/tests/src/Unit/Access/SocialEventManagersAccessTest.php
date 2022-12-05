@@ -3,15 +3,20 @@
 namespace Drupal\social_event_manager\Tests;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests the SocialEventManagersAccessHelper class.
+ * Tests the SocialEventManagersAccess.
  *
  * @group social_event_manager
  */
-class SocialEventManagersAccessHelperTest extends UnitTestCase {
+class SocialEventManagersAccessTest extends UnitTestCase {
+
+  protected function setUp(): void {
+    parent::setUp();
+    // Include module file for the hook_entity_access.
+    require_once __DIR__ . '/../../../../social_event_managers.module';
+  }
 
   /**
    * Test eventEnrollmentAccessCheck.
@@ -34,6 +39,7 @@ class SocialEventManagersAccessHelperTest extends UnitTestCase {
     $field_item->expects($this->any())
       ->method('getString')
       ->willReturn("1");
+
 
     $field_account_item = $this->createMock('\Drupal\Core\Field\EntityReferenceFieldItemList');
     $field_account_item->expects($this->any())
@@ -62,12 +68,7 @@ class SocialEventManagersAccessHelperTest extends UnitTestCase {
       ->method('getOwner')
       ->willReturn($owner);
 
-    $accessHelper = new SocialEventManagersAccessHelper();
-    $returned_access = $accessHelper->eventEnrollmentAccessCheck(
-      $event_enrollment,
-      'view',
-      $account
-    );
+    $returned_access = social_event_managers_event_enrollment_access($event_enrollment, 'view', $account);
 
     $this->assertEquals(AccessResult::allowed(), $returned_access);
   }
@@ -121,12 +122,7 @@ class SocialEventManagersAccessHelperTest extends UnitTestCase {
       ->method('getOwner')
       ->willReturn($owner);
 
-    $accessHelper = new SocialEventManagersAccessHelper();
-    $returned_access = $accessHelper->eventEnrollmentAccessCheck(
-      $event_enrollment,
-      'view',
-      $account
-    );
+    $returned_access = social_event_managers_event_enrollment_access($event_enrollment, 'view', $account);
 
     $this->assertEquals(AccessResult::neutral(), $returned_access);
   }
