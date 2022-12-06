@@ -27,7 +27,10 @@ jobs:
 
       - name: Find feature files
         id: set-matrix
-        run: echo "::set-output name=features::$(ls tests/behat/features/capabilities | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+        run: |
+          echo -n "features=" >> $GITHUB_OUTPUT
+          cd tests/behat/features/capabilities
+          find * -type d -exec sh -c "ls {} | grep '\.feature$' > /dev/null" ';' -print | jq -R -s -c 'split("\n") | map(select(length > 0))' >> $GITHUB_OUTPUT
 
     outputs:
       features: ${{ steps.set-matrix.outputs.features }}
@@ -160,14 +163,15 @@ jobs:
       - name: Run Integration test
         run: |
           vendor/bin/behat --version
-          for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*; do
-            echo $test
+          for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
             if head -n1 $test | grep -q "@disabled"; then
-              echo "Skipping disabled test"
+              echo "$test - Skipping disabled test"
             else
+              echo "::group::$test"
               drush sql-drop -y
               drush sqlc < installation.sql
               vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+              echo "::endgroup::"
             fi
           done
 
