@@ -81,6 +81,58 @@ class FeatureContext extends RawMinkContext {
     }
 
     /**
+     * @Then I should see :text in the :heading block
+     */
+    public function shouldSeeTextInHeadingBlock(string $text, string $heading) {
+      // There seems to be no easy way to search all links so we musst craft our
+      // own xpath looking at examples from `NamedSelector`.
+      $heading_literal = (new Escaper())->escapeLiteral($heading);
+      $search_string = "contains(normalize-space(string(.)), $heading_literal)";
+      $xpaths = [];
+      for ($heading_level=1;$heading_level<=6;$heading_level++) {
+        $xpaths[] = ".//h{$heading_level}//.//descendant-or-self::*[{$search_string}]";
+      }
+      $xpath = join("|", $xpaths);
+
+      $matching_headings = $this->getSession()->getPage()->findAll('xpath', $xpath);
+
+      // We rely on the fact that for how our blocks are always rendered in a
+      // `section` element that will have an ID containing `block`. We take into
+      // account that a heading may be nested inside something inside the
+      // section, but it may not be in multiple sections.
+      $blocks = array_filter(
+        array_map(
+          function (NodeElement $el) {
+            do {
+              $el = $el->getParent();
+              if ($el->getTagName() === "section") {
+                return
+                  str_contains($el->getAttribute("id") ?? "", "block")
+                  ? $el
+                  : NULL;
+              }
+            } while ($el->getTagName() !== "body");
+
+            return NULL;
+          },
+          $matching_headings
+        )
+      );
+
+      if (count($blocks) === 0) {
+        throw new \RuntimeException("Could not find a block with a heading of any level containing '$heading'.");
+      }
+      if (count($blocks) > 1) {
+        throw new \RuntimeException("Found multiple blocks with a heading of any level containing '$heading'.");
+      }
+
+      $block = current($blocks);
+      if (!$block->has('named', ['content', $text])) {
+        throw new \RuntimeException("Could not find '$text' in block with heading '$heading'.");
+      }
+    }
+
+    /**
      * @Then /^The iframe in the body description should have the src "([^"]*)"$/
      */
     public function iFrameInBodyDescriptionShouldHaveTheSrc($src) {
