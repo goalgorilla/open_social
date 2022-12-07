@@ -5,6 +5,8 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
@@ -277,9 +279,16 @@ class FeatureContext extends RawMinkContext {
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
       $value = $radiobutton->getAttribute('value');
-      $labelonpage = $radiobutton->getParent()->getText();
-      if ($label !== '' && $label != $labelonpage) {
-        throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+      // Only check the label if we were selecting by ID, otherwise we already
+      // found the button by a magic label, and help text may cause the parent
+      // of the radio button to have more text than the label, making the
+      // following always fail.
+      if ($id) {
+        $labelonpage = $radiobutton->getParent()->getText();
+        if ($label !== '' && $label != $labelonpage) {
+          throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()
+            ->getCurrentUrl()));
+        }
       }
       $radiobutton->selectOption($value, FALSE);
 
@@ -838,6 +847,44 @@ class FeatureContext extends RawMinkContext {
       }
 
       $row->clickLink($link_name);
+    }
+
+  /**
+   * Expand a details area.
+   *
+   * @When I expand the :label section
+   */
+    public function iExpandDetailsSection(string $label) : void {
+      $elements = array_filter(
+        $this->getSession()->getPage()->findAll("css", "summary"),
+        fn (NodeElement $el) => str_contains($el->getText(), $label),
+      );
+
+      if (count($elements) === 0) {
+        throw new ElementNotFoundException($this->getSession(), "summary", "css", "summary");
+      }
+
+      if (count($elements) > 1) {
+        throw new \RuntimeException("More than one summary element was found with label '$label', make the labels unique or improve your label specificity.");
+      }
+
+      // Store the summary so we can click it and find the parent details element.
+      $element = $summary = current($elements);
+      do {
+        $element = $element->getParent();
+        if ($element->getTagName() === "body") {
+          throw new \RuntimeException("The summary field for '$label' was not in a parent 'details' element to expand.");
+        }
+      } while ($element->getTagName() !== "details");
+
+      // If the default state for the details is open then the test should be
+      // adjusted to encode that behaviour.
+      if ($element->hasAttribute("open")) {
+        throw new \RuntimeException("The details element for '$label' is already opened.");
+      }
+
+      // Expand the details element.
+      $summary->click();
     }
 
     /**

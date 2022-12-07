@@ -429,6 +429,38 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
+   * Assert we're on the group page.
+   *
+   * Can be used to check that a redirect was implemented correctly.
+   *
+   * @Then I should be viewing the group :group
+   * @Then should be viewing the group :group
+   */
+  public function shouldBeViewingGroup(string $group) : void {
+    $group_id = $this->getNewestGroupIdFromTitle($group);
+    if ($group_id === NULL) {
+      throw new \Exception("Group '${group}' does not exist.");
+    }
+    $this->assertSession()->statusCodeEquals(200);
+    // We may need to change the path here since the default group page is
+    // configurable.
+    $this->assertSession()->addressEquals("/group/${group_id}/about");
+  }
+
+  /**
+   * Edit a specific group.
+   *
+   * This mirrors editingTopic even though we already have viewPageInGroup which
+   * could be used. A little duplication makes easier test writing.
+   *
+   * @When I am editing the group :group
+   * @When am editing the group :group
+   */
+  public function editingGroup(string $group) : void {
+    $this->viewPageInGroup("edit", $group);
+  }
+
+  /**
    * Open the group on a specific page.
    *
    * @When I am viewing the :group_page page of group :group

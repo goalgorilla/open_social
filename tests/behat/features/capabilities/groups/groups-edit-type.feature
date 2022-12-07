@@ -4,56 +4,36 @@ Feature: Edit group type after creation
   Role: As a CM+
   Goal/desire: Being able to edit existing groups types after creation
 
-  Scenario: Successfully add new content with the group selector
+  Scenario: Site Manager changes a group with content in it and the content visibility should update
+    Given groups with non-anonymous owner:
+      | label     | field_group_description | type         | langcode |
+      | Nescafe   | Coffee time!!!          | closed_group | en       |
+    And "topic_type" terms:
+      | name |
+      | Blog |
+    And topics:
+      | title     | body      | group   | field_content_visibility | langcode | field_topic_type |
+      | Nespresso | What else | Nescafe | group                    | en       | Blog             |
 
-    Given users:
-      | name        | pass | mail                    | status | roles       |
-      | test_user_1 | 1234 | test_user_1@example.com | 1      | verified    |
-      | test_user_2 | 1234 | test_user_2@example.com | 1      | sitemanager |
-    Given groups:
-      | label     | field_group_description | author       | type         | langcode |
-      | Nescafe   | Coffee time!!!          | test_user_2  | closed_group | en       |
-    Given "topic_types" terms:
-      | name      |
-      | Blog      |
-    Given topic content:
-      | title         | field_topic_type | status | field_content_visibility | alias          |
-      | Nescafe Topic | Blog             | 1      | group                    | /nescafe-topic |
+    # Assert initial visibility is correct
+    Given I am logged in as a user with the verified role
+    When I am viewing the topic "Nespresso"
+    Then I should be denied access
 
-    # Scenario SM change Group Type with Topic Content in it.
-    When I am logged in as "test_user_2"
-      And I am on "/nescafe-topic"
-    Then I should see "Nescafe Topic"
-      And I click "Edit content"
-      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-      And I select group "Nescafe"
-      And I wait for AJAX to finish
-      And I press "Save"
-    Then I should see "Nescafe"
+    # @When I change the group visibility for "Nescafe" from "closed" to "public" using the group edit form
+    Given I am logged in as a user with the sitemanager role
 
-    When I am logged in as "test_user_1"
-      And I am on "/nescafe-topic"
-    Then I should see "Access Denied"
+    When I am editing the group Nescafe
+    And I expand the Settings section
+    And I should see checked the box "Closed group"
+    And I click radio button "Public group"
+    And I should see "Please note that changing the group type will also change the visibility of the group content and the way users can join the group"
+    And I press "Save"
+    And I wait for the batch job to finish
 
-    When I am logged in as "test_user_2"
-      And I am on the stream of group "Nescafe"
-    Then I should see "Closed group"
-      And I should see "Nescafe"
-    When I click "Edit group"
-    And I click the xth "0" element with the css "#edit-group-settings summary"
-    Then I should see checked the box "Closed group"
+    Then I should be viewing the group Nescafe
 
-    Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"
-      And I wait for AJAX to finish
-    Then I should see "Please note that changing the group type will also change the visibility of the group content and the way users can join the group"
-      And I press "Save"
-      And I wait for the batch job to finish
-    Then I should see "Nescafe"
-
-    When I click "Stream" in the "Tabs"
-      And I click the post visibility dropdown
-    Then I should see "Public"
-
-    When I am logged in as "test_user_1"
-      And I am on "/nescafe-topic"
-    Then I should see "Nescafe Topic"
+    # Check that content visibility changed.
+    Given I am logged in as a user with the verified role
+    When I am viewing the topic "Nespresso"
+    Then I should see "Nespresso"
