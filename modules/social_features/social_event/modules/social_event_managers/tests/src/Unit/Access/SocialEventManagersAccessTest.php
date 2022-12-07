@@ -12,6 +12,9 @@ use Drupal\Tests\UnitTestCase;
  */
 class SocialEventManagersAccessTest extends UnitTestCase {
 
+  /**
+   * Include the event managers module in the setup, so we can call the hooks.
+   */
   protected function setUp(): void {
     parent::setUp();
     // Include module file for the hook_entity_access.
@@ -39,7 +42,6 @@ class SocialEventManagersAccessTest extends UnitTestCase {
     $field_item->expects($this->any())
       ->method('getString')
       ->willReturn("1");
-
 
     $field_account_item = $this->createMock('\Drupal\Core\Field\EntityReferenceFieldItemList');
     $field_account_item->expects($this->any())
