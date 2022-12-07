@@ -11,6 +11,7 @@ use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
+use Drupal\social_event\Entity\EventEnrollment;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -95,6 +96,23 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Assert we're on the event page.
+   *
+   * Can be used to check that a redirect was implemented correctly.
+   *
+   * @Then I should be viewing the event :event
+   * @Then should be viewing the event :event
+   */
+  public function shouldBeViewingEvent(string $event) : void {
+    $event_id = $this->getEventIdFromTitle($event);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${event}' does not exist.");
+    }
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals("/node/${event_id}");
+  }
+
+  /**
    * Edit a specific event.
    *
    * @When I am editing the event :event
@@ -106,6 +124,20 @@ class EventContext extends RawMinkContext {
       throw new \Exception("Event '${event}' does not exist.");
     }
     $this->visitPath("/node/${event_id}/edit");
+  }
+
+  /**
+   * View the event manager page for a specific event.
+   *
+   * @When I am viewing the event manager page for :event
+   * @When am viewing the event manager page for :event
+   */
+  public function viewEventManagerPage(string $event) : void {
+    $event_id = $this->getEventIdFromTitle($event);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${event}' does not exist.");
+    }
+    $this->visitPath("/node/${event_id}/all-enrollments");
   }
 
   /**
@@ -308,6 +340,35 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Make yourself an event manager for an event.
+   *
+   * @Given I am an event manager for the :title event
+   * @Given am an event manager for the :title event
+   */
+  public function iAmAnEventManagerForTheEvent(string $title) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+
+    if ($current_user === NULL || !isset($current_user->uid) || $current_user->uid === 0) {
+      throw new \RuntimeException("Can not make an anonymous user event manager");
+    }
+
+    $event_id = $this->getEventIdFromTitle($title);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${title}' does not exist.");
+    }
+
+    $event = Node::load($event_id);
+    assert($event instanceof Node);
+
+    if (!$event->hasField("field_event_managers")) {
+      throw new \RuntimeException("Field 'field_event_managers' not found, make sure you have the social_event_managers module enabled.");
+    }
+
+    $event->get('field_event_managers')->appendItem(['target_id' => $current_user->uid]);
+    $event->save();
+  }
+
+  /**
    * Clean up any events created in this scenario.
    *
    * @AfterScenario
@@ -320,6 +381,42 @@ class EventContext extends RawMinkContext {
       if ($nid !== NULL) {
         Node::load($nid)?->delete();
       }
+    }
+  }
+
+  /**
+   * Create event enrollments if it doesn't matter who is enrolled.
+   *
+   * @Given there are :count event enrollments for the :title event
+   * @Given there is :count event enrollment for the :title event
+   */
+  public function thereAreEventEnrollmentsForEvent(int $count, string $title) : void {
+    assert(abs($count) === $count, "The :count may not be negative (got $count).");
+
+    $event_id = $this->getEventIdFromTitle($title);
+    if ($event_id === NULL) {
+      throw new \Exception("Event '${title}' does not exist.");
+    }
+
+    for ($i = 0; $i<$count; $i++) {
+      // Create a new random user to add as enrollee.
+      $user = (object) [
+        'name' => $this->drupalContext->getRandom()->name(8),
+        'pass' => $this->drupalContext->getRandom()->name(16),
+        'role' => "authenticated",
+      ];
+      $user->mail = "{$user->name}@example.com";
+
+      $user = $this->drupalContext->userCreate($user);
+      assert(isset($user->uid));
+
+      // Event enrollments should get cleaned up when users are deleted.
+      EventEnrollment::create([
+        'user_id' => $user->uid,
+        'field_event' => $event_id,
+        'field_enrollment_status' => '1',
+        'field_account' => $user->uid,
+      ])->save();
     }
   }
 
