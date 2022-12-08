@@ -714,9 +714,12 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
 
-  // If the current user has no access to viewing user profiles, it might not
-  // have access to the users profile.
-  if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
+  // If the current user is anonymous, it means it does not have access to the
+  // users profile.
+  if ($current_user->isAnonymous() &&
+    isset($display->get('content')['field_profile_image'])
+  ) {
+
     // Try to load the profile picture.
     $image = $entity->get('field_profile_image')->entity;
 
@@ -724,7 +727,8 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
     if ($image instanceof FileInterface) {
       // Potentially the file is in the private file system. In that case,
       // anonymous user don't have access to it.
-      if (!$image->access('view', $current_user)) {
+      $file_scheme = \Drupal::service('stream_wrapper_manager')->getScheme($image->getFileUri());
+      if ($file_scheme === 'private') {
         // Load default data.
         $replacement_data = social_profile_get_default_image();
         // Time to override the data that going to be rendered.
