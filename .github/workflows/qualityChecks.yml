@@ -2,6 +2,11 @@ name: Quality checks
 
 on:
   pull_request: { }
+  # Trigger workflow for release branches.
+  push:
+    branches:
+      - main
+      - "[0-9]+.[0-9]+.x"
 
 jobs:
   setup:

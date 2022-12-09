@@ -721,8 +721,11 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
         // Or disabled in the event.
         !$node->showEnrollments()
       ) {
-        // Return forbidden, since access was not explicitly granted.
-        return AccessResult::forbidden();
+        // Block should be visible for authors.
+        if ($node->getOwnerId() !== $account->id()) {
+          // Return forbidden, since access was not explicitly granted.
+          return AccessResult::forbidden();
+        }
       }
     }
   }
@@ -1425,6 +1428,13 @@ function social_event_social_core_title_alter(array &$titles): void {
   foreach (['node', 'group_content'] as $entity_type) {
     $titles[$entity_type]['bundles']['event'] = 'an';
   }
+}
+
+/**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_event_social_tagging_type_alter(array &$items): void {
+  $items['node'][] = 'event';
 }
 
 /**

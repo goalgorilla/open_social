@@ -10,7 +10,7 @@ Feature: Book page in Flexible Group
 
   Scenario: Flexible group provides CTA for book creation
     Given I am logged in as a user with the contentmanager role
-    And groups:
+    And groups owned by current user:
       | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
       | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
@@ -23,7 +23,7 @@ Feature: Book page in Flexible Group
 
   Scenario: Can create a book in a flexible Group
     Given I am logged in as a user with the contentmanager role
-    And groups:
+    And groups owned by current user:
       | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
       | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
 
@@ -38,7 +38,7 @@ Feature: Book page in Flexible Group
 
   Scenario: Can create a sub-book in a flexible group
     Given I am logged in as a user with the contentmanager role
-    And groups:
+    And groups owned by current user:
       | label                 | field_group_description | enable_books | type           | langcode | path                 | field_flexible_group_visibility | field_group_allowed_visibility |
       | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
     And books:
@@ -59,7 +59,7 @@ Feature: Book page in Flexible Group
 
   Scenario: Group books overview only shows top-level books
     Given I am logged in as a user with the contentmanager role
-    And groups:
+    And groups owned by current user:
       | label                 | field_group_description | enable_books | type           | langcode | path                | field_flexible_group_visibility | field_group_allowed_visibility |
       | Test Flexible Group   | Description text        | 1            | flexible_group | en       | /test-flexible-group | public                          | public                         |
     And books:

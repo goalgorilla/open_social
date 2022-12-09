@@ -7,6 +7,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -56,18 +57,56 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
   private $entityTypeManager;
 
   /**
+   * The renderer.
+   */
+  private RendererInterface $renderer;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
     Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $translation,
-    EntityTypeManagerInterface $entity_type_manager
+    EntityTypeManagerInterface $entity_type_manager,
+    RendererInterface $renderer
   ) {
     $this->database = $connection;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($translation);
     $this->entityTypeManager = $entity_type_manager;
+    $this->renderer = $renderer;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function description(string $key, string $hook): string {
+    $description = '';
+
+    // We need it to be specified otherwise we can't build the markup.
+    if (empty($key)) {
+      return $description;
+    }
+
+    // Allow modules to provide their own markup for a given key in the
+    // visibility #options array.
+    $this->moduleHandler->alter($hook, $key, $description);
+
+    if (is_array($description)) {
+      $element = [
+        '#theme' => 'visibility',
+        '#name' => $key,
+      ];
+
+      foreach ($description as $field => $item) {
+        $element['#' . $field] = $item;
+      }
+
+      $description = $this->renderer->render($element);
+    }
+
+    return $description;
   }
 
   /**
