@@ -319,7 +319,7 @@ function social_post_user_cancel($edit, AccountInterface $account, $method) {
     $pids = \Drupal::entityQuery('post')
       ->condition('user_id', $account->id())
       ->execute();
-    module_load_include('inc', 'social_post', 'social_post.admin');
+    \Drupal::moduleHandler()->loadInclude('social_post', 'inc', 'social_post.admin');
     social_post_mass_update($pids, $update, NULL, TRUE);
   }
 }

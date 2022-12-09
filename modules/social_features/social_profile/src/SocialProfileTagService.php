@@ -222,7 +222,10 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
   private function prepareTermOptions(array $terms) {
     $options = [];
     foreach ($terms as $category) {
-      $options[$category->tid] = $category->name;
+      // Only return published taxonomy terms.
+      if ($category->status) {
+        $options[$category->tid] = $category->name;
+      }
     }
 
     return $options;

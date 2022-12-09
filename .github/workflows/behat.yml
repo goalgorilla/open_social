@@ -4,6 +4,11 @@ name: 'Behat'
 on:
   # Triggers the workflow on all pull request events
   pull_request: { }
+  # Trigger workflow for release branches.
+  push:
+    branches:
+      - main
+      - "[0-9]+.[0-9]+.x"
 
 # github.head_ref is only set when the workflow was triggered by a pull_request and it contains the value of the source branch of the PR.
 # github.ref_name will than only be used if the workflow was not triggered by a pull_request and it also just contains the branch name.
@@ -22,7 +27,10 @@ jobs:
 
       - name: Find feature files
         id: set-matrix
-        run: echo "::set-output name=features::$(ls tests/behat/features/capabilities | jq -R -s -c 'split("\n") | map(select(length > 0))')"
+        run: |
+          echo -n "features=" >> $GITHUB_OUTPUT
+          cd tests/behat/features/capabilities
+          find * -type d -exec sh -c "ls {} | grep '\.feature$' > /dev/null" ';' -print | jq -R -s -c 'split("\n") | map(select(length > 0))' >> $GITHUB_OUTPUT
 
     outputs:
       features: ${{ steps.set-matrix.outputs.features }}
@@ -66,7 +74,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: 'goalgorilla/drupal_social'
-          ref: '6.1.0'
+          ref: '6.2.0'
 
       # Install the version of Open Social under test.
       - name: Composer require current branch
@@ -155,14 +163,15 @@ jobs:
       - name: Run Integration test
         run: |
           vendor/bin/behat --version
-          for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*; do
-            echo $test
+          for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
             if head -n1 $test | grep -q "@disabled"; then
-              echo "Skipping disabled test"
+              echo "$test - Skipping disabled test"
             else
+              echo "::group::$test"
               drush sql-drop -y
               drush sqlc < installation.sql
               vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+              echo "::endgroup::"
             fi
           done
 

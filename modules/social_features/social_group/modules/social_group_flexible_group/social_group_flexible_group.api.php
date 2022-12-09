@@ -23,14 +23,21 @@ function hook_social_group_flexible_group_content_routes_alter(array &$content_r
 }
 
 /**
- * Provide a description for a given key from the content visibility #options.
+ * Provide a description for a given key from the flexible group visibility.
  *
+ * @param string $key
+ *   The visibility option name.
  * @param string $description
- *   The descriptive.
+ *   An explanation of a visibility option as HTML markup text.
+ *
+ * @deprecated in social:11.5.0 and is removed from social:12.0.0. Use
+ *   hook_social_group_group_visibility_description_alter instead.
+ *
+ * @see https://www.drupal.org/node/3302921
  *
  * @ingroup social_group_api
  */
-function hook_social_group_flexible_group_allowed_visibility_description_alter($key, &$description) {
+function hook_social_group_flexible_group_allowed_visibility_description_alter(string $key, string &$description) {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';

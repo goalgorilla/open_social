@@ -1,0 +1,57 @@
+editor.editor.mail_html:
+  expected_config:
+    settings:
+      toolbar:
+          rows:
+            -
+              -
+                name: Formatting
+                items:
+                  - Bold
+                  - Italic
+                  - Underline
+              -
+                name: Links
+                items:
+                  - DrupalLink
+                  - DrupalUnlink
+  update_actions:
+    delete:
+      settings:
+        toolbar: { }
+    change:
+      settings:
+        toolbar:
+          rows:
+            -
+              -
+                name: Formatting
+                items:
+                  - Bold
+                  - Italic
+                  - Underline
+              -
+                name: Links
+                items:
+                  - DrupalLink
+                  - DrupalUnlink
+
+              -
+                name: Aligment
+                items:
+                  - JustifyBlock
+                  - JustifyLeft
+                  - JustifyCenter
+                  - JustifyRight
+filter.format.mail_html:
+  expected_config:
+    filters:
+      filter_html:
+        settings:
+          allowed_html: '<a href hreflang title id target rel class=""> <b> <br> <em> <i> <p> <strong> <u>'
+  update_actions:
+    change:
+      filters:
+        filter_html:
+          settings:
+            allowed_html: '<a href hreflang title id target rel class=""> <b> <br> <em> <i> <p class=""> <strong> <u>'
