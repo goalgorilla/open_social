@@ -50,11 +50,19 @@ class Field extends DataProducerPluginBase {
       return NULL;
     }
 
-    $value = $entity->get($field);
     // A FieldableEntityInterface::get will always return a
     // FieldItemListInterface which implements AccessibleInterface. Thus no
     // further typechecking is needed.
-    return $value->access('view') ? $value : NULL;
+    $entity_field = $entity->get($field);
+    if (!$entity_field->access('view')) {
+      return NULL;
+    }
+
+    if ($entity_field->isEmpty()) {
+      return NULL;
+    }
+
+    return $entity_field;
   }
 
 }

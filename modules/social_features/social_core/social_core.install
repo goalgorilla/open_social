@@ -1470,8 +1470,8 @@ function social_core_update_10300() {
 function social_core_update_11001(): void {
   Role::create([
     'id' => 'verified',
-    'label' => t('Verified User'),
-    'weight' => 5,
+    'label' => 'Verified User',
+    'weight' => 3,
     'is_admin' => NULL,
     'permissions' => [],
   ])->save();
@@ -1624,4 +1624,32 @@ function social_core_update_11403(array &$sandbox): void {
       $style->flush();
     }
   }
+}
+
+/**
+ * Fix verified user role weight.
+ */
+function social_core_update_11404(): void {
+  // This should've been created in 11001.
+  $role = Role::load('verified');
+
+  if ($role === NULL) {
+    throw new \RuntimeException("Verified user role is required for Open Social to function.");
+  }
+
+  $role->setWeight(3)->save();
+}
+
+/**
+ * Update social_post exposed filter button name.
+ */
+function social_core_update_11405(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

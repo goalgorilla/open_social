@@ -141,37 +141,40 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
  * @param \Drupal\Core\Entity\EntityInterface $form_entity
  *   Entity object.
  */
-function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
+function social_tagging_social_tagging_field_form_alter(
+  array &$form,
+  FormStateInterface &$form_state,
+  EntityInterface $form_entity
+): void {
   if (!empty($form['social_tagging'])) {
-    // Load tag config..
-    $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    // Switch for the entity_type.
-    switch ($form_entity->getEntityTypeId()) {
-      case 'node':
-        $type = $form_entity->bundle();
-        $tag_enabled = $tag_settings->get('tag_node_type_' . $type);
-        break;
+    /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $tag_service */
+    $tag_service = \Drupal::service('social_tagging.tag_service');
 
-      case 'group':
-      case 'profile':
-        $type = $form_entity->getEntityTypeId();
-        $tag_enabled = $tag_settings->get('tag_type_' . $type);
-        break;
+    $items = $tag_service->types();
+    $suffix = $form_entity->getEntityTypeId();
+    $prefix = '';
 
-      case 'media':
-        $type = $form_entity->bundle();
-        $tag_enabled = $tag_settings->get('tag_media_type_' . $type);
-        break;
+    if (isset($items[$suffix])) {
+      if (!empty($items[$suffix])) {
+        $prefix = $suffix . '_';
+        $suffix = $form_entity->bundle();
+      }
 
-      default:
-        $tag_enabled = FALSE;
-        break;
+      // Load tag config.
+      $tag_enabled = \Drupal::configFactory()
+        ->getEditable('social_tagging.settings')
+        ->get("tag_{$prefix}type_$suffix");
+    }
+    else {
+      $tag_enabled = NULL;
     }
 
-    // Get the taggingservice.
-    $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
     // Check if tagging is turned on/off.
-    if (!$tag_service->active() || !$tag_service->hasContent() || $tag_enabled == FALSE) {
+    if (
+      $tag_enabled === NULL ||
+      !$tag_service->active() ||
+      !$tag_service->hasContent()
+    ) {
       // Remove the field from the form.
       $form['social_tagging']['#access'] = FALSE;
       return;
@@ -335,42 +338,15 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
 /**
  * Implements hook_entity_base_field_info().
  */
-function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type) {
+function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type): array {
   $fields = [];
 
-  $entity_types = [
-    'node',
-    'group',
-    'profile',
-  ];
-
-  if (\Drupal::moduleHandler()->moduleExists('media')) {
-    $entity_types[] = 'media';
-  }
+  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
+  $helper = \Drupal::service('social_tagging.tag_service');
 
   // Add a Tagging base field.
-  if (in_array($entity_type->id(), $entity_types)) {
-    $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Tagging'))
-      ->setDescription(t('Tagging field.'))
-      ->setSetting('target_type', 'taxonomy_term')
-      ->setSetting('handler', 'default:taxonomy_term')
-      ->setSetting('handler_settings', [
-        'target_bundles' => [
-          'social_tagging' => 'social_tagging',
-        ],
-      ])
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-      ->setDisplayOptions('view', [
-        'region' => 'hidden',
-      ])
-      ->setDisplayOptions('form', [
-        'type' => 'options_select',
-        'weight' => 3,
-        'settings' => [],
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+  if (in_array($entity_type->id(), $helper->types(TRUE))) {
+    $fields['social_tagging'] = _social_tagging_field();
   }
 
   return $fields;
@@ -700,4 +676,31 @@ function social_tagging_modules_installed(array $modules): void {
     \Drupal::entityDefinitionUpdateManager()
       ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $fields['social_tagging']);
   }
+}
+
+/**
+ * Gets base field.
+ */
+function _social_tagging_field(): FieldStorageDefinitionInterface {
+  return BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'region' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
 }

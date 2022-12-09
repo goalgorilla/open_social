@@ -4,6 +4,8 @@ namespace Drupal\social_event_addtocal\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\File\FileSystemInterface;
+use Eluceo\iCal\Domain\Entity\TimeZone;
+use Eluceo\iCal\Presentation\Factory\TimeZoneFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +61,7 @@ class AddToCalendarIcsController extends ControllerBase {
   public function downloadIcs() {
     // Event dates.
     $dates = $this->request->get('dates');
+    $timezone = $this->request->get('timezone');
 
     // Create ICS filename.
     $name = md5(serialize($this->request->query->all()));
@@ -78,6 +81,18 @@ class AddToCalendarIcsController extends ControllerBase {
         'UID:' . $name,
         'SUMMARY:' . $this->request->get('title'),
       ];
+
+      // Generate the VTIMEZONE.
+      $timezone_components = [];
+
+      $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['start'], $timezone);
+      $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['end'], $timezone);
+
+      $componentFactory = new TimeZoneFactory();
+      $timezone_elements = $componentFactory->createComponents($timezone_components);
+      foreach ($timezone_elements as $el) {
+        $file_data[] = $el->__toString();
+      }
 
       // Set start and end datetime for event.
       if ($dates['all_day']) {
@@ -117,6 +132,28 @@ class AddToCalendarIcsController extends ControllerBase {
     $response->setContentDisposition('attachment', $filename);
 
     return $response;
+  }
+
+  /**
+   * Helper method to generate the VTIMEZONE component for a date.
+   *
+   * @param string $date
+   *   Date string.
+   * @param string $timezone
+   *   Timezone string.
+   *
+   * @return \Eluceo\iCal\Domain\Entity\TimeZone
+   *   Returns the TimeZone component.
+   */
+  protected function generateTimezoneComponent(string $date, string $timezone) {
+    $date = str_replace("$timezone:", "", $date);
+    $timezone_component = TimeZone::createFromPhpDateTimeZone(
+      new \DateTimeZone($timezone),
+      new \DateTimeImmutable($date, new \DateTimeZone($timezone)),
+      new \DateTimeImmutable($date, new \DateTimeZone($timezone)),
+    );
+
+    return $timezone_component;
   }
 
 }

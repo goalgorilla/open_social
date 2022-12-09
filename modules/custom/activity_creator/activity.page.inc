@@ -12,6 +12,8 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
+use Drupal\profile\ProfileStorage;
+use Drupal\user\UserInterface;
 
 /**
  * Prepares variables for Activity templates.
@@ -84,7 +86,7 @@ function template_preprocess_activity(array &$variables) {
   // 'compact_notification' view mode might not be configured, so remember to
   // always check the theme setting first.
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if ($storage !== NULL) {
+  if ($storage instanceof ProfileStorage && $account instanceof UserInterface) {
     $user_profile = $storage->loadByUser($account, 'profile');
     if ($user_profile) {
       $content = \Drupal::entityTypeManager()
@@ -101,7 +103,7 @@ function template_preprocess_activity(array &$variables) {
 
   // Our author is Anonymous. If that happens for a notification.
   // Lets provide the author as a default profile image.
-  if ($variables['elements']['#view_mode'] === 'notification' && $account->isAnonymous()) {
+  if ($variables['elements']['#view_mode'] === 'notification' && $account !== NULL && $account->isAnonymous()) {
     $default_image = social_profile_get_default_image();
     if (!empty($default_image['id'])) {
       $file = File::load($default_image['id']);
