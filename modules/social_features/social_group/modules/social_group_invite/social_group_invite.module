@@ -633,6 +633,11 @@ function social_group_invite_mail_alter(&$message) {
     $group_config = \Drupal::config('social_group.settings');
     $invite_settings = $group_config->get('group_invite');
 
+    // The mail params list should contain group content entity.
+    /* @see ginvite_group_content_insert() */
+    /** @var \Drupal\group\Entity\GroupContentInterface $invite */
+    $invite = $params['group_content'] ?? NULL;
+
     // Alter message and subject if it configured.
     if (
       !is_null($invite_settings) &&
@@ -644,16 +649,33 @@ function social_group_invite_mail_alter(&$message) {
         $tempstore = \Drupal::service('tempstore.shared')->get('social_group_invite');
         $resent_invites = (array) $tempstore->get(SocialGroupInviteResend::TEMP_STORE_ID);
         if (!empty($resent_invites)) {
-          // The mail params list should contain group content entity.
-          /* @see ginvite_group_content_insert() */
+
           if (
-            ($params['group_content'] instanceof GroupContentInterface) &&
-            in_array($params['group_content']->uuid(), $resent_invites)
+            $invite instanceof GroupContentInterface &&
+            in_array($invite->uuid(), $resent_invites)
           ) {
             $overridden_body = $invite_settings['invite_resend_message'];
             // Remove handled resent invite from list.
             unset($resent_invites[$params['group_content']->uuid()]);
             $tempstore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
+          }
+        }
+      }
+
+      if ($invite instanceof GroupContentInterface) {
+        // Allows to have different invite message per group type by replacing
+        // default global message.
+        /** @var Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation $group_content_plugin */
+        $group_content_plugin = $invite->getContentPlugin();
+
+        if ($group_content_plugin->getPluginId() === 'group_invitation') {
+          $configuration = $group_content_plugin->getConfiguration();
+
+          if ($subject = $configuration['invitation_subject'] ?? '') {
+            $invite_settings['invite_subject'] = $subject;
+          }
+          if ($body = $configuration['invitation_body'] ?? '') {
+            $invite_settings['invite_message'] = $body;
           }
         }
       }
