@@ -165,7 +165,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $menu_items['create'] += $create_links;
 
       // If the user can't access any children then we disable the entire menu.
-      if (isset($menu_items['create']) && is_array($menu_items['create']) && !$this->hasAccessibleChild($menu_items['create'])) {
+      if (!$this->hasAccessibleChild($menu_items['create'])) {
         $menu_items['create']['#access'] = FALSE;
       }
 
