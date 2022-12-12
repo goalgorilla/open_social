@@ -42,7 +42,7 @@ function hook_social_event_enroll_method_description_alter($key, &$description) 
  *
  * @ingroup social_event_api
  */
-function hook_social_event_menu_local_tasks_routes_alter(&$routes) {
+function hook_social_event_menu_local_tasks_routes_alter(array &$routes) {
   return $routes;
 }
 
