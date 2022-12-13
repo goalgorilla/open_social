@@ -188,9 +188,9 @@ function social_album_post_presave(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
+ * Helper function to invalidate tags.
  */
-function social_album_post_insert(EntityInterface $entity) {
+function _social_album_invalidate_tags(EntityInterface $entity): void {
   /** @var \Drupal\social_post\Entity\PostInterface $entity */
   if ($entity->bundle() === 'photo' && !$entity->field_album->isEmpty()) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags([
@@ -198,6 +198,20 @@ function social_album_post_insert(EntityInterface $entity) {
       'user:' . $entity->getOwnerId(),
     ]);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_album_post_insert(EntityInterface $entity) {
+  _social_album_invalidate_tags($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_album_post_update(EntityInterface $entity) {
+  _social_album_invalidate_tags($entity);
 }
 
 /**
