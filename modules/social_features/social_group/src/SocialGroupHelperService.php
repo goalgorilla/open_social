@@ -235,7 +235,11 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     if ($group instanceof GroupInterface) {
       $memberships = $group->getMembers();
       foreach ($memberships as $member) {
-        $cache[] = $member->getUser()->id();
+        $uid = $member->getUser()->id();
+        // This should always be TRUE but Drupal's interface implementations
+        // are such that PHPStan needs some help.
+        assert(is_int($uid));
+        $cache[] = $uid;
       }
     }
 
