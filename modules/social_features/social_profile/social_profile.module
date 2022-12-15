@@ -425,7 +425,7 @@ function social_profile_user_form_profiles_field_alter(array &$element, FormStat
     // Remove "Profiles" when embedding profile fields on the user register
     // form.
     case 'register':
-      unset($element['#field_title']);
+      $element['#after_build'][] = 'social_profile_hide_profile_title_on_registration_page';
       break;
 
     // Add a useful title and explainer text to our visibility settings.
@@ -436,6 +436,14 @@ function social_profile_user_form_profiles_field_alter(array &$element, FormStat
       $element['#after_build'][] = 'social_profile_display_visibility_fields_horizontal';
       break;
   }
+}
+
+/**
+ * Hide the profile details title on the registration page.
+ */
+function social_profile_hide_profile_title_on_registration_page(array $element, FormStateInterface $form_state) : array {
+  unset($element['#title']);
+  return $element;
 }
 
 /**
