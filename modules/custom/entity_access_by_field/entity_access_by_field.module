@@ -83,6 +83,8 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     // If we haven't stored anything for this user yet, let's try and populate it
     // now.
     if (!isset($gids[$account->id()])) {
+      $gids[$account->id()] = [];
+
       $entity_type_manager = \Drupal::entityTypeManager();
 
       /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
