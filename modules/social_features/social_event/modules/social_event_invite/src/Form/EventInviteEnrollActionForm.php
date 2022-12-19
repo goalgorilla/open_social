@@ -123,6 +123,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
           $form['#attached']['library'][] = 'social_event/form_submit';
 
+          // Hide parent "Enroll" action.
+          if (!empty($form['enroll_wrapper'])) {
+            $form['enroll_wrapper']['#access'] = FALSE;
+          }
         }
       }
     }
