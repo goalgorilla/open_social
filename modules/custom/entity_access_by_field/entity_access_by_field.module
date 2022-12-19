@@ -51,6 +51,8 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op): arr
     // If we haven't stored any grants for this user, let's try and populate it
     // now.
     if (!isset($grants[$account->id()])) {
+      $grants[$account->id()] = [];
+
       $entityAccessPermissions = \Drupal::getContainer()
         ->get('entity_access_by_field.permissions');
       $permissions = $entityAccessPermissions->getRealmWithPermission();
@@ -80,8 +82,8 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     // Statically cache the grant ids per account.
     $gids = &drupal_static(__FUNCTION__);
 
-    // If we haven't stored anything for this user yet, let's try and populate it
-    // now.
+    // If we haven't stored anything for this user yet, let's try and populate
+    // it now.
     if (!isset($gids[$account->id()])) {
       $gids[$account->id()] = [];
 
