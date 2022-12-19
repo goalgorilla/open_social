@@ -1485,7 +1485,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2022-11-04 23:42+0000\n"
+"POT-Creation-Date: 2022-12-09 11:30+0000\n"
 "PO-Revision-Date: 2022-06-15 22:03+0000\n"
 "Last-Translator: Bilej Kornelia <bilej.kornelia@greenpeace.org>\n"
 "Language-Team: Hungarian <https://translate.getopensocial.com/projects/gpcee/"
@@ -1647,7 +1647,7 @@ msgstr "– Mind –"
 #: modules/social_features/social_comment/social_comment.module:423
 #: modules/social_features/social_group/src/Plugin/views/filter/FilterByGroup.php:74
 #: modules/social_features/social_search/social_search.module:76
-#: modules/social_features/social_tagging/social_tagging.module:526;561
+#: modules/social_features/social_tagging/social_tagging.module:502;537
 #: modules/social_features/social_user/social_user.module:144
 msgid "- Any -"
 msgstr "- Bármely -"
@@ -1828,9 +1828,9 @@ msgstr ""
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/"
-"{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
-"\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
-"\"}'>{{ field_post_image }}</a>"
+"{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-"
+"type=\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":"
+"\"post\"}'>{{ field_post_image }}</a>"
 msgstr ""
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:209
@@ -1944,8 +1944,8 @@ msgstr ""
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid ""
-"<p><a href=\"\">[message:author:display-name]</a> mentioned <a href="
-"\"\">[social_mentions:mentioned_user]</a> in a post</p>\n"
+"<p><a href=\"\">[message:author:display-name]</a> mentioned <a "
+"href=\"\">[social_mentions:mentioned_user]</a> in a post</p>\n"
 msgstr ""
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
@@ -2084,9 +2084,9 @@ msgid ""
 "</table>\r\n"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> hozzászólt az alábbihoz: [social_comment:commented_content_type] <a href="
-"\"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
-"title]</a> amelyet követsz</p>\n"
+"a> hozzászólt az alábbihoz: [social_comment:commented_content_type] <a "
+"href=\"[message:field_message_related_object:entity:url:absolute]\">[message:"
+"node-title]</a> amelyet követsz</p>\n"
 "\n"
 "<p>[message:preview]</p>\n"
 "\n"
@@ -2344,15 +2344,15 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>"
-"\r\n"
+"a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></"
+"p>\r\n"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>"
-"\r\n"
+"a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></"
+"p>\r\n"
 "\r\n"
 "<p>[message:preview]</p>\r\n"
 "\r\n"
@@ -2469,8 +2469,8 @@ msgid ""
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> nem helyénvalóként jelentette az alábbit: <a href="
-"\"[social_content_report:content_url]\">content</a> </p>\n"
+"a> nem helyénvalóként jelentette az alábbit: <a "
+"href=\"[social_content_report:content_url]\">content</a> </p>\n"
 "\n"
 "<p>[message:preview]</p>\n"
 "\n"
@@ -2505,8 +2505,8 @@ msgid ""
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
 "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
-"display-name]</a> jelentkezett az alábbi csoportodba:&nbsp;<a href="
-"\"[message:gurl]\">[message:gtitle]</a></p>\n"
+"display-name]</a> jelentkezett az alábbi csoportodba:&nbsp;<a "
+"href=\"[message:gurl]\">[message:gtitle]</a></p>\n"
 "\n"
 "<p>[message:preview]</p>\n"
 "\n"
@@ -2582,8 +2582,8 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0;0
 msgid ""
 "<p><a href=\"absolute]\">[message:recipient-user:display-name]</a> has "
-"requested membership to the <a href=\"gurl]\">[message:gtitle]</a> group</p>"
-"\r\n"
+"requested membership to the <a href=\"gurl]\">[message:gtitle]</a> group</"
+"p>\r\n"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
@@ -2609,11 +2609,11 @@ msgid ""
 "<table class=\"btn-wrap\">\r\n"
 "\t<tbody>\r\n"
 "\t\t<tr>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[social_event_invite:user_login_event_destination]\">See event</"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:user_login_event_destination]\">See event</"
 "a></td>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
 "\t\t</tr>\r\n"
 "\t</tbody>\r\n"
 "</table>\r\n"
@@ -2629,11 +2629,11 @@ msgstr ""
 "<table class=\"btn-wrap\">\n"
 "\t<tbody>\n"
 "\t\t<tr>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[social_event_invite:user_login_event_destination]\">Esemény "
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:user_login_event_destination]\">Esemény "
 "megtekintése</a></td>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">A [site:name] oldalról</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">A [site:name] oldalról</a></td>\n"
 "\t\t</tr>\n"
 "\t</tbody>\n"
 "</table>\n"
@@ -2651,10 +2651,10 @@ msgid ""
 "<table class=\"btn-wrap\">\r\n"
 "\t<tbody>\r\n"
 "\t\t<tr>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[message:gurl]\">Accept invite</a></td>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Accept invite</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
 "\t\t</tr>\r\n"
 "\t</tbody>\r\n"
 "</table>\r\n"
@@ -2670,10 +2670,10 @@ msgid ""
 "<table class=\"btn-wrap\">\r\n"
 "\t<tbody>\r\n"
 "\t\t<tr>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[social_event_invite:register_link]\">See event</a></td>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:register_link]\">See event</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
 "\t\t</tr>\r\n"
 "\t</tbody>\r\n"
 "</table>\r\n"
@@ -2730,22 +2730,23 @@ msgstr ""
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0;0
 msgid ""
 "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a "
-"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
-"\r\n"
+"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></"
+"p>\r\n"
 msgstr ""
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0
 msgid ""
 "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a "
-"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
-"\r\n"
+"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></"
+"p>\r\n"
 "\r\n"
 "<p>[message:preview]</p>\r\n"
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
-"<p><a href=\"[message:pmt-url]\">Üzenetet </a>kaptál tőle: <a href="
-"\"[message:author:url:absolute]\">[message:author:display-name]</a></p>\n"
+"<p><a href=\"[message:pmt-url]\">Üzenetet </a>kaptál tőle: <a "
+"href=\"[message:author:url:absolute]\">[message:author:display-name]</a></"
+"p>\n"
 "\n"
 "<p>[message:preview]</p>\n"
 "\n"
@@ -2823,7 +2824,7 @@ msgid_plural "@count new members are enrolled to your event."
 msgstr[0] "@count új tag jelentkezett az eseményedre."
 msgstr[1] "@count új tagok jelentkeztek az eseményedre."
 
-#: modules/social_features/social_group/social_group.module:1355
+#: modules/social_features/social_group/social_group.module:1387
 msgid "@count new member joined the group."
 msgid_plural "@count new members joined the group."
 msgstr[0] "@count új tag csatlakozott a csoporthoz."
@@ -2832,6 +2833,10 @@ msgstr[1] "@count új tagok csatlakoztak a csoporthoz."
 #: modules/social_features/social_content_report/src/EventSubscriber/FlagSubscriber.php:116
 msgid ""
 "@entity_type @entity_id could not be unpublished after a user reported it."
+msgstr ""
+
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:163
+msgid "@entity_type type: @bundle"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:277
@@ -3301,7 +3306,7 @@ msgstr "Hozzáférés csak adminok számára."
 msgid "Access group search"
 msgstr "Hozzáférés a csoportos kereséshez"
 
-#: modules/social_features/social_group/social_group.module:437;2233;2930;2936
+#: modules/social_features/social_group/social_group.module:445;2265;2962;2968
 msgid "Access permissions"
 msgstr "Hozzáférés engedélyezése"
 
@@ -3644,7 +3649,7 @@ msgstr "A kiválasztott felhasználók szerepkörhöz rendelése"
 msgid "Add alternative frontpage settings"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:338
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:369
 msgid "Add another organizer"
 msgstr "Szervező hozzáadása"
 
@@ -4102,7 +4107,7 @@ msgstr "Összesített tevékenység"
 msgid "Album"
 msgstr "Album"
 
-#: modules/social_features/social_album/social_album.module:238
+#: modules/social_features/social_album/social_album.module:242
 msgid ""
 "Album @title is successfully created. Now you can add images to this album."
 msgstr "Album @title sikeresen létrehozva. Képek hozzáadása az albumhoz."
@@ -4270,7 +4275,7 @@ msgstr "Összes téma"
 msgid "All types"
 msgstr "Összes típus"
 
-#: modules/social_features/social_group/social_group.module:623
+#: modules/social_features/social_group/social_group.module:695
 msgid "All visitors of the platform can see this group"
 msgstr "Az oldal minden látogatója láthatja ezt a csoportot"
 
@@ -4324,7 +4329,7 @@ msgstr ""
 msgid "Allow category split"
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:121
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:95
 msgid "Allow category split."
 msgstr "Kategóriafelosztás engedélyezése."
 
@@ -4485,7 +4490,7 @@ msgid "Allow to set the Group settings in Open Social."
 msgstr ""
 "Engedélyezze a Csoportbeállítások megadását az Open Social alkalmazásban."
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:129
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:102
 msgid "Allow use a parent of category."
 msgstr "Engedélyezze a kategória szülőjének használatát."
 
@@ -4529,7 +4534,7 @@ msgstr ""
 "Lehetővé teszi a felhasználóknak, hogy kihagyják a megerősítő lépést, mikor "
 "csatlakoznak bármely @csoporttípus."
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:113
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:89
 msgid "Allow users to tag content in content."
 msgstr ""
 "Lehetővé teszi a felhasználók számára a tartalom megjelölését a tartalomban."
@@ -4707,7 +4712,7 @@ msgid ""
 "picture or name."
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:69
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:71
 msgid ""
 "Altering the visibility options could result in changes in access for "
 "content within this group and the group itself."
@@ -4813,7 +4818,7 @@ msgstr ""
 msgid "Appearance"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1025
+#: modules/social_features/social_event/social_event.module:1028
 msgid "Approve"
 msgstr "Elfogadás"
 
@@ -4853,7 +4858,7 @@ msgstr "Jóvá lett hagyva, hogy csatlakozzon egy csoport tevékenységeihez"
 msgid "Approved/Rejected by"
 msgstr "Jóváhagyva/elutasítva"
 
-#: modules/social_features/social_group/social_group.module:886
+#: modules/social_features/social_group/social_group.module:918
 msgid ""
 "Are you sure to accept the invitation and join this group? You can leave "
 "this group at any time."
@@ -4892,7 +4897,7 @@ msgstr "Biztosan elutasítód a @name csatlakozási kérelmét?"
 msgid "Are you sure you want to delete %name?"
 msgstr "%name valóban törölhető?"
 
-#: modules/social_features/social_group/social_group.module:1046
+#: modules/social_features/social_group/social_group.module:1078
 msgid ""
 "Are you sure you want to delete your group \"@group\" along with all of the "
 "posts, events and topics inside this group? This action cannot be undone."
@@ -4904,7 +4909,7 @@ msgstr ""
 msgid "Are you sure you want to reject the membership request for @name?"
 msgstr "Biztos, hogy el akarja utasítani tagsági kérelmét @név-től?"
 
-#: modules/social_features/social_group/social_group.module:873
+#: modules/social_features/social_group/social_group.module:905
 msgid "Are you sure you want to remove %name from %group?"
 msgstr ""
 
@@ -5067,7 +5072,7 @@ msgstr ""
 msgid "Avatar settings"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1073
+#: modules/social_features/social_event/social_event.module:1076
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:165
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:163
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
@@ -5235,7 +5240,7 @@ msgstr ""
 msgid "Books"
 msgstr ""
 
-#: modules/social_features/social_mentions/social_mentions.module:225
+#: modules/social_features/social_mentions/social_mentions.module:211
 msgid "Both (username and full name)"
 msgstr "Mindkettő (felhasználónév és teljes név)"
 
@@ -5271,11 +5276,11 @@ msgstr ""
 
 #: modules/social_features/social_embed/src/Service/SocialEmbedHelper.php:4
 msgid ""
-"By clicking show content, you agree to load the embedded content from <b>"
-"\"@provider\"</b> and therefore its privacy policy."
+"By clicking show content, you agree to load the embedded content from "
+"<b>\"@provider\"</b> and therefore its privacy policy."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:881
+#: modules/social_features/social_group/social_group.module:913
 msgid ""
 "By submitting this form you will become a member of the group. As a member "
 "of the group you will begin to receive notifications about changes and "
@@ -5341,7 +5346,7 @@ msgstr "Nem lehet e-mailt küldeni %entity"
 #: modules/social_features/social_core/social_core.module:1031
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:291
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:165
-#: modules/social_features/social_group/social_group.module:905;1049
+#: modules/social_features/social_group/social_group.module:937;1081
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:130
 #: modules/social_features/social_profile/social_profile.module:223
 msgid "Cancel"
@@ -5437,7 +5442,7 @@ msgstr ""
 msgid "Change which profile fields are used / not used"
 msgstr "Módosítsa a használt / nem használt profilmezőket"
 
-#: modules/social_features/social_event/social_event.module:766
+#: modules/social_features/social_event/social_event.module:769
 msgid "Change your timezone here"
 msgstr "Itt módosíthatja az időzónáját"
 
@@ -5449,7 +5454,7 @@ msgstr "Itt módosíthatja az időzónáját"
 msgid "Changed"
 msgstr "Módosítva"
 
-#: modules/social_features/social_album/social_album.module:382
+#: modules/social_features/social_album/social_album.module:386
 msgid ""
 "Changing groups and visibility isn't allowed for Albums yet, consider "
 "creating a new Album instead."
@@ -5457,7 +5462,7 @@ msgstr ""
 "A csoportok és a láthatóság megváltoztatása egyelőre nem engedélyezett az "
 "Albumoknál, fontolja meg új Album létrehozását."
 
-#: modules/social_features/social_group/social_group.module:2224
+#: modules/social_features/social_group/social_group.module:2256
 msgid "Changing groups is disabled when translating."
 msgstr "A csoportváltás le van tiltva a fordítás során."
 
@@ -5473,7 +5478,7 @@ msgid ""
 "strong>."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2222
+#: modules/social_features/social_group/social_group.module:2254
 msgid "Changing visibility is disabled when translating."
 msgstr "A láthatóság megváltoztatása le van tiltva a fordítás során."
 
@@ -5514,7 +5519,7 @@ msgid ""
 msgstr ""
 
 #: translations.php:116
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:104
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:106
 msgid "Choose the visibility options allowed for the group content."
 msgstr ""
 "Válassza ki a csoport tartalmának megengedett láthatósági beállításait."
@@ -5556,7 +5561,7 @@ msgstr "Kijelölés törlése az összes oldalon"
 msgid "Clear selection when exposed filters change"
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:198
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:195
 msgid "Click here to go to the social tagging overview"
 msgstr "Kattintson ide a közösségi címkézés áttekintéséhez"
 
@@ -5725,7 +5730,7 @@ msgid "Comments unapproved"
 msgstr ""
 
 #: modules/social_features/social_activity/social_activity.install:38
-#: modules/social_features/social_group/social_group.module:630;3130
+#: modules/social_features/social_group/social_group.module:673;698
 #: modules/social_features/social_post/social_post.module:143
 #: modules/social_features/social_post/src/Entity/Post.php:219
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_flexible_group_visibility.yml:0
@@ -6207,19 +6212,19 @@ msgstr "Új tartalom létrehozása"
 msgid "Create New Event"
 msgstr "Új esemény létrehozása"
 
-#: modules/social_features/social_group/social_group.module:2492
+#: modules/social_features/social_group/social_group.module:2524
 msgid "Create New Group"
 msgstr "Új csoport léltrehozása"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:350
+#: modules/social_features/social_landing_page/social_landing_page.module:357
 msgid "Create New Landing Page"
 msgstr "Új kezdőoldal létrehozása"
 
-#: modules/social_features/social_page/social_page.module:47
+#: modules/social_features/social_page/social_page.module:54
 msgid "Create New Page"
 msgstr "Új oldal létrehozása"
 
-#: modules/social_features/social_topic/social_topic.module:213
+#: modules/social_features/social_topic/social_topic.module:220
 msgid "Create New Topic"
 msgstr "Új téma létrehozása"
 
@@ -6501,11 +6506,11 @@ msgstr "Indexkép körbevágása"
 msgid "Crop your image to select which part of your image to show on display."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1514
+#: modules/social_features/social_group/social_group.module:1546
 msgid "Cross posting is not allowed for @type group type"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1215
+#: modules/social_features/social_group/social_group.module:1247
 msgid "Cross-group posting for @group_type is disabled"
 msgstr ""
 
@@ -6635,7 +6640,7 @@ msgstr "Nap Hónap"
 msgid "Day Month Time"
 msgstr "Nap Hónap Idő"
 
-#: modules/social_features/social_event/social_event.module:1032
+#: modules/social_features/social_event/social_event.module:1035
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:111
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Join/SocialGroupInviteJoin.php:98
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
@@ -6794,7 +6799,7 @@ msgstr "Törölje a kijelölt csoporttartalmi entitásokat"
 msgid "Delete the selected comments"
 msgstr "A kijelölt hozzászólások törlése"
 
-#: modules/social_features/social_private_message/social_private_message.module:374
+#: modules/social_features/social_private_message/social_private_message.module:382
 msgid "Delete thread"
 msgstr "Szál törlése"
 
@@ -6802,7 +6807,7 @@ msgstr "Szál törlése"
 msgid "Delete your account and anonymize all other content."
 msgstr "Törölje fiókját, és névtelenítse az összes többi tartalmat."
 
-#: modules/social_features/social_private_message/social_private_message.module:454
+#: modules/social_features/social_private_message/social_private_message.module:462
 msgid ""
 "Delete your account, delete private messages, and anonymize all other "
 "content."
@@ -6820,7 +6825,7 @@ msgstr "Törölt felhasználó"
 msgid "Deleting @type's"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2106
+#: modules/social_features/social_group/social_group.module:2138
 msgid "Deleting the group and all the content within the group..."
 msgstr "A csoport és a csoporton belüli összes tartalom törlése..."
 
@@ -6924,7 +6929,7 @@ msgid ""
 "tag fields or as a single tag field when using tags on profile."
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:124
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
 msgid ""
 "Determine if the main categories of the vocabury will be used as seperate "
 "tag fields or as a single tag field when using tags on content."
@@ -6932,7 +6937,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:148
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:132
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:104
 msgid "Determine if the parent of categories will be used with children tags."
 msgstr ""
 
@@ -6958,7 +6963,7 @@ msgid ""
 "profile."
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:116
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:190
 msgid ""
 "Determine whether users are allowed to tag content, view tags and filter on "
 "tags in content. (@content)"
@@ -7075,7 +7080,7 @@ msgstr "Megjeleníti az ikon konfigurációját"
 msgid "Display name"
 msgstr "Megjelenített név"
 
-#: modules/social_features/social_mentions/social_mentions.module:218
+#: modules/social_features/social_mentions/social_mentions.module:204
 msgid "Display settings"
 msgstr "Megjelenítési beállítások"
 
@@ -7156,7 +7161,7 @@ msgid "Do not count downloads for users with this role."
 msgstr ""
 "Ne számolja az ezzel a szerepkörrel rendelkező felhasználók letöltését."
 
-#: modules/social_features/social_private_message/social_private_message.module:586
+#: modules/social_features/social_private_message/social_private_message.module:594
 msgid "Do not show threads a user deleted."
 msgstr "Ne mutassa a felhasználó által törölt szálakat."
 
@@ -7265,7 +7270,7 @@ msgstr "Élek"
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:214
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:2626
+#: modules/social_features/social_group/social_group.module:2658
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:228
 msgid "Edit"
@@ -7597,7 +7602,7 @@ msgstr ""
 msgid "End"
 msgstr "Vége"
 
-#: modules/social_features/social_event/social_event.module:880
+#: modules/social_features/social_event/social_event.module:883
 msgid "End date is required!"
 msgstr ""
 
@@ -7661,7 +7666,7 @@ msgstr "Beiratkozik a @címke Esemény"
 msgid "Enroll in event"
 msgstr "Regisztráljon az eseményre"
 
-#: modules/social_features/social_event/social_event.module:1378
+#: modules/social_features/social_event/social_event.module:1381
 #: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
 msgid "Enroll method"
 msgstr "Feliratkozási módszer"
@@ -7712,7 +7717,7 @@ msgid ""
 "event is Public."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:302
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:333
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0;0
 msgid "Enrollments"
 msgstr "Feliratkozások"
@@ -8166,7 +8171,6 @@ msgid "Feature Machine Name"
 msgstr ""
 
 #: modules/social_features/social_activity/social_activity.install:186
-#: modules/social_features/social_post/social_post.install:156
 #: modules/social_features/social_activity/config/install/core.entity_view_mode.activity.featured.yml:0
 #: modules/social_features/social_featured_content/config/install/core.entity_view_mode.group.featured.yml:0
 #: modules/social_features/social_featured_content/config/install/core.entity_view_mode.node.featured.yml:0
@@ -8328,7 +8332,7 @@ msgstr ""
 msgid "Filter by profile tags"
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:583;585
+#: modules/social_features/social_private_message/social_private_message.module:591;593
 msgid "Filter deleted threads"
 msgstr ""
 
@@ -8336,7 +8340,7 @@ msgstr ""
 msgid "Filter events by start date and end date"
 msgstr "Szűrje az eseményeket kezdési és befejezési dátum szerint"
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:46;48;49
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:48;50;51
 msgid ""
 "Filter nodes, with visibility group, placed in group you are not a member of."
 msgstr ""
@@ -8385,14 +8389,14 @@ msgstr "Tartalmakat keres és kezel."
 msgid "Find and manage people interacting with your site."
 msgstr "A webhellyel kapcsolatban álló emberek keresése és adminisztrációja."
 
-#: modules/social_features/social_group/social_group.module:916
+#: modules/social_features/social_group/social_group.module:948
 msgid "Find people by name"
 msgstr "Név alapján embereket keresni"
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:71
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:198
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:224
-#: modules/social_features/social_group/src/SocialGroupHelperService.php:317
+#: modules/social_features/social_group/src/SocialGroupHelperService.php:356
 msgid "Find people by name or email address"
 msgstr "Keressen embereket név vagy e-mail cím alapján"
 
@@ -8750,10 +8754,9 @@ msgstr ""
 #: modules/custom/gvbo/gvbo.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
 #: modules/social_features/social_featured_content/templates/group--featured.html.twig:50
-#: modules/social_features/social_group/social_group.module:2188
+#: modules/social_features/social_group/social_group.module:2220
 #: modules/social_features/social_group/social_group.routing.yml:0
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:143
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:155
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
 #: modules/social_features/social_comment/config/install/views.view.comment.yml:0;0;0;0;0
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_group.yml:0
@@ -8859,7 +8862,7 @@ msgstr "Csoport típusok"
 msgid "Group Views Bulk Operations"
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:348
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:351
 msgid "Group Visibility"
 msgstr "Csoport láthatósága"
 
@@ -8919,13 +8922,13 @@ msgstr ""
 msgid "Group content in my group activity context"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:419
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:349
+#: modules/social_features/social_group/social_group.module:427
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:355
 msgid "Group content visibility"
 msgstr ""
 
 #: translations.php:115
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:101
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:103
 msgid "Group content visibility options"
 msgstr ""
 
@@ -8963,7 +8966,7 @@ msgstr "Csoport meghívók"
 msgid "Group invites (@count)"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1927
+#: modules/social_features/social_group/social_group.module:1959
 msgid "Group manager"
 msgstr "Adminisztrátor"
 
@@ -8991,11 +8994,11 @@ msgstr "Csoport tagok"
 msgid "Group members landing tab"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:3140
+#: modules/social_features/social_group/social_group.module:677
 msgid "Group members only"
 msgstr "Csak csoport tagjai"
 
-#: modules/social_features/social_group/social_group.module:638
+#: modules/social_features/social_group/social_group.module:702
 msgid "Group members only (Secret)"
 msgstr "Csak csoport tagjai (Titkos)"
 
@@ -9043,7 +9046,7 @@ msgstr ""
 msgid "Group request"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:917
+#: modules/social_features/social_group/social_group.module:949
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:167
 msgid "Group roles"
 msgstr "Csoport szerepek"
@@ -9077,7 +9080,7 @@ msgid "Group types"
 msgstr "Csoport típusok"
 
 #: translations.php:113
-#: modules/social_features/social_group/social_group.module:409
+#: modules/social_features/social_group/social_group.module:417
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_flexible_group_visibility.yml:0
 msgid "Group visibility"
 msgstr "Csoport láthatósága"
@@ -9222,10 +9225,10 @@ msgid ""
 "><br /><table class=\"btn-wrapp\">\r\n"
 "\t<tbody>\r\n"
 "\t\t<tr>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[group_content:register_link]\">View group</a></td>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:register_link]\">View group</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
 "\t\t</tr>\r\n"
 "\t</tbody>\r\n"
 "</table>"
@@ -9242,10 +9245,10 @@ msgid ""
 "><br /><table class=\"btn-wrapp\">\r\n"
 "\t<tbody>\r\n"
 "\t\t<tr>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[group_content:my_invitations_link]\">View group</a></td>\r\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
-"\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:my_invitations_link]\">View group</a></td>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\r\n"
 "\t\t</tr>\r\n"
 "\t</tbody>\r\n"
 "</table>"
@@ -9278,7 +9281,7 @@ msgid "Homepage stream block"
 msgstr ""
 
 #: translations.php:118
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:124
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:126
 msgid ""
 "How can people join this group. Group managers can always add members "
 "directly, regardless of the chosen join method."
@@ -9454,7 +9457,7 @@ msgstr ""
 msgid "Inappropriate content reported"
 msgstr ""
 
-#: modules/social_features/social_private_message/social_private_message.module:493;496;535;1
+#: modules/social_features/social_private_message/social_private_message.module:501;504;543;1
 #: modules/social_features/social_private_message/social_private_message.routing.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0;0
 msgid "Inbox"
@@ -9561,7 +9564,7 @@ msgid "Invite event enrollment"
 msgstr ""
 
 #: translations.php:31
-#: modules/social_features/social_group/social_group.module:711
+#: modules/social_features/social_group/social_group.module:743
 msgid "Invite only"
 msgstr "Meghívásos"
 
@@ -9587,7 +9590,7 @@ msgstr ""
 msgid "Invite(s) have been successfully sent."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:177;1286
+#: modules/social_features/social_event/social_event.module:177;1289
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Invite-only"
 msgstr "Csak meghívással"
@@ -9722,7 +9725,7 @@ msgid "JS Location"
 msgstr "JS Helyszín"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:204
-#: modules/social_features/social_group/src/SocialGroupHelperService.php:323
+#: modules/social_features/social_group/src/SocialGroupHelperService.php:362
 msgid "Jane Doe"
 msgstr ""
 
@@ -9743,14 +9746,14 @@ msgstr ""
 msgid "Join group"
 msgstr "Csatlakozás csoporthoz"
 
-#: modules/social_features/social_group/social_group.module:429
+#: modules/social_features/social_group/social_group.module:437
 #: modules/social_features/social_group/modules/social_group_flexible_group/src/SocialGroupFlexibleGroupConfigOverride.php:403;529
 msgid "Join method"
 msgstr "Csatlakozási módszer"
 
 #: translations.php:117
-#: modules/social_features/social_group/social_group.module:3091
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:121
+#: modules/social_features/social_group/social_group.module:3125
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:123
 msgid "Join methods"
 msgstr "Csatlakozási módszerek"
 
@@ -10267,7 +10270,7 @@ msgstr "Eseményfeliratkozási kérelmek kezelése"
 msgid "Manage form and displays settings of posts"
 msgstr "Az űrlap kezelése és a bejegyzések beállításainak megjelenítése"
 
-#: modules/social_features/social_group/social_group.module:1687
+#: modules/social_features/social_group/social_group.module:1719
 msgid "Manage members"
 msgstr "Tagság kezelése"
 
@@ -10364,10 +10367,6 @@ msgstr "Média"
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
 msgid "Media bridge"
 msgstr "Média híd"
-
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:189
-msgid "Media type: @node_type"
-msgstr ""
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.medium_teaser.yml:0
 msgid "Medium Teaser"
@@ -10648,7 +10647,7 @@ msgstr ""
 msgid "Muted groups"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2523;2528
+#: modules/social_features/social_group/social_group.module:2555;2560
 msgid "My Groups"
 msgstr "Csoportjaim"
 
@@ -10656,7 +10655,7 @@ msgstr "Csoportjaim"
 msgid "My Invitations"
 msgstr "Meghívásaim"
 
-#: modules/social_features/social_album/social_album.module:529
+#: modules/social_features/social_album/social_album.module:533
 msgid "My albums"
 msgstr "Albumjaim"
 
@@ -10668,7 +10667,7 @@ msgstr "Eseményeim"
 msgid "My group membership request is approved"
 msgstr "Csoporttagsági kérelemem jóváhagyva"
 
-#: modules/social_features/social_group/social_group.module:2550
+#: modules/social_features/social_group/social_group.module:2582
 msgid "My groups"
 msgstr "Csoportjaim"
 
@@ -10676,7 +10675,7 @@ msgstr "Csoportjaim"
 msgid "My profile"
 msgstr "Profilom"
 
-#: modules/social_features/social_topic/social_topic.module:238
+#: modules/social_features/social_topic/social_topic.module:245
 msgid "My topics"
 msgstr "Témáim"
 
@@ -10746,19 +10745,19 @@ msgstr "Új tartalom"
 msgid "New Event"
 msgstr "Új esemény"
 
-#: modules/social_features/social_group/social_group.module:2494
+#: modules/social_features/social_group/social_group.module:2526
 msgid "New Group"
 msgstr "Új csoport"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:352
+#: modules/social_features/social_landing_page/social_landing_page.module:359
 msgid "New Landing Page"
 msgstr "Új kezdőoldal"
 
-#: modules/social_features/social_page/social_page.module:49
+#: modules/social_features/social_page/social_page.module:56
 msgid "New Page"
 msgstr "Új oldal"
 
-#: modules/social_features/social_topic/social_topic.module:215
+#: modules/social_features/social_topic/social_topic.module:222
 msgid "New Topic"
 msgstr "Új téma"
 
@@ -11011,16 +11010,13 @@ msgstr "Nincs közelgő esemény, amelyre feliratkozott"
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:17
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:139
 msgid "Node"
 msgstr "Tartalom"
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:28
 msgid "Node title"
 msgstr "Tartalom címe"
-
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:173
-msgid "Node type: @node_type"
-msgstr ""
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
 msgid "Nodes"
@@ -11274,15 +11270,15 @@ msgstr "Folyamatban"
 msgid "Ongoing and upcoming events"
 msgstr "Folyamatban lévő és közelgő események"
 
-#: modules/social_features/social_mentions/social_mentions.module:224
+#: modules/social_features/social_mentions/social_mentions.module:210
 msgid "Only full name (first and last)"
 msgstr "Csak teljes név (vezeték és kereszt)"
 
-#: modules/social_features/social_group/social_group.module:639
+#: modules/social_features/social_group/social_group.module:703
 msgid "Only group members can see this group"
 msgstr "Csak a csoport tagjai láthatják ezt a csoportot"
 
-#: modules/social_features/social_group/social_group.module:631
+#: modules/social_features/social_group/social_group.module:699
 msgid "Only members who are logged in can see this group"
 msgstr "Csak a bejelentkezett tagok láthatják ezt a csoportot"
 
@@ -11295,7 +11291,7 @@ msgstr ""
 msgid "Only show the group address to the group members"
 msgstr "Csak a csoport címét mutassa meg a csoport tagjainak"
 
-#: modules/social_features/social_mentions/social_mentions.module:223
+#: modules/social_features/social_mentions/social_mentions.module:209
 msgid "Only username"
 msgstr "Csak felhasználónév"
 
@@ -11366,7 +11362,7 @@ msgstr "Nyilvános csoport: Csoport tagság"
 msgid "Open group: Group node (Album)"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:171;1274
+#: modules/social_features/social_event/social_event.module:171;1277
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll"
 msgstr "Megnyitás jelentkezéshez"
@@ -11377,7 +11373,7 @@ msgid "Open to enroll - users can enroll for this event without approval"
 msgstr ""
 
 #: translations.php:29
-#: modules/social_features/social_group/social_group.module:705
+#: modules/social_features/social_group/social_group.module:737
 msgid "Open to join"
 msgstr "Megnyitás csatlakozáshoz"
 
@@ -11779,7 +11775,7 @@ msgid ""
 "Your report will only be visible to the content moderation team."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1255
+#: modules/social_features/social_group/social_group.module:1287
 msgid ""
 "Please note that changing the group type will also change the\n"
 "  visibility of the group content and the way users can join the group."
@@ -11914,7 +11910,7 @@ msgstr ""
 msgid "Post on profile of others block"
 msgstr ""
 
-#: modules/social_features/social_album/social_album.module:416
+#: modules/social_features/social_album/social_album.module:420
 msgid "Post operations links"
 msgstr ""
 
@@ -11991,7 +11987,7 @@ msgstr "Előtag"
 msgid "Preliminary configuration array"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2107
+#: modules/social_features/social_group/social_group.module:2139
 msgid ""
 "Preparing to delete the group and all it's topic's, event's and post's..."
 msgstr ""
@@ -12143,7 +12139,6 @@ msgstr "Feldolgozás"
 
 #: modules/social_features/social_profile/social_profile.views.inc:26
 #: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:17
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:162
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
@@ -12516,7 +12511,7 @@ msgid ""
 "Provides landing page content type for dynamic content, such as a home page."
 msgstr ""
 
-#: modules/social_features/social_album/social_album.module:417
+#: modules/social_features/social_album/social_album.module:421
 msgid "Provides links to perform post operations."
 msgstr ""
 
@@ -12572,7 +12567,7 @@ msgstr "Lehetővé teszi az Album funkció használatát egy bejegyzésben."
 msgid "Provides user profiles."
 msgstr "Felhasználói profilokat biztosít."
 
-#: modules/social_features/social_group/social_group.module:622;3120
+#: modules/social_features/social_group/social_group.module:669;694
 #: modules/social_features/social_post/social_post.module:133
 #: modules/social_features/social_post/src/Entity/Post.php:223
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_flexible_group_visibility.yml:0
@@ -12732,7 +12727,7 @@ msgstr "Ok"
 msgid "Reason term for which an additional textfield is displayed."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:2464
+#: modules/social_features/social_group/social_group.module:2496
 msgid "Reassign your groups to the super administrator."
 msgstr "Rendelje át csoportjait a kiemelt rendszergazdához."
 
@@ -12887,12 +12882,12 @@ msgstr ""
 
 #: translations.php:158
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:362
-#: modules/social_features/social_group/social_group.module:872;2627
+#: modules/social_features/social_group/social_group.module:904;2659
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialGroupInviteVBOConfirmAction.php:27
 msgid "Remove"
 msgstr "Eltávolítás"
 
-#: modules/social_features/social_group/social_group.module:868
+#: modules/social_features/social_group/social_group.module:900
 msgid "Remove %name from %group"
 msgstr ""
 
@@ -12956,7 +12951,7 @@ msgid "Replies to comments deeper than 1 is not allowed"
 msgstr ""
 
 #: modules/social_features/social_comment/social_comment.module:77;78
-#: modules/social_features/social_mentions/social_mentions.module:173
+#: modules/social_features/social_mentions/social_mentions.module:159
 msgid "Reply"
 msgstr "Válasz"
 
@@ -13097,7 +13092,7 @@ msgstr ""
 msgid "Request status"
 msgstr "Kérelem állapota"
 
-#: modules/social_features/social_event/social_event.module:174;1280
+#: modules/social_features/social_event/social_event.module:174;1283
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:88;95
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:219;234;288
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
@@ -13306,7 +13301,7 @@ msgstr "Szerepkörök"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:88
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:297
-#: modules/social_features/social_group/social_group.module:990
+#: modules/social_features/social_group/social_group.module:1022
 msgid "Save"
 msgstr "Mentés"
 
@@ -15160,7 +15155,7 @@ msgstr "Alcím"
 msgid "Suffix"
 msgstr "Utótag"
 
-#: modules/social_features/social_mentions/social_mentions.module:232
+#: modules/social_features/social_mentions/social_mentions.module:218
 msgid "Suggestions format"
 msgstr "Javaslatok formátuma"
 
@@ -15226,7 +15221,7 @@ msgid "Tag"
 msgstr "Címke"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module:151
-#: modules/social_features/social_tagging/social_tagging.module:184
+#: modules/social_features/social_tagging/social_tagging.module:187
 msgid "Tag content"
 msgstr "Jelölés tartalma"
 
@@ -15236,21 +15231,21 @@ msgstr "Jelölés tartalma"
 msgid "Tag settings"
 msgstr "Jelölés beállítások"
 
-#: modules/social_features/social_tagging/social_tagging.module:354
-#: modules/social_features/social_tagging/social_tagging.install:162;250
+#: modules/social_features/social_tagging/social_tagging.module:686
+#: modules/social_features/social_tagging/social_tagging.install:177
 msgid "Tagging"
 msgstr "Jelölés"
 
-#: modules/social_features/social_tagging/social_tagging.module:355
-#: modules/social_features/social_tagging/social_tagging.install:163;251
+#: modules/social_features/social_tagging/social_tagging.module:687
+#: modules/social_features/social_tagging/social_tagging.install:178
 msgid "Tagging field."
 msgstr "Jelölés mezők."
 
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:164
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php:156
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
-#: modules/social_features/social_tagging/social_tagging.module:199;206;225;282;456
-#: modules/social_features/social_tagging/src/SocialTaggingOverrides.php:126;239
+#: modules/social_features/social_tagging/social_tagging.module:202;209;228;285;432
+#: modules/social_features/social_tagging/src/SocialTaggingOverrides.php:131;242
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/config/install/field.field.block_content.follow_tags.field_tags.yml:0
 #: modules/social_features/social_tagging/config/optional/block.block.socialtagsblock.yml:0
 msgid "Tags"
@@ -15647,13 +15642,13 @@ msgstr "Az entitástípus"
 msgid "The entity type to which this mention is attached."
 msgstr "Az entitás típusa, amelyhez ez a megemlítés kapcsolódik."
 
-#: modules/social_features/social_event/social_event.module:779
+#: modules/social_features/social_event/social_event.module:782
 msgid "The event date and time are set based on the site's default timezone."
 msgstr ""
 "Az esemény dátumát és idejét a webhely alapértelmezett időzónája alapján "
 "állítjuk be."
 
-#: modules/social_features/social_event/social_event.module:764
+#: modules/social_features/social_event/social_event.module:767
 msgid ""
 "The event date and time are set based on your timezone. @change_timezone."
 msgstr ""
@@ -16200,7 +16195,7 @@ msgstr ""
 "Ez a logó megjelenik a platform fejlécében és a felhasználóknak küldött e-"
 "mailekben. A fenti E-mail beállításban felülírható"
 
-#: modules/social_features/social_private_message/social_private_message.module:407
+#: modules/social_features/social_private_message/social_private_message.module:415
 msgid "This message was deleted together with the user’s account."
 msgstr "Ezt az üzenetet a felhasználó fiókjával együtt törölték."
 
@@ -16287,7 +16282,7 @@ msgstr ""
 "Jelölje be a négyzetet annak megadásához, hogy mely adatokat szeretné "
 "megosztani. Hagyja pipa nélkül, ha nem szeretne adatokat megosztani."
 
-#: modules/social_features/social_event/social_event.module:758
+#: modules/social_features/social_event/social_event.module:761
 msgid "Time zone"
 msgstr "Időzóna"
 
@@ -16555,7 +16550,7 @@ msgstr "Típus"
 msgid "Type a message on resending invites"
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:150
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:121
 msgid "Type configuration"
 msgstr "Típus konfiguráció"
 
@@ -17037,7 +17032,7 @@ msgstr ""
 #: modules/custom/social_queue_storage/social_queue_storage.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:210
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:2628
+#: modules/social_features/social_group/social_group.module:2660
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr "Megtekintés"
@@ -17142,7 +17137,7 @@ msgstr "Kezelői megjegyzések megtekintése a felhasználói profilon"
 msgid "View mode"
 msgstr "Nézetmód"
 
-#: modules/social_features/social_album/social_album.module:527
+#: modules/social_features/social_album/social_album.module:531
 msgid "View my albums"
 msgstr "Albumaim megtekintése"
 
@@ -17150,7 +17145,7 @@ msgstr "Albumaim megtekintése"
 msgid "View my events"
 msgstr "Az eseményeim megtekintése"
 
-#: modules/social_features/social_group/social_group.module:2548
+#: modules/social_features/social_group/social_group.module:2580
 msgid "View my groups"
 msgstr "Csoportjaim megtekintése"
 
@@ -17158,7 +17153,7 @@ msgstr "Csoportjaim megtekintése"
 msgid "View my profile"
 msgstr "Profilom megtekintése"
 
-#: modules/social_features/social_topic/social_topic.module:236
+#: modules/social_features/social_topic/social_topic.module:243
 msgid "View my topics"
 msgstr "Témáim megtekintése"
 
@@ -17285,7 +17280,7 @@ msgid "Violations"
 msgstr "Megsértések"
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:167
-#: modules/social_features/social_group/social_group.module:3015
+#: modules/social_features/social_group/social_group.module:3049
 #: modules/social_features/social_album/config/install/field.field.node.album.field_content_visibility.yml:0
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_content_visibility.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_content_visibility.yml:0
@@ -17411,11 +17406,11 @@ msgstr ""
 "profiljukon. Ha le van tiltva, a felhasználók ellenőrizhetik nyelvi "
 "preferenciáik láthatóságát."
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:142
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:114
 msgid "When filtering use AND condition."
 msgstr ""
 
-#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:145
+#: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:116
 msgid "When filtering with multiple terms use AND condition in the query."
 msgstr ""
 
@@ -17806,7 +17801,7 @@ msgstr ""
 "Most használta egyszeri bejelentkezési linkjét. A bejelentkezéshez már nem "
 "szükséges ezt a linket használni."
 
-#: modules/social_features/social_album/social_album.module:254
+#: modules/social_features/social_album/social_album.module:258
 msgid "You have posted successfully in your new album @link"
 msgstr "Sikeresen közzétetted új albumod @link"
 
@@ -18439,11 +18434,11 @@ msgstr ""
 msgid "on the"
 msgstr "rajta"
 
-#: modules/social_features/social_group/social_group.module:3131
+#: modules/social_features/social_group/social_group.module:674
 msgid "only visible to all logged-in users."
 msgstr "csak a bejelentkezett felhasználó számára látható."
 
-#: modules/social_features/social_group/social_group.module:3141
+#: modules/social_features/social_group/social_group.module:678
 msgid "only visible to logged-in group members."
 msgstr "csak a bejelentkezett csoporttagok láthatják."
 
@@ -18613,7 +18608,7 @@ msgstr "rejtett"
 msgid "users"
 msgstr "felhasználók"
 
-#: modules/social_features/social_event/social_event.module:1281
+#: modules/social_features/social_event/social_event.module:1284
 msgid ""
 "users can \"request to enroll\" for this event which event organisers "
 "approve/decline"
@@ -18633,16 +18628,16 @@ msgid ""
 "managers approve/decline."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1275
+#: modules/social_features/social_event/social_event.module:1278
 msgid "users can enroll for this event without approval"
 msgstr "a felhasználók jóváhagyás nélkül feliratkozhatnak erre az eseményre"
 
 #: translations.php:30
-#: modules/social_features/social_group/social_group.module:706
+#: modules/social_features/social_group/social_group.module:738
 msgid "users can join this @entity_type_id without approval."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:1287
+#: modules/social_features/social_event/social_event.module:1290
 msgid ""
 "users can only enroll for this event if they are added/invited by event "
 "organisers"
@@ -18650,7 +18645,7 @@ msgstr ""
 "a felhasználók csak akkor regisztrálhatnak erre az eseményre, ha az esemény "
 "szervezői hozzáadják / meghívják őket"
 
-#: modules/social_features/social_group/social_group.module:712
+#: modules/social_features/social_group/social_group.module:744
 msgid ""
 "users can only join this @entity_type_id if they are\n"
 "added/invited by @entity_type_id managers."
@@ -18670,7 +18665,7 @@ msgstr "megtekintés"
 msgid "view download counts"
 msgstr "letöltések számának megtekintése"
 
-#: modules/social_features/social_group/social_group.module:3121
+#: modules/social_features/social_group/social_group.module:670
 msgid "visible to all visitors to the platform."
 msgstr "a platform minden látogató számára elérhető."
 
