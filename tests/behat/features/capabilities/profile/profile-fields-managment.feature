@@ -1,8 +1,5 @@
 @bia @api
-Feature: View and test Profile Fields options
-  Benefit: In order to manage profle and registration options
-  Role: SM and LU
-  Goal/desire: Test
+Feature: Manage which profile fields are enabled on a platform and the permissions around them
 
   Scenario: Successfully see Profile Fields
     Given I am on "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/login"
