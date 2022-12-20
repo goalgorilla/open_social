@@ -4,7 +4,7 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
   Scenario: Successfully see Profile Fields
     Given I am logged in as a user with the site_manager role
 
-    When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
+    When I go to "/admin/config/people/social-profile"
 
     Then I should see "Address"
       And I should see "Banner Image"
@@ -27,7 +27,7 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
   Scenario: Change the profile and check if it is updated on user profile
     Given I am logged in as a user with the site_manager role
 
-    When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
+    When I go to "/admin/config/people/social-profile"
       # Disabel Banner image field
       And I check the box "edit-fields-list-field-profile-banner-image-disabled"
       # Make Phone number field required
@@ -37,7 +37,7 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
       And I press "Save configuration"
       And the cache has been cleared
       # Going to user profile page to check if the changes were effective
-      And I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/14/profile"
+      And I go to "/user/14/profile"
 
     # Check if the change on the admin area was effective
     Then I should not see "Banner Image"
@@ -49,7 +49,7 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
   Scenario: Undo test changes
     Given I am logged in as a user with the site_manager role
 
-    When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
+    When I go to "/admin/config/people/social-profile"
       # Enable Banner image field
       And I uncheck the box "edit-fields-list-field-profile-banner-image-disabled"
       # Make Phone number field not required
