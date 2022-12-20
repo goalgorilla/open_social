@@ -2,12 +2,10 @@
 Feature: Manage which profile fields are enabled on a platform and the permissions around them
 
   Scenario: Successfully see Profile Fields
-    Given I am on "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/login"
-      And I fill in the following:
-      | Username or email address | benflorez |
-      | Password                  | benflorez |
-      And I press "Log in"
+    Given I am logged in as a user with the site_manager role
+
     When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
+
     Then I should see "Address"
       And I should see "Banner Image"
       And I should see "Email"
@@ -27,11 +25,8 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
       And I should see "Summary"
 
   Scenario: Change the profile and check if it is updated on user profile
-    Given I am on "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/login"
-      And I fill in the following:
-      | Username or email address | benflorez |
-      | Password                  | benflorez |
-      And I press "Log in"
+    Given I am logged in as a user with the site_manager role
+
     When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
       # Disabel Banner image field
       And I check the box "edit-fields-list-field-profile-banner-image-disabled"
@@ -43,6 +38,7 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
       And the cache has been cleared
       # Going to user profile page to check if the changes were effective
       And I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/14/profile"
+
     # Check if the change on the admin area was effective
     Then I should not see "Banner Image"
       And I should not see "Self introduction"
@@ -51,11 +47,8 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
         And I should see "Phone number field is required."
 
   Scenario: Undo test changes
-    Given I am on "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/user/login"
-      And I fill in the following:
-      | Username or email address | benflorez |
-      | Password                  | benflorez |
-      And I press "Log in"
+    Given I am logged in as a user with the site_manager role
+
     When I go to "https://pr2478-alkzipyilbwrgclgshhyrkjgbnhiixio.tugboatqa.com/admin/config/people/social-profile"
       # Enable Banner image field
       And I uncheck the box "edit-fields-list-field-profile-banner-image-disabled"
@@ -63,5 +56,6 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
       And I uncheck the box "edit-fields-list-field-profile-phone-number-required"
       # Make Self introduction field not required
       And I uncheck the box "edit-fields-list-field-profile-self-introduction-disabled"
+
     Then I press "Save configuration"
       And I should see "The configuration options have been saved."
