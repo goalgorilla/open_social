@@ -212,13 +212,13 @@ function social_group_invite_update_11501(): void {
     }
 
     // Set email subject text.
-    if (empty($configuration->get('invitation_subject')) && !empty($invite_settings['invite_subject'])) {
-      $configuration->set('invitation_subject', $invite_settings['invite_subject']);
+    if (empty($configuration->get('plugin_config.invitation_subject')) && !empty($invite_settings['invite_subject'])) {
+      $configuration->set('plugin_config.invitation_subject', $invite_settings['invite_subject']);
       $configuration->save();
     }
     // Set email body text.
-    if (empty($configuration->get('invite_message')) && !empty($invite_settings['invite_message'])) {
-      $configuration->set('invitation_body', $invite_settings['invite_message']);
+    if (empty($configuration->get('plugin_config.invitation_body')) && !empty($invite_settings['invite_message'])) {
+      $configuration->set('plugin_config.invitation_body', $invite_settings['invite_message']);
       $configuration->save();
     }
   }
