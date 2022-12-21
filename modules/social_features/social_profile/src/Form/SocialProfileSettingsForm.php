@@ -328,16 +328,16 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         '#type' => 'container',
         'user' => [
           '#type' => 'checkbox',
-          '#title' => new TranslatableMarkup('User can edit'),
+          '#title' => new TranslatableMarkup('User can edit <span class="visually-hidden">:field visibility</span>', [':field' => $label]),
           '#default_value' => $roles['authenticated']->hasPermission("edit own ${visibility_field_name} profile profile field"),
           '#states' => $disabled_states,
         ],
         'default' => [
           '#type' => 'radios',
           '#options' => [
-            SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC => new TranslatableMarkup('Public'),
-            SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY => new TranslatableMarkup('Community'),
-            SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE => new TranslatableMarkup('Private'),
+            SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC => new TranslatableMarkup('Public <span class="visually-hidden">visibility for :field field</span>', [':field' => $label]),
+            SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY => new TranslatableMarkup('Community <span class="visually-hidden">visibility for :field field</span>', [':field' => $label]),
+            SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE => new TranslatableMarkup('Private <span class="visually-hidden">visibility for :field field</span>', [':field' => $label]),
           ],
           '#default_value' => $visibility_field->getDefaultValueLiteral()[0]['value'] ?? SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE,
           '#states' => $disabled_states,
@@ -355,7 +355,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       foreach ($override_roles as $role_id => $role) {
         $row['always_show'][$role_id] = [
           '#type' => 'checkbox',
-          '#title' => $role->label(),
+          '#title' => new TranslatableMarkup('<span class="visually-hidden">Always show :field field for</span> :role', [':field' => $label, ':role' => $role->label()]),
           '#default_value' => $role->hasPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields"),
           '#disabled' => $role_id === 'sitemanager',
           '#states' => $role_id === 'sitemanager' ? [] : $disabled_states,
@@ -371,7 +371,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         '#type' => 'container',
         'user' => [
           '#type' => 'checkbox',
-          '#title' => new TranslatableMarkup('User can edit'),
+          '#title' => new TranslatableMarkup('User can edit <span class="visually-hidden">:field field value</span>', [':field' => $label]),
           // Users can always change their preferred language.
           // @todo Move this into a third party field setting rather than
           // special-casing names.
@@ -390,7 +390,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       foreach ($override_roles as $role_id => $role) {
         $row['allow_editing']['other'][$role_id] = [
           '#type' => 'checkbox',
-          '#title' => $role->label(),
+          '#title' => new TranslatableMarkup('<span class="visually-hidden">Allow editing :field field by</span> :role', [':field' => $label, ':role' => $role->label()]),
           '#default_value' => $role->hasPermission("edit any ${field_name} profile profile field"),
           '#disabled' => $role_id === 'sitemanager',
           '#states' => $role_id === 'sitemanager' ? [] : $disabled_states,
@@ -408,7 +408,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       );
       $row['registration'] = [
         '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Show'),
+        '#title' => new TranslatableMarkup('<span class="visually-hidden">Show :field field</span> At registration', [':field' => $label]),
         // Users are required to enter an email during registration so this
         // setting can not be changed.
         // @todo Move this into a third party field setting rather than
@@ -421,7 +421,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       // Required.
       $row['required'] = [
         '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Required'),
+        '#title' => new TranslatableMarkup('<span class="visually-hidden">:field field is</span> Required', [':field' => $label]),
         // Users must have an email and preferred language so these fields
         // are required.
         // @todo Move this into a third party field setting rather than
@@ -434,7 +434,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       // Disabled.
       $row['disabled'] = [
         '#type' => 'checkbox',
-        '#title' => new TranslatableMarkup('Disabled'),
+        '#title' => new TranslatableMarkup('<span class="visually-hidden">:field</span> Disabled', [':field' => $label]),
         // Email and preferred language are always available so these fields
         // can't be disabled but only hidden.
         // @todo Move this into a third party field setting rather than
