@@ -1051,3 +1051,10 @@ function social_profile_social_core_default_main_menu_links_alter(array &$links)
     $links[] = $link;
   }
 }
+
+/**
+ * Implements hook_social_tagging_type().
+ */
+function social_profile_social_tagging_type(): string {
+  return 'profile';
+}

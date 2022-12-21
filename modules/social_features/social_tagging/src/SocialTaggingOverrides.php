@@ -5,8 +5,10 @@ namespace Drupal\social_tagging;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\social_core\Service\MachineNameInterface;
 
 /**
  * Configuration override.
@@ -17,19 +19,28 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
   /**
    * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The machine name.
+   */
+  private MachineNameInterface $machineName;
 
   /**
    * Constructs the service.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\social_core\Service\MachineNameInterface $machine_name
+   *   The machine name.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    MachineNameInterface $machine_name
+  ) {
     $this->configFactory = $config_factory;
+    $this->machineName = $machine_name;
   }
 
   /**
@@ -40,11 +51,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    *
    * @param array $names
    *   The names of the configs for which overrides are being loaded.
-   *
-   * @return bool
-   *   Whether we override those configs.
    */
-  private function shouldApplyOverrides(array $names) {
+  private function shouldApplyOverrides(array $names): bool {
     $config_names = [
       'views.view.search_content',
       'views.view.search_groups',
@@ -89,9 +97,6 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
     $tag_service = \Drupal::service('social_tagging.tag_service');
 
-    /** @var \Drupal\social_core\Service\MachineName $machine_name */
-    $machine_name_service = \Drupal::service('social_core.machine_name');
-
     $config = $this->configFactory;
 
     // Check if tagging is active.
@@ -131,16 +136,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_' . $tid] = [
-            // @todo Replace with dependency injection in Open Social 12.0.0.
-            'identifier' => $machine_name_service->transform($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
         // Display parent of tags.
         elseif ($tag_service->useCategoryParent()) {
           $fields['social_tagging_' . $tid] = [
-            // @todo Replace with dependency injection in Open Social 12.0.0.
-            'identifier' => $machine_name_service->transform($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
@@ -244,8 +247,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
           $fields['social_tagging_target_id_' . $tid] = [
-            // @todo Replace with dependency injection in Open Social 12.0.0.
-            'identifier' => $machine_name_service->transform($value),
+            'identifier' => $this->machineName->transform($value),
             'label' => $value,
           ];
         }
@@ -429,7 +431,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 

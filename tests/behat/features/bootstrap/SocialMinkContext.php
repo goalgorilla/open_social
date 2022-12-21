@@ -136,6 +136,9 @@ class SocialMinkContext extends MinkContext {
 
   /**
    * @Then I should see checked the box :checkbox
+   *
+   * @todo This doesn't actually check that the radio button is visible for the
+   *   user, e.g. it may be hidden in a closed details element.
    */
   public function iShouldSeeCheckedTheBox($checkbox) {
     $checkbox = $this->fixStepArgument($checkbox);

@@ -201,6 +201,13 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 }
 
 /**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_topic_social_tagging_type_alter(array &$items): void {
+  $items['node'][] = 'topic';
+}
+
+/**
  * Implements hook_social_user_account_header_create_links().
  *
  * Adds the "Create Topic" link to the content creation menu.

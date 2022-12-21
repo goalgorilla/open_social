@@ -143,18 +143,7 @@ class SetGroupsForNodeService {
 
     // Invoke hook_social_group_move if the content is not new.
     if ($moved && !$is_new) {
-      $hook = 'social_group_move';
-
-      // Get a list of hook implementors.
-      $implementors = [];
-      $this->moduleHandler->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
-        $implementors[] = $module;
-      });
-
-      foreach ($implementors as $module) {
-        $function = $module . '_' . $hook;
-        $function($node);
-      }
+      $this->moduleHandler->invokeAll("social_group_move", [$node]);
     }
 
     return $node;
