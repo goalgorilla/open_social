@@ -87,20 +87,12 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     if (!isset($gids[$account->id()])) {
       $gids[$account->id()] = [];
 
-      $entity_type_manager = \Drupal::entityTypeManager();
-
-      /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-      $group_content_storage = $entity_type_manager->getStorage('group_content');
-
-      /** @var \Drupal\user\UserStorageInterface $user_storage */
-      $user_storage = $entity_type_manager->getStorage('user');
-
       // Get all user's memberships.
-      /** @var \Drupal\user\UserInterface $user */
-      $user = $user_storage->load($account->id());
-      $memberships = $group_content_storage->loadByEntity($user);
-      foreach ($memberships as $membership) {
-        $gids[$account->id()][] = $membership->getGroup()->id();
+      /** @var \Drupal\social_group\SocialGroupHelperService $social_group_helper_service */
+      $social_group_helper_service = \Drupal::service('social_group.helper_service');
+      $groups = $social_group_helper_service->getAllGroupsForUser($account->id());
+      foreach ($groups as $group) {
+        $gids[$account->id()][] = $group;
       }
     }
 
