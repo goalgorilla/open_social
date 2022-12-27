@@ -98,9 +98,16 @@ function social_profile_organization_tag_fetch(Profile $profile, $return_html = 
           if ($return_html === TRUE) {
             $value = '<span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
           }
-          $arguments = [
-            '@org' => $organization->label(),
-          ];
+          if (\Drupal::languageManager()->isMultilingual()) {
+            $arguments = [
+              '@org' => $organization->getTranslation(\Drupal::languageManager()->getCurrentLanguage()->getId())->label(),
+            ];
+          }
+          else {
+            $arguments = [
+              '@org' => $organization->label(),
+            ];
+          }
           return new FormattableMarkup($value, $arguments);
         }
       }
