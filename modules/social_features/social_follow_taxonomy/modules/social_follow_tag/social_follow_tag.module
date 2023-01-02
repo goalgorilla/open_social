@@ -45,7 +45,7 @@ function social_follow_tag_theme() {
 /**
  * Implements hook_module_implements_alter().
  */
-function social_follow_tag_module_implements_alter(&$implementations, $hook): void {
+function social_follow_tag_module_implements_alter(array &$implementations, string $hook): void {
   switch ($hook) {
     // Move our hook_theme() implementation to the end of the list.
     case 'theme':
