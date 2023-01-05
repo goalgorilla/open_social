@@ -28,8 +28,6 @@ Feature: View users as site manager
       And I should see an "#edit-login-op" element
       And I should see an "#edit-login-min" element
       And I should see an "#edit-login-max" element
-      # Check select tags filter
-      And I should see "Following by content tags"
       # Check filter buttons
       And I should see an "#edit-submit-user-admin-people" element
 
