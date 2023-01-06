@@ -560,3 +560,20 @@ function social_content_block_update_10303(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Allow to filter content by Flexible groups.
+ */
+function social_content_block_update_10501(): void {
+  // Load the existing configuration.
+  $config_name = 'field.field.block_content.custom_content_list.field_group';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['handler_settings']['target_bundles'])) {
+    $config_data['settings']['handler_settings']['target_bundles']['flexible_group'] = 'flexible_group';
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
