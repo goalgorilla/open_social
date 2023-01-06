@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\social_tagging\SocialTaggingServiceInterface;
+use Drupal\taxonomy\TermInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -116,6 +117,9 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#description' => $this->t("When filtering with multiple terms use AND condition in the query."),
     ];
 
+    // Add "Categories ordering" form element.
+    $this->buildCategoriesOrderElement($form, $form_state);
+
     $form['node_type_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Type configuration'),
@@ -199,6 +203,10 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
 
   /**
    * {@inheritdoc}
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Get the configuration file.
@@ -226,6 +234,17 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       }
     }
 
+    foreach ($form_state->getValue('categories_order') as $tid => $categories_order_values) {
+      $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
+      if ($term instanceof TermInterface) {
+        // Update weight only if it was changed.
+        if ($term->getWeight() !== $categories_order_values['weight']) {
+          $term->setWeight($categories_order_values['weight']);
+          $term->save();
+        }
+      }
+    }
+
     $fields = [
       'enable_content_tagging',
       'allow_category_split',
@@ -240,6 +259,78 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->save();
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Add "Categories ordering" element to form.
+   *
+   * @param array $form
+   *   Form build array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   */
+  private function buildCategoriesOrderElement(array &$form, FormStateInterface $form_state): void {
+    $input = $form_state->getUserInput();
+
+    $form['categories_order_wrapper'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Categories ordering'),
+      '#description' => $this->t('Drag-and-drop to change the order'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    ];
+
+    $wrapper =& $form['categories_order_wrapper'];
+
+    $wrapper['categories_order'] = [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('Category'),
+        $this->t('Weight'),
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'categories-order-weight',
+        ],
+      ],
+      '#attributes' => [
+        'id' => 'categories-terms',
+      ],
+      '#empty' => $this->t('There are currently no terms in the vocabulary.'),
+    ];
+
+    $categories = $this->helper->getCategories();
+
+    foreach ($categories as $tid => $label) {
+      $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
+
+      if (!$term instanceof TermInterface) {
+        continue;
+      }
+
+      $wrapper['categories_order'][$tid]['#attributes']['class'][] = 'draggable';
+      $wrapper['categories_order'][$tid]['#weight'] = $input['categories_order'][$tid]['weight'] ?? NULL;
+      $wrapper['categories_order'][$tid]['effect'] = [
+        '#tree' => FALSE,
+        'data' => [
+          'label' => [
+            '#plain_text' => $label,
+          ],
+        ],
+      ];
+
+      $wrapper['categories_order'][$tid]['weight'] = [
+        '#type' => 'weight',
+        '#title' => $this->t('Weight for @title', ['@title' => $label]),
+        '#title_display' => 'invisible',
+        '#default_value' => $term->getWeight(),
+        '#attributes' => [
+          'class' => ['categories-order-weight'],
+        ],
+      ];
+    }
   }
 
 }
