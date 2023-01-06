@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\social\Behat;
 
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\Core\Database\Query\PagerSelectExtender;
-use Drupal\Core\Database\Query\TableSortExtender;
-use Drupal\Core\Database\StatementWrapper;
 
 /**
- * Defines test steps around the usage of user.
+ * Defines test steps around users and user management.
  */
 class UserContext extends RawMinkContext {
+
+  private const REGISTRATION_PAGE = "/user/register";
 
   /**
    * Delete/cancel user.
@@ -35,6 +36,16 @@ class UserContext extends RawMinkContext {
   }
 
   /**
+   * View the user registration page.
+   *
+   * @When /^(?:|I )am on the registration page$/
+   */
+  public function whenIViewTheUserRegistrationPage(): void {
+    $this->visitPath(self::REGISTRATION_PAGE);
+    $this->assertSession()->statusCodeEquals(200);
+  }
+
+  /**
    * Get user id from username.
    *
    * Throws an error if user id with given username does not exist.
@@ -54,4 +65,5 @@ class UserContext extends RawMinkContext {
       throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
     }
   }
+
 }
