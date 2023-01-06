@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\profile\Entity\Profile;
 use Drupal\social_profile\FieldManager;
@@ -35,6 +37,33 @@ class ProfileContext extends RawMinkContext {
    * Field settings that have been changed during the current scenario.
    */
   private array $fieldSettings;
+
+  /**
+   * The Drupal context which gives us access to user management.
+   */
+  private DrupalContext $drupalContext;
+
+  /**
+   * Make some contexts available here so we can delegate steps.
+   *
+   * @BeforeScenario
+   */
+  public function gatherContexts(BeforeScenarioScope $scope) {
+    $environment = $scope->getEnvironment();
+
+    $this->drupalContext = $environment->getContext(SocialDrupalContext::class);
+  }
+
+  /**
+   * Go to the profile edit page for the current user.
+   *
+   * @When I am editing my profile
+   */
+  public function amEditingMyProfile() : void {
+    $user_id = $this->drupalContext->getUserManager()->getCurrentUser()->uid;
+    $this->visitPath("/user/$user_id/profile");
+    $this->assertSession()->statusCodeEquals(200);
+  }
 
   /**
    * Enable or disable fields on the profile fields form.
@@ -167,6 +196,8 @@ class ProfileContext extends RawMinkContext {
 
     if (count($this->fieldsDisabled) !== 0) {
       $disabledFields = \Drupal::entityQuery('field_config')
+        ->condition('entity_type', 'profile')
+        ->condition('bundle', 'profile')
         ->condition('label', $this->fieldsDisabled, 'IN')
         ->execute();
       assert(count($disabledFields) === count($this->fieldsDisabled), "Could not load all fields that were disabled by their field label.");
@@ -180,6 +211,8 @@ class ProfileContext extends RawMinkContext {
 
     if (count($this->fieldsEnabled) !== 0) {
       $enabledFields = \Drupal::entityQuery('field_config')
+        ->condition('entity_type', 'profile')
+        ->condition('bundle', 'profile')
         ->condition('label', $this->fieldsEnabled, 'IN')
         ->execute();
       assert(count($enabledFields) === count($this->fieldsEnabled), "Could not load all fields that were disabled by their field label.");
@@ -193,7 +226,11 @@ class ProfileContext extends RawMinkContext {
 
     foreach ($this->fieldSettings as $fieldSettings) {
       $field_label =  $fieldSettings['field_name'];
-      $field_ids = \Drupal::entityQuery('field_config')->condition('label', $field_label)->execute();
+      $field_ids = \Drupal::entityQuery('field_config')
+        ->condition('entity_type', 'profile')
+        ->condition('bundle', 'profile')
+        ->condition('label', $field_label)
+        ->execute();
       assert(count($field_ids) === 1, "Could not find a unique field with field name $field_label");
       $field_id = end($field_ids);
 
@@ -263,6 +300,175 @@ class ProfileContext extends RawMinkContext {
       if ($field->isRequired() !== $fieldSettings['required']) {
         throw new \RuntimeException("Expected $field_label " . ($fieldSettings['required'] ? "to be" : "not to be") . " required.");
       }
+    }
+  }
+
+  /**
+   * Enable or disable fields in the profile fields configuration.
+   *
+   * the profile fields are disabled:
+   * | Field name |
+   * | Expertise  |
+   * | ...        |
+   *
+   * @Given the profile fields are :action:
+   */
+  public function setProfileFieldsStatus(string $action, TableNode $fields) : void {
+    assert($action === "enabled" || $action === "disabled", ":action must be one of 'enabled' or 'disabled' (got '$action')");
+    foreach ($fields->getHash() as $field) {
+      $field_ids = \Drupal::entityQuery('field_config')
+        ->condition('entity_type', 'profile')
+        ->condition('bundle', 'profile')
+        ->condition('label', $field['Field name'])
+        ->execute();
+      assert(count($field_ids) === 1, "Could not find a unique field with field name {$field['Field name']}");
+      $config = FieldConfig::load(end($field_ids));
+      assert($config !== NULL);
+
+      if ($action === "disabled") {
+        $config->setStatus(FALSE);
+      }
+      else {
+        $config->setStatus(TRUE);
+      }
+      $config->save();
+    }
+  }
+
+  /**
+   * Set the profile field settings to a specific state.
+   *
+   * the profile field settings:
+   * | Field name | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | User can edit value | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
+   * | Address    | Private    | true                     | true                            | false                         | true                | false                            | false                          | true                 | true     |
+   * | Function   | Public     | false                    | false                           | false                         | true                | true                             | false                          | false                | false    |
+   * | ...        | ...        | ...                      | ...                             | ...                           | ...                 | ...                              | ...                            | ...                  | ...      |
+   *
+   * @Given the profile field settings:
+   */
+  public function setProfileFieldSettings(TableNode $rawFields) : void {
+    $fieldManager = \Drupal::service('social_profile.field_manager');
+    assert($fieldManager instanceof FieldManager, "Could not load field manager service");
+
+    $authenticated_role = Role::load(Role::AUTHENTICATED_ID);
+    assert($authenticated_role !== NULL);
+    $verified_role = Role::load("verified");
+    assert($verified_role !== NULL);
+    $contentmanager_role = Role::load("contentmanager");
+    assert($contentmanager_role !== NULL);
+
+    $registration_user_form_display = EntityFormDisplay::load("user.user.register");
+    assert($registration_user_form_display !== NULL);
+    $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
+    assert($registration_profile_form_display !== NULL);
+
+    $fields = $this->parseFieldSettingsTableNode($rawFields);
+
+    foreach ($fields as $fieldSettings) {
+      $field_label =  $fieldSettings['field_name'];
+      $field_ids = \Drupal::entityQuery('field_config')
+        ->condition('entity_type', 'profile')
+        ->condition('bundle', 'profile')
+        ->condition('label', $field_label)
+        ->execute();
+      assert(count($field_ids) === 1, "Could not find a unique field with field label $field_label");
+      $field_id = end($field_ids);
+
+      $field = FieldConfig::load($field_id);
+      assert($field !== NULL);
+      $visibility_field = FieldConfig::loadByName("profile", "profile", $fieldManager::getVisibilityFieldName($field));
+      assert($visibility_field !== NULL, "Could not load visibility field for $field_id");
+
+      $visibility_field
+        ->setDefaultValue(strtolower($fieldSettings['visibility']))
+        ->save();
+
+      if ($fieldSettings['user_edit_visibility']) {
+        $authenticated_role->grantPermission("edit own {$visibility_field->getName()} profile profile field");
+      }
+      else {
+        $authenticated_role->revokePermission("edit own {$visibility_field->getName()} profile profile field");
+      }
+
+      if ($fieldSettings['always_show_verified_user']) {
+        $verified_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field->getName()} profile profile fields");
+      }
+      else {
+        $verified_role->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field->getName()} profile profile fields");
+      }
+
+      if ($fieldSettings['always_show_content_manager']) {
+        $contentmanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field->getName()} profile profile fields");
+      }
+      else {
+        $contentmanager_role->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " {$field->getName()} profile profile fields");
+      }
+
+      if ($fieldSettings['user_edit_value']) {
+        $authenticated_role->grantPermission("edit own {$field->getName()} profile profile field");
+      }
+      else {
+        $authenticated_role->revokePermission("edit own {$field->getName()} profile profile field");
+      }
+
+      if ($fieldSettings['allow_editing_verified_user']) {
+        $verified_role->grantPermission("edit any {$field->getName()} profile profile field");
+      }
+      else {
+        $verified_role->revokePermission("edit any {$field->getName()} profile profile field");
+      }
+
+      if ($fieldSettings['allow_editing_content_manager']) {
+        $contentmanager_role->grantPermission("edit any {$field->getName()} profile profile field");
+      }
+      else {
+        $contentmanager_role->revokePermission("edit any {$field->getName()} profile profile field");
+      }
+
+      $syncedProfileFields = [
+        "field_profile_email" => "mail",
+        "field_profile_preferred_language" => "preferred_langcode",
+      ];
+      $field_on_registration = $fieldSettings['registration'];
+      $stored_on_user_entity = isset($syncedProfileFields[$field->getName()]);
+      if (!$stored_on_user_entity) {
+        if (!$field_on_registration && $registration_profile_form_display->getComponent($field->getName()) !== NULL) {
+          $registration_profile_form_display->removeComponent($field->getName());
+        }
+        elseif ($field_on_registration && $registration_profile_form_display->getComponent($field->getName()) === NULL) {
+          $default_profile_form_display = EntityFormDisplay::load("profile.profile.default");
+          assert($default_profile_form_display !== NULL);
+
+          // Use the same settings as on the default form. This ensures a
+          // consistent order (weight) and consistent choice of widget.
+          $default_form_component = $default_profile_form_display->getComponent($field->getName());
+
+          $registration_profile_form_display->setComponent(
+            $field->getName(),
+            $default_form_component ?? []
+          );
+        }
+      }
+      // Email is always added in AccountForm so we can't configure it.
+      elseif ($field->getName() !== "field_profile_email") {
+        $translated_field_name = $syncedProfileFields[$field->getName()];
+        if (!$field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) !== NULL) {
+          $registration_user_form_display->removeComponent($translated_field_name);
+        }
+        elseif ($field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) === NULL) {
+          $registration_user_form_display->setComponent($translated_field_name);
+        }
+      }
+
+      $field->setRequired($fieldSettings['required']);
+
+      // Store all the things that changed.
+      $field->save();
+      $authenticated_role->save();
+      $verified_role->save();
+      $contentmanager_role->save();
+      $registration_user_form_display->save();
+      $registration_profile_form_display->save();
     }
   }
 

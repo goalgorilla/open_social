@@ -80,6 +80,41 @@ class FeatureContext extends RawMinkContext {
 
     }
 
+  /**
+   * Should see a field with a specific label.
+   *
+   * @param string $label
+   *  The field label.
+   *
+   * @Then I should see a field labeled :label
+   */
+  public function shouldSeeFieldLabeled(string $label) : void {
+    if (!$this->getSession()->getPage()->hasField($label)) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $label);
+    }
+  }
+
+  /**
+   * Should see a required field with a specific label.
+   *
+   * @param string $label
+   *  The field label.
+   *
+   * @Then I should see a required field labeled :label
+   */
+  public function shouldSeeRequiredFieldLabeled(string $label) : void {
+    $field = $this->getSession()->getPage()->findField($label);
+    if ($field === NULL) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $label);
+    }
+    // File type fields rely on server side validation, so we can't check the
+    // attribute. Similarly textarea's replaced by a WISYWYG don't have a
+    // required at attribute.
+    if (($field->getAttribute("type") !== "file" && $field->getTagName() !== "textarea") && !$field->hasAttribute("required")) {
+      throw new \RuntimeException("Found field '$label' but it was not required when it should be.");
+    }
+  }
+
     /**
      * @Then I should see :text in the :heading block
      */
