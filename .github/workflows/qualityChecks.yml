@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - support/test-assertions
       - "[0-9]+.[0-9]+.x"
 
 jobs:
@@ -19,6 +20,9 @@ jobs:
         with:
           path: ./*
           key: ${{ github.sha }}-${{ matrix.php }}-${{ github.run_attempt }}
+
+      - name: PHP Ini
+        run: php -i && exit 1
 
       # Set PHP {{ matrix.php }} as default.
       # https://github.com/shivammathur/setup-php
