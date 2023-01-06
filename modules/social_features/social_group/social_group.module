@@ -775,10 +775,6 @@ function social_group_allowed_join_method_description(
     $implementors[] = $module;
   });
 
-  if (!$implementors) {
-    return $description;
-  }
-
   $found = FALSE;
 
   foreach ($implementors as $module) {
