@@ -197,6 +197,16 @@ class DatabaseContext implements Context {
   }
 
   /**
+   * Run updates using Drush
+   *
+   * @Given run pending updates
+   * @When I run pending updates
+   */
+  public function executeUpdates() : void {
+    $this->drushDriver->drush("updatedb", ['-y']);
+  }
+
+  /**
    * Calls `onDatabaseLoaded` in all contexts that have it.
    *
    * This allows contexts to do database related set-ups (e.g. log detection).

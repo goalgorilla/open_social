@@ -43,8 +43,8 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
       $following_enabled = FALSE;
 
       // Check if user already followed.
-      /** @var \Drupal\flag\FlagInterface $flag */
       $flag = $this->flagService->getFlagById('follow_user');
+      assert($flag !== NULL, "The 'follow_user' flag type does not exist, this indicates a problem with the social_follow_user module installation.");
       // And display only "Unfollow" button because we should leave the ability
       // to unfollow user.
       if ($this->flagService->getFlagging($flag, $profile, $this->currentUser)) {
@@ -58,18 +58,9 @@ class SocialFollowUserHelper implements SocialFollowUserHelperInterface {
    * {@inheritdoc}
    */
   public function getFollowingStatus(Profile $profile): bool {
-    $allow_following = $profile->getFieldValue('field_profile_allow_following', 'value');
-
     // Check if it's unchanged value and set it to the TRUE because for existing
     // users the "allow following" option should be enabled by default.
-    if ($allow_following == NULL) {
-      $allow_following = TRUE;
-    }
-    else {
-      $allow_following = (bool) $allow_following;
-    }
-
-    return $allow_following;
+    return (bool) ($profile->getOwner()->get('field_allow_following')->value ?? TRUE);
   }
 
 }
