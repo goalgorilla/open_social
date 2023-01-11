@@ -47,7 +47,7 @@ jobs:
       matrix:
         with_optional:
           - ""
-          - "--with-optional"
+          - "with-optional"
 
     services:
       db:
@@ -86,8 +86,26 @@ jobs:
 
       - name: Install Open Social
         run: |
-          chmod +x scripts/social/install/install_script.sh
-          scripts/social/install/install_script.sh ${{ matrix.with_optional }} --localsettings
+          set -e
+
+          export OPTIONAL=""
+          if [ "${{ matrix.with_optional }}" == "with-optional" ]; then
+            export OPTIONAL="social_module_configure_form.select_all='TRUE'"
+          fi
+
+          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+
+          # Create swiftmailer-spool directory for behat tests
+          if [ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]; then
+            mkdir /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+          fi
+          chown -R www-data:www-data /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+          chmod +w -R /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+
+          # Make sure swiftmailer is configured for our CI.
+          drush cset -y swiftmailer.transport transport 'smtp'
+          drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
+          drush cset -y swiftmailer.transport smtp_port 1025
 
       - name: Dump Database
         run: drush sql:dump --result-file=../installation.sql
@@ -118,7 +136,7 @@ jobs:
         feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
         with_optional:
           - ""
-          - "--with-optional"
+          - "with-optional"
 
     services:
       web:
