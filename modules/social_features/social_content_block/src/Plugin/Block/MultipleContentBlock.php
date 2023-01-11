@@ -380,7 +380,7 @@ class MultipleContentBlock extends BlockBase implements ContainerFactoryPluginIn
 
     /** @var array $vid_value */
     $vid_value = $term->get('vid')->getValue();
-    /** @var string $vid */
+    /** @var array $vid */
     $vid = end($vid_value);
 
     /** @var \Drupal\taxonomy\TermStorage $term_storage */
