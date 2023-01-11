@@ -110,6 +110,7 @@ class SocialGroupSettings extends ConfigFormBase {
         'address_visibility_settings' => $this->t('Only show the group address to the group members'),
       ],
       '#weight' => 10,
+      '#default_value' => [],
     ];
 
     foreach (array_keys($form['permissions']['#options']) as $permission) {

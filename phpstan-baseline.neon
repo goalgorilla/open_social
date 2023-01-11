@@ -1801,11 +1801,6 @@ parameters:
 			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
 
 		-
-			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessByFieldPermissions\\:\\:getRealmWithPermission\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
-
-		-
 			message: "#^Method Drupal\\\\entity_access_by_field\\\\EntityAccessByFieldPermissions\\:\\:permissions\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php
@@ -2641,7 +2636,7 @@ parameters:
 			path: modules/custom/social_graphql/src/Wrappers/EdgeInterface.php
 
 		-
-			message: "#^Property Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:\\$server \\(Drupal\\\\graphql\\\\Entity\\\\ServerInterface\\) in isset\\(\\) is not nullable\\.$#"
+			message: "#^Property Drupal\\\\Tests\\\\social_graphql\\\\Kernel\\\\GraphQLTestBase\\:\\:\\$server \\(Drupal\\\\graphql\\\\Entity\\\\Server\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: modules/custom/social_graphql/tests/src/Kernel/GraphQLTestBase.php
 
@@ -3126,12 +3121,12 @@ parameters:
 			path: modules/custom/social_path_manager/social_path_manager.module
 
 		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
+			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.module
 
 		-
-			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
+			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 1
 			path: modules/custom/social_path_manager/social_path_manager.module
 
@@ -3942,6 +3937,11 @@ parameters:
 
 		-
 			message: "#^Function social_album_post_insert\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_album/social_album.module
+
+		-
+			message: "#^Function social_album_post_update\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_album/social_album.module
 
@@ -5611,17 +5611,7 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
-			message: "#^Cannot access offset 'host' on array\\{scheme\\?\\: string, host\\?\\: string, port\\?\\: int, user\\?\\: string, pass\\?\\: string, path\\?\\: string, query\\?\\: string, fragment\\?\\: string\\}\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
-			message: "#^Cannot access offset 'path' on array\\{scheme\\?\\: string, host\\?\\: string, port\\?\\: int, user\\?\\: string, pass\\?\\: string, path\\?\\: string, query\\?\\: string, fragment\\?\\: string\\}\\|false\\.$#"
-			count: 1
-			path: modules/social_features/social_core/social_core.module
-
-		-
-			message: "#^Cannot access offset 'scheme' on array\\{scheme\\?\\: string, host\\?\\: string, port\\?\\: int, user\\?\\: string, pass\\?\\: string, path\\?\\: string, query\\?\\: string, fragment\\?\\: string\\}\\|false\\.$#"
+			message: "#^Cannot access offset 0 on 0\\|0\\.0\\|array\\{\\}\\|string\\|false\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.module
 
@@ -5631,7 +5621,7 @@ parameters:
 			path: modules/social_features/social_core/social_core.module
 
 		-
-			message: "#^Cannot cast non\\-empty\\-array\\|non\\-empty\\-string to string\\.$#"
+			message: "#^Cannot cast non\\-empty\\-array\\|non\\-falsy\\-string to string\\.$#"
 			count: 1
 			path: modules/social_features/social_core/social_core.module
 
@@ -6179,6 +6169,16 @@ parameters:
 			message: "#^Unsafe access to private constant Drupal\\\\social_embed\\\\Form\\\\EmbedConsentForm\\:\\:SETTINGS through static\\:\\:\\.$#"
 			count: 3
 			path: modules/social_features/social_embed/src/Form/EmbedConsentForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|null given\\.$#"
+			count: 2
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function preg_replace_callback expects array\\|string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
 
 		-
 			message: "#^Method Drupal\\\\social_embed\\\\SocialEmbedConfigOverride\\:\\:addEditorOverride\\(\\) has no return type specified\\.$#"
@@ -9843,7 +9843,7 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.install
 
 		-
-			message: "#^Cannot access offset non\\-empty\\-string on Drupal\\\\group\\\\Entity\\\\GroupRoleInterface\\.$#"
+			message: "#^Cannot access offset non\\-falsy\\-string on Drupal\\\\group\\\\Entity\\\\GroupRoleInterface\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
@@ -10119,11 +10119,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchField\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_invite/src/SocialGroupInviteConfigOverride.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, float\\|int\\<min, \\-1\\>\\|int\\<1, max\\>\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_invite/src/SocialGroupInviteConfigOverride.php
 
@@ -10983,16 +10978,6 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: '#Function social_group_social_group_content_visibility_description_alter\(\) has parameter \$description with no type specified.#'
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: '#Function social_group_social_group_group_visibility_description_alter\(\) has parameter \$description with no type specified.#'
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
 			message: "#^Function _social_group_cancel_join_leave_form\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
@@ -11338,12 +11323,22 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
+			message: "#^Function social_group_social_group_content_visibility_description_alter\\(\\) has parameter \\$description with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
 			message: "#^Function social_group_social_group_default_route_tabs_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
 		-
 			message: "#^Function social_group_social_group_default_route_tabs_alter\\(\\) has parameter \\$tabs with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
+			message: "#^Function social_group_social_group_group_visibility_description_alter\\(\\) has parameter \\$description with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -11408,17 +11403,17 @@ parameters:
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
+			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
+			message: "#^Offset 'delete' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
-			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-empty\\-string\\>\\}\\.$#"
+			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
 			count: 3
 			path: modules/social_features/social_group/social_group.module
 
@@ -11454,11 +11449,6 @@ parameters:
 
 		-
 			message: "#^Property Drupal\\\\views\\\\ViewExecutable\\:\\:\\$rowPlugin \\(Drupal\\\\views\\\\Plugin\\\\views\\\\row\\\\RowPluginBase\\) in empty\\(\\) is not falsy\\.$#"
-			count: 1
-			path: modules/social_features/social_group/social_group.module
-
-		-
-			message: "#^Trying to invoke non\\-empty\\-string but it might not be a callable\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -11643,6 +11633,11 @@ parameters:
 			path: modules/social_features/social_group/src/Form/SocialGroupAddForm.php
 
 		-
+			message: "#^Cannot access an offset on array\\<int\\|string, Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\|string\\>\\|Drupal\\\\Core\\\\StringTranslation\\\\TranslatableMarkup\\|int\\|string\\.$#"
+			count: 1
+			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
+
+		-
 			message: "#^Cannot call method label\\(\\) on Drupal\\\\node\\\\Entity\\\\NodeType\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
@@ -11659,11 +11654,6 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_group\\\\Form\\\\SocialGroupSettings\\:\\:validateForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
-
-		-
-			message: "#^Parameter \\#1 \\$name of method Drupal\\\\social_group\\\\Form\\\\SocialGroupSettings\\:\\:hasPermission\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Form/SocialGroupSettings.php
 
@@ -11793,51 +11783,6 @@ parameters:
 			path: modules/social_features/social_group/src/Plugin/EntityReferenceSelection/SocialGroupSelection.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\FieldableEntityInterface\\:\\:getOwner\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
-			count: 2
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Cannot call method getGroupType\\(\\) on Drupal\\\\group\\\\Entity\\\\Group\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Cannot call method getSettableOptions\\(\\) on Drupal\\\\Core\\\\TypedData\\\\OptionsProviderInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Cannot call method hasPermission\\(\\) on Drupal\\\\group\\\\Entity\\\\Group\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialGroupSelectorWidget\\:\\:checkGroupContentCreateAccess\\(\\) should return int but returns false\\.$#"
-			count: 2
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialGroupSelectorWidget\\:\\:checkGroupContentCreateAccess\\(\\) should return int but returns true\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Parameter \\#1 \\$group_type_id of function social_group_get_allowed_visibility_options_per_group_type expects string\\|null, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
-			message: "#^Property Drupal\\\\social_group\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialGroupSelectorWidget\\:\\:\\$options \\(array\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: modules/social_features/social_group/src/Plugin/Field/FieldWidget/SocialGroupSelectorWidget.php
-
-		-
 			message: "#^Method Drupal\\\\social_group\\\\Plugin\\\\views\\\\access\\\\ManageByGroupManagersOnlyAccess\\:\\:alterRouteDefinition\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/Plugin/views/access/ManageByGroupManagersOnlyAccess.php
@@ -11933,7 +11878,7 @@ parameters:
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
 		-
-			message: "#^Trying to invoke non\\-empty\\-string but it might not be a callable\\.$#"
+			message: "#^Variable \\$original_groups in empty\\(\\) always exists and is always falsy\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SetGroupsForNodeService.php
 
@@ -11941,6 +11886,16 @@ parameters:
 			message: "#^Method Drupal\\\\social_group\\\\SocialGroupAdminPeopleConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/src/SocialGroupAdminPeopleConfigOverride.php
+
+		-
+			message: "#^Cannot access an offset on array\\<int, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/src/SocialGroupHelperService.php
+
+		-
+			message: "#^Method Drupal\\\\social_group\\\\SocialGroupHelperService\\:\\:getCurrentGroupMembers\\(\\) should return array but returns array\\<int, int\\>\\|float\\|int\\|string\\|false\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_group/src/SocialGroupHelperService.php
 
 		-
 			message: "#^Method Drupal\\\\social_group\\\\SocialGroupSelectorWidgetConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -14253,7 +14208,7 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$key of method Drupal\\\\Core\\\\Config\\\\Config\\:\\:get\\(\\) expects string, array\\|string given\\.$#"
+			message: "#^Parameter \\#1 \\$key of method Drupal\\\\Core\\\\Config\\\\Config\\:\\:get\\(\\) expects string, array\\<int, string\\>\\|string given\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
 
@@ -15828,6 +15783,11 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
+			message: "#^Offset 'social_tagging' on array in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: modules/social_features/social_tagging/social_tagging.module
+
+		-
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Delete\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 2
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -16473,7 +16433,7 @@ parameters:
 			path: modules/social_features/social_user/social_user.module
 
 		-
-			message: "#^Binary operation \"/\" between int and array\\<int, int\\<0, max\\>\\|string\\>\\|int\\<0, max\\>\\|string results in an error\\.$#"
+			message: "#^Binary operation \"/\" between int and int\\<0, max\\>\\|string results in an error\\.$#"
 			count: 1
 			path: modules/social_features/social_user/social_user.post_update.php
 

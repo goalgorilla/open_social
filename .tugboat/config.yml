@@ -31,8 +31,8 @@ services:
         cp $TUGBOAT_ROOT/.tugboat/composer.json .
         # Add the GitHub repository that the branch is in.
         composer config repositories.open_social git "https://github.com/$TUGBOAT_GITHUB_OWNER/$TUGBOAT_GITHUB_REPO"
-        # Install our preview version through private packagist from BitBucket.
-        composer require $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
+        # Install our preview version through private packagist.
+        composer require --update-with-all-dependencies $COMPOSER_PROJECT_NAME:dev-$BRANCH_NAME#$TUGBOAT_PREVIEW_SHA
         # Use the tugboat-specific Drupal settings.
         cat $DOCROOT/sites/default/default.settings.php | \
           sed -z "s@#\n# if (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n#   include \$app_root . '/' . \$site_path . '/settings.local.php';\n# }@if (file_exists(__DIR__ . '/settings.local.php')) {\n  include __DIR__ . '/settings.local.php';\n}@" \

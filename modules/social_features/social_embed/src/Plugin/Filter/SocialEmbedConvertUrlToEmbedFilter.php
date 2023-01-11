@@ -156,7 +156,7 @@ class SocialEmbedConvertUrlToEmbedFilter extends ConvertUrlToEmbedFilter impleme
       $text = preg_replace_callback('`<!--(.*?)-->`s', '_filter_url_escape_comments', $text) ?? $text;
 
       // Split at all tags; ensures that no tags or attributes are processed.
-      $chunks = preg_split('/(<.+?>)/is', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+      $chunks = preg_split('/(<.+?>)/is', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
       // PHP ensures that the array consists of alternating delimiters and
       // literals, and begins and ends with a literal (inserting NULL as
       // required). Therefore, the first chunk is always text:

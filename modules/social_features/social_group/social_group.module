@@ -775,10 +775,6 @@ function social_group_allowed_join_method_description(
     $implementors[] = $module;
   });
 
-  if (!$implementors) {
-    return $description;
-  }
-
   $found = FALSE;
 
   foreach ($implementors as $module) {
@@ -1150,24 +1146,16 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $hook = 'social_group_join_method_info';
         $join_methods = [];
 
-        \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
-          // There is minimal overhead since the hook is not invoked.
-          $implementors[] = $module;
-        });
-
-        if (is_array($implementors) && !empty($implementors)) {
-          foreach ($implementors as $module) {
-            /** @var callable $function */
-            $function = $module . '_' . $hook;
-
-            foreach ($function() as $id => $join_method) {
-              $join_methods[] = [
-                'id' => $id,
-                'weight' => $join_method['weight'],
-              ];
-            }
+        // We could've used `invokeAll` here but decided to make our array
+        // associative and later use `id` so we need to do some stuff manually.
+        \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$join_methods) {
+          foreach ($hook() as $id => $join_method) {
+            $join_methods[] = [
+              'id' => $id,
+              'weight' => $join_method['weight'],
+            ];
           }
-        }
+        });
 
         usort($join_methods, [SortArray::class, 'sortByWeightElement']);
 
@@ -2796,14 +2784,8 @@ function _social_group_action_batch_finish($success, array $results, array $oper
   $hook = 'social_group_action_' . $results['action'] . '_finish';
 
   // Get a list of hook implementors.
-  $implementors = [];
-  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
-    $implementors[] = $module;
-  });
-
-  foreach ($implementors as $module) {
-    $function = $module . '_' . $hook;
-    $messages = $function($success);
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use ($success, $results_count) {
+    $messages = $hook($success);
 
     if (is_array($messages)) {
       $fields = 0;
@@ -2821,7 +2803,7 @@ function _social_group_action_batch_finish($success, array $results, array $oper
         \Drupal::messenger()->addMessage($message, $type);
       }
     }
-  }
+  });
 }
 
 /**

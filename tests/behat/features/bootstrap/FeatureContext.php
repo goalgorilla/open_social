@@ -5,6 +5,8 @@ namespace Drupal\social\Behat;
 
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
@@ -49,6 +51,85 @@ class FeatureContext extends RawMinkContext {
       $this->minkContext = $environment->getContext(SocialMinkContext::class);
 
       $this->getSession()->resizeWindow(1280, 2024, 'current');
+    }
+
+    /**
+     * Check that a user sees an access denied page.
+     *
+     * @Then I should be denied access
+     */
+    public function iShouldBeDeniedAccess() : void {
+      $this->assertSession()->statusCodeEquals(403);
+
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied");
+      $page->hasContent("You are not authorized to access this page.");
+    }
+
+    /**
+     * Check that an anonymous user is asked to login to view a page.
+     *
+     * @Then I should be asked to login
+     */
+    public function iShouldBeAskedToLogin() : void {
+      $this->assertSession()->statusCodeEquals(200);
+      $this->assertSession()->addressEquals("/user/login");
+
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied. You must log in to view this page.");
+
+    }
+
+    /**
+     * @Then I should see :text in the :heading block
+     */
+    public function shouldSeeTextInHeadingBlock(string $text, string $heading) {
+      // There seems to be no easy way to search all links so we musst craft our
+      // own xpath looking at examples from `NamedSelector`.
+      $heading_literal = (new Escaper())->escapeLiteral($heading);
+      $search_string = "contains(normalize-space(string(.)), $heading_literal)";
+      $xpaths = [];
+      for ($heading_level=1;$heading_level<=6;$heading_level++) {
+        $xpaths[] = ".//h{$heading_level}//.//descendant-or-self::*[{$search_string}]";
+      }
+      $xpath = join("|", $xpaths);
+
+      $matching_headings = $this->getSession()->getPage()->findAll('xpath', $xpath);
+
+      // We rely on the fact that for how our blocks are always rendered in a
+      // `section` element that will have an ID containing `block`. We take into
+      // account that a heading may be nested inside something inside the
+      // section, but it may not be in multiple sections.
+      $blocks = array_filter(
+        array_map(
+          function (NodeElement $el) {
+            do {
+              $el = $el->getParent();
+              if ($el->getTagName() === "section") {
+                return
+                  str_contains($el->getAttribute("id") ?? "", "block")
+                  ? $el
+                  : NULL;
+              }
+            } while ($el->getTagName() !== "body");
+
+            return NULL;
+          },
+          $matching_headings
+        )
+      );
+
+      if (count($blocks) === 0) {
+        throw new \RuntimeException("Could not find a block with a heading of any level containing '$heading'.");
+      }
+      if (count($blocks) > 1) {
+        throw new \RuntimeException("Found multiple blocks with a heading of any level containing '$heading'.");
+      }
+
+      $block = current($blocks);
+      if (!$block->has('named', ['content', $text])) {
+        throw new \RuntimeException("Could not find '$text' in block with heading '$heading'.");
+      }
     }
 
     /**
@@ -250,9 +331,16 @@ class FeatureContext extends RawMinkContext {
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
       $value = $radiobutton->getAttribute('value');
-      $labelonpage = $radiobutton->getParent()->getText();
-      if ($label !== '' && $label != $labelonpage) {
-        throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+      // Only check the label if we were selecting by ID, otherwise we already
+      // found the button by a magic label, and help text may cause the parent
+      // of the radio button to have more text than the label, making the
+      // following always fail.
+      if ($id) {
+        $labelonpage = $radiobutton->getParent()->getText();
+        if ($label !== '' && $label != $labelonpage) {
+          throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()
+            ->getCurrentUrl()));
+        }
       }
       $radiobutton->selectOption($value, FALSE);
 
@@ -405,7 +493,7 @@ class FeatureContext extends RawMinkContext {
     public function getGroupContentIdFromGroupTitle($group_title, $mail) {
 
       $properties = [
-        'gid' => $this->getGroupIdFromTitle($group_title),
+        'gid' => $this->getNewestGroupIdFromTitle($group_title),
         'invitation_status' => 0,
         'invitee_mail' => $mail
       ];
@@ -811,6 +899,44 @@ class FeatureContext extends RawMinkContext {
       }
 
       $row->clickLink($link_name);
+    }
+
+  /**
+   * Expand a details area.
+   *
+   * @When I expand the :label section
+   */
+    public function iExpandDetailsSection(string $label) : void {
+      $elements = array_filter(
+        $this->getSession()->getPage()->findAll("css", "summary"),
+        fn (NodeElement $el) => str_contains($el->getText(), $label),
+      );
+
+      if (count($elements) === 0) {
+        throw new ElementNotFoundException($this->getSession(), "summary", "css", "summary");
+      }
+
+      if (count($elements) > 1) {
+        throw new \RuntimeException("More than one summary element was found with label '$label', make the labels unique or improve your label specificity.");
+      }
+
+      // Store the summary so we can click it and find the parent details element.
+      $element = $summary = current($elements);
+      do {
+        $element = $element->getParent();
+        if ($element->getTagName() === "body") {
+          throw new \RuntimeException("The summary field for '$label' was not in a parent 'details' element to expand.");
+        }
+      } while ($element->getTagName() !== "details");
+
+      // If the default state for the details is open then the test should be
+      // adjusted to encode that behaviour.
+      if ($element->hasAttribute("open")) {
+        throw new \RuntimeException("The details element for '$label' is already opened.");
+      }
+
+      // Expand the details element.
+      $summary->click();
     }
 
     /**

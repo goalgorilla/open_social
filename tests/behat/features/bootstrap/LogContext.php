@@ -131,6 +131,9 @@ class LogContext implements Context {
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3319526
       || ($row->type === 'activity_send_email_worker' && (int) $row->severity === RfcLogLevel::NOTICE && str_contains($row->message, "The activity was already deleted. We marked it as successful."))
+      // Ignore an existing bug.
+      // @todo https://www.drupal.org/project/social/issues/3320117
+      || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && (str_contains($row->variables, 'Undefined array key "#comment_display_mode"') || str_contains($row->variables, 'Undefined array key "#comment_type"')))
       ;
   }
 
