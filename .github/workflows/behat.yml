@@ -105,14 +105,14 @@ jobs:
           mkdir /var/www/files_private
 
           export OPTIONAL=""
-          if [ "${{ matrix.with_optional }}" == "with-optional" ]; then
+          if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
           drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
 
           # Create swiftmailer-spool directory for behat tests
-          if [ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]; then
+          if [[ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]]; then
             mkdir /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
           fi
           chown -R www-data:www-data /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
@@ -147,14 +147,14 @@ jobs:
           mkdir /var/www/files_private
 
           export OPTIONAL=""
-          if [ "${{ matrix.with_optional }}" == "with-optional" ]; then
+          if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
           drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
 
           # Create swiftmailer-spool directory for behat tests
-          if [ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]; then
+          if [[ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]]; then
             mkdir /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
           fi
           chown -R www-data:www-data /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
@@ -253,13 +253,29 @@ jobs:
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
             if head -n1 $test | grep -q "@disabled"; then
               echo "$test - Skipping disabled test"
-            else
-              echo "::group::$test"
-              drush sql-drop -y
-              drush sqlc < installation.sql
-              vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
-              echo "::endgroup::"
+              continue
             fi
+
+            # If we're testing a clean install (i.e. not updating) then ignore
+            # any tests that have opted out of install testing.
+            if [[ -z "${{ matrix.update }}" ]]; then
+              export TAGS="--tags=~no-install"
+            # Do the same when we are testing with an update.
+            else
+              export TAGS="--tags=~no-update"
+            fi
+
+            # Tests with the @no-database tag import their own scaffold so they
+            # ignore the databases provided by our test matrix, that's why we
+            # only run them once when all our matrix values are off.
+            if [[ ! -z "${{ matrix.update }}" ]] || [[ ! -z "${{ matrix.with_optional }}" ]]; then
+              export TAGS="$TAGS&&~no-database"
+            fi
+
+            echo "::group::$test"
+            # Run in subshell to make the test command visible and copyable.
+            (set -x; vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors --allow-empty $TAGS $test)
+            echo "::endgroup::"
           done
 
       - name: Upload Behat Test Output
