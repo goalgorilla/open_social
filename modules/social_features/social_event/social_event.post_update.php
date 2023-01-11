@@ -70,7 +70,7 @@ function social_event_post_update_10302_set_all_day_value(array &$sandbox): void
       ->accessCheck(FALSE)
       ->execute();
 
-    $sandbox['total'] = is_array($sandbox['ids']) ? count($sandbox['ids']) : 0;
+    $sandbox['total'] = count($sandbox['ids']);
     $sandbox['current'] = 0;
   }
 

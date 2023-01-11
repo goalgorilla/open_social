@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Default theme implementation for visibility option.
+ *
+ * Available variables:
+ * - name: The visibility machine name.
+ * - icon: The icon for visibility.
+ * - title: The translatable title.
+ * - description: The translatable description.
+ *
+ * @ingroup themeable
+ */
+#}
+<p>
+  <strong>
+    <svg class="icon-small">
+      <use xlink:href="#icon-{% if icon %}{{ icon }}{% else %}{{ name }}{% endif %}"></use>
+    </svg>
+    {{ title }}
+  </strong>
+  - {{ description }}
+</p>

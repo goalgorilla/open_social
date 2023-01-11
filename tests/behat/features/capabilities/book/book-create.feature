@@ -14,3 +14,4 @@ Feature: Create Book page
 
     Then I should see the book I just created
     And it should not show author information
+

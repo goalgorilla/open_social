@@ -6,8 +6,10 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Symfony\Component\Yaml\Yaml;
 
@@ -18,6 +20,7 @@ class TopicContext extends RawMinkContext {
 
   use EntityTrait;
   use NodeTrait;
+  use GroupTrait;
 
   private const CREATE_PAGE = "/node/add/topic";
 
@@ -78,6 +81,34 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * View a specific topic.
+   *
+   * @When I am viewing the topic :topic
+   * @When am viewing the topic :topic
+   */
+  public function viewingTopic(string $topic) : void {
+    $topic_id = $this->getTopicIdFromTitle($topic);
+    if ($topic_id === NULL) {
+      throw new \Exception("Topic '${topic}' does not exist.");
+    }
+    $this->visitPath("/node/${topic_id}");
+  }
+
+  /**
+   * Edit a specific topic.
+   *
+   * @When I am editing the topic :topic
+   * @When am editing the topic :topic
+   */
+  public function editingTopic(string $topic) : void {
+    $topic_id = $this->getTopicIdFromTitle($topic);
+    if ($topic_id === NULL) {
+      throw new \Exception("Topic '${topic}' does not exist.");
+    }
+    $this->visitPath("/node/${topic_id}/edit");
+  }
+
+  /**
    * Create multiple topics at the start of a test.
    *
    * Creates topics provided in the form:
@@ -111,6 +142,16 @@ class TopicContext extends RawMinkContext {
     $this->updatedTopicData = $this->fillOutTopicForm($fields);
     $this->getSession()->getPage()->pressButton("Create topic");
     $this->created[] = $this->updatedTopicData['title'];
+  }
+
+  /**
+   * View the topic creation page.
+   *
+   * @When /^(?:|I )view the topic creation page$/
+   */
+  public function whenIViewTheTopicCreationPage() : void {
+    $this->visitPath(self::CREATE_PAGE);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -253,15 +294,30 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * Assert that we landed on the topic creation form.
+   *
+   * @Then I should be on the topic creation form
+   */
+  public function shouldBeOnTopicCreationForm() : void {
+    $status_code = $this->getSession()->getStatusCode();
+    if ($status_code !== 200) {
+      throw new \Exception("The page status code {$status_code} dis not match 200 Ok.");
+    }
+
+    $this->minkContext->assertPageContainsText("Create a topic");
+  }
+
+  /**
    * Clean up any topics created in this scenario.
    *
    * @AfterScenario
    */
   public function cleanUpTopics() : void {
     foreach ($this->created as $idOrTitle) {
-      $nid = is_int($idOrTitle) ? $idOrTitle : $this->getTopicIdFromTitle($idOrTitle);
+      // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
+      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getTopicIdFromTitle($idOrTitle);
+      // Ignore already deleted nodes, they may have been deleted in the test.
       if ($nid !== NULL) {
-        // Ignore already deleted nodes, they may have been deleted in the test.
         Node::load($nid)?->delete();
       }
     }
@@ -289,6 +345,14 @@ class TopicContext extends RawMinkContext {
     }
     unset($topic['author']);
 
+    if (isset($topic['group'])) {
+      $group_id = $this->getNewestGroupIdFromTitle($topic['group']);
+      if ($group_id === NULL) {
+        throw new \Exception("Group '{$topic['group']}' does not exist.");
+      }
+      unset($topic['group']);
+    }
+
     $topic['type'] = 'topic';
 
     if (isset($topic['field_topic_type'])) {
@@ -306,6 +370,17 @@ class TopicContext extends RawMinkContext {
       throw new \Exception("The topic you tried to create is invalid: $violations");
     }
     $topic_object->save();
+
+    // Adding to group usually happens in a form handler so for initialization
+    // we must do that ourselves.
+    if (isset($group_id)) {
+      try {
+        Group::load($group_id)?->addContent($topic_object, "group_node:topic");
+      }
+      catch (PluginNotFoundException $_) {
+        throw new \Exception("Modules that allow adding content to groups should ensure the `gnode` module is enabled.");
+      }
+    }
 
     return $topic_object;
   }

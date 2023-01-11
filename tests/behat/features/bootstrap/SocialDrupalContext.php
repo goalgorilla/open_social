@@ -221,26 +221,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * @Given Search indexes are up to date
-   */
-  public function updateSearchIndexes() {
-    /** @var \Drupal\search_api\Entity\SearchApiConfigEntityStorage $index_storage */
-    $index_storage = \Drupal::service("entity_type.manager")->getStorage('search_api_index');
-
-    $indexes = $index_storage->loadMultiple();
-    if (!$indexes) {
-      return;
-    }
-
-    // Loop over all interfaces and let the Search API index any non-indexed
-    // items.
-    foreach ($indexes as $index) {
-      /** @var \Drupal\search_api\IndexInterface $index */
-      $index->indexItems();
-    }
-  }
-
-  /**
    * @When I empty the queue
    */
   public function iEmptyTheQueue() {
@@ -354,15 +334,6 @@ class SocialDrupalContext extends DrupalContext {
     }
 
     \Drupal::configFactory()->getEditable('social_profile_privacy.settings')->set("limit_search_and_mention", $restrict)->save();
-  }
-
-  /**
-   * I search :index for :term
-   *
-   * @When /^(?:|I )search (all|users|groups|content) for "([^"]*)"/
-   */
-  public function iSearchIndexForTerm($index, $term) {
-    $this->getSession()->visit($this->locatePath('/search/' . $index . '/' . urlencode($term)));
   }
 
   /**
