@@ -248,6 +248,7 @@ jobs:
       # each test runs against a clean database cheaply.
       - name: Run Integration test
         run: |
+          export TEST_DATABASE=`pwd`/installation.sql
           vendor/bin/behat --version
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
             if head -n1 $test | grep -q "@disabled"; then
