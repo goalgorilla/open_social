@@ -87,12 +87,29 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     if (!isset($gids[$account->id()])) {
       $gids[$account->id()] = [];
 
-      // Get all user's memberships.
-      /** @var \Drupal\social_group\SocialGroupHelperService $social_group_helper_service */
-      $social_group_helper_service = \Drupal::service('social_group.helper_service');
-      $groups = $social_group_helper_service->getAllGroupsForUser($account->id());
-      foreach ($groups as $group) {
-        $gids[$account->id()][] = $group;
+      // Get all the memberships for this user.
+      if (\Drupal::hasService('social_group.helper_service')) {
+        /** @var \Drupal\social_group\SocialGroupHelperService $social_group_helper_service */
+        $social_group_helper_service = \Drupal::service('social_group.helper_service');
+        $groups = $social_group_helper_service->getAllGroupsForUser($account->id());
+        foreach ($groups as $group) {
+          $gids[$account->id()][] = $group;
+        }
+      }
+      else {
+        // This fallback method exists to ensure there is no direct dependency needed on Social Group. It primarily
+        // helps to prevent dependency issues during installation.
+        /** @var \Drupal\user\UserStorageInterface $user_storage */
+        $user_storage = \Drupal::entityTypeManager()->getStorage('user');
+        /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+        $group_content_storage = \Drupal::entityTypeManager()->getStorage('group_content');
+
+        /** @var \Drupal\user\UserInterface $user */
+        $user = $user_storage->load($account->id());
+        $memberships = $group_content_storage->loadByEntity($user);
+        foreach ($memberships as $membership) {
+          $gids[$account->id()][] = $membership->getGroup()->id();
+        }
       }
     }
 
