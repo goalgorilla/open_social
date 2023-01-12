@@ -68,11 +68,16 @@ function activity_creator_message_insert(Message $entity) {
   $message_template_id = $entity->getTemplate()->id();
   $actor = $entity->getOwner()->id();
 
-  // If one field of field_message_context, field_message_destination or
+  // Messages that are not part of the activity system may not have the fields
+  // we need. Similarly for our activity system we always ensure they are all
+  // filled thus if one of field_message_context, field_message_destination or
   // field_message_related_object is empty, don't create activities.
   if (
+    !$entity->hasField('field_message_context') ||
     $entity->get('field_message_context')->isEmpty() ||
+    !$entity->hasField('field_message_destination') ||
     $entity->get('field_message_destination')->isEmpty() ||
+    !$entity->hasField('field_message_related_object') ||
     $entity->get('field_message_related_object')->isEmpty()
   ) {
     return;
