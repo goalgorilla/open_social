@@ -43,6 +43,20 @@ function social_follow_tag_theme() {
 }
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function social_follow_tag_module_implements_alter(array &$implementations, string $hook): void {
+  switch ($hook) {
+    // Move our hook_theme() implementation to the end of the list.
+    case 'theme':
+      $group = $implementations['social_follow_tag'];
+      unset($implementations['social_follow_tag']);
+      $implementations['social_follow_tag'] = $group;
+      break;
+  }
+}
+
+/**
  * Implements hook_social_follow_taxonomy_terms_list_alter().
  *
  * {@inheritdoc}
