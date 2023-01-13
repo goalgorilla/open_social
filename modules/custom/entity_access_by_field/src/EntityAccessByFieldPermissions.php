@@ -170,12 +170,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    *   Returns the entity interface containing all the content types.
    */
   protected function getContentTypes() {
-    $content_types = &drupal_static(__FUNCTION__);
-    if (!isset($content_types)) {
-      $content_types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
-    }
-
-    return $content_types;
+    return $this->entityTypeManager->getStorage('node_type')->loadMultiple();
   }
 
   /**

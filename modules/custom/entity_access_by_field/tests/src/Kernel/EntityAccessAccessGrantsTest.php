@@ -27,6 +27,8 @@ class EntityAccessAccessGrantsTest extends EntityAccessNodeAccessTestBase {
     entity_access_by_field_node_grants_alter($altered_grants_groups12, $this->account, 'view');
     $this->assertEquals($grants, $altered_grants_groups12);
 
+    drupal_static_reset('entity_access_by_field_node_grants_alter');
+    drupal_static_reset('getAllGroupsForUser');
     // Verify that when a member is removed from one group, it is altered as
     // such.
     $this->group1->removeMember($this->account);
@@ -39,6 +41,8 @@ class EntityAccessAccessGrantsTest extends EntityAccessNodeAccessTestBase {
     ];
     $this->assertEquals($expected_result_groups2, $altered_grants_groups2);
 
+    drupal_static_reset('entity_access_by_field_node_grants_alter');
+    drupal_static_reset('getAllGroupsForUser');
     // Verify that when a member is not a member of any group, it is altered as
     // such.
     $this->group2->removeMember($this->account);
