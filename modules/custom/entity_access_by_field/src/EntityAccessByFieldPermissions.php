@@ -108,6 +108,10 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    * Get the realms array with permissions as value.
    */
   public function getRealmWithPermission(): array {
+  $realms = &drupal_static(__FUNCTION__);
+
+  // If realms is not yet cached, let's populate it now.
+  if (!isset($realms)) {
     $realms = [];
     $contentTypes = $this->getContentTypes();
 
@@ -143,6 +147,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
         }
       }
     }
+  }
 
     return $realms;
   }
@@ -165,8 +170,12 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    *   Returns the entity interface containing all the content types.
    */
   protected function getContentTypes() {
-    $contentTypes = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
-    return $contentTypes;
+    $content_types = &drupal_static(__FUNCTION__);
+    if (!isset($content_types)) {
+      $content_types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
+    }
+
+    return $content_types;
   }
 
   /**
