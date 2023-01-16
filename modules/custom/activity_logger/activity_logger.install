@@ -5,6 +5,8 @@
  * Installation code for the activity_logger module.
  */
 
+use Drupal\message\Entity\MessageTemplate;
+
 /**
  * Implements hook_update_dependencies().
  */
@@ -72,5 +74,66 @@ function activity_logger_update_10301() {
     }
     $config->set('third_party_settings.activity_logger', $activity_logger_settings);
     $config->save();
+  }
+}
+
+/**
+ * Create activity fields for supporting templates.
+ */
+function activity_logger_update_11001() : void {
+  $fields = [
+    ['name' => 'field_message_context', 'type' => 'list_string'],
+    ['name' => 'field_message_destination', 'type' => 'list_string'],
+    [
+      'name' => 'field_message_related_object',
+      'type' => 'dynamic_entity_reference',
+    ],
+  ];
+  $config_storage = \Drupal::entityTypeManager()->getStorage('field_config');
+
+  // We assume there are about 100 message templates even in the case of very
+  // complex sites. They're also relatively simple entities, so it's safe to
+  // load them all.
+  $message_templates = MessageTemplate::loadMultiple();
+  foreach ($message_templates as $message_template) {
+    if (empty($message_template->getThirdPartySettings('activity_logger'))) {
+      continue;
+    }
+    $message_type = $message_template->id();
+    foreach ($fields as $field) {
+      $id = 'message.' . $message_type . '.' . $field['name'];
+      if ($config_storage->load($id) === NULL) {
+        $field_instance = [
+          'langcode' => 'en',
+          'status' => TRUE,
+          'config' => [
+            'field.storage.message.' . $field['name'],
+            'message.template.' . $message_type,
+          ],
+          'module' => ['options'],
+          'id' => $id,
+          'field_name' => $field['name'],
+          'entity_type' => 'message',
+          'bundle' => $message_type,
+          'label' => '',
+          'description' => '',
+          'required' => FALSE,
+          'translatable' => FALSE,
+          'default_value' => [],
+          'default_value_callback' => '',
+          'field_type' => $field['type'],
+        ];
+
+        if ($field['type'] === 'list_string') {
+          $field_instance['module'] = ['options'];
+          $field_instance['settings'] = [];
+        }
+        elseif ($field['type'] === 'dynamic_entity_reference') {
+          $field_instance['module'] = ['dynamic_entity_reference'];
+          $field_instance['settings'] = [];
+        }
+        $config_storage->create($field_instance)->save();
+      }
+    }
   }
 }
