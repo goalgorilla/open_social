@@ -78,7 +78,6 @@ jobs:
       - name: Prepare composer
         run: |
           cp tmp/tests/composer.json composer.json
-          rm -r tmp
 
       # Install the version of Open Social under test.
       - name: Composer require current branch
@@ -87,6 +86,9 @@ jobs:
       - name: Install Open Social
         run: |
           set -e
+
+          cp tmp/tests/default.settings.php /var/www/html/sites/default/default.settings.php
+          mkdir /var/www/files_private
 
           export OPTIONAL=""
           if [ "${{ matrix.with_optional }}" == "with-optional" ]; then
@@ -106,6 +108,9 @@ jobs:
           drush cset -y swiftmailer.transport transport 'smtp'
           drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
           drush cset -y swiftmailer.transport smtp_port 1025
+
+      - name: Clean up checkout
+        run: rm -r tmp
 
       - name: Dump Database
         run: drush sql:dump --result-file=../installation.sql
