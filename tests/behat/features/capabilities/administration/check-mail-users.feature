@@ -6,18 +6,24 @@ Feature: Send bulk email
 
   @email-spool
   Scenario: Send bulk email as SM to the first 3 users
-    Given I am logged in as a user with the "sitemanager" role
-      And I am on "admin/people"
+    Given users:
+      | name      | status | roles    |
+      | MailUser1 |      1 | verified |
+      | MailUser2 |      1 | verified |
+      | MailUser3 |      1 | verified |
+    And I am logged in as a user with the "sitemanager" role
+
     #Select the first 3 users displayed on the user list to be export
-    When I check the box "edit-views-bulk-operations-bulk-form-0"
+    When I am on "admin/people"
+      And I check the box "edit-views-bulk-operations-bulk-form-0"
       And I check the box "edit-views-bulk-operations-bulk-form-1"
       And I check the box "edit-views-bulk-operations-bulk-form-2"
-      
+
       #Execute the Send bulk email action to the 3 users selected
       And I select "Send email" from "Action"
       And I press the "Apply to selected items" button
       And I should see the text "Send an email to 3 members"
-      And I fill in "Subject" with "This is the e-mail subject" 
+      And I fill in "Subject" with "This is the e-mail subject"
       And I fill in the "edit-message-value" WYSIWYG editor with "The body for the e-mail to send"
       And I press the "Send email" button
       And I should see the text "Are you sure you wish to perform"

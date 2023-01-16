@@ -144,6 +144,10 @@ function social_group_install() {
 
   // Set module weight.
   module_set_weight('social_group', 2);
+
+  // Since we update group related permissions that touch node content we must
+  // also rebuild the node access permissions.
+  node_access_rebuild();
 }
 
 /**
