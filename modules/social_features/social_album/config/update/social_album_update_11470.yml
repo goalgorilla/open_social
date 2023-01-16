@@ -1,0 +1,16 @@
+views.view.albums:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        entity_reference:
+          display_options:
+            arguments: { }
+    change:
+      display:
+        entity_reference:
+          cache_metadata:
+            contexts:
+              - 'languages:language_content'
+              - 'languages:language_interface'
+              - 'user.node_grants:view'

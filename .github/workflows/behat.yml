@@ -70,11 +70,15 @@ jobs:
         working-directory: /var/www
 
     steps:
-      # Checkout Drupal Social.
       - uses: actions/checkout@v3
         with:
-          repository: 'goalgorilla/drupal_social'
-          ref: '6.2.0'
+          path: ${{ github.workspace }}/tmp
+
+      # Checkout Drupal Social.
+      - name: Prepare composer
+        run: |
+          cp tmp/tests/composer.json composer.json
+          rm -r tmp
 
       # Install the version of Open Social under test.
       - name: Composer require current branch
@@ -170,7 +174,7 @@ jobs:
               echo "::group::$test"
               drush sql-drop -y
               drush sqlc < installation.sql
-              vendor/bin/behat --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
+              vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
               echo "::endgroup::"
             fi
           done

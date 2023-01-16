@@ -232,7 +232,10 @@ class SocialAlbumController extends ControllerBase {
     if ($this->checkAlbumAccess($node)) {
       $account = $this->currentUser();
 
-      if ($node->getOwnerId() === $account->id()) {
+      // Access allowed for the owner or for the user who can edit any posts.
+      // The 'edit any post entities' is used because there is no separate
+      // permission for managers to add to any albums.
+      if ($node->getOwnerId() === $account->id() || $account->hasPermission('edit any post entities')) {
         return AccessResult::allowed();
       }
       elseif (

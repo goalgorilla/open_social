@@ -1,4 +1,4 @@
-@api @administration @javascript @DS-361 @ADMIN @flood-edit
+@administration @api @administration @javascript @ADMIN @flood-edit
 Feature: Edit flood settings
   Benefit: Have an interface to edit flood settings
   Role: As an ADMIN

@@ -12,9 +12,6 @@ jobs:
   setup:
     name: Project Setup
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php: [ '7.4', '8.0' ]
     steps:
       # We want to reuse our project setup to run different jobs at once.
       - uses: actions/cache@v3
@@ -28,10 +25,10 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 8.0
           coverage: none
 
-      # We checkout the code in a separate folder since we want to use the
+      # We check out the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
       # A separate path is used to keep our working directory clean.
       - name: Setup a temporariy repository
@@ -65,9 +62,6 @@ jobs:
     needs: setup
     name: PHPStan check
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
@@ -80,9 +74,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 8.0
           coverage: none
           tools: cs2pr
+
+      - name: PHPStan Version
+        run: $GITHUB_WORKSPACE/vendor/bin/phpstan --version
 
       # Run PHPStan
       - name: Run PHPStan analysis
@@ -92,9 +89,6 @@ jobs:
     needs: setup
     name: PHPCS check
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
@@ -107,7 +101,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 8.0
           coverage: none
           tools: cs2pr
 
@@ -126,9 +120,6 @@ jobs:
     needs: setup
     name: PHPUnit Tests
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        php: [ '7.4', '8.0' ]
     steps:
       - uses: actions/cache@v3
         id: opensocial-project-build
@@ -141,7 +132,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 8.0
+          ini-values: zend.assertions=1
           coverage: none
           tools: cs2pr
 

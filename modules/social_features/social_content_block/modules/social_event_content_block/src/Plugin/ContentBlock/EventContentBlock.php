@@ -126,6 +126,17 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
               $query->condition('nfed.field_event_date_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
               break;
 
+            case 'future_ongoing':
+              $range['start'] = new \DateTime('-30 days');
+
+              $query->leftJoin('node__field_event_date_end', 'nfede', "nfede.entity_id = base_table.nid AND nfede.bundle = 'event'");
+              $or = $query->orConditionGroup();
+              $or->condition('nfede.field_event_date_end_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>');
+              $or->isNull('nfede.entity_id');
+
+              $query->condition($or);
+              break;
+
             case 'last_30':
               $range['start'] = new \DateTime('-30 days');
               $range['end'] = new \DateTime();
