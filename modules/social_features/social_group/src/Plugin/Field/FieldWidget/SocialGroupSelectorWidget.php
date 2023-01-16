@@ -12,16 +12,17 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\group\Entity\Group;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Plugin\GroupContentEnablerManager;
-use Drupal\user\Entity\User;
+use Drupal\select2\Plugin\Field\FieldWidget\Select2EntityReferenceWidget;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * A widget to select a group when creating an entity in a group.
@@ -45,7 +46,7 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   /**
    * The list of options.
    *
-   * @var array
+   * @var mixed
    *
    * @todo Should be removed after merging patch in the core:
    * https://www.drupal.org/files/issues/2923353-5.patch
@@ -111,66 +112,90 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   }
 
   /**
-   * Returns the array of options for the widget.
-   *
-   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
-   *   The entity for which to return options.
-   *
-   * @return array
-   *   The array of options for the widget.
+   * Gets a list of supported entity types.
+   */
+  protected function types(): array {
+    return ['node'];
+  }
+
+  /**
+   * {@inheritdoc}
    */
   protected function getOptions(FieldableEntityInterface $entity) {
-    // Must be a node.
-    if ($entity->getEntityTypeId() !== 'node') {
-      // We only handle nodes. When using this widget on other content types,
-      // we simply return the normal options.
+    if (!in_array($type = $entity->getEntityTypeId(), $this->types())) {
       return parent::getOptions($entity);
     }
-
-    // Get the bundle fron the node.
-    $entity_type = $entity->bundle();
 
     /** @var \Drupal\user\Entity\User $account */
     $account = $this->userManager->load($this->currentUser->id());
 
+    $groups_admin = $account->hasPermission('manage all groups');
+
     // If the user can administer content and groups, we allow them to
-    // override this. Otherwise we stick to the original owner.
-    if (!$account->hasPermission('administer nodes') && !$account->hasPermission('manage all groups')) {
-      $account = $entity->getOwner();
-    }
+    // override this. Otherwise, we stick to the original owner.
+    if ($entity instanceof EntityOwnerInterface && !$groups_admin) {
+      if ($type === 'node') {
+        $permission = 'administer nodes';
+      }
+      else {
+        $definition = $this->entityTypeManager->getDefinition($type);
 
-    // Limit the settable options for the current user account.
-    $options = $this->fieldDefinition
-      ->getFieldStorageDefinition()
-      ->getOptionsProvider($this->column, $entity)
-      ->getSettableOptions($account);
-
-    // Check for each group type if the content type is installed.
-    foreach ($options as $key => $optgroup) {
-      // Groups are in the array below.
-      if (is_array($optgroup)) {
-        // Loop through the groups.
-        foreach ($optgroup as $gid => $title) {
-          // If the group exists.
-          if ($group = Group::load($gid)) {
-            // Load all installed plugins for this group type.
-            $plugin_ids = $this->pluginManager->getInstalledIds($group->getGroupType());
-            // If the bundle is not installed,
-            // then unset the entire optiongroup (=group type).
-            if (!in_array('group_node:' . $entity_type, $plugin_ids)) {
-              unset($options[$key]);
-            }
-          }
-          // We need to check only one of each group type,
-          // so break out the second each.
-          break;
+        if ($definition !== NULL) {
+          $permission = $definition->getAdminPermission();
         }
+      }
+
+      if (
+        empty($permission) ||
+        !is_string($permission) ||
+        !$account->hasPermission($permission)
+      ) {
+        $account = $entity->getOwner();
       }
     }
 
-    // Remove groups the user does not have create access to.
-    if (!$account->hasPermission('manage all groups')) {
-      $options = $this->removeGroupsWithoutCreateAccess($options, $account, $entity);
+    // Limit the settable options for the current user account.
+    $options_provider = $this->fieldDefinition
+      ->getFieldStorageDefinition()
+      ->getOptionsProvider($this->column, $entity);
+
+    if ($options_provider !== NULL) {
+      $options = $options_provider->getSettableOptions($account);
+
+      $storage = $this->entityTypeManager->getStorage('group');
+
+      // Check for each group type if the content type is installed.
+      foreach ($options as $key => $optgroup) {
+        // Groups are in the array below.
+        if (is_array($optgroup)) {
+          $group = $storage->load(array_keys($optgroup)[0]);
+
+          // If the group exists.
+          if ($group instanceof GroupInterface) {
+            $supported = $this->pluginManager
+              ->getInstalled($group->getGroupType())
+              ->has('group_' . $type . ':' . $entity->bundle());
+
+            // If the bundle is not installed,
+            // then unset the entire optiongroup (=group type).
+            if (!$supported) {
+              unset($options[$key]);
+            }
+          }
+        }
+      }
+
+      // Remove groups the user does not have create access to.
+      if (!$groups_admin) {
+        $options = $this->removeGroupsWithoutCreateAccess(
+          $options,
+          $account,
+          $entity,
+        );
+      }
+    }
+    else {
+      $options = [];
     }
 
     // Add an empty option if the widget needs one.
@@ -178,12 +203,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
       $options = ['_none' => $empty_label] + $options;
     }
 
-    $module_handler = $this->moduleHander;
     $context = [
       'fieldDefinition' => $this->fieldDefinition,
       'entity' => $entity,
     ];
-    $module_handler->alter('options_list', $options, $context);
+
+    $this->moduleHander->alter('options_list', $options, $context);
 
     array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
@@ -232,8 +257,11 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     }
 
     $change_group_node = $sg_settings->get('allow_group_selection_in_node');
-    /** @var \Drupal\Core\Entity\EntityInterface $entity */
-    $entity = $form_state->getFormObject()->getEntity();
+
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+
+    $entity = $form_object->getEntity();
 
     // If it is a new node lets add the current group.
     if (!$entity->id()) {
@@ -272,9 +300,12 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *   Response changing values of the visibility field and set status message.
    */
   public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
-
     $ajax_response = new AjaxResponse();
-    $entity = $form_state->getFormObject()->getEntity();
+
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+
+    $entity = $form_object->getEntity();
 
     $selected_visibility = $form_state->getValue('field_content_visibility');
     if (!empty($selected_visibility)) {
@@ -311,11 +342,10 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong> and may cause <strong>author/co-authors</strong> to lose access.');
 
     \Drupal::messenger()->addStatus($text);
-    $ajax_response->addCommand(
-      new HtmlCommand('#group-selection-result', $text)
-    );
 
-    return $ajax_response;
+    return $ajax_response->addCommand(
+      new HtmlCommand('#group-selection-result', $text),
+    );
   }
 
   /**
@@ -332,39 +362,36 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity.
    *
-   * @return array
-   *   A list of visibility options.
-   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private static function getVisibilityOptionsforMultipleGroups(array $gids, EntityInterface $entity) {
-    $groups = \Drupal::entityTypeManager()
-      ->getStorage('group')
+  private static function getVisibilityOptionsforMultipleGroups(
+    array $gids,
+    EntityInterface $entity
+  ): array {
+    /** @var \Drupal\group\Entity\GroupInterface[] $groups */
+    $groups = \Drupal::entityTypeManager()->getStorage('group')
       ->loadMultiple($gids);
 
-    foreach ($groups as $group) {
-      /** @var \Drupal\group\Entity\GroupInterface $group */
-      $group_type_id = $group->getGroupType()->id();
-      $options[] = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $group);
-    }
+    $options = [];
 
-    if (isset($options)) {
-      $allowed_visibility_options = [];
-      foreach ($options as $item) {
-        foreach ($item as $key => $value) {
-          if (!isset($allowed_visibility_options[$key])) {
-            $allowed_visibility_options[$key] = $value;
-          }
-          // We always rewrite options if it is "FALSE".
-          if (!$value) {
-            $allowed_visibility_options[$key] = $value;
-          }
+    foreach ($groups as $group) {
+      $items = social_group_get_allowed_visibility_options_per_group_type(
+        (string) $group->getGroupType()->id(),
+        NULL,
+        $entity,
+        $group,
+      );
+
+      foreach ($items as $key => $value) {
+        // We always rewrite options if it is "FALSE".
+        if (!isset($options[$key]) || !$value) {
+          $options[$key] = $value;
         }
       }
     }
 
-    return $allowed_visibility_options ?? [];
+    return $options;
   }
 
   /**
@@ -372,19 +399,22 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * @param array $options
    *   A list of options to check.
-   * @param \Drupal\user\Entity\User $account
+   * @param \Drupal\user\UserInterface $account
    *   The user to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check for.
    *
    * @return array
-   *   An list of options for the field containing groups with create access.
+   *   A list of options for the field containing groups with create access.
    */
-  private function removeGroupsWithoutCreateAccess(array $options, User $account, EntityInterface $entity) {
-
+  private function removeGroupsWithoutCreateAccess(
+    array $options,
+    UserInterface $account,
+    EntityInterface $entity
+  ): array {
     foreach ($options as $option_category_key => $groups_in_category) {
       if (is_array($groups_in_category)) {
-        foreach ($groups_in_category as $gid => $group_title) {
+        foreach (array_keys($groups_in_category) as $gid) {
           if (!$this->checkGroupContentCreateAccess($gid, $account, $entity)) {
             unset($options[$option_category_key][$gid]);
           }
@@ -409,26 +439,43 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
    *
    * @param int $gid
    *   Group id.
-   * @param \Drupal\user\Entity\User $account
+   * @param \Drupal\user\UserInterface $account
    *   The user to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The node bundle to check for.
-   *
-   * @return int
-   *   Either TRUE or FALSE.
    */
-  private function checkGroupContentCreateAccess($gid, User $account, EntityInterface $entity) {
-    $group = Group::load($gid);
+  private function checkGroupContentCreateAccess(
+    int $gid,
+    UserInterface $account,
+    EntityInterface $entity
+  ): bool {
+    $group = $this->entityTypeManager->getStorage('group')->load($gid);
 
-    if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {
+    if (
+      $group instanceof GroupInterface &&
+      $group->hasPermission(
+        sprintf(
+          'create group_%s:%s entity',
+          $entity->getEntityTypeId(),
+          $entity->bundle(),
+        ),
+        $account,
+      )
+    ) {
       if ($group->getGroupType()->id() === 'public_group') {
         $config = $this->configFactory->get('entity_access_by_field.settings');
-        if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+
+        if (
+          $config->get('disable_public_visibility') === 1 &&
+          !$account->hasPermission('override disabled public visibility')
+        ) {
           return FALSE;
         }
       }
+
       return TRUE;
     }
+
     return FALSE;
   }
 
