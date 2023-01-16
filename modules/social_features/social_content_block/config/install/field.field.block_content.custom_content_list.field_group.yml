@@ -4,8 +4,11 @@ dependencies:
   config:
     - block_content.type.custom_content_list
     - field.storage.block_content.field_group
+    - group.type.flexible_group
     - group.type.open_group
     - group.type.public_group
+  module:
+    - social_group_flexible_group
 id: block_content.custom_content_list.field_group
 field_name: field_group
 entity_type: block_content
@@ -20,6 +23,7 @@ settings:
   handler: 'default:group'
   handler_settings:
     target_bundles:
+      flexible_group: flexible_group
       open_group: open_group
       public_group: public_group
     sort:
