@@ -3,6 +3,7 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
 
 /**
@@ -189,6 +190,50 @@ class SocialMinkContext extends MinkContext {
     $field = $this->fixStepArgument('path[0][alias]');
     $value = $this->fixStepArgument($value);
     $this->getSession()->getPage()->fillField($field, $value);
+  }
+
+  /**
+   * Ensure a specific option is selected in a select field.
+   *
+   * @Then I should see :option selected in the :locator select field
+   * @Then should see :option selected in the :locator select field
+   */
+  public function thenShouldSeeOptionSelected(string $option, string $locator) : void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    $opt = $field->find('named', ['option', $option]);
+
+    if (NULL === $opt) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'select option', 'value|text', $option);
+    }
+
+    if (!$opt->isSelected()) {
+      throw new \Exception("Expected '$option' to be selected but it was not.");
+    }
+  }
+
+  /**
+   * Ensure a select field does not contain an option.
+   *
+   * @Then I should not see :option in the :locator select field
+   * @Then should not see :option in the :locator select field
+   */
+  public function thenShouldNotSeeOptionInTheSelectField(string $option, string $locator) : void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    $opt = $field->find('named', ['option', $option]);
+
+    if ($opt !== NULL) {
+      throw new \Exception("The field was not supposed to contain '$option' but it was an option in the select field.");
+    }
   }
 
 }
