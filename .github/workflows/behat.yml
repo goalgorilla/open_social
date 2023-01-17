@@ -95,7 +95,7 @@ jobs:
           PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[1]'`
           echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
 
-          composer require goalgorilla/open_social:^$PREVIOUS_MAJOR goalgorilla/open_social_dev:^$PREVIOUS_MAJOR
+          composer require goalgorilla/open_social:^$PREVIOUS_MAJOR
 
           # Installation
           # This is purposefully duplicated because we may change how
@@ -123,7 +123,7 @@ jobs:
           drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
           drush cset -y swiftmailer.transport smtp_port 1025
 
-          composer require --update-with-all-dependencies goalgorilla/open_social:dev-$BRANCH_NAME goalgorilla/open_social_dev:dev-main
+          composer require --update-with-all-dependencies goalgorilla/open_social:dev-$BRANCH_NAME
           vendor/bin/drush updb -y
 
       - name: Set-up a new Open Social installation at HEAD
