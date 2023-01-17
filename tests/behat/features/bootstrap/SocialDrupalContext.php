@@ -69,15 +69,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * @beforeScenario @api
-   */
-  public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
-    $admin_user = User::load('1');
-    $current_user = \Drupal::getContainer()->get('current_user');
-    $current_user->setAccount($admin_user);
-  }
-
-  /**
    * Creates content of the given type for the current user,
    * provided in the form:
    * | title     | My node        |
