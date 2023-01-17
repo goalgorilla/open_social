@@ -123,7 +123,13 @@ jobs:
           drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
           drush cset -y swiftmailer.transport smtp_port 1025
 
-          composer require --update-with-all-dependencies goalgorilla/open_social:dev-$BRANCH_NAME
+          # We update the composer.json manually using jq and then update with composer
+          # This is because there's a difference in composer's dependency resolution through
+          # require --update-* and update. That difference can cause require to consider
+          # transient dependencies locked when they shouldn't be.
+          jq "(.require.\"goalgorilla/open_social\") |= \"dev-$BRANCH_NAME\"" < composer.json > composer.json.tmp
+          mv composer.json.tmp composer.json
+          composer update --with-all-dependencies
           vendor/bin/drush updb -y
 
       - name: Set-up a new Open Social installation at HEAD
