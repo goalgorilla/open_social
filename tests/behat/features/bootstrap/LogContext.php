@@ -45,9 +45,10 @@ class LogContext implements Context {
   /**
    * Ensure the dblog is enabled and store existing log entry count.
    *
-   * @BeforeScenario
+   * This is triggered by DatabaseContext::triggerOnDatabaseLoaded so it runs
+   * every time a database is imported.
    */
-  public function beforeScenario(BeforeScenarioScope $scope) : void {
+  public function onDatabaseLoaded() : void {
     \Drupal::service('module_installer')->install(['dblog']);
 
     $this->deleteAllLogMessages();

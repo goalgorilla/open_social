@@ -3,6 +3,7 @@
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\HookScope;
 use Drupal\Driver\DrushDriver;
@@ -29,6 +30,11 @@ class DatabaseContext implements Context {
   private DrushDriver $drushDriver;
 
   /**
+   * The Behat environment we're operating in.
+   */
+  private InitializedContextEnvironment $environment;
+
+  /**
    * Configure the context.
    *
    * @param string $fixturePath
@@ -44,7 +50,8 @@ class DatabaseContext implements Context {
    * @BeforeScenario
    */
   public function getDrushDriver(BeforeScenarioScope $scope) : void {
-    $drupal_context = $scope->getEnvironment()->getContext(SocialDrupalContext::class);
+    $this->environment= $scope->getEnvironment();
+    $drupal_context = $this->environment->getContext(SocialDrupalContext::class);
     if (!$drupal_context instanceof SocialDrupalContext) {
       throw new \RuntimeException("Expected " . SocialDrupalContext::class . " to be configured for Behat.");
     }
@@ -146,6 +153,24 @@ class DatabaseContext implements Context {
     }
     catch (\RuntimeException $e) {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
+    }
+
+    $this->triggerOnDatabaseLoaded();
+  }
+
+  /**
+   * Calls `onDatabaseLoaded` in all contexts that have it.
+   *
+   * This allows contexts to do database related set-ups (e.g. log detection).
+   *
+   * @return void
+   */
+  private function triggerOnDatabaseLoaded() : void {
+    foreach ($this->environment->getContexts() as $context) {
+      $hook = [$context, "onDatabaseLoaded"];
+      if (is_callable($hook)) {
+        $hook();
+      }
     }
   }
 
