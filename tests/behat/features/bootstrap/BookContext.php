@@ -56,6 +56,16 @@ class BookContext extends RawMinkContext {
   }
 
   /**
+   * View the book creation page.
+   *
+   * @When /^(?:|I )view the book creation page$/
+   */
+  public function whenIViewTheBookCreationPage() : void {
+    $this->visitPath(self::CREATE_PAGE);
+    $this->assertSession()->statusCodeEquals(200);
+  }
+
+  /**
    * Create multiple books at the start of a test.
    *
    * Creates books provided in the form:
@@ -70,6 +80,24 @@ class BookContext extends RawMinkContext {
       $book = $this->bookCreate($bookHash);
       $this->created[] = $book->id();
     }
+  }
+
+  /**
+   * Enable Drupal core book functionality for a content type.
+   *
+   * @Given book structure is enabled for :content_type
+   */
+  public function enableBookStructureForContentType(string $content_type) : void {
+    $config = \Drupal::configFactory()->getEditable('book.settings');
+
+    if ($config->isNew()) {
+      throw new \Exception("The book.settings configuration did not yet exist, is the 'book' module enabled?");
+    }
+
+    $allowed_types = $config->get('allowed_types');
+    $allowed_types[] = $content_type;
+
+    $config->set('allowed_types', $allowed_types)->save();
   }
 
   /**
