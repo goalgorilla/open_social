@@ -6,6 +6,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\HookScope;
+use Drupal\Core\Cache\Cache;
 use Drupal\Driver\DrushDriver;
 
 /**
@@ -138,6 +139,18 @@ class DatabaseContext implements Context {
       $database_file = $this->fixturePath . DIRECTORY_SEPARATOR . $database_file;
     }
 
+
+    $data = [
+      'pre-reset' => [
+        'dblog.settings' => \Drupal::config("dblog.settings")->getRawData(),
+        'core.extension' => \Drupal::config("core.extension")->getRawData(),
+      ],
+    ];
+
+    try {
+      $data['pre-reset']['database'] = \Drupal::database()->query("SELECT * FROM config WHERE name='core.extension';")->fetchAll();
+    } catch (\Exception $e) { $data['database'] = NULL; }
+
     if (!is_file($database_file)) {
       throw new \RuntimeException("Scaffold file '$database_file' does not exist.");
     }
@@ -154,6 +167,31 @@ class DatabaseContext implements Context {
     catch (\RuntimeException $e) {
       throw new \RuntimeException("Could not drop existing database.", 0, $e);
     }
+
+    // When there's no database Drupal kicks into Install mode which sets up a
+    // read only config. Now that we have a database loaded we need to get
+    // Drupal out of that mode.
+    // Steps need to be in a specific order here since the install mode also
+    // doesn't load the system module (which every module under the sun assumes
+    // is loaded).
+    //
+    // 1.Remove the global that keeps the container in install mode
+    unset($GLOBALS['conf']['container_service_providers']['InstallerServiceProvider']);
+    // 2. Rebuild the container to ensure the Module Handler gets a new module
+    //    list
+    $kernel = \Drupal::service('kernel');
+    $kernel->invalidateContainer();
+    $kernel->rebuildContainer();
+    // 3. Reload all the modules to ensure the system module is loaded
+    \Drupal::moduleHandler()->reload();
+    // 4. Flush all the caches to ensure we don't cache data from the previously
+    //    loaded database. This will trigger another container rebuild but
+    //    that's fine.
+    drupal_flush_all_caches();
+    // 5. We must clear the current user, since the container rebuild saves it,
+    //    but it references a non-existent user now.
+    \Drupal::currentUser()->setInitialAccountId(0);
+
 
     $this->triggerOnDatabaseLoaded();
   }
