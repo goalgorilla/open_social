@@ -108,37 +108,42 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    * Get the realms array with permissions as value.
    */
   public function getRealmWithPermission(): array {
-    $realms = [];
-    $contentTypes = $this->getContentTypes();
+    $realms = &drupal_static(__FUNCTION__);
 
-    foreach ($contentTypes as $bundle) {
-      $entity_type = 'node';
-      $fields = $this->getEntityAccessFields($entity_type, $bundle);
+    // If realms is not yet cached, let's populate it now.
+    if (!isset($realms)) {
+      $realms = [];
+      $contentTypes = $this->getContentTypes();
 
-      /** @var \Drupal\field\Entity\FieldConfig $field */
-      foreach ($fields as $field) {
-        $field_storage = $field->getFieldStorageDefinition();
+      foreach ($contentTypes as $bundle) {
+        $entity_type = 'node';
+        $fields = $this->getEntityAccessFields($entity_type, $bundle);
 
-        // Gets allowed values from function if exists.
-        $function = $field_storage->getSetting('allowed_values_function');
-        if (!empty($function)) {
-          $allowed_values = $function($field_storage);
-        }
-        else {
-          $allowed_values = $field_storage->getSetting('allowed_values');
-        }
+        /** @var \Drupal\field\Entity\FieldConfig $field */
+        foreach ($fields as $field) {
+          $field_storage = $field->getFieldStorageDefinition();
 
-        if (!empty($allowed_values)) {
-          $op = 'view';
+          // Gets allowed values from function if exists.
+          $function = $field_storage->getSetting('allowed_values_function');
+          if (!empty($function)) {
+            $allowed_values = $function($field_storage);
+          }
+          else {
+            $allowed_values = $field_storage->getSetting('allowed_values');
+          }
 
-          foreach ($allowed_values as $field_key => $field_label) {
-            // e.g. label = node.article.field_content_visibility:public.
-            $permission_label = "$entity_type.{$bundle->id()}.{$field->getName()}:$field_key";
-            $permission = $op . ' ' . $permission_label . ' content';
-            $bundle_id = $bundle->id();
-            $field_name = $field->getName();
-            $realm = $this->getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_key);
-            $realms[$realm] = $permission;
+          if (!empty($allowed_values)) {
+            $op = 'view';
+
+            foreach ($allowed_values as $field_key => $field_label) {
+              // e.g. label = node.article.field_content_visibility:public.
+              $permission_label = "$entity_type.{$bundle->id()}.{$field->getName()}:$field_key";
+              $permission = $op . ' ' . $permission_label . ' content';
+              $bundle_id = $bundle->id();
+              $field_name = $field->getName();
+              $realm = $this->getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_key);
+              $realms[$realm] = $permission;
+            }
           }
         }
       }
@@ -165,8 +170,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    *   Returns the entity interface containing all the content types.
    */
   protected function getContentTypes() {
-    $contentTypes = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
-    return $contentTypes;
+    return $this->entityTypeManager->getStorage('node_type')->loadMultiple();
   }
 
   /**

@@ -45,24 +45,33 @@ function entity_access_by_field_node_access(
  * Implements hook_node_grants().
  */
 function entity_access_by_field_node_grants(AccountInterface $account, $op): array {
-  $grants = [];
   if ($op === 'view') {
+    $grants = &drupal_static(__FUNCTION__);
 
-    // @todo Check performance hit, this is not cached.
-    $entityAccessPermissions = \Drupal::getContainer()
-      ->get('entity_access_by_field.permissions');
-    $permissions = $entityAccessPermissions->getRealmWithPermission();
+    // If we haven't stored any grants for this user, let's try and populate it
+    // now.
+    if (!isset($grants[$account->id()])) {
+      $grants[$account->id()] = [];
 
-    if (!empty($permissions)) {
-      foreach ($permissions as $realm => $permission) {
-        if ($account->hasPermission($permission)) {
-          $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
+      $entityAccessPermissions = \Drupal::getContainer()
+        ->get('entity_access_by_field.permissions');
+      $permissions = $entityAccessPermissions->getRealmWithPermission();
+
+      if (!empty($permissions)) {
+        foreach ($permissions as $realm => $permission) {
+          if ($account->hasPermission($permission)) {
+            $grants[$account->id()][$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
+          }
+          $grants[$account->id()][$realm . '_author'] = [$account->id()];
         }
-        $grants[$realm . '_author'] = [$account->id()];
       }
     }
+
+    return $grants[$account->id()];
   }
-  return $grants;
+
+  // We don't influence any operation other than `view`.
+  return [];
 }
 
 /**
@@ -70,21 +79,39 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op): arr
  */
 function entity_access_by_field_node_grants_alter(array &$grants, AccountInterface $account, string $op): void {
   if ($op === 'view') {
-    $entity_type_manager = \Drupal::entityTypeManager();
+    // Statically cache the grant ids per account.
+    $gids = &drupal_static(__FUNCTION__);
 
-    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-    $group_content_storage = $entity_type_manager->getStorage('group_content');
+    // If we haven't stored anything for this user yet, let's try and populate
+    // it now.
+    if (!isset($gids[$account->id()])) {
+      $gids[$account->id()] = [];
 
-    /** @var \Drupal\user\UserStorageInterface $user_storage */
-    $user_storage = $entity_type_manager->getStorage('user');
+      // Get all the memberships for this user.
+      if (\Drupal::hasService('social_group.helper_service')) {
+        /** @var \Drupal\social_group\SocialGroupHelperService $social_group_helper_service */
+        $social_group_helper_service = \Drupal::service('social_group.helper_service');
+        $groups = $social_group_helper_service->getAllGroupsForUser($account->id());
+        foreach ($groups as $group) {
+          $gids[$account->id()][] = $group;
+        }
+      }
+      else {
+        // This fallback method exists to ensure there is no direct dependency
+        // needed on Social Group. It primarily helps to prevent dependency
+        // issues during installation.
+        /** @var \Drupal\user\UserStorageInterface $user_storage */
+        $user_storage = \Drupal::entityTypeManager()->getStorage('user');
+        /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+        $group_content_storage = \Drupal::entityTypeManager()->getStorage('group_content');
 
-    // Get all user's memberships.
-    /** @var \Drupal\user\UserInterface $user */
-    $user = $user_storage->load($account->id());
-    $memberships = $group_content_storage->loadByEntity($user);
-    $gids = [];
-    foreach ($memberships as $membership) {
-      $gids[] = $membership->getGroup()->id();
+        /** @var \Drupal\user\UserInterface $user */
+        $user = $user_storage->load($account->id());
+        $memberships = $group_content_storage->loadByEntity($user);
+        foreach ($memberships as $membership) {
+          $gids[$account->id()][] = $membership->getGroup()->id();
+        }
+      }
     }
 
     // Load node types.
@@ -96,7 +123,7 @@ function entity_access_by_field_node_grants_alter(array &$grants, AccountInterfa
     // Remove grants of node type if user are not a member in this group.
     foreach ($node_types as $node_type) {
       if (isset($grants["gnode:$node_type"])) {
-        $grants["gnode:$node_type"] = array_intersect($grants["gnode:$node_type"], $gids);
+        $grants["gnode:$node_type"] = array_intersect($grants["gnode:$node_type"], $gids[$account->id()]);
       }
     }
   }
