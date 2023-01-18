@@ -5,6 +5,8 @@ Feature: Group manager should to be able to disabled posts in groups for members
   Goal/desire: I want to disable posting in groups
 
   Scenario: Create a flexible group with enabled/disabled posting
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given users:
       | name          | mail             | status | roles    |
       | Group Manager | gm_1@example.com | 1      | verified |

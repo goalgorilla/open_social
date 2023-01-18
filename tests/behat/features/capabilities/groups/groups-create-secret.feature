@@ -6,6 +6,8 @@ Feature: Create Secret Group
 
   @email-spool
   Scenario: Successfully create secret group
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given I enable the module "social_group_secret"
     Given users:
       | name                 | mail                     | status | roles       |
