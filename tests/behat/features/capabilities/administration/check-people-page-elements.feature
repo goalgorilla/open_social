@@ -1,8 +1,10 @@
-@administration @account @profile @stability @perfect @api @view-block-users
+@administration @account @profile @stability @perfect @api @view-block-users @no-update
 Feature: View users as site manager
   Benefit: In order to see user list at
   Role: SM
   Goal/desire: See user list
+
+  # @todo https://www.drupal.org/project/social/issues/3334769
 
   Scenario: Successfully see user list
     Given I am logged in as an "sitemanager"
@@ -39,7 +41,7 @@ Feature: View users as site manager
       And I should see "Last access"
       And I should see "Operation"
       And I should see an "#edit-views-bulk-operations-bulk-form-0" element
-      
+
       # Check action area
       And I should see an "#edit-action" element
       And I should see an "input.button[disabled]" element
