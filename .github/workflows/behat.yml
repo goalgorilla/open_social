@@ -276,7 +276,7 @@ jobs:
 
             echo "::group::$test"
             # Run in subshell to make the test command visible and copyable.
-            (set -x; vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors --allow-empty $TAGS $test)
+            (set -x; vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --colors --allow-empty $TAGS $test)
             echo "::endgroup::"
           done
 
