@@ -1,4 +1,4 @@
-@api @notifications @group @DS-7598 @stability @stability-3 @group-mute-group-notifications
+@api @notifications @group @DS-7598 @stability @stability-3 @group-mute-group-notifications @no-update
 Feature: Mute/Unmute group notifications
   Benefit: In order to be able to get more fine grained control about notifications which I find relative to me
   Role: As a LU
