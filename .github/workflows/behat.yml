@@ -124,12 +124,20 @@ jobs:
           drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
           drush cset -y swiftmailer.transport smtp_port 1025
 
+          # Composer has special handling for "version-like" branch names
+          if [[ $BRANCH_NAME =~ "[0-9]+.[0-9]+.x" ]]; then
+            export OPEN_SOCIAL_VERSION=$BRANCH_NAME-dev
+          else
+            export OPEN_SOCIAL_VERSION=dev-$BRANCH_NAME
+          fi
+
           # We update the composer.json manually using jq and then update with composer
           # This is because there's a difference in composer's dependency resolution through
           # require --update-* and update. That difference can cause require to consider
           # transient dependencies locked when they shouldn't be.
-          jq "(.require.\"goalgorilla/open_social\") |= \"dev-$BRANCH_NAME\"" < composer.json > composer.json.tmp
+          jq "(.require.\"goalgorilla/open_social\") |= \"$OPEN_SOCIAL_VERSION\"" < composer.json > composer.json.tmp
           mv composer.json.tmp composer.json
+
           composer update --with-all-dependencies
           vendor/bin/drush updb -y
 
@@ -138,7 +146,12 @@ jobs:
         run: |
           set -e
 
-          composer require goalgorilla/open_social:dev-$BRANCH_NAME
+          # Composer has special handling for "version-like" branch names
+          if [[ $BRANCH_NAME =~ "[0-9]+.[0-9]+.x" ]]; then
+            composer require goalgorilla/open_social:$BRANCH_NAME-dev
+          else
+            composer require goalgorilla/open_social:dev-$BRANCH_NAME
+          fi
 
           # Installation
           # This is purposefully duplicated because we may change how
