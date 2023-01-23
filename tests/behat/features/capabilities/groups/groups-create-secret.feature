@@ -1,4 +1,4 @@
-@api @group @notifications @TB-6072 @stability @stability-1 @group-create-secret
+@api @group @notifications @TB-6072 @group-create-secret @no-update
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
   Role: As a Verified
