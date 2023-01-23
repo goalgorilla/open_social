@@ -1,8 +1,10 @@
-@api @group @notifications @javascript @TB-6072 @DS-3428 @DS-4211 @stability @stability-1 @group-create-closed
+@api @group @notifications @javascript @TB-6072 @DS-3428 @DS-4211 @group-create-closed @no-update
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
   Role: As a Verified
   Goal/desire: I want to create Closed Groups
+
+  # @todo https://www.drupal.org/project/social/issues/3334773
 
   @email-spool
   Scenario: Successfully create closed group

@@ -1,4 +1,4 @@
-@api @notifications @javascript @stability @stability-3 @YANG-4199 @group-invite-members
+@api @notifications @javascript @stability @stability-3 @YANG-4199 @group-invite-members @no-update
 Feature: Send invite group email notifications
   Benefit: Email notifications attract users to the platform
   Role: As a SM

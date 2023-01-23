@@ -1,8 +1,10 @@
-@api @gdpr @data-policy @data-policy-create @DS-5586 @stability @stability-4
+@api @gdpr @data-policy @data-policy-create @DS-5586 @no-update
 Feature: Create data policy and view new policy
   Benefit: In order to have a clear data policy users need to accept
   Role: As a SM
   Goal/desire: I want to create a data policy
+
+  # @todo https://www.drupal.org/project/social/issues/3334770
 
   Scenario: Successfully create and view a data policy
 

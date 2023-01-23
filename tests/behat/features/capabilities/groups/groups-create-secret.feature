@@ -1,4 +1,4 @@
-@api @group @notifications @TB-6072 @stability @stability-1 @group-create-secret
+@api @group @notifications @TB-6072 @group-create-secret @no-update
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
   Role: As a Verified
@@ -6,6 +6,8 @@ Feature: Create Secret Group
 
   @email-spool
   Scenario: Successfully create secret group
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given I enable the module "social_group_secret"
     Given users:
       | name                 | mail                     | status | roles       |

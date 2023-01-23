@@ -1,4 +1,4 @@
-@administration @account @user @stability @perfect @api @revoke-or-grant-roles-by-permission
+@administration @account @user @stability @perfect @api @revoke-or-grant-roles-by-permission @no-update
 Feature: Revoking or granting roles by permission
   Benefit: A user with the SM role can't grant himself the administrator role.
   Role: SM

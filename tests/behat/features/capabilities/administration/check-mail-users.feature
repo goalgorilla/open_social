@@ -1,8 +1,10 @@
-@administration @api @notifications @javascript @stability @bulk-mails
+@administration @api @notifications @javascript @stability @bulk-mails @no-update
 Feature: Send bulk email
   Benefit: Be able to notify community members
   Role: As a SM
   Goal/desire: I want to be able to notify one or more community members
+
+  # @todo https://www.drupal.org/project/social/issues/3334769
 
   @email-spool
   Scenario: Send bulk email as SM to the first 3 users

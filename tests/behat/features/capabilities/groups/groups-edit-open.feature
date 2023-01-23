@@ -5,6 +5,8 @@ Feature: Edit my group as a group manager
   Goal/desire: I want to edit my Groups
 
   Scenario: Successfully create and edit my group as a group manager
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given users:
       | name              | mail             | field_profile_organization | status | roles    |
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      | verified |

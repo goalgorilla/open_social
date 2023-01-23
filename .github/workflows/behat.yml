@@ -39,12 +39,15 @@ jobs:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci
+      image: goalgorilla/open_social_docker:ci-php7
       volumes:
         - ${{ github.workspace }}:/var/www
 
     strategy:
       matrix:
+        update:
+          - ""
+          - "update"
         with_optional:
           - ""
           - "with-optional"
@@ -67,6 +70,7 @@ jobs:
 
     defaults:
       run:
+        shell: bash
         working-directory: /var/www
 
     steps:
@@ -79,26 +83,79 @@ jobs:
         run: |
           cp tmp/tests/composer.json composer.json
 
-      # Install the version of Open Social under test.
-      - name: Composer require current branch
-        run: composer require goalgorilla/open_social:dev-$BRANCH_NAME
-
-      - name: Install Open Social
+      - name: Set-up the previous major version of Open Social and update to HEAD
+        if: ${{ matrix.update == 'update' }}
         run: |
           set -e
 
+          apt-get install -y jq
+          # This gets all version info from composer for Open Social. We then
+          # use jq to traverse and manipulate the JSON data to find ourselves
+          # the last stable major version before the current stable major
+          # version.
+          PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[1]'`
+          echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
+
+          composer require goalgorilla/open_social:^$PREVIOUS_MAJOR
+
+          # Installation
+          # This is purposefully duplicated because we may change how
+          # installation works between major versions, so this provides us the
+          # flexibility to reflect that in the workflow.
           cp tmp/tests/default.settings.php /var/www/html/sites/default/default.settings.php
           mkdir /var/www/files_private
 
           export OPTIONAL=""
-          if [ "${{ matrix.with_optional }}" == "with-optional" ]; then
+          if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
           drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
 
           # Create swiftmailer-spool directory for behat tests
-          if [ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]; then
+          if [[ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]]; then
+            mkdir /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+          fi
+          chown -R www-data:www-data /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+          chmod +w -R /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
+
+          # Make sure swiftmailer is configured for our CI.
+          drush cset -y swiftmailer.transport transport 'smtp'
+          drush cset -y swiftmailer.transport smtp_host 'mailcatcher'
+          drush cset -y swiftmailer.transport smtp_port 1025
+
+          # We update the composer.json manually using jq and then update with composer
+          # This is because there's a difference in composer's dependency resolution through
+          # require --update-* and update. That difference can cause require to consider
+          # transient dependencies locked when they shouldn't be.
+          jq "(.require.\"goalgorilla/open_social\") |= \"dev-$BRANCH_NAME\"" < composer.json > composer.json.tmp
+          mv composer.json.tmp composer.json
+          composer update --with-all-dependencies
+          vendor/bin/drush updb -y
+
+      - name: Set-up a new Open Social installation at HEAD
+        if: ${{ matrix.update == '' }}
+        run: |
+          set -e
+
+          composer require goalgorilla/open_social:dev-$BRANCH_NAME
+
+          # Installation
+          # This is purposefully duplicated because we may change how
+          # installation works between major versions, so this provides us the
+          # flexibility to reflect that in the workflow.
+          cp tmp/tests/default.settings.php /var/www/html/sites/default/default.settings.php
+          mkdir /var/www/files_private
+
+          export OPTIONAL=""
+          if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
+            export OPTIONAL="social_module_configure_form.select_all='TRUE'"
+          fi
+
+          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+
+          # Create swiftmailer-spool directory for behat tests
+          if [[ ! -d /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool ]]; then
             mkdir /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
           fi
           chown -R www-data:www-data /var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool
@@ -122,7 +179,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}
-          key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
+          key: ${{ github.sha }}-test-setup-${{ matrix.update}}${{ matrix.with_optional }}
 
   # This workflow contains a single job called "Running tests"
   tests:
@@ -139,6 +196,9 @@ jobs:
       fail-fast: false
       matrix:
         feature: ${{ fromJson(needs.feature_discovery.outputs.features) }}
+        update:
+          - ""
+          - "update"
         with_optional:
           - ""
           - "with-optional"
@@ -175,6 +235,7 @@ jobs:
 
     defaults:
       run:
+        shell: bash
         working-directory: /var/www
 
     steps:
@@ -182,24 +243,41 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}
-          key: ${{ github.sha }}-test-setup${{ matrix.with_optional }}
+          key: ${{ github.sha }}-test-setup-${{ matrix.update}}${{ matrix.with_optional }}
 
       # We could run all tests at once by passing the folder directly to behat
       # however, by doing this manually in a loop we have the ability to ensure
       # each test runs against a clean database cheaply.
       - name: Run Integration test
         run: |
+          export TEST_DATABASE=`pwd`/installation.sql
           vendor/bin/behat --version
           for test in html/profiles/contrib/social/tests/behat/features/capabilities/${{ matrix.feature }}/*.feature; do
             if head -n1 $test | grep -q "@disabled"; then
               echo "$test - Skipping disabled test"
-            else
-              echo "::group::$test"
-              drush sql-drop -y
-              drush sqlc < installation.sql
-              vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --strict --colors $test
-              echo "::endgroup::"
+              continue
             fi
+
+            # If we're testing a clean install (i.e. not updating) then ignore
+            # any tests that have opted out of install testing.
+            if [[ -z "${{ matrix.update }}" ]]; then
+              export TAGS="--tags=~no-install"
+            # Do the same when we are testing with an update.
+            else
+              export TAGS="--tags=~no-update"
+            fi
+
+            # Tests with the @no-database tag import their own scaffold so they
+            # ignore the databases provided by our test matrix, that's why we
+            # only run them once when all our matrix values are off.
+            if [[ ! -z "${{ matrix.update }}" ]] || [[ ! -z "${{ matrix.with_optional }}" ]]; then
+              export TAGS="$TAGS&&~no-database"
+            fi
+
+            echo "::group::$test"
+            # Run in subshell to make the test command visible and copyable.
+            (set -x; vendor/bin/behat -vv --config html/profiles/contrib/social/tests/behat/behat.yml --colors --allow-empty $TAGS $test)
+            echo "::endgroup::"
           done
 
       - name: Upload Behat Test Output
