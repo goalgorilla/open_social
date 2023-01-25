@@ -222,18 +222,6 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       $config->clear('use_category_parent')->save();
     }
 
-    if ($form_state->hasValue('tag_type_profile')) {
-      $result = $this->database->select('cachetags', 'ct')
-        ->fields('ct', ['tag'])
-        ->condition('ct.tag', 'profile:%', 'LIKE')
-        ->execute();
-
-      if ($result !== NULL) {
-        // Clear cache tags of profiles.
-        $this->cacheTagsInvalidator->invalidateTags($result->fetchCol());
-      }
-    }
-
     foreach ($form_state->getValue('categories_order') as $tid => $categories_order_values) {
       $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
       if ($term instanceof TermInterface) {
