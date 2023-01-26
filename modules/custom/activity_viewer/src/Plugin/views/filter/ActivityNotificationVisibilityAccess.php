@@ -2,9 +2,12 @@
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
+use Drupal\Core\Database\Connection;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 use Drupal\Core\Database\Query\Condition;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity based on visibility settings.
@@ -16,9 +19,29 @@ use Drupal\Core\Database\Query\Condition;
 class ActivityNotificationVisibilityAccess extends FilterPluginBase {
 
   /**
+   * The database connection.
+   */
+  protected Connection $database;
+
+  /**
+   * The group helper service.
+   */
+  public SocialGroupHelperService $groupHelper;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->groupHelper = $container->get('social_group.helper_service');
+    $instance->database = $container->get('database');
+    return $instance;
+  }
+
+  /**
    * Not exposable.
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
@@ -38,25 +61,27 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
    * system when this is implemented.
    * See https://www.drupal.org/node/777578
    */
-  public function query() {
+  public function query(): void {
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
     $account = $this->view->getUser();
 
     $open_groups = [];
     $group_memberships = [];
-    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+    if ($this->moduleHandler->moduleExists('social_group')) {
       // @todo This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
       $open_groups = social_group_get_all_open_groups();
-      $group_memberships = \Drupal::service('social_group.helper_service')
+      $group_memberships = $this->groupHelper
         ->getAllGroupsForUser($account->id());
     }
     $groups = array_merge($open_groups, $group_memberships);
     $groups_unique = array_unique($groups);
 
     // Add tables and joins.
-    $this->query->addTable('activity__field_activity_recipient_group');
-    $this->query->addTable('activity__field_activity_entity');
-    $this->query->addTable('activity__field_activity_recipient_user');
+    $query->addTable('activity__field_activity_recipient_group');
+    $query->addTable('activity__field_activity_entity');
+    $query->addTable('activity__field_activity_recipient_user');
 
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
@@ -71,8 +96,9 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
         ],
       ],
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
+    $query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = [
       'left_table' => 'post',
@@ -81,45 +107,31 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       'field' => 'entity_id',
       'operator' => '=',
     ];
+    /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
-
-    // Join node table(s).
-    $configuration = [
-      'left_table' => 'activity__field_activity_entity',
-      'left_field' => 'field_activity_entity_target_id',
-      'table' => 'node_access',
-      'field' => 'nid',
-      'operator' => '=',
-      'extra' => [
-        0 => [
-          'left_field' => 'field_activity_entity_target_type',
-          'value' => 'node',
-        ],
-      ],
-    ];
-    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('node_access', $join, 'node_access_relationship');
+    $query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
     if ($account->isAnonymous()) {
       $configuration['table'] = 'node_field_data';
+      /** @var \Drupal\views\Plugin\views\join\JoinPluginBase $join */
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-      $this->query->addRelationship('node_field_data', $join, 'node_field_data');
+      $query->addRelationship('node_field_data', $join, 'node_field_data');
     }
 
     // Add queries.
     $and_wrapper = new Condition('AND');
     $or = new Condition('OR');
 
-    // Allow us to check for authenticated users.
     $authenticated = $account->isAuthenticated();
 
-    // Nodes: retrieve all the nodes 'created' activity by node access grants.
-    $node_access = new Condition('AND');
-    $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
-    $node_access_grants = node_access_grants('view', $account);
-    $grants = new Condition('OR');
-    foreach ($node_access_grants as $realm => $gids) {
+    // Nodes: check if user has appropriate nodes access by realms.
+    $node_access_subquery = $this->database->select('node_access', 'node_access');
+    $node_access_subquery->addField('afae', 'entity_id');
+    $node_access_subquery->join('activity__field_activity_entity', 'afae', 'node_access.nid = afae.field_activity_entity_target_id');
+    $node_access_subquery->condition('afae.field_activity_entity_target_type', 'node');
+    $grants = $node_access_subquery->orConditionGroup();
+
+    foreach (node_access_grants('view', $account) as $realm => $gids) {
       if (!empty($gids)) {
         $and = new Condition('AND');
 
@@ -133,8 +145,11 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
         );
       }
     }
-    $node_access->condition($grants);
-    $or->condition($node_access);
+
+    $node_access_subquery->condition($grants);
+    $or->condition((new Condition('AND'))
+      ->condition('activity_field_data.id', $node_access_subquery, 'IN')
+    );
 
     // Posts: retrieve all the posts in groups the user is a member of.
     if ($authenticated && count($groups_unique) > 0) {
@@ -218,7 +233,7 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
     // or actual members get the message.
     // Or.
     // We match field_activity_recipient_group_target_id
-    // see GroupActivityContext so we can match our own memberships against it.
+    // see GroupActivityContext, so we can match our own memberships against it.
     if ($authenticated) {
       $membership_access = new Condition('AND');
       $membership_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'group_content');
@@ -237,15 +252,15 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $or->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', (string) $account->id());
     }
 
-    // Lets add all the or conditions to the Views query.
+    // Let's add all the or conditions to the Views query.
     $and_wrapper->condition($or);
-    $this->query->addWhere('visibility', $and_wrapper);
+    $query->addWhere('visibility', $and_wrapper);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user.permissions';
