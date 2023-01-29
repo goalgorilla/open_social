@@ -185,3 +185,41 @@ function social_group_invite_update_11401(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update email invitation messages.
+ */
+function social_group_invite_update_11501(): void {
+  $config_factory = \Drupal::configFactory();
+
+  $group_config = \Drupal::config('social_group.settings');
+  $invite_settings = $group_config->get('group_invite');
+
+  $configurations = [
+    'group.content_type.closed_group-group_invitation',
+    'group.content_type.flexible_group-group_invitation',
+    'group.content_type.open_group-group_invitation',
+    'group.content_type.public_group-group_invitation',
+    'group.content_type.secret_group-group_invitation',
+  ];
+
+  foreach ($configurations as $name) {
+    $configuration = $config_factory->getEditable($name);
+
+    if ($configuration->isNew()) {
+      // Configuration doesn't exist.
+      continue;
+    }
+
+    // Set email subject text.
+    if (empty($configuration->get('plugin_config.invitation_subject')) && !empty($invite_settings['invite_subject'])) {
+      $configuration->set('plugin_config.invitation_subject', $invite_settings['invite_subject']);
+      $configuration->save();
+    }
+    // Set email body text.
+    if (empty($configuration->get('plugin_config.invitation_body')) && !empty($invite_settings['invite_message'])) {
+      $configuration->set('plugin_config.invitation_body', $invite_settings['invite_message']);
+      $configuration->save();
+    }
+  }
+}

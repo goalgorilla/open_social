@@ -543,22 +543,69 @@ function social_group_invite_preprocess_join(array &$variables): void {
 function social_group_invite_form_social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $invite_config = \Drupal::config('social_group.settings')
     ->get('group_invite');
+
   $form['group_invite'] = [
     '#type' => 'details',
     '#title' => t('Group invite settings'),
     '#weight' => 30,
   ];
 
+  // "Group invite" allows to have invite message per each group where
+  // this group content type plugin is enabled.
+  // Here we allow for SM to have separate invite message for each group type.
+  $form['group_invite']['invite_message_tabs'] = [
+    '#type' => 'vertical_tabs',
+  ];
+  $configurations = (array) \Drupal::entityQuery('group_content_type')
+    ->condition('content_plugin', 'group_invitation')
+    ->condition('status', TRUE)
+    ->accessCheck(FALSE)
+    ->execute();
+
   $default_subject = '[current-user:display-name] has invited you to join a group on [site:name].';
-  $form['group_invite']['invite_subject'] = [
+  $default_message = "Hi,<br /><br /> I would like to invite you to join my group [group:title] on [site:name].<br /><br />Kind regards,<br />[current-user:display-name]<br /><br />\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[group_content:register_link]\">View group</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>";
+
+  foreach ($configurations as $name) {
+    $config = \Drupal::configFactory()->getEditable("group.content_type.$name");
+
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    $group_type = \Drupal::entityTypeManager()->getStorage('group_type')
+      ->load($config->get('group_type'));
+
+    $form[$name] = [
+      '#type' => 'details',
+      '#title' => $group_type->label(),
+      '#group' => 'invite_message_tabs',
+      '#tree' => TRUE,
+    ];
+
+    $form[$name]['invitation_subject'] = [
+      '#type' => 'textfield',
+      '#title' => t('Subject'),
+      '#default_value' => $config->get('plugin_config.invitation_subject') ?? ($invite_config['invite_subject'] ?? $default_subject),
+    ];
+
+    $form[$name]['invitation_body'] = [
+      '#type' => 'textarea',
+      '#title' => t('Message'),
+      '#default_value' => $config->get('plugin_config.invitation_body') ?? ($invite_config['invite_message'] ?? $default_message),
+    ];
+  }
+
+  // Default fallback invite message.
+  $form['default'] = [
+    '#type' => 'details',
+    '#title' => t('Default'),
+    '#description' => t('If any of above is empty this will be used as fallback.'),
+    '#group' => 'invite_message_tabs',
+  ];
+  $form['default']['invite_subject'] = [
     '#type' => 'textfield',
     '#title' => t('Subject'),
     '#default_value' => $invite_config['invite_subject'] ?? $default_subject,
     '#required' => TRUE,
   ];
-
-  $default_message = "Hi,<br /><br /> I would like to invite you to join my group [group:title] on [site:name].<br /><br />Kind regards,<br />[current-user:display-name]<br /><br />\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[group_content:register_link]\">View group</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>";
-  $form['group_invite']['invite_message'] = [
+  $form['default']['invite_message'] = [
     '#type' => 'textarea',
     '#title' => t('Message'),
     '#default_value' => $invite_config['invite_message'] ?? $default_message,
@@ -612,6 +659,27 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
     ->set('group_invite.email_verification', $form_state->getValue('email_verification'))
     ->set('group_invite.invite_by_members', $form_state->getValue('invite_by_members'))
     ->save();
+
+  // Update invite messages per group type.
+  $configurations = (array) \Drupal::entityQuery('group_content_type')
+    ->condition('content_plugin', 'group_invitation')
+    ->condition('status', TRUE)
+    ->accessCheck(FALSE)
+    ->execute();
+
+  foreach ($configurations as $name) {
+    $config = \Drupal::configFactory()->getEditable("group.content_type.$name");
+    $subject = $form_state->getValue([$name, 'invitation_subject']);
+    if ($config->get('plugin_config.invitation_subject') !== $subject) {
+      $config->set('plugin_config.invitation_subject', $subject);
+      $config->save();
+    }
+    $body = $form_state->getValue([$name, 'invitation_body']);
+    if ($config->get('plugin_config.invitation_body') !== $body) {
+      $config->set('plugin_config.invitation_body', $body);
+      $config->save();
+    }
+  }
 }
 
 /**
@@ -633,6 +701,11 @@ function social_group_invite_mail_alter(&$message) {
     $group_config = \Drupal::config('social_group.settings');
     $invite_settings = $group_config->get('group_invite');
 
+    // The mail params list should contain group content entity.
+    /* @see ginvite_group_content_insert() */
+    /** @var \Drupal\group\Entity\GroupContentInterface $invite */
+    $invite = $params['group_content'] ?? NULL;
+
     // Alter message and subject if it configured.
     if (
       !is_null($invite_settings) &&
@@ -644,16 +717,33 @@ function social_group_invite_mail_alter(&$message) {
         $tempstore = \Drupal::service('tempstore.shared')->get('social_group_invite');
         $resent_invites = (array) $tempstore->get(SocialGroupInviteResend::TEMP_STORE_ID);
         if (!empty($resent_invites)) {
-          // The mail params list should contain group content entity.
-          /* @see ginvite_group_content_insert() */
+
           if (
-            ($params['group_content'] instanceof GroupContentInterface) &&
-            in_array($params['group_content']->uuid(), $resent_invites)
+            $invite instanceof GroupContentInterface &&
+            in_array($invite->uuid(), $resent_invites)
           ) {
             $overridden_body = $invite_settings['invite_resend_message'];
             // Remove handled resent invite from list.
             unset($resent_invites[$params['group_content']->uuid()]);
             $tempstore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
+          }
+        }
+      }
+
+      if ($invite instanceof GroupContentInterface) {
+        // Allows to have different invite message per group type by replacing
+        // default global message.
+        /** @var Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation $group_content_plugin */
+        $group_content_plugin = $invite->getContentPlugin();
+
+        if ($group_content_plugin->getPluginId() === 'group_invitation') {
+          $configuration = $group_content_plugin->getConfiguration();
+
+          if ($subject = $configuration['invitation_subject'] ?? '') {
+            $invite_settings['invite_subject'] = $subject;
+          }
+          if ($body = $configuration['invitation_body'] ?? '') {
+            $invite_settings['invite_message'] = $body;
           }
         }
       }
