@@ -204,6 +204,7 @@ function social_profile_preview_profile_view_alter(
     $account = $profile->getOwner();
 
     if (
+      isset($build['private_message_link']) &&
       $account->hasPermission('use private messaging system') &&
       $account->hasPermission('create private messages thread')
     ) {

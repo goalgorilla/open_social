@@ -6,6 +6,12 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Site\Settings;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\profile\Entity\Profile;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_install().
@@ -30,13 +36,29 @@ function social_follow_user_install(): void {
   // Add & apply user follow functionality.
   _social_follow_user_config_update();
 
-  // Set the weight of the social_follow_user to 6
-  // so it is loaded after the social_profile module.
-  module_set_weight('social_follow_user', 6);
-
-  // Clear cache so than form elements will be available after changing
-  // module weight.
-  drupal_flush_all_caches();
+  // Add our settings field to the user settings form.
+  $form_mode = EntityFormDisplay::load("user.user.default");
+  if ($form_mode === NULL) {
+    throw new \RuntimeException("Default user form mode is missing, Drupal is not correctly installed.");
+  }
+  $form_mode->setComponent('field_allow_following', [
+    "type" => "boolean_checkbox",
+    "weight" => 3,
+    "region" => "content",
+    "settings" => [
+      "display_label" => TRUE,
+    ],
+    "third_party_settings" => [],
+  ]);
+  $privacy_group = $form_mode->getThirdPartySetting("field_group", "group_privacy");
+  if ($privacy_group !== NULL) {
+    if (empty($privacy_group['children'])) {
+      $privacy_group['children'] = [];
+    }
+    $privacy_group['children'][] = 'field_allow_following';
+  }
+  $form_mode->setThirdPartySetting("field_group", "group_privacy", $privacy_group);
+  $form_mode->save();
 }
 
 /**
@@ -99,8 +121,7 @@ function social_follow_user_uninstall(): void {
   /** @var \Drupal\field\FieldConfigStorage $field_config_storage */
   $field_config_storage = $entity_type_manager->getStorage('field_config');
 
-  /** @var \Drupal\field\FieldConfigInterface|null $field */
-  $field = $field_config_storage->load('profile.profile.field_profile_allow_following');
+  $field = $field_config_storage->load('user.user.field_allow_following');
   if (!is_null($field)) {
     $field->delete();
   }
@@ -110,10 +131,24 @@ function social_follow_user_uninstall(): void {
   $field_storage_storage = $entity_type_manager->getStorage('field_storage_config');
 
   /** @var \Drupal\field\FieldStorageConfigInterface|null $field_storage */
-  $field_storage = $field_storage_storage->load('profile.field_profile_allow_following');
+  $field_storage = $field_storage_storage->load('user.field_allow_following');
   if (!is_null($field_storage)) {
     $field_storage->delete();
   }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_follow_user_update_dependencies() : array {
+  $dependencies = [];
+
+  // The social_user update creates the field group we depend on.
+  $dependencies['social_user'][11402] = [
+    'social_follow_user' => 11406,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -224,4 +259,154 @@ function social_follow_user_update_11402(): void {
   if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
     $field_config_storage->create($data)->save();
   }
+}
+
+/**
+ * Create `field_allow_following` on user.
+ */
+function social_follow_user_update_11403(): void {
+  $profile_storage = FieldStorageConfig::load("profile.field_profile_allow_following");
+  $profile_config = FieldConfig::load("profile.profile.field_profile_allow_following");
+  if ($profile_storage === NULL || $profile_config === NULL) {
+    throw new \RuntimeException("field_profile_allow_following is not correctly installed.");
+  }
+
+  $user_storage = FieldStorageConfig::create([
+    "langcode" => $profile_storage->get("langcode"),
+    "status" => $profile_storage->get("status"),
+    "dependencies" => [
+      "module" => ["user"],
+      "enforced" => [
+        "module" => ["social_follow_user"],
+      ],
+    ],
+    "id" => "user.field_allow_following",
+    "field_name" => "field_allow_following",
+    "entity_type" => "user",
+    "type" => $profile_storage->get("type"),
+    "settings" => [],
+    "module" => $profile_storage->get("module"),
+    "locked" => $profile_storage->get("locked"),
+    "cardinality" => $profile_storage->get("cardinality"),
+    "translatable" => $profile_storage->get("translatable"),
+    "indexes" => $profile_storage->get("indexes") ?? [],
+    "persist_with_no_fields" => $profile_storage->get("persist_with_no_fields"),
+    "custom_storage" => $profile_storage->get("custom_storage"),
+  ]);
+  $user_storage->save();
+
+  $user_config = FieldConfig::create([
+    "langcode" => $profile_config->get("langcode"),
+    "status" => $profile_config->get("status"),
+    "dependencies" => [
+      "config" => ["field.storage.user.field_allow_following"],
+      "enforced" => [
+        "module" => ["social_follow_user"],
+      ],
+    ],
+    "id" => "user.user.field_profile_allow_following",
+    "field_name" => "field_allow_following",
+    "entity_type" => "user",
+    "bundle" => "user",
+    "label" => $profile_config->get("label"),
+    "description" => $profile_config->get("description"),
+    "required" => $profile_config->get("required"),
+    "translatable" => $profile_config->get("translatable"),
+    "default_value" => $profile_config->get("default_value"),
+    "default_value_callback" => $profile_config->get("default_value_callback"),
+    "settings" => $profile_config->get("settings"),
+    "field_type" => $profile_config->get("field_type"),
+  ]);
+  $user_config->save();
+}
+
+/**
+ * Move `field_profile_allow_following` data to `field_allow_following`.
+ */
+function social_follow_user_update_11404(array &$sandbox) : void {
+  if (!isset($sandbox['count'])) {
+    $sandbox['ids'] = \Drupal::entityQuery('user')
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $sandbox['count'] = count($sandbox['ids']);
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+  }
+
+  $ids = array_splice($sandbox['ids'], 0, $sandbox['limit']);
+
+  // Load accounts by users IDs.
+  $users = User::loadMultiple($ids);
+  $profile_ids = \Drupal::entityTypeManager()->getStorage('profile')
+    ->getQuery()
+    ->condition('uid', $ids, 'IN')
+    ->condition('type', 'profile')
+    ->condition('status', TRUE)
+    ->condition('is_default', TRUE)
+    ->accessCheck(FALSE)
+    ->execute();
+  assert(is_array($profile_ids), "Misconfigured query execute.");
+  $profiles = Profile::loadMultiple($profile_ids);
+
+  foreach ($profiles as $profile) {
+    $user = $users[$profile->getOwnerId()] ?? NULL;
+    // Ignore orphaned profiles.
+    if ($user === NULL) {
+      continue;
+    }
+
+    // Move value to user entity.
+    $user->set('field_allow_following', $profile->get('field_profile_allow_following')->getValue())->save();
+  }
+
+  if (empty($sandbox['ids'])) {
+    $sandbox['#finished'] = 1;
+  }
+  else {
+    $sandbox['#finished'] = 1 - (count($sandbox['ids']) / $sandbox['count']);
+  }
+}
+
+/**
+ * Delete `field_profile_allow_following`.
+ */
+function social_follow_user_update_11405(): void {
+  $profile_config = FieldConfig::load("profile.profile.field_profile_allow_following");
+
+  if ($profile_config !== NULL) {
+    $profile_config->delete();
+  }
+
+  $profile_storage = FieldStorageConfig::load("profile.field_profile_allow_following");
+  if ($profile_storage !== NULL) {
+    $profile_storage->delete();
+  }
+}
+
+/**
+ * Configure user form display for field_allow_following.
+ */
+function social_follow_user_update_11406() : void {
+  $form_mode = EntityFormDisplay::load("user.user.default");
+  if ($form_mode === NULL) {
+    throw new \RuntimeException("Default user form mode is missing, Drupal is not correctly installed.");
+  }
+  $form_mode->setComponent('field_allow_following', [
+    "type" => "boolean_checkbox",
+    "weight" => 3,
+    "region" => "content",
+    "settings" => [
+      "display_label" => TRUE,
+    ],
+    "third_party_settings" => [],
+  ]);
+  $privacy_group = $form_mode->getThirdPartySetting("field_group", "group_privacy");
+  if ($privacy_group !== NULL) {
+    if (empty($privacy_group['children'])) {
+      $privacy_group['children'] = [];
+    }
+    $privacy_group['children'][] = 'field_allow_following';
+  }
+  $form_mode->setThirdPartySetting("field_group", "group_privacy", $privacy_group);
+  $form_mode->save();
 }
