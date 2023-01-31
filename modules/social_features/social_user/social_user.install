@@ -75,6 +75,16 @@ function social_user_update_dependencies(): array {
     'social_core' => 11002,
   ];
 
+  // The group module installs variationcache which affects code touched by some
+  // of our update hooks. Not having this dependency would lead to:
+  // > [notice] Update started: social_user_update_11201
+  // > [error]  The "VariationCache" module is not installed. Please run the
+  // update script to install it properly.
+  // > [error]  Update failed: social_user_update_11201.
+  $dependencies['social_user'][11201] = [
+    'group' => 8020,
+  ];
+
   return $dependencies;
 }
 
