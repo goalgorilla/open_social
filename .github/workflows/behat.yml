@@ -293,9 +293,33 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: Move test artifacts into upload folder
+        if: failure()
+        run: |
+          set -e
+
+          # Make the output folder
+          if [[ ! -z "${{ matrix.update }}" ]] && [[ ! -z "${{ matrix.with_optional }}" ]]; then
+            export OUTPUT_FOLDER=behat-test-output/${{ matrix.feature }}/update-with-optional
+          elif [[ ! -z "${{ matrix.update }}" ]]; then
+            export OUTPUT_FOLDER=behat-test-output/${{ matrix.feature }}/update
+          elif [[ ! -z "${{ matrix.with_optional }}" ]]; then
+            export OUTPUT_FOLDER=behat-test-output/${{ matrix.feature }}/with-optional
+          else
+            export OUTPUT_FOLDER=behat-test-output/${{ matrix.feature }}
+          fi
+          mkdir -p $OUTPUT_FOLDER
+
+          # Move test results to the output folder
+          mv html/profiles/contrib/social/tests/behat/logs/* $OUTPUT_FOLDER/
+
+          # Copy the installation database to the output folder
+          # this makes local reproduction easier.
+          cp `pwd`/installation.sql $OUTPUT_FOLDER/
+
       - name: Upload Behat Test Output
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: behat-output-${{ matrix.feature }}${{ matrix.with_optional }}
-          path: html/profiles/contrib/social/tests/behat/logs
+          name: behat-test-output
+          path: behat-test-output
