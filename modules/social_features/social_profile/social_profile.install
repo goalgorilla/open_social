@@ -740,6 +740,12 @@ function social_profile_update_12002() : void {
     'type' => 'string',
   ]);
   $profile_display->save();
+
+  // We must clear the cache of loaded profiles since some profile entities may
+  // already be in memory but their field definition list is no longer accurate
+  // which would cause `social_profile_copy_shared_user_data_to_profile` to fail
+  // when subsequent post-update hooks modify users.
+  \Drupal::entityTypeManager()->getStorage('profile')->resetCache();
 }
 
 /**
