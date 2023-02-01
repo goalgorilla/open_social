@@ -55,6 +55,17 @@ class ProfileContext extends RawMinkContext {
   }
 
   /**
+   * Go to the profile page for the current user.
+   *
+   * @When I am viewing my profile
+   */
+  public function amViewingMyProfile() : void {
+    $user_id = $this->drupalContext->getUserManager()->getCurrentUser()->uid;
+    $this->visitPath("/user/$user_id");
+    $this->assertSession()->statusCodeEquals(200);
+  }
+
+  /**
    * Go to the profile edit page for the current user.
    *
    * @When I am editing my profile

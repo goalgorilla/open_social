@@ -7,6 +7,7 @@ use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Session;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
@@ -936,6 +937,37 @@ class FeatureContext extends RawMinkContext {
 
       // Expand the details element.
       $summary->click();
+    }
+
+    /**
+     * Checks that the URL of an image with a certain alt-text is loaded.
+     *
+     * @param string $alt
+     *   The alt attribute of the image to find.
+     *
+     * @Then the image :title should be loaded
+     */
+    public function imageShouldBeLoaded(string $alt) : void {
+      $session = $this->getSession();
+      $locator  = "img[alt=\"$alt\"]";
+      $img = $session->getPage()->find('css', $locator);
+      if ($img === NULL) {
+        throw new ElementNotFoundException($session->getDriver(), "img", "css", $locator);
+      }
+
+      $src = $img->getAttribute("src");
+      if ($src === NULL) {
+        throw new \RuntimeException("Image with alt '$alt' has no 'src' attribute.");
+      }
+
+      // Load the image in a new session to not disrupt our current test.
+      $img_session = new Session($session->getDriver());
+      $img_session->visit($this->locatePath($src));
+      $img_status_code = $img_session->getStatusCode();
+      $img_session->stop();
+      if ($img_status_code !== 200) {
+        throw new \RuntimeException("Loaded image at '$src', expected status code 200 but got $img_status_code");
+      }
     }
 
 }
