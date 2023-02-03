@@ -16841,3 +16841,8 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
+			count: 4
+			path: modules/social_features/social_event/src/SocialEventTrait.php
