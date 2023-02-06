@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -25,6 +26,13 @@ use Drupal\Core\Url;
 class ContentBuilder implements ContentBuilderInterface {
 
   use StringTranslationTrait;
+
+  /**
+   * User account entity.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected AccountInterface $account;
 
   /**
    * The entity type manager.
@@ -55,6 +63,7 @@ class ContentBuilder implements ContentBuilderInterface {
    * {@inheritdoc}
    */
   public function __construct(
+    AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     TranslationInterface $string_translation,
@@ -62,6 +71,7 @@ class ContentBuilder implements ContentBuilderInterface {
     EntityRepositoryInterface $entity_repository,
     TimeInterface $time
   ) {
+    $this->account = $account;
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->setStringTranslation($string_translation);
@@ -162,6 +172,13 @@ class ContentBuilder implements ContentBuilderInterface {
             ->loadMultiple($entities);
 
           foreach ($entities as $key => $entity) {
+            // @todo Better to move to entity query check but
+            // it doesn't work correctly for flexible groups.
+            if (!$entity->access('view', $this->account)) {
+              unset($entities[$key]);
+              continue;
+            }
+
             $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
           }
 
