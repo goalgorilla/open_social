@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
@@ -20,6 +21,8 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
   /**
    * ContentBuilder constructor.
    *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   User account entity.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Database\Connection $connection
@@ -34,6 +37,7 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
    *   The time service.
    */
   public function __construct(
+    AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     TranslationInterface $string_translation,
