@@ -29,6 +29,7 @@ Feature: Create Mention in a Post
 
     When I logout
     And I am on the homepage
-    And I should not see the link "user_2"
-    And I should not see the link "user_3"
+
     Then I should see "Hello user_2, user_3!"
+    And I should see the link "user_2"
+    And I should see the link "user_3"
