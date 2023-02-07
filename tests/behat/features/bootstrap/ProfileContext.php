@@ -13,6 +13,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\profile\Entity\Profile;
 use Drupal\social_profile\FieldManager;
 use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 
 /**
  * Defines test steps around user profiles and profile management.
@@ -74,6 +75,62 @@ class ProfileContext extends RawMinkContext {
     $user_id = $this->drupalContext->getUserManager()->getCurrentUser()->uid;
     $this->visitPath("/user/$user_id/profile");
     $this->assertSession()->statusCodeEquals(200);
+  }
+
+  /**
+   * Go to the profile edit page for the specified user.
+   *
+   * @When I try to edit the profile of :user
+   */
+  public function amEditingProfileOf(string $user) : void {
+    if ($user === 'anonymous') {
+      $user_ids = [0];
+    }
+    else {
+      $user_ids = \Drupal::entityQuery('user')
+        ->accessCheck(FALSE)
+        ->condition('name', $user)
+        ->execute();
+
+      if (count($user_ids) !== 1) {
+        throw new \InvalidArgumentException("Could not find user with username `$user'.");
+      }
+    }
+
+    $user_id = reset($user_ids);
+    $this->visitPath("/user/$user_id/profile");
+  }
+
+  /**
+   * Manage whether unique nicknames are enforced.
+   *
+   * @param string $state
+   *   enabled or disabled.
+   *
+   * @Given unique nicknames for users is :state
+   */
+  public function setUniqueNicknames(string $state) : void {
+    assert($state === "enabled" || $state === "disabled", ":state must be one of 'enabled' or 'disabled' (got '$state')");
+
+    \Drupal::configFactory()->getEditable("social_profile.settings")->set("nickname_unique_validation", $state === "enabled")->save();
+  }
+
+  /**
+   * Check the state of unique nicknames enforcement.
+   *
+   * @param string $state
+   *   enabled or disabled.
+   *
+   * @Then unique nicknames for users should be :state
+   */
+  public function assertUniqueNicknames(string $state) : void {
+    assert($state === "enabled" || $state === "disabled", ":state must be one of 'enabled' or 'disabled' (got '$state')");
+
+    $expectedState = $state === "enabled";
+    $actualState = \Drupal::config("social_profile.settings")->get("nickname_unique_validation");
+    if ($expectedState !== $actualState) {
+      throw new \RuntimeException("Expected unique nikcnames to be $state but got '" . ($actualState ? "enabled" : "disabled") . "'");
+    }
   }
 
   /**
