@@ -35,17 +35,6 @@ function social_core_requirements($phase) {
   $requirements = [];
 
   switch ($phase) {
-    case 'runtime':
-      if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
-        $requirements['social_file_private_module_check'] = [
-          'title' => t('Social Private Files'),
-          'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
-          'severity' => REQUIREMENT_WARNING,
-          'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-        ];
-      }
-      break;
-
     case 'update':
       // From 9.0 on-wards a site must update to 8.1 first to ensure that the
       // features removal update hooks have run that are no longer present in
