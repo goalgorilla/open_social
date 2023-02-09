@@ -45,8 +45,33 @@ class SocialFollowUserSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
+    $follow_status = $this->config('social_follow_user.settings')->get('status');
+    $roles = $this->config('social_follow_user.settings')->get('roles');
+    $permission = 'flag follow_user';
+
+    // Remove the permissions for following users if disabled.
+    if ($follow_status === TRUE && $form_state->getValue('status') === 0 ) {
+      // Permission can be different from default so retrieve it dynamically.
+      $roles = user_role_names(FALSE, $permission);
+      $roles = array_keys($roles);
+
+      foreach ($roles as $role) {
+        user_role_revoke_permissions($role, [$permission]);
+      }
+    }
+    elseif ($follow_status === FALSE && $form_state->getValue('status') === 1 ) {
+      // If the config is not set yet, then it means we have the default.
+      if ($roles !== NULL) {
+        // Add the permission to follow users if the feature is turned on.
+        foreach ($roles as $role) {
+          user_role_grant_permissions($role, [$permission]);
+        }
+      }
+    }
+
     $this->config('social_follow_user.settings')
       ->set('status', $form_state->getValue('status'))
+      ->set('roles',  $roles)
       ->save();
   }
 
