@@ -129,11 +129,11 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
           $user = $this->currentUser->isAnonymous() ? NULL : User::load($this->currentUser->id());
           $embed_settings = $this->configFactory->get('social_embed.settings');
 
-          $media_cookies_consent_given = FALSE;
+          $marketing_cookies = FALSE;
           if (\Drupal::moduleHandler()->moduleExists('social_cookie_media')) {
             /** @var \Drupal\social_cookie\Service\SocialCookieManager $social_cookie_manager */
             $social_cookie_manager = \Drupal::service('social_cookie.manager');
-            $media_cookies_consent_given = $social_cookie_manager->cookieConsentGivedForCategory('media_cookies');
+            $marketing_cookies = $social_cookie_manager->cookieConsentGivedForCategory('marketing_cookies');
           }
 
           if (
@@ -141,10 +141,10 @@ class SocialEmbedUrlEmbedFilter extends UrlEmbedFilter {
             (($user instanceof User &&
                 $embed_settings->get('embed_consent_settings_lu') &&
                 $user->hasField('field_user_embed_content_consent') &&
-                $media_cookies_consent_given === FALSE &&
+                $marketing_cookies === FALSE &&
                 !empty($user->get('field_user_embed_content_consent')->getValue()[0]['value'])) ||
               ($user == NULL && !empty($embed_settings->get('embed_consent_settings_an')))) &&
-            $media_cookies_consent_given === FALSE
+            $marketing_cookies === FALSE
           ) {
             // Replace URL with consent button.
             $url_output = $this->embedHelper->getPlaceholderMarkupForProvider($info['providerName'], $url);
