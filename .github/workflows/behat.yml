@@ -125,7 +125,7 @@ jobs:
           drush cset -y swiftmailer.transport smtp_port 1025
 
           # Composer has special handling for "version-like" branch names
-          if [[ $BRANCH_NAME =~ "[0-9]+.[0-9]+.x" ]]; then
+          if [[ $BRANCH_NAME =~ [0-9]+\.[0-9]+\.x ]]; then
             export OPEN_SOCIAL_VERSION=$BRANCH_NAME-dev
           else
             export OPEN_SOCIAL_VERSION=dev-$BRANCH_NAME
