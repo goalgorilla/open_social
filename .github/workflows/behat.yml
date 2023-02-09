@@ -147,7 +147,7 @@ jobs:
           set -e
 
           # Composer has special handling for "version-like" branch names
-          if [[ $BRANCH_NAME =~ "[0-9]+.[0-9]+.x" ]]; then
+          if [[ $BRANCH_NAME =~ [0-9]+\.[0-9]+\.x ]]; then
             composer require goalgorilla/open_social:$BRANCH_NAME-dev
           else
             composer require goalgorilla/open_social:dev-$BRANCH_NAME
