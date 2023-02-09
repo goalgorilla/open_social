@@ -420,7 +420,7 @@ function social_follow_user_update_11407(): void {
   $permission = 'flag follow_user';
 
   // Remove the permissions for following users if disabled.
-  if ($follow_status === FALSE ) {
+  if ($follow_status === FALSE) {
     // Permission can be different from default so retrieve it dynamically.
     $roles = user_role_names(FALSE, $permission);
     $roles = array_keys($roles);
