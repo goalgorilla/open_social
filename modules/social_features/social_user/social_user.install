@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_user module.
  */
 
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -170,4 +171,35 @@ function social_user_update_11401(): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Add privacy user form group.
+ */
+function social_user_update_11402() : void {
+  $form_mode = EntityFormDisplay::load("user.user.default");
+  if ($form_mode === NULL) {
+    throw new \RuntimeException("Default user form mode is missing, Drupal is not correctly installed.");
+  }
+  $field_groups = $form_mode->getThirdPartySettings("field_group");
+  if (isset($field_groups['group_locale_settings']['weight']) && $field_groups['group_locale_settings']['weight'] === 1) {
+    $field_groups['group_locale_settings']['weight'] = 10;
+    $form_mode->setThirdPartySetting('field_group', 'group_locale_settings', $field_groups['group_locale_settings']);
+  }
+  $form_mode->setThirdPartySetting("field_group", "group_privacy", [
+    "children" => [],
+    "label" => "Privacy",
+    "region" => "content",
+    "parent_name" => "",
+    "weight" => 5,
+    "format_type" => "fieldset",
+    "format_settings" => [
+      "id" => '',
+      "classes" => '',
+      "description" => '',
+      "required_fields" => TRUE,
+      "show_empty_fields" => FALSE,
+    ],
+  ]);
+  $form_mode->save();
 }

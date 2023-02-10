@@ -34,7 +34,7 @@ function social_profile_preview_preprocess_field__field_activity_output_text(arr
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-  if (($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
+  if ($account !== NULL && ($profile = $storage->loadByUser($account, 'profile')) !== NULL) {
     /** @var \Drupal\social_profile_preview\Service\SocialProfilePreviewHelperInterface $helper */
     $helper = \Drupal::service('social_profile_preview.helper');
 
@@ -204,6 +204,7 @@ function social_profile_preview_profile_view_alter(
     $account = $profile->getOwner();
 
     if (
+      isset($build['private_message_link']) &&
       $account->hasPermission('use private messaging system') &&
       $account->hasPermission('create private messages thread')
     ) {
