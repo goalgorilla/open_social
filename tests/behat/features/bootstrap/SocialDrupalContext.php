@@ -3,8 +3,7 @@
 
 namespace Drupal\social\Behat;
 
-use Drupal\advancedqueue\Annotation\AdvancedQueueJobType;
-use Drupal\advancedqueue\Commands\AdvancedQueueCommands;
+use Behat\Mink\Element\NodeElement;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\user\Entity\User;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
@@ -26,7 +25,7 @@ class SocialDrupalContext extends DrupalContext {
    * Original PR here:
    * https://github.com/jhedstrom/drupalextension/pull/325
    *
-   * @BeforeScenario
+   * @BeforeScenario @api
    */
   public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope) {
     // Start a session if not already done.
@@ -67,15 +66,6 @@ class SocialDrupalContext extends DrupalContext {
     if (!isset($user->mail)) {
       $user->mail = strtolower(trim($user->name)) . '@example.com';
     }
-  }
-
-  /**
-   * @beforeScenario @api
-   */
-  public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
-    $admin_user = User::load('1');
-    $current_user = \Drupal::getContainer()->get('current_user');
-    $current_user->setAccount($admin_user);
   }
 
   /**
@@ -212,32 +202,13 @@ class SocialDrupalContext extends DrupalContext {
 
     for ($index = 1; $index <= $count; $index++) {
       $storage->create([
+        'status' => 1,
         'entity_id' => $node->id(),
         'entity_type' => $node->getEntityTypeId(),
         'field_name' => 'field_topic_comments',
         'field_comment_body' => str_replace('[id]', $index, $text),
         'uid' => $node->getOwnerId(),
       ])->save();
-    }
-  }
-
-  /**
-   * @Given Search indexes are up to date
-   */
-  public function updateSearchIndexes() {
-    /** @var \Drupal\search_api\Entity\SearchApiConfigEntityStorage $index_storage */
-    $index_storage = \Drupal::service("entity_type.manager")->getStorage('search_api_index');
-
-    $indexes = $index_storage->loadMultiple();
-    if (!$indexes) {
-      return;
-    }
-
-    // Loop over all interfaces and let the Search API index any non-indexed
-    // items.
-    foreach ($indexes as $index) {
-      /** @var \Drupal\search_api\IndexInterface $index */
-      $index->indexItems();
     }
   }
 
@@ -278,6 +249,17 @@ class SocialDrupalContext extends DrupalContext {
    *   If set to TRUE, it doesn't process the items, but simply deletes them.
    */
   protected function processQueue($just_delete = FALSE) {
+    // This step is sometimes called after a cache clear which rebuilds the
+    // container and unloads all modules. Normally an HTTP request will ensure
+    // all modules are loaded again, but if the cache clear is directly
+    // preceding queue processing then that's not the case.
+    // Normally this wouldn't even be a problem, but in some tests we have those
+    // two steps AND we have something in the queue that calls `renderPlain`
+    // (e.g. a message token) which will cause the theme system to balk at
+    // unloaded modules. Thus, to fix this we must now make sure all modules
+    // are loaded.
+    \Drupal::moduleHandler()->loadAll();
+
     $workerManager = \Drupal::service('plugin.manager.queue_worker');
     /** @var Drupal\Core\Queue\QueueFactory; $queue */
     $queue = \Drupal::service('queue');
@@ -322,26 +304,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * I enable the module :module_name.
-   *
-   * @When /^(?:|I )enable the module "([^"]*)"/
-   */
-  public function iEnableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->install($modules);
-  }
-
-  /**
-   * I disable the module :module_name.
-   *
-   * @When /^(?:|I )disable the module "([^"]*)"/
-   */
-  public function iDisableTheModule($module_name) {
-    $modules = [$module_name];
-    \Drupal::service('module_installer')->uninstall($modules);
-  }
-
-  /**
    * I enable the nickname field on profiles
    *
    * @When /^(?:|I )enable the nickname field on profiles/
@@ -378,15 +340,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * I search :index for :term
-   *
-   * @When /^(?:|I )search (all|users|groups|content) for "([^"]*)"/
-   */
-  public function iSearchIndexForTerm($index, $term) {
-    $this->getSession()->visit($this->locatePath('/search/' . $index . '/' . urlencode($term)));
-  }
-
-  /**
    * Allow platforms that re-use the Open Social platform a chance to fill in
    * custom form fields that are not present in the distribution but may lead to
    * validation errors (e.g. because a field is required).
@@ -397,6 +350,20 @@ class SocialDrupalContext extends DrupalContext {
     // This method is intentionally left blank. Projects extending Open Social
     // are encouraged to overwrite this method and call the methods that are
     // needed to fill in custom required fields for the used type.
+  }
+
+  /**
+   * @Given I reset the Open Social install
+   */
+  public function iResetOpenSocial()
+  {
+    $schema = \Drupal::database()->schema();
+    $tables = $schema->findTables('%');
+    if ($tables) {
+      foreach ($tables as $key => $table_name) {
+        $schema->dropTable($table_name);
+      }
+    }
   }
 
   /**
@@ -438,5 +405,48 @@ class SocialDrupalContext extends DrupalContext {
   public function iDisableVerifiedImmediately() {
     \Drupal::configFactory()->getEditable('social_user.settings')->set('verified_immediately', FALSE)->save();
   }
+
+  /**
+   * Task is done.
+   *
+   * @Then /^task "([^"]*)" is done$/
+   */
+  public function taskIsDone($text) {
+    $doneTask = [
+      'Choose language'                        => 'body > div > div > aside > ol > li:nth-child(1)',
+      'Verify requirements'                    => 'body > div > div > aside > ol > li:nth-child(2)',
+      'Set up database'                        => 'body > div > div > aside > ol > li:nth-child(3)',
+      'Select optional modules'                => 'body > div > div > aside > ol > li:nth-child(4)',
+      'Install site'                           => 'body > div > div > aside > ol > li:nth-child(5)',
+      'Configure site'                         => 'body > div > div > aside > ol > li:nth-child(6)',
+    ];
+
+    // En sure we have our task set.
+    $task = $this->getSession()->getPage()->findAll('css', $doneTask[$text]);
+
+    if ($task === NULL) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $doneTask[$text]));
+    }
+
+    /** @var NodeElement $result */
+    foreach ($task as $result) {
+      if ($result->hasClass('done')) {
+        break;
+      }
+    }
+  }
+
+  /**
+   * Wait for the Batch API to finish.
+   *
+   * Wait until the id="updateprogress" element is gone,
+   * or timeout after 30 minutes (1800000 ms).
+   *
+   * @Given /^I wait for the installer to finish$/
+   */
+  public function iWaitForTheInstallerBatchJobToFinish() {
+    $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
+  }
+
 
 }

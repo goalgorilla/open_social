@@ -6,13 +6,22 @@ Feature: Profile manager notes
 
   Scenario: Create a manager note for a profile
     Given I enable the module "social_profile_manager_notes"
-    And I am logged in as an "sitemanager"
-    And I am on "/user/12/information"
-    And I should see "Site manager remarks"
+    And users:
+      | name      |
+      | test_user |
+    And I am logged in as a user with the sitemanager role
+
+    When I am on the profile of "test_user"
+    And I click "Information"
+
+    Then I should see "Site manager remarks"
     And I fill in "edit-field-comment-body-0-value" with "New remark created"
     And I press "Leave remark"
     And I should see "New remark created"
 
     Given I am logged in as an "verified"
-    And I am on "/user/12/information"
-    And I should not see "Site manager remarks"
+
+    When I am on the profile of "test_user"
+    And I click "Information"
+
+    Then I should not see "Site manager remarks"

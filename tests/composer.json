@@ -22,7 +22,7 @@
     },
     "require": {},
     "require-dev": {
-        "goalgorilla/open_social_dev": "dev-main"
+        "goalgorilla/open_social_dev": "~1.1.0"
     },
     "repositories": [
         {
@@ -35,6 +35,7 @@
         }
     ],
     "extra": {
+        "composer-exit-on-patch-failure": true,
         "drupal-scaffold": {
             "locations": {
                 "web-root": "html/"
@@ -75,6 +76,13 @@
                 "type:drupal-drush"
             ]
         },
-        "enable-patching": true
+        "enable-patching": true,
+        "patches-ignore": {
+            "goalgorilla/open_social": {
+                "instaclick/php-webdriver": {
+                    "Curl_exec errors on behat (1.4.10)": "https://www.drupal.org/files/issues/2021-10-17/social-instaclick-webdriver-3226058-8.patch"
+                }
+            }
+        }
     }
 }

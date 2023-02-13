@@ -160,8 +160,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $this->pluginManager = $plugin_manager;
     $this->configFactory = $config_factory;
     $this->token = $token;
-    $this->groupInvitationLoader = $group_membership_loader;
-    $this->groupMembershipLoader = $invitation_loader;
+    $this->groupMembershipLoader = $group_membership_loader;
+    $this->groupInvitationLoader = $invitation_loader;
     $this->fileUrlGenerator = $file_url_generator;
   }
 
@@ -247,8 +247,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $invite_settings = $this->configFactory->get('social_group.settings')->get('group_invite');
 
     // Set preview subject and message.
-    $invitation_subject = $invite_settings['invite_subject'] ?? $group_invite_config['invitation_subject'];
-    $invitation_body = $invite_settings['invite_message'] ?? $group_invite_config['invitation_body'];
+    $invitation_subject = $group_invite_config['invitation_subject'] ?? $invite_settings['invite_subject'];
+    $invitation_body = $group_invite_config['invitation_body'] ?? $invite_settings['invite_message'];
 
     // Cleanup message body and replace any links on preview page.
     $invitation_body = $this->token->replace($invitation_body, $params);

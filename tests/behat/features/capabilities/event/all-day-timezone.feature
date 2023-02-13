@@ -6,6 +6,8 @@ Feature: All day event for different timezones
 
   @verified @perfect @critical
   Scenario: Successfully create an all day event in GMT - 8
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given I set the configuration item "system.date" with key "date_default_timezone" to "America/Los_Angeles"
     And I am logged in as an "verified"
     And I am on "/node/add/event"

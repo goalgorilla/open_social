@@ -88,6 +88,11 @@ class SocialGroupInviteResend extends ViewsBulkOperationsActionBase implements C
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function execute($entity = NULL): void {
+    $is_member = $entity->getGroup()->getMember($entity->getEntity());
+    if (is_object($is_member)) {
+      return;
+    }
+
     // This action allows to resend invitations for each member.
     $time = $this->time->getCurrentTime();
 

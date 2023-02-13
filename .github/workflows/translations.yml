@@ -1,0 +1,108 @@
+name: Translations
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  extract:
+    permissions:
+      contents: write # to make pull request (goalgorilla/create-pull-request)
+      pull-requests: write # to make pull request (goalgorilla/create-pull-request)
+
+    name: Extract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Gettext tools
+        run: sudo apt-get install gettext
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "noreply@getopensocial.com"
+          git config --global user.name "Open Social Translation Workflow"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          # Since composer must clone from this we require all the history.
+          fetch-depth: 0
+
+      - name: Prepare Installation Directory
+        run: |
+          mkdir ${RUNNER_TEMP}/installation
+          cp tests/composer.json ${RUNNER_TEMP}/installation/composer.json
+
+      - name: Install Open Social
+        working-directory: ${{ runner.temp }}/installation
+        run: |
+          composer config repositories.social vcs ${GITHUB_WORKSPACE}
+          composer require goalgorilla/open_social:dev-${GITHUB_REF_NAME}
+
+      - name: Install Open Social Translation Extractor
+        env:
+          COMPOSER_AUTH: '{"http-basic": {"repo.packagist.com": {"username": "token", "password": "${{secrets.COMPOSER_TOOLS_AUTH}}"}}}' # [tl! **]
+        run: |
+          mkdir ${RUNNER_TEMP}/oste
+          cd ${RUNNER_TEMP}/oste
+          composer init -n --name="goalgorilla/extractor"
+          composer config repositories.oste '{"type": "composer", "url": "https://repo.packagist.com/opensocial/distribution-tools/", "only": ["goalgorilla/oste"] }'
+          composer require --dev --prefer-dist --no-progress goalgorilla/oste:dev-main
+
+      - name: Setup Extractor
+        run: |
+          mkdir -p ${RUNNER_TEMP}/extractor
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/setup-extractor.sh ${RUNNER_TEMP}/extractor
+
+      - name: Extract Translations
+        working-directory: ${{ runner.temp }}/installation/html/profiles/contrib
+        run: |
+          CHANGES_FILE="${RUNNER_TEMP}/CHANGES.md"
+          touch $CHANGES_FILE
+
+          NAME="social"
+          TRANSLATIONS_FOLDER="${GITHUB_WORKSPACE}/translations"
+
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/extract-source.sh ${RUNNER_TEMP}/extractor "${NAME}" "${TRANSLATIONS_FOLDER}"
+
+          cd $GITHUB_WORKSPACE
+
+          CHANGES=`${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/list-changes.sh translations/en.pot`
+          if [[ ! -z "$CHANGES" ]]; then
+            echo "\`\`\`diff" >> $CHANGES_FILE
+            echo "$CHANGES" >> $CHANGES_FILE
+            echo "\`\`\`" >> $CHANGES_FILE
+          fi
+
+          # Commit the changes for Open Social
+          ${RUNNER_TEMP}/oste/vendor/goalgorilla/oste/bin/commit-updated-po-files.sh --yes Updating translation source strings
+
+      - name: Collect Changes
+        id: changesets
+        run: |
+          CHANGES="$(cat "${RUNNER_TEMP}/CHANGES.md")"
+
+          if [[ -z "$CHANGES" ]]; then
+            CHANGES="No changes"
+          fi
+
+          PR_BODY=$(cat <<EOF
+          # Summary of Translations
+          Below is a summary of the strings changed, removed, and updated in the template file.
+
+          $CHANGES
+          EOF
+          )
+
+          echo "$PR_BODY" > "${RUNNER_TEMP}/CHANGES.md"
+
+      - name: Create Pull Request
+        uses: goalgorilla/create-pull-request@patched-2022-08-30
+        with:
+          branch: automation/translations-source-extraction
+          delete-branch: true
+          title: Updated source translations
+          body-file: ${{ runner.temp }}/CHANGES.md
+          labels: automated,translations

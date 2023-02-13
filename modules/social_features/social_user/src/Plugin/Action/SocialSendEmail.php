@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -322,7 +323,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     // @todo Check for proper access here.
-    return TRUE;
+    return AccessResult::allowed();
   }
 
 }

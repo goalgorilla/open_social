@@ -19,7 +19,7 @@ class OwnerEventEnrollmentActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function getRecipients(array $data, $last_uid, $limit): array {
+  public function getRecipients(array $data, int $last_id, int $limit): array {
     if (empty($data['related_object'][0])) {
       return [];
     }

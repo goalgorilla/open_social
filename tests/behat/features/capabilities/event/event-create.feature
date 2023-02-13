@@ -6,6 +6,8 @@ Feature: Create Event
 
   @verified @perfect @critical
   Scenario: Successfully create event
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given I am logged in as an "verified"
     And I am on "user"
     And I click "Events"

@@ -7,6 +7,7 @@ Feature: Event bulk actions
   @email-spool @event-bulk-emails
   Scenario: Successfully send bulk emails to enrollees
     Given I enable the module "social_event_an_enroll"
+    Given I enable the module "social_event_an_enroll_enrolments_export"
 
     Given users:
       | name             | mail                         | status |

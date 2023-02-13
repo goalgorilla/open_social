@@ -7,6 +7,7 @@ use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
 use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\message\Entity\Message;
 use Drupal\user\EntityOwnerInterface;
 
@@ -112,15 +113,10 @@ class ActivityLoggerFactory {
         $new_message['uid'] = 0;
       }
 
-      $additional_fields = [
-        ['name' => 'field_message_context', 'type' => 'list_string'],
-        ['name' => 'field_message_destination', 'type' => 'list_string'],
-        [
-          'name' => 'field_message_related_object',
-          'type' => 'dynamic_entity_reference',
-        ],
-      ];
-      $this->createFieldInstances($message_type, $additional_fields);
+      // This is performed in an assert so that the code doesn't run in
+      // production. The check loads field configs which can be an expensive
+      // operation in the hot-path that is activity handling.
+      assert($this->debugMessageTemplateIsCompatible($message_type), "Message template '$message_type' is not compatible with the activity system. This can be because the template is missing required fields or the fields are wrongly configured. See " . __CLASS__ . "::debugMessageTemplateIsCompatible for the requirements.");
 
       $new_message['field_message_context'] = $mt_context;
       $new_message['field_message_destination'] = $destinations;
@@ -202,6 +198,101 @@ class ActivityLoggerFactory {
   }
 
   /**
+   * Checks that a message template is compatible with the activity system.
+   *
+   * To support activities, various fields need to exist on a message template,
+   * with the right configuration. Below are the most important configurations
+   * for a field that are checked, though these are not complete examples of
+   * a field config.
+   *
+   * ```yaml
+   * message.<message_type>.field_message_context:
+   *   langcode: en
+   *   status: TRUE
+   *   id: message.<message_type>.field_message_context
+   *   field_type: list_string
+   *   module: ['options']
+   *   field_name: field_message_context
+   *   required: FALSE
+   *   translatable: FALSE
+   *
+   * message.<message_type>.field_message_destination:
+   *   langcode: en
+   *   status: TRUE
+   *   id: message.<message_type>.field_message_destination
+   *   field_type: list_string
+   *   module: ['options']
+   *   field_name: field_message_destination
+   *   required: FALSE
+   *   translatable: FALSE
+   *
+   * message.<message_type>.field_message_related_object:
+   *   langcode: en
+   *   status: TRUE
+   *   id: message.<message_type>.field_message_related_object
+   *   field_type: dynamic_entity_reference
+   *   module: ['dynamic_entity_reference']
+   *   field_name: field_message_related_object
+   *   required: FALSE
+   *   translatable: FALSE
+   * ```
+   *
+   * @param string $message_type
+   *   The ID of the message type to check for.
+   *
+   * @return bool
+   *   Whether the message type is compatible.
+   */
+  private function debugMessageTemplateIsCompatible(string $message_type) : bool {
+    $config_storage = $this->entityTypeManager
+      ->getStorage('field_config');
+
+    $field_message_context = $config_storage->load("message.$message_type.field_message_context");
+    if (!$field_message_context instanceof FieldConfigInterface) {
+      return FALSE;
+    }
+    if (
+      !$field_message_context->status() ||
+      $field_message_context->getType() !== 'list_string' ||
+      $field_message_context->isRequired() ||
+      $field_message_context->isTranslatable() ||
+      $field_message_context->language()->getId() !== "en"
+    ) {
+      return FALSE;
+    }
+
+    $field_message_destination = $config_storage->load("message.$message_type.field_message_destination");
+    if (!$field_message_destination instanceof FieldConfigInterface) {
+      return FALSE;
+    }
+    if (
+      !$field_message_destination->status() ||
+      $field_message_destination->getType() !== 'list_string' ||
+      $field_message_destination->isRequired() ||
+      $field_message_destination->isTranslatable() ||
+      $field_message_destination->language()->getId() !== "en"
+    ) {
+      return FALSE;
+    }
+
+    $field_message_related_object = $config_storage->load("message.$message_type.field_message_related_object");
+    if (!$field_message_related_object instanceof FieldConfigInterface) {
+      return FALSE;
+    }
+    if (
+      !$field_message_related_object->status() ||
+      $field_message_related_object->getType() !== 'dynamic_entity_reference' ||
+      $field_message_related_object->isRequired() ||
+      $field_message_related_object->isTranslatable() ||
+      $field_message_related_object->language()->getId() !== "en"
+    ) {
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
    * Create field instances.
    *
    * @param string $message_type
@@ -210,6 +301,7 @@ class ActivityLoggerFactory {
    *   The data to insert in the field instances.
    */
   protected function createFieldInstances($message_type, array $fields) {
+    @trigger_error(__METHOD__ . ' is deprecated in social:11.7.0 and is removed from social:12.0.0. Create the fields using `config/install` instead. See https://www.drupal.org/node/3232246', E_USER_DEPRECATED);
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = $this->entityTypeManager

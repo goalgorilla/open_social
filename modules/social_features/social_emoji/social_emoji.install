@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_emoji module.
+ */
+
+/**
+ * Enables emoji picker for all existing supported comment/post field widgets.
+ */
+function social_emoji_install(): void {
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface[] $entity_form_displays */
+  $entity_form_displays = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties(['targetEntityType' => 'comment']);
+
+  $entity_form_displays += \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->loadByProperties(['targetEntityType' => 'post']);
+
+  foreach ($entity_form_displays as $entity_form_display) {
+    _social_emoji_enable_picker_for_entity_view_display($entity_form_display);
+    $entity_form_display->save();
+  }
+}

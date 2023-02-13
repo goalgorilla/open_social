@@ -1,0 +1,83 @@
+default:
+  autoload:
+    '': '%paths.base%/features/bootstrap'
+  suites:
+    default:
+      parameters:
+        test_users:
+          admin:
+            username: 'admin'
+            password: 'admin'
+            mail: 'info+admin@example.com'
+      paths:
+        features: '%paths.base%/features'
+        bootstrap: '%paths.base%/features/bootstrap'
+      filters:
+        tags: "~@disabled"
+      contexts:
+        - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\social\Behat\BookContext
+        - Drupal\social\Behat\CKEditorContext
+        - Drupal\social\Behat\DatabaseContext:
+            - '%paths.base%/fixture'
+        - Drupal\social\Behat\EmailContext
+        - Drupal\social\Behat\EventContext
+        - Drupal\social\Behat\GroupContext
+        - Drupal\social\Behat\GDPRContext
+        - Drupal\social\Behat\PostContext
+        - Drupal\social\Behat\FeatureContext
+        - Drupal\social\Behat\LogContext
+        - Drupal\social\Behat\ModuleContext
+        - Drupal\social\Behat\SearchContext
+        - Drupal\social\Behat\SocialDrupalContext
+        - Drupal\social\Behat\SocialMessageContext
+        - Drupal\social\Behat\SocialMinkContext
+        - Drupal\social\Behat\ThemeContext
+        - Drupal\social\Behat\TopicContext
+  extensions:
+    Drupal\social\Behat\Chrome\ChromeExtension: ~
+    Drupal\MinkExtension:
+      base_url: 'http://web'
+      files_path: '%paths.base%/features'
+      browser_name: chrome
+      javascript_session: chrome_headless
+      ajax_timeout: 30
+      sessions:
+        chrome_headless:
+          chrome:
+            api_url: "http://chrome:9222"
+            validate_certificate: false
+    Drupal\DrupalExtension:
+      api_driver: 'drupal'
+      drupal:
+        drupal_root: '/var/www/html'
+      drush:
+        # We must specify the binary path because drush launcher outputs its own
+        # version before the drush version when queried with `--version` which
+        # causes the DrupalDriver to think we're using a version before 9
+        # (see DrushDriver::isLegacyDrush).
+        binary: /var/www/vendor/bin/drush
+        root: '/var/www/html'
+      selectors:
+        message_selector: '.alert'
+        error_message_selector: '.alert.alert-danger'
+        success_message_selector: '.alert.alert-success, .messages.messages--status'
+      text:
+        username_field: 'Username or email address'
+        log_in: "Log in"
+        log_out: "Logout"
+      region_map:
+        'Page title block': '.region--title'
+        'Admin page title block': '.region-sticky'
+        'Hero block': '.region--hero'
+        'Hero buttons': '.region--hero .btn-group'
+        'Tabs': '.region--secondary-navigation'
+        'Main content': '.region--content'
+        'Main content front': '.region--content'
+        'Sidebar second': 'aside[role=complementary]'
+        'Modal': '#drupal-modal'
+        'Modal footer': '.modal-footer'
+    FriendsOfBehat\MinkDebugExtension:
+      directory: '%paths.base%/logs'
+      screenshot: true

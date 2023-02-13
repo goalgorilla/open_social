@@ -1,4 +1,4 @@
-@api @account @registration @stability @perfect @security @verified-user
+@api @account @registration @stability @perfect @security @verified-user @no-update
 Feature: User is Verified
   Benefit: In order to distinguish between actual verified users who earned it to engage with the community and new users who might need to process payment or details in order to become trusted.
   Role: As a Verified

@@ -39,3 +39,17 @@ function social_editor_update_8904() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Add aligment buttons to mail_html text format.
+ */
+function social_editor_update_9000(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_editor', 'social_editor_update_9000');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

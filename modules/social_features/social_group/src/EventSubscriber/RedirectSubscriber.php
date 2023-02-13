@@ -39,12 +39,20 @@ class RedirectSubscriber implements EventSubscriberInterface {
     }
 
     // Get the current route name for the checks being performed below.
-    $routeMatch = \Drupal::routeMatch()->getRouteName();
+    $route_name = \Drupal::routeMatch()->getRouteName();
 
     // Redirect the group content collection index to the group canonical URL.
-    if ($routeMatch === 'entity.group_content.collection') {
+    if ($route_name === 'entity.group_content.collection') {
       $event->setResponse(new RedirectResponse(Url::fromRoute('entity.group.canonical', ['group' => $group->id()])
         ->toString()));
+    }
+    elseif ($route_name === 'view.group_pending_members.page_1') {
+      // We have two pages with a list of group members. One of them is provided
+      // by the grequest module and is not correct. So we add a redirect to the
+      // custom one.
+      $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_pending_members.membership_requests', [
+        'arg_0' => $group->id(),
+      ])->toString()));
     }
 
     // Get the current user.
@@ -63,7 +71,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
           return;
         }
         // If the user is not an member of this group.
-        elseif (!$group->hasMember($user) && in_array($routeMatch, $routes)) {
+        elseif (!$group->hasMember($user) && in_array($route_name, $routes)) {
           $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
             ->toString()));
         }

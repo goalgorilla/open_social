@@ -1,56 +1,91 @@
-@api @event @eventenrollment @stability @perfect @GPI-10 @profile @stability-2 @enrollment-manage
+@api @event @eventenrollment @javascript @stability @perfect @GPI-10 @profile @stability-2 @enrollment-manage
 Feature: Manage event enrollment
   Benefit: In order to attend an Event
   Role: As a Verified
   Goal/desire: I want to manage event enrollment
 
-  @verified
-  Scenario: Successfully manage enrollment
-    Given users:
-      | name            | pass            | mail                        | status | roles        |
-      | event_creator   | event_creator   | event_creator@example.com   | 1      | sitemanager  |
-      | event_organiser | event_organiser | event_organiser@example.com | 1      | verified     |
-      | event_enrollee  | event_enrollee  | event_enrollee@example.com  | 1      | verified     |
-    When I am logged in as "event_creator"
-    Given event content:
-      | title           | field_event_date | field_event_date_end | status | field_content_visibility | alias         |
-      | My Behat Event  | +8 days          | +9 days              | 1      | community                | /mybehatevent |
+  Background:
+    Given I enable the module "social_event_managers"
 
-    When I am logged in as "event_organiser"
-    And I wait for "3" seconds
-    And I am on "mybehatevent"
+  Scenario: Can't manage an event by default
+    Given events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And I am logged in as a user with the verified role
+
+    When I am viewing the event "Test content"
+
     Then I should not see the link "Manage enrollments"
 
-    Given I enable the module "social_event_managers"
-    When I am logged in as "event_creator"
-    And I am on "mybehatevent"
-    And I click "Edit content"
-    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I fill in "event_organiser" for "field_event_managers[0][target_id]"
+  Scenario: Can add an event manager
+    # @todo The order matters here because we don't have to be explicit about
+    # authors yet, we have solved this for groups but not yet for topics/events.
+    Given I am logged in as a user with the verified role
+    And events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And users:
+      | name     | pass            | mail                        | status | roles        |
+      | Jane Doe | event_organiser | event_organiser@example.com | 1      | verified     |
+
+    When I am editing the event "Test content"
+    And I expand the "Additional information" section
+    # @todo: The fact that we can't do this through a label shows a potential
+    #  accessibility issue.
+    And I fill in "Jane Doe" for "field_event_managers[0][target_id]"
     And I press "Save"
-    And I am logged in as "event_organiser"
-    And I am on "mybehatevent"
+
+    Then I should be viewing the event "Test content"
+    And I should see "Jane Doe" in the "Organisers" block
+
+  Scenario: Event manager can see the manage enrollments link on events
+    Given events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And I am logged in as a user with the verified role
+    And I am an event manager for the "Test content" event
+
+    When I am viewing the event "Test content"
+
     Then I should see the link "Manage enrollments"
 
-    When I click "Manage enrollments"
+  Scenario: Event manager can see the empty state when there are no enrollments
+    Given events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And I am logged in as a user with the verified role
+    And I am an event manager for the "Test content" event
+
+    When I am viewing the event manager page for "Test content"
+
     Then I should see the text "0 Enrollees"
     And I should see the text "No one has enrolled for this event"
 
-    When I am logged in as "event_enrollee"
-    And I am on "mybehatevent"
-    And I press "Enroll"
-    And I am logged in as "event_organiser"
-    And I am on "mybehatevent"
-    And I click "Manage enrollments"
-    Then I should see the text "1 Enrollees"
+  Scenario: Event manager can see the event enrollments when there are enrollments
+    Given events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And there are 2 event enrollments for the "Test content" event
+    And I am logged in as a user with the verified role
+    And I am an event manager for the "Test content" event
+
+    When I am viewing the event manager page for "Test content"
+
+    Then I should see the text "2 Enrollees"
     And I should see the link "Enrollee"
     And I should see the link "Organization"
     And I should see the link "Enroll date"
     And I should see the text "Operation"
-    And I should see the link "event_enrollee"
 
-    # as EO we should also get a notification about this enrollment.Ability:
-    When I am logged in as "event_organiser"
+  Scenario: Event manager gets a notification for an event enrollment
+    Given events:
+      | title        | body                  | field_content_visibility | field_event_date    | langcode |
+      | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
+    And I am logged in as a user with the verified role
+    And I am an event manager for the "Test content" event
+
+    When there is 1 event enrollment for the "Test content" event
     And I wait for the queue to be empty
     And I am at "notifications"
-    Then I should see text matching "event_enrollee has enrolled to the event My Behat Event you are organizing"
+
+    Then I should see text matching "has enrolled to the event Test content you are organizing"

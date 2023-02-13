@@ -66,6 +66,37 @@ function social_event_managers_activity_send_email_notifications_alter(array &$i
 }
 
 /**
+ * Implements hook_entity_access().
+ */
+function social_event_managers_event_enrollment_access(EventEnrollment $event_enrollment, string $operation, AccountInterface $account): AccessResult {
+  // This allows view access to event_enrollment entities for users which are
+  // the recipients of the event enrollment but not the owner of the entity.
+  // For example a site manager can create an enrollment for a specific user.
+  if ($operation !== 'view') {
+    // If we are doing different operations than viewing, then let other
+    // access checks to determine the access.
+    return AccessResult::neutral();
+  }
+
+  $enrollment_status = $event_enrollment->get('field_enrollment_status')->getString();
+  if (!(bool) $enrollment_status) {
+    // Return neutral and let other access checks acts on this.
+    return AccessResult::neutral();
+  }
+
+  $owner = $event_enrollment->getOwner();
+  if (!$owner->hasPermission('view published event enrollment entities')) {
+    // Return neutral and let other access checks acts on this.
+    return AccessResult::neutral();
+  }
+
+  $field_account_id = $event_enrollment->get('field_account')->getString();
+
+  // If the user is a recipient allow access to event enrollment.
+  return AccessResult::allowedIf((int) $field_account_id === (int) $account->id());
+}
+
+/**
  * Implements hook_block_access().
  */
 function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
@@ -273,13 +304,8 @@ function social_event_managers_node_access(NodeInterface $node, $op, AccountInte
  */
 function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_managers_link = FALSE;
-  $routes_to_check = [
-    'view.event_enrollments.view_enrollments',
-    'entity.node.canonical',
-    'view.managers.view_managers',
-    'view.manage_enrollments.page',
-    'view.event_manage_enrollments.page_manage_enrollments',
-  ];
+  $routes_to_check = _social_event_menu_local_tasks_routes();
+
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
     if (!is_null($node) && (!$node instanceof Node)) {
@@ -432,9 +458,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
 
   $hook = 'social_event_managers_action_' . $results['action'] . '_finish';
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-    $function = $module . '_' . $hook;
-    $messages = $function($success);
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook) use ($success) {
+    $messages = $hook($success);
 
     if (is_array($messages)) {
       $fields = 0;
@@ -448,12 +473,12 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       if ($fields === 2) {
         // @todo source strings will never be translatable when we use
         // variables. This should be refactored.
-        $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
+        $message = \Drupal::translation()->formatPlural(count($messages), $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
         \Drupal::messenger()->addMessage($message, $type);
       }
     }
-  }
+  });
 }
 
 /**

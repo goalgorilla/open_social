@@ -13,6 +13,7 @@ use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
+use Drupal\social_event\Entity\Node\Event;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Service\SocialEventEnrollServiceInterface;
 use Drupal\social_event_max_enroll\Service\EventMaxEnrollService;
@@ -313,7 +314,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       ]);
     if (
       !$event_invite_settings->get('invite_by_users') ||
-      !$this->eventEnrollService->isEnabled($node) ||
+      !($node instanceof Event && $node->isEnrollmentEnabled()) ||
       empty($enrollment) ||
       $node->get('field_content_visibility')->getString() === 'group'
     ) {

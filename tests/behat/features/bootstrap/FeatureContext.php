@@ -3,25 +3,23 @@
 
 namespace Drupal\social\Behat;
 
-use Drupal\group\Entity\GroupContentType;
-use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
-use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
 use Behat\Mink\Selector\Xpath\Escaper;
-use PHPUnit\Framework\Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawMinkContext implements Context
-{
+class FeatureContext extends RawMinkContext {
+
+    use GroupTrait;
 
     protected $minkContext;
 
@@ -36,13 +34,6 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * Keep track of all groups that are created so they can easily be removed.
-     *
-     * @var array
-     */
-    protected $groups = array();
-
-    /**
      * @BeforeScenario
      *
      * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
@@ -55,11 +46,6 @@ class FeatureContext extends RawMinkContext implements Context
         $this->getSession()->start();
       }
 
-      // Since we enable Sky theme by default we should make sure we run our
-      // tests on the old theme. In another case, it will break all our tests.
-      // @see https://www.drupal.org/project/socialblue/issues/3251299
-      \Drupal::configFactory()->getEditable('socialblue.settings')->set('style', '')->save();
-
       /** @var \Behat\Testwork\Environment\Environment $environment */
       $environment = $scope->getEnvironment();
       $this->minkContext = $environment->getContext(SocialMinkContext::class);
@@ -68,57 +54,82 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * Get the wysiwyg instance variable to use in Javascript.
+     * Check that a user sees an access denied page.
      *
-     * @param string
-     *   The instanceId used by the WYSIWYG module to identify the instance.
-     *
-     * @throws Exception
-     *   Throws an exception if the editor does not exist.
-     *
-     * @return string
-     *   A Javascript expression representing the WYSIWYG instance.
+     * @Then I should be denied access
      */
-    protected function getWysiwygInstance($instanceId) {
-      $instance = "CKEDITOR.instances['$instanceId']";
-      if (!$this->getSession()->evaluateScript("return !!$instance")) {
-        throw new \Exception(sprintf('The editor "%s" was not found on the page %s', $instanceId, $this->getSession()->getCurrentUrl()));
-      }
-      return $instance;
+    public function iShouldBeDeniedAccess() : void {
+      $this->assertSession()->statusCodeEquals(403);
+
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied");
+      $page->hasContent("You are not authorized to access this page.");
     }
 
     /**
-     * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
+     * Check that an anonymous user is asked to login to view a page.
+     *
+     * @Then I should be asked to login
      */
-    public function iFillInTheWysiwygEditor($locator, $text) {
-      $field = $this->getSession()->getPage()->findField($locator);
+    public function iShouldBeAskedToLogin() : void {
+      $this->assertSession()->statusCodeEquals(200);
+      $this->assertSession()->addressEquals("/user/login");
 
-      if (null === $field) {
-        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $locator);
-      }
+      $page = $this->getSession()->getPage();
+      $page->hasContent("Access Denied. You must log in to view this page.");
 
-      $id = $field->getAttribute('id');
-      $instance = $this->getWysiwygInstance($id);
-      $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
 
     /**
-     * @When /^I click on the embed icon in the WYSIWYG editor$/
+     * @Then I should see :text in the :heading block
      */
-    public function clickEmbedIconInWysiwygEditor() {
+    public function shouldSeeTextInHeadingBlock(string $text, string $heading) {
+      // There seems to be no easy way to search all links so we musst craft our
+      // own xpath looking at examples from `NamedSelector`.
+      $heading_literal = (new Escaper())->escapeLiteral($heading);
+      $search_string = "contains(normalize-space(string(.)), $heading_literal)";
+      $xpaths = [];
+      for ($heading_level=1;$heading_level<=6;$heading_level++) {
+        $xpaths[] = ".//h{$heading_level}//.//descendant-or-self::*[{$search_string}]";
+      }
+      $xpath = join("|", $xpaths);
 
-      $cssSelector = 'a.cke_button__social_embed';
+      $matching_headings = $this->getSession()->getPage()->findAll('xpath', $xpath);
 
-      $session = $this->getSession();
-      $element = $session->getPage()->find(
-        'xpath',
-        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      // We rely on the fact that for how our blocks are always rendered in a
+      // `section` element that will have an ID containing `block`. We take into
+      // account that a heading may be nested inside something inside the
+      // section, but it may not be in multiple sections.
+      $blocks = array_filter(
+        array_map(
+          function (NodeElement $el) {
+            do {
+              $el = $el->getParent();
+              if ($el->getTagName() === "section") {
+                return
+                  str_contains($el->getAttribute("id") ?? "", "block")
+                  ? $el
+                  : NULL;
+              }
+            } while ($el->getTagName() !== "body");
+
+            return NULL;
+          },
+          $matching_headings
+        )
       );
-      if (null === $element) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+
+      if (count($blocks) === 0) {
+        throw new \RuntimeException("Could not find a block with a heading of any level containing '$heading'.");
+      }
+      if (count($blocks) > 1) {
+        throw new \RuntimeException("Found multiple blocks with a heading of any level containing '$heading'.");
       }
 
-      $element->click();
+      $block = current($blocks);
+      if (!$block->has('named', ['content', $text])) {
+        throw new \RuntimeException("Could not find '$text' in block with heading '$heading'.");
+      }
     }
 
     /**
@@ -174,26 +185,6 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * @When /^I click on the image icon in the WYSIWYG editor$/
-     */
-    public function clickImageIconInWysiwygEditor() {
-
-      $cssSelector = 'a.cke_button__drupalimage';
-
-      $session = $this->getSession();
-      $element = $session->getPage()->find(
-        'xpath',
-        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
-      );
-      if (null === $element) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
-      }
-
-      $element->click();
-
-    }
-
-    /**
      * @Then /^The image path in the body description should be private$/
      */
     public function imagePathInBodyDescriptionShouldBePrivate() {
@@ -230,46 +221,6 @@ class FeatureContext extends RawMinkContext implements Context
 
       $adminlink = $adminspan->getParent();
       $adminlink->click();
-    }
-
-    /**
-     * @When I select post visibility :visibility
-     */
-    public function iSelectPostVisibility($visibility) {
-      // First make post visibility setting visible.
-      $this->iClickPostVisibilityDropdown();
-
-      // Click the label of the readio button with the visibility. The radio
-      // button itself can't be clicked because it's invisible.
-      $page = $this->getSession()->getPage();
-      $field = $page->findField($visibility);
-
-      if (null === $field) {
-        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $visibility);
-      }
-
-      $field->getParent()->click();
-    }
-
-    /**
-     * @When I select group :group
-     */
-    public function iSelectGroup($group) {
-
-      if ($group === "- None -") {
-        $option = '_none';
-      }
-
-      if ($group !== "- None -") {
-        $option = $this->getGroupIdFromTitle($group);
-      }
-
-      if (!$option) {
-        throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
-      }
-
-      $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
-
     }
 
 
@@ -356,40 +307,6 @@ class FeatureContext extends RawMinkContext implements Context
   }
 
     /**
-     * @When /^I click the post visibility dropdown/
-     */
-    public function iClickPostVisibilityDropdown()
-    {
-      $locator = 'button#post-visibility';
-      $session = $this->getSession();
-      $element = $session->getPage()->find('css', $locator);
-
-      if ($element === NULL) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
-      }
-
-      // Now click the element.
-      $element->click();
-    }
-
-    /**
-     * @When /^I click the group member dropdown/
-     */
-    public function iClickGroupMemberDropdown()
-    {
-      $locator = '.add-users-dropbutton .dropdown-toggle';
-      $session = $this->getSession();
-      $element = $session->getPage()->find('css', $locator);
-
-      if ($element === NULL) {
-        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
-      }
-
-      // Now click the element.
-      $element->click();
-    }
-
-    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
@@ -414,9 +331,16 @@ class FeatureContext extends RawMinkContext implements Context
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
       $value = $radiobutton->getAttribute('value');
-      $labelonpage = $radiobutton->getParent()->getText();
-      if ($label !== '' && $label != $labelonpage) {
-        throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+      // Only check the label if we were selecting by ID, otherwise we already
+      // found the button by a magic label, and help text may cause the parent
+      // of the radio button to have more text than the label, making the
+      // following always fail.
+      if ($id) {
+        $labelonpage = $radiobutton->getParent()->getText();
+        if ($label !== '' && $label != $labelonpage) {
+          throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()
+            ->getCurrentUrl()));
+        }
       }
       $radiobutton->selectOption($value, FALSE);
 
@@ -561,109 +485,6 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * Creates group of a given type provided in the form:
-     * | title    | description     | author   | type        | language
-     * | My title | My description  | username | open_group  | en
-     * | ...      | ...             | ...      | ...         | ...
-     *
-     * @Given groups:
-     */
-    public function createGroups(TableNode $groupsTable) {
-      foreach ($groupsTable->getHash() as $groupHash) {
-        $groupFields = (object) $groupHash;
-        try {
-          $group = $this->groupCreate($groupFields);
-          $this->groups[$groupFields->title] = $group;
-        } catch (Exception $e) {
-
-        }
-      }
-    }
-
-    /**
-     * Remove any groups that were created.
-     *
-     * @AfterScenario
-     */
-    public function cleanupGroups(AfterScenarioScope $scope) {
-      if (!empty($this->groups)) {
-        foreach ($this->groups as $group) {
-          $group->delete();
-        }
-      }
-    }
-
-    /**
-     * Create a group.
-     *
-     * @return object
-     *   The created group.
-     */
-    public function groupCreate($group) {
-
-      $account = user_load_by_name($group->author);
-      if ($account->id() !== 0) {
-        $account_uid = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
-      }
-
-      // Let's create some groups.
-      $group_object = Group::create([
-        'langcode' => $group->language,
-        'uid' => $account_uid,
-        'type' => $group->type,
-        'label' => $group->title,
-        'field_group_description' => $group->description,
-      ]);
-
-      $group_object->save();
-
-      return $group_object;
-    }
-
-    /**
-     * Opens group stream page.
-     *
-     * @Given /^(?:|I )am on the stream of group "(?P<group_title>[^"]+)"$/
-     * @When /^(?:|I )go to the stream of group "(?P<group_title>[^"]+)"$/
-     */
-    public function openGroupStreamPage($group_title)
-    {
-      $group_id = $this->getGroupIdFromTitle($group_title);
-      $page = '/group/' . $group_id . '/stream';
-
-      $this->visitPath($page);
-    }
-
-    /**
-     * @param $group_title
-     *
-     * @return null
-     */
-    public function getGroupIdFromTitle($group_title) {
-
-      $query = \Drupal::entityQuery('group')
-        ->accessCheck(FALSE)
-        ->condition('label', $group_title);
-
-      $group_ids = $query->execute();
-      $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple($group_ids);
-
-      if (count($groups) > 1) {
-        return NULL;
-      }
-      else {
-        $group = reset($groups);
-        if ($group->id() !== 0) {
-          $group_id = $group->id();
-        }
-      }
-      return $group_id;
-    }
-
-    /**
      * @param $group_title
      * @param $mail
      *
@@ -672,7 +493,7 @@ class FeatureContext extends RawMinkContext implements Context
     public function getGroupContentIdFromGroupTitle($group_title, $mail) {
 
       $properties = [
-        'gid' => $this->getGroupIdFromTitle($group_title),
+        'gid' => $this->getNewestGroupIdFromTitle($group_title),
         'invitation_status' => 0,
         'invitee_mail' => $mail
       ];
@@ -795,7 +616,7 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
   /**
-   * Remove any groups that were created.
+   * Remove any users that were created.
    *
    * @AfterScenario
    */
@@ -922,98 +743,6 @@ class FeatureContext extends RawMinkContext implements Context
     {
       $page = '/user/logout';
       $this->visitPath($page);
-    }
-
-    /**
-     * Opens the content from a group and check for access.
-     *
-     * @Then /I open and check the access of content in group "(?P<groupname>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
-     */
-    public function openAndCheckGroupContentAccess($groupname, $access)
-    {
-      $allowed_access = array(
-        '0' => 'denied',
-        '1' => 'allowed',
-      );
-      if (!in_array($access, $allowed_access)) {
-        throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
-      }
-      $expected_access = 0;
-      if ($access == 'allowed') {
-        $expected_access = 1;
-      }
-
-      $query = \Drupal::entityQuery('group')
-        ->condition('label', $groupname)
-        ->accessCheck(FALSE);
-      $gid = $query->execute();
-
-      if (!empty($gid) && count($gid) === 1) {
-        $gid = reset($gid);
-
-        if ($gid) {
-          $group = Group::load($gid);
-          $group_content_types = GroupContentType::loadByEntityTypeId('node');
-          $group_content_types = array_keys($group_content_types);
-
-          // Get all the node's related to the current group
-          $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-          $query->addField('gcfd', 'entity_id');
-          $query->condition('gcfd.gid', $group->id());
-          $query->condition('gcfd.type', $group_content_types, 'IN');
-          $query->execute()->fetchAll();
-
-          $nodes = $query->execute()->fetchAllAssoc('entity_id');
-          foreach (array_keys($nodes) as $key => $entity_id) {
-            $this->openEntityAndExpectAccess('node', $entity_id, $expected_access);
-          }
-
-          // Get all the posts from this group
-          $query = \Drupal::database()->select('post__field_recipient_group', 'pfrg');
-          $query->addField('pfrg', 'entity_id');
-          $query->condition('pfrg.field_recipient_group_target_id', $group->id());
-          $query->execute()->fetchAll();
-
-          $post_ids = $query->execute()->fetchAllAssoc('entity_id');
-
-          foreach (array_keys($post_ids) as $key => $entity_id) {
-            $this->openEntityAndExpectAccess('post', $entity_id, $expected_access);
-          }
-        }
-      }
-      else {
-        if (empty($gid)) {
-          throw new \Exception(sprintf("Group '%s' does not exist.", $groupname));
-        }
-        if (count($gid) > 1) {
-          throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
-        }
-      }
-    }
-
-    /**
-     * This opens the entity and check for the expected access.
-     *
-     * @param $entity_type
-     * @param $entity_id
-     * @param $expected_access
-     *  0 = NO access
-     *  1 = YES access
-     */
-    public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
-      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
-      /** @var \Drupal\Core\Url $url */
-      $url = $entity->toUrl();
-      $page = $url->toString();
-
-      $this->visitPath($page);
-
-      if ($expected_access == 0) {
-        $this->assertSession()->pageTextContains('Access denied');
-      }
-      else {
-        $this->assertSession()->pageTextNotContains('Access denied');
-      }
     }
 
     /**
@@ -1170,6 +899,44 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $row->clickLink($link_name);
+    }
+
+  /**
+   * Expand a details area.
+   *
+   * @When I expand the :label section
+   */
+    public function iExpandDetailsSection(string $label) : void {
+      $elements = array_filter(
+        $this->getSession()->getPage()->findAll("css", "summary"),
+        fn (NodeElement $el) => str_contains($el->getText(), $label),
+      );
+
+      if (count($elements) === 0) {
+        throw new ElementNotFoundException($this->getSession(), "summary", "css", "summary");
+      }
+
+      if (count($elements) > 1) {
+        throw new \RuntimeException("More than one summary element was found with label '$label', make the labels unique or improve your label specificity.");
+      }
+
+      // Store the summary so we can click it and find the parent details element.
+      $element = $summary = current($elements);
+      do {
+        $element = $element->getParent();
+        if ($element->getTagName() === "body") {
+          throw new \RuntimeException("The summary field for '$label' was not in a parent 'details' element to expand.");
+        }
+      } while ($element->getTagName() !== "details");
+
+      // If the default state for the details is open then the test should be
+      // adjusted to encode that behaviour.
+      if ($element->hasAttribute("open")) {
+        throw new \RuntimeException("The details element for '$label' is already opened.");
+      }
+
+      // Expand the details element.
+      $summary->click();
     }
 
     /**

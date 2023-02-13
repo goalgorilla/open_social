@@ -8,6 +8,7 @@
 use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -103,6 +104,27 @@ function social_comment_query_comment_filter_alter(AlterableInterface $query): v
       );
 
       $query->orderBy($alias, 'DESC');
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_comment_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  // This code will move the comments' field to the "Settings" field group
+  // only if $form['advanced'] does not exist.
+  if (method_exists($form_state->getFormObject(), 'getEntity')) {
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity instanceof ContentEntityInterface) {
+      // Move comments field to "group_settings" field group.
+      $comments_field = "field_{$entity->bundle()}_comments";
+      if (!empty($form[$comments_field])) {
+        if (!empty($form['#fieldgroups']['group_settings'])) {
+          $form[$comments_field]['#group'] = 'group_settings';
+          $form['#group_children']['group_settings'] = $comments_field;
+        }
+      }
     }
   }
 }

@@ -69,6 +69,21 @@ function _social_tagging_search_api_fields(): array {
 }
 
 /**
+ * Install a base field for an entity type.
+ *
+ * @param string $entity_type
+ *   The entity type identifier.
+ */
+function _social_tagging_add_base_field(string $entity_type): void {
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
+    'social_tagging',
+    $entity_type,
+    'social_tagging',
+    _social_tagging_field(),
+  );
+}
+
+/**
  * Add fields to search API.
  */
 function _social_tagging_add_fields_search_api(): void {
@@ -242,32 +257,90 @@ function social_tagging_update_11201(): void {
  * Install Tagging base field to the media entity type.
  */
 function social_tagging_update_11401(): void {
-  if (!\Drupal::moduleHandler()->moduleExists('media')) {
-    return;
+  if (\Drupal::moduleHandler()->moduleExists('media')) {
+    _social_tagging_add_base_field('media');
+  }
+}
+
+/**
+ * Remove filters from the views config so that it can be added in an overrider.
+ */
+function social_tagging_update_11402(): void {
+  $config = \Drupal::configFactory()->getEditable('views.view.newest_users');
+
+  if ($filters = $config->get('display.default.display_options.filters')) {
+    $filters = array_filter($filters, fn($filter) => $filter['field'] !== 'social_tagging_target_id');
+    $config->set('display.page_newest_users.display_options.filters', $filters);
+    $config->set('display.block_newest_users.display_options.filters', $filters);
+    $config->set('display.page_newest_users.display_options.defaults.filters', FALSE);
+    $config->set('display.block_newest_users.display_options.defaults.filters', FALSE);
+    $config->save(TRUE);
+  }
+}
+
+/**
+ * Install a base field for supported entity types.
+ */
+function social_tagging_update_11501(): void {
+  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
+  $helper = \Drupal::service('social_tagging.tag_service');
+
+  foreach ($helper->types(TRUE) as $entity_type) {
+    _social_tagging_add_base_field($entity_type);
+  }
+}
+
+/**
+ * Add a new field to social tagging.
+ */
+function social_tagging_update_11801(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_tagging') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.taxonomy_term.field_term_page_url_11801');
+  if (is_array($data)) {
+    /** @var \Drupal\Core\Field\FieldItemInterface $class */
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
   }
 
-  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
-    ->setLabel(t('Tagging'))
-    ->setDescription(t('Tagging field.'))
-    ->setSetting('target_type', 'taxonomy_term')
-    ->setSetting('handler', 'default:taxonomy_term')
-    ->setSetting('handler_settings', [
-      'target_bundles' => [
-        'social_tagging' => 'social_tagging',
-      ],
-    ])
-    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-    ->setDisplayOptions('view', [
-      'region' => 'hidden',
-    ])
-    ->setDisplayOptions('form', [
-      'type' => 'options_select',
-      'weight' => 3,
-      'settings' => [],
-    ])
-    ->setDisplayConfigurable('form', TRUE)
-    ->setDisplayConfigurable('view', TRUE);
+  // Create field settings.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $data = $source->read('field.field.taxonomy_term.social_tagging.field_term_page_url_11801');
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
 
-  \Drupal::entityDefinitionUpdateManager()
-    ->installFieldStorageDefinition('social_tagging', 'media', 'social_tagging', $field_storage_definition);
+  // Create/update a form/view display for the 'Social tagging' terms.
+  $displays = [
+    'entity_form_display',
+    'entity_view_display',
+  ];
+
+  foreach ($displays as $display) {
+    $display_storage = $entity_type_manager->getStorage($display);
+    $data = $source->read("core.$display.taxonomy_term.social_tagging.default_11801");
+    if (is_array($data)) {
+      if (is_null($display_storage->load($data['id']))) {
+        $display_storage->create($data)->save();
+      }
+      else {
+        /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $view_display */
+        $view_display = $display_storage->load($data['id']);
+        $view_display->setComponent('field_term_page_url', $data['content']['field_term_page_url']);
+        $view_display->save();
+      }
+    }
+  }
 }

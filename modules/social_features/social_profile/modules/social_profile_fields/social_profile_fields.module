@@ -409,20 +409,6 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
 }
 
 /**
- * Implements hook_theme().
- */
-function social_profile_fields_theme() {
-  return [
-    'field__field_profile_nationality' => [
-      'base hook' => 'field',
-    ],
-    'field__field_profile_nationality__sky' => [
-      'base hook' => 'field',
-    ],
-  ];
-}
-
-/**
  * Implements hook_preprocess_field().
  */
 function social_profile_fields_preprocess_field(&$variables) {

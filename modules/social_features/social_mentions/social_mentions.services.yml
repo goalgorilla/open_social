@@ -3,3 +3,8 @@ services:
     class: \Drupal\social_mentions\SocialMentionsConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
+
+  social_mentions.helper:
+    class: Drupal\social_mentions\SocialMentionsHelper
+    arguments:
+      - '@config.factory'

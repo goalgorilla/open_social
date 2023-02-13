@@ -78,6 +78,14 @@ function social_group_theme() {
       ],
       'file' => 'social_group.theme.inc',
     ],
+    'visibility' => [
+      'variables' => [
+        'name' => NULL,
+        'icon' => NULL,
+        'title' => [],
+        'description' => NULL,
+      ],
+    ],
   ];
 }
 
@@ -601,52 +609,19 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 }
 
 /**
- * Returns a description array for the field_flexible_group_visibility options.
+ * Gets a description as HTML markup for the selected group visibility option.
  *
- * @return string
- *   The render array containing the description.
+ * @param string $key
+ *   The visibility option name.
  */
-function social_group_group_visibility_description($key) {
-  $description = '';
+function social_group_group_visibility_description(string $key): string {
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
 
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('All visitors of the platform can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      $description = '<p>';
-      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('Only members who are logged in can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'members':
-      $description = '<p>';
-      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
-      $description .= ' - ' . t('Only group members can see this group')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()
-    ->alter('social_group_group_visibility_description', $key, $description);
-
-  return $description;
+  return $helper->description(
+    $key,
+    'social_group_group_visibility_description',
+  );
 }
 
 /**
@@ -676,6 +651,63 @@ function _social_group_allowed_values_callback(
   usort($values, [SortArray::class, 'sortByWeightElement']);
 
   return array_column($values, 'title', 'id');
+}
+
+/**
+ * Implements hook_social_group_content_visibility_field().
+ */
+function social_group_social_group_content_visibility_field(): string {
+  return 'field_content_visibility';
+}
+
+/**
+ * Implements hook_social_group_content_visibility_description_alter().
+ */
+function social_group_social_group_content_visibility_description_alter(string $key, &$description): void {
+  $items = [
+    'public' => [
+      'title' => t('Public'),
+      'description' => t('visible to all visitors to the platform.'),
+    ],
+    'community' => [
+      'title' => t('Community'),
+      'description' => t('only visible to all logged-in users.'),
+    ],
+    'group' => [
+      'title' => t('Group members only'),
+      'description' => t('only visible to logged-in group members.'),
+      'icon' => 'lock',
+    ],
+  ];
+
+  if (isset($items[$key])) {
+    $description = $items[$key];
+  }
+}
+
+/**
+ * Implements hook_social_group_group_visibility_description_alter().
+ */
+function social_group_social_group_group_visibility_description_alter(string $key, &$description): void {
+  $items = [
+    'public' => [
+      'title' => t('Public'),
+      'description' => t('All visitors of the platform can see this group'),
+    ],
+    'community' => [
+      'title' => t('Community'),
+      'description' => t('Only members who are logged in can see this group'),
+    ],
+    'members' => [
+      'title' => t('Group members only (Secret)'),
+      'description' => t('Only group members can see this group'),
+      'icon' => 'lock',
+    ],
+  ];
+
+  if (isset($items[$key])) {
+    $description = $items[$key];
+  }
 }
 
 /**
@@ -738,13 +770,14 @@ function social_group_allowed_join_method_description(
 
   $hook = 'social_group_join_method_info';
 
-  if (!($modules = \Drupal::moduleHandler()->getImplementations($hook))) {
-    return $description;
-  }
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+    // There is minimal overhead since the hook is not invoked.
+    $implementors[] = $module;
+  });
 
   $found = FALSE;
 
-  foreach ($modules as $module) {
+  foreach ($implementors as $module) {
     /** @var callable $function */
     $function = $module . '_' . $hook;
 
@@ -939,25 +972,39 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Check if form is group content create form.
-  if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
-    // Add custom validate handler to check if groups field values in node.
-    $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
+  if (isset($form['#entity_type'])) {
+    if ($form['#entity_type'] === 'node') {
+      // Add custom validate handler to check if groups field values in node.
+      $form['#validate'][] = '_social_group_node_form_cross_posting_validate';
 
-    $group = _social_group_get_current_group();
+      $group = _social_group_get_current_group();
 
-    if (!empty($group)) {
-      // Add custom submit handler just for redirect purposes.
-      // We don't want to override the form::save in group.
-      $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+      if (!empty($group)) {
+        // Add custom submit handler just for redirect purposes.
+        // We don't want to override the form::save in group.
+        $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+      }
+      elseif (isset($entity)) {
+        // If node don't belong to any group as a group content plugin
+        // we don't need group visibility field.
+        /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
+        $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
+
+        if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
+          unset($form['groups']);
+        }
+      }
     }
-    elseif (isset($entity)) {
-      // If node don't belong to any group as a group content plugin
-      // we don't need group visibility field.
-      /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $gc_manager */
-      $gc_manager = \Drupal::service('plugin.manager.group_content_enabler');
 
-      if (!$gc_manager->getGroupContentTypeIds('group_node:' . $entity->bundle())) {
-        unset($form['groups']);
+    // Let's remove the original submit function in favor of this submit.
+    if (isset($form['groups'])) {
+      $entity_types = \Drupal::moduleHandler()->invokeAll('social_group_linked_type');
+
+      if (in_array($form['#entity_type'], $entity_types)) {
+        $form['actions']['submit']['#submit'] = array_filter(
+          $form['actions']['submit']['#submit'],
+          fn ($callback): bool => $callback !== 'group_content_entity_submit',
+        );
       }
     }
   }
@@ -1099,17 +1146,16 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $hook = 'social_group_join_method_info';
         $join_methods = [];
 
-        foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-          /** @var callable $function */
-          $function = $module . '_' . $hook;
-
-          foreach ($function() as $id => $join_method) {
+        // We could've used `invokeAll` here but decided to make our array
+        // associative and later use `id` so we need to do some stuff manually.
+        \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$join_methods) {
+          foreach ($hook() as $id => $join_method) {
             $join_methods[] = [
               'id' => $id,
               'weight' => $join_method['weight'],
             ];
           }
-        }
+        });
 
         usort($join_methods, [SortArray::class, 'sortByWeightElement']);
 
@@ -2092,6 +2138,17 @@ function _social_group_delete_group() {
 }
 
 /**
+ * Get all public groups.
+ */
+function social_group_get_all_public_groups(): array {
+  $query = \Drupal::service('entity_type.manager')
+    ->getStorage('group')
+    ->getQuery()
+    ->condition('type', 'public_group');
+  return $query->execute();
+}
+
+/**
  * Get all open groups.
  */
 function social_group_get_all_open_groups() {
@@ -2103,7 +2160,7 @@ function social_group_get_all_open_groups() {
 }
 
 /**
- * Get all open groups.
+ * Get all groups.
  */
 function social_group_get_all_groups() {
   $query = \Drupal::service('entity_type.manager')
@@ -2194,12 +2251,6 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
       foreach ($change_fieldgroup_titles as $fieldgroup_title) {
         if (isset($form['#fieldgroups'][$fieldgroup_title])) {
           $form['#fieldgroups'][$fieldgroup_title]->label = t('Access permissions')->render();
-        }
-      }
-      // Lets remove the original submit function in favor of this submit.
-      foreach ($form['actions']['submit']['#submit'] as $submit_key => $submit_function) {
-        if ($submit_function === 'group_content_entity_submit') {
-          unset($form['actions']['submit']['#submit'][$submit_key]);
         }
       }
 
@@ -2732,9 +2783,9 @@ function _social_group_action_batch_finish($success, array $results, array $oper
 
   $hook = 'social_group_action_' . $results['action'] . '_finish';
 
-  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
-    $function = $module . '_' . $hook;
-    $messages = $function($success);
+  // Get a list of hook implementors.
+  \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use ($success, $results_count) {
+    $messages = $hook($success);
 
     if (is_array($messages)) {
       $fields = 0;
@@ -2752,7 +2803,7 @@ function _social_group_action_batch_finish($success, array $results, array $oper
         \Drupal::messenger()->addMessage($message, $type);
       }
     }
-  }
+  });
 }
 
 /**
@@ -2963,7 +3014,9 @@ function social_group_preprocess_fieldset(array &$variables): void {
     return;
   }
 
-  if ($element['#field_name'] === 'field_content_visibility') {
+  $fields = \Drupal::moduleHandler()->invokeAll('social_group_content_visibility_field');
+
+  if (in_array($element['#field_name'], $fields)) {
     $description = '';
 
     /** @var string $key */
@@ -2974,7 +3027,7 @@ function social_group_preprocess_fieldset(array &$variables): void {
     // Render a specific tooltip based on a field name and description.
     // This is done in the fieldset, next to the <legend>.
     $variables['popover'] = social_group_render_tooltip(
-      'field_content_visibility',
+      $element['#field_name'],
       t('Visibility'),
       $description,
     );
@@ -3057,61 +3110,19 @@ function social_group_preprocess_fieldset(array &$variables): void {
 }
 
 /**
- * Returns a description array for the field_flexible_group_visibility options.
+ * Gets a description as HTML markup for the selected content visibility option.
  *
  * @param string $key
- *   The join method key.
- *
- * @return string
- *   The render array containing the description.
+ *   The visibility option name.
  */
-function social_group_allowed_visibility_description($key) {
-  $description = '';
+function social_group_allowed_visibility_description(string $key): string {
+  /** @var \Drupal\social_group\SocialGroupHelperServiceInterface $helper */
+  $helper = \Drupal::service('social_group.helper_service');
 
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      // If we want to have the title, lets start with it, otherwise open our
-      // paragraph.
-      $description = '<p>';
-      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('visible to all visitors to the platform.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      // If we want to have the title, lets start with it, otherwise open our
-      // paragraph.
-      $description = '<p>';
-      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to all logged-in users.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'group':
-      // If we want to have the title, lets start with it, otherwise open our
-      // paragraph.
-      $description = '<p>';
-      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to logged-in group members.')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()
-    ->alter('social_group_content_visibility_description', $key, $description);
-
-  return $description;
+  return $helper->description(
+    $key,
+    'social_group_content_visibility_description',
+  );
 }
 
 /**
@@ -3219,4 +3230,11 @@ function social_group_social_core_title(): array {
       },
     ],
   ];
+}
+
+/**
+ * Implements hook_social_tagging_type().
+ */
+function social_group_social_tagging_type(): string {
+  return 'group';
 }

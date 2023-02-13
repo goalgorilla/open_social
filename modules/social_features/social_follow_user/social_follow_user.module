@@ -7,7 +7,6 @@
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -220,54 +219,14 @@ function social_follow_user_preprocess_flag(array &$variables): void {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for user_form().
- */
-function social_follow_user_form_user_form_alter(array &$form, FormStateInterface $form_state): void {
-  $profile = _social_profile_get_profile_from_route();
-  $active = \Drupal::config('social_follow_user.settings')->get('status');
-
-  if ($profile instanceof Profile && $active) {
-    $following_enabled = \Drupal::service('social_follow_user.helper')
-      ->getFollowingStatus($profile);
-
-    $form['profile_privacy']['field_profile_allow_following'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Allow members to follow me'),
-      '#default_value' => $following_enabled,
-      '#description' => t('This selection allows you to turn on the ability for 
-members to follow your activity and receive notifications about new content you
-create.'),
-      '#attributes' => [
-        'data-switch' => TRUE,
-      ],
-    ];
-
-    $form['actions']['submit']['#submit'][] = '_social_follow_user_form_submit';
-  }
-}
-
-/**
- * Form submit for user_form.
+ * Implements hook_form_FORM_ID_alter().
  *
- * @param array $form
- *   The user edit form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
+ * @see \Drupal\user\AccountForm
  */
-function _social_follow_user_form_submit(array $form, FormStateInterface $form_state): void {
-  $profile = _social_profile_get_profile_from_route();
-  $profile_privacy = $form_state->getValue('profile_privacy');
-
-  if ($profile instanceof Profile) {
-    $uid = $profile->getOwnerId();
-
-    if (isset($profile_privacy['field_profile_allow_following'])) {
-      // Save following status in the user data.
-      $profile->set('field_profile_allow_following', $profile_privacy['field_profile_allow_following']);
-      $profile->save();
-    }
-    // Invalidate profile cache tags.
-    Cache::invalidateTags(['profile:' . $uid]);
+function social_follow_user_form_user_form_alter(array &$form, FormStateInterface $form_state) : void {
+  // Show the setting as a switch in the settings form.
+  if (isset($form['field_allow_following']['widget']['value'])) {
+    $form['field_allow_following']['widget']['value']['#attributes']['data-switch'] = TRUE;
   }
 }
 

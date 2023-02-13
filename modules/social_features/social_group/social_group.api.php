@@ -111,6 +111,7 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
  *   The entity type identifier.
  *
  * @see social_group_entity_base_field_info_alter()
+ * @see social_group_form_alter()
  *
  * @ingroup social_group_api
  */
@@ -133,14 +134,42 @@ function hook_social_group_move(NodeInterface $node) {
 }
 
 /**
- * Provide a description for a given key from the content visibility #options.
+ * Provide field(s) which is(are) used for managing content visibility.
  *
- * @param string $description
- *   The descriptive.
+ * @return string|string[]
+ *   The name of a single field or list of field names.
+ *
+ * @see social_group_preprocess_fieldset()
  *
  * @ingroup social_group_api
  */
-function hook_social_group_content_visibility_description_alter($key, &$description) {
+function hook_social_group_content_visibility_field() {
+  return 'field_media_visibility';
+}
+
+/**
+ * Provide a description for a given key from the content visibility #options.
+ *
+ * @param string $key
+ *   The visibility option name.
+ * @param string|array $description
+ *   An explanation of a visibility option in one of two supported formats - an
+ *   associative array or HTML markup text. The keys are the identifiers. The
+ *   values are associative arrays that should contain the following elements:
+ *   - title: The human-readable name of the visibility option. If this should
+ *     be translated, create a \Drupal\Core\StringTranslation\TranslatableMarkup
+ *     object.
+ *   - description: The description of the visibility option. If this should be
+ *     translated, create a \Drupal\Core\StringTranslation\TranslatableMarkup
+ *     object.
+ *   - icon: (optional) The visibility option unique icon. If it is empty then
+ *     the value from the previous parameter will be used here.
+ *
+ * @see social_group_allowed_visibility_description()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_content_visibility_description_alter(string $key, &$description) {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -150,23 +179,38 @@ function hook_social_group_content_visibility_description_alter($key, &$descript
       break;
 
     case 'custom_role_2':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Custom role 2')->render() . '</strong>';
-      $description .= '-' . t('All users with this role can change it')->render();
-      $description .= '</p>';
+      $description = [
+        'title' => t('Custom role 2'),
+        'description' => t('All users with this role can change it'),
+        'icon' => 'community',
+      ];
       break;
   }
 }
 
 /**
- * Provide a description for a given key from the group_visibility #options.
+ * Provide a description for a given key from the group visibility #options.
  *
- * @param string $description
- *   The descriptive.
+ * @param string $key
+ *   The visibility option name.
+ * @param string|array $description
+ *   An explanation of a visibility option in one of two supported formats - an
+ *   associative array or HTML markup text. The keys are the identifiers. The
+ *   values are associative arrays that should contain the following elements:
+ *   - title: The human-readable name of the visibility option. If this should
+ *     be translated, create a \Drupal\Core\StringTranslation\TranslatableMarkup
+ *     object.
+ *   - description: The description of the visibility option. If this should be
+ *     translated, create a \Drupal\Core\StringTranslation\TranslatableMarkup
+ *     object.
+ *   - icon: (optional) The visibility option unique icon. If it is empty then
+ *     the value from the previous parameter will be used here.
+ *
+ * @see social_group_group_visibility_description()
  *
  * @ingroup social_group_api
  */
-function hook_social_group_group_visibility_description_alter($key, &$description) {
+function hook_social_group_group_visibility_description_alter(string $key, &$description) {
   switch ($key) {
     case 'custom_role_1':
       $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
@@ -176,10 +220,11 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
       break;
 
     case 'custom_role_2':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Custom role 2')->render() . '</strong>';
-      $description .= '-' . t('All users with this role can change it')->render();
-      $description .= '</p>';
+      $description = [
+        'title' => t('Custom role 2'),
+        'description' => t('All users with this role can change it'),
+        'icon' => 'community',
+      ];
       break;
   }
 }

@@ -3,17 +3,8 @@
 
 namespace Drupal\social\Behat;
 
+use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
-use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit\Framework\Assert as PHPUnit;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Behat\Hook\Scope\AfterStepScope;
 
 /**
  * Defines application features from the specific context.
@@ -58,23 +49,16 @@ class SocialMinkContext extends MinkContext {
     parent::assertCheckBox($checkbox);
   }
 
-
-  /**
-   * @Given /^I make a screenshot$/
-   */
-  public function iMakeAScreenshot() {
-    $this->iMakeAScreenshotWithFileName('screenshot');
-  }
-
   /**
    * @Given /^I make a screenshot with the name "([^"]*)"$/
    */
   public function iMakeAScreenshotWithFileName($filename) {
-    $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    $dir = '/var/www/travis_artifacts';
+    $dir = __DIR__ . '/../../logs';
     if (is_writeable($dir)) {
-      $file_and_path = $dir . '/' . $filename . '.jpg';
-      file_put_contents($file_and_path, $screenshot);
+      file_put_contents(
+        "$dir/$filename.jpg",
+        $this->getSession()->getScreenshot()
+      );
     }
   }
 
@@ -136,33 +120,6 @@ class SocialMinkContext extends MinkContext {
     $clearButton->click();
   }
 
-
-  /**
-   * @AfterStep
-   */
-  public function takeScreenShotAfterFailedStep(AfterStepScope $scope)
-  {
-    if (99 === $scope->getTestResult()->getResultCode()) {
-      $driver = $this->getSession()->getDriver();
-      if (!($driver instanceof Selenium2Driver)) {
-        return;
-      }
-      $feature = $scope->getFeature();
-      $title = $feature->getTitle();
-
-      $filename = date("Ymd-H_i_s");
-
-      if (!empty($title)) {
-        $filename .= '-' . str_replace(' ', '-', strtolower($title));
-      }
-
-      $filename .= '-error';
-
-      $this->iMakeAScreenshotWithFileName($filename);
-    }
-  }
-
-
   /**
    * Attaches file to field with specified name.
    *
@@ -180,6 +137,9 @@ class SocialMinkContext extends MinkContext {
 
   /**
    * @Then I should see checked the box :checkbox
+   *
+   * @todo This doesn't actually check that the radio button is visible for the
+   *   user, e.g. it may be hidden in a closed details element.
    */
   public function iShouldSeeCheckedTheBox($checkbox) {
     $checkbox = $this->fixStepArgument($checkbox);
@@ -230,6 +190,50 @@ class SocialMinkContext extends MinkContext {
     $field = $this->fixStepArgument('path[0][alias]');
     $value = $this->fixStepArgument($value);
     $this->getSession()->getPage()->fillField($field, $value);
+  }
+
+  /**
+   * Ensure a specific option is selected in a select field.
+   *
+   * @Then I should see :option selected in the :locator select field
+   * @Then should see :option selected in the :locator select field
+   */
+  public function thenShouldSeeOptionSelected(string $option, string $locator) : void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    $opt = $field->find('named', ['option', $option]);
+
+    if (NULL === $opt) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'select option', 'value|text', $option);
+    }
+
+    if (!$opt->isSelected()) {
+      throw new \Exception("Expected '$option' to be selected but it was not.");
+    }
+  }
+
+  /**
+   * Ensure a select field does not contain an option.
+   *
+   * @Then I should not see :option in the :locator select field
+   * @Then should not see :option in the :locator select field
+   */
+  public function thenShouldNotSeeOptionInTheSelectField(string $option, string $locator) : void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    $opt = $field->find('named', ['option', $option]);
+
+    if ($opt !== NULL) {
+      throw new \Exception("The field was not supposed to contain '$option' but it was an option in the select field.");
+    }
   }
 
 }

@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * The social_emoji module.
+ */
+
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
+ *
+ * Add emoji trigger element to every text_texarea element.
+ */
+function social_emoji_field_widget_single_element_text_textarea_form_alter(array &$element, FormStateInterface &$form_state, array $context): void {
+  if ($context['widget']->getThirdPartySetting('social_emoji', 'display_emoji_picker')) {
+    $element['#attributes']['class'][] = 'social-emoji-capable';
+    $element['#attached']['library'][] = 'social_emoji/emoji-picker-element';
+  }
+}
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function social_emoji_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, string $form_mode, array $form, FormStateInterface $form_state): array {
+  $element = [];
+
+  if (_social_emoji_is_field_widget_supported($plugin->getPluginId())) {
+    $element['display_emoji_picker'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Display emoji picker'),
+      '#default_value' => $plugin->getThirdPartySetting('social_emoji', 'display_emoji_picker'),
+    ];
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function social_emoji_field_widget_settings_summary_alter(array &$summary, array $context): void {
+  /** @var \Drupal\Core\Field\WidgetInterface $widget */
+  $widget = $context['widget'];
+  if (_social_emoji_is_field_widget_supported($widget->getPluginId())) {
+    $summary[] = t('Display emoji picker: @display_emoji_picker', ['@display_emoji_picker' => $widget->getThirdPartySetting('social_emoji', 'display_emoji_picker') ? t('Yes') : t('No')]);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for entity_form_display.
+ *
+ * Automatically enable emoji picker for all the supported comment and post
+ * fields upon creation of a new entity form display.
+ *
+ * Doing this here allows us avoid dependencies on post/comment-related modules.
+ */
+function social_emoji_entity_form_display_presave(EntityFormDisplayInterface $entity_form_display): void {
+  if ($entity_form_display->isNew() && ($entity_form_display->getTargetEntityTypeId() === 'comment' || $entity_form_display->getTargetEntityTypeId() === 'post')) {
+    _social_emoji_enable_picker_for_entity_view_display($entity_form_display);
+  }
+}
+
+/**
+ * Checks if a given field widget supports emoji picker.
+ *
+ * @param string $field_widget_plugin_id
+ *   Field widget plugin ID.
+ *
+ * @return bool
+ *   Whether the given field widget is supported or not.
+ */
+function _social_emoji_is_field_widget_supported(string $field_widget_plugin_id): bool {
+  $supported_field_widget_plugin_ids = [
+    'string_textarea',
+    'text_textarea',
+    'text_textarea_with_summary',
+  ];
+
+  return in_array($field_widget_plugin_id, $supported_field_widget_plugin_ids);
+}
+
+/**
+ * Enables emoji picker for all field widgets of a given entity form display.
+ *
+ * @param \Drupal\Core\Entity\Display\EntityFormDisplayInterface $entity_form_display
+ *   Entity form display instance.
+ */
+function _social_emoji_enable_picker_for_entity_view_display(EntityFormDisplayInterface $entity_form_display): void {
+  $components = $entity_form_display->getComponents();
+  foreach ($components as $name => $component) {
+    if (array_key_exists('type', $component) && (_social_emoji_is_field_widget_supported($component['type']))) {
+      $component['third_party_settings']['social_emoji']['display_emoji_picker'] = TRUE;
+      $entity_form_display->setComponent($name, $component);
+    }
+  }
+}

@@ -15,11 +15,8 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
-use Drupal\user\Entity\Role;
-use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
-use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -145,177 +142,11 @@ function social_profile_uninstall() {
 }
 
 /**
- * Set default profile image.
+ * Implements hook_update_last_removed().
  */
-function social_profile_update_8002(&$sandbox) {
-  // Only run when there is not a file added to the file managed table.
-  // Confirmed that it's not there on our current platforms. (But is locally).
-  $query = \Drupal::database()->select('file_managed', 'fm');
-  $query->addField('fm', 'uuid');
-  $query->condition('fm.filename', 'default-profile-picture.png');
-  $query->range(0, 1);
-  $result = $query->execute()->fetchField();
-
-  // $result will be FALSE if there is no UUID available.
-  if (!$result) {
-    _social_profile_add_default_profile_image();
-  }
-
-}
-
-/**
- * Add social_profile.settings config. Update permissions for SM role.
- */
-function social_profile_update_8003(&$sandbox) {
-  $config = \Drupal::configFactory()->getEditable('social_profile.settings');
-  $config->set('social_profile_show_email', 1);
-  $config->save();
-
-  // Add permission to view profile email and administer profile settings for
-  // sitemanager role.
-  $roles = Role::loadMultiple();
-  $permissions = [
-    'administer profile settings',
-    'view profile email',
-  ];
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
-}
-
-/**
- * Add edit own and edit any profile permissions after update to Profile beta1.
- */
-function social_profile_update_8004(&$sandbox) {
-  $roles = Role::loadMultiple();
-  $lu_permissions = [
-    'update own profile profile',
-  ];
-  $cm_permissions = [
-    'update any profile profile',
-  ];
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'authenticated') {
-      user_role_grant_permissions($role->id(), $lu_permissions);
-    }
-    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $cm_permissions);
-    }
-  }
-}
-
-/**
- * Update the context_mapping for profile_hero_block blocks.
- */
-function social_profile_update_8005() {
-  $blocks = Block::loadMultiple();
-
-  /** @var \Drupal\block\BlockInterface $block */
-  foreach ($blocks as $block) {
-    if ($block->getPluginId() == 'profile_hero_block') {
-      $settings = $block->get('settings');
-
-      if (!isset($settings['context_mapping']['user'])) {
-        $settings['context_mapping']['user'] = '@social_user.user_route_context:user';
-        $block->set('settings', $settings);
-        $block->save();
-      }
-    }
-  }
-}
-
-/**
- * Create a profile for users that have none.
- */
-function social_profile_update_8006(&$sandbox) {
-  if (!isset($sandbox['progress'])) {
-    // This must be the first run. Initialize the sandbox.
-    $sandbox['progress'] = 0;
-    $sandbox['profiles_created'] = 0;
-    // We use array_values to get the entity_ids.
-    // Not interested in the revisions.
-    $sandbox['uids'] = array_values(\Drupal::entityQuery('user')
-      ->execute());
-    $sandbox['user_count'] = count($sandbox['uids']);
-
-    \Drupal::logger('social_profile')
-      ->info('Checking profile status for @count users', ['@count' => $sandbox['user_count']]);
-  }
-
-  // Try to do 5 each cycle. Never do more than are available.
-  for ($target = $sandbox['progress'] + 5; $sandbox['progress'] < $target && $sandbox['progress'] < $sandbox['user_count']; $sandbox['progress']++) {
-    $uid = $sandbox['uids'][$sandbox['progress']];
-
-    /** @var \Drupal\user\Entity\User $account */
-    $account = User::load($uid);
-
-    // For anonymous we do nothing.
-    if ($account->isAnonymous()) {
-      continue;
-    }
-    // Check if the user has a profile already.
-    $profile = \Drupal::entityTypeManager()
-      ->getStorage('profile')
-      ->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
-    if (!$profile) {
-      try {
-        Profile::create([
-          'type' => ProfileType::load('profile')->id(),
-          'uid' => $account->id(),
-        ])->save();
-        $sandbox['profiles_created']++;
-      }
-      catch (Exception $e) {
-        \Drupal::logger('social_profile')
-          ->error('Could not create profile for @user_id', ['@user_id' => $uid]);
-      }
-    }
-  }
-
-  $sandbox['#finished'] = empty($sandbox['user_count']) ? 1 : ($sandbox['progress'] / $sandbox['user_count']);
-
-  if ($sandbox['#finished'] === 1) {
-    \Drupal::logger('social_profile')
-      ->info('Created profiles for @count users', [
-        '@count' => $sandbox['profiles'],
-      ]);
-  }
-}
-
-/**
- * Grant the 'view profile' permission.
- */
-function social_profile_update_8007(&$sandbox) {
-  $roles = [
-    'authenticated',
-    'contentmanager',
-    'sitemanager',
-  ];
-  $permissions = [
-    'view profile',
-  ];
-  foreach ($roles as $role) {
-    user_role_grant_permissions($role, $permissions);
-  }
-}
-
-/**
- * Remove title property from field_profile_image.
- */
-function social_profile_update_8008() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+function social_profile_update_last_removed() : int {
+  // Removed all update hooks before 10.0.
+  return 8803;
 }
 
 /**
@@ -334,99 +165,6 @@ function social_profile_update_dependencies() {
   ];
 
   return $dependencies;
-}
-
-/**
- * Create medium_teaser profile view mode.
- */
-function social_profile_update_8009() {
-  // Create a new profile entity view mode.
-  EntityViewMode::create([
-    'targetEntityType' => 'profile',
-    'id' => 'profile.medium_teaser',
-    'status' => TRUE,
-    'label' => t('Medium Teaser'),
-  ])->save();
-
-  // Load teaser profile view mode.
-  $display = EntityViewDisplay::load('profile.profile.teaser')->toArray();
-
-  // Make sure that labels are hidden for all fields.
-  foreach ($display['content'] as &$field) {
-    $field['label'] = 'hidden';
-  }
-
-  // Create the corresponding entity view display for profile entity type.
-  $display = array_merge($display, [
-    'uuid' => NULL,
-    'targetEntityType' => 'profile',
-    'bundle' => 'profile',
-    'mode' => 'medium_teaser',
-  ]);
-  EntityViewDisplay::create($display)->save();
-}
-
-/**
- * Update small_teaser profile view mode.
- */
-function social_profile_update_8010() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Update small_teaser profile view mode again, last one had the wrong yml file.
- */
-function social_profile_update_8801() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8010');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Update social_profile.settings config & permissions for authenticated role.
- */
-function social_profile_update_8802(&$sandbox) {
-  $config = \Drupal::configFactory()->getEditable('social_profile.settings');
-  $config->set('social_profile_show_language', TRUE);
-  $config->save();
-
-  // Add permission to view profile language for authenticated role.
-  $roles = Role::loadMultiple();
-  $permissions = [
-    'view profile language',
-  ];
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if (in_array($role->id(), ['sitemanager', 'contentmanager'])) {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
-}
-
-/**
- * Moved the profile's banner field above image field.
- */
-function social_profile_update_8803() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8803');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
 }
 
 /**
@@ -698,4 +436,18 @@ function social_profile_update_11301(array &$sandbox): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Update exposed filter button name.
+ */
+function social_profile_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

@@ -5,6 +5,8 @@ Feature: See my upcoming events
   Goal/desire: I want to see an overview of upcoming events on my profile
 
   Scenario: Successfully show my upcoming events as a Verified
+    # @todo This test relies on the old layout.
+    Given the theme is set to old
     Given I am on the homepage
     Then I should not see "My upcoming events"
 

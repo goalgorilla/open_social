@@ -68,7 +68,7 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
     $account = &$context['data']['user'];
     if ($account instanceof UserInterface) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if ($storage !== NULL && isset($replacements['[message:author:display-name]'])) {
+      if ($storage !== NULL) {
         if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
           $replacements['[message:author:display-name]'] .= rtrim(' ' . social_profile_organization_tag_fetch($user_profile, FALSE));
         }
@@ -87,22 +87,30 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
  * Function that fetches the extra organizational info for a profile.
  */
 function social_profile_organization_tag_fetch(Profile $profile, $return_html = TRUE) {
-  if ($profile instanceof Profile) {
-    if (!$profile->get('field_profile_organization_tag')->isEmpty()) {
-      $organization_tag = $profile->get('field_profile_organization_tag');
-      $organization_tag_entities = $organization_tag->referencedEntities();
-      if (count($organization_tag_entities) === 1) {
-        /** @var \Drupal\taxonomy\Entity\Term $organization */
-        foreach ($organization_tag_entities as $organization) {
-          $value = t('from @org');
-          if ($return_html === TRUE) {
-            $value = '<span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
-          }
-          $arguments = [
-            '@org' => $organization->label(),
-          ];
-          return new FormattableMarkup($value, $arguments);
+  if (!$profile->get('field_profile_organization_tag')->isEmpty()) {
+    $organization_tag = $profile->get('field_profile_organization_tag');
+    $organization_tag_entities = $organization_tag->referencedEntities();
+    if (count($organization_tag_entities) === 1) {
+      /** @var \Drupal\taxonomy\Entity\Term $organization */
+      foreach ($organization_tag_entities as $organization) {
+        $value = t('from @org');
+        if ($return_html === TRUE) {
+          $value = '<span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
         }
+        $arguments = [
+          '@org' => $organization->label(),
+        ];
+        if (\Drupal::languageManager()->isMultilingual()) {
+          try {
+            $arguments = [
+              '@org' => $organization->getTranslation(\Drupal::languageManager()->getCurrentLanguage()->getId())->label(),
+            ];
+          }
+          catch (InvalidArgumentException $exception) {
+            \Drupal::logger('social_profile_organization_tag')->info($exception->getMessage());
+          }
+        }
+        return new FormattableMarkup($value, $arguments);
       }
     }
   }

@@ -9,4 +9,20 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  */
 interface MentionsTypeInterface extends ConfigEntityInterface {
 
+  /**
+   * The mention type.
+   *
+   * @return string
+   *   Returns the mention type.
+   */
+  public function mentionType(): string;
+
+  /**
+   * Get the input settings.
+   *
+   * @return array
+   *   Returns the input settings.
+   */
+  public function getInputSettings(): array;
+
 }

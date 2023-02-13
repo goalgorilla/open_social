@@ -1,9 +1,0 @@
-{% if items is not empty %}
-  <h5>{{ label }}</h5>
-
-  {% set classes = ['badge', 'badge--pill', 'badge--large', 'badge-default'] %}
-
-  {% for item in items %}
-    <div{{ item.attributes.addClass(classes) }}>{{ item.content }}</div>
-  {% endfor %}
-{% endif %}

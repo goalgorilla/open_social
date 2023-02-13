@@ -1,9 +1,9 @@
 <h3>{{ notification_count }}</h3>
 
 <ul>
-    {% for notification in notifications %}
-        <li>{{ notification|striptags('<p><a><strong><small><em><div><table><tbody><tr><td><span><img><ul><li>')|raw }}</li>
-    {% endfor %}
+        {% for notification in notifications %}
+                <li>{{ notification|striptags('<p><a><strong><small><em><div><table><tbody><tr><td><span><img><ul><li><svg><title><path>')|raw }}</li>
+        {% endfor %}
 </ul>
 
 <p>&nbsp;</p>
