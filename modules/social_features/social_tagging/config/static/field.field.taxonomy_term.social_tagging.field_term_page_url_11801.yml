@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_term_page_url
+    - taxonomy.vocabulary.social_tagging
+  enforced:
+    module:
+      - social_tagging
+  module:
+    - link
+id: taxonomy_term.social_tagging.field_term_page_url
+field_name: field_term_page_url
+entity_type: taxonomy_term
+bundle: social_tagging
+label: URL
+description: 'Choose a URL link to help members find your tag’s custom page. The URL will be used in different blocks across the platform to improve the user experience. <p>If left blank/on default, members can still find the content related to the tag but there will be no custom page linked.</p>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link
