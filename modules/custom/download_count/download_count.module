@@ -67,7 +67,7 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
       ->execute()
       ->fetchAssoc();
 
-    if (!empty($file_usage_data)) {
+    if (!empty($file_usage_data) && is_array($file_usage_data)) {
       $connection = Database::getConnection();
       $connection->insert('download_count')
         ->fields([

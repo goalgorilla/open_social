@@ -723,7 +723,7 @@ class FeatureContext extends RawMinkContext {
       /** @var \Drupal\file\Entity\File $file */
       $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
       $url = $file->createFileUrl();
-      $page = file_url_transform_relative($url);
+      $page = \Drupal::service('file_url_generator')->transformRelative($url);
       $this->visitPath($page);
 
       if ($expected_access == 0) {

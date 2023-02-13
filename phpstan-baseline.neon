@@ -6091,15 +6091,6 @@ parameters:
 			path: modules/social_features/social_embed/src/SocialEmbedConfigOverride.php
 
 		-
-			message: """
-				#^Call to deprecated method assertEqual\\(\\) of class Drupal\\\\KernelTests\\\\KernelTestBase\\:
-				in drupal\\:8\\.0\\.0 and is removed from drupal\\:10\\.0\\.0\\. Use
-				  \\$this\\-\\>assertEquals\\(\\) instead\\.$#
-			"""
-			count: 2
-			path: modules/social_features/social_embed/tests/src/Kernel/SocialUserEmbedTest.php
-
-		-
 			message: "#^Function template_preprocess_event_enrollment\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/event_enrollment.page.inc
