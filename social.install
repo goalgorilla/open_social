@@ -30,6 +30,32 @@ function social_install() {
 }
 
 /**
+ * Implements hook_requirements().
+ */
+function social_requirements($phase) : array {
+  $requirements = [];
+
+  switch ($phase) {
+    case 'install':
+      // We don't care how Drupal configures the private file system (e.g.
+      // through a setting or otherwise), we just care that our `private` uri
+      // scheme for our file field storages works.
+      if (!in_array('private', stream_get_wrappers(), TRUE)) {
+        $requirements['private_file_system'] = [
+          'title' => t('Private File System'),
+          'value' => t('Not configured'),
+          'description' => t('The private file system must be configured for Open Social to install. You may opt-out of the private file system for individual fields after installation. See https://www.drupal.org/documentation/modules/file for how to set the file_private_path in your settings.php.'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+      break;
+
+  }
+
+  return $requirements;
+}
+
+/**
  * Disable secondary toolbar on frontend in Gin theme.
  */
 function _social_core_disable_secondary_gin_toolbar() {
