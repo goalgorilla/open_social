@@ -410,3 +410,17 @@ function social_follow_user_update_11406() : void {
   $form_mode->setThirdPartySetting("field_group", "group_privacy", $privacy_group);
   $form_mode->save();
 }
+
+/**
+ * Update the empty behaviour text for follower_user and following_users.
+ */
+function social_follow_user_update_11701(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_follow_user', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
