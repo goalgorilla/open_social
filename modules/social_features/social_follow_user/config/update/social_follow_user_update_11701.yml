@@ -1,0 +1,31 @@
+views.view.followers_user:
+  expected_config:
+    default:
+      display_options:
+        empty:
+          area_text_custom:
+            content: 'You do not have any followers.'
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            empty:
+              area_text_custom:
+                content: 'This user does not have any followers.'
+views.view.following_users:
+  expected_config:
+    display:
+      default:
+        display_options:
+          empty:
+            area_text_custom:
+              content: 'You do not follow any users.'
+  update_actions:
+    change:
+      display:
+        default:
+          display_options:
+            empty:
+              area_text_custom:
+                content: 'This user does not follow any users.'
