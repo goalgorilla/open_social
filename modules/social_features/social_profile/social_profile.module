@@ -1183,6 +1183,16 @@ function social_profile_profile_presave(ProfileInterface $profile) : void {
 function social_profile_copy_shared_user_data_to_profile(UserInterface $user, ProfileInterface $profile) : bool {
   $has_changed = FALSE;
 
+  if (!$profile->hasField('field_profile_email') || !$profile->hasField('field_profile_preferred_language')) {
+    // Depending on the 11.x version people are upgrading from, the update hook
+    // may contain updates to the user entity triggering this function but the
+    // hook creating the fields may not have run yet, so we must skip the
+    // synchronisation in that case.
+    // @todo Change this early return into a hard error in 13.0.0 indicating
+    // that Open Social is not properly installed.
+    return $has_changed;
+  }
+
   $user_email = $user->getEmail();
   if ((!$current_email = $profile->get('field_profile_email')->first()) || $current_email->getValue() !== $user_email) {
     $profile->set('field_profile_email', $user_email, FALSE);
