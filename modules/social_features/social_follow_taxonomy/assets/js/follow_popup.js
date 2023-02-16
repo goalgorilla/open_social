@@ -9,7 +9,7 @@
 
         $groupAction.each(function () {
           var $this = $(this);
-          var $badge = $this.find('.badge ');
+          var $badge = $this.find('.btn-action__term');
           var $popup = $this.find('.popup-info');
           var $popupH = $popup.outerHeight();
 
@@ -27,7 +27,7 @@
           });
 
           $(document).click(function (event) {
-            if ($(event.target).closest('.social_follow_tax .group-action .badge').length) {
+            if ($(event.target).closest('.social_follow_tax .group-action .btn-action__term').length) {
               return;
             }
             if ($(event.target).closest('.social_follow_tax .group-action .popup-info').length) {

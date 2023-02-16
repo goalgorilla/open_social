@@ -60,7 +60,7 @@ Feature: Follow Users
 
     # Check if followers page is accessible.
     When I click "0 followers"
-    And I should see the text "You do not have any followers"
+    And I should see the text "This user does not have any followers"
 
     # Check if following page is accessible as well.
     When I click the xth "0" element with the css ".navbar-nav .profile"
