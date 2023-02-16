@@ -214,6 +214,15 @@
     overflow: visible;
   }
 
+  // Added to override html/themes/contrib/socialbase/assets/css/teaser.css
+  // @media (min-width: 600px) {.teaser:not(.teaser--tile) .teaser__body}
+  @media (min-width: 600px) {
+    .teaser .teaser__body {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
   .teaser__content {
     padding: 0;
   }
