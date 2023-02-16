@@ -192,11 +192,13 @@ class EventContentBlock extends ContentBlockBase implements ContainerFactoryPlug
       // Sort in "ASC" order.
       'event_date' => [
         'label' => $this->t('Oldest -> Newest'),
+        'description' => 'Sorts in ascending order.',
         'limit' => FALSE,
       ],
       // Sort in "DESC" order.
       'event_date_desc' => [
         'label' => $this->t('Newest -> Oldest'),
+        'description' => 'Sorts in descending order.',
         'limit' => FALSE,
       ],
     ];
