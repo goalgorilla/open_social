@@ -12,48 +12,6 @@ use Drupal\Core\Field\FieldConfigInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Implements hook_modules_installed().
- */
-function social_content_block_modules_installed() {
-  // When the set of installed modules change, reload the sorting optios.
-  _social_content_block_update_sorting_options();
-}
-
-/**
- * Update the allowed values in the sorting options field based on plugins.
- */
-function _social_content_block_update_sorting_options() {
-  /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
-  $content_block_manager = \Drupal::service('plugin.manager.content_block');
-
-  // Retrieve all sort options, removing duplicates and format them to the
-  // format of field storage configuration.
-  $sort_options = [];
-
-  foreach (array_keys($content_block_manager->getDefinitions()) as $plugin_id) {
-    $plugin = $content_block_manager->createInstance($plugin_id);
-
-    foreach ($plugin->supportedSortOptions() as $name => $settings) {
-      $sort_options[] = [
-        'value' => $name,
-        'label' => is_array($settings) ? $settings['label'] : $settings,
-      ];
-    }
-  }
-
-  // Load the existing configuration and update it if it's different.
-  $config_name = 'field.storage.block_content.field_sorting';
-  $config = \Drupal::configFactory()->getEditable($config_name);
-  $config_data = $config->getRawData();
-
-  if ($sort_options !== $config_data['settings']['allowed_values']) {
-    $config_data['settings']['allowed_values'] = $sort_options;
-    $config->setData($config_data)->save();
-    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
-  }
-}
-
-/**
  * Add fields for plugin ID and plugin fields to the block content form.
  */
 function social_content_block_update_8001(&$sandbox) {
@@ -575,5 +533,25 @@ function social_content_block_update_10501(): void {
     $config->setData($config_data)->save();
     // Make sure we clear cached definitions for the fields.
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Reset the field_sorting storage configuration.
+ *
+ * This will remove obselete allowed values which was added due to malformed
+ * code.
+ *
+ * @see:
+ */
+function social_content_block_update_11001() {
+  $config_file = \Drupal::service('extension.list.module')->getPath('social_content_block') . '/config/static/field.storage.block_content.field_sorting_11001.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.storage.block_content.field_sorting');
+      $config->setData($settings)->save(TRUE);
+    }
   }
 }
