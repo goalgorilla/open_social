@@ -378,28 +378,19 @@ class ContentBuilder implements ContentBuilderInterface {
    * {@inheritdoc}
    */
   public static function updateFormSortingOptions(array $form, FormStateInterface $form_state): array {
-    $parents = ['field_sorting'];
-
     // Check that the currently selected value is valid and change it otherwise.
-    $value_parents = array_merge($parents, ['0', 'value']);
-    $sort_value = $form_state->getValue($value_parents);
-
-    $options = NestedArray::getValue(
-      $form,
-      array_merge($parents, ['widget', '#options'])
+    $sort_value = $form_state->getValue(
+      ['settings', 'block_form', 'field_sorting', '0', 'value']
     );
-
-    if ($sort_value === NULL || !isset($options[$sort_value])) {
+    if ($sort_value === NULL || !isset($form['settings']['block_form']['field_sorting']['widget']['#options'][$sort_value])) {
       // Unfortunately this has already triggered a validation error.
       $form_state->clearErrors();
-      $form_state->setValue($value_parents, key($options));
+      $form_state->setValue(
+        ['settings', 'block_form', 'field_sorting', '0', 'value'],
+        key($form['settings']['block_form']['field_sorting']['widget']['#options'])
+      );
     }
-
-    if ($form_state->has('layout_builder__component')) {
-      $parents = array_merge(['settings', 'block_form'], $parents);
-    }
-
-    return NestedArray::getValue($form, $parents);
+    return $form['settings']['block_form']['field_sorting'];
   }
 
   /**
