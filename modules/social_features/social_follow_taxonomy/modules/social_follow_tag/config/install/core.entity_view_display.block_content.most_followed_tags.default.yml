@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.most_followed_tags
+    - field.field.block_content.most_followed_tags.field_terms
+  enforced:
+    module:
+      - social_follow_tag
+id: block_content.most_followed_tags.default
+targetEntityType: block_content
+bundle: most_followed_tags
+mode: default
+content:
+  field_terms:
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: followers_count
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden:
+  search_api_excerpt: true
