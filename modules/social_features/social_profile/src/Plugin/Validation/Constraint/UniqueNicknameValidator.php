@@ -3,6 +3,8 @@
 namespace Drupal\social_profile\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Field\Plugin\Field\FieldType\StringItem;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -46,7 +48,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
     assert($constraint instanceof UniqueNickname);
     foreach ($items as $item) {
       // Next check if the value is unique.
-      if (!$this->isUnique($item->value)) {
+      if (!$this->isUnique($item)) {
         $this->context->addViolation($constraint->notUnique, ['%value' => $item->value]);
       }
     }
@@ -55,26 +57,22 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * Checks if a nickname is unique.
    *
-   * @param string $value
-   *   The provided nickname.
+   * @param \Drupal\Core\Field\Plugin\Field\FieldType\StringItem $item
+   *   The provided nickname field item.
    *
    * @return bool
    *   Returns TRUE if the name is not taken. Returns FALSE if the name is
    *   taken.
    */
-  private function isUnique($value) {
+  private function isUnique(StringItem $item) : bool {
     // Get all profiles with the provided nickname.
-    $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
+    $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $item->value]);
 
-    // Remove current profile from profiles.
-    foreach ($profiles as $key => $profile) {
-      // Get the profile we're performing actions on.
-      $current_profile = _social_profile_get_profile_from_route();
-
-      if ($profile->id() === $current_profile->get('profile_id')->value) {
-        unset($profiles[$key]);
-      }
-    }
+    // Get the profile we're performing actions on.
+    $current_profile = $item->getEntity();
+    assert($current_profile instanceof ProfileInterface, "The UniqueNickname constraint is used on a field that doesn't belong to a profile entity.");
+    // Remove it from the count if it was already in there.
+    unset($profiles[$current_profile->id()]);
 
     // If we have results, the name is taken.
     return count($profiles) === 0;
