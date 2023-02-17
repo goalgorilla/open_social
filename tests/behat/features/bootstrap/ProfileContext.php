@@ -113,6 +113,7 @@ class ProfileContext extends RawMinkContext {
     assert($state === "enabled" || $state === "disabled", ":state must be one of 'enabled' or 'disabled' (got '$state')");
 
     \Drupal::configFactory()->getEditable("social_profile.settings")->set("nickname_unique_validation", $state === "enabled")->save();
+    \Drupal::service("entity_field.manager")->clearCachedFieldDefinitions();
   }
 
   /**

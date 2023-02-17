@@ -6375,6 +6375,11 @@ parameters:
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
 
 		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
+			count: 2
+			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
+
+		-
 			message: "#^Method Drupal\\\\social_event_an_enroll\\\\Form\\\\EventAnEnrollActionForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
@@ -8360,6 +8365,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
 			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
+			count: 2
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
 
 		-
@@ -13943,211 +13953,6 @@ parameters:
 			path: modules/social_features/social_private_message/src/SocialPrivateMessageServiceProvider.php
 
 		-
-			message: "#^Function social_profile_fields_censor_full_name_suggestion\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_entity_bundle_field_info_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_entity_bundle_field_info_alter\\(\\) has parameter \\$bundle with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_entity_bundle_field_info_alter\\(\\) has parameter \\$fields with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_entity_form_display_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_entity_view_display_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_form_profile_profile_edit_form_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_form_profile_profile_edit_form_alter\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_preprocess_field\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_preprocess_field\\(\\) has parameter \\$variables with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_profile_view_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_social_user_export_plugin_info_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Function social_profile_fields_social_user_name_display_suggestions_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Method Drupal\\\\profile\\\\ProfileStorageInterface\\:\\:loadByUser\\(\\) invoked with 3 parameters, 2 required\\.$#"
-			count: 2
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Parameter \\#1 \\$profile_type_id of method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsHelper\\:\\:getProfileFields\\(\\) expects string, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.module
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\Form\\\\SocialProfileFieldsFlushForm\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\Form\\\\SocialProfileFieldsFlushForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$key of method Drupal\\\\Core\\\\Config\\\\Config\\:\\:get\\(\\) expects string, array\\<int, string\\>\\|string given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php
-
-		-
-			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\Form\\\\SocialProfileFieldsSettingsForm\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\Form\\\\SocialProfileFieldsSettingsForm\\:\\:submitFlush\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\Form\\\\SocialProfileFieldsSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$profile_type_id of method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsHelper\\:\\:getProfileFields\\(\\) expects string, int\\|string\\|null given\\.$#"
-			count: 2
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Variable \\$field_config in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$field$#"
-			count: 2
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$address_line1\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$locality\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$postal_code\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Cannot access property \\$field_profile_address on Drupal\\\\profile\\\\Entity\\\\Profile\\|null\\.$#"
-			count: 3
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Cannot call method hasField\\(\\) on Drupal\\\\profile\\\\Entity\\\\Profile\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\profile\\\\Entity\\\\Profile\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Cannot call method save\\(\\) on Drupal\\\\profile\\\\Entity\\\\Profile\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Cannot call method set\\(\\) on Drupal\\\\profile\\\\Entity\\\\Profile\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsBatch\\:\\:performFlush\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsBatch\\:\\:performFlushFinishedCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
-
-		-
-			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsHelper.php
-
-		-
-			message: "#^Method Drupal\\\\social_profile_fields\\\\SocialProfileFieldsOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsOverride.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsOverride.php
-
-		-
 			message: "#^Function social_profile_manager_notes_install\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.install
@@ -16271,8 +16076,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
-			count: 4
-			path: modules/social_features/social_event/src/SocialEventTrait.php
