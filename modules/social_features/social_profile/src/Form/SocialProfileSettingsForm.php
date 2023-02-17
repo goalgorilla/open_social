@@ -697,6 +697,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     $this->submitFieldsFieldset($form, $form_state);
 
     // Must run after submitFieldsFieldset because it's dependent on the status.
+    $this->submitNicknameFieldset($form, $form_state);
     $this->submitAddressFieldset($form, $form_state);
 
     parent::submitForm($form, $form_state);
@@ -885,6 +886,21 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     }
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Submit the nickname configuration values.
+   *
+   * This is split out into a separate function to make it easier to find all
+   * the other settings this form stores.
+   *
+   * @param array $form
+   *   The settings form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  private function submitNicknameFieldset(array &$form, FormStateInterface $form_state) : void {
+
   }
 
   /**

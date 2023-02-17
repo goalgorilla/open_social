@@ -11,6 +11,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldConfigInterface;
@@ -31,6 +32,7 @@ use Drupal\menu_link_content\MenuLinkContentInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\social_profile\FieldManager;
 use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
@@ -1213,6 +1215,20 @@ function social_profile_copy_shared_user_data_to_profile(UserInterface $user, Pr
 }
 
 /**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function social_profile_entity_bundle_field_info_alter(array &$fields, EntityTypeInterface $entity_type, string $bundle) : void {
+  if ($entity_type->id() === 'profile' && $bundle === 'profile') {
+    $config = \Drupal::config('social_profile.settings');
+
+    // Add the unique nickname constraint if it's enabled and the field exists.
+    if (isset($fields['field_profile_nick_name']) && $config->get('nickname_unique_validation')) {
+      $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
+    }
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_user_form_alter(&$form, FormStateInterface $form_state) {
@@ -1337,28 +1353,48 @@ function social_profile_social_user_name_display_suggestions(AccountInterface $a
 
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = $entityTypeManager->getStorage('profile');
+  assert($storage instanceof ProfileStorageInterface);
 
-  if ($user_profile = $storage->loadByUser($account, 'profile')) {
-    /** @var \Drupal\profile\ProfileAccessControlHandler $accessControlHandler */
-    $accessControlHandler = $entityTypeManager->getAccessControlHandler('profile');
+  $profile = $storage->loadByUser($account, 'profile');
 
-    $first_name_field = $user_profile->get('field_profile_first_name');
-    $last_name_field = $user_profile->get('field_profile_last_name');
+  // We expect all users to have a profile, not having one means Open Social is
+  // incorrectly installed. However, we can't continue without one.
+  if ($profile === NULL) {
+    \Drupal::logger('social_profile')->error("Missing default 'profile' profile for user ({$account->id()}).");
+    return $suggestions;
+  }
 
-    $first_name = $accessControlHandler->fieldAccess('view', $first_name_field->getFieldDefinition(), NULL, $first_name_field, FALSE)
-      ? $first_name_field->getString()
-      : "";
-    $last_name = $accessControlHandler->fieldAccess('view', $last_name_field->getFieldDefinition(), NULL, $last_name_field, FALSE)
-      ? $last_name_field->getString()
-      : "";
+  // Full name.
+  $first_name_field = $profile->get('field_profile_first_name');
+  $first_name_field_definition = $first_name_field->getFieldDefinition();
+  assert($first_name_field_definition instanceof FieldConfigInterface);
+  $last_name_field = $profile->get('field_profile_last_name');
+  $last_name_field_definition = $last_name_field->getFieldDefinition();
+  assert($last_name_field_definition instanceof FieldConfigInterface);
 
-    $account_name = trim($first_name . " " . $last_name);
-    if ($account_name !== '') {
-      // Add the full name with a default weight.
-      $suggestions['full_name'] = [
-        'name' => $account_name,
-      ];
-    }
+  $first_name = $first_name_field_definition->status() && $first_name_field->access('view') ? $first_name_field->getString() : "";
+  $last_name = $last_name_field_definition->status() && $last_name_field->access('view') ? $last_name_field->getString() : "";
+
+  $account_name = trim($first_name . " " . $last_name);
+  if ($account_name !== '') {
+    // Add the full name with a default weight.
+    $suggestions['full_name'] = [
+      'name' => $account_name,
+    ];
+  }
+
+  // Nickname.
+  $nick_name_field = $profile->get('field_profile_nick_name');
+  $nick_name_field_definition = $nick_name_field->getFieldDefinition();
+  assert($nick_name_field_definition instanceof FieldConfigInterface);
+
+  $nickname = $nick_name_field_definition->status() &&  $nick_name_field->access('view') ? $nick_name_field->getString() : "";
+  if ($nickname !== '') {
+    // Add the nickname with a low weight, so it's shown before the full name.
+    $suggestions['nickname'] = [
+      'weight' => -100,
+      'name' => $nickname,
+    ];
   }
 
   return $suggestions;
