@@ -366,7 +366,7 @@ function social_content_block_update_8005() {
  * Add event date as sorting option for events.
  */
 function social_content_block_update_8006() {
-  _social_content_block_update_sorting_options();
+  // Emptied in https://github.com/goalgorilla/open_social/pull/3315
 }
 
 /**
@@ -544,10 +544,11 @@ function social_content_block_update_10501(): void {
  *
  * @see: https://github.com/goalgorilla/open_social/pull/3315
  */
-function social_content_block_update_11001() {
+function social_content_block_update_11001(): void {
   $config_file = \Drupal::service('extension.list.module')->getPath('social_content_block') . '/config/static/field.storage.block_content.field_sorting_11001.yml';
-  if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
+  if (is_file($config_file)
+    && !empty($file_content = file_get_contents($config_file))) {
+    $settings = Yaml::parse($file_content);
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('field.storage.block_content.field_sorting');
