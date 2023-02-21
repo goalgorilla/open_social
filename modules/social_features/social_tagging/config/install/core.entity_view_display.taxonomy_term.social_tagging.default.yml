@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.social_tagging.field_term_page_url
+    - taxonomy.vocabulary.social_tagging
+  module:
+    - link
+    - text
+  enforced:
+    module:
+      - social_tagging
+id: taxonomy_term.social_tagging.default
+targetEntityType: taxonomy_term
+bundle: social_tagging
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_term_page_url:
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+hidden:
+  search_api_excerpt: true
