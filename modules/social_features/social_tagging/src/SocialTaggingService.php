@@ -305,20 +305,34 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   public function types(bool $short = FALSE): array {
     $items = [];
 
-    foreach ($this->moduleHandler->invokeAll(self::HOOK) as $item) {
-      if (is_array($item)) {
-        $entity_type = $item['entity_type'];
-        $bundles = $item['bundles'];
-      }
-      else {
-        $entity_type = $item;
-        $bundles = [];
-      }
+    $this->moduleHandler->invokeAllWith(
+      self::HOOK,
+      function (callable $hook, string $module) use (&$items) {
+        if (is_array($item = $hook())) {
+          $entity_type = $item['entity_type'];
 
-      $items[$entity_type] = $bundles;
-    }
+          unset($item['entity_type']);
+        }
+        else {
+          $entity_type = $item;
+          $item = [];
+        }
+
+        $items[$entity_type] = $item;
+      },
+    );
 
     $this->moduleHandler->alter(self::HOOK, $items);
+
+    foreach ($items as &$item) {
+      foreach ($item as $key => $value) {
+        if (is_numeric($key)) {
+          $item['bundles'][] = $value;
+
+          unset($item[$key]);
+        }
+      }
+    }
 
     return $short ? array_keys($items) : $items;
   }
