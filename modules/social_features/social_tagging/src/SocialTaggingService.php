@@ -299,6 +299,14 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     return $options;
   }
 
+  private function type(array &$items, array $item): void {
+    $entity_type = $item['entity_type'];
+
+    unset($item['entity_type']);
+
+    $items[$entity_type]['sets'][] = $item;
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -309,16 +317,18 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
       self::HOOK,
       function (callable $hook, string $module) use (&$items) {
         if (is_array($item = $hook())) {
-          $entity_type = $item['entity_type'];
-
-          unset($item['entity_type']);
+          if (isset($item['entity_type'])) {
+            $this->type($items, $item);
+          }
+          else {
+            foreach ($item as $sub_item) {
+              $this->type($items, $sub_item);
+            }
+          }
         }
         else {
-          $entity_type = $item;
-          $item = [];
+          $items[$item] = ['sets' => [[]]];
         }
-
-        $items[$entity_type] = $item;
       },
     );
 
@@ -327,11 +337,17 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     foreach ($items as &$item) {
       foreach ($item as $key => $value) {
         if (is_numeric($key)) {
-          $item['bundles'][] = $value;
+          foreach ($item['sets'] as &$set) {
+            $set['bundles'][] = $value;
+          }
 
           unset($item[$key]);
         }
       }
+
+      $item += $item['sets'];
+
+      unset($item['sets']);
     }
 
     return $short ? array_keys($items) : $items;

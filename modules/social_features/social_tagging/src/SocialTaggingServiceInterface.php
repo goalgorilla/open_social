@@ -13,6 +13,11 @@ use Drupal\Core\Language\LanguageManagerInterface;
 interface SocialTaggingServiceInterface {
 
   /**
+   * The default field name.
+   */
+  public const FIELD = 'social_tagging';
+
+  /**
    * SocialTaggingService constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
