@@ -255,8 +255,7 @@ class ActivityLoggerFactory {
       !$field_message_context->status() ||
       $field_message_context->getType() !== 'list_string' ||
       $field_message_context->isRequired() ||
-      $field_message_context->isTranslatable() ||
-      $field_message_context->language()->getId() !== "en"
+      $field_message_context->isTranslatable()
     ) {
       return FALSE;
     }
@@ -269,8 +268,7 @@ class ActivityLoggerFactory {
       !$field_message_destination->status() ||
       $field_message_destination->getType() !== 'list_string' ||
       $field_message_destination->isRequired() ||
-      $field_message_destination->isTranslatable() ||
-      $field_message_destination->language()->getId() !== "en"
+      $field_message_destination->isTranslatable()
     ) {
       return FALSE;
     }
@@ -283,8 +281,7 @@ class ActivityLoggerFactory {
       !$field_message_related_object->status() ||
       $field_message_related_object->getType() !== 'dynamic_entity_reference' ||
       $field_message_related_object->isRequired() ||
-      $field_message_related_object->isTranslatable() ||
-      $field_message_related_object->language()->getId() !== "en"
+      $field_message_related_object->isTranslatable()
     ) {
       return FALSE;
     }

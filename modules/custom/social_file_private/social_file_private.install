@@ -5,66 +5,104 @@
  * The social_file_private install file.
  */
 
-use Drupal\Core\StreamWrapper\PrivateStream;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
- * Implements hook_requirements().
+ * Implements hook_install().
  */
-function social_file_private_requirements($phase) {
-  $requirements = [];
+function social_file_private_install() : void {
+  $config_ids = [
+    'field.storage.block_content.field_hero_image',
+    'field.storage.comment.field_comment_files',
+    'field.storage.group.field_group_image',
+    'field.storage.node.field_book_image',
+    'field.storage.node.field_event_image',
+    'field.storage.node.field_files',
+    'field.storage.node.field_page_image',
+    'field.storage.node.field_topic_image',
+    'field.storage.post.field_post_image',
+    'field.storage.profile.field_profile_image',
+    'field.storage.profile.field_profile_banner_image',
+    'field.storage.paragraph.field_hero_image',
+    'field.storage.paragraph.field_hero_small_image',
+  ];
 
-  // Test if the Private File System Path is set.
-  if ($phase == 'runtime') {
-    /** @var string|NULL $file_private_path_base_path */
-    $file_private_path_base_path = PrivateStream::basePath();
-
-    if ($file_private_path_base_path === NULL) {
-      $requirements['social_file_private_path'] = [
-        'title' => t('Social Private Files'),
-        'value' => t('Private file system path not set'),
-        'severity' => REQUIREMENT_ERROR,
-        'description' => t('Your uploaded files on the Open Social entities are not fully protected because you did not set a Private File Directory. You need to set an existing local file system path for storing private files. It should be writable by Drupal and not accessible over the web. This must be changed in settings.php. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-      ];
+  foreach ($config_ids as $config_id) {
+    $storage = FieldStorageConfig::load($config_id);
+    // No need to update fields that aren't installed.
+    if ($storage === NULL) {
+      continue;
     }
-    else {
-      $requirements['social_file_private_path'] = [
-        'title' => t('Social Private Files'),
-        'value' => t('Private file system path is set'),
-        'severity' => REQUIREMENT_OK,
-        'description' => t('Assuming your private file system path configuration is functional and no other warnings are shown: your uploaded files on the Open Social entities are fully protected. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-      ];
-    }
-
-    $image_fields = \Drupal::service('entity_type.manager')->getStorage('field_storage_config')->loadByProperties(['type' => 'image']);
-    $file_fields = \Drupal::service('entity_type.manager')->getStorage('field_storage_config')->loadByProperties(['type' => 'file']);
-    $all_fields = array_merge($image_fields, $file_fields);
-
-    /** @var \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride $plugin */
-    $file_private_fields_config_override = \Drupal::service('social_file_private_fields.overrider');
-    $protected_fields = $file_private_fields_config_override->getFileImageFieldsToProtect();
-
-    /** @var \Drupal\field\FieldStorageConfigInterface $field */
-    $unprotected_fields = [];
-    foreach ($all_fields as $field) {
-      $id = $field->getOriginalId();
-      if ($id === 'font.field_fonts') {
-        continue;
-      }
-      if (!in_array('field.storage.' . $id, $protected_fields)) {
-        if ($field->getSetting('uri_scheme') === 'public') {
-          $unprotected_fields[$id] = $id;
-        }
-      }
-    }
-    if (!empty($unprotected_fields)) {
-      $requirements['social_file_private_path'] = [
-        'title' => t('Social Private Files Unprotected'),
-        'value' => t('Private file system path not set for some fields'),
-        'severity' => REQUIREMENT_ERROR,
-        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://www.drupal.org/docs/8/distributions/open-social/private-files', [':fields' => implode(',', $unprotected_fields)]),
-      ];
+    // Only update fields that aren't already private.
+    if ($storage->getSetting("uri_schema") === "public") {
+      $storage->setSetting("uri_schema", "private")->save();
     }
   }
 
-  return $requirements;
+  $editor_ids = [
+    'editor.editor.basic_html',
+    'editor.editor.full_html',
+  ];
+
+  foreach ($editor_ids as $editor_id) {
+    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
+    // Skip editor configs that don't yet exist.
+    if ($editor_config->isNew()) {
+      continue;
+    }
+    // Only update config that isn't already private.
+    if ($editor_config->get('image_upload.scheme') === "public") {
+      $editor_config->set('image_upload.scheme', 'private')->save();
+    }
+  }
+}
+
+/**
+ * Move config overrides into active configuration.
+ */
+function social_file_private_update_11001() : void {
+  $field_storages = [
+    'field.storage.block_content.field_hero_image',
+    'field.storage.comment.field_comment_files',
+    'field.storage.group.field_group_image',
+    'field.storage.node.field_book_image',
+    'field.storage.node.field_event_image',
+    'field.storage.node.field_files',
+    'field.storage.node.field_page_image',
+    'field.storage.node.field_topic_image',
+    'field.storage.post.field_post_image',
+    'field.storage.profile.field_profile_image',
+    'field.storage.profile.field_profile_banner_image',
+    'field.storage.paragraph.field_hero_image',
+    'field.storage.paragraph.field_hero_small_image',
+  ];
+
+  foreach ($field_storages as $storage_id) {
+    $storage = FieldStorageConfig::load($storage_id);
+    // No need to update fields that aren't installed.
+    if ($storage === NULL) {
+      continue;
+    }
+    // Only update fields that aren't already private.
+    if ($storage->getSetting("uri_schema") === "public") {
+      $storage->setSetting("uri_schema", "private")->save();
+    }
+  }
+
+  $editor_ids = [
+    'editor.editor.basic_html',
+    'editor.editor.full_html',
+  ];
+
+  foreach ($editor_ids as $editor_id) {
+    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
+    // Skip editor configs that don't yet exist.
+    if ($editor_config->isNew()) {
+      continue;
+    }
+    // Only update config that isn't already private.
+    if ($editor_config->get('image_upload.scheme') === "public") {
+      $editor_config->set('image_upload.scheme', 'private')->save();
+    }
+  }
 }
