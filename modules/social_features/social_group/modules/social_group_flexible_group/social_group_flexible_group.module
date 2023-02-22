@@ -396,6 +396,17 @@ function social_group_flexible_group_social_group_join_method_usage(): array {
 }
 
 /**
+ * Implements hook_social_tagging_type_alter().
+ */
+function social_group_flexible_group_social_tagging_type_alter(array &$items): void {
+  $items['group']['sets'][] = [
+    'bundles' => ['flexible_group'],
+    'group' => 'additional_details',
+    'label' => t('Tags'),
+  ];
+}
+
+/**
  * Custom form submit handler for editing a flexible group.
  *
  * @param array $form

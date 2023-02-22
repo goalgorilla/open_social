@@ -232,7 +232,10 @@ function social_tagging_social_tagging_field_form_alter(
     if ($styled) {
       $group = 'group_' . ($item['group'] ?? 'social_tags');
 
-      if (!isset($form['#fieldgroups'][$group])) {
+      if (isset($form['#fieldgroups'][$group])) {
+        $form['#fieldgroups'][$group]->children[] = $wrapper;
+      }
+      else {
         $group_tags = new stdClass();
 
         $group_tags->children = [];
@@ -256,17 +259,6 @@ function social_tagging_social_tagging_field_form_alter(
 
       $form[$wrapper]['#group'] = $group;
       $form['#group_children'][$wrapper] = $group;
-
-      // Add Tags in flexible groups if enabled.
-      if (
-        isset($form['#fieldgroups'][$group = 'group_additional_details']) &&
-        \Drupal::moduleHandler()->moduleExists('social_group_flexible_group')
-      ) {
-        $form[$wrapper]['#type'] = 'details';
-        $form[$wrapper]['#title'] = t('Tags');
-        $form['#fieldgroups'][$group]->children[] = $wrapper;
-        $form['#group_children'][$wrapper] = $group;
-      }
     }
 
     if (isset($machine_name, $default_value)) {
