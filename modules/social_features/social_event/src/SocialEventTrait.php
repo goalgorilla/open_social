@@ -24,19 +24,20 @@ trait SocialEventTrait {
   protected function eventHasBeenFinished(NodeInterface $node): bool {
     $current_time = new DrupalDateTime();
 
-    // Retrieve timezone from current time.
-    $timezone = $current_time->getTimezone()->getName();
-
     // Use the start date when the end date is not set to determine if the event
     // is closed.
+    /** @var \Drupal\Core\Datetime\DrupalDateTime $check_end_date */
     $check_end_date = $node->get('field_event_date_end')->isEmpty()
-      ? $node->get('field_event_date')->getString()
-      : $node->get('field_event_date_end')->getString();
-    $check_end_date = new \DateTime($check_end_date, new \DateTimeZone($timezone));
-    $check_end_date = $check_end_date->getTimestamp();
+      ? $node->get('field_event_date')->date
+      : $node->get('field_event_date_end')->date;
+
+    if (!$check_end_date instanceof DrupalDateTime) {
+      // Not possible to detect end date.
+      return FALSE;
+    }
 
     // The event has finished if the end date is smaller than the current date.
-    return $current_time->getTimestamp() > $check_end_date;
+    return $current_time->getTimestamp() > $check_end_date->getTimestamp();
   }
 
 }
