@@ -132,7 +132,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $content_types = [];
 
-    foreach ($types as $entity_type => $bundles) {
+    foreach ($types as $entity_type => $sets) {
       $definition = $this->entityTypeManager->getDefinition($entity_type);
 
       if ($definition === NULL) {
@@ -141,6 +141,19 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
 
       $label = $entity_type === 'node'
         ? $this->t('Node') : $definition->getLabel();
+
+      $bundles = [];
+
+      foreach ($sets as $set) {
+        if (!empty($set['bundles'])) {
+          $bundles = [...$bundles, ...$set['bundles']];
+        }
+        else {
+          $bundles = [];
+
+          break;
+        }
+      }
 
       if ($bundles) {
         $bundle_entity_type = $definition->getBundleEntityType();
