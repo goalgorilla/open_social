@@ -186,7 +186,9 @@ function social_tagging_social_tagging_field_form_alter(
   ) {
     // Remove the field from the form.
     foreach ($items[$type] as $item) {
-      if (!empty($form[$field = $item['field'] ?? 'social_tagging'])) {
+      $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
+
+      if (!empty($form[$field])) {
         $form[$field]['#access'] = FALSE;
       }
     }
@@ -196,16 +198,9 @@ function social_tagging_social_tagging_field_form_alter(
 
   $styled = theme_get_setting('content_entity_form_style') === 'open_social';
 
-  // Get the main categories.
-  $categories = $tag_service->getCategories();
-
-  if ($tag_service->allowSplit()) {
-    // Get the default value.
-    $default_value = _social_tagging_node_form_defaults_values($entity);
-
-    /** @var \Drupal\social_core\Service\MachineNameInterface $machine_name */
-    $machine_name = \Drupal::service('social_core.machine_name');
-  }
+  // Get the default value.
+  $default_value = ($split = $tag_service->allowSplit())
+    ? _social_tagging_node_form_defaults_values($entity) : NULL;
 
   foreach ($items[$type] as $delta => $item) {
     $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
@@ -217,15 +212,24 @@ function social_tagging_social_tagging_field_form_alter(
       continue;
     }
 
-    // Add an extra vertical tab.
-    $form[$wrapper = 'tagging' . $delta] = [
-      '#type' => $styled ? 'details' : 'fieldset',
-      '#title' => $styled ? $item['label'] ?? '' : t('Tag content'),
-      '#description' => '',
-      '#group' => 'group_' . $wrapper,
-      '#open' => TRUE,
-      '#weight' => 50,
-    ];
+    if ($styled) {
+      if (
+        !empty($item['label']) &&
+        (!isset($item['wrapper']) || $item['wrapper'])
+      ) {
+        $title = $item['label'];
+      }
+      else {
+        $title = NULL;
+      }
+    }
+    else {
+      $title = t('Tag content');
+    }
+
+    $wrapper = SocialTaggingServiceInterface::WRAPPER . $delta;
+
+    $tag_service->wrapper($form, $styled, $title, NULL, $wrapper);
 
     // We want to move the tagging field in new fieldset "Tags" only when the
     // theme settings are updated.
@@ -261,57 +265,20 @@ function social_tagging_social_tagging_field_form_alter(
       $form['#group_children'][$wrapper] = $group;
     }
 
-    if (isset($machine_name, $default_value)) {
-      // Loop over the categories.
-      foreach ($categories as $tid => $category) {
-        $field_name = $field . '_' . $machine_name->transform($category);
+    $tag_service->field($form, $field, $default_value);
 
-        // Get the corresponding items.
-        $options = $tag_service->getChildren($tid);
-
-        // Display parent item in the tags list.
-        if ($tag_service->useCategoryParent()) {
-          $options = [$tid => $category] + $options;
-        }
-
-        // Only add a field if the category has any options.
-        if (count($options) > 0) {
-          // Add a field.
-          $form[$wrapper][$field_name] = [
-            '#type' => 'select2',
-            '#title' => $category,
-            '#multiple' => TRUE,
-            '#default_value' => $default_value,
-            '#options' => $options,
-            '#group' => 'group_' . $wrapper,
-          ];
-        }
-      }
-
-      // Deny access the tags field altogether.
-      $form[$field]['#access'] = FALSE;
-
+    if ($split) {
       // Add a custom submit handler.
       $form['#validate'][] = '_social_tagging_entity_validate';
     }
     else {
-      $options = [];
-
-      foreach ($categories as $key => $value) {
-        $options[$value] = $tag_service->getChildren($key);
-      }
-
-      $form[$field]['widget']['#options'] = $options;
-
-      // Move the tags field in the group.
-      $form[$wrapper][$field] = $form[$field];
-
-      unset($form[$field]);
-
       $form[$wrapper][$field]['#group'] = 'group_' . $wrapper;
     }
 
-    if ($type === 'profile' && $field === SocialTaggingServiceInterface::FIELD) {
+    if (
+      $type === 'profile' &&
+      $field === SocialTaggingServiceInterface::FIELD
+    ) {
       if (isset($form['#fieldgroups'][$group = 'group_tags'])) {
         $form[$wrapper]['#type'] = 'container';
         $form[$wrapper]['#group'] = $group;
