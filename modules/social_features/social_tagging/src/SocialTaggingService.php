@@ -299,6 +299,14 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     return $options;
   }
 
+  /**
+   * Prepares settings of a supported entity type.
+   *
+   * @param array $items
+   *   The modified settings structure is keyed by entity type identifiers.
+   * @param array $item
+   *   The current entity type settings.
+   */
   private function type(array &$items, array $item): void {
     $entity_type = $item['entity_type'];
 
