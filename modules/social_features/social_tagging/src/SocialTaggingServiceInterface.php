@@ -6,6 +6,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_core\Service\MachineNameInterface;
 
 /**
  * Defines the tagging service interface.
@@ -18,6 +20,11 @@ interface SocialTaggingServiceInterface {
   public const FIELD = 'social_tagging';
 
   /**
+   * The default name of the wrapper for tags fields.
+   */
+  public const WRAPPER = 'tagging';
+
+  /**
    * SocialTaggingService constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -28,18 +35,35 @@ interface SocialTaggingServiceInterface {
    *   Injection of the languageManager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_core\Service\MachineNameInterface $machine_name
+   *   The machine name.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    MachineNameInterface $machine_name
   );
 
   /**
    * Returns whether the feature is turned on or not.
    */
   public function active(): bool;
+
+  /**
+   * Prepares tags field.
+   *
+   * @param array $form
+   *   The form structure.
+   * @param string $name
+   * @param array|null $default_value
+   */
+  public function field(
+    array &$form,
+    string $name,
+    array $default_value = NULL
+  ): void;
 
   /**
    * Returns whether the feature is turned on for groups or not.
@@ -129,5 +153,28 @@ interface SocialTaggingServiceInterface {
    *   The keys are entity type identifiers. The values are arrays of bundles.
    */
   public function types(bool $short = FALSE): array;
+
+  /**
+   * Prepares tags fields wrapper.
+   *
+   * @param array $form
+   *   The form structure.
+   * @param bool $styled
+   *   The styled content indicator.
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $title
+   *   (optional) The wrapper title. Defaults to NULL.
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $description
+   *   (optional) The wrapper description. Defaults to NULL.
+   * @param string $name
+   *   (optional) The wrapper identifier. Defaults to
+   *   SocialTaggingServiceInterface::WRAPPER.
+   */
+  public function wrapper(
+    array &$form,
+    bool $styled,
+    TranslatableMarkup $title = NULL,
+    TranslatableMarkup $description = NULL,
+    string $name = self::WRAPPER
+  ): self;
 
 }

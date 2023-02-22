@@ -6,7 +6,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\social_core\Service\MachineNameInterface;
 use Drupal\taxonomy\TermInterface;
 
 /**
@@ -46,18 +48,30 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   private ModuleHandlerInterface $moduleHandler;
 
   /**
+   * The machine name.
+   */
+  private MachineNameInterface $machineName;
+
+  /**
+   * The tags fields wrapper.
+   */
+  private string $wrapper;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    MachineNameInterface $machine_name
   ) {
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
     $this->languageManager = $language_manager;
     $this->moduleHandler = $module_handler;
+    $this->machineName = $machine_name;
   }
 
   /**
@@ -66,6 +80,63 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   public function active(): bool {
     return (bool) $this->configFactory->get('social_tagging.settings')
       ->get('enable_content_tagging');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function field(
+    array &$form,
+    string $name,
+    array $default_value = NULL
+  ): void {
+    // Get the main categories.
+    $categories = $this->getCategories();
+
+    if ($default_value !== NULL) {
+      // Loop over the categories.
+      foreach ($categories as $tid => $category) {
+        $field_name = $name . '_' . $this->machineName->transform($category);
+
+        // Get the corresponding items.
+        $options = $this->getChildren($tid);
+
+        // Display parent item in the tags list.
+        if ($this->useCategoryParent()) {
+          $options = [$tid => $category] + $options;
+        }
+
+        // Only add a field if the category has any options.
+        if (count($options) > 0) {
+          // Add a field.
+          $form[$this->wrapper][$field_name] = [
+            '#type' => 'select2',
+            '#title' => $category,
+            '#multiple' => TRUE,
+            '#default_value' => $default_value,
+            '#options' => $options,
+            '#group' => 'group_' . $this->wrapper,
+          ];
+        }
+      }
+
+      // Deny access the tags field altogether.
+      $form[$name]['#access'] = FALSE;
+    }
+    else {
+      $options = [];
+
+      foreach ($categories as $tid => $category) {
+        $options[$category] = $this->getChildren($tid);
+      }
+
+      $form[$name]['widget']['#options'] = $options;
+
+      // Move the tags field in the group.
+      $form[$this->wrapper][$name] = $form[$name];
+
+      unset($form[$name]);
+    }
   }
 
   /**
@@ -359,6 +430,30 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     }
 
     return $short ? array_keys($items) : $items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function wrapper(
+    array &$form,
+    bool $styled,
+    TranslatableMarkup $title = NULL,
+    TranslatableMarkup $description = NULL,
+    string $name = self::WRAPPER
+  ): self {
+    $form[$name] = [
+      '#type' => $styled ? 'details' : 'fieldset',
+      '#title' => $title,
+      '#description' => $description,
+      '#group' => 'group_' . $name,
+      '#open' => TRUE,
+      '#weight' => $name === self::WRAPPER ? 0 : 50,
+    ];
+
+    $this->wrapper = $name;
+
+    return $this;
   }
 
 }
