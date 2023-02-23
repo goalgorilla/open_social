@@ -197,7 +197,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   /**
    * Gets the mentions in text.
    *
-   * @param string $text
+   * @param null|string $text
    *   The text to find mentions in.
    *
    * @return array
@@ -205,8 +205,12 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  public function getMentions(string $text): array {
+  public function getMentions(?string $text): array {
     $mentions = [];
+
+    if (empty($text)) {
+      return $mentions;
+    }
 
     foreach ($this->getConfigsByMentionTypes() as $config_name => $config) {
       $input_settings = $this->getInputSettingsByConfig($config);
