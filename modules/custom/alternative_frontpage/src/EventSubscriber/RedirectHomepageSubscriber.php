@@ -17,6 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Url;
+use Drupal\path_alias\AliasRepositoryInterface;
 
 /**
  * The RedirectHomepageSubscriber class.
@@ -73,6 +74,13 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected StateInterface $state;
 
   /**
+   * The path alias repository.
+   *
+   * @var \Drupal\path_alias\AliasRepositoryInterface
+   */
+  protected AliasRepositoryInterface $pathAliasRepository;
+
+  /**
    * Constructor for the RedirectHomepageSubscriber.
    *
    * @param \Drupal\user\UserData $user_data
@@ -89,6 +97,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\path_alias\AliasRepositoryInterface $path_alias_repository
+   *   The path alias repository.
    */
   public function __construct(
     UserData $user_data,
@@ -97,7 +107,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     PathMatcher $path_matcher,
     StateInterface $state,
     EntityTypeManagerInterface $entity_type_manager,
-    LanguageManagerInterface $language_manager
+    LanguageManagerInterface $language_manager,
+    AliasRepositoryInterface $path_alias_repository
   ) {
     // We need it.
     $this->userData = $user_data;
@@ -107,6 +118,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $this->state = $state;
     $this->entityTypeManager = $entity_type_manager;
     $this->languageManager = $language_manager;
+    $this->pathAliasRepository = $path_alias_repository;
   }
 
   /**
@@ -163,13 +175,24 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
       /** @var \Drupal\alternative_frontpage\Entity\AlternativeFrontpage $authenticated_page */
       $authenticated_page = reset($authenticated_page);
+      $authenticated_page_url = $authenticated_page->path;
+      if ($alias = $this->pathAliasRepository->lookupByAlias($authenticated_page_url, $active_language)) {
+        $authenticated_page_url = $alias['path'];
+      }
 
-      if ($request_path === $authenticated_page->path) {
+      // If we are on the frontpage, Drupal will rewrite the url
+      // to '/', so the below if condition  will never be true
+      // this will cause an endless loop.
+      if ($request_path === "/") {
+        $request_path = $site_settings_frontpage;
+      }
+
+      if ($request_path === $authenticated_page_url) {
         return;
       }
 
       if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language)) {
-        $this->doRedirect($event, 'administrator', $authenticated_page->path);
+        $this->doRedirect($event, 'administrator', $authenticated_page_url);
       }
     }
 
@@ -193,6 +216,13 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
 
     // We only proceed if the user requests the home page.
     if ($this->isFrontPageRequested($request_path, $site_settings_frontpage, $active_language->getId())) {
+      // Check if user_page is an alias, if so get the actual url.
+      // $site_settings_frontpage will always be a URL, even if the alias
+      // is used.
+      if ($alias = $this->pathAliasRepository->lookupByAlias($user_page, $active_language->getId())) {
+        $user_page = $alias['path'];
+      }
+
       // The home page for the user is the same as in the site configuration,
       // and we are not redirecting, otherwise there will be an endless loop.
       if ($user_page === $site_settings_frontpage) {
