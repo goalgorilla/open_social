@@ -2,8 +2,10 @@
 
 namespace Drupal\activity_creator\Plugin;
 
+use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Base class for Activity action plugins.
@@ -32,12 +34,13 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity): bool {
     // Turn off this feature for all non-content entities.
-    if (!$entity instanceof ContentEntityInterface) {
-      return FALSE;
+    // Or non notification config entity.
+    if ($entity instanceof ContentEntityInterface || $entity instanceof NotificationConfigEntityInterface) {
+      return TRUE;
     }
-    return TRUE;
+    return FALSE;
   }
 
 }
