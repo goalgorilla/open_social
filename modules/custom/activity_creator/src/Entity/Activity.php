@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator\Entity;
 
+use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -201,15 +202,23 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    *   Returns NULL or Entity object.
    */
   public function getRelatedEntity() {
-
     $related_object = $this->get('field_activity_entity')->getValue();
     if (!empty($related_object)) {
       $target_type = $related_object['0']['target_type'];
       $target_id = $related_object['0']['target_id'];
       $entity_storage = $this->entityTypeManager()->getStorage($target_type);
-      /** @var  \Drupal\Core\Entity\EntityInterface $entity */
-      $entity = $entity_storage->load($target_id);
-      return $entity;
+      if ($entity_storage instanceof ConfigEntityStorage) {
+        $entity = $entity_storage->loadByProperties([
+          'unique_id' => $target_id,
+          'status' => 1,
+        ]);
+        $entity = reset($entity);
+      }
+      else {
+        /** @var  \Drupal\Core\Entity\EntityInterface $entity */
+        $entity = $entity_storage->load($target_id);
+      }
+      return empty($entity) ? NULL : $entity;
     }
     return NULL;
 
