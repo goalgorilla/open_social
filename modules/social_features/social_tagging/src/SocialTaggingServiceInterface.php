@@ -72,6 +72,9 @@ interface SocialTaggingServiceInterface {
    *   (optional) The default value. Defaults to NULL.
    * @param string|null $parent
    *   (optional) The wrapper element name. Defaults to NULL.
+   *
+   * @return bool
+   *   TRUE, if the field is displayed.
    */
   public function field(
     array &$form,
@@ -82,7 +85,7 @@ interface SocialTaggingServiceInterface {
     string $wrapper = self::WRAPPER,
     array $default_value = NULL,
     string $parent = NULL
-  ): void;
+  ): bool;
 
   /**
    * Returns whether the feature is turned on for groups or not.

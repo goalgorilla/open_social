@@ -233,7 +233,7 @@ function social_tagging_social_tagging_field_form_alter(
     $default_value = $split
       ? _social_tagging_node_form_defaults_values($entity, $field) : NULL;
 
-    $tag_service->field(
+    $added = $tag_service->field(
       $form,
       $form_state,
       $field,
@@ -242,6 +242,10 @@ function social_tagging_social_tagging_field_form_alter(
       $wrapper = SocialTaggingServiceInterface::WRAPPER . $delta,
       $default_value,
     );
+
+    if (!$added) {
+      continue;
+    }
 
     // We want to move the tagging field in new fieldset "Tags" only when the
     // theme settings are updated.
@@ -320,7 +324,7 @@ function _social_tagging_entity_validate(
 
     // Loop over the categories.
     foreach ($categories as $counter => $category) {
-      $sub_field = $field. '_' . $machine_name->transform($category);
+      $sub_field = $field . '_' . $machine_name->transform($category);
 
       foreach ((array) $form_state->getValue($sub_field) as $selected) {
         $tagging_values[] = [
