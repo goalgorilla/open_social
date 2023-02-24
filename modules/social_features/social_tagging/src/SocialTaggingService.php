@@ -85,7 +85,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     string $wrapper = self::WRAPPER,
     array $default_value = NULL,
     string $parent = NULL
-  ): void {
+  ): bool {
     if ($parent !== NULL) {
       $element = &NestedArray::getValue($form, [$parent]);
     }
@@ -93,16 +93,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
       $element = &$form;
     }
 
-    $styled = theme_get_setting('content_entity_form_style') === 'open_social';
-
-    $element[$wrapper] = [
-      '#type' => $styled ? 'details' : 'fieldset',
-      '#title' => $title,
-      '#description' => $description,
-      '#group' => 'group_' . $wrapper,
-      '#open' => TRUE,
-      '#weight' => $wrapper === self::WRAPPER ? 0 : 50,
-    ];
+    $displayed = FALSE;
 
     // Get the main categories.
     $categories = $this->getCategories();
@@ -131,17 +122,21 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
             '#group' => 'group_' . $wrapper,
             '#options' => $options,
           ];
+
+          $displayed = TRUE;
         }
       }
 
       // Deny access the tags field altogether.
       $element[$name]['#access'] = FALSE;
 
-      // Add a custom submit handler.
-      $form['#validate'][] = '_social_tagging_entity_validate';
+      if ($displayed) {
+        // Add a custom submit handler.
+        $form['#validate'][] = '_social_tagging_entity_validate';
 
-      $fields = (array) $form_state->get('tags');
-      $form_state->set('tags', array_merge($fields, [$name]));
+        $fields = (array) $form_state->get('tags');
+        $form_state->set('tags', array_merge($fields, [$name]));
+      }
     }
     else {
       $options = [];
@@ -158,7 +153,24 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
       unset($element[$name]);
 
       $element[$wrapper][$name]['#group'] = 'group_' . $wrapper;
+
+      $displayed = TRUE;
     }
+
+    if ($displayed) {
+      $styled = theme_get_setting('content_entity_form_style') === 'open_social';
+
+      $element[$wrapper] += [
+        '#type' => $styled ? 'details' : 'fieldset',
+        '#title' => $title,
+        '#description' => $description,
+        '#group' => 'group_' . $wrapper,
+        '#open' => TRUE,
+        '#weight' => $wrapper === self::WRAPPER ? 0 : 50,
+      ];
+    }
+
+    return $displayed;
   }
 
   /**
