@@ -146,7 +146,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
 
       foreach ($sets as $set) {
         if (!empty($set['bundles'])) {
-          $bundles = [...$bundles, ...$set['bundles']];
+          $bundles = [...$bundles, ...array_values($set['bundles'])];
         }
         else {
           $bundles = [];
