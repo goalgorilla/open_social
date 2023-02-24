@@ -434,19 +434,26 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     $this->moduleHandler->alter(self::HOOK, $items);
 
     foreach ($items as &$item) {
-      foreach ($item as $key => $value) {
-        if (is_numeric($key)) {
-          foreach ($item['sets'] as &$set) {
-            $set['bundles'][] = $value;
-          }
+      if (is_array($item)) {
+        foreach ($item as $key => $value) {
+          if (is_numeric($key)) {
+            foreach ($item['sets'] as &$set) {
+              $set['bundles'][] = $value;
+            }
 
-          unset($item[$key]);
+            unset($item[$key]);
+          }
+        }
+
+        if (isset($item['sets'])) {
+          $item += $item['sets'];
+
+          unset($item['sets']);
         }
       }
-
-      $item += $item['sets'];
-
-      unset($item['sets']);
+      else {
+        $item = [];
+      }
     }
 
     return $short ? array_keys($items) : $items;
