@@ -91,7 +91,7 @@ function mentions_insert_or_update(EntityInterface $entity, bool $update): void 
     $container = \Drupal::getContainer();
     $filter_mentions = MentionsFilter::create($container, [], 'filter_mentions', []);
     $filter_mentions->setTextFormat($format);
-    if ($filter_mentions->shouldApplyFilter()) {
+    if ($filter_mentions->shouldApplyFilter() && !empty($value)) {
       $mentions = $filter_mentions->getMentions($value);
       $auid = \Drupal::currentUser()->id();
       mentions_crud_update($type, $mentions, (int) $entity->id(), $auid);
