@@ -5,6 +5,7 @@
  * The Social Private Message (de)installation file.
  */
 
+use Drupal\message\Entity\Message;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -65,6 +66,20 @@ function social_private_message_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function social_private_message_uninstall(bool $is_syncing) : void {
+  // Delete any notifications that exist for private messages since we're
+  // removing the template.
+  $message_ids = \Drupal::entityQuery('message')
+    ->accessCheck(TRUE)
+    ->condition('template', 'create_private_message')
+    ->execute();
+  assert(is_array($message_ids));
+  Message::deleteMultiple($message_ids);
+}
+
+/**
  * Implements hook_update_dependencies().
  */
 function social_private_message_update_dependencies() {
@@ -85,6 +100,11 @@ function social_private_message_update_dependencies() {
   // > [error]  Update failed: social_private_message_update_11002
   $dependencies['social_private_message'][11002] = [
     'group' => 8020,
+  ];
+
+  // Ensure the messages fields are installed before we try to update them.
+  $dependencies['social_private_message'][11402] = [
+    'activity_logger' => 11002,
   ];
 
   return $dependencies;
@@ -504,4 +524,35 @@ function social_private_message_update_11401(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Ensure module dependency is uninstalled when the module is.
+ */
+function social_private_message_update_11402() : void {
+  $configFactory = \Drupal::configFactory();
+
+  $toUpdate = [
+    'core.entity_view_display.profile.profile.compact_private_message',
+    'core.entity_view_mode.profile.compact_private_message',
+    'field.field.message.create_private_message.field_message_context',
+    'field.field.message.create_private_message.field_message_destination',
+    'field.field.message.create_private_message.field_message_related_object',
+    'message.template.create_private_message',
+    'views.view.inbox',
+  ];
+
+  foreach ($toUpdate as $id) {
+    $config = $configFactory->getEditable($id);
+    $dependencies = $config->get('dependencies');
+    if (!isset($dependencies['enforced'])) {
+      $dependencies['enforced'] = [];
+    }
+    if (!isset($dependencies['enforced']['module'])) {
+      $dependencies['enforced']['module'] = [];
+    }
+    $dependencies['enforced']['module'][] = 'social_private_message';
+    $config->set('dependencies', $dependencies)
+      ->save(TRUE);
+  }
 }
