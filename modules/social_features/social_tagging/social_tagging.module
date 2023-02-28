@@ -207,10 +207,7 @@ function social_tagging_social_tagging_field_form_alter(
   foreach ($items[$type] as $delta => $item) {
     $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
 
-    if (
-      empty($form[$field]) ||
-      (!empty($item['bundles']) && !in_array($bundle, $item['bundles']))
-    ) {
+    if (empty($form[$field])) {
       continue;
     }
 
