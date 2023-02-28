@@ -166,11 +166,11 @@ function social_tagging_social_tagging_field_form_alter(
     return;
   }
 
-  $bundles = FALSE;
+  $bundles = TRUE;
 
   foreach ($items[$type] as $item) {
-    if (!empty($item['bundles'])) {
-      $bundles = TRUE;
+    if (empty($item['bundles'])) {
+      $bundles = FALSE;
       break;
     }
   }
