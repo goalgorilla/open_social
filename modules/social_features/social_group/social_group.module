@@ -1133,14 +1133,40 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         $found = TRUE;
         break;
       }
+
+      // These conditions are here to check exactly the same as the code above
+      // except that `!isset($data['method']) &&` is not part of the conditions
+      // anymore. The reason why we did this is that initial architecture of
+      // @Join plugins predicted that plugins could be initiated only by field
+      // or only by method, but there can be group types where it should
+      // be initiated by both. The conditions below are respecting that fact,
+      // which is needed to change the field type of the field which is
+      // responsible for listing all join options accordingly.
+      $field_found = FALSE;
+      if (
+        isset($data['field'], $form[$data['field']]) &&
+        $data['entity_type'] === $entity_type_id &&
+        (
+          !isset($data['bundle']) &&
+          $bundle === NULL ||
+          in_array($bundle, (array) $data['bundle'])
+        )
+      ) {
+        $field_found = TRUE;
+        break;
+      }
     }
 
-    if ($found && isset($data)) {
+    if ($field_found && isset($data)) {
       $field = &$form[$data['field']]['widget'];
 
       if ($field['#type'] === 'checkboxes') {
         $field['#type'] = 'radios';
       }
+    }
+
+    if ($found && isset($data)) {
+      $field = &$form[$data['field']]['widget'];
 
       if ($entity->isNew()) {
         $hook = 'social_group_join_method_info';
