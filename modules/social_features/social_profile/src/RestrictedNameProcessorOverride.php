@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_privacy;
+namespace Drupal\social_profile;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
@@ -9,7 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Adds the Restricted Name field to our required processors.
  *
- * @package Drupal\social_profile_privacy
+ * @package Drupal\social_profile
  */
 class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface {
 
@@ -67,6 +67,11 @@ class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface 
    * {@inheritdoc}
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+    // Drupal core also violates the interface here, see
+    // \Drupal\Core\Installer\ConfigOverride and contrib has similar cases
+    // saying it doesn't break anything, so it seems like an incorrect interface
+    // in core.
+    // @phpstan-ignore-next-line
     return NULL;
   }
 
