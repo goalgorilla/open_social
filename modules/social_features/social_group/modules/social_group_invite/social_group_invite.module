@@ -904,3 +904,31 @@ function social_group_invite_field_formatter_info_alter(array &$info): void {
     $info['entity_reference_label']['class'] = EntityReferenceLabelFormatterOverrider::class;
   }
 }
+
+/**
+ * Ads "added" method for flexible_group, because users with certain permissions
+ * (SM/GM) can always invite users (member management feature), despite what
+ * join method is selected per flexible group.
+ *
+ * @param array $items
+ * @return void
+ */
+function social_group_invite_social_group_join_method_usage_alter(array &$items) {
+
+  foreach ($items as &$item) {
+
+    if (isset($item['bundle']) && $item['bundle'] === 'flexible_group') {
+      if (isset($item['method'])) {
+        if (is_string($item['method'])) {
+          $item['method'] = [$item['method']];
+        }
+      } else {
+        $item['method'] = [];
+      }
+
+      if (!array_search('added', $item['method'])) {
+        $item['method'][] = 'added';
+      }
+    }
+  }
+}
