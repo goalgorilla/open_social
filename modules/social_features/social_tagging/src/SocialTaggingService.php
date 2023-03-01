@@ -452,7 +452,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
         }
       }
       else {
-        $item = [];
+        $item = [[]];
       }
     }
 
