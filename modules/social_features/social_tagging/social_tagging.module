@@ -167,8 +167,9 @@ function social_tagging_social_tagging_field_form_alter(
   }
 
   $bundles = TRUE;
+  $items = $items[$type];
 
-  foreach ($items[$type] as $item) {
+  foreach ($items as $item) {
     if (empty($item['bundles'])) {
       $bundles = FALSE;
       break;
@@ -190,7 +191,7 @@ function social_tagging_social_tagging_field_form_alter(
     !$tag_service->hasContent()
   ) {
     // Remove the field from the form.
-    foreach ($items[$type] as $item) {
+    foreach ($items as $item) {
       $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
 
       if (!empty($form[$field])) {
@@ -203,13 +204,21 @@ function social_tagging_social_tagging_field_form_alter(
 
   $styled = theme_get_setting('content_entity_form_style') === 'open_social';
   $split = $tag_service->allowSplit();
+  $fields = [];
 
-  foreach ($items[$type] as $delta => $item) {
+  usort(
+    $items,
+    fn($a, $b) => !empty($a['bundles']) && empty($b['bundles']) ? -1 : 1,
+  );
+
+  foreach ($items as $delta => $item) {
     $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
 
-    if (empty($form[$field])) {
+    if (empty($form[$field]) || in_array($field, $fields)) {
       continue;
     }
+
+    $fields[] = $field;
 
     if ($styled) {
       if (
