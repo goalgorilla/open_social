@@ -166,19 +166,9 @@ function social_tagging_social_tagging_field_form_alter(
     return;
   }
 
-  $bundles = TRUE;
   $items = $items[$type];
-
-  foreach ($items as $item) {
-    if (empty($item['bundles'])) {
-      $bundles = FALSE;
-      break;
-    }
-  }
-
-  $prefix = $bundles ? $type . '_' : '';
-  $bundle = $entity->bundle();
-  $suffix = $bundles ? $bundle : $type;
+  $prefix = ($bundles = !empty($items[0]['bundles'])) ? $type . '_' : '';
+  $suffix = $bundles ? $entity->bundle() : $type;
 
   // Load tag config.
   $enabled = \Drupal::configFactory()->getEditable('social_tagging.settings')
