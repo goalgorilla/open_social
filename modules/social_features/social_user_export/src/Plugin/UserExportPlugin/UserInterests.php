@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_interests",
  *  label = @Translation("Interests"),
  *  weight = -290,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_interests",
+ *    },
+ *  )
  * )
  */
 class UserInterests extends UserExportPluginBase {

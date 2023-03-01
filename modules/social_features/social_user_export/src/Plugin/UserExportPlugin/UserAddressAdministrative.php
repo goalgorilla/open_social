@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_address_administrative",
  *  label = @Translation("Administrative address"),
  *  weight = -380,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_address",
+ *    },
+ *  )
  * )
  */
 class UserAddressAdministrative extends UserExportPluginBase {

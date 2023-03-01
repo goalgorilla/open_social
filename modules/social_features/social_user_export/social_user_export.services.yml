@@ -1,4 +1,9 @@
 services:
   plugin.manager.user_export_plugin:
     class: Drupal\social_user_export\Plugin\UserExportPluginManager
-    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@current_user', '@config.factory']
+    arguments:
+      - '@container.namespaces'
+      - '@cache.discovery'
+      - '@module_handler'
+      - '@theme_handler'
+      - '@config.factory'

@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_address_country_code",
  *  label = @Translation("Country code"),
  *  weight = -390,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_address",
+ *    }
+ *  )
  * )
  */
 class UserAddressCountryCode extends UserExportPluginBase {

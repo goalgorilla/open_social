@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_self_introduction",
  *  label = @Translation("Self Introduction"),
  *  weight = -280,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_self_introduction",
+ *    },
+ *  )
  * )
  */
 class UserSelfIntroduction extends UserExportPluginBase {
