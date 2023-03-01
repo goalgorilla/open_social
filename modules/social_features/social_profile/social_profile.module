@@ -1350,6 +1350,7 @@ function social_profile_social_user_name_display_suggestions(AccountInterface $a
   $suggestions = [];
 
   $entityTypeManager = \Drupal::entityTypeManager();
+  $settings = \Drupal::config('social_profile.settings');
 
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = $entityTypeManager->getStorage('profile');
@@ -1394,6 +1395,17 @@ function social_profile_social_user_name_display_suggestions(AccountInterface $a
     $suggestions['nickname'] = [
       'weight' => -100,
       'name' => $nickname,
+    ];
+  }
+
+  if (
+    $settings->get('limit_name_display')
+    && isset($suggestions['full_name'], $suggestions['nickname'])
+    && \Drupal::currentUser()->hasPermission('social profile always show full name')
+  ) {
+    $suggestions['nickname_with_full_name'] = [
+      'weight' => -PHP_INT_MAX,
+      'name' => $suggestions['nickname']['name'] . ' (' . $suggestions['full_name']['name'] . ')',
     ];
   }
 

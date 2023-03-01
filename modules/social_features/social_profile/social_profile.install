@@ -1742,9 +1742,43 @@ function social_profile_update_12018() : void {
 }
 
 /**
- * Clean up migrated settings and permissions.
+ * Migrate social_profile_privacy settings.
  */
 function social_profile_update_12019() : void {
+  $profile_settings = \Drupal::configFactory()
+    ->getEditable('social_profile.settings');
+  $privacy_settings = \Drupal::configFactory()
+    ->getEditable('social_profile_privacy.settings');
+
+  $profile_settings->set('limit_name_display', $privacy_settings->get('limit_search_and_mention'));
+
+  $profile_settings->save();
+  $privacy_settings->delete();
+
+  // Migrate privacy permission.
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->hasPermission("social profile privacy always show full name")) {
+      $role->grantPermission("social profile always show full name");
+      $role->revokePermission("social profile privacy always show full name");
+      $role->save();
+    }
+  }
+
+  // Ensure our search index no longer depend on `social_profile_privacy`.
+  // We make it depend on `social_profile` instead.
+  $index = \Drupal::configFactory()->getEditable('search_api.index.social_all');
+  $dependencies = $index->get("dependencies");
+  $dependencies['module'] = array_unique(array_map(
+    fn (string $module) => $module === "social_profile_privacy" ? "social_profile" : $module,
+    $dependencies['module'] ?? []
+  ));
+  $index->set('dependencies', $dependencies)->save(TRUE);
+}
+
+/**
+ * Clean up migrated settings and permissions.
+ */
+function social_profile_update_12020() : void {
   // This is done as a separate step on purpose. This allows extending modules
   // to set their update dependencies between an update hook performing set-up
   // but before the settings are removed. In case they want to make any changes
@@ -1795,7 +1829,7 @@ function social_profile_update_12019() : void {
 /**
  * Update field configuration to match removed profile template.
  */
-function social_profile_update_12020() : string {
+function social_profile_update_12021() : string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

@@ -196,7 +196,7 @@ class ProfileEntitySortable extends RenderedEntity {
         $limit_search_and_mention = \Drupal::config('social_profile_privacy.settings')
           ->get('limit_search_and_mention');
         if ($view_any) {
-          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile privacy always show full name')) {
+          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile always show full name')) {
             $sort = "
               TRIM(CONCAT(
                 COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
@@ -241,7 +241,7 @@ class ProfileEntitySortable extends RenderedEntity {
 
           // Below is the same as for any field except that the field is set to
           // NULL based on the configured visibility value.
-          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile privacy always show full name')) {
+          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile always show full name')) {
             $sort = "
               TRIM(CONCAT(
                 COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
