@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_profile_privacy\EventSubscriber;
+namespace Drupal\social_profile\EventSubscriber;
 
 use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigEvents;
@@ -10,11 +10,11 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class ConfigEventSubscriber.
+ * Listens to config changes and triggers search reindexing when needed.
  *
- * @package Drupal\social_profile_privacy\EventSubscriber
+ * @package Drupal\social_profile\EventSubscriber
  */
-class ConfigEventsSubscriber implements EventSubscriberInterface {
+class ProfileReindexSubscriber implements EventSubscriberInterface {
 
   /**
    * The Drupal module handler service.
@@ -76,17 +76,15 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\search_api\SearchApiException
    */
-  public function configSave(ConfigCrudEvent $event) {
-    // A list of configuration changes that trigger an index update.
-    $triggers = [
-      'social_profile_privacy.settings' => 'limit_search_and_mention',
-      'social_profile_fields.settings' => 'profile_profile_field_profile_nick_name',
-    ];
-
-    // If the config that changed is part of our trigger list and the value that
-    // changed is one we're interested in, perform the re-index.
+  public function configSave(ConfigCrudEvent $event) : void {
     $config_name = $event->getConfig()->getName();
-    if (isset($triggers[$config_name]) && $event->isChanged($triggers[$config_name])) {
+
+    // We reindex if the `limit_name_display` setting changes.
+    if ($config_name === "social_profile.settings" && $event->isChanged("limit_name_display")) {
+      $this->invalidateSearchIndices();
+    }
+    // We must also re-index if a profile field changes status.
+    elseif (str_starts_with($config_name, "field.field.profile.profile.") && $event->isChanged("status")) {
       $this->invalidateSearchIndices();
     }
   }

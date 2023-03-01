@@ -1,12 +1,15 @@
 <?php
 
-namespace Drupal\social_profile_privacy\Plugin\search_api\processor;
+namespace Drupal\social_profile\Plugin\search_api\processor;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Processor\ProcessorProperty;
 use Drupal\search_api\Query\QueryInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The RestrictedNameProcessor adds the restricted name to search indexes.
@@ -14,10 +17,9 @@ use Drupal\search_api\Query\QueryInterface;
  * The restricted name is a field that's based on the full name of a user or
  * the nickname, if they have it filled in. This is added to the search index
  * because it's not possibly to search on these fields on a row by row basis.
- * If the `limit_search_and_mention` setting is TRUE then users should not be
- * findable by their real name if they have a nickname filled and the user
- * searching does not have the `social profile privacy always show full name`
- * permission.
+ * If the `limit_name_display` setting is TRUE then users should not be found
+ * by their real name if they have a nickname filled and the user searching does
+ * not have the `social profile always show full name` permission.
  *
  * Ensures that when the setting is enabled to be strict with first/last name
  * display and the current user does not have the permission to bypass this
@@ -48,6 +50,54 @@ use Drupal\search_api\Query\QueryInterface;
 class RestrictedNameProcessor extends ProcessorPluginBase {
 
   /**
+   * The user viewing the search results being processed.
+   */
+  protected AccountInterface $currentUser;
+
+  /**
+   * The Drupal config factory.
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $processor = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+
+    $processor->setCurrentUser($container->get('current_user'));
+    $processor->setConfigFactory($container->get('config.factory'));
+
+    return $processor;
+  }
+
+  /**
+   * Set the current user.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   *
+   * @return $this
+   */
+  public function setCurrentUser(AccountInterface $current_user) : self {
+    $this->currentUser = $current_user;
+    return $this;
+  }
+
+  /**
+   * Set the config factory.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   *
+   * @return $this
+   */
+  public function setConfigFactory(ConfigFactoryInterface $config_factory) : self {
+    $this->configFactory = $config_factory;
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getPropertyDefinitions(DatasourceInterface $datasource = NULL) {
@@ -56,7 +106,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
     if ($datasource && $this->supportsDataSource($datasource)) {
       $definition = [
         'label' => $this->t('Restricted Name'),
-        'description' => $this->t('The display name that is visible for unpriviliged users.'),
+        'description' => $this->t('The display name that is visible for unprivileged users.'),
         'type' => 'search_api_text',
         'is_list' => FALSE,
         'processor_id' => $this->getPluginId(),
@@ -70,7 +120,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function preIndexSave() {
+  public function preIndexSave() : void {
     $datasources = $this->getIndex()->getDatasources();
 
     // Ensure that we have our "Restricted Name" field for all our supported
@@ -85,7 +135,7 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function addFieldValues(ItemInterface $item) {
+  public function addFieldValues(ItemInterface $item) : void {
     $restricted_name = NULL;
 
     $nickname = $this->getFirstItemField($item, 'field_profile_nick_name');
@@ -126,13 +176,12 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function preprocessSearchQuery(QueryInterface $query) {
-    $config = \Drupal::config('social_profile_privacy.settings');
-    $account = \Drupal::currentUser();
+  public function preprocessSearchQuery(QueryInterface $query) : void {
+    $config = $this->configFactory->get('social_profile.settings');
 
     // If the use of real names is not limited or the user can bypass this
     // restriction then we're done too.
-    if (!$config->get('limit_search_and_mention') || $account->hasPermission('social profile privacy always show full name')) {
+    if (!$config->get('limit_name_display') || $this->currentUser->hasPermission('social profile always show full name')) {
       return;
     }
 
