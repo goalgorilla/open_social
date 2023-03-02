@@ -55,7 +55,7 @@ Feature: I want to restrict full name visibility when nickname is used
   Scenario: View and search for real names when a user has the permission
     Given I restrict real name usage
     And Search indexes are up to date
-    And I am logged in as a user with the "social profile privacy always show full name" permission
+    And I am logged in as a user with the "social profile always show full name" permission
 
     # Profile displays the real name and nickname (if available).
     When I go to the profile of "user_1"
