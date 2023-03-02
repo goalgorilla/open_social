@@ -138,16 +138,18 @@ function social_profile_setup_per_profile_field_permissions() : void {
   $field_manager = \Drupal::service('social_profile.field_manager');
   $fields = $field_manager->getManagedProfileFieldDefinitions();
 
-  /** @var \Drupal\user\RoleInterface $authenticated_role */
   $authenticated_role = Role::load(RoleInterface::AUTHENTICATED_ID);
+  assert($authenticated_role !== NULL, "Drupal is broken, expected the authenticated role to exist.");
 
-  /** @var \Drupal\user\RoleInterface|NULL $verified_role */
   $verified_role = Role::load("verified");
   if ($verified_role === NULL) {
     throw new RuntimeException("verified role is not installed.");
   }
 
-  /** @var \Drupal\user\RoleInterface|NULL $sitemanager_role */
+  $contentmanager_role = Role::load('contentmanager');
+  if ($contentmanager_role === NULL) {
+    throw new RuntimeException("contentmanager role is not installed.");
+  }
   $sitemanager_role = Role::load('sitemanager');
   if ($sitemanager_role === NULL) {
     throw new RuntimeException("sitemanager role is not installed.");
@@ -157,9 +159,13 @@ function social_profile_setup_per_profile_field_permissions() : void {
   // fields. This relies on the fact that in the default set-up all users on the
   // platform are verified.
   $verified_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
+  // The same permission must also be granted to contentmanagers and
+  // sitemanagers so they can do their job even if they're unverified.
+  $contentmanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
+  $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
 
   foreach ($fields as $field_name => $field_config) {
-    $visibility_field_name = $visibility_field_name = $field_manager::getVisibilityFieldName($field_config);
+    $visibility_field_name = $field_manager::getVisibilityFieldName($field_config);
     // By default users can change the visibility of all the fields on their
     // profile.
     $authenticated_role->grantPermission("edit own ${visibility_field_name} profile profile field");
@@ -176,6 +182,7 @@ function social_profile_setup_per_profile_field_permissions() : void {
 
   $authenticated_role->save();
   $verified_role->save();
+  $contentmanager_role->save();
   $sitemanager_role->save();
 }
 
@@ -1388,18 +1395,32 @@ function social_profile_update_12012() : void {
 
   $authenticated_role->save();
 
-  /** @var \Drupal\user\RoleInterface|NULL $verified_role */
   $verified_role = Role::load("verified");
   if ($verified_role === NULL) {
     throw new RuntimeException("verified role is not installed.");
+  }
+
+  $contentmanager_role = Role::load("contentmanager");
+  if ($contentmanager_role === NULL) {
+    throw new RuntimeException("contentmanager role is not installed.");
+  }
+  $sitemanager_role = Role::load("sitemanager");
+  if ($sitemanager_role === NULL) {
+    throw new RuntimeException("sitemanager role is not installed.");
   }
 
   // By default only verified users can view other people's community profile
   // fields. This relies on the fact that in the default set-up all users on the
   // platform are verified.
   $verified_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
+  // The same permission must also be granted to contentmanagers and
+  // sitemanagers so they can do their job even if they're unverified.
+  $contentmanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
+  $sitemanager_role->grantPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
 
   $verified_role->save();
+  $contentmanager_role->save();
+  $sitemanager_role->save();
 }
 
 /**
