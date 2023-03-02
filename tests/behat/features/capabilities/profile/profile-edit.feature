@@ -46,8 +46,6 @@ Feature: Users can edit profiles
 
     Then I should be asked to login
 
-  # @todo This test is broken which suggest we don't correctly set our field
-  #   visibility during install.
   Scenario: As a sitemanager I can edit the profile of another user
     Given users:
       | name    | status | roles    |
@@ -59,12 +57,12 @@ Feature: Users can edit profiles
       | First name   | Jane        |
       | Last name    | Doe         |
       | Function     | Boss        |
-      | Organization | CIA         |
+      | Organization | NSA         |
     And I press "Save"
 
     Then I should see "The profile has been saved"
     And I should see "Jane Doe"
-    And I should see "CIA"
+    And I should see "NSA"
     And I should see "Boss"
 
   # @todo Add testing for profile editing by verified user/content manager of other profiles depending on field settings.
