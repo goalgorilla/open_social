@@ -12,7 +12,7 @@ abstract class ProfileGraphQLTestBase extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
     // @todo Possibly untangle this?
@@ -33,6 +33,11 @@ abstract class ProfileGraphQLTestBase extends SocialGraphQLTestBase {
     "lazy",
     "image_widget_crop",
     "crop",
+    // Needed for the admin people view schema.
+    'variationcache',
+    'group',
+    'views_bulk_operations',
+    'views',
     // The actual module under test.
     "social_profile",
   ];

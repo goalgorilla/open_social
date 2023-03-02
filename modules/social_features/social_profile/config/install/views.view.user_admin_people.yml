@@ -1153,7 +1153,6 @@ display:
             max: ''
             value: ''
             type: date
-            widget: date
           group: 1
           exposed: true
           expose:
@@ -1277,7 +1276,7 @@ display:
             multiple: true
             remember_roles:
               authenticated: authenticated
-            reduce: 0
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -1290,12 +1289,12 @@ display:
             default_group: All
             default_group_multiple: { }
             group_items: { }
-          reduce_duplicates: 1
+          reduce_duplicates: true
           type: select
           limit: true
           vid: profile_tag
-          hierarchy: 1
-          error_message: 1
+          hierarchy: true
+          error_message: true
       sorts:
         created:
           id: created

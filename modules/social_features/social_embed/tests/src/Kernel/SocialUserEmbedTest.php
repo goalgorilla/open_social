@@ -5,6 +5,7 @@ namespace Drupal\social_embed\Tests;
 use Drupal\Component\Uuid\Php;
 use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\profile\Entity\ProfileType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
@@ -51,6 +52,11 @@ class SocialUserEmbedTest extends KernelTestBase {
     $settings['social_embed_flood_retries'] = 5;
     $settings['social_embed_flood_time_window'] = 10;
     new Settings($settings);
+
+    // Create the `profile` profile type since it's required for Open Social
+    // but we don't want to install the entire social_profile module and its
+    // dependencies.
+    ProfileType::create(['id' => 'profile'])->save();
 
     // Give anonymous users permission to view test entities.
     if ($anonymous_role = Role::load(RoleInterface::ANONYMOUS_ID)) {

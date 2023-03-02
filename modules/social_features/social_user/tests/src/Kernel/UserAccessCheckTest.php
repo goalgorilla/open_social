@@ -21,7 +21,7 @@ class UserAccessCheckTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     "entity",
     "user",
