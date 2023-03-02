@@ -170,6 +170,14 @@ function social_tagging_social_tagging_field_form_alter(
   $prefix = ($bundles = !empty($items[0]['bundles'])) ? $type . '_' : '';
   $suffix = $bundles ? $entity->bundle() : $type;
 
+  foreach ($items as &$item) {
+    if (!isset($item['field'])) {
+      $item['field'] = SocialTaggingServiceInterface::FIELD;
+    }
+  }
+
+  unset($item);
+
   // Load tag config.
   $enabled = \Drupal::configFactory()->getEditable('social_tagging.settings')
     ->get("tag_{$prefix}type_$suffix");
@@ -182,10 +190,8 @@ function social_tagging_social_tagging_field_form_alter(
   ) {
     // Remove the field from the form.
     foreach ($items as $item) {
-      $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
-
-      if (!empty($form[$field])) {
-        $form[$field]['#access'] = FALSE;
+      if (!empty($form[$item['field']])) {
+        $form[$item['field']]['#access'] = FALSE;
       }
     }
 
@@ -202,7 +208,7 @@ function social_tagging_social_tagging_field_form_alter(
   );
 
   foreach ($items as $delta => $item) {
-    $field = $item['field'] ?? SocialTaggingServiceInterface::FIELD;
+    $field = $item['field'];
 
     if (empty($form[$field]) || in_array($field, $fields)) {
       continue;
