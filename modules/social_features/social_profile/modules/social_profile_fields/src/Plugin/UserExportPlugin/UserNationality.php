@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *   id = "user_nationality",
  *   label = @Translation("Nationality"),
  *   weight = -325,
+ *   dependencies = @PluginDependency(
+ *     config = {
+ *       "field.field.profile.profile.field_profile_nationality",
+ *     }
+ *   )
  * )
  */
 class UserNationality extends UserExportPluginBase {
