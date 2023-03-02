@@ -917,7 +917,7 @@ function social_group_invite_social_group_join_method_usage_alter(array &$items)
 
   foreach ($items as &$item) {
 
-    if (isset($item['bundle']) && $item['bundle'] === 'flexible_group') {
+    if (isset($item['bundle']) && in_array('flexible_group', (array) $item['bundle'])) {
       if (isset($item['method'])) {
         if (is_string($item['method'])) {
           $item['method'] = [$item['method']];
