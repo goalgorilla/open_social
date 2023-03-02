@@ -1203,6 +1203,24 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['group_type']['#element_validate'][] = '_social_group_cross_posting_group_type_validate';
     }
   }
+
+  if (in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['add'])) {
+    // Move the Published status to group settings with a new wrapper.
+    if (!empty($form['status']) && Element::isVisibleElement($form['status'])) {
+      // Add an details element to status.
+      $form['status_label'] = [
+        '#type' => 'details',
+        '#title' => t('Publish status'),
+        '#description' => '',
+        '#open' => TRUE,
+        '#weight' => 110,
+        '#group' => 'group_settings',
+      ];
+      $form['status']['#group'] = 'status_label';
+      $form['status_label']['status'] = $form['status'];
+      unset($form['status']);
+    }
+  }
 }
 
 /**
