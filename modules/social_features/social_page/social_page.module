@@ -38,7 +38,7 @@ function social_page_node_links_alter(array &$links, NodeInterface $entity, arra
  * Implements hook_social_tagging_type_alter().
  */
 function social_page_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'page';
+  $items['node']['sets'][0]['bundles'][] = 'page';
 }
 
 /**

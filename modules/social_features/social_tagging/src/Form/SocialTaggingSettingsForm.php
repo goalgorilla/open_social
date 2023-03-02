@@ -195,7 +195,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
         if (isset($suffix)) {
           $key = "tag_{$prefix}type_$suffix";
 
-          $form['node_type_settings']['tag_type_' . $type] = [
+          $form['node_type_settings'][$key] = [
             '#type' => 'checkbox',
             '#title' => $title,
             '#default_value' => $config->get($key) ?: !empty($bundles),

@@ -341,7 +341,7 @@ function _social_landing_page_get_hero_image(NodeInterface $node) {
  * Implements hook_social_tagging_type_alter().
  */
 function social_landing_page_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'landing_page';
+  $items['node']['sets'][0]['bundles'][] = 'landing_page';
 }
 
 /**
