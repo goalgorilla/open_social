@@ -1135,16 +1135,20 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       // These conditions are here to check exactly the same as the code above
-      // except that `!isset($data['method']) &&` is not part of the conditions
-      // anymore. The reason why we did this is that initial architecture of
-      // @Join plugins predicted that plugins could be initiated only by field
-      // or only by method, but there can be group types where it should
-      // be initiated by both. The conditions below are respecting that fact,
-      // which is needed to change the field type of the field which is
-      // responsible for listing all join options accordingly.
-      $field_found = FALSE;
+      // except that `!isset($data['method']) &&` is replaced by
+      // `$data['field'] === 'field_group_allowed_join_method'` instead.
+      // The reason why we did this is that initial architecture of
+      // @Join plugins predicted that plugins where "method" is defined,
+      // should not be altered in this process, but there are groups which have
+      // "method" defined for fallback reasons and this is why we need to
+      // process them the same way as there would be no "method" defined.
+      // Currently, we are limiting this exception only for the groups with
+      // field field_group_allowed_join_method. In the future we can change this
+      // logic in a way that it would not be based on field name but rather on
+      // plugin setting.
       if (
         isset($data['field'], $form[$data['field']]) &&
+        $data['field'] === 'field_group_allowed_join_method' &&
         $data['entity_type'] === $entity_type_id &&
         (
           !isset($data['bundle']) &&
@@ -1152,21 +1156,17 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
           in_array($bundle, (array) $data['bundle'])
         )
       ) {
-        $field_found = TRUE;
+        $found = TRUE;
         break;
-      }
-    }
-
-    if ($field_found && isset($data)) {
-      $field = &$form[$data['field']]['widget'];
-
-      if ($field['#type'] === 'checkboxes') {
-        $field['#type'] = 'radios';
       }
     }
 
     if ($found && isset($data)) {
       $field = &$form[$data['field']]['widget'];
+
+      if ($field['#type'] === 'checkboxes') {
+        $field['#type'] = 'radios';
+      }
 
       if ($entity->isNew()) {
         $hook = 'social_group_join_method_info';
