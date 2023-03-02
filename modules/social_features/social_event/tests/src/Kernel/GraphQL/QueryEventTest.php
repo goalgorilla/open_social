@@ -83,6 +83,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
   protected static $configSchemaCheckerExclusions = [
     'social_event_managers.settings',
     'views.view.event_manage_enrollments',
+    'views.view.user_admin_people',
   ];
 
   /**

@@ -17,7 +17,7 @@ class UserAccessCheckTest extends BaseUserAccessCheckTest {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     // Requirements for social_profile.
     "field_group",
     "entity",
@@ -35,6 +35,11 @@ class UserAccessCheckTest extends BaseUserAccessCheckTest {
     "lazy",
     "image_widget_crop",
     "crop",
+    // Needed for the admin people view schema.
+    'variationcache',
+    'group',
+    'views_bulk_operations',
+    'views',
     // The module under test.
     "social_profile",
   ];

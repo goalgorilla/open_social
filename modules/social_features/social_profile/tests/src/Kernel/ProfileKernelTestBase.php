@@ -12,7 +12,7 @@ abstract class ProfileKernelTestBase extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "system",
     "field",
     "social_user",
@@ -38,6 +38,10 @@ abstract class ProfileKernelTestBase extends KernelTestBase {
     "lazy",
     "image_widget_crop",
     "crop",
+    // Needed for the admin people view schema.
+    'group',
+    'views_bulk_operations',
+    'views',
     // The actual module under test.
     "social_profile",
   ];

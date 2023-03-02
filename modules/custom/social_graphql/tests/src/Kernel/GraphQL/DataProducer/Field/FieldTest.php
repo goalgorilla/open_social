@@ -19,7 +19,7 @@ class FieldTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     "text",
     'entity_test',
   ];

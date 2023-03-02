@@ -58,6 +58,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'file_mdm',
     'group_core_comments',
     'views',
+    'views_bulk_operations',
     'group',
     'datetime',
     'address',
