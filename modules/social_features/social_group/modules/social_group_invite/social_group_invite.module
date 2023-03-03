@@ -908,7 +908,7 @@ function social_group_invite_field_formatter_info_alter(array &$info): void {
 /**
  * Implements hook_social_group_join_method_usage_alter().
  */
-function social_group_invite_social_group_join_method_usage_alter(array &$items) {
+function social_group_invite_social_group_join_method_usage_alter(array &$items): void {
 
   // Ads "added" method for flexible_group, because users with certain
   // permissions (SM/GM) can always invite users (member management feature),
@@ -920,7 +920,8 @@ function social_group_invite_social_group_join_method_usage_alter(array &$items)
         if (is_string($item['method'])) {
           $item['method'] = [$item['method']];
         }
-      } else {
+      }
+      else {
         $item['method'] = [];
       }
 
