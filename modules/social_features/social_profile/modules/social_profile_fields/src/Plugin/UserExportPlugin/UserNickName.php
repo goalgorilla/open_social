@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_nickname",
  *  label = @Translation("Nickname"),
  *  weight = -449,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_nick_name",
+ *    }
+ *  )
  * )
  */
 class UserNickName extends UserExportPluginBase {

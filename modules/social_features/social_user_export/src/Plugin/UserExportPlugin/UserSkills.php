@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_skills",
  *  label = @Translation("Skills"),
  *  weight = -300,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_expertise",
+ *    }
+ *  )
  * )
  */
 class UserSkills extends UserExportPluginBase {

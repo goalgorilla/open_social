@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_address_line2",
  *  label = @Translation("Address line 2"),
  *  weight = -340,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_address",
+ *    },
+ *  )
  * )
  */
 class UserAddressLine2 extends UserExportPluginBase {
