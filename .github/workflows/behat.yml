@@ -203,6 +203,13 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ github.sha }}-test-setup-${{ matrix.update}}${{ matrix.with_optional }}
 
+      - name: Upload Installation database
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: behat-test-output
+          path: behat-test-output
+
   # This workflow contains a single job called "Running tests"
   tests:
     needs: [feature_discovery, install_open_social]
