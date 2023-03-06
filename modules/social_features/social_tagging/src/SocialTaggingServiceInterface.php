@@ -5,12 +5,25 @@ namespace Drupal\social_tagging;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_core\Service\MachineNameInterface;
 
 /**
  * Defines the tagging service interface.
  */
 interface SocialTaggingServiceInterface {
+
+  /**
+   * The default field name.
+   */
+  public const FIELD = 'social_tagging';
+
+  /**
+   * The default name of the wrapper for tags fields.
+   */
+  public const WRAPPER = 'tagging';
 
   /**
    * SocialTaggingService constructor.
@@ -23,18 +36,56 @@ interface SocialTaggingServiceInterface {
    *   Injection of the languageManager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\social_core\Service\MachineNameInterface $machine_name
+   *   The machine name.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    MachineNameInterface $machine_name
   );
 
   /**
    * Returns whether the feature is turned on or not.
    */
   public function active(): bool;
+
+  /**
+   * Prepares tags field.
+   *
+   * @param array $form
+   *   The form structure.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param string $name
+   *   The field name.
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $title
+   *   (optional) The wrapper title. Defaults to NULL.
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $description
+   *   (optional) The wrapper description. Defaults to NULL.
+   * @param string $wrapper
+   *   (optional) The wrapper identifier. Defaults to
+   *   SocialTaggingServiceInterface::WRAPPER.
+   * @param array|null $default_value
+   *   (optional) The default value. Defaults to NULL.
+   * @param string|null $parent
+   *   (optional) The wrapper element name. Defaults to NULL.
+   *
+   * @return bool
+   *   TRUE, if the field is displayed.
+   */
+  public function field(
+    array &$form,
+    FormStateInterface $form_state,
+    string $name,
+    TranslatableMarkup $title = NULL,
+    TranslatableMarkup $description = NULL,
+    string $wrapper = self::WRAPPER,
+    array $default_value = NULL,
+    string $parent = NULL
+  ): bool;
 
   /**
    * Returns whether the feature is turned on for groups or not.
@@ -81,13 +132,10 @@ interface SocialTaggingServiceInterface {
   public function getCategories(): array;
 
   /**
-   * Returns the children of top level term items.
+   * Returns the children of any level term items.
    *
    * @param int $category
    *   The category you want to fetch the child items from.
-   *
-   * @return array
-   *   An array of child items.
    */
   public function getChildren(int $category): array;
 

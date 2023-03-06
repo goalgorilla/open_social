@@ -59,7 +59,7 @@ function social_book_social_core_compatible_content_forms_alter(&$compatible_con
  * Implements hook_social_tagging_type_alter().
  */
 function social_book_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'book';
+  $items['node']['sets'][0]['bundles'][] = 'book';
 }
 
 /**

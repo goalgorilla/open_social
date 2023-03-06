@@ -204,7 +204,7 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  * Implements hook_social_tagging_type_alter().
  */
 function social_topic_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'topic';
+  $items['node']['sets'][0]['bundles'][] = 'topic';
 }
 
 /**
