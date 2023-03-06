@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_first_name",
  *  label = @Translation("First name"),
  *  weight = -480,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_first_name",
+ *    },
+ *  )
  * )
  */
 class UserFirstName extends UserExportPluginBase {

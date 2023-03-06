@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_organization",
  *  label = @Translation("Organization"),
  *  weight = -320,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_organization",
+ *    },
+ *  )
  * )
  */
 class UserOrganization extends UserExportPluginBase {

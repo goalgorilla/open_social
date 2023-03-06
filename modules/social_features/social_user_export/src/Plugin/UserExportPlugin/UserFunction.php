@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_function",
  *  label = @Translation("Function"),
  *  weight = -310,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_function",
+ *    },
+ *  )
  * )
  */
 class UserFunction extends UserExportPluginBase {
