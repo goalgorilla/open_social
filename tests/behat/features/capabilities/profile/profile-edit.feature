@@ -65,7 +65,43 @@ Feature: Users can edit profiles
     And I should see "NSA"
     And I should see "Boss"
 
-  # @todo Add testing for profile editing by verified user/content manager of other profiles depending on field settings.
+  Scenario: A content manager can edit fields on another user's profile if configured
+    Given users:
+      | name    | status | roles    |
+      | janedoe | 1      | verified |
+    And the profile field settings:
+      | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
+      | First name         | true                | Community  | false                    | false                           | false                         | true                             | false                          | true                 | true     |
+      | Last name          | true                | Community  | false                    | false                           | false                         | true                             | false                          | true                 | true     |
+    And I am logged in as a user with the contentmanager role
+
+    When I try to edit the profile of janedoe
+    And I fill in the following:
+      | First name   | Jane        |
+      | Last name    | Doe         |
+    And I press "Save"
+
+    Then I should see "The profile has been saved"
+    And I should see "Jane Doe"
+
+    # Until https://github.com/jhedstrom/drupalextension/issues/641
+    And I logout
+
+  Scenario: A content manager can not edit fields on another user's profile if configured
+    Given users:
+      | name    | status | roles    |
+      | janedoe | 1      | verified |
+    And the profile field settings:
+      | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
+      | First name         | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
+      | Last name          | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
+    And I am logged in as a user with the contentmanager role
+
+    When I try to edit the profile of janedoe
+
+    # When a user can't edit any fields they should be denied access to the
+    # entire page.
+    Then I should be denied access
 
   Scenario: Enabled fields show on the edit form
     # Profile tag field only shows when there's at least one tag.
@@ -131,11 +167,9 @@ Feature: Users can edit profiles
     And I should see a required field labeled "Self introduction"
     And I should see a required field labeled "Summary"
 
-  # TODO: This test fails because `status` is not respected for `FieldConfig`
-  #  entities, we can't handle this on an access level because form validations
-  #  for `required` fields would still be applied, perhaps we can config_load alter?
-  # Looking at EntityViewDisplay/EntityFormDisplay ::getRenderer could solve this.
-  # We'd have to figure something out for search though.
+    # Until https://github.com/jhedstrom/drupalextension/issues/641
+    And I logout
+
   Scenario: Disabled fields don't show on the edit form
     # Profile tag field only shows when there's at least one tag.
     Given profile_tag terms:
