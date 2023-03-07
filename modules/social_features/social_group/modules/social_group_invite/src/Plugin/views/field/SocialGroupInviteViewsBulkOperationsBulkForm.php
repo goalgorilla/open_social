@@ -21,7 +21,7 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions() {
+  public function getBulkOptions(): array {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'social_group_invitations') {

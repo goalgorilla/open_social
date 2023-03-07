@@ -108,7 +108,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions() {
+  public function getBulkOptions(): array {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'event_manage_enrollments') {
@@ -136,7 +136,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsForm(array &$form, FormStateInterface $form_state) {
+  public function viewsForm(array &$form, FormStateInterface $form_state): void {
     $this->view->setExposedInput(['status' => TRUE]);
 
     parent::viewsForm($form, $form_state);
@@ -340,7 +340,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state): void {
     parent::viewsFormSubmit($form, $form_state);
 
     if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'event_manage_enrollments') {
@@ -414,7 +414,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  protected function getTempstoreData($view_id = NULL, $display_id = NULL) {
+  protected function getTempstoreData($view_id = NULL, $display_id = NULL): ?array {
     $data = parent::getTempstoreData($view_id, $display_id);
 
     if (is_array($data) && $data) {
