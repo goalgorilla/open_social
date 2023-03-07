@@ -36,10 +36,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
   /**
    * The action plugin manager.
-   *
-   * @var \Drupal\Core\Action\ActionManager
    */
-  protected $actionManager;
+  protected ViewsBulkOperationsActionManager $actionManager;
 
   /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
