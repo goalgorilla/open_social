@@ -36,8 +36,10 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
   /**
    * The action plugin manager.
+   *
+   * @var \Drupal\Core\Action\ActionInterface
    */
-  protected ViewsBulkOperationsActionManager $actionManager;
+  protected $pluginActionManager;
 
   /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
@@ -81,7 +83,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
-    $this->actionManager = $pluginActionManager;
+    $this->pluginActionManager = $pluginActionManager;
   }
 
   /**
