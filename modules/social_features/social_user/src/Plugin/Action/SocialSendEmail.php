@@ -136,7 +136,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function setContext(array &$context) {
+  public function setContext(array &$context): void {
     parent::setContext($context);
     // @todo make the batch size configurable.
     $context['batch_size'] = Settings::get('social_mail_batch_size', 25);
