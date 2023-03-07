@@ -38,6 +38,7 @@ use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\Role;
 use Drupal\user\EntityOwnerInterface;
+use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
 const SOCIAL_PROFILE_SUGGESTIONS_USERNAME = 'username';
@@ -892,6 +893,12 @@ function social_profile_entity_social_managed_field_access(string $operation, Fi
   /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
   $storage = \Drupal::service('entity_type.manager')->getStorage($entity_type);
 
+  // Access to disabled fields is denied regardless of operation. This ensures
+  // they don't show up anywhere (like forms, pages and search).
+  if ($field_definition instanceof FieldConfig && !$field_definition->status()) {
+    return AccessResult::forbidden("Field is disabled");
+  }
+
   if ($operation === 'view') {
     // Bypass more complex access checks if a user is viewing their own profile
     // and can see that field.
@@ -1498,6 +1505,33 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
   $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
     ->getViewBuilder('profile')
     ->view($profile, 'small');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_profile_user_role_presave(RoleInterface $role) : void {
+  // For our profile editing we want to deny access to the entire page if a role
+  // can't edit any of the managed fields on a process. This prevents the user
+  // from seeing an empty form page. This is done in a presave hook to ensure
+  // the permission stays in sync regardless of how the field level permissions
+  // were updated.
+  $can_edit_any = FALSE;
+  foreach (\Drupal::service("social_profile.field_manager")->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
+    $can_edit_any = $role->hasPermission("edit any ${field_name} profile profile field");
+    if ($can_edit_any) {
+      break;
+    }
+  }
+
+  if ($can_edit_any) {
+    $role->grantPermission('add any profile profile');
+    $role->grantPermission('update any profile profile');
+  }
+  else {
+    $role->revokePermission('add any profile profile');
+    $role->revokePermission('update any profile profile');
+  }
 }
 
 /**
