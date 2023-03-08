@@ -402,18 +402,15 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       // Email is stored on the user entity but not configured in the view mode,
       // it's added by AccountForm instead.
       $registration_is_checked = $field_name === "field_profile_email" || (
-        $stored_on_user_entity
-          ? $registration_user_form_display->getComponent(static::$syncedProfileFields[$field_name]) !== NULL
-          : $registration_profile_form_display->getComponent($field_name) !== NULL
+        !$stored_on_user_entity && $registration_profile_form_display->getComponent($field_name) !== NULL
       );
       $row['registration'] = [
         '#type' => 'checkbox',
         '#title' => new TranslatableMarkup('<span class="visually-hidden">Show :field field</span> At registration', [':field' => $label]),
-        // Users are required to enter an email during registration so this
-        // setting can not be changed.
-        // @todo Move this into a third party field setting rather than
-        // special-casing names.
-        '#disabled' => $field_name === 'field_profile_email',
+        // Fields that are stored on the user entity can not be removed or added
+        // because that form is controlled by `AccountForm` with various access
+        // checks without the Field UI.
+        '#disabled' => $stored_on_user_entity,
         '#default_value' => $registration_is_checked,
         '#states' => $field_name === 'field_profile_email' ? [] : $disabled_states,
       ];
@@ -718,14 +715,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     // Keep track of changed roles so we can only save once.
     $modified_roles = [];
 
-    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_user_form_display */
-    $registration_user_form_display = EntityFormDisplay::load("user.user.register");
-    // This should be created by the install or update hook. If this does not
-    // exist we have a configuration bug.
-    if ($registration_user_form_display === NULL) {
-      throw new \RuntimeException("Form display mode user.user.register does not exist.");
-    }
-
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_profile_form_display */
     $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
     // This should be created by the install or update hook. If this does not
@@ -839,6 +828,8 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         ["fields", "list", $field_name, "registration"]
       );
       $stored_on_user_entity = isset(static::$syncedProfileFields[$field_name]);
+      // If a field is stored on the user entity then access is controlled by
+      // the `AccountForm` class and we can't manage those fields.
       if (!$stored_on_user_entity) {
         if (!$field_on_registration && $registration_profile_form_display->getComponent($field_name) !== NULL) {
           $registration_profile_form_display->removeComponent($field_name);
@@ -852,16 +843,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
             $field_name,
             $default_form_component ?? []
           );
-        }
-      }
-      // Email is always added in AccountForm so we can't configure it.
-      elseif ($field_name !== "field_profile_email") {
-        $translated_field_name = static::$syncedProfileFields[$field_name];
-        if (!$field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) !== NULL) {
-          $registration_user_form_display->removeComponent($translated_field_name);
-        }
-        elseif ($field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) === NULL) {
-          $registration_user_form_display->setComponent($translated_field_name);
         }
       }
 
