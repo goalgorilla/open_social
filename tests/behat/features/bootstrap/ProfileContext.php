@@ -11,6 +11,7 @@ use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_profile\FieldManager;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -19,6 +20,8 @@ use Drupal\user\Entity\User;
  * Defines test steps around user profiles and profile management.
  */
 class ProfileContext extends RawMinkContext {
+
+  use EntityTrait;
 
   /**
    * Fields that were enabled during the current scenario.
@@ -65,6 +68,67 @@ class ProfileContext extends RawMinkContext {
     $this->visitPath("/user/$user_id");
     $this->assertSession()->statusCodeEquals(200);
   }
+
+  /**
+   * Try to view a specific profile even if you might not have access.
+   *
+   * @When I try to view the profile of :user
+   */
+  public function attemptViewingProfile(string $user) : void {
+    if ($user === 'anonymous') {
+      $user_ids = [0];
+    }
+    else {
+      $user_ids = \Drupal::entityQuery('user')
+        ->accessCheck(FALSE)
+        ->condition('name', $user)
+        ->execute();
+
+      if (count($user_ids) !== 1) {
+        throw new \InvalidArgumentException("Could not find user with username `$user'.");
+      }
+    }
+
+    $user_id = reset($user_ids);
+    $this->visitPath("/user/$user_id");
+  }
+
+  /**
+   * Create or update the profile for a user with a specific nickname.
+   *
+   * Updates a profile in the form:
+   * | field_profile_first_name | John |
+   * | field_profile_last_name  | Doe  |
+   *
+   * @Given user :username has a profile filled with:
+   */
+  public function userHasProfile(string $username, TableNode $profileTable) : void {
+    $profile = $profileTable->getRowsHash();
+    $profile['owner'] = $username;
+    $this->profileUpdate($profile);
+  }
+
+  /**
+   * Create or update the profile for the current user.
+   *
+   * Updates a profile in the form:
+   * | field_profile_first_name | John |
+   * | field_profile_last_name  | Doe  |
+   *
+   * @Given I have a profile filled with:
+   * @Given have a profile filled with:
+   */
+  public function iHaveProfile(TableNode $profileTable) : void {
+    $profile = $profileTable->getRowsHash();
+    if (isset($profile['uid'])) {
+      throw new \InvalidArgumentException("Should not set `uid` for profile, use 'user :username has a profile filled with' instead.");
+    }
+    if (isset($profile['owner'])) {
+      throw new \InvalidArgumentException("Should not set `owner` for profile, use 'user :username has a profile filled with' instead.");
+    }
+    $this->profileUpdate($profile);
+  }
+
 
   /**
    * Go to the profile edit page for the current user.
@@ -180,7 +244,7 @@ class ProfileContext extends RawMinkContext {
     foreach ($fields as $field) {
       $name = $field['field_name'];
 
-      $page->selectFieldOption($field['visibility'] . " visibility for $name field", strtolower($field['visibility']));
+      $page->selectFieldOption($field['visibility'] . " visibility for $name", strtolower($field['visibility']));
 
       if ($field['user_edit_visibility']) {
         $page->checkField("User can edit $name visibility");
@@ -246,6 +310,12 @@ class ProfileContext extends RawMinkContext {
    * @Then the profile field settings should be updated
    */
   public function profileFieldSettingsShouldBeUpdated() : void {
+    // For some reason the way Drupal Extension runs Drupal the permissions get
+    // cached in our runtime, so we need to cache bust to ensure we can actually
+    // see the result of the form save.
+    \Drupal::configFactory()->clearStaticCache();
+    \Drupal::entityTypeManager()->getStorage('user_role')->resetCache();
+
     $fieldManager = \Drupal::service('social_profile.field_manager');
     assert($fieldManager instanceof FieldManager, "Could not load field manager service");
 
@@ -390,7 +460,7 @@ class ProfileContext extends RawMinkContext {
         ->condition('bundle', 'profile')
         ->condition('label', $field['Field name'])
         ->execute();
-      assert(count($field_ids) === 1, "Could not find a unique field with field name {$field['Field name']}");
+      assert(count($field_ids) === 1, "Could not find a unique field with field label {$field['Field name']}");
       $config = FieldConfig::load(end($field_ids));
       assert($config !== NULL);
 
@@ -426,8 +496,6 @@ class ProfileContext extends RawMinkContext {
     $contentmanager_role = Role::load("contentmanager");
     assert($contentmanager_role !== NULL);
 
-    $registration_user_form_display = EntityFormDisplay::load("user.user.register");
-    assert($registration_user_form_display !== NULL);
     $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
     assert($registration_profile_form_display !== NULL);
 
@@ -496,10 +564,12 @@ class ProfileContext extends RawMinkContext {
 
       $syncedProfileFields = [
         "field_profile_email" => "mail",
-        "field_profile_preferred_language" => "preferred_langcode",
+        "field_profile_preferred_language" => "language",
       ];
       $field_on_registration = $fieldSettings['registration'];
       $stored_on_user_entity = isset($syncedProfileFields[$field->getName()]);
+      // If a field is stored on the user entity then access is controlled by
+      // the `AccountForm` class and we can't manage those fields.
       if (!$stored_on_user_entity) {
         if (!$field_on_registration && $registration_profile_form_display->getComponent($field->getName()) !== NULL) {
           $registration_profile_form_display->removeComponent($field->getName());
@@ -518,16 +588,6 @@ class ProfileContext extends RawMinkContext {
           );
         }
       }
-      // Email is always added in AccountForm so we can't configure it.
-      elseif ($field->getName() !== "field_profile_email") {
-        $translated_field_name = $syncedProfileFields[$field->getName()];
-        if (!$field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) !== NULL) {
-          $registration_user_form_display->removeComponent($translated_field_name);
-        }
-        elseif ($field_on_registration && $registration_profile_form_display->getComponent($translated_field_name) === NULL) {
-          $registration_user_form_display->setComponent($translated_field_name);
-        }
-      }
 
       $field->setRequired($fieldSettings['required']);
 
@@ -536,9 +596,58 @@ class ProfileContext extends RawMinkContext {
       $authenticated_role->save();
       $verified_role->save();
       $contentmanager_role->save();
-      $registration_user_form_display->save();
       $registration_profile_form_display->save();
     }
+  }
+
+  /**
+   * Update a profile for a user.
+   *
+   * @param array $profile
+   *   The field values for the profile.
+   *
+   * @return \Drupal\profile\Entity\Profile
+   *   The updated profile.
+   */
+  private function profileUpdate(array $profile) : Profile {
+    if (!isset($profile['owner'])) {
+      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+      $profile['uid'] ??= is_object($current_user) ? $current_user->uid ?? 0 : 0;
+    }
+    else {
+      $account = user_load_by_name($profile['owner']);
+      if ($account->id() !== 0) {
+        $profile['uid'] ??= $account->id();
+      }
+      else {
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $profile['owner']));
+      }
+      unset($profile['owner']);
+    }
+
+    if ($profile['uid'] === 0) {
+      throw new \InvalidArgumentException("Can not update the profile of the anonymous user");
+    }
+
+    $profile['type'] = 'profile';
+    $this->validateEntityFields("profile", $profile);
+    $profile_object = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser(User::load($profile['uid']), 'profile');
+    if ($profile_object instanceof ProfileInterface) {
+      foreach ($profile as $field => $value) {
+        $profile_object->set($field, $value);
+      }
+    }
+    else {
+      $profile_object = Profile::create($profile);
+    }
+
+    $violations = $profile_object->validate();
+    if ($violations->count() !== 0) {
+      throw new \Exception("The profile you tried to update is invalid: $violations");
+    }
+    $profile_object->save();
+
+    return $profile_object;
   }
 
   /**

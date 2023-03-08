@@ -41,4 +41,5 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
       | Last name   | Community  | true                     | false                           | false                         | true                | false                            | false                          | true                 | false    |
     And I press "Save configuration"
 
-    Then the profile field settings should be updated
+    Then I should see "The configuration options have been saved"
+    And the profile field settings should be updated
