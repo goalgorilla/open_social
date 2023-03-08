@@ -1024,7 +1024,14 @@ function social_profile_entity_social_managed_field_access(string $operation, Fi
       $entity = $items->getEntity();
       $entity_owner = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
 
-      if ($entity_owner !== NULL && $entity_owner->id() === $account->id()) {
+      // Anonymous users may always edit fields for the anonymous profile since
+      // this is needed for the registration form. There are other methods that
+      // ensure anonymous users can't actually create anonymous profiles.
+      if ($account->id() === 0 && ($entity_owner === NULL || (int) $entity_owner->id() === 0)) {
+        return AccessResult::allowed();
+      }
+
+      if ($entity_owner !== NULL && (int) $entity_owner->id() === (int) $account->id()) {
         $permissions[] = "edit own ${field_name} ${entity_bundle} ${entity_type} field";
       }
     }
