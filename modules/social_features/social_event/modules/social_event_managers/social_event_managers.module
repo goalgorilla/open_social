@@ -586,16 +586,16 @@ function _social_event_managers_views_bulk_operations_bulk_form_submit($form, Fo
     'node' => $node,
   ];
 
-  if (!empty($node)) {
+  if (!empty($node) && $url) {
     if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
       $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', $route_parameters);
     }
     if ($url->getRouteName() === 'social_event_managers.vbo.confirm') {
       $url = Url::fromRoute('social_event_managers.vbo.confirm', $route_parameters);
     }
-  }
 
-  $form_state->setRedirectUrl($url);
+    $form_state->setRedirectUrl($url);
+  }
 }
 
 /**
