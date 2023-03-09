@@ -4,6 +4,13 @@
   Role: As a Verified
   Goal/desire: I want to find people
 
+  Scenario: Can't access user search as anonymous user
+    Given I am an anonymous user
+
+    And I search users for "cheese"
+
+    Then I should be asked to login
+
   Scenario: Successfully search users
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name | roles    |
