@@ -57,7 +57,11 @@ define('SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE', 'private');
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_profile_field_storage_config_insert(FieldStorageConfigInterface $field_storage_config) : void {
-  if ($field_storage_config->getTargetEntityTypeId() === "profile" && $field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') === NULL) {
+  if (
+    $field_storage_config->getTargetEntityTypeId() === "profile" &&
+    $field_storage_config->getThirdPartySetting('social_profile', 'managed_access', TRUE) &&
+    $field_storage_config->getThirdPartySetting('social_profile', 'visibility_for') === NULL
+  ) {
     $visibility_storage_config = social_profile_create_visibility_field_storage_config_for($field_storage_config);
 
     $field_storage_config->setThirdPartySetting('social_profile', 'visibility_stored_by', $visibility_storage_config->getName());
@@ -190,6 +194,10 @@ function social_profile_ensure_associated_visibility_field_config(FieldConfigInt
   // core (i.e. entity base fields).
   $field_storage_config = $field_config->getFieldStorageDefinition();
   if (!$field_storage_config instanceof FieldStorageConfigInterface) {
+    return;
+  }
+
+  if (FieldManager::isOptedOutOfFieldAccessManagement($field_config)) {
     return;
   }
 
