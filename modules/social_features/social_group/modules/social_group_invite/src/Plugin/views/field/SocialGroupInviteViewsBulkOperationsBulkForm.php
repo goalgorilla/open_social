@@ -85,7 +85,7 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
       $tempstoreData['group_id'] = $group->id();
     }
 
-    /** @var array $tempStoreData */
+    /** @var array $tempstoreData */
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
