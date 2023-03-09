@@ -601,6 +601,25 @@ class ProfileContext extends RawMinkContext {
   }
 
   /**
+   * I hide real name behind nickname.
+   *
+   * @When /^(?:|I )(un)?hide real name behind nickname/
+   */
+  public function iHideRealNameBehindNickname($restrict = TRUE) {
+    // Convert our negative match to a boolean.
+    if ($restrict === "un") {
+      $restrict = FALSE;
+    }
+
+    assert(is_bool($restrict), "Restrict has unknown value " . print_r($restrict, TRUE));
+
+    \Drupal::configFactory()
+      ->getEditable('social_profile.settings')
+      ->set("limit_name_display", $restrict)
+      ->save();
+  }
+
+  /**
    * Update a profile for a user.
    *
    * @param array $profile

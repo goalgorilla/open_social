@@ -8,6 +8,7 @@ dependencies:
     - field.storage.profile.field_profile_first_name
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_last_name
+    - field.storage.profile.field_profile_nick_name
     - field.storage.profile.field_profile_profile_tag
     - field.storage.node.field_event_date
     - field.storage.node.field_event_date_end
@@ -239,6 +240,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_last_name
+  profile_nickname:
+    label: 'Nickname'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_nick_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_nick_name
   profile_owner_created:
     label: 'Owner » User » Created'
     datasource_id: 'entity:profile'
@@ -367,6 +377,7 @@ processor_settings:
       - profile_first_name
       - profile_interests_name
       - profile_last_name
+      - profile_nickname
       - profile_owner_name
       - profile_type
   language_with_fallback: {  }
@@ -431,6 +442,7 @@ processor_settings:
       - profile_first_name
       - profile_interests_name
       - profile_last_name
+      - profile_nickname
       - profile_owner_name
     spaces: ''
     ignored: ._-
@@ -455,6 +467,7 @@ processor_settings:
       - profile_first_name
       - profile_interests_name
       - profile_last_name
+      - profile_nickname
       - profile_owner_name
       - profile_type
   verified_users:

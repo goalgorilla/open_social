@@ -43,3 +43,6 @@ Feature: Manage which profile fields are enabled on a platform and the permissio
 
     Then I should see "The configuration options have been saved"
     And the profile field settings should be updated
+
+    # Until https://github.com/jhedstrom/drupalextension/issues/641
+    And I logout

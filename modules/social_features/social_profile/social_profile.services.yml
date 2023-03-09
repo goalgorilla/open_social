@@ -20,10 +20,6 @@ services:
   social_profile.field_manager:
     class: Drupal\social_profile\FieldManager
     arguments: ['@entity_field.manager']
-  social_profile_privacy.overrider:
-    class: Drupal\social_profile\RestrictedNameProcessorOverride
-    tags:
-      - { name: config.factory.override, priority: 5 }
   social_profile.profile_reindex_subscriber:
     class: Drupal\social_profile\EventSubscriber\ProfileReindexSubscriber
     arguments:
