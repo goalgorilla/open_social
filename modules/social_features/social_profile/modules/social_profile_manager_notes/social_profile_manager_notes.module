@@ -5,63 +5,64 @@
  * The social profile manager notes module file.
  */
 
-use Drupal\Core\Cache\Cache;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Implements hook_form_alter().
  */
 function social_profile_manager_notes_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  $profile_forms = [
-    'comment_comment_profile_form',
-  ];
+  if ($form_id !== 'comment_comment_profile_form') {
+    return;
+  }
 
-  if (in_array($form_id, $profile_forms)) {
-    if (!\Drupal::currentUser()->hasPermission('edit field manager notes')) {
-      $form['field_comment_body']['#access'] = FALSE;
-      unset($form['actions']);
-    }
-    else {
-      unset($form['actions']['preview']);
-      unset($form['field_comment_body']['widget'][0]['#title']);
-      $form['actions']['submit']['#value'] = new TranslatableMarkup('Leave remark');
-      $form['#attached']['library'][] = 'social_profile_manager_notes/manager_notes';
-      $form['actions']['submit']['#submit'][] = '_social_profile_manager_notes_form_submit';
-    }
+  if (!\Drupal::currentUser()->hasPermission('edit field manager notes')) {
+    $form['field_comment_body']['#access'] = FALSE;
+    unset($form['actions']);
+  }
+  else {
+    unset($form['actions']['preview']);
+    unset($form['field_comment_body']['widget'][0]['#title']);
+    $form['actions']['submit']['#value'] = new TranslatableMarkup('Leave remark');
+    $form['#attached']['library'][] = 'social_profile_manager_notes/manager_notes';
+    $form['actions']['submit']['#submit'][] = '_social_profile_manager_notes_redirect_comment_submit_to_profile';
   }
 }
 
 /**
- * Form submit for profile_profile_edit_form and profile_profile_add_form.
+ * Redirect the creation of a note back to the profile view page.
  *
  * @param array $form
- *   The profile edit form.
+ *   The comment create form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form state interface.
  */
-function _social_profile_manager_notes_form_submit(array $form, FormStateInterface $form_state) {
-  /** @var \Drupal\profile\Entity\Profile $profile */
-  $profile = _social_profile_get_profile_from_route();
-  // Let's be on the safe side.
-  if ($profile instanceof Profile) {
-    // Get the uid of the profile.
-    $uid = $profile->getOwnerId();
-    // Invalidate cache tag.
-    Cache::invalidateTags(['user:breadcrumb:' . $uid]);
-    // Set redirect to the profile page when a SM submits a note.
-    $form_state->setRedirect(
-      'social_profile.view_user_profile', [
-        'user' => $uid,
-      ]
-    );
-  }
+function _social_profile_manager_notes_redirect_comment_submit_to_profile(array $form, FormStateInterface $form_state) : void {
+  // We can get the profile from the comment form. We're assuming this hook is
+  // only used correctly so we can use asserts to make sure that's true.
+  $form_object = $form_state->getFormObject();
+  assert($form_object instanceof EntityFormInterface, __FUNCTION__ . " was used as submit hook outside of the profile comment form.");
+  $comment = $form_object->getEntity();
+  assert($comment instanceof CommentInterface);
+  $profile = $comment->getCommentedEntity();
+  assert($profile instanceof ProfileInterface);
+  $uid = $profile->getOwnerId();
+  assert($uid !== NULL, "Profile (id: " . $profile->id() . ") is orphaned but being commented on.");
+
+  // Set redirect to the profile page when a SM submits a note.
+  $form_state->setRedirect(
+    'social_profile.view_user_profile', [
+      'user' => $profile->getOwnerId(),
+    ]
+  );
 }
 
 /**
@@ -92,8 +93,7 @@ function social_profile_manager_notes_theme($existing, $type, $theme, $path) {
  * Implements hook_entity_view_display_alter().
  */
 function social_profile_manager_notes_entity_view_display_alter(EntityViewDisplayInterface $display, array $context): void {
-  if ($context['entity_type'] === 'profile'
-    && $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE) {
+  if ($context['entity_type'] === 'profile' && $context['view_mode'] === 'full') {
     $display->setComponent('field_manager_notes', [
       'weight' => 6,
       'settings' => [],
