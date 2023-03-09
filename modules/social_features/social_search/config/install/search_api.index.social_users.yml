@@ -6,6 +6,7 @@ dependencies:
     - field.storage.profile.field_profile_first_name
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_last_name
+    - field.storage.profile.field_profile_nick_name
     - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
@@ -83,6 +84,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_last_name
+  field_profile_nick_name:
+    label: 'Nickname'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_nick_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_nick_name
   field_profile_profile_tag:
     label: 'Profile tag'
     datasource_id: 'entity:profile'
@@ -112,6 +122,12 @@ field_settings:
         'entity:profile':
           main: ''
           profile: search_index
+  social_profile_privacy_restricted_name:
+    label: 'Restricted Name'
+    datasource_id: 'entity:profile'
+    property_path: social_profile_privacy_restricted_name
+    type: text
+    indexed_locked: true
   uid:
     label: Owner
     datasource_id: 'entity:profile'
@@ -144,6 +160,8 @@ processor_settings:
       - field_profile_first_name
       - field_profile_interests_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - name
       - rendered_item
     weights:
@@ -222,6 +240,8 @@ processor_settings:
       - field_profile_first_name
       - field_profile_interests_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - name
       - rendered_item
     weights:
@@ -232,6 +252,7 @@ processor_settings:
     weights:
       add_properties: 0
       pre_index_save: -10
+  social_profile_privacy_restricted_name: { }
   add_url:
     plugin_id: add_url
     weights:
@@ -248,6 +269,8 @@ processor_settings:
       - field_profile_first_name
       - field_profile_interests_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - name
       - rendered_item
     spaces: ''

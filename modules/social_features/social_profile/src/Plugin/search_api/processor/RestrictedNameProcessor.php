@@ -128,6 +128,20 @@ class RestrictedNameProcessor extends ProcessorPluginBase {
     foreach ($datasources as $datasource_id => $datasource) {
       if ($this->supportsDataSource($datasource)) {
         $this->ensureField($datasource_id, 'social_profile_privacy_restricted_name');
+        // Add our new field to the processors we need.
+        foreach ($this->getIndex()->getProcessors() as $processor_id => $processor) {
+          if (in_array(
+            $processor_id,
+            ['tokenizer', 'ignorecase', 'transliteration'],
+            TRUE
+          )) {
+            $configuration = $processor->getConfiguration();
+            if (!in_array('social_profile_privacy_restricted_name', $configuration['fields'], TRUE)) {
+              $configuration['fields'][] = 'social_profile_privacy_restricted_name';
+            }
+            $processor->setConfiguration($configuration);
+          }
+        }
       }
     }
   }

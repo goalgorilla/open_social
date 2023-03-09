@@ -22,6 +22,8 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Item\Field as SearchField;
 use Drupal\social_profile\FieldManager;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -113,6 +115,7 @@ function social_profile_install() {
       'administer profile settings',
       'view profile email',
       'view profile language',
+      'social profile always show full name',
     ]
   );
   social_profile_setup_per_profile_field_permissions();
@@ -1768,7 +1771,9 @@ function social_profile_update_12019() : void {
 
   // Migrate privacy permission.
   foreach (Role::loadMultiple() as $role) {
-    if ($role->hasPermission("social profile privacy always show full name")) {
+    // We must also give the role to sitemanagers since they should always have
+    // it but never got it due to a previously made implementation error.
+    if ($role->hasPermission("social profile privacy always show full name") || $role->id() === "sitemanager") {
       $role->grantPermission("social profile always show full name");
       $role->revokePermission("social profile privacy always show full name");
       $role->save();
@@ -1855,4 +1860,39 @@ function social_profile_update_12021() : string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Move profile_field_nick_name from override into config.
+ */
+function social_profile_update_12022() : void {
+  // profile_field_nick_name was previously a `social_profile_fields` config
+  // override but we're trying to remove config overrides.
+  // We don't need to do the same thing for the
+  // `social_profile_privacy_restricted_name` processor because it adds
+  // everything it needs during the index save that we trigger while adding the
+  // nickname.
+  foreach (Index::loadMultiple(['social_all', 'social_users']) as $index_id => $index) {
+    $field = new SearchField($index, "field_profile_nick_name");
+    $field
+      ->setLabel("Nickname")
+      ->setDatasourceId("entity:profile")
+      ->setPropertyPath("field_profile_nick_name")
+      ->setType("text")
+      ->setBoost(2.0)
+      ->setDependencies(['config' => 'field.storage.profile.field_profile_nick_name']);
+    $index->addField($field);
+
+    foreach ($index->getProcessors() as $processor_id => $processor) {
+      if (in_array($processor_id, ['tokenizer', 'ignorecase', 'transliteration'], TRUE)) {
+        $configuration = $processor->getConfiguration();
+        if (!in_array('social_profile_privacy_restricted_name', $configuration['fields'], TRUE)) {
+          $configuration['fields'][] = 'social_profile_privacy_restricted_name';
+        }
+        $processor->setConfiguration($configuration);
+      }
+    }
+
+    $index->save();
+  }
 }

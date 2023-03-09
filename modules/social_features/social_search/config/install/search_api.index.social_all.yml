@@ -16,6 +16,7 @@ dependencies:
     - field.storage.profile.field_profile_first_name
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_last_name
+    - field.storage.profile.field_profile_nick_name
     - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.group.teaser
@@ -92,6 +93,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_last_name
+  field_profile_nick_name:
+    label: 'Nickname'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_nick_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_nick_name
   field_profile_profile_tag:
     label: 'Profile tag'
     datasource_id: 'entity:profile'
@@ -144,6 +154,12 @@ field_settings:
           topic: search_index
         'entity:profile':
           profile: search_index
+  social_profile_privacy_restricted_name:
+    label: 'Restricted Name'
+    datasource_id: 'entity:profile'
+    property_path: social_profile_privacy_restricted_name
+    type: text
+    indexed_locked: true
   status:
     label: 'Publishing status'
     datasource_id: 'entity:node'
@@ -245,6 +261,8 @@ processor_settings:
       - field_group_location
       - field_profile_first_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - label
       - name
       - rendered_item
@@ -332,6 +350,8 @@ processor_settings:
       - field_group_location
       - field_profile_first_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - label
       - name
       - rendered_item
@@ -342,6 +362,7 @@ processor_settings:
       preprocess_index: -20
       preprocess_query: -20
   rendered_item: {  }
+  social_profile_privacy_restricted_name: { }
   add_url: {  }
   aggregated_field: {  }
   tokenizer:
@@ -350,6 +371,8 @@ processor_settings:
       - field_group_description
       - field_profile_first_name
       - field_profile_last_name
+      - field_profile_nick_name
+      - social_profile_privacy_restricted_name
       - label
       - name
       - rendered_item
