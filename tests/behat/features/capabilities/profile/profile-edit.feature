@@ -231,3 +231,6 @@ Feature: Users can edit profiles
     And I should not see the text "Profile tag"
     And I should not see the text "Self introduction"
     And I should not see the text "Summary"
+
+    # Until https://github.com/jhedstrom/drupalextension/issues/641
+    And I logout

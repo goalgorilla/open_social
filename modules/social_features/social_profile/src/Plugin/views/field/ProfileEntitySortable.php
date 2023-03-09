@@ -170,10 +170,10 @@ class ProfileEntitySortable extends RenderedEntity {
         //
         // We'll craft the following two possible sort orders:
         // - First name + Last name + Nickname + Username (If
-        //   limit_search_and_mention is enabled and user can bypass this or
-        //   limit_search_and_mention is disabled)
+        //   limit_name_display is enabled and user can bypass this or
+        //   limit_name_display is disabled)
         // - Nickname + First name + Last name + Username (If
-        //   limit_search_and_mention is enabled, protecting the first name and
+        //   limit_name_display is enabled, protecting the first name and
         //   last name by the nickname but falling back to real name in case
         //   nickname is NULL)
         //
@@ -183,20 +183,20 @@ class ProfileEntitySortable extends RenderedEntity {
         // shown to the user which could be just a last name, so the sort field
         // is treated as a single string containing whatever is filled in.
         //
-        // While the order is dictated by the limit_search_and_mention setting
+        // While the order is dictated by the limit_name_display setting
         // with the related permission, the visibility of individual fields
         // within that order is dictated by profile field settings.
         //
-        // We don't handle the case where limit_search_and_mention protects
+        // We don't handle the case where limit_name_display protects
         // the users real name with a nickname but the user has removed access
         // for others to their nickname. In such a case their full name is
         // visible anyway. This can be solved by forcing a nickname to be
         // public but that's out of the scope of the work being done here.
         // @phpstan-ignore-next-line
-        $limit_search_and_mention = \Drupal::config('social_profile_privacy.settings')
-          ->get('limit_search_and_mention');
+        $limit_name_display = \Drupal::config('social_profile_privacy.settings')
+          ->get('limit_name_display');
         if ($view_any) {
-          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile always show full name')) {
+          if (!$limit_name_display || $this->currentUser->hasPermission('social profile always show full name')) {
             $sort = "
               TRIM(CONCAT(
                 COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
@@ -241,7 +241,7 @@ class ProfileEntitySortable extends RenderedEntity {
 
           // Below is the same as for any field except that the field is set to
           // NULL based on the configured visibility value.
-          if (!$limit_search_and_mention || $this->currentUser->hasPermission('social profile always show full name')) {
+          if (!$limit_name_display || $this->currentUser->hasPermission('social profile always show full name')) {
             $sort = "
               TRIM(CONCAT(
                 COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
