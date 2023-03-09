@@ -1258,31 +1258,6 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
 }
 
 /**
- * Gets the users profile by route.
- *
- * @return mixed
- *   The profile or NULL if nothing could be found.
- */
-function _social_profile_get_profile_from_route() {
-  $profile = NULL;
-  $entity_type_manager = \Drupal::entityTypeManager();
-
-  $account = \Drupal::routeMatch()->getParameter('user');
-  if (!is_object($account) && !is_null($account)) {
-    $account = $entity_type_manager
-      ->getStorage('user')
-      ->load($account);
-  }
-
-  if (!empty($account)) {
-    $storage = $entity_type_manager->getStorage('profile');
-    $profile = $storage->loadByUser($account, 'profile');
-  }
-
-  return $profile;
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
