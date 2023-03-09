@@ -4,12 +4,14 @@ Feature: Profile manager notes
   Role: SM
   Goal/desire: SM can share remarks about Users
 
-  Scenario: Create a manager note for a profile
+  Background:
     Given I enable the module "social_profile_manager_notes"
     And users:
       | name      |
       | test_user |
-    And I am logged in as a user with the sitemanager role
+
+  Scenario: Create a manager note for a profile as a sitemanager
+    Given I am logged in as a user with the sitemanager role
 
     When I am on the profile of "test_user"
     And I click "Information"
@@ -19,6 +21,7 @@ Feature: Profile manager notes
     And I press "Leave remark"
     And I should see "New remark created"
 
+  Scenario: Can not see manager notes as a non-sitemanager user
     Given I am logged in as an "verified"
 
     When I am on the profile of "test_user"
