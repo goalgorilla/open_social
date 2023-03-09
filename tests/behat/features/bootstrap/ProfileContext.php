@@ -190,11 +190,15 @@ class ProfileContext extends RawMinkContext {
    */
   public function assertUniqueNicknames(string $state) : void {
     assert($state === "enabled" || $state === "disabled", ":state must be one of 'enabled' or 'disabled' (got '$state')");
+    // For some reason the way Drupal Extension runs Drupal the permissions get
+    // cached in our runtime, so we need to cache bust to ensure we can actually
+    // see the result of the form save.
+    \Drupal::configFactory()->clearStaticCache();
 
     $expectedState = $state === "enabled";
     $actualState = \Drupal::config("social_profile.settings")->get("nickname_unique_validation");
     if ($expectedState !== $actualState) {
-      throw new \RuntimeException("Expected unique nikcnames to be $state but got '" . ($actualState ? "enabled" : "disabled") . "'");
+      throw new \RuntimeException("Expected unique nicknames to be $state but got '" . ($actualState ? "enabled" : "disabled") . "'");
     }
   }
 
