@@ -714,9 +714,9 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
 
-  // If the current user is anonymous, it means it does not have access to the
-  // users profile.
-  if ($current_user->isAnonymous() &&
+  // If the current user has no access to viewing user profiles, it might not
+  // have access to the users profile.
+  if (!$current_user->hasPermission('view any profile profile') &&
     isset($display->get('content')['field_profile_image'])
   ) {
 
