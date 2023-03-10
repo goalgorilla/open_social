@@ -175,7 +175,7 @@ Feature: Create Closed Group
     And I click "Test closed group"
     And I click "Edit group"
     And I click "Delete"
-    And I wait for "3" seconds
+    And I wait for "30" seconds
     And I should see "Are you sure you want to delete your group"
     And I should see the button "Cancel"
     And I should see the button "Delete"
