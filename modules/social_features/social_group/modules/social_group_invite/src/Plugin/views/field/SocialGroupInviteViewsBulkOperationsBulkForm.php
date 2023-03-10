@@ -104,8 +104,9 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
 
     // Render select all results checkbox.
     if (!empty($wrapper['select_all'])) {
+      $total_results = is_array($this->tempStoreData) ? $this->tempStoreData['total_results'] : 0;
       $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count invites across all the pages', [
-        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+        '@count' => ' ' . $total_results,
       ]);
       // Styling attributes for the select box.
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';

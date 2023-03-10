@@ -449,12 +449,7 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
     return;
   }
 
-  $operations = array_count_values($results['operations']);
-  $results_count = 0;
-
-  foreach ($operations as $count) {
-    $results_count += $count;
-  }
+  $results_count = $results['operations'][0]['count'];
 
   $hook = 'social_event_managers_action_' . $results['action'] . '_finish';
 
