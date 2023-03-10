@@ -3,6 +3,7 @@
 namespace Drupal\social_core;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -54,10 +55,28 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   public function loadOverrides($names) {
     $overrides = [];
 
+    // There are some performance issues, even when content translation is
+    // disabled.
+    // Since we check for the social_content_translation settings, if the
+    // module is configured and enabled for content translation.
+    // We can easily skip if the module isn't enabled.
+    // If the module "social_content_translation" is enabled let make
+    // translations enabled for content provided by the module by default.
+    $is_content_translations_enabled = \Drupal::moduleHandler()
+      ->moduleExists('social_content_translation');
+
+    if (!$is_content_translations_enabled) {
+      return $overrides;
+    }
+
+    // If the module is enabled, we only need to get the content translation
+    // configuration once per request. To see for what it's enabled.
     // This setting can't be changed in an override because that would create
     // and endless loop in trying to apply the override.
-    $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
-    $is_enabled = $settings->getOriginal($this->getModule(), FALSE);
+    $is_enabled = $this->isContentTranslationEnabledForModule();
+    if (!$is_enabled) {
+      return $overrides;
+    }
 
     if ($is_enabled) {
       $translation_overrides = $this->getTranslationOverrides();
@@ -70,6 +89,35 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
     }
 
     return $overrides;
+  }
+
+  /**
+   * Returns the Content translations settings.
+   *
+   * @return \Drupal\Core\Config\Config
+   *   The Config for content translation settings.
+   */
+  protected function getContentTranslationSettings(): Config {
+    $settings = &drupal_static(__FUNCTION__);
+
+    // Lets statically cache this, because of performance reasons
+    // this could get called quite often (for all the loadOverrides).
+    if (empty($settings)) {
+      $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
+    }
+
+    return $settings;
+  }
+
+  /**
+   * Checks for the given Module if we configured content translations.
+   *
+   * @return mixed
+   *   True if it's enabled for the current checked module or null.
+   */
+  protected function isContentTranslationEnabledForModule(): mixed {
+    $settings = $this->getContentTranslationSettings();
+    return $settings->getOriginal($this->getModule(), FALSE);
   }
 
   /**
