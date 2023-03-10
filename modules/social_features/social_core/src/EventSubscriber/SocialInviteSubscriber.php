@@ -96,7 +96,6 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
   public function notifyAboutPendingInvitations(RequestEvent $event) {
     // Only show this message when a user is logged in.
     if ($this->currentUser->isAuthenticated()) {
-      $data = $this->inviteService->getInviteData();
       /** @var \Symfony\Component\HttpFoundation\Request $request */
       $request = $event->getRequest();
       $request_path = $request->getPathInfo();
@@ -120,6 +119,8 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
       // the front page set for authenticated users
       // or the stream being the social_core.homepage.
       if (in_array($request_path, $paths_allowed) || in_array($route_name, $routes_allowed)) {
+        $data = $this->inviteService->getInviteData();
+
         if (!empty($data['name']) && !empty($data['amount'])) {
           $replacement_url = [
             '@url' => Url::fromRoute($data['name'], ['user' => $this->currentUser->id()])
