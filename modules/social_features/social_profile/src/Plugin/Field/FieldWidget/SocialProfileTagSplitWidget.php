@@ -32,7 +32,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
     $widget = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $widget->setSocialProfileTagService($container->get('social_profile.tag_service'));
     return $widget;
@@ -51,7 +51,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     // Do not render field if no options or not active.
