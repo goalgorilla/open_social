@@ -198,7 +198,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     }
     // Add the Event ID to the data.
     $tempstoreData['event_id'] = $event->id();
-   
+
     /** @var array $tempstoreData */
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
