@@ -389,8 +389,7 @@ function social_profile_preprocess_profile(array &$variables) {
       $current_user->id() != $profile->getOwnerId() &&
       $current_user->hasPermission('use private messaging system') &&
       $current_user->hasPermission('create private messages thread') &&
-      User::load($profile->getOwnerId())
-        ->hasPermission('use private messaging system')
+      $user->hasPermission('use private messaging system')
     ) {
       $preprocessed_variables[$profile->id()]['profile_contact_label'] = 'private_message';
       $preprocessed_variables[$profile->id()]['#cache']['contexts'][] = 'user';
