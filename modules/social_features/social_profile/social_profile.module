@@ -367,47 +367,72 @@ function social_profile_preprocess_field__field_profile_image(array &$variables)
 function social_profile_preprocess_profile(array &$variables) {
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $variables['profile'];
-  $user = User::load($profile->getOwnerId());
   $current_user = \Drupal::currentUser();
 
-  // See social_user_user_format_name_alter(), DisplayName is either first name
-  // + last name, or username if both first and last name aren't filled out.
-  $variables['profile_name'] = $user->getDisplayName();
-  $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
-  $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
-  $variables['profile_home'] = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
+  $preprocessed_variables = &drupal_static(__FUNCTION__, []);
+  if (empty($preprocessed_variables[$profile->id()])) {
+    $user = User::load($profile->getOwnerId());
 
-  // Set a condition for the label to show in the teaser
-  // The actual label text should be changeable in the template.
-  // Disable for the LU's own profile.
-  $variables['profile_contact_label'] = 'profile_info';
-  if (
-    \Drupal::moduleHandler()->moduleExists('social_private_message') &&
-    $current_user->id() != $profile->getOwnerId() &&
-    $current_user->hasPermission('use private messaging system') &&
-    $current_user->hasPermission('create private messages thread') &&
-    User::load($profile->getOwnerId())
-      ->hasPermission('use private messaging system')
-  ) {
-    $variables['profile_contact_label'] = 'private_message';
-    $variables['#cache']['contexts'][] = 'user';
-  }
+    // See social_user_user_format_name_alter(), DisplayName is either first name
+    // + last name, or username if both first and last name aren't filled out.
+    $preprocessed_variables[$profile->id()]['profile_name'] = $user->getDisplayName();
+    $preprocessed_variables[$profile->id()]['profile_contact_url'] = _social_profile_get_contact_url($user);
+    $preprocessed_variables[$profile->id()]['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
+    $preprocessed_variables[$profile->id()]['profile_home'] = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
 
-  if (_social_profile_check_property_access($profile, $current_user, 'email')) {
-    // Derived from MailToFormatter.php.
-    $email = $user->getEmail();
-    if (!empty($email)) {
-      $variables['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
+    // Set a condition for the label to show in the teaser
+    // The actual label text should be changeable in the template.
+    // Disable for the LU's own profile.
+    $preprocessed_variables[$profile->id()]['profile_contact_label'] = 'profile_info';
+    if (
+      \Drupal::moduleHandler()->moduleExists('social_private_message') &&
+      $current_user->id() != $profile->getOwnerId() &&
+      $current_user->hasPermission('use private messaging system') &&
+      $current_user->hasPermission('create private messages thread') &&
+      User::load($profile->getOwnerId())
+        ->hasPermission('use private messaging system')
+    ) {
+      $preprocessed_variables[$profile->id()]['profile_contact_label'] = 'private_message';
+      $preprocessed_variables[$profile->id()]['#cache']['contexts'][] = 'user';
+    }
+
+    if (_social_profile_check_property_access($profile, $current_user, 'email')) {
+      // Derived from MailToFormatter.php.
+      $email = $user->getEmail();
+      if (!empty($email)) {
+        $preprocessed_variables[$profile->id()]['user_mail'] = Link::fromTextAndUrl($email, Url::fromUri('mailto:' . $email));
+      }
+    }
+
+    // Language field.
+    $language_manager = \Drupal::languageManager();
+    if ($language_manager->isMultilingual() &&
+      _social_profile_check_property_access($profile, $current_user, 'language')) {
+      // Add the user language.
+      $preprocessed_variables[$profile->id()]['user_lang'] = $language_manager->getLanguageName($user->getPreferredLangcode());
+    }
+
+    // Add the hero styled image if we have access to it.
+    if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
+      $preprocessed_variables[$profile->id()]['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+        ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+    }
+
+    // Profile information URL.
+    $preprocessed_variables[$profile->id()]['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
+
+    /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
+    $tag_service = \Drupal::service('social_profile.tag_service');
+    $preprocessed_variables[$profile->id()]['profile_tagging_active'] = $tag_service->isActive();
+    $preprocessed_variables[$profile->id()]['profile_tagging_allow_split'] = $tag_service->allowSplit();
+
+    if (!$profile->get('field_profile_profile_tag')->isEmpty()) {
+      $tags = $profile->get('field_profile_profile_tag')->getValue();
+      $preprocessed_variables[$profile->id()]['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
     }
   }
 
-  // Language field.
-  $language_manager = \Drupal::languageManager();
-  if ($language_manager->isMultilingual() &&
-    _social_profile_check_property_access($profile, $current_user, 'language')) {
-    // Add the user language.
-    $variables['user_lang'] = $language_manager->getLanguageName($user->getPreferredLangcode());
-  }
+  $variables = array_merge($variables, $preprocessed_variables[$profile->id()]);
 
   // Edit profile URL.
   // Get the current route name to check if the user is on the edit or delete
@@ -418,33 +443,16 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['#cache']['contexts'][] = 'route.name';
   }
 
-  // Add the hero styled image if we have access to it.
-  if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
-    $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-      ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
-  }
-
-  // Profile information URL.
-  $variables['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
-
   // Prepare variables for statistic block.
   if ($variables['elements']['#view_mode'] === 'statistic') {
+    $user = User::load($profile->getOwnerId());
+
     /** @var \Drupal\social_profile\UserStatistics $user_statistics */
     $user_statistics = \Drupal::service('social_profile.user_statistics');
     $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
     $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
-  }
-
-  /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
-  $tag_service = \Drupal::service('social_profile.tag_service');
-  $variables['profile_tagging_active'] = $tag_service->isActive();
-  $variables['profile_tagging_allow_split'] = $tag_service->allowSplit();
-
-  if (!$profile->get('field_profile_profile_tag')->isEmpty()) {
-    $tags = $profile->get('field_profile_profile_tag')->getValue();
-    $variables['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
   }
 }
 
