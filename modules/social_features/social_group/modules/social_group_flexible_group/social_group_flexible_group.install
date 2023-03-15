@@ -530,3 +530,75 @@ function social_group_flexible_group_update_11402(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Apply default value of field_group_posts_enabled where it is not defined.
+ *
+ * Before field_group_posts_enabled was introduced, all users were able to post
+ * by default as this was a hardcoded functionality. If the flexible group was
+ * created before field_group_posts_enabled existed, this value is not defined
+ * in the database. If field_group_posts_enabled is not defined (not in the
+ * database) and the group is edited without any changes, the default value is
+ * not set and this results in the group being updated with
+ * field_group_posts_enabled disabled (value 0). Because of these facts, we need
+ * to define the field_group_posts_enabled value for each flexible group where
+ * it is not defined. The field_group_posts_enabled value is defined based on
+ * the field_group_posts_enabled default value.
+ */
+function social_group_flexible_group_update_11701(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('group')
+      ->condition('type', 'flexible_group')
+      ->notExists('field_group_posts_enabled')
+      ->count()
+      ->execute();
+
+    if (!$sandbox['total']) {
+      return t('No flexibe groups were updated.');
+    }
+
+    $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('group', 'flexible_group');
+    if (isset($definitions['field_group_posts_enabled'])) {
+      $sandbox['field_group_posts_enabled_default_value'] =
+        $definitions['field_group_posts_enabled']->getDefaultValueLiteral()[0]['value'];
+    } else {
+      return t('field_group_posts_enabled does not exist. No flexibe groups were updated.');
+    }
+
+    $sandbox['processed'] = 0;
+    $sandbox['current_id'] = -1;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 10);
+  }
+
+  $entity_ids = \Drupal::entityQuery('group')
+    ->condition('type', 'flexible_group')
+    ->condition('id', $sandbox['current_id'], '>')
+    ->notExists('field_group_posts_enabled')
+    ->sort('id')
+    ->range(0, $sandbox['limit'])
+    ->execute();
+
+  $storage = \Drupal::entityTypeManager()->getStorage('group');
+
+  foreach ($entity_ids as $entity_id) {
+    /** @var \Drupal\social_group\Entity\Group $entity */
+    $entity = $storage->load($entity_id);
+    $entity->field_group_posts_enabled->value =
+      $sandbox['field_group_posts_enabled_default_value'];
+    $entity->save();
+
+    $sandbox['processed']++;
+    $sandbox['current_id'] = $entity_id;
+    $sandbox['processed_ids'][] = $entity_id;
+  }
+
+  $sandbox['#finished'] = $sandbox['processed'] >= $sandbox['total'] ? TRUE : $sandbox['processed'] / $sandbox['total'];
+
+  if ($sandbox['#finished'] === TRUE) {
+    return t('Post for group members was @status for @count flexible groups (ids): @ids', [
+      '@status' => $sandbox['field_group_posts_enabled_default_value'] === 1 ? t('enabled') : t('disabled'),
+      '@count' => count($sandbox['processed_ids']),
+      '@ids' => implode(', ', $sandbox['processed_ids']),
+    ]);
+  }
+}
