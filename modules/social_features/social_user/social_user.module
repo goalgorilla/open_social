@@ -677,7 +677,7 @@ function social_user_ensure_help_text_fieldset(&$form) {
 function social_user_user_format_name_alter(&$name, AccountInterface $account) {
   $suggested_names = &drupal_static(__FUNCTION__, []);
 
-  if (empty($suggested_names[$account->id()])) {
+  if (!isset($suggested_names[$account->id()])) {
     // We always add the username as fallback suggestion.
     $suggestions = [
       'username' => [
@@ -704,11 +704,9 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
         $lowest_weight = $suggestion['weight'];
       }
     }
-
-    $name = $suggested_names[$account->id()];
   }
-  else {
-    $name = $suggested_names[$account->id()];
+
+  $name = $suggested_names[$account->id()];
   }
 }
 
