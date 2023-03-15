@@ -11,6 +11,7 @@ use Drupal\search_api\Entity\Index;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Site\Settings;
 
 /**
  * Implements hook_install().
@@ -545,7 +546,7 @@ function social_group_flexible_group_update_11402(): string {
  * it is not defined. The field_group_posts_enabled value is defined based on
  * the field_group_posts_enabled default value.
  */
-function social_group_flexible_group_update_11701(&$sandbox) {
+function social_group_flexible_group_update_11701(array &$sandbox): string {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('group')
       ->condition('type', 'flexible_group')
@@ -561,7 +562,8 @@ function social_group_flexible_group_update_11701(&$sandbox) {
     if (isset($definitions['field_group_posts_enabled'])) {
       $sandbox['field_group_posts_enabled_default_value'] =
         $definitions['field_group_posts_enabled']->getDefaultValueLiteral()[0]['value'];
-    } else {
+    }
+    else {
       return t('field_group_posts_enabled does not exist. No flexibe groups were updated.');
     }
 
@@ -600,5 +602,8 @@ function social_group_flexible_group_update_11701(&$sandbox) {
       '@count' => count($sandbox['processed_ids']),
       '@ids' => implode(', ', $sandbox['processed_ids']),
     ]);
+  }
+  else {
+    return '';
   }
 }
