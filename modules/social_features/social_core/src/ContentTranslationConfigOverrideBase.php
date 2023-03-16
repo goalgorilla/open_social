@@ -5,6 +5,7 @@ namespace Drupal\social_core;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorableConfigBase;
 use Drupal\Core\Config\StorageInterface;
 
 /**
@@ -29,7 +30,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * Returns the module that provides the overrides.
    *
-   * This is used as the social_contant_translation.settings configuration key
+   * This is used as the social_content_translation.settings configuration key
    * as well as in the cache suffix for the overrides.
    *
    * @return string
@@ -40,7 +41,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * Returns the display name for this set of configuration overrides.
    *
-   * This can be used in a user interface to let sitemanagers determine which
+   * This can be used in a user interface to let site managers determine which
    * parts of Open Social should be translatable. For consistency when
    * displaying this should always be a plural string.
    *
@@ -77,8 +78,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
     if (!$is_enabled) {
       return $overrides;
     }
-
-    if ($is_enabled) {
+    else {
       $translation_overrides = $this->getTranslationOverrides();
 
       foreach ($translation_overrides as $name => $override) {
@@ -100,7 +100,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   protected function getContentTranslationSettings(): Config {
     $settings = &drupal_static(__FUNCTION__);
 
-    // Lets statically cache this, because of performance reasons
+    // Let's statically cache this, because of performance reasons
     // this could get called quite often (for all the loadOverrides).
     if (empty($settings)) {
       $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
@@ -151,7 +151,7 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   /**
    * {@inheritdoc}
    */
-  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+  public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION): ?StorableConfigBase {
     return NULL;
   }
 
