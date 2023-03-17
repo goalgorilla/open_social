@@ -689,7 +689,8 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
     $suggestions += \Drupal::moduleHandler()->invokeAll('social_user_name_display_suggestions', [$account]);
     \Drupal::moduleHandler()->alter('social_user_name_display_suggestions', $suggestions, $account);
 
-    // We could use -PHP_INT_MAX but someone being clever might shoot themselves.
+    // We could use -PHP_INT_MAX but someone being clever might shoot 
+    // themselves.
     $lowest_weight = NULL;
 
     // If our array ends up being empty then we just stick to Drupal's default.
