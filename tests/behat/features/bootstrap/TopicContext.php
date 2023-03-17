@@ -126,6 +126,64 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
+   * Create multiple topics at the start of a test.
+   *
+   * Creates topics provided in the form:
+   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given topics with non-anonymous author:
+   */
+  public function createTopicsWithAuthor(TableNode $topicsTable) : void {
+    // Create a new random user to own the content, this ensures the author
+    // isn't anonymous.
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => "authenticated",
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+
+    foreach ($topicsTable->getHash() as $topicHash) {
+      if (isset($topicHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
+      }
+
+      $topicHash['author'] = $user->name;
+
+      $topic = $this->topicCreate($topicHash);
+      $this->created[] = $topic->id();
+    }
+  }
+
+  /**
+   * Create multiple topics at the start of a test.
+   *
+   * Creates topics provided in the form:
+   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given topics authored by current user:
+   */
+  public function createTopicsAuthoredByCurrentUser(TableNode $topicsTable) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    foreach ($topicsTable->getHash() as $topicHash) {
+      if (isset($topicHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
+      }
+
+      $topicHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
+
+      $topic = $this->topicCreate($topicHash);
+      $this->created[] = $topic->id();
+    }
+  }
+
+  /**
    * Fill out the topic creation form and submit.
    *
    * Example: When I create a topic using its creation page:
@@ -331,18 +389,14 @@ class TopicContext extends RawMinkContext {
    */
   private function topicCreate($topic) : Node {
     if (!isset($topic['author'])) {
-      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $topic['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      throw new \Exception("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
     }
-    else {
-      $account = user_load_by_name($topic['author']);
-      if ($account->id() !== 0) {
-        $topic['uid'] = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
-      }
+
+    $account = user_load_by_name($topic['author']);
+    if ($account === FALSE) {
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
     }
+    $topic['uid'] = $account->id();
     unset($topic['author']);
 
     if (isset($topic['group'])) {

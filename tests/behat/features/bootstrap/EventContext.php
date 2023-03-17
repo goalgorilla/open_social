@@ -158,6 +158,64 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Create multiple events at the start of a test.
+   *
+   * Creates events provided in the form:
+   * | title    | body            | field_content_visibility | field_event_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given events with non-anonymous author:
+   */
+  public function createEventsWithAuthor(TableNode $eventsTable) : void {
+    // Create a new random user to own the content, this ensures the author
+    // isn't anonymous.
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => "authenticated",
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+
+    foreach ($eventsTable->getHash() as $eventHash) {
+      if (isset($groupHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
+      }
+
+      $eventHash['author'] = $user->name;
+
+      $event = $this->eventCreate($eventHash);
+      $this->created[] = $event->id();
+    }
+  }
+
+  /**
+   * Create multiple events at the start of a test.
+   *
+   * Creates events provided in the form:
+   * | title    | body            | field_content_visibility | field_event_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given events authored by current user:
+   */
+  public function createEventsAuthoredByCurrentUser(TableNode $eventsTable) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    foreach ($eventsTable->getHash() as $eventHash) {
+      if (isset($eventHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
+      }
+
+      $eventHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
+
+      $event = $this->eventCreate($eventHash);
+      $this->created[] = $event->id();
+    }
+  }
+
+  /**
    * Fill out the event creation form and submit.
    *
    * Example: When I create a event using its creation page:
@@ -428,18 +486,14 @@ class EventContext extends RawMinkContext {
    */
   private function eventCreate($event) : Node {
     if (!isset($event['author'])) {
-      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $event['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      throw new \Exception("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
     }
-    else {
-      $account = user_load_by_name($event['author']);
-      if ($account->id() !== 0) {
-        $event['uid'] = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
-      }
+
+    $account = user_load_by_name($event['author']);
+    if ($account === FALSE) {
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
     }
+    $event['uid'] = $account->id();
     unset($event['author']);
 
     if (isset($event['group'])) {
