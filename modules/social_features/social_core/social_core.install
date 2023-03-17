@@ -1642,3 +1642,14 @@ function social_core_update_11405(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Rebuild the `menu_tree` storage.
+ */
+function social_core_update_11801(): void {
+  // Rebuilding the menu tree storage ensures the db table `menu_tree` is
+  // updated, which should ensure social_core.dashboard is now not under
+  // the menu_name admin; Rather it's own top level menu. So we can render
+  // this in the toolbar.
+  \Drupal::service('plugin.manager.menu.link')->rebuild();
+}
