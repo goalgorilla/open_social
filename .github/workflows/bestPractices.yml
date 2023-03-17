@@ -1,0 +1,30 @@
+# This file contains custom lints that are not common to PHP/Drupal projects but
+# are specific to how we want to build products at Open Social. These only run
+# on pull requests since they are input for reviewer conversations and not hard
+# rules such as our quality checks.
+name: Best practices
+
+on:
+  pull_request: { }
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Contrary to the other jobs we only perform this check on pull requests and
+  # accept that if a PR is merged despite this check we can ignore the addition
+  # on the main branch.
+  config_overrides:
+    name: No config overrides added
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # We're only interested in config overrides being added.
+      # grep exits with 0 if it has matches, which we consider to be a fail
+      # so we invert.
+      - run: "! git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- '**/*.services.yml' | grep -e '^+' | grep config.factory.override"
