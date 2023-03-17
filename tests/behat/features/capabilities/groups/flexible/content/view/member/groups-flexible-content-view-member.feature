@@ -9,7 +9,7 @@ Feature: Flexible groups content view access for group members
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | <group_visibility>              |
-    And topics:
+    And topics with non-anonymous author:
       | title        | group      | field_topic_type | body                  | field_content_visibility | langcode |
       | Test content | Test group | News             | Body description text | <content_visibility>     | en       |
     And I am logged in as a user with the <role> role
@@ -66,7 +66,7 @@ Feature: Flexible groups content view access for group members
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
       | Test group | Group description       | flexible_group | en       | <group_visibility>              |
-    And events:
+    And events with non-anonymous author:
       | title        | group      | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Test group | Body description text | <content_visibility>     | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the <role> role
