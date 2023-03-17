@@ -8,7 +8,7 @@ Feature: Social Sharing
     Given I enable the optional module social_sharing
 
   Scenario: Can share public content as authenticated user
-    Given topics:
+    Given topics with non-anonymous author:
       | title        | field_topic_type | body                      | field_content_visibility | path          |
       | Public Topic | News             | Testing public visibility | public                   | /public-topic |
 
@@ -18,7 +18,7 @@ Feature: Social Sharing
     Then I should see "Share this page"
 
   Scenario: Can share public content as anonymous user
-    Given topics:
+    Given topics with non-anonymous author:
       | title        | field_topic_type | body                      | field_content_visibility | path          |
       | Public Topic | News             | Testing public visibility | public                   | /public-topic |
 
@@ -27,7 +27,7 @@ Feature: Social Sharing
     Then I should see "Share this page"
 
   Scenario: Can not share community content
-    Given topics:
+    Given topics with non-anonymous author:
       | title           | field_topic_type | body                         | field_content_visibility | path             |
       | Community Topic | News             | Testing community visibility | community                | /community-topic |
 
