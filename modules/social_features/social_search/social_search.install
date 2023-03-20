@@ -8,7 +8,10 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Item\Field;
+use Drupal\search_api\Item\FieldInterface;
 use Drupal\user\RoleInterface;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_update_dependencies().
@@ -350,5 +353,371 @@ function social_search_update_11404() : void {
   $incorrect_view = \Drupal::configFactory()->getEditable("views.view.search_group");
   if (!$incorrect_view->isNew()) {
     $incorrect_view->delete();
+  }
+}
+
+/**
+ * Merge search indices into social_all.
+ */
+function social_search_update_12000() : void {
+  // We rename fields to make it easier to distinguish between fields with the
+  // same info for different types and to group fields added with the field API
+  // by the type they're attached to.
+  $rename_fields = [
+    'created' => 'node_created',
+    'created_1' => 'group_created',
+    'label' => 'group_title',
+    'name' => 'profile_owner_name',
+    'status' => 'node_status',
+    'title' => 'node_title',
+    // We pick `type_1` because it has a boost configured.
+    'type_1' => 'node_type',
+    'uid' => 'node_owner_id',
+    'uid_1' => 'group_owner_id',
+    'uid_2' => 'profile_owner_id',
+    'field_group_description' => 'group_description',
+    'field_group_location' => 'group_location_name',
+    'field_profile_expertise' => 'profile_expertise_id',
+    'field_profile_first_name' => 'profile_first_name',
+    'field_profile_interests' => 'profile_interests_id',
+    'field_profile_last_name' => 'profile_last_name',
+    'field_profile_profile_tag' => 'profile_profile_tag',
+  ];
+  // We want to clean up some fields in social_all while we're at it.
+  $remove_fields = [
+    // We stop indexing the rendered item and instead index the fields for the
+    // content we're actually interested in, this allows us to search based on
+    // the fields a user has access to.
+    'rendered_item',
+    // We remove `type` because it duplicates `type_1`.
+    'type',
+  ];
+  // Some fields are not yet in `social_all` so we want to migrate them from the
+  // other indices.
+  $migrate_fields = [
+    'social_content' => [
+      'field_event_date' => 'event_date_start',
+      'field_event_date_end' => 'event_date_end',
+    ],
+    'social_groups' => [
+      'name' => 'group_creator_name',
+      'type' => 'group_type',
+    ],
+    'social_users' => [
+      'created' => 'profile_owner_created',
+      'field_profile_expertise_name' => 'profile_expertise_name',
+      'field_profile_interests_name' => 'profile_interests_name',
+    ],
+  ];
+  // Some fields didn't exist in any index so we must create them.
+  $add_fields = [
+    'node_description' => [
+      'label' => 'Description',
+      'datasource_id' => 'entity:node',
+      'property_path' => 'body',
+      'type' => 'text',
+      'dependencies' => [
+        'config' => ['field.storage.node.body'],
+      ],
+    ],
+    'group_allowed_join_method' => [
+      'label' => 'Allowed join method',
+      'datasource_id' => 'entity:group',
+      'property_path' => 'field_group_allowed_join_method',
+      'type' => 'string',
+      'dependencies' => [
+        'config' => ['field.storage.group.field_group_allowed_join_method'],
+      ],
+    ],
+  ];
+
+  // Process the indices.
+  $index_all = Index::load("social_all");
+  assert($index_all !== NULL, "Missing social_all index, this indicates a corrupt Open Social installation");
+
+  $index_all->set("name", "Community Search");
+  $index_all->set("description", "Contains all searchable community data for the platform (e.g. nodes, groups, and users).");
+  $index_all->removeProcessor("rendered_item");
+  $processors_all = $index_all->getProcessors();
+
+  foreach ($remove_fields as $field_id) {
+    $index_all->removeField($field_id);
+    foreach ($processors_all as $processor) {
+      $configuration = $processor->getConfiguration();
+      if (isset($configuration['fields'])) {
+        // Filter out the removed field.
+        $configuration['fields'] = array_filter($configuration['fields'], fn (string $field) => $field !== $field_id);
+        $processor->setConfiguration($configuration);
+      }
+    }
+  }
+
+  foreach ($rename_fields as $old_id => $new_id) {
+    $index_all->renameField($old_id, $new_id);
+
+    foreach ($processors_all as $processor) {
+      $configuration = $processor->getConfiguration();
+      if (isset($configuration['fields'])) {
+        // Rename the fields in processors.
+        $configuration['fields'] = array_map(
+          fn (string $field) => $field === $old_id ? $new_id : $field,
+          $configuration['fields']
+        );
+        $processor->setConfiguration($configuration);
+      }
+    }
+  }
+
+  foreach ($migrate_fields as $index_id => $fields) {
+    $index = Index::load($index_id);
+    assert($index !== NULL, "Missing $index_id index, this indicates a corrupt Open Social installation");
+    foreach ($fields as $old_id => $new_id) {
+      $old_field = $index->getField($old_id);
+      if ($old_field === NULL) {
+        continue;
+      }
+
+      // This is a hack to allow us to change the index of the search field
+      // without writing to the raw configuration (or manually copying all the
+      // aspects and config of a field.
+      $idx_len = strlen($index_id);
+      $new_field = unserialize(str_replace("s:$idx_len:\"$index_id\"", "s:10:\"social_all\"", serialize($old_field)), ['allowed_classes' => [Field::class]]);
+      assert($new_field instanceof FieldInterface, "Failed to change index for field '$old_id'");
+      $new_field->setFieldIdentifier($new_id);
+
+      $index_all->addField($new_field);
+      $index->removeField($old_id);
+
+      // Ensure the fields that were part of processors in the old index are
+      // also part of the processors in the merged index. We assume all the
+      // needed processors already exist in the new index.
+      foreach ($index->getProcessors() as $processor_id => $processor) {
+        if (!isset($processors_all[$processor_id])) {
+          continue;
+        }
+        $configuration = $processor->getConfiguration();
+        $all_configuration = $processors_all[$processor_id]->getConfiguration();
+
+        if (!isset($configuration['fields'], $all_configuration['fields'])) {
+          continue;
+        }
+
+        if (in_array($old_id, $configuration['fields'], TRUE) && !in_array($new_id, $all_configuration['fields'], TRUE)) {
+          $all_configuration['fields'][] = $new_id;
+          $processors_all[$processor_id]->setConfiguration($all_configuration);
+        }
+      }
+    }
+    $index->save();
+  }
+
+  foreach ($add_fields as $field_id => $field_config) {
+    // Skip any fields with unmet config dependencies.
+    foreach ($field_config['dependencies']['config'] as $config_id) {
+      if (\Drupal::configFactory()->getEditable($config_id)->isNew()) {
+        continue 2;
+      }
+    }
+
+    $field = new Field($index_all, $field_id);
+    $field->setLabel($field_config['label']);
+    $field->setDatasourceId($field_config['datasource_id']);
+    $field->setPropertyPath($field_config['property_path']);
+    $field->setType($field_config['type']);
+    $field->setDependencies($field_config['dependencies']);
+
+    $index_all->addField($field);
+
+    // Add text fields to the required processors.
+    if ($field->getType() === "text") {
+      $html_filter = $index_all->getProcessor("html_filter");
+      if ($html_filter !== NULL) {
+        $hfc = $html_filter->getConfiguration();
+        $hfc['fields'][] = $field_id;
+        $html_filter->setConfiguration($hfc);
+      }
+
+      $ignorecase = $index_all->getProcessor("ignorecase");
+      if ($ignorecase !== NULL) {
+        $ic = $ignorecase->getConfiguration();
+        $ic['fields'][] = $field_id;
+        $ignorecase->setConfiguration($ic);
+      }
+
+      $stopwords = $index_all->getProcessor("stopwords");
+      if ($stopwords !== NULL) {
+        $swc = $stopwords->getConfiguration();
+        $swc['fields'][] = $field_id;
+        $stopwords->setConfiguration($swc);
+      }
+
+      $tokenizer = $index_all->getProcessor("tokenizer");
+      if ($tokenizer !== NULL) {
+        $tc = $tokenizer->getConfiguration();
+        $tc['fields'][] = $field_id;
+        $tokenizer->setConfiguration($tc);
+      }
+
+      $transliteration = $index_all->getProcessor("transliteration");
+      if ($transliteration !== NULL) {
+        $tlc = $transliteration->getConfiguration();
+        $tlc['fields'][] = $field_id;
+        $transliteration->setConfiguration($tlc);
+      }
+    }
+  }
+
+  $index_all->save();
+
+  // Update the views.
+  // We use some nested loops for brevity here but what the code comes down it
+  // is that we need to move from the old view specific index (as table) to the
+  // new unified index for all the things interacting with tables.
+  // We also need to change the selected field in places where we renamed this
+  // in search.
+  $views = ["all", "content", "groups", "users"];
+  $field_settings_children = ["fields", "filters", "sorts", "arguments"];
+  $filter_entity = ["content" => "node", "groups" => "group", "users" => "profile"];
+  foreach ($views as $view_id) {
+    $view = View::load("search_$view_id");
+    assert($view !== NULL, "search_$view_id view is missing, this indicates a corrupt Open Social installation");
+    $view->set("base_table", "search_api_index_social_all");
+    $displays = $view->get("display");
+    foreach ($displays as &$display) {
+      foreach ($field_settings_children as $child_id) {
+        if (!isset($display["display_options"][$child_id])) {
+          continue;
+        }
+        foreach ($display["display_options"][$child_id] as &$child) {
+          // Change the index we select from.
+          if ($child["table"] === "search_api_index_social_$view_id") {
+            $child["table"] = "search_api_index_social_all";
+          }
+          // Update the selected field name if it was changed in migration.
+          if (isset($migrate_fields["social_$view_id"][$child["field"]])) {
+            $child["field"] = $migrate_fields["social_$view_id"][$child["field"]];
+          }
+          // Or update it if it was instead renamed.
+          elseif (isset($rename_fields[$child["field"]])) {
+            $child["field"] = $rename_fields[$child["field"]];
+          }
+        }
+        unset($child);
+      }
+    }
+    unset($display);
+
+    if (isset($filter_entity[$view_id])) {
+      $displays["default"]["display_options"]["filters"]["search_api_datasource"] = [
+        'id' => 'search_api_datasource',
+        'table' => 'search_api_index_social_all',
+        'field' => 'search_api_datasource',
+        'relationship' => 'none',
+        'group_type' => 'group',
+        'admin_label' => '',
+        'plugin_id' => 'search_api_datasource',
+        'operator' => 'or',
+        'value' => [
+          "entity:{$filter_entity[$view_id]}" => "entity:{$filter_entity[$view_id]}",
+        ],
+        'group' => 1,
+        'exposed' => FALSE,
+        'expose' => [
+          'operator_id' => '',
+          'label' => '',
+          'description' => '',
+          'use_operator' => FALSE,
+          'operator' => '',
+          'operator_limit_selection' => FALSE,
+          'operator_list' => [],
+          'identifier' => '',
+          'required' => FALSE,
+          'remember' => FALSE,
+          'multiple' => FALSE,
+          'remember_roles' => [
+            'authenticated' => 'authenticated',
+          ],
+          'reduce' => FALSE,
+        ],
+        'is_grouped' => FALSE,
+        'group_info' => [
+          'label' => '',
+          'description' => '',
+          'identifier' => '',
+          'optional' => TRUE,
+          'widget' => 'select',
+          'multiple' => FALSE,
+          'remember' => FALSE,
+          'default_group' => 'All',
+          'default_group_multiple' => [],
+          'group_items' => [],
+        ],
+        'reduce_duplicates' => FALSE,
+      ];
+    }
+    $view->set("display", $displays);
+    $view->save();
+  }
+
+  // Update the join method filter in the group search view.
+  if (\Drupal::moduleHandler()->moduleExists("social_group_flexible_group")) {
+    $groups = View::load("search_groups");
+    assert($groups !== NULL);
+    $display = &$groups->getDisplay("default");
+    unset($display['display_options']['filters']['field_group_allowed_join_method_value']);
+    $display['display_options']['filters']['group_allowed_join_method'] = [
+      'id' => 'group_allowed_join_method',
+      'table' => 'search_api_index_social_all',
+      'field' => 'group_allowed_join_method',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => 'or',
+      'value' => [],
+      'group' => 1,
+      'exposed' => TRUE,
+      'expose' => [
+        'operator_id' => 'group_allowed_join_method_op',
+        'label' => 'Join method',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => 'group_allowed_join_method_op',
+        'identifier' => 'group_allowed_join_method',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => 'group_allowed_join_method',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'list_field',
+    ];
+    $groups->save();
+  }
+
+}
+
+/**
+ * Delete the merged indices.
+ */
+function social_search_update_12002() : void {
+  // We do the deletion separately from the merge so that other modules can slot
+  // their own update hooks between migration and deletion if needed.
+  $indices = ['social_content', 'social_groups', 'social_users'];
+  foreach (Index::loadMultiple($indices) as $index) {
+    $index->delete();
   }
 }
