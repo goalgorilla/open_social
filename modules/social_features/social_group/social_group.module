@@ -1138,7 +1138,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // except that `!isset($data['method']) &&` is replaced by
       // `$data['field'] === 'field_group_allowed_join_method'` instead.
       // The reason why we did this is that initial architecture of
-      // `@Join` plugins predicted that plugins where "method" is defined,
+      // @Join plugins predicted that plugins where "method" is defined,
       // should not be altered in this process, but there are groups which have
       // "method" defined for fallback reasons and this is why we need to
       // process them the same way as there would be no "method" defined.
