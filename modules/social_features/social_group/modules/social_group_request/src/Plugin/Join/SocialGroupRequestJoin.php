@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation as GroupInvitationEnabler;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\social_group\EntityMemberInterface;
 use Drupal\social_group\JoinBase;
@@ -81,9 +80,8 @@ class SocialGroupRequestJoin extends JoinBase {
     // If user has a pending invite we should skip the request button.
     if ($this->loader !== NULL) {
       $group_invites = $this->loader->loadByProperties([
-        'entity_id' => $this->currentUser->id(),
-        'gid' => $entity->id(),
-        'invitation_status' => GroupInvitationEnabler::INVITATION_PENDING,
+        'gid' => $group->id(),
+        'uid' => $this->currentUser->id(),
       ]);
 
       if ($group_invites !== []) {
