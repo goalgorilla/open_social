@@ -1,0 +1,69 @@
+dependencies:
+  config:
+    - field.storage.group.field_group_allowed_join_method
+items:
+  search_api.index.social_all:
+    expected_config: { }
+    update_actions:
+      add:
+        field_settings:
+          group_allowed_join_method:
+            label: Allowed join method
+            datasource_id: 'entity:group'
+            property_path: field_group_allowed_join_method
+            type: string
+            dependencies:
+              config:
+                - field.storage.group.field_group_allowed_join_method
+  views.view.search_groups:
+    expected_config: { }
+    update_actions:
+      add:
+        display:
+          default:
+            display_options:
+              filters:
+                group_allowed_join_method:
+                  id: group_allowed_join_method
+                  table: search_api_index_social_all
+                  field: group_allowed_join_method
+                  relationship: none
+                  group_type: group
+                  admin_label: ''
+                  operator: or
+                  value: { }
+                  group: 1
+                  exposed: true
+                  expose:
+                    operator_id: group_allowed_join_method_op
+                    label: Join method
+                    description: ''
+                    use_operator: false
+                    operator: group_allowed_join_method_op
+                    identifier: group_allowed_join_method
+                    required: false
+                    remember: false
+                    multiple: false
+                    remember_roles:
+                      authenticated: authenticated
+                  is_grouped: false
+                  group_info:
+                    label: ''
+                    description: ''
+                    identifier: group_allowed_join_method
+                    optional: true
+                    widget: select
+                    multiple: false
+                    remember: false
+                    default_group: All
+                    default_group_multiple: { }
+                    group_items: { }
+                  plugin_id: search_api_options
+                group_type:
+                  value:
+                    flexible_group: flexible_group
+              row:
+                options:
+                  view_modes:
+                    'entity:group':
+                      flexible_group: teaser

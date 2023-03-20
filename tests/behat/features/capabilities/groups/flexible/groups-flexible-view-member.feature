@@ -34,7 +34,7 @@ Feature: Flexible groups view access for members
   Scenario Outline: As a member of a group I can view a group of any visibility on the groups search
     Given groups with non-anonymous owner:
       | label      | field_group_description | type           | langcode | field_flexible_group_visibility |
-      | Test group | Secret visibility       | flexible_group | en       | <visibility>                    |
+      | Test group | <visibility> visibility | flexible_group | en       | <visibility>                    |
     And Search indexes are up to date
     And I am logged in as a user with the <role> role
     And I am a member of "Test group"
