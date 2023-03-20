@@ -1,14 +1,6 @@
 langcode: en
 status: true
 dependencies:
-  module:
-    - node
-    - group
-    - profile
-    - user
-    - search_api
-    - entity_access_by_field
-    - social_search
   config:
     - field.storage.group.field_group_description
     - field.storage.group.field_group_location
@@ -17,24 +9,40 @@ dependencies:
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_last_name
     - field.storage.profile.field_profile_profile_tag
+    - field.storage.node.field_event_date
+    - field.storage.node.field_event_date_end
     - search_api.server.social_database
-    - core.entity_view_mode.group.teaser
-    - core.entity_view_mode.node.search_index
-    - core.entity_view_mode.profile.search_index
+  module:
+    - profile
+    - user
+    - node
+    - group
+    - taxonomy
+    - search_api
+    - entity_access_by_field
+    - social_search
 id: social_all
-name: 'Social all'
-description: 'All content index created for the Social distribution.'
+name: 'Community Search'
+description: 'Contains all searchable community data for the platform (e.g. nodes, groups, and users).'
 read_only: false
 field_settings:
-  created:
-    label: 'Authored on'
+  event_date_end:
+    label: End
     datasource_id: 'entity:node'
-    property_path: created
+    property_path: field_event_date_end
     type: date
     dependencies:
-      module:
-        - node
-  created_1:
+      config:
+        - field.storage.node.field_event_date_end
+  event_date_start:
+    label: Start
+    datasource_id: 'entity:node'
+    property_path: field_event_date
+    type: date
+    dependencies:
+      config:
+        - field.storage.node.field_event_date
+  group_created:
     label: 'Created on'
     datasource_id: 'entity:group'
     property_path: created
@@ -42,7 +50,16 @@ field_settings:
     dependencies:
       module:
         - group
-  field_group_description:
+  group_creator_name:
+    label: 'Group creator » User » Name'
+    datasource_id: 'entity:group'
+    property_path: 'uid:entity:name'
+    type: string
+    dependencies:
+      module:
+        - group
+        - user
+  group_description:
     label: Description
     datasource_id: 'entity:group'
     property_path: field_group_description
@@ -50,7 +67,7 @@ field_settings:
     dependencies:
       config:
         - field.storage.group.field_group_description
-  field_group_location:
+  group_location_name:
     label: 'Location name'
     datasource_id: 'entity:group'
     property_path: field_group_location
@@ -58,49 +75,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.group.field_group_location
-  field_profile_expertise:
-    label: Expertise
-    datasource_id: 'entity:profile'
-    property_path: field_profile_expertise
+  group_owner_id:
+    label: 'Group creator'
+    datasource_id: 'entity:group'
+    property_path: uid
     type: integer
     dependencies:
-      config:
-        - field.storage.profile.field_profile_expertise
-  field_profile_first_name:
-    label: 'First name'
-    datasource_id: 'entity:profile'
-    property_path: field_profile_first_name
-    type: text
-    boost: !!float 2
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_first_name
-  field_profile_interests:
-    label: Interests
-    datasource_id: 'entity:profile'
-    property_path: field_profile_interests
-    type: integer
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_interests
-  field_profile_last_name:
-    label: 'Last name'
-    datasource_id: 'entity:profile'
-    property_path: field_profile_last_name
-    type: text
-    boost: !!float 2
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_last_name
-  field_profile_profile_tag:
-    label: 'Profile tag'
-    datasource_id: 'entity:profile'
-    property_path: field_profile_profile_tag
-    type: integer
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_profile_tag
-  label:
+      module:
+        - group
+  group_title:
     label: Title
     datasource_id: 'entity:group'
     property_path: label
@@ -109,16 +92,30 @@ field_settings:
     dependencies:
       module:
         - group
-  name:
-    label: 'Owner » User » Name'
-    datasource_id: 'entity:profile'
-    property_path: 'uid:entity:name'
-    type: text
-    boost: !!float 2
+  group_type:
+    label: Type
+    datasource_id: 'entity:group'
+    property_path: type
+    type: string
     dependencies:
       module:
-        - profile
-        - user
+        - group
+  node_created:
+    label: 'Authored on'
+    datasource_id: 'entity:node'
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - node
+  node_description:
+    label: 'Description'
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
   node_grants:
     label: 'Node access information'
     property_path: search_api_node_grants
@@ -126,61 +123,7 @@ field_settings:
     indexed_locked: true
     type_locked: true
     hidden: true
-  rendered_item:
-    label: 'Rendered HTML output'
-    property_path: rendered_item
-    type: text
-    configuration:
-      roles:
-        anonymous: anonymous
-      view_mode:
-        'entity:group':
-          closed_group: teaser
-          open_group: teaser
-          public_group: ''
-        'entity:node':
-          event: search_index
-          page: search_index
-          topic: search_index
-        'entity:profile':
-          profile: search_index
-  status:
-    label: 'Publishing status'
-    datasource_id: 'entity:node'
-    property_path: status
-    type: boolean
-    indexed_locked: true
-    type_locked: true
-    dependencies:
-      module:
-        - node
-  title:
-    label: Title
-    datasource_id: 'entity:node'
-    property_path: title
-    type: text
-    boost: !!float 21
-    dependencies:
-      module:
-        - node
-  type:
-    label: 'Content type'
-    datasource_id: 'entity:node'
-    property_path: type
-    type: string
-    dependencies:
-      module:
-        - node
-  type_1:
-    label: 'Content type'
-    datasource_id: 'entity:node'
-    property_path: type
-    type: text
-    boost: !!float 13
-    dependencies:
-      module:
-        - node
-  uid:
+  node_owner_id:
     label: 'Authored by'
     datasource_id: 'entity:node'
     property_path: uid
@@ -190,19 +133,128 @@ field_settings:
     dependencies:
       module:
         - node
-  uid_1:
-    label: 'Group creator'
-    datasource_id: 'entity:group'
-    property_path: uid
-    type: integer
+  node_status:
+    label: 'Publishing status'
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
     dependencies:
       module:
-        - group
-  uid_2:
+        - node
+  node_title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 21
+    dependencies:
+      module:
+        - node
+  node_type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: text
+    boost: !!float 13
+    dependencies:
+      module:
+        - node
+  profile_expertise_id:
+    label: Expertise
+    datasource_id: 'entity:profile'
+    property_path: field_profile_expertise
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_expertise
+  profile_expertise_name:
+    label: 'Expertise » Taxonomy term » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'field_profile_expertise:entity:name'
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_expertise
+      module:
+        - taxonomy
+  profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
+  profile_interests_id:
+    label: Interests
+    datasource_id: 'entity:profile'
+    property_path: field_profile_interests
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_interests
+  profile_interests_name:
+    label: 'Interests » Taxonomy term » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'field_profile_interests:entity:name'
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_interests
+      module:
+        - taxonomy
+  profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
+  profile_owner_created:
+    label: 'Owner » User » Created'
+    datasource_id: 'entity:profile'
+    property_path: 'uid:entity:created'
+    type: date
+    dependencies:
+      module:
+        - profile
+        - user
+  profile_owner_id:
     label: Owner
     datasource_id: 'entity:profile'
     property_path: uid
     type: integer
+    dependencies:
+      module:
+        - profile
+  profile_owner_name:
+    label: 'Owner » User » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'uid:entity:name'
+    type: text
+    boost: !!float 2
+    dependencies:
+      module:
+        - profile
+        - user
+  profile_profile_tag:
+    label: 'Profile tag'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_profile_tag
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_profile_tag
+  profile_type:
+    label: Profile Type
+    datasource_id: 'entity:profile'
+    property_path: type
+    type: string
     dependencies:
       module:
         - profile
@@ -235,34 +287,69 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  entity_access_by_field:
+  add_url: {  }
+  aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  blocked_users:
     weights:
       preprocess_query: -30
-  ignorecase:
-    all_fields: true
-    fields:
-      - field_group_description
-      - field_group_location
-      - field_profile_first_name
-      - field_profile_last_name
-      - label
-      - name
-      - rendered_item
-      - title
-      - type
-      - type_1
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
   content_access:
     weights:
       preprocess_query: -30
-  language_with_fallback: {  }
-  stopwords:
+  entity_access_by_field:
+    weights:
+      preprocess_query: -30
+  entity_type: {  }
+  html_filter:
+    weights:
+      preprocess_index: -25
+      preprocess_query: -15
     all_fields: false
     fields:
-      - field_group_description
-      - rendered_item
+      - group_description
+      - group_location_name
+      - group_title
+      - node_description
+      - node_title
+      - profile_owner_name
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
+  ignorecase:
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+    all_fields: true
+    fields:
+      - group_creator_name
+      - group_description
+      - group_location_name
+      - group_title
+      - group_type
+      - node_description
+      - node_title
+      - node_type
+      - profile_expertise_name
+      - profile_first_name
+      - profile_interests_name
+      - profile_last_name
+      - profile_owner_name
+      - profile_type
+  language_with_fallback: {  }
+  stopwords:
+    weights:
+      preprocess_index: -5
+      preprocess_query: -2
+    all_fields: false
+    fields:
+      - group_description
     stopwords:
       - a
       - an
@@ -299,82 +386,57 @@ processor_settings:
       - was
       - will
       - with
+  super_user:
     weights:
-      preprocess_index: -5
-      preprocess_query: -2
-  html_filter:
-    all_fields: false
-    fields:
-      - field_group_description
-      - field_group_location
-      - label
-      - name
-      - rendered_item
-      - title
-      - type
-    title: true
-    alt: true
-    tags:
-      b: 2
-      em: 1
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      u: 1
-    weights:
-      preprocess_index: -25
-      preprocess_query: -15
-  transliteration:
-    all_fields: true
-    fields:
-      - field_group_description
-      - field_group_location
-      - field_profile_first_name
-      - field_profile_last_name
-      - label
-      - name
-      - rendered_item
-      - title
-      - type
-      - type_1
-    weights:
-      preprocess_index: -20
-      preprocess_query: -20
-  rendered_item: {  }
-  add_url: {  }
-  aggregated_field: {  }
+      preprocess_query: 30
   tokenizer:
-    all_fields: true
-    fields:
-      - field_group_description
-      - field_profile_first_name
-      - field_profile_last_name
-      - label
-      - name
-      - rendered_item
-      - title
-      - type_1
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
     weights:
       preprocess_index: -6
       preprocess_query: -6
+    all_fields: true
+    fields:
+      - group_description
+      - group_title
+      - node_description
+      - node_title
+      - node_type
+      - profile_expertise_name
+      - profile_first_name
+      - profile_interests_name
+      - profile_last_name
+      - profile_owner_name
+    spaces: ''
     ignored: ._-
-  blocked_users:
+    overlap_cjk: 1
+    minimum_word_size: '3'
+  transliteration:
     weights:
-      preprocess_query: -30
+      preprocess_index: -20
+      preprocess_query: -20
+    all_fields: true
+    fields:
+      - group_creator_name
+      - group_description
+      - group_location_name
+      - group_title
+      - group_type
+      - node_description
+      - node_title
+      - node_type
+      - profile_expertise_name
+      - profile_first_name
+      - profile_interests_name
+      - profile_last_name
+      - profile_owner_name
+      - profile_type
   verified_users:
-    weights:
-      preprocess_query: 30
-  super_user:
     weights:
       preprocess_query: 30
 tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: false
   cron_limit: 50
+  index_directly: false
+  track_changes_in_references: true
 server: social_database
