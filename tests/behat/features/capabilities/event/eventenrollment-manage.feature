@@ -8,7 +8,7 @@ Feature: Manage event enrollment
     Given I enable the module "social_event_managers"
 
   Scenario: Can't manage an event by default
-    Given events:
+    Given events with non-anonymous author:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
@@ -21,7 +21,7 @@ Feature: Manage event enrollment
     # @todo The order matters here because we don't have to be explicit about
     # authors yet, we have solved this for groups but not yet for topics/events.
     Given I am logged in as a user with the verified role
-    And events:
+    And events authored by current user:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And users:
@@ -39,7 +39,7 @@ Feature: Manage event enrollment
     And I should see "Jane Doe" in the "Organisers" block
 
   Scenario: Event manager can see the manage enrollments link on events
-    Given events:
+    Given events with non-anonymous author:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
@@ -50,7 +50,7 @@ Feature: Manage event enrollment
     Then I should see the link "Manage enrollments"
 
   Scenario: Event manager can see the empty state when there are no enrollments
-    Given events:
+    Given events with non-anonymous author:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
@@ -62,7 +62,7 @@ Feature: Manage event enrollment
     And I should see the text "No one has enrolled for this event"
 
   Scenario: Event manager can see the event enrollments when there are enrollments
-    Given events:
+    Given events with non-anonymous author:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And there are 2 event enrollments for the "Test content" event
@@ -78,7 +78,7 @@ Feature: Manage event enrollment
     And I should see the text "Operation"
 
   Scenario: Event manager gets a notification for an event enrollment
-    Given events:
+    Given events with non-anonymous author:
       | title        | body                  | field_content_visibility | field_event_date    | langcode |
       | Test content | Body description text | community                | 2100-01-01T12:00:00 | en       |
     And I am logged in as a user with the verified role
