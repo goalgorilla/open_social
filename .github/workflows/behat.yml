@@ -326,8 +326,10 @@ jobs:
           fi
           mkdir -p $OUTPUT_FOLDER
 
-          # Move test results to the output folder
-          mv html/profiles/contrib/social/tests/behat/logs/* $OUTPUT_FOLDER/
+          # Move test results to the output folder if they exist
+          if (shopt -s nullglob; f=(tests/behat/logs/*); ((${#f[@]}))); then
+            mv html/profiles/contrib/social/tests/behat/logs/* $OUTPUT_FOLDER/
+          fi
 
           # Copy the installation database to the output folder
           # this makes local reproduction easier.

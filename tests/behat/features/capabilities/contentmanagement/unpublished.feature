@@ -17,7 +17,7 @@ Feature: Un/publish a node
 
   Scenario: Successfully publish an unpublished topic
     Given I am logged in as an "verified"
-    And topics:
+    And topics authored by current user:
       | title    | body            | field_content_visibility | field_topic_type | langcode    | status |
       | My title | My description  | public                   | News             | en          | 0         |
 
@@ -27,7 +27,7 @@ Feature: Un/publish a node
     Then I should see the topic I just updated
 
   Scenario: Normal user only sees published topics
-    Given topics:
+    Given topics with non-anonymous author:
       | title                     | body            | field_content_visibility | field_topic_type | langcode    | status |
       | This topic is published   | My description  | public                   | News             | en          | 1         |
       | This topic is unpublished | My description  | public                   | News             | en          | 0         |

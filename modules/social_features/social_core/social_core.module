@@ -642,24 +642,32 @@ function social_core_filter_process_format($element) {
  * Implements hook_block_access().
  */
 function social_core_block_access(Block $block, $operation, AccountInterface $account) {
-  $blocks = &drupal_static(__FUNCTION__);
-  $blocks = [];
+  $blocks = &drupal_static(__FUNCTION__, []);
 
-  // First check if we have it cached before we run the modulehandler alter.
-  /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
-  $cache = \Drupal::service('cache.default');
-  if ($cache->get('social_core.block_visibility_cache') === FALSE) {
-    // Allow other modules to change the block visibility.
-    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
-
-    // Set the cache expire to 1 week.
-    $date = new DateTime(date('Y-m-d'));
-    $date->modify('+7 day');
-
-    $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+  // We only care about view operations right now.
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
   }
-  else {
-    $blocks = $cache->get('social_core.block_visibility_cache')->data;
+
+  // If we didnt have statically cached blocks,
+  // lets see if we can grab it from the cache instead.
+  if (empty($blocks)) {
+    // First check if we have it cached before we run the modulehandler alter.
+    /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
+    $cache = \Drupal::service('cache.default');
+    if ($cache->get('social_core.block_visibility_cache') === FALSE) {
+      // Allow other modules to change the block visibility.
+      $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
+
+      // Set the cache expire to 1 week.
+      $date = new DateTime(date('Y-m-d'));
+      $date->modify('+7 day');
+
+      $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+    }
+    else {
+      $blocks = $cache->get('social_core.block_visibility_cache')->data;
+    }
   }
 
   // Alter the access based on the blocks array.

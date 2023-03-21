@@ -5796,11 +5796,6 @@ parameters:
 			path: modules/social_features/social_core/social_core.post_update.php
 
 		-
-			message: "#^Method Drupal\\\\social_core\\\\ContentTranslationConfigOverrideBase\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
-
-		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
@@ -16701,3 +16696,8 @@ parameters:
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
 			count: 4
 			path: modules/social_features/social_event/src/SocialEventTrait.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
