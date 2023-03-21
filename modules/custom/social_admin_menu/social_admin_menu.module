@@ -16,3 +16,17 @@ function social_admin_menu_toolbar_alter(&$items) {
     ],
   ];
 }
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function social_admin_menu_module_implements_alter(&$implementations, $hook) {
+  // Remove the toolbar implementations from gin.
+  // we are doing our own pre render in this module, and will add the
+  // gin requirements in there.
+  if ($hook === 'toolbar') {
+    if (isset($implementations['gin_toolbar'])) {
+      unset($implementations['gin_toolbar']);
+    }
+  }
+}
