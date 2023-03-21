@@ -8,7 +8,7 @@ Feature: Group management for CM+
     Given groups with non-anonymous owner:
       | label             | type         | field_group_description |
       | Test closed group | closed_group | Description text        |
-    And topics:
+    And topics with non-anonymous author:
       | title                   | group             | field_topic_type | body                  | field_content_visibility | langcode |
       | Test closed group topic | Test closed group | News             | Body description text | group                    | en       |
     And I am logged in as a user with the <role> role
@@ -51,7 +51,7 @@ Feature: Group management for CM+
     Given groups with non-anonymous owner:
       | label             | type         | field_group_description |
       | Test closed group | closed_group | Description text        |
-    And topics:
+    And topics with non-anonymous author:
       | title                   | group             | field_topic_type | body                  | field_content_visibility | langcode |
       | Test closed group topic | Test closed group | News             | Body description text | group                    | en       |
     And I am logged in as a user with the <role> role

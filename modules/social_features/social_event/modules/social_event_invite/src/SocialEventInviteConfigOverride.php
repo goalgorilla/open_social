@@ -77,28 +77,26 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
     $config_name = 'user.settings';
 
-    // Get default verify_mail users settings.
-    $verify_mail = $this->configFactory->getEditable($config_name)->get('verify_mail');
-
-    // Get email_verification status of social event invite settings.
-    $event_invite = $this->configFactory->getEditable('social_event_invite.settings');
-    $ignore_email_verification = $event_invite->get('email_verification');
-
     // Skip email verification step on registration for user event invitation.
-    if (
-      in_array($config_name, $names, TRUE) &&
-      $ignore_email_verification === TRUE &&
-      $verify_mail === TRUE
-    ) {
-      $request = $this->requestStack->getCurrentRequest();
+    if (in_array($config_name, $names, TRUE)) {
+      // Get default verify_mail users settings.
+      $verify_mail = $this->configFactory->getEditable($config_name)->get('verify_mail');
 
-      $invitee_mail = $request->query->get('invitee_mail', '');
-      $destination = $request->query->get('destination', '');
+      // Get email_verification status of social event invite settings.
+      $event_invite = $this->configFactory->getEditable('social_event_invite.settings');
+      $ignore_email_verification = $event_invite->get('email_verification');
 
-      $is_valid = $this->validateInviteData($invitee_mail, $destination);
+      if ($ignore_email_verification === TRUE && $verify_mail === TRUE) {
+        $request = $this->requestStack->getCurrentRequest();
 
-      if ($is_valid) {
-        $overrides[$config_name]['verify_mail'] = FALSE;
+        $invitee_mail = $request->query->get('invitee_mail', '');
+        $destination = $request->query->get('destination', '');
+
+        $is_valid = $this->validateInviteData($invitee_mail, $destination);
+
+        if ($is_valid) {
+          $overrides[$config_name]['verify_mail'] = FALSE;
+        }
       }
     }
 
