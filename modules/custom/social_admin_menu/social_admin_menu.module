@@ -68,16 +68,24 @@ function social_admin_menu_preprocess_toolbar(&$variables) {
     if (($route_context = array_search('route', $variables['#cache']['contexts'])) !== FALSE) {
       unset($variables['#cache']['contexts'][$route_context]);
     }
-    // Similarly Bootstrap varies the cache by if it's front or not.
-    // Our toolbar implementation works across all pages, front or not.
-    // So we can remove this from our toolbar render array as well.
+    // Bootstrap varies the cache by if it's front or not, see src/Bootstrap.php
+    // in the bootstrap module.
+    // Since our toolbar implementation works across all pages, front or not,
+    // we can remove this from our toolbar render array as well.
     if (($is_front = array_search('url.path.is_front', $variables['#cache']['contexts'])) !== FALSE) {
       unset($variables['#cache']['contexts'][$is_front]);
     }
   }
 }
 
+/**
+ * Implements hook_preprocess_menu__toolbar().
+ */
 function social_admin_menu_preprocess_menu__toolbar(&$variables) {
+  // Bootstrap varies the cache by if it's front or not, see src/Bootstrap.php
+  // in the bootstrap module.
+  // Since our toolbar implementation works across all pages, front or not,
+  // we can remove this from our toolbar render array as well.
   if ($variables['menu_name'] === 'social_core.dashboard') {
     if (!empty($variables['#cache']['contexts'])) {
       if (($is_front = array_search('url.path.is_front', $variables['#cache']['contexts'])) !== FALSE) {
