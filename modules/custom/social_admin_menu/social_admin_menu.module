@@ -30,3 +30,59 @@ function social_admin_menu_module_implements_alter(&$implementations, $hook) {
     }
   }
 }
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_admin_menu_theme_registry_alter(&$theme_registry) {
+  // Unfortunately the preprocess functions aren't ordered by module weight.
+  // Changing module weight doesn't work, also with dependency set to
+  // gin_toolbar this should be dealt with but is not.
+  // So we enforce our preprocess after gin_toolbar all the way at the end.
+  if (!empty($theme_registry['toolbar']['preprocess functions'])) {
+    $current_key = array_search('social_admin_menu_preprocess_toolbar', $theme_registry['toolbar']['preprocess functions'], FALSE);
+    unset($theme_registry['toolbar']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['toolbar']['preprocess functions'][] = 'social_admin_menu_preprocess_toolbar';
+  }
+  // Make sure our menu preprocess also runs at the end as src/Bootstrap.php
+  // adds unnecessary cache contexts to our admin menu. Because cache is
+  // bubbled, we need to do it for every preprocess function the render cache
+  // for a menu in a toolbar container hits.
+  if (!empty($theme_registry['menu__toolbar']['preprocess functions'])) {
+    $current_key = array_search('social_admin_menu_preprocess_menu__toolbar', $theme_registry['menu__toolbar']['preprocess functions'], FALSE);
+    unset($theme_registry['menu__toolbar']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['menu__toolbar']['preprocess functions'][] = 'social_admin_menu_preprocess_menu__toolbar';
+  }
+}
+
+/**
+ * Implements hook_preprocess_toolbar().
+ */
+function social_admin_menu_preprocess_toolbar(&$variables) {
+  if (!empty($variables['#cache']['contexts'])) {
+    // Gin wants to cache the toolbar per route, this so it can render an active
+    // menu trail, which we rather not do for caching purposes.
+    // So we can cache it across routes.
+    if (($route_context = array_search('route', $variables['#cache']['contexts'])) !== FALSE) {
+      unset($variables['#cache']['contexts'][$route_context]);
+    }
+    // Similarly Bootstrap varies the cache by if it's front or not.
+    // Our toolbar implementation works across all pages, front or not.
+    // So we can remove this from our toolbar render array as well.
+    if (($is_front = array_search('url.path.is_front', $variables['#cache']['contexts'])) !== FALSE) {
+      unset($variables['#cache']['contexts'][$is_front]);
+    }
+  }
+}
+
+function social_admin_menu_preprocess_menu__toolbar(&$variables) {
+  if ($variables['menu_name'] === 'social_core.dashboard') {
+    if (!empty($variables['#cache']['contexts'])) {
+      if (($is_front = array_search('url.path.is_front', $variables['#cache']['contexts'])) !== FALSE) {
+        unset($variables['#cache']['contexts'][$is_front]);
+      }
+    }
+  }
+}

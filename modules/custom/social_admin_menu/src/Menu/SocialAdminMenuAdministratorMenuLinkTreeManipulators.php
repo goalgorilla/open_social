@@ -64,6 +64,8 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       ->excludeRoot()
       ->setMaxDepth(2)
       ->onlyEnabledLinks();
+    // Add default menu tree manipulators for access checks.
+    // The gin toolbar to add specific icon classes which we can use in our css.
     $manipulators = [
       ['callable' => 'menu.default_tree_manipulators:checkAccess'],
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
@@ -75,11 +77,6 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       '#type' => 'container',
       '#attributes' => [
         'class' => ['toolbar-menu-administration'],
-      ],
-      '#cache' => [
-        'contexts' => [
-          'user.roles',
-        ],
       ],
       'administration_menu' => $this->toolbarMenuLinkTree->build($tree),
     ];
