@@ -86,7 +86,7 @@ function social_admin_menu_preprocess_menu__toolbar(array &$variables): void {
   // in the bootstrap module.
   // Since our toolbar implementation works across all pages, front or not,
   // we can remove this from our toolbar render array as well.
-  if ($variables['menu_name'] === 'social_core.dashboard') {
+  if ($variables['menu_name'] === 'admin') {
     if (!empty($variables['#cache']['contexts'])) {
       if (($is_front = array_search('url.path.is_front', $variables['#cache']['contexts'])) !== FALSE) {
         unset($variables['#cache']['contexts'][$is_front]);
