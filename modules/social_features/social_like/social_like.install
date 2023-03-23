@@ -31,7 +31,6 @@ function social_like_install() {
   user_role_grant_permissions(
     'verified',
     [
-      'add or remove like votes on post',
       'add or remove like votes on post of post',
       'add or remove like votes on photo of post',
       'add or remove like votes on comment of comment',
@@ -43,7 +42,6 @@ function social_like_install() {
   user_role_grant_permissions(
     'contentmanager',
     [
-      'add or remove like votes on post',
       'add or remove like votes on post of post',
       'add or remove like votes on photo of post',
       'add or remove like votes on comment of comment',
@@ -55,7 +53,6 @@ function social_like_install() {
   user_role_grant_permissions(
     'sitemanager',
     [
-      'add or remove like votes on post',
       'add or remove like votes on post of post',
       'add or remove like votes on photo of post',
       'add or remove like votes on comment of comment',
@@ -168,7 +165,8 @@ function _social_like_get_permissions($role) {
 
   // Verified.
   $permissions['verified'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], [
-    'add or remove like votes on post',
+    'add or remove like votes on post of post',
+    'add or remove like votes on photo of post',
     'add or remove like votes on comment of comment',
     'add or remove like votes on post_comment of comment',
     'add or remove like votes on topic of node',
