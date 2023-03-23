@@ -42,7 +42,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
     $overrides = [];
 
     // Add field_group and field_comment_files.
-    // We don't need to add any fields if uploads are disabled, so let's check.
+    // We need to add the necessary fields if uploads are enabled.
     $config_name = 'core.entity_form_display.comment.comment.default';
     if (in_array($config_name, $names) &&
       $this->configFactory->getEditable('social_comment_upload.settings')->getOriginal('allow_upload_comments', TRUE)) {
@@ -88,7 +88,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
     }
 
     // Add field_comment_files.
-    // We don't need to add any fields if uploads are disabled, so let's check.
+    // We need to add the necessary field if uploads are enabled.
     $config_name = 'core.entity_view_display.comment.comment.default';
     if (in_array($config_name, $names) &&
       $this->configFactory->getEditable('social_comment_upload.settings')->getOriginal('allow_upload_comments', TRUE)) {
