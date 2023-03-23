@@ -159,11 +159,6 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       '#attributes' => [
         'class' => ['toolbar-menu-administration'],
       ],
-      '#cache' => [
-        'contexts' => [
-          'user.roles',
-        ],
-      ],
       'administration_menu' => $this->toolbarMenuLinkTree->build($tree),
     ];
     return $element;
