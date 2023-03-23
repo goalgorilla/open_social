@@ -125,8 +125,9 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     if (
       $read_cache &&
       is_array($this->cache) &&
+      isset($this->cache[$cache_type]) &&
       is_array($this->cache[$cache_type]) &&
-      isset($this->cache[$cache_type][$cache_id])
+      array_key_exists($cache_id, $this->cache[$cache_type])
     ) {
       return $this->cache[$cache_type][$cache_id];
     }
