@@ -5,6 +5,7 @@ namespace Drupal\social_content_block_landing_page\Service;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Render\Element;
 use Drupal\social_content_block\ContentBuilder;
+use Drupal\social_content_block\Entity\BlockContent\ContentListInterface;
 
 /**
  * Defines the content builder service.
@@ -29,18 +30,20 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
       $build['content'][$key]['#weight'] = $weight++;
     }
 
-    $build['content']['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-      '#attributes' => [
-        'class' => ['title'],
-      ],
-      '#value' => $this->entityTypeManager->getStorage($entity_type_id)
-        ->load($entity_id)
-        ->field_subtitle
-        ->value,
-      '#weight' => 0,
-    ];
+    $entity = $this->entityTypeManager->getStorage($entity_type_id)
+      ->load($entity_id);
+
+    if ($entity instanceof ContentListInterface && $entity->hasSubtitle()) {
+      $build['content']['title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#attributes' => [
+          'class' => ['title'],
+        ],
+        '#value' => $entity->getSubtitle(),
+        '#weight' => 0,
+      ];
+    }
 
     if (
       !isset($build['content']['entities']['#markup']) &&

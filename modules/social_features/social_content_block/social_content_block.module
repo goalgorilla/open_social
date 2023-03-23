@@ -12,27 +12,41 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_content_block\ContentBuilder;
+use Drupal\social_content_block\Entity\BlockContent\ContentList;
+use Drupal\social_content_block\Entity\BlockContent\ContentListInterface;
 
 /**
  * Implements hook_preprocess_block().
  */
-function social_content_block_preprocess_block(&$variables) {
-  if (isset($variables['content']['#block_content']) && $variables['content']['#block_content']->bundle() === 'custom_content_list') {
+function social_content_block_preprocess_block(array &$variables): void {
+  if (
+    isset($variables['content']['#block_content']) &&
+    $variables['content']['#block_content'] instanceof ContentListInterface
+  ) {
     if ($variables['base_plugin_id'] === 'block_content') {
       $variables['card'] = TRUE;
     }
     // Add subtitle and content type icon for display on dashboards.
     elseif ($variables['base_plugin_id'] === 'inline_block') {
+      /** @var \Drupal\social_content_block\Entity\BlockContent\ContentListInterface $block_entity */
       $block_entity = $variables['content']['#block_content'];
-      if (!$block_entity instanceof BlockContentInterface || $block_entity->bundle() !== 'custom_content_list') {
-        return;
-      }
-      $variables['content_type'] = ['#plain_text' => _social_content_block_get_content_type_for_block($block_entity)];
-      if (!$block_entity->field_subtitle->isEmpty()) {
+
+      $variables['content_type'] = [
+        '#plain_text' => _social_content_block_get_content_type_for_block($block_entity),
+      ];
+
+      if ($block_entity->hasSubtitle()) {
         $variables['subtitle'] = $block_entity->field_subtitle->view(['label' => 'hidden']);
       }
     }
   }
+}
+
+/**
+ * Implements hook_entity_bundle_info_alter().
+ */
+function social_content_block_entity_bundle_info_alter(array &$bundles): void {
+  $bundles['block_content']['custom_content_list']['class'] = ContentList::class;
 }
 
 /**
@@ -165,8 +179,7 @@ function _social_content_block_allowed_values_callback(FieldStorageDefinitionInt
   if (
     $definition->getName() !== 'field_sorting' ||
     $definition->getTargetEntityTypeId() !== 'block_content' ||
-    !$entity instanceof BlockContentInterface ||
-    $entity->bundle() !== 'custom_content_list'
+    !$entity instanceof ContentListInterface
   ) {
     return $values;
   }
