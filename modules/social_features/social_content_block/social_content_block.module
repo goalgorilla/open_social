@@ -46,7 +46,9 @@ function social_content_block_preprocess_block(array &$variables): void {
  * Implements hook_entity_bundle_info_alter().
  */
 function social_content_block_entity_bundle_info_alter(array &$bundles): void {
-  $bundles['block_content']['custom_content_list']['class'] = ContentList::class;
+  if (isset($bundles['block_content']['custom_content_list'])) {
+    $bundles['block_content']['custom_content_list']['class'] = ContentList::class;
+  }
 }
 
 /**
