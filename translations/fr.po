@@ -1500,7 +1500,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2023-01-10 09:26+0000\n"
-"PO-Revision-Date: 2023-03-28 17:28+0000\n"
+"PO-Revision-Date: 2023-03-30 15:02+0000\n"
 "Last-Translator: Taras Kruts <taras.kruts@lembergsolutions.com>\n"
 "Language-Team: French <https://translate.getopensocial.com/projects/"
 "open-social/distribution/fr/>\n"
@@ -2222,9 +2222,10 @@ msgid ""
 "entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> a commenté le contenu de [social_comment:parent_entity_author] <a "
-"href=\"[message:field_message_related_object:entity:url:absolute]\">[message:"
-"node-title]</a> que vous suivez</p>\n"
+"a> a commenté le contenu de [social_comment:parent_entity_author] "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> que vous suivez</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -2235,7 +2236,8 @@ msgid ""
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> a commenté un contenu partagé par [social_comment:parent_entity_author] "
-"dans le groupe <a href=\"[message:gurl]\">[message:gtitle]</a></p>\n"
+"[social_comment:commented_content_type] dans le groupe <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -2245,7 +2247,8 @@ msgid ""
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> a commenté un contenu partagé par \n"
-"[social_comment:parent_entity_author]</p>\n"
+"[social_comment:parent_entity_author] "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
@@ -2592,8 +2595,9 @@ msgid ""
 "p>\r\n"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> a répondu à votre <a href=\"[message:field_message_related_object:entity:"
-"url:absolute]\">commentaire</p>\n"
+"a> a répondu à votre <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">commentaire</a> "
+"dans [social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0
 msgid ""
@@ -2755,9 +2759,9 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
-"<p><a href=\"[social_event:enrolled_eventurl]\">[social_event:"
-"enrolled_user]</a> s'est inscrit à l'événement [social_event:"
-"event_iam_organizing] que vous organisez</p>\n"
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> s'est inscrit à l'événement "
+"[social_event:event_iam_organizing] que vous organisez</p>\n"
 "\n"
 "<p>[message:preview]</p>\n"
 "\n"
@@ -3094,9 +3098,8 @@ msgid "@amount like(s)"
 msgstr "@amount j'aime"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.module:144
-#, fuzzy
 msgid "@cal calendar"
-msgstr "Calendrier"
+msgstr "@cal calendrier"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.module:67;114
 #, fuzzy
@@ -3227,15 +3230,13 @@ msgstr[1] ""
 "nouveau."
 
 #: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php:116
-#, fuzzy
 msgid "@usernames is already member of the @type, you can't add them again"
 msgid_plural ""
 "@usernames are already members of the @type, you can't add them again"
 msgstr[0] ""
-"@usernames est déjà membre du type @, vous ne pouvez pas l'ajouter à nouveau."
+"@usernames est déjà membre du @type, vous ne pouvez pas l'ajouter à nouveau"
 msgstr[1] ""
-"@usernames sont déjà membre du type @, vous ne pouvez pas l'ajouter à "
-"nouveau."
+"@usernames sont déjà membre du @type, vous ne pouvez pas l'ajouter à nouveau"
 
 #: translations.php:65;105
 msgid ""
@@ -5747,7 +5748,7 @@ msgid ""
 "frequency</strong>"
 msgstr ""
 "Sur la base de vos @settings, vous recevez cette notification de manière "
-"<strong>frequency</strong>."
+"<strong>:frequency</strong>"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:175
 msgid ""
@@ -5757,11 +5758,11 @@ msgid_plural ""
 "Based on your @settings, the notifications above are sent to you as a "
 "<strong>:frequency mail</strong>"
 msgstr[0] ""
-"Sur la base de vos @settings, vous recevez ce mail de manière "
-"<strong>frequency mail</strong>."
+"Sur la base de vos @settings, vous recevez ce mail de manière <strong>:"
+"frequency mail</strong>"
 msgstr[1] ""
-"Sur la base de vos @settings, vous recevez ce mail de manière "
-"<strong>frequency mail</strong>."
+"Sur la base de vos @settings, vous recevez ce mail de manière <strong>:"
+"frequency mail</strong>"
 
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:35;36
 msgid "Basic"
@@ -8879,7 +8880,7 @@ msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:56
 msgid "Enter your @s username or email."
-msgstr "Indiquez votre nom d'utilisateur ou votre mail."
+msgstr "Indiquez votre @s nom d'utilisateur ou votre mail."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:101
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/optional/field.field.event_enrollment.event_enrollment.field_email.yml:0
@@ -11194,7 +11195,7 @@ msgstr "ex : Nicolas Hulot"
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:81
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:234
 msgid "Jane Doe, johndoe@example.com"
-msgstr "ex : Nicolas Hulot, nico@exemple.fr"
+msgstr "ex : Nicolas Hulot, nico@example.com"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:68
 #, fuzzy
@@ -18071,7 +18072,8 @@ msgstr ""
 msgid ""
 "The event date and time are set based on your timezone. @change_timezone."
 msgstr ""
-"La date et l'heure de l'événement sont basées sur votre fuseau horaire."
+"La date et l'heure de l'événement sont basées sur votre fuseau horaire. "
+"@change_timezone."
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:82
 msgid "The event enrollment request has been approved."
@@ -18375,9 +18377,8 @@ msgstr[1] "Le rôle de @count membres sélectionnés a été modifié avec succ�
 msgid "The role of 1 selected member has not been changed successfully"
 msgid_plural ""
 "The role of @count selected members have not been changed successfully"
-msgstr[0] "Le rôle d'un membre sélectionné n'a pas été modifié avec succès."
-msgstr[1] ""
-"Le rôle de @count membres sélectionnés n'a pas été modifié avec succès."
+msgstr[0] "Le rôle d'un membre sélectionné n'a pas été modifié avec succès"
+msgstr[1] "Le rôle de @count membres sélectionnés n'a pas été modifié avec succè"
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:86
 #, fuzzy
@@ -20430,7 +20431,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/social_follow_content.module:157
 msgid "You are now automatically following this @type. @unfollow_link."
-msgstr "Vous suivez désormais ce contenu. @unfollow_link."
+msgstr "Vous suivez désormais ce contenu @type. @unfollow_link."
 
 #: modules/custom/mentions/mentions.module:25
 #, fuzzy
