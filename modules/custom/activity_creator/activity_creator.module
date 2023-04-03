@@ -401,8 +401,10 @@ function activity_creator_empty_queue() {
         // Must contain items.
         if ($worker->numberOfItems() > 0) {
           while ($item = $worker->claimItem()) {
-            $queue_worker->processItem($item->data);
-            $worker->deleteItem($item);
+            if (is_object($item) && !empty($item->data)) {
+              $queue_worker->processItem($item->data);
+              $worker->deleteItem($item);
+            }
           }
         }
       }
