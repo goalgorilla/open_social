@@ -16,7 +16,7 @@ abstract class EntityAccessNodeAccessTestBase extends EntityKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['group', 'options', 'entity', 'variationcache', 'node', 'gnode', 'social_group', 'flag', 'address', 'image', 'file', 'entity_access_by_field'];
+  protected static $modules = ['group', 'options', 'entity', 'variationcache', 'node', 'gnode', 'social_group', 'flag', 'address', 'image', 'file', 'entity_access_by_field'];
 
   /**
    * The entity type manager service.
