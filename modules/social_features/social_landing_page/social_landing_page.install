@@ -635,7 +635,6 @@ function social_landing_page_update_8806() {
 function social_landing_page_update_8807() {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $storage_definition = $manager->getFieldStorageDefinition('field_featured_items', 'paragraph');
-  assert($storage_definition instanceof FieldStorageDefinitionInterface);
   $storage_definition->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
   $manager->updateFieldStorageDefinition($storage_definition);
 
