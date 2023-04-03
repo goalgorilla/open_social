@@ -6071,6 +6071,15 @@ parameters:
 			path: modules/social_features/social_embed/src/SocialEmbedConfigOverride.php
 
 		-
+			message: """
+				#^Call to deprecated method assertEqual\\(\\) of class Drupal\\\\KernelTests\\\\KernelTestBase\\:
+				in drupal\\:8\\.0\\.0 and is removed from drupal\\:10\\.0\\.0\\. Use
+				  \\$this\\-\\>assertEquals\\(\\) instead\\.$#
+			"""
+			count: 2
+			path: modules/social_features/social_embed/tests/src/Kernel/SocialUserEmbedTest.php
+
+		-
 			message: "#^Function template_preprocess_event_enrollment\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_event/event_enrollment.page.inc
@@ -11260,7 +11269,7 @@ parameters:
 
 		-
 			message: "#^Offset 'add' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 3
+			count: 2
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -11270,7 +11279,7 @@ parameters:
 
 		-
 			message: "#^Offset 'edit' does not exist on array\\{\\}\\|array\\{add\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, delete\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>, edit\\: non\\-empty\\-array\\<int, non\\-falsy\\-string\\>\\}\\.$#"
-			count: 4
+			count: 3
 			path: modules/social_features/social_group/social_group.module
 
 		-
@@ -13120,6 +13129,11 @@ parameters:
 
 		-
 			message: "#^Cannot call method hasKey\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityTypeInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/Plugin/Block/PostBlock.php
+
+		-
+			message: "#^Method Drupal\\\\social_post\\\\Plugin\\\\Block\\\\PostBlock\\:\\:blockAccess\\(\\) should return Drupal\\\\Core\\\\Access\\\\AccessResult but returns Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Plugin/Block/PostBlock.php
 
@@ -15417,6 +15431,11 @@ parameters:
 			message: "#^Function social_swiftmail_update_8003\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_swiftmail/social_swiftmail.install
+
+		-
+			message: "#^Cannot call method getDisplayName\\(\\) on object\\|true\\.$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/social_swiftmail.module
 
 		-
 			message: "#^Function social_swiftmail_element_info_alter\\(\\) has no return type specified\\.$#"
