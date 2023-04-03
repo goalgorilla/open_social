@@ -85,7 +85,7 @@ class SocialUserEmbedTest extends KernelTestBase {
 
       // All requests should be ok except last one as it will be $retries + 1.
       $status_code = ($i === $retries) ? Response::HTTP_FORBIDDEN : Response::HTTP_OK;
-      $this->assertEqual($response->getStatusCode(), $status_code);
+      $this->assertEquals($response->getStatusCode(), $status_code);
     }
   }
 
@@ -112,7 +112,7 @@ class SocialUserEmbedTest extends KernelTestBase {
 
       // All requests should be ok except last one as it will be $retries + 1.
       $status_code = ($i === $retries) ? Response::HTTP_FORBIDDEN : Response::HTTP_OK;
-      $this->assertEqual($response->getStatusCode(), $status_code);
+      $this->assertEquals($response->getStatusCode(), $status_code);
     }
   }
 
