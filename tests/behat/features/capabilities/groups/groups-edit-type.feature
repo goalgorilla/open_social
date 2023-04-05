@@ -11,7 +11,7 @@ Feature: Edit group type after creation
     And "topic_type" terms:
       | name |
       | Blog |
-    And topics:
+    And topics with non-anonymous author:
       | title     | body      | group   | field_content_visibility | langcode | field_topic_type |
       | Nespresso | What else | Nescafe | group                    | en       | Blog             |
 

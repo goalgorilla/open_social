@@ -7,6 +7,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -29,6 +30,8 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
    *   The current active database's master connection.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
@@ -41,6 +44,7 @@ interface ContentBuilderInterface extends TrustedCallbackInterface {
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     TranslationInterface $string_translation,
+    LanguageManagerInterface $language_manager,
     ContentBlockManagerInterface $content_block_manager,
     EntityRepositoryInterface $entity_repository,
     TimeInterface $time
