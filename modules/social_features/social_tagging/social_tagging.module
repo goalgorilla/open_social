@@ -179,12 +179,12 @@ function social_tagging_social_tagging_field_form_alter(
   unset($item);
 
   // Load tag config.
-  $enabled = \Drupal::configFactory()->getEditable('social_tagging.settings')
+  $enabled = (bool) \Drupal::configFactory()->getEditable('social_tagging.settings')
     ->get("tag_{$prefix}type_$suffix");
 
   // Check if tagging is turned on/off.
   if (
-    $enabled === NULL ||
+    $enabled === FALSE ||
     !$tag_service->active() ||
     !$tag_service->hasContent()
   ) {
