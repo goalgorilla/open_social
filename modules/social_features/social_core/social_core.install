@@ -1642,3 +1642,17 @@ function social_core_update_11405(): string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Ajust popovers socialblue theme configs.
+ */
+function social_core_update_11801(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
