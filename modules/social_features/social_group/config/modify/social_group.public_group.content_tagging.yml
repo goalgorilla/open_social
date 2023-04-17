@@ -1,0 +1,36 @@
+# Add the required configuration for the content tagging functionality that is
+# part of the social_tagging module.
+dependencies:
+  config:
+    - core.entity_view_display.group.public_group.social_tagging
+    - field.field.group.public_group.field_social_tagging
+items:
+  core.entity_form_display.group.public_group.default:
+    expected_config: { }
+    update_actions:
+      add:
+        third_party_settings:
+          field_group:
+            group_social_tagging:
+              children:
+                - field_social_tagging
+              parent_name: ''
+              weight: 3
+              label: 'Tags'
+              format_type: fieldset
+              format_settings:
+                description: ''
+                classes: ''
+                id: ''
+                required_fields: true
+              region: content
+        content:
+          field_social_tagging:
+            type: social_tag_split
+            weight: 26
+            region: content
+            settings: { }
+            third_party_settings: { }
+      delete:
+        hidden:
+          field_social_tagging: { }

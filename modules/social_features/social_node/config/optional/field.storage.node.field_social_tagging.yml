@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_tagging
+    - node
+id: node.field_social_tagging
+field_name: field_social_tagging
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+  handler: default:taxonomy_term
+  handler_settings:
+    target_bundles:
+      - social_tagging
+module: social_node
+locked: false
+cardinality: -1
+translatable: false
+indexes: {  }
+persist_with_no_fields: true
+custom_storage: false

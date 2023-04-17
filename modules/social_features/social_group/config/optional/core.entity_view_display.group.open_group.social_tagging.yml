@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.social_tagging
+    - field.field.group.open_group.field_social_tagging
+    - group.type.open_group
+  module:
+    - social_tagging
+id: group.open_group.social_tagging
+targetEntityType: group
+bundle: open_group
+mode: social_tagging
+content:
+  field_social_tagging:
+    type: social_tag_split
+    weight: 0
+    region: content
+    label: hidden
+    settings: { }
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  label: true
+  uid: true

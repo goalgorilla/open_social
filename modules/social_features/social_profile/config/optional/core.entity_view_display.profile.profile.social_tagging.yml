@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.social_tagging
+    - field.field.profile.profile.field_social_tagging
+    - profile.type.profile
+  module:
+    - social_tagging
+id: profile.profile.social_tagging
+targetEntityType: profile
+bundle: profile
+mode: social_tagging
+content:
+  field_social_tagging:
+    type: social_tag_split
+    weight: 0
+    region: content
+    label: hidden
+    settings: { }
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  label: true
+  uid: true
+  links: true

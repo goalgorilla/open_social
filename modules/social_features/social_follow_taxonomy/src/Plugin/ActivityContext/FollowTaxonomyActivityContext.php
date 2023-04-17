@@ -127,15 +127,6 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   }
 
   /**
-   * List of taxonomy terms.
-   */
-  public function taxonomyTermsList($entity) {
-    $term_ids = social_follow_taxonomy_terms_list($entity);
-
-    return $term_ids;
-  }
-
-  /**
    * Returns recipients from followed taxonomies.
    */
   public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
@@ -145,7 +136,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       ->load($related_entity['target_id']);
 
     if (!empty($entity)) {
-      $tids = $this->taxonomyTermsList($entity);
+      $tids = social_follow_taxonomy_terms_list($entity);
     }
 
     if (empty($tids)) {
@@ -231,7 +222,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    */
   public function getListOfTagsFields() {
     $fields_to_check = [
-      'social_tagging',
+      'field_social_tagging',
     ];
     $this->moduleHandler->alter('social_follow_taxonomy_fields', $fields_to_check);
     return $fields_to_check;
