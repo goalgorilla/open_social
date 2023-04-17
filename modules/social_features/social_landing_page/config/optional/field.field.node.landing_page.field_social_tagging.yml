@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  modules:
+    - social_tagging
+  config:
+    - field.storage.node.field_social_tagging
+    - node.type.landing_page
+id: node.landing_page.field_social_tagging
+field_name: field_social_tagging
+entity_type: node
+bundle: landing_page
+label: 'Tagging'
+description: 'A shared taxonomy between the different types of data in Open Social.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      social_tagging: social_tagging
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -199,9 +199,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
    * {@inheritdoc}
    */
   public function allowSplit(): bool {
-    return $this->active() &&
-      $this->configFactory->get('social_tagging.settings')
-        ->get('allow_category_split');
+    return $this->active();
   }
 
   /**
