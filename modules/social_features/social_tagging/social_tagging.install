@@ -9,7 +9,6 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\search_api\Item\Field;
 
 /**
  * Install the module.
@@ -58,17 +57,6 @@ function social_tagging_uninstall(): void {
 }
 
 /**
- * Add fields to search API.
- */
-function _social_tagging_search_api_fields(): array {
-  return [
-    'social_content' => 'node',
-    'social_groups' => 'group',
-    'social_users' => 'profile',
-  ];
-}
-
-/**
  * Install a base field for an entity type.
  *
  * @param string $entity_type
@@ -87,45 +75,14 @@ function _social_tagging_add_base_field(string $entity_type): void {
  * Add fields to search API.
  */
 function _social_tagging_add_fields_search_api(): void {
-  $fields = _social_tagging_search_api_fields();
 
-  foreach ($fields as $index => $type) {
-    $index_storage = \Drupal::entityTypeManager()
-      ->getStorage('search_api_index');
-
-    /** @var \Drupal\search_api\IndexInterface $index */
-    $index = $index_storage->load($index);
-
-    // Only add the field if it doesn't exist yet.
-    if (!$index->getField('social_tagging')) {
-      $field_intro = new Field($index, 'social_tagging');
-      $field_intro->setType('integer');
-      $field_intro->setPropertyPath('social_tagging');
-      $field_intro->setDatasourceId('entity:' . $type);
-      $field_intro->setLabel('Social Tagging');
-      $index->addField($field_intro);
-
-      $index->save();
-    }
-  }
 }
 
 /**
  * Remove fields from search API.
  */
 function _social_tagging_remove_fields_search_api(): void {
-  $fields = _social_tagging_search_api_fields();
 
-  foreach ($fields as $index => $type) {
-    $index_storage = \Drupal::entityTypeManager()
-      ->getStorage('search_api_index');
-
-    /** @var \Drupal\search_api\IndexInterface $index */
-    $index = $index_storage->load($index);
-
-    $index->removeField('social_tagging');
-    $index->save();
-  }
 }
 
 /**
