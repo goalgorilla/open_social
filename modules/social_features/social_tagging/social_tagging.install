@@ -6,9 +6,14 @@
  */
 
 use Drupal\Core\Config\FileStorage;
-use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Item\Field;
 
 /**
  * Install the module.
@@ -24,19 +29,8 @@ function social_tagging_install(): void {
     ]
   );
 
-  // Add the new search api fields.
-  _social_tagging_add_fields_search_api();
-
-  // If the search module is enabled trigger updating of the indexes affected
-  // by tagging.
-  try {
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      social_search_resave_search_indexes(['social_content', 'social_groups']);
-    }
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
+  // Ensure tagging data is indexed in our search index.
+  _social_tagging_update_search_index_for_tagging();
 }
 
 /**
@@ -45,30 +39,6 @@ function social_tagging_install(): void {
 function social_tagging_uninstall(): void {
   // Remove the search api fields.
   _social_tagging_remove_fields_search_api();
-
-  try {
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      social_search_resave_search_indexes(['social_content', 'social_groups']);
-    }
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
-}
-
-/**
- * Install a base field for an entity type.
- *
- * @param string $entity_type
- *   The entity type identifier.
- */
-function _social_tagging_add_base_field(string $entity_type): void {
-  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition(
-    'social_tagging',
-    $entity_type,
-    'social_tagging',
-    _social_tagging_field(),
-  );
 }
 
 /**
@@ -82,169 +52,15 @@ function _social_tagging_add_fields_search_api(): void {
  * Remove fields from search API.
  */
 function _social_tagging_remove_fields_search_api(): void {
-
+  // @todo REIMPLEMENT THIS
 }
 
 /**
- * Update the field definitions on install, or in an update hook.
- *
- * @param string $field
- *   The field definition you want to update.
+ * Implements hook_update_last_removed().
  */
-function _social_profile_field_definitions_update(string $field): void {
-  // Update definitions and schema.
-  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
-  if (!empty($list[$field])) {
-    foreach ($list[$field] as $item) {
-      \Drupal::entityDefinitionUpdateManager()->updateEntityType($item);
-    }
-  }
-}
-
-/**
- * Exclude landing pages from tagging.
- */
-function social_tagging_update_8001(): void {
-  // Set allow to true, since that's the case by default.
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-  $config->set('tag_node_type_landing_page', FALSE)->save();
-}
-
-/**
- * Toggle group index.
- */
-function social_tagging_update_8002(): void {
-  // Toggle the index groups.
-  try {
-    // If the search module is enabled we need to update the group index.
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      social_search_resave_search_indexes(['social_groups']);
-    }
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
-}
-
-/**
- * Install Tagging base field to profile entity type.
- */
-function social_tagging_update_8003(): void {
-  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
-    ->setLabel(t('Tagging'))
-    ->setDescription(t('Tagging field.'))
-    ->setSetting('target_type', 'taxonomy_term')
-    ->setSetting('handler', 'default:taxonomy_term')
-    ->setSetting('handler_settings', [
-      'target_bundles' => [
-        'social_tagging' => 'social_tagging',
-      ],
-    ])
-    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-    ->setDisplayOptions('view', [
-      'region' => 'hidden',
-    ])
-    ->setDisplayOptions('form', [
-      'type' => 'options_select',
-      'weight' => 3,
-      'settings' => [],
-    ])
-    ->setDisplayConfigurable('form', TRUE)
-    ->setDisplayConfigurable('view', TRUE);
-
-  \Drupal::entityDefinitionUpdateManager()
-    ->installFieldStorageDefinition('social_tagging', 'profile', 'social_tagging', $field_storage_definition);
-}
-
-/**
- * Toggle user index.
- */
-function social_tagging_update_8004(): void {
-  _social_profile_field_definitions_update('social_tagging');
-
-  // Toggle the index users.
-  try {
-    // If the search module is enabled we need to update the group index.
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      social_search_resave_search_indexes(['social_users']);
-    }
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
-}
-
-/**
- * Add the search api fields.
- */
-function social_tagging_update_8005(): void {
-  _social_tagging_add_fields_search_api();
-
-  // Update definitions and schema.
-  _social_profile_field_definitions_update('social_tagging');
-
-  // Toggle the index users.
-  try {
-    // If the search module is enabled we need to update the group index.
-    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
-      social_search_resave_search_indexes(['social_users']);
-    }
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
-}
-
-/**
- * Make "Social Tagging" vocabulary translatable.
- */
-function social_tagging_update_11201(): void {
-  if (!\Drupal::moduleHandler()->moduleExists('social_content_translation')) {
-    return;
-  }
-
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_tagging') . '/config/static';
-  $source = new FileStorage($config_path);
-
-  $config_storage->write('language.content_settings.taxonomy_term.social_tagging', (array) $source->read('language.content_settings.taxonomy_term.social_tagging_11201'));
-}
-
-/**
- * Install Tagging base field to the media entity type.
- */
-function social_tagging_update_11401(): void {
-  if (\Drupal::moduleHandler()->moduleExists('media')) {
-    _social_tagging_add_base_field('media');
-  }
-}
-
-/**
- * Remove filters from the views config so that it can be added in an overrider.
- */
-function social_tagging_update_11402(): void {
-  $config = \Drupal::configFactory()->getEditable('views.view.newest_users');
-
-  if ($filters = $config->get('display.default.display_options.filters')) {
-    $filters = array_filter($filters, fn($filter) => $filter['field'] !== 'social_tagging_target_id');
-    $config->set('display.page_newest_users.display_options.filters', $filters);
-    $config->set('display.block_newest_users.display_options.filters', $filters);
-    $config->set('display.page_newest_users.display_options.defaults.filters', FALSE);
-    $config->set('display.block_newest_users.display_options.defaults.filters', FALSE);
-    $config->save(TRUE);
-  }
-}
-
-/**
- * Install a base field for supported entity types.
- */
-function social_tagging_update_11501(): void {
-  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
-  $helper = \Drupal::service('social_tagging.tag_service');
-
-  foreach ($helper->types(TRUE) as $entity_type) {
-    _social_tagging_add_base_field($entity_type);
-  }
+function social_tagging_update_last_removed() : int {
+  // Removed all update hooks that tried to install the old field type.
+  return 11501;
 }
 
 /**
@@ -301,3 +117,280 @@ function social_tagging_update_11801(): void {
     }
   }
 }
+
+/**
+ * Move social_tagging field to a Field API field.
+ */
+function social_tagging_update_12000() : void {
+  $settings = \Drupal::configFactory()->getEditable("social_tagging.settings");
+
+  // We've decided that as of 12.0.0 we will always enable category splitting
+  // and remove the setting. It was the original intention of the feature and
+  // emulating non-split mode can be easily done by creating a single hierarchy.
+  // This allows us to simplify a lot of our code.
+  // Similarly, we no longer allow selection of the category parent but just fix
+  // our filters instead.
+  $form_widget = [
+    "type" => "social_tag_split",
+    "settings" => [],
+    "region" => "content",
+  ];
+
+  // Security: This array should only be static SQL-safe values.
+  $entity_types = [
+    'node' => [
+      'book',
+      'event',
+      'page',
+      'topic',
+      'landing_page',
+    ],
+    'group' => [
+      'flexible_group',
+      'secret_group',
+      'closed_group',
+      'open_group',
+      'public_group',
+    ],
+    'profile' => [
+      'profile',
+    ],
+  ];
+
+  foreach ($entity_types as $entity_type => $bundles) {
+    $storage = FieldStorageConfig::create([
+      'field_name' => "field_social_tagging",
+      'entity_type' => $entity_type,
+      'type' => 'entity_reference',
+      'module' => 'social_tagging',
+      'cardinality' => FieldStorageConfig::CARDINALITY_UNLIMITED,
+      'translatable' => FALSE,
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+    ]);
+    $storage->save();
+    foreach ($bundles as $bundle) {
+      try {
+        $field = FieldConfig::create([
+          'field_storage' => $storage,
+          'bundle' => $bundle,
+          'label' => new TranslatableMarkup('Tagging'),
+          'description' => new TranslatableMarkup('A shared taxonomy between the different types of data in Open Social.'),
+          'required' => FALSE,
+          'translatable' => FALSE,
+          'settings' => [
+            'handler' => 'default:taxonomy_term',
+            'handler_settings' => [
+              'target_bundles' => [
+                'social_tagging' => 'social_tagging',
+              ],
+              'sort' => [
+                'field' => 'name',
+                'direction' => 'asc',
+              ],
+              'auto_create' => FALSE,
+              'auto_create_bundle' => '',
+            ],
+          ],
+          'field_type' => 'entity_reference',
+        ]);
+
+        // Migrate the status for individual bundles.
+        $status = $settings->get("tag_${entity_type}_type_{$bundle}");
+        if ($status !== NULL && !$status) {
+          $field->setStatus(FALSE);
+        }
+        $settings->clear("tag_${entity_type}_type_{$bundle}");
+        $field->save();
+
+        // Update the form display mode to ensure the tag is positioned
+        // correctly. We can ignore the view display since tags are displayed in
+        // blocks next to the primary content, so the default of hidden is fine.
+        $form_display_storage = \Drupal::entityTypeManager()->getStorage("entity_form_display");
+        $form_display = $form_display_storage->load("${entity_type}.${bundle}.default");
+        assert($form_display instanceof EntityFormDisplayInterface, "${entity_type}.${bundle} doesn't have a default form display.");
+        // Position the field in the right place on the form and give it the
+        // right widget based on module settings.
+        $form_display->setComponent(
+          "field_social_tagging",
+          $form_widget + [
+            "weight" => $form_display->getComponent("social_tagging")["weight"] ?? 3,
+          ]
+        );
+        $form_display->removeComponent("social_tagging");
+        // Ensure the tag is in the tags field group and remove the old field if
+        // it's present.
+        $field_group = $form_display->getThirdPartySetting(
+          "field_group",
+          "group_social_tags",
+          [
+            "children" => [],
+            "parent_name" => '',
+            "weight" => 1,
+            "label" => "Tags",
+            "format_type" => "fieldset",
+            "format_settings" => [
+              "required_fields" => TRUE,
+              "id" => "tags",
+              "classes" => "card",
+              "label" => "Tags",
+            ],
+            "region" => "content",
+          ]
+        );
+        // Change anything that may be in the stored version.
+        $field_group["region"] = "content";
+        $field_group["children"][] = "field_social_tagging";
+        $field_group["children"] = array_filter($field_group["children"], fn ($f) => $f !== "social_tagging");
+        $form_display->setThirdPartySetting("field_group", "group_social_tags", $field_group);
+
+        $form_display->save();
+      }
+      // Mute exceptions thrown by bundles not being installed. Thrown in
+      // \Drupal\Core\Entity\EntityType:getBundleConfigDependency when we try to
+      // create the field.
+      catch (\LogicException $e) {
+      }
+    }
+
+    // Migrate all the data from the old field directly in the database, this is
+    // more performant than loading all the entities.
+    // Security: This does not pose a SQL injection threat because the inserted
+    // variable only ever contains static values set earlier in this function.
+    \Drupal::database()->query("INSERT INTO ${entity_type}__field_social_tagging SELECT bundle, deleted, entity_id, revision_id, langcode, delta, social_tagging_target_id as field_social_tagging_target_id FROM ${entity_type}__social_tagging ");
+    if ($entity_type === "node" || $entity_type === "profile") {
+      \Drupal::database()->query("INSERT INTO ${entity_type}_revision__field_social_tagging SELECT bundle, deleted, entity_id, revision_id, langcode, delta, social_tagging_target_id as field_social_tagging_target_id FROM ${entity_type}_revision__social_tagging");
+    }
+
+    foreach ($bundles as $bundle) {
+      FieldConfig::load("$entity_type.$bundle.social_tagging")?->delete();
+    }
+
+    FieldStorageConfig::load("$entity_type.social_tagging")?->delete();
+  }
+
+  // This update hook runs after the search indices have been merged, so we only
+  // need to update the social_all index.
+  $index = Index::load("social_all");
+  assert($index !== NULL, "Missing 'social_all' index which points to a corrupt Open Social installation.");
+  $index->removeField("social_tagging");
+  $field = new Field($index, "social_tagging");
+  $field
+    ->setLabel("Tagging")
+    ->setPropertyPath("aggregated_field")
+    ->setType("string")
+    ->setConfiguration([
+      "type" => "union",
+      "fields" => [
+        "entity:group/field_social_tagging",
+        "entity:node/field_social_tagging",
+        "entity:profile/field_social_tagging",
+      ],
+    ]);
+  $index->addField($field);
+  if (!$index->isValidProcessor("aggregated_field")) {
+    $index->addProcessor(
+      \Drupal::getContainer()
+        ->get('search_api.plugin_helper')
+        ->createProcessorPlugin($index, "aggregated_field")
+    );
+  }
+  $index->save();
+
+  // Remove the things from settings that are now in the widget config.
+  $settings
+    ->clear("allow_category_split")
+    ->clear("use_category_parent")
+    ->save();
+}
+
+/**
+ * Create new view modes, display configurations and blocks.
+ */
+function social_tagging_update_12001() : void {
+  // Should match list in social_tagging_update_12000.
+  $entity_types = [
+    'node' => [
+      'book',
+      'event',
+      'page',
+      'topic',
+      'landing_page',
+    ],
+    'group' => [
+      'flexible_group',
+      'secret_group',
+      'closed_group',
+      'open_group',
+      'public_group',
+    ],
+    'profile' => [
+      'profile',
+    ],
+  ];
+
+  foreach ($entity_types as $entity_type => $bundles) {
+    EntityViewMode::create([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'social_tagging',
+          $entity_type,
+        ],
+      ],
+      'id' => "${entity_type}.social_tagging",
+      'label' => 'Tags',
+      'targetEntityType' => $entity_type,
+      'cache' => TRUE,
+    ])->save();
+    foreach ($bundles as $bundle) {
+      EntityViewDisplay::create([
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            "core.entity_view_mode.${entity_type}.social_tagging",
+            "field.field.${entity_type}.${bundle}.field_social_tagging",
+            "${entity_type}.type.${bundle}",
+          ],
+          'module' => [
+            'social_tagging',
+          ],
+        ],
+        'id' => "${entity_type}.${bundle}.social_tagging",
+        'targetEntityType' => $entity_type,
+        'bundle' => $bundle,
+        'mode' => 'social_tagging',
+        'content' => [
+          'field_social_tagging' => [
+            'type' => 'social_tag_split',
+            'weight' => 0,
+            'region' => 'content',
+            'label' => 'hidden',
+            'settings' => [
+              'allow_category_parent_selection' => TRUE,
+            ],
+            'third_party_settings' => [],
+          ],
+          'hidden' => [],
+        ],
+      ])->save();
+    }
+  }
+
+  $content_block = \Drupal\block\Entity\Block::load("socialtagsblock");
+  $group_block = \Drupal\block\Entity\Block::load("socialgrouptagsblock");
+
+  // TODO: Create new block with settings
+  // TODO: Merge `request_path` visibility if available
+  // TODO: Remove old blocks
+}
+
+
+// TODO: Move to fieldable field using config/optional for `group`/`node`/`profile`
+// TODO: Add an aggregated field to the search index which unions the term ID and name
+// TODO: Update the views to filter on this field.
+// TODO: Add update hooks for the above and migrate data from the current base field.
+// TODO: Check the term ID type

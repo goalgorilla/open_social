@@ -107,6 +107,8 @@ interface SocialTaggingServiceInterface {
    *
    * @return bool
    *   Whether category split on field level is turned on or not.
+   *
+   * @deprecated Tagging is always split now.
    */
   public function allowSplit(): bool;
 

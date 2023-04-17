@@ -99,31 +99,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     $config = $this->configFactory;
 
-    // Check if tagging is active.
-    if (!($tag_service->active() && $tag_service->hasContent())) {
-      return $overrides;
-    }
-
     // Remove tagging field from search index if not needed.
-    if (!$tag_service->groupActive()) {
-      $field_settings = $config
-        ->getEditable('search_api.index.social_groups')
-        ->get('field_settings');
-
-      unset($field_settings['social_tagging']);
-
-      $overrides['search_api.index.social_groups']['field_settings'] = $field_settings;
-    }
-
-    if (!$tag_service->profileActive()) {
-      $field_settings = $config
-        ->getEditable('search_api.index.social_users')
-        ->get('field_settings');
-
-      unset($field_settings['social_tagging']);
-
-      $overrides['search_api.index.social_users']['field_settings'] = $field_settings;
-    }
 
     // Prepare fields.
     $fields['social_tagging'] = [
@@ -131,34 +107,28 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'label' => $this->t('Tags'),
     ];
 
-    if ($tag_service->allowSplit()) {
-      $fields = [];
-      foreach ($tag_service->getCategories() as $tid => $value) {
-        if (!empty($tag_service->getChildren($tid))) {
-          $fields['social_tagging_' . $tid] = [
-            'identifier' => $this->machineName->transform($value),
-            'label' => $value,
-          ];
-        }
-        // Display parent of tags.
-        elseif ($tag_service->useCategoryParent()) {
-          $fields['social_tagging_' . $tid] = [
-            'identifier' => $this->machineName->transform($value),
-            'label' => $value,
-          ];
-        }
+    $term_storage = \Drupal::service("entity_type.manager")->getStorage("taxonomy_term");
+    $categories = $term_storage->loadByProperties(["vid" => "social_tagging", "parent" => 0]);
+
+    foreach ($categories as $tid => $term) {
+      $children = $term_storage->loadByProperties(["vid" => "social_tagging", "parent" => $tid]);
+      if (!empty($children)) {
+        $fields['social_tagging_' . $tid] = [
+          'identifier' => $this->machineName->transform($term->label()),
+          'label' => $term->label(),
+        ];
       }
     }
 
     // Add tagging fields to the views filters.
     $config_views = [
-      'views.view.search_content' => 'search_api_index_social_content',
+      'views.view.search_content' => 'search_api_index_social_all',
     ];
     if ($tag_service->groupActive()) {
-      $config_views['views.view.search_groups'] = 'search_api_index_social_groups';
+      $config_views['views.view.search_groups'] = 'search_api_index_social_all';
     }
     if ($tag_service->profileActive()) {
-      $config_views['views.view.search_users'] = 'search_api_index_social_users';
+      $config_views['views.view.search_users'] = 'search_api_index_social_all';
     }
 
     foreach ($config_views as $config_name => $type) {
@@ -242,15 +212,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'label' => $this->t('Tags'),
     ];
 
-    if ($tag_service->allowSplit()) {
-      $fields = [];
-      foreach ($tag_service->getCategories() as $tid => $value) {
-        if (!empty($tag_service->getChildren($tid))) {
-          $fields['social_tagging_target_id_' . $tid] = [
-            'identifier' => $this->machineName->transform($value),
-            'label' => $value,
-          ];
-        }
+
+    foreach ($categories as $tid => $term) {
+      $children = $term_storage->loadByProperties(["vid" => "social_tagging", "parent" => $tid]);
+      if (!empty($children)) {
+        $fields['social_tagging_target_id_' . $tid] = [
+          'identifier' => $this->machineName->transform($term->label()),
+          'label' => $term->label(),
+        ];
       }
     }
 

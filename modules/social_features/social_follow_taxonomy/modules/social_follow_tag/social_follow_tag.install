@@ -71,10 +71,23 @@ function social_follow_tag_install() {
     $config->save();
   }
 
-  // Set a higher weight to overlap templates.
-  module_set_weight('social_follow_tag', 10);
-  // Clear cache so that overlapped templates are used after module enabling.
-  drupal_flush_all_caches();
+  // Replace the social_tag_split formatter with our formatter that includes
+  // the follow preview. We do this in all the social_tagging display modes
+  // since that's what should be displayed in the blocks.
+  $displays = \Drupal::entityTypeManager()
+    ->getStorage("entity_view_display")
+    ->loadByProperties(["mode" => "social_tagging"]);
+
+  foreach ($displays as $display) {
+    $component = $display->getComponent("field_social_tagging");
+    if ($component === NULL || $component["type"] !== "social_tag_split") {
+      continue;
+    }
+
+    $component["type"] = "social_follow_tag_split";
+    $display->setComponent("field_social_tagging", $component);
+    $display->save();
+  }
 }
 
 /**
@@ -85,6 +98,23 @@ function social_follow_tag_uninstall(): void {
   $config = \Drupal::configFactory()->getEditable('views.view.user_admin_people');
   $config->clear('display.default.display_options.filters.social_follow_taxonomy_follow_filter');
   $config->save();
+
+  // Replace our formatter with the default social_tag_split formatter again.
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface[] $displays */
+  $displays = \Drupal::entityTypeManager()
+    ->getStorage("entity_view_display")
+    ->loadByProperties(["mode" => "social_tagging"]);
+
+  foreach ($displays as $display) {
+    $component = $display->getComponent("field_social_tagging");
+    if ($component === NULL || $component["type"] !== "social_follow_tag_split") {
+      continue;
+    }
+
+    $component["type"] = "social_tag_split";
+    $display->setComponent("field_social_tagging", $component);
+    $display->save();
+  }
 }
 
 /**

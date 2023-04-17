@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.social_tagging
+    - field.field.node.event.field_social_tagging
+    - node.type.event
+  module:
+    - social_tagging
+id: node.event.social_tagging
+targetEntityType: node
+bundle: event
+mode: social_tagging
+content:
+  field_social_tagging:
+    type: social_tag_split
+    weight: 0
+    region: content
+    label: hidden
+    settings: { }
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  label: true
+  uid: true
+  links: true
+  flag_follow_content: true
