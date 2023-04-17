@@ -1,23 +1,24 @@
+uuid: 0f78b0c9-4260-41c6-adf5-0d87fb823396
 langcode: en
 status: true
 dependencies:
   module:
-    - social_tagging
+    - social_core
     - system
   theme:
     - socialblue
   enforced:
     module:
-    - social_tagging
-id: socialtagsblock
+      - social_tagging
+id: socialblue_grouptagsblock
 theme: socialblue
-region: complementary_top
+region: content
 weight: 0
 provider: null
 plugin: entity_view_block
 settings:
   id: entity_view_block
-  label: Tags
+  label: 'Group Tags'
   label_display: visible
   provider: social_core
   view_mode: social_tagging
@@ -26,6 +27,5 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: '/node/*'
     negate: false
-    context_mapping: {  }
+    pages: '/group/*/about'

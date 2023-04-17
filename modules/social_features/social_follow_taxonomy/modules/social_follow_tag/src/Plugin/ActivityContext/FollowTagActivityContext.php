@@ -25,7 +25,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
       ->load($related_entity['target_id']);
 
     if (!empty($entity)) {
-      $tids = $this->taxonomyTermsList($entity);
+      $tids = social_follow_taxonomy_terms_list($entity);
     }
 
     if (empty($tids)) {

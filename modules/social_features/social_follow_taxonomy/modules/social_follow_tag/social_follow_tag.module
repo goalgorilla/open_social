@@ -20,12 +20,6 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function social_follow_tag_theme() {
   return [
-    'social_tagging_nosplit' => [
-      'base hook' => 'social_tagging_nosplit',
-    ],
-    'social_tagging_split' => [
-      'base hook' => 'social_tagging_split',
-    ],
     'search_follow_tag' => [
       'variables' => [
         'tagstitle' => NULL,
@@ -54,29 +48,15 @@ function social_follow_tag_theme() {
 }
 
 /**
- * Implements hook_module_implements_alter().
- */
-function social_follow_tag_module_implements_alter(array &$implementations, string $hook): void {
-  switch ($hook) {
-    // Move our hook_theme() implementation to the end of the list.
-    case 'theme':
-      $group = $implementations['social_follow_tag'];
-      unset($implementations['social_follow_tag']);
-      $implementations['social_follow_tag'] = $group;
-      break;
-  }
-}
-
-/**
  * Implements hook_social_follow_taxonomy_terms_list_alter().
  *
  * {@inheritdoc}
  */
 function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_ids, $entity) {
   /** @var \Drupal\node\Entity\Node $entity */
-  if ($entity instanceof NodeInterface && $entity->hasField('social_tagging')) {
-    if (!empty($entity->get('social_tagging')->getValue())) {
-      $tags = $entity->get('social_tagging')->getValue();
+  if ($entity instanceof NodeInterface && $entity->hasField('field_social_tagging')) {
+    if (!$entity->get('field_social_tagging')->isEmpty()) {
+      $tags = $entity->get('field_social_tagging')->getValue();
 
       foreach ($tags as $tag) {
         $term_ids[] = $tag['target_id'];
