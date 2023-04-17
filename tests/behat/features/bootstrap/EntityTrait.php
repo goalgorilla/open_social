@@ -84,6 +84,11 @@ trait EntityTrait {
           );
         }
       }
+      // Allow date time fields to be provided as an offset to the current day
+      // (e.g. "+1 day" or "-5 days").
+      if ($field_definition !== NULL && $field_definition->getType() === "datetime") {
+        $values[$field_name] = date('Y-m-d\TH:i:s', strtotime($values[$field_name]));
+      }
     }
   }
 
