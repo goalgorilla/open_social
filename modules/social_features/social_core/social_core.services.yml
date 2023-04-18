@@ -42,3 +42,8 @@ services:
   social_core.members_page_helper:
     class: Drupal\social_core\Service\MembersPageHelperService
     arguments: [ '@user.data', '@current_user' ]
+
+  social_core.secret_files_path_processor:
+    class: Drupal\social_core\PathProcessor\SecretFiles
+    tags:
+      - { name: path_processor_inbound, priority: 100 }
