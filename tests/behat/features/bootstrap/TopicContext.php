@@ -31,15 +31,14 @@ class TopicContext extends RawMinkContext {
    * the ID if we already have it in the step or the title otherwise. We avoid
    * looking up the topic because a user may be testing an error state.
    *
-   * @var array
-   * @phpstan-var array<int|string>
+   * @var array<int|string>
    */
   private array $created = [];
 
   /**
    * Topic data that was changed in a previous step.
    *
-   * @phpstan-var array<string, mixed>
+   * @var array<string, mixed>
    */
   private array $updatedTopicData = [];
 
