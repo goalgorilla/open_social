@@ -51,7 +51,7 @@ class GroupMuteNotify {
    *   TRUE if a user muted notifications for a group.
    */
   public function groupNotifyIsMuted(GroupInterface $group, AccountInterface $account): bool {
-    $flaggings = $this->flagService->getAllEntityFlaggings($group, $account);
+    $flaggings = $this->flagService->getAllEntityFlaggings($group, $account, $this->flagService->getAnonymousSessionId());
 
     return !empty($flaggings);
   }
