@@ -52,7 +52,7 @@ Feature: Search
     And I fill in the following:
       | search_input | topic |
     And I press "Search"
-    And I click the xth "1" element with the css ".pager-nav .pager__item"
+    And I click the xth "0" element with the css ".pager-nav .pager__item--next"
     And I should see "Topic thirteen"
     And I fill in the following:
       | search_input | four |
