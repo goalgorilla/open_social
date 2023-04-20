@@ -15,7 +15,7 @@ Feature: Mute/Unmute group notifications
       | Ressinel's group 2nd | Good nickname, dude!!!  | dude_1st     | closed_group   | en       |
 
   @group-mute-group-notifications-group-page
-  Scenario: LU able to mute/umute group notifications
+  Scenario: LU able to mute/unmute group notifications
     Given I am logged in as "dude_1st"
       And I am on "/my-groups"
     Then I should see "Ressinel's group 1st" in the "Main content"
