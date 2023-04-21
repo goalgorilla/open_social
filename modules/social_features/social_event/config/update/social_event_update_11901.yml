@@ -1,0 +1,20 @@
+message.template.user_was_enrolled_to_event:
+  expected_config:
+    text:
+      2:
+        value: "<p>This is to confirm that you've enrolled for the event <u>[social_event:event_iam_organizing]</u>.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+  update_actions:
+    delete:
+      text:
+        2: { }
+    add:
+      text:
+        -
+          value: ''
+          format: full_html
+        -
+          value: ''
+          format: full_html
+        -
+          value: "<p>This is to confirm that you've enrolled for the event <em>[social_event:event_iam_organizing]</em>.</p>\r\n\r\n<p>[message:preview]</p>\r\n\r\n<p>[message:cta_button]</p>\r\n"
+          format: full_html
