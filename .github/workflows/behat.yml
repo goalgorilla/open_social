@@ -327,7 +327,7 @@ jobs:
           mkdir -p $OUTPUT_FOLDER
 
           # Move test results to the output folder if they exist
-          if (shopt -s nullglob; f=(tests/behat/logs/*); ((${#f[@]}))); then
+          if (shopt -s nullglob; f=(html/profiles/contrib/social/tests/behat/logs/*); ((${#f[@]}))); then
             mv html/profiles/contrib/social/tests/behat/logs/* $OUTPUT_FOLDER/
           fi
 
