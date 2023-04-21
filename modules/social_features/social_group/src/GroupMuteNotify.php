@@ -4,6 +4,8 @@ namespace Drupal\social_group;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\flag\Entity\Flag;
+use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
@@ -51,9 +53,20 @@ class GroupMuteNotify {
    *   TRUE if a user muted notifications for a group.
    */
   public function groupNotifyIsMuted(GroupInterface $group, AccountInterface $account): bool {
-    $flaggings = $this->flagService->getAllEntityFlaggings($group, $account, $this->flagService->getAnonymousSessionId());
+    // Make sure we only check for the specific mute group flag.
+    $flag = Flag::load('mute_group_notifications');
+    $session_id = NULL;
+    if ($account->isAnonymous()) {
+      $session_id = $this->flagService->getAnonymousSessionId();
+    }
+    $flags = $this->flagService->getFlagging($flag, $group, $account, $session_id);
 
-    return !empty($flaggings);
+    // If a user has the mute group flag set for a group we can return TRUE.
+    if ($flags instanceof FlaggingInterface) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
   /**

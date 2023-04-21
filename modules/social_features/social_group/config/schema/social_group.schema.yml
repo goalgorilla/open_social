@@ -14,6 +14,22 @@ social_group.settings:
     social_group_type_required:
       type: boolean
       label: 'Enable and require a group type'
+    cross_posting:
+      type: mapping
+      mapping:
+        status:
+          type: boolean
+          label: "Cross posting enabled yes or no"
+        content_types:
+          type: sequence
+          label: 'Content types with cross posting enabled'
+          sequence:
+            type: string
+        group_types:
+          type: sequence
+          label: 'Group types with cross posting enabled'
+          sequence:
+            type: string
 
 views.access.group_managers_only:
   type: mapping
