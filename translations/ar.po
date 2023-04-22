@@ -1500,7 +1500,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2023-01-10 09:26+0000\n"
-"PO-Revision-Date: 2023-04-22 13:28+0000\n"
+"PO-Revision-Date: 2023-04-22 19:08+0000\n"
 "Last-Translator: Bram ten Hove <bram.ten.hove@goalgorilla.com>\n"
 "Language-Team: Arabic <https://translate.getopensocial.com/projects/"
 "open-social/distribution/ar/>\n"
@@ -2532,10 +2532,10 @@ msgid ""
 "\r\n"
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
-"<p> <a href=\"[message:author:url:absolute]\"> [message:author:display-name] "
-"</a> ذكرتك في تعليق <a href=\""
-"[message:field_message_related_object:entity:url:absolute]\"> &nbsp; تم "
-"إجراؤه على [social_mentions:commented_entity_link_html] </p>\n"
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> ذكرك في تعليق <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">تعليق</a>&nbsp;"
+"صنع على [social_mentions:commented_entity_link_html]</p>\n"
 "\n"
 "<p> [message:preview] </p>\n"
 "\n"
@@ -2547,9 +2547,9 @@ msgid ""
 "a> mentioned you in a <a href=\"[message:field_message_related_object:entity:"
 "url:absolute]\">post</a></p>\r\n"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[الرسالة:author:display-name]</"
-"a> ذكرك في <a href=\"[message:field_message_related_object:entity:url:"
-"absolute]\">منشور</a></p>\n"
+"<p> <a href=\"[message:author:url:absolute]\"> [message:author:display-name] "
+"</a> ذكرتك في منشور <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\"> </a> </p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0
 msgid ""
@@ -2937,22 +2937,22 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
-"<p>مرحبًا بك،</p>\n"
+"<p> مرحبًا، </p>\n"
 "\n"
-"<p>أود دعوتك للانضمام إلى مجموعتي [message: gtitle] على [site:name]. </p>\n"
+"<p> أود أن أدعوك إلى مجموعتي [message:gtitle] على [site:name]. </p>\n"
 "\n"
-"<p>مع أطيب التحيات،<br />\n"
-"[message:author:display-name]</p>\n"
+"<p> أطيب التحيات، <br />\n"
+"[message:author:display-name] </p>\n"
 "\n"
 "<table class=\"btn-wrap\">\n"
-"\t<tbody>\n"
-"\t\t<tr>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[message:gurl]\">Accept invite</a></td>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[site:url]\">About [site:name]</a></td>\n"
-"\t\t</tr>\n"
-"\t</tbody>\n"
+" <tbody>\n"
+" <tr>\n"
+" <td class=\"align-center\"> <a class=\"btn-link btn-link-bg btn-link-one\" "
+"href=\"[message:gurl]\"> قبول الدعوة </a> </td>\n"
+" <td class=\"align-center\"> <a class=\"btn-link btn-link-bg btn-link-one\" "
+"href=\"[site:url]\"> حول [site:name] </a> </td>\n"
+" </tr>\n"
+" </tbody>\n"
 "</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
@@ -3092,7 +3092,6 @@ msgstr ""
 "a></p>\r\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
-#, fuzzy
 msgid ""
 "<p>Your request to join the <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "group has been approved! You are now a member of the group and can start "
@@ -3103,12 +3102,11 @@ msgid ""
 "<p>[message:cta_button]</p>\r\n"
 msgstr ""
 "<p> تمت الموافقة على طلبك للانضمام إلى مجموعة <a href=\"[message:gurl]\"> "
-"[message:gtitle] </a>! أنت الآن عضو في المجموعة ويمكنك البدء في النشر. [X155 "
-"×]\r\n"
-"\r\n"
-"[× 163 ×] [× 166 ×] [× 183 ×]\r\n"
-"\r\n"
-"<p> [message:cta_button] </p>\n"
+"[message:gtitle] </a>! أنت الآن عضو في المجموعة ويمكنك البدء في النشر. </p>\n"
+"\n"
+"<p>[message:preview]</p>\n"
+"\n"
+"<p>[message:cta_button]</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/install/social_profile_privacy.settings.yml:0
 msgid ""
@@ -3147,9 +3145,8 @@ msgid "@cal calendar"
 msgstr "تقويم @cal"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.module:67;114
-#, fuzzy
 msgid "@calendar calendar"
-msgstr "تقويم @cal"
+msgstr "تقويم @calendar"
 
 #: modules/custom/activity_creator/activity_creator.post_update.php:70
 msgid ""
@@ -3159,12 +3156,12 @@ msgstr "@count تم ترحيل بينات النشاطات الى جدول  acti
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:133
 msgid "@count new member is enrolled to this event."
 msgid_plural "@count new members are enrolled to this event."
-msgstr[0] "@count أعضاء جدد سجلّوا في هذا الحدث"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تم تسجيل الأعضاء الجدد @count في هذا الحدث."
+msgstr[1] "تم تسجيل عضو جديد @count في هذا الحدث."
+msgstr[2] "تم تسجيل الأعضاء الجدد @count في هذا الحدث."
+msgstr[3] "تم تسجيل الأعضاء الجدد @count في هذا الحدث."
+msgstr[4] "تم تسجيل الأعضاء الجدد @count في هذا الحدث."
+msgstr[5] "تم تسجيل الأعضاء الجدد @count في هذا الحدث."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:136
 msgid "@count new member is enrolled to your event."
@@ -3203,9 +3200,8 @@ msgid "@err"
 msgstr "@err"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php:142
-#, fuzzy
 msgid "@frequency_name"
-msgstr "@mc_list_description"
+msgstr "@frequency_name"
 
 #: modules/social_features/social_activity/templates/message-user-profile-preview.html.twig:13
 #, fuzzy
@@ -3213,9 +3209,8 @@ msgid "@function @ @organization"
 msgstr "@function @ @organization"
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
-#, fuzzy
 msgid "@interval"
-msgstr "@mc_list_description"
+msgstr "@interval"
 
 #: translations.php:71
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -3279,23 +3274,22 @@ msgstr[5] "@usernames are already enrolled, you can't add them again"
 msgid "@usernames is already invited or enrolled, you can't invite them again"
 msgid_plural ""
 "@usernames are already invited or enrolled, you can't invite them again"
-msgstr[0] "@usernames مدعو بالفعل أو مسجل ، ولا يمكنك دعوتهم مرة أخرى"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
+msgstr[1] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
+msgstr[2] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
+msgstr[3] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
+msgstr[4] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
+msgstr[5] "تمت دعوة @usernames بالفعل أو تسجيله، ولا يمكنك دعوته مرة أخرى"
 
 #: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php:116
-#, fuzzy
 msgid "@usernames is already member of the @type, you can't add them again"
 msgid_plural ""
 "@usernames are already members of the @type, you can't add them again"
 msgstr[0] "@usernames هم بالفعل أعضاء في @type، لا يمكنك إضافتهم مرة أخرى"
 msgstr[1] "@usernames عضو بالفعل في @type، لا يمكنك إضافتها مرة أخرى"
 msgstr[2] "@usernames هم بالفعل أعضاء في @type، لا يمكنك إضافتهم مرة أخرى"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "@usernames هم بالفعل أعضاء في @type، لا يمكنك إضافتهم مرة أخرى"
+msgstr[4] "@usernames هم بالفعل أعضاء في @type، لا يمكنك إضافتهم مرة أخرى"
 msgstr[5] "@usernames هم بالفعل أعضاء في @type، لا يمكنك إضافتهم مرة أخرى"
 
 #: translations.php:65;105
@@ -4115,12 +4109,12 @@ msgstr "أضف نوع المنشور"
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:117
 msgid "Add selected member to a group"
 msgid_plural "Add @count selected members to a group"
-msgstr[0] "إضافة العضو المحدد إلى مجموعة1"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "إضافة أعضاء @count المحددين إلى مجموعة"
+msgstr[1] "إضافة عضو محدد إلى مجموعة"
+msgstr[2] "إضافة أعضاء @count المحددين إلى مجموعة"
+msgstr[3] "إضافة أعضاء @count المحددين إلى مجموعة"
+msgstr[4] "إضافة أعضاء @count المحددين إلى مجموعة"
+msgstr[5] "إضافة أعضاء @count المحددين إلى مجموعة"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.module:118
 #, fuzzy
@@ -5267,26 +5261,28 @@ msgstr ""
 "المجموعة في أي وقت."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersViewsBulkOperationsConfirmAction.php:23
+#, fuzzy
 msgid "Are you sure you want to \"%action\" the following enrollee?"
 msgid_plural ""
 "Are you sure you want to \"%action\" the following %count enrollees?"
-msgstr[0] "هل أنت متأكد من أنك تريد  \"%action\" المنتسب التالي؟"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "هل تريد بالتأكيد «%action» المسجلين التاليين في %count؟"
+msgstr[1] "هل تريد بالتأكيد «%action» الخاص بالمنتسب التالي؟"
+msgstr[2] "هل تريد بالتأكيد «%action» المسجلين التاليين في %count؟"
+msgstr[3] "هل تريد بالتأكيد «%action» المسجلين التاليين في %count؟"
+msgstr[4] "هل تريد بالتأكيد «%action» المسجلين التاليين في %count؟"
+msgstr[5] "هل تريد بالتأكيد «%action» المسجلين التاليين في %count؟"
 
 #: modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfirmAction.php:23
+#, fuzzy
 msgid "Are you sure you want to \"%action\" the following member?"
 msgid_plural ""
 "Are you sure you want to \"%action\" the following %count members?"
-msgstr[0] "هل أنت متأكد من أنك تريد \"%action\" العضو التالي؟"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "هل تريد بالتأكيد «%action» أعضاء %count التاليين؟"
+msgstr[1] "هل تريد بالتأكيد «%action» العضو التالي؟"
+msgstr[2] "هل تريد بالتأكيد «%action» أعضاء %count التاليين؟"
+msgstr[3] "هل تريد بالتأكيد «%action» أعضاء %count التاليين؟"
+msgstr[4] "هل تريد بالتأكيد «%action» أعضاء %count التاليين؟"
+msgstr[5] "هل تريد بالتأكيد «%action» أعضاء %count التاليين؟"
 
 #: modules/custom/grequest/src/Form/GroupRequestMembershipRejectForm.php:42
 #, fuzzy
@@ -5332,23 +5328,23 @@ msgid "Are you sure you want to send your email to the following enrollee?"
 msgid_plural ""
 "Are you sure you want to send your email to to the following %count "
 "enrollees?"
-msgstr[0] "هل أنت متأكد أنك تريد إرسال بريدك الإلكتروني إلى المنتسب التالي؟"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المسجلين التاليين %count؟"
+msgstr[1] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المنتسب التالي؟"
+msgstr[2] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المسجلين التاليين %count؟"
+msgstr[3] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المسجلين التاليين %count؟"
+msgstr[4] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المسجلين التاليين %count؟"
+msgstr[5] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى المسجلين التاليين %count؟"
 
 #: modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfirmAction.php:35
 msgid "Are you sure you want to send your email to the following member?"
 msgid_plural ""
 "Are you sure you want to send your email to to the following %count members?"
-msgstr[0] "هل أنت متأكد أنك تريد إرسال بريدك الإلكتروني إلى العضو التالي؟"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى أعضاء %count التاليين؟"
+msgstr[1] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى العضو التالي؟"
+msgstr[2] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى أعضاء %count التاليين؟"
+msgstr[3] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى أعضاء %count التاليين؟"
+msgstr[4] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى أعضاء %count التاليين؟"
+msgstr[5] "هل تريد بالتأكيد إرسال بريدك الإلكتروني إلى أعضاء %count التاليين؟"
 
 #: config/install/views.view.content.yml:0
 #: modules/custom/grequest/config/optional/views.view.group_pending_members.yml:0
@@ -5530,13 +5526,23 @@ msgid_plural ""
 "Based on your @settings, the notifications above are sent to you as a "
 "<strong>:frequency mail</strong>"
 msgstr[0] ""
-"بناءً على @settings  الخاصة بك ، يتم إرسال الإشعار أعلاه إليك على أنه "
-"<strong>: البريد متكرر</strong>"
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعارات أعلاه إليك كبريد "
+"<strong> :frequency </strong>"
 msgstr[1] ""
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعار أعلاه إليك كبريد <strong> "
+":frequency </strong>"
 msgstr[2] ""
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعارات أعلاه إليك كبريد "
+"<strong> :frequency </strong>"
 msgstr[3] ""
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعارات أعلاه إليك كبريد "
+"<strong> :frequency </strong>"
 msgstr[4] ""
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعارات أعلاه إليك كبريد "
+"<strong> :frequency </strong>"
 msgstr[5] ""
+"استنادًا إلى @settings الخاص بك، يتم إرسال الإشعارات أعلاه إليك كبريد "
+"<strong> :frequency </strong>"
 
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:35;36
 msgid "Basic"
@@ -5788,7 +5794,7 @@ msgstr "استدعاء رابط العمل"
 
 #: translations.php:51
 msgid "Can not send e-mail for %entity"
-msgstr "لا يمكن إرسال بريد إلكتروني لـ   %enti"
+msgstr "لا يمكن إرسال بريد إلكتروني لـ %entity"
 
 #: modules/social_features/social_core/social_core.module:1031
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:291
@@ -5892,12 +5898,12 @@ msgstr "تغيير الدور"
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:138
 msgid "Change the role of selected member"
 msgid_plural "Change the role of @count selected members"
-msgstr[0] "تغيير دور العضو المختار"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تغيير دور أعضاء @count المحددين"
+msgstr[1] "تغيير دور العضو المحدد"
+msgstr[2] "تغيير دور أعضاء @count المحددين"
+msgstr[3] "تغيير دور أعضاء @count المحددين"
+msgstr[4] "تغيير دور أعضاء @count المحددين"
+msgstr[5] "تغيير دور أعضاء @count المحددين"
 
 #: modules/social_features/social_embed/social_embed.permissions.yml:0
 #, fuzzy
@@ -6004,12 +6010,12 @@ msgstr "اختر خيارات الرؤية المسموح بها لمحتوى ا
 msgid "Choose which group roles to assign to the member you selected"
 msgid_plural ""
 "Choose which group roles to assign to the @count members you selected"
-msgstr[0] "اختر أدوار المجموعة التي تريد تعيينها للعضو الذي حددته"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "اختر أدوار المجموعة التي تريد تعيينها لأعضاء @count الذين حددتهم"
+msgstr[1] "اختر أدوار المجموعة التي تريد تعيينها للعضو الذي حددته"
+msgstr[2] "اختر أدوار المجموعة التي تريد تعيينها لأعضاء @count الذين حددتهم"
+msgstr[3] "اختر أدوار المجموعة التي تريد تعيينها لأعضاء @count الذين حددتهم"
+msgstr[4] "اختر أدوار المجموعة التي تريد تعيينها لأعضاء @count الذين حددتهم"
+msgstr[5] "اختر أدوار المجموعة التي تريد تعيينها لأعضاء @count الذين حددتهم"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php:203
 msgid "City"
@@ -6423,24 +6429,39 @@ msgid ""
 msgid_plural ""
 "Configure the email you want to send to the @count enrollees you have "
 "selected."
-msgstr[0] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى المنتسب الذي حددته."
-msgstr[1] ""
+msgstr[0] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المسجلين @count الذين قمت "
+"بتحديدهم."
+msgstr[1] "قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المنتسب الذي حددته."
 msgstr[2] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المسجلين @count الذين قمت "
+"بتحديدهم."
 msgstr[3] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المسجلين @count الذين قمت "
+"بتحديدهم."
 msgstr[4] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المسجلين @count الذين قمت "
+"بتحديدهم."
 msgstr[5] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى المسجلين @count الذين قمت "
+"بتحديدهم."
 
 #: modules/social_features/social_group/src/Plugin/Action/SocialSendEmail.php:50
 msgid ""
 "Configure the email you want to send to the one member you have selected."
 msgid_plural ""
 "Configure the email you want to send to the @count members you have selected."
-msgstr[0] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى العضو الذي حددته."
-msgstr[1] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى العضو الذي حددته."
-msgstr[2] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
-msgstr[3] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
-msgstr[4] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
-msgstr[5] "تهيئة البريد الإلكتروني الذي تريد إرساله إلى الأعضاء الذين حددتهم."
+msgstr[0] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى أعضاء @count الذين حددتهم."
+msgstr[1] "قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى العضو الذي حددته."
+msgstr[2] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى أعضاء @count الذين حددتهم."
+msgstr[3] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى أعضاء @count الذين حددتهم."
+msgstr[4] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى أعضاء @count الذين حددتهم."
+msgstr[5] ""
+"قم بتكوين البريد الإلكتروني الذي تريد إرساله إلى أعضاء @count الذين حددتهم."
 
 #: modules/social_features/social_footer/social_footer.links.menu.yml:0
 msgid "Configure the footer branding block."
@@ -8203,12 +8224,11 @@ msgid ""
 "the '%search_name' permission will find users using their full name through "
 "search or mentions."
 msgstr ""
-"يؤدي تمكين هذا الإعداد إلى إخفاء الاسم الكامل للمستخدمين على النظام الأساسي "
-"عندما يملأ المستخدم لقبه. لن يخفي هذا الإعداد الاسم الكامل للمستخدمين الذين "
-"لم يملأوا لقبًا. سيستمر المستخدمون الذين لديهم إذن \"%d isplay_name\" في رؤية "
-"الاسم الكامل متى كان ذلك متاحًا. فقط المستخدمون الذين لديهم إذن '%s "
-"earch_name' سيجدون المستخدمين الذين يستخدمون اسمهم الكامل من خلال البحث أو "
-"الإشارات."
+"يؤدي تمكين هذا الإعداد إلى إخفاء الاسم الكامل للمستخدمين على المنصة عندما "
+"يقوم المستخدم بملء لقبه. لن يخفي هذا الإعداد الاسم الكامل للمستخدمين الذين "
+"لم يملأوا اسمًا مستعارًا. سيظل المستخدمون الذين لديهم إذن '%display_name' "
+"يرون الاسم الكامل كلما كان ذلك متاحًا. لن يجد سوى المستخدمين الذين لديهم إذن "
+"'%search_name' مستخدمين يستخدمون اسمهم الكامل من خلال البحث أو الإشارات."
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date_end.yml:0
 msgid "End"
@@ -8282,7 +8302,7 @@ msgstr "ارفقه"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php:145
 msgid "Enroll in @label Event"
-msgstr "التسجيل في حدث @lable"
+msgstr "التسجيل في حدث @label"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:115
 msgid "Enroll in event"
@@ -8592,7 +8612,7 @@ msgstr "دعوات الحدث"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Menu/LocalTask/EventInviteLocalTask.php:66
 msgid "Event invites (@count)"
-msgstr "دعوات الفعاليات (@counts)"
+msgstr "دعوات الحدث (@count)"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:28;33
 msgid "Event link with login page"
@@ -9385,12 +9405,12 @@ msgstr "تم انشاء %num %demo_description."
 #: modules/custom/social_path_manager/social_path_manager.module:119
 msgid "Generated 1 group tab aliases."
 msgid_plural "Generated @count group tab aliases."
-msgstr[0] "تم إنشاء مجموعة واحدة من الأسماء المستعارة لعلامة التبويب."
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تم إنشاء أسماء مستعارة لعلامات تبويب المجموعة @count."
+msgstr[1] "تم إنشاء أسماء مستعارة لعلامة تبويب واحدة للمجموعة."
+msgstr[2] "تم إنشاء أسماء مستعارة لعلامات تبويب المجموعة @count."
+msgstr[3] "تم إنشاء أسماء مستعارة لعلامات تبويب المجموعة @count."
+msgstr[4] "تم إنشاء أسماء مستعارة لعلامات تبويب المجموعة @count."
+msgstr[5] "تم إنشاء أسماء مستعارة لعلامات تبويب المجموعة @count."
 
 #: modules/social_features/social_embed/social_embed.permissions.yml:0
 #, fuzzy
@@ -9656,7 +9676,7 @@ msgstr "دعوات المجموعة"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Menu/LocalTask/GroupInviteLocalTask.php:75
 msgid "Group invites (@count)"
-msgstr "دعوات الفعاليات (@counts)"
+msgstr "دعوات جماعية (@count)"
 
 #: modules/social_features/social_group/social_group.module:1947
 msgid "Group manager"
@@ -9939,13 +9959,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
-"أهلا،<br /><br /> أود أن أدعوكم للانضمام إلى مجموعتي [group: title] على "
-"[site: name].<br /><br /> أطيب التحيات،<br /> [المستخدم الحالي: اسم "
-"العرض]<br /><br /><table j=0 style=\";text-align:right;direction:"
-"rtl\"><tbody><tr><td class=\"align-center\"> <a class=\"btn-link btn-link-bg "
-"btn-link-one\" href=\"[group_content:register_link]\">عرض المجموعة</a></"
-"td><td class=\"align-center\"> <a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[site:url]\">حول [الموقع: الاسم]</a></td></tr></tbody></table>"
+"مرحبًا، <br /> <br /> أود أن أدعوك للانضمام إلى مجموعتي [group:title] على "
+"[site:name]. <br /> <br /> أطيب التحيات، <br /> [current-user:display-name] "
+"<br /> <br /> <table class=\"btn-wrapp\">\n"
+" <tbody>\n"
+" <tr>\n"
+" <td class=\"align-center\"> <a class=\"btn-link btn-link-bg btn-link-one\" "
+"href=\"[group_content:register_link]\"> عرض المجموعة </a> </td>\n"
+"<td class=\"align-center\"> <a class=\"btn-link btn-link-bg btn-link-one\" "
+"href=\"[site:url]\"> حول [site:name] </a> </td>\n"
+" </tr>\n"
+" </tbody>\n"
+"</table>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -12077,22 +12102,22 @@ msgstr "تشغيل"
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:45
 msgid "One item deleted."
 msgid_plural "@count items deleted."
-msgstr[0] "تم حذف عنصر واحد."
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تم حذف عناصر @count."
+msgstr[1] "تم حذف عنصر واحد."
+msgstr[2] "تم حذف عناصر @count."
+msgstr[3] "تم حذف عناصر @count."
+msgstr[4] "تم حذف عناصر @count."
+msgstr[5] "تم حذف عناصر @count."
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php:75
 msgid "One profile flushed."
 msgid_plural "@count profiles flushed."
-msgstr[0] "تم مسح ملف تعريف واحد."
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "تم مسح ملفات تعريف @count."
+msgstr[1] "تم مسح ملف تعريف واحد."
+msgstr[2] "تم مسح ملفات تعريف @count."
+msgstr[3] "تم مسح ملفات تعريف @count."
+msgstr[4] "تم مسح ملفات تعريف @count."
+msgstr[5] "تم مسح ملفات تعريف @count."
 
 #: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.install:64;152
 #: modules/social_features/social_event/social_event.module:372
@@ -12692,12 +12717,12 @@ msgid "Please select the group you want to add the member you have selected to"
 msgid_plural ""
 "Please select the group you want to add the @count members you have selected "
 "to"
-msgstr[0] "الرجاء تحديد المجموعة التي تريد إضافة العضو الذي اخترته إليها"
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
+msgstr[0] "يرجى تحديد المجموعة التي تريد إضافة أعضاء @count الذين حددتهم إليها"
+msgstr[1] "يرجى تحديد المجموعة التي تريد إضافة العضو الذي حددته إليها"
+msgstr[2] "يرجى تحديد المجموعة التي تريد إضافة أعضاء @count الذين حددتهم إليها"
+msgstr[3] "يرجى تحديد المجموعة التي تريد إضافة أعضاء @count الذين حددتهم إليها"
+msgstr[4] "يرجى تحديد المجموعة التي تريد إضافة أعضاء @count الذين حددتهم إليها"
+msgstr[5] "يرجى تحديد المجموعة التي تريد إضافة أعضاء @count الذين حددتهم إليها"
 
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Form/FilterSettingsForm.php:116
 msgid ""
@@ -18756,7 +18781,7 @@ msgstr "عرض"
 
 #: modules/custom/entity_access_by_field/src/EntityAccessByFieldPermissions.php:96
 msgid "View @label content"
-msgstr "عرض محتوى @content"
+msgstr "عرض محتوى @label"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "View Comment"
@@ -19412,7 +19437,7 @@ msgstr "أنت بالفعل عضو في @group."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/social_event_an_enroll.settings.yml:0
 msgid "You are enrolled in the event [node:title]"
-msgstr "أنت مسجل في الحدث [العقدة: العنوان]"
+msgstr "أنت مسجل في الحدث [node:title]"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:232
 #, fuzzy
@@ -19546,7 +19571,11 @@ msgstr[2] ""
 "لديك دعوات معلقة @count <a href=\"@url\"> قم بزيارة نظرة عامة على الدعوة </"
 "a> لرؤيتها."
 msgstr[3] ""
+"لديك دعوات معلقة @count <a href=\"@url\"> قم بزيارة نظرة عامة على الدعوة </"
+"a> لرؤيتها."
 msgstr[4] ""
+"لديك دعوات معلقة @count <a href=\"@url\"> قم بزيارة نظرة عامة على الدعوة </"
+"a> لرؤيتها."
 msgstr[5] ""
 "لديك دعوات معلقة @count <a href=\"@url\"> قم بزيارة نظرة عامة على الدعوة </"
 "a> لرؤيتها."
@@ -19596,8 +19625,8 @@ msgid ""
 "enrollment anytime using the following link: [social_event_an_enroll:"
 "enrolled_event]."
 msgstr ""
-"لقد تم تسجيلك في الحدث [node:title]. يمكنك إلغاء تسجيلك في أي وقت باستخدام "
-"الرابط التالي: [social_event_an_enroll: Registered_event]."
+"لقد تم تسجيلك في الحدث [node:title]. يمكنك إلغاء التسجيل في أي وقت باستخدام "
+"الرابط التالي: [social_event_an_enroll:enrolled_event]."
 
 #: translations.php:129
 #, fuzzy
@@ -19662,14 +19691,13 @@ msgid "You have posted successfully in your new album @link"
 msgstr "لقد قمت بالنشر بنجاح في ألبومك الجديد @link"
 
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php:152
-#, fuzzy
 msgid "You have received <strong>:count</strong> notification"
 msgid_plural "You have received <strong>:count</strong> notifications"
 msgstr[0] "لقد تلقيت إشعارات <strong> :count </strong>"
 msgstr[1] "لقد تلقيت إشعارًا <strong> :count </strong>"
 msgstr[2] "لقد تلقيت إشعارات <strong> :count </strong>"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "لقد تلقيت إشعارات <strong> :count </strong>"
+msgstr[4] "لقد تلقيت إشعارات <strong> :count </strong>"
 msgstr[5] "لقد تلقيت إشعارات <strong> :count </strong>"
 
 #: translations.php:138
@@ -19725,72 +19753,66 @@ msgid "Your content has been liked"
 msgstr "لقد تم الإعجاب بالمحتوى الخاص بك"
 
 #: translations.php:144
-#, fuzzy
 msgid "Your email has been sent to 1 selected enrollee successfully"
 msgid_plural ""
 "Your email has been sent to @count selected enrollees successfully"
 msgstr[0] "تم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 msgstr[1] "تم إرسال بريدك الإلكتروني إلى مسجل واحد تم تحديده بنجاح"
 msgstr[2] "تم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "تم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
+msgstr[4] "تم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 msgstr[5] "تم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 
 #: translations.php:154
-#, fuzzy
 msgid "Your email has been sent to 1 selected member successfully"
 msgid_plural "Your email has been sent to @count selected members successfully"
 msgstr[0] "تم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 msgstr[1] "تم إرسال بريدك الإلكتروني إلى عضو واحد محدد بنجاح"
 msgstr[2] "تم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "تم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
+msgstr[4] "تم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 msgstr[5] "تم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 
 #: translations.php:145
-#, fuzzy
 msgid "Your email has not been sent to 1 selected enrollee successfully"
 msgid_plural ""
 "Your email has not been sent to @count selected enrollees successfully"
 msgstr[0] "لم يتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 msgstr[1] "لم يتم إرسال بريدك الإلكتروني إلى مسجل واحد محدد بنجاح"
 msgstr[2] "لم يتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "لم يتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
+msgstr[4] "لم يتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 msgstr[5] "لم يتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين بنجاح"
 
 #: translations.php:155
-#, fuzzy
 msgid "Your email has not been sent to 1 selected member successfully"
 msgid_plural ""
 "Your email has not been sent to @count selected members successfully"
 msgstr[0] "لم يتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 msgstr[1] "لم يتم إرسال بريدك الإلكتروني إلى عضو واحد محدد بنجاح"
 msgstr[2] "لم يتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "لم يتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
+msgstr[4] "لم يتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 msgstr[5] "لم يتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين بنجاح"
 
 #: translations.php:156
-#, fuzzy
 msgid "Your email will be send to 1 selected enrollee"
 msgid_plural "Your email will be send to @count selected enrollees"
 msgstr[0] "سيتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين"
 msgstr[1] "سيتم إرسال بريدك الإلكتروني إلى مسجل واحد محدد"
 msgstr[2] "سيتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "سيتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين"
+msgstr[4] "سيتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين"
 msgstr[5] "سيتم إرسال بريدك الإلكتروني إلى @count المسجلين المحددين"
 
 #: translations.php:157
-#, fuzzy
 msgid "Your email will be send to 1 selected member"
 msgid_plural "Your email will be send to @count selected members"
 msgstr[0] "سيتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين"
 msgstr[1] "سيتم إرسال بريدك الإلكتروني إلى عضو واحد محدد"
 msgstr[2] "سيتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين"
-msgstr[3] ""
-msgstr[4] ""
+msgstr[3] "سيتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين"
+msgstr[4] "سيتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين"
 msgstr[5] "سيتم إرسال بريدك الإلكتروني إلى أعضاء @count المحددين"
 
 #: modules/social_features/social_footer/src/Form/FooterSettingsForm.php:152
@@ -19878,9 +19900,8 @@ msgstr ""
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0;0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0;0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0;0
-#, fuzzy
 msgid "[current-page:title]"
-msgstr "@mc_list_description"
+msgstr "[current-page:title]"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0;0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0;0
@@ -19889,97 +19910,82 @@ msgstr "@mc_list_description"
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0;0
 msgid ""
 "[current-user:display-name] has invited you to join a group on [site:name]."
-msgstr "دعاك [current-user: display-name] للانضمام إلى مجموعة على [site:name]."
+msgstr ""
+"قام [current-user:display-name] بدعوتك للانضمام إلى مجموعة على [site:name]."
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:field_group_address:address_line1]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_address:address_line1]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:field_group_address:country_name]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_address:country_name]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:field_group_address:locality]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_address:locality]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:field_group_address:postal_code]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_address:postal_code]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0;0
-#, fuzzy
 msgid "[group:field_group_description]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_description]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:field_group_image:entity:url]"
-msgstr "@mc_list_description"
+msgstr "[group:field_group_image:entity:url]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0;0
-#, fuzzy
 msgid "[group:title]"
-msgstr "@mc_list_description"
+msgstr "[group:title]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
-#, fuzzy
 msgid "[group:url]"
-msgstr "@mc_list_description"
+msgstr "[group:url]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
-#, fuzzy
 msgid "[node:body]"
-msgstr "@mc_list_description"
+msgstr "[node:body]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#, fuzzy
 msgid "[node:field_event_address:address_line1]"
-msgstr "@mc_list_description"
+msgstr "[node:field_event_address:address_line1]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#, fuzzy
 msgid "[node:field_event_address:country_name]"
-msgstr "@mc_list_description"
+msgstr "[node:field_event_address:country_name]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#, fuzzy
 msgid "[node:field_event_address:locality]"
-msgstr "@mc_list_description"
+msgstr "[node:field_event_address:locality]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#, fuzzy
 msgid "[node:field_event_address:postal_code]"
-msgstr "@mc_list_description"
+msgstr "[node:field_event_address:postal_code]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#, fuzzy
 msgid "[node:field_event_image:entity:url]"
-msgstr "@mc_list_description"
+msgstr "[node:field_event_image:entity:url]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
-#, fuzzy
 msgid "[node:field_page_image:entity:url]"
-msgstr "@mc_list_description"
+msgstr "[node:field_page_image:entity:url]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
-#, fuzzy
 msgid "[node:field_topic_image:entity:url]"
-msgstr "@mc_list_description"
+msgstr "[node:field_topic_image:entity:url]"
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
@@ -20322,9 +20328,8 @@ msgid "in @event"
 msgstr "في @event"
 
 #: modules/social_features/social_topic/social_topic.module:60
-#, fuzzy
 msgid "in @topic"
-msgstr "في @event"
+msgstr "في @topic"
 
 #: modules/social_features/social_core/social_core.module:367;381;388;395
 msgid "in the community"
