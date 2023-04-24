@@ -16,6 +16,9 @@ parameters:
       - translations/
     analyse:
       - *SocialProfileTrait.php
+  # Not sure we can specify generic types properly with Drupal coding standards
+  # yet, disable for now.
+  checkGenericClassInNonGenericObjectType: false
   drupal:
       drupal_root: %currentWorkingDirectory%/html/core
       entityMapping:
@@ -64,3 +67,4 @@ parameters:
       # The accessCheck test seems to be horribly broken and providing false positives
       # Disable until https://github.com/mglaman/phpstan-drupal/issues/396 is fixed.
       - "#^Missing explicit access check on entity query\\.$#"
+
