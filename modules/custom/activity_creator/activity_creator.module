@@ -10,6 +10,7 @@
  */
 
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\activity_creator\Service\ActivityCreatorBatchActivityDeletion;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
@@ -355,12 +356,7 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
     }
     elseif ($action === 'delete') {
       // Delete all activities.
-      $activity_storage = \Drupal::entityTypeManager()->getStorage('activity');
-      $activities = $activity_storage->loadMultiple($ids);
-      $activity_storage->delete($activities);
-
-      // Remove entries from activity_notification_table.
-      $activity_notification_service->deleteNotificationsbyIds($ids);
+      ActivityCreatorBatchActivityDeletion::bulkDeleteActivities($ids);
     }
   }
 }
