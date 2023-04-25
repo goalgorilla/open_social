@@ -198,20 +198,25 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       ->get('default') === 'socialblue') {
       // Add default image.
       // Only when socialblue is default we continue.
-      $file_path = $this->extensionList->getPath('social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
-      $file_system = \Drupal::service('file_system');
-      $uri = $file_system->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
+      $file_path = 'public://open_social_logo.png';
 
-      // Create a file media.
-      /** @var \Drupal\file\FileInterface $file */
-      $media = File::create([
-        'uri' => $uri,
-      ]);
-      $media->setPermanent();
-      $media->save();
+      if (!file_exists($file_path)) {
+        $logo_path = $this->extensionList->getPath('social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
+        $uri = \Drupal::service('file_system')->copy($logo_path, $file_path, FileSystemInterface::EXISTS_REPLACE);
+
+        // Create a file.
+        /** @var \Drupal\file\FileInterface $file */
+        $file = File::create([
+          'uri' => $uri,
+        ]);
+        $file->setPermanent();
+        $file->save();
+        $file_path = $file->getFileUri();
+      }
+
       $build['logo'] = [
         '#theme' => 'image',
-        '#uri' => $media->getFileUri(),
+        '#uri' => $file_path,
       ];
     }
 
