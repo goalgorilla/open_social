@@ -44,7 +44,7 @@ Feature: Set alternative frontpage
     And I click radio button "Authenticated user"
     And I press "Save"
     And the cache has been cleared
-    And I click "Home"
+    And I click "Back to site"
     Then I should see "Frontpage LU"
     # See as AN
     Given I logout
@@ -59,6 +59,6 @@ Feature: Set alternative frontpage
     When I am on "admin/config/alternative_frontpage/manage/logged_users/delete"
     And I click the xth "0" element with the css "#edit-submit"
     Then I should see "Logged users has been deleted."
-    When I click "Home"
+    When I click "Back to site"
     And the cache has been cleared
     Then I am on "stream"
