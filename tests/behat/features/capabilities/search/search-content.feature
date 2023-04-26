@@ -3,7 +3,7 @@ Feature: Search Content
   Benefit: In order to find specific content
   Role: As a LU
   Goal/desire: I want to search the site for content
-  
+
   Background:
     Given I disable that the registered users to be verified immediately
     And users:
@@ -151,6 +151,7 @@ Feature: Search Content
 
     # Until https://github.com/jhedstrom/drupalextension/issues/641
     And I logout
+
 
   Scenario: Can filter by content type
 

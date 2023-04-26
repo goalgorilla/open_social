@@ -865,11 +865,11 @@ class FeatureContext extends RawMinkContext {
       $row->clickLink($link_name);
     }
 
-  /**
-   * Expand a details area.
-   *
-   * @When I expand the :label section
-   */
+    /**
+     * Expand a details area.
+     *
+     * @When I expand the :label section
+     */
     public function iExpandDetailsSection(string $label) : void {
       $elements = array_filter(
         $this->getSession()->getPage()->findAll("css", "summary"),
