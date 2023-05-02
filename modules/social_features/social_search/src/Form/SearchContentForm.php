@@ -81,6 +81,11 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $search_all_view = 'search_all';
     $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
+
+    // Unset the page parameter. When someone starts a new search query they
+    // should always start again at the first page.
+    unset($query['page']);
+
     $options = ['query' => $query];
     $parameters = [];
 
