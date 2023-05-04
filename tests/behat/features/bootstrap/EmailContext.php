@@ -38,9 +38,6 @@ class EmailContext implements Context {
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'native');
     $swiftmailer_config->save();
-
-    // Clean up emails after us.
-    $this->purgeSpool();
   }
 
   /**
