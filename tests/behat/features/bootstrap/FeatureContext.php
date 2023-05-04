@@ -698,6 +698,9 @@ class FeatureContext extends RawMinkContext {
     /**
      * Log out.
      *
+     * Until https://github.com/jhedstrom/drupalextension/issues/641
+     * @afterScenario
+     *
      * @Given /^(?:|I )logout$/
      */
     public function iLogOut()
