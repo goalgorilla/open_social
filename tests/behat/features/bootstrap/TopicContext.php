@@ -393,7 +393,7 @@ class TopicContext extends RawMinkContext {
 
     $account = user_load_by_name($topic['author']);
     if ($account === FALSE) {
-      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
     }
     $topic['uid'] = $account->id();
     unset($topic['author']);
@@ -407,14 +407,6 @@ class TopicContext extends RawMinkContext {
     }
 
     $topic['type'] = 'topic';
-
-    if (isset($topic['field_topic_type'])) {
-      $type_id = $this->getTopicTypeIdFromLabel($topic['field_topic_type']);
-      if ($type_id === NULL) {
-        throw new \Exception("Topic Type with label '{$topic['field_topic_type']}' does not exist.");
-      }
-      $topic['field_topic_type'] = $type_id;
-    }
 
     $this->validateEntityFields("node", $topic);
     $topic_object = Node::create($topic);
@@ -449,36 +441,6 @@ class TopicContext extends RawMinkContext {
    */
   private function getTopicIdFromTitle(string $topic_title) : ?int {
     return $this->getNodeIdFromTitle("topic", $topic_title);
-  }
-
-  /**
-   * Get the Term ID for a topic type from its label.
-   *
-   * @param string $label
-   *   The label.
-   *
-   * @return int|null
-   *   The topic type ID or NULL if it can't be found.
-   */
-  private function getTopicTypeIdFromLabel(string $label) : ?int {
-    $query = \Drupal::entityQuery('taxonomy_term')
-      ->accessCheck(FALSE)
-      ->condition('vid', 'topic_types')
-      ->condition('name', $label);
-
-    $term_ids = $query->execute();
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($term_ids);
-
-    if (count($terms) !== 1) {
-      return NULL;
-    }
-
-    $term_id = reset($terms)->id();
-    if ($term_id !== 0) {
-      return $term_id;
-    }
-
-    return NULL;
   }
 
 }
