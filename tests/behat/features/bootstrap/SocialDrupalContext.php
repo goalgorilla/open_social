@@ -17,6 +17,8 @@ use Drupal\DrupalExtension\Hook\Scope\EntityScope;
  */
 class SocialDrupalContext extends DrupalContext {
 
+  use AvoidCleanupTrait;
+
   /**
    * Prepares Big Pipe NOJS cookie if needed.
    *
@@ -447,6 +449,5 @@ class SocialDrupalContext extends DrupalContext {
   public function iWaitForTheInstallerBatchJobToFinish() {
     $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
   }
-
 
 }
