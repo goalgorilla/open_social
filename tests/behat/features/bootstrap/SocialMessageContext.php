@@ -11,6 +11,8 @@ use Drupal\DrupalExtension\Context\MessageContext;
  */
 class SocialMessageContext extends MessageContext {
 
+  use AvoidCleanupTrait;
+
   /**
    * Checks if the current page contains the given success message
    *

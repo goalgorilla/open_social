@@ -421,24 +421,9 @@ class EventContext extends RawMinkContext {
       throw new \RuntimeException("Field 'field_event_managers' not found, make sure you have the social_event_managers module enabled.");
     }
 
-    $event->get('field_event_managers')->appendItem(['target_id' => $current_user->uid]);
+    $event->get('field_event_managers')
+      ->appendItem(['target_id' => $current_user->uid]);
     $event->save();
-  }
-
-  /**
-   * Clean up any events created in this scenario.
-   *
-   * @AfterScenario
-   */
-  public function cleanUpEvents() : void {
-    foreach ($this->created as $idOrTitle) {
-      // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
-      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getEventIdFromTitle($idOrTitle);
-      // Ignore already deleted nodes, they may have been deleted in the test.
-      if ($nid !== NULL) {
-        Node::load($nid)?->delete();
-      }
-    }
   }
 
   /**

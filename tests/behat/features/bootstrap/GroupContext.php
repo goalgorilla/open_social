@@ -637,19 +637,6 @@ class GroupContext extends RawMinkContext {
   }
 
   /**
-   * Remove any groups that were created.
-   *
-   * @AfterScenario
-   */
-  public function cleanupGroups(AfterScenarioScope $scope) {
-    if (!empty($this->groups)) {
-      foreach ($this->groups as $group) {
-        $group->delete();
-      }
-    }
-  }
-
-  /**
    * Create a group.
    *
    * @param array $group

@@ -365,22 +365,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Clean up any topics created in this scenario.
-   *
-   * @AfterScenario
-   */
-  public function cleanUpTopics() : void {
-    foreach ($this->created as $idOrTitle) {
-      // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
-      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getTopicIdFromTitle($idOrTitle);
-      // Ignore already deleted nodes, they may have been deleted in the test.
-      if ($nid !== NULL) {
-        Node::load($nid)?->delete();
-      }
-    }
-  }
-
-  /**
    * Create a topic.
    *
    * @return \Drupal\node\Entity\Node
