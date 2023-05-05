@@ -96,7 +96,7 @@ class LogContext implements Context {
    * @return bool
    *   Whether to ignore this message.
    */
-  private function isIgnoredLogMessage($row) : bool {
+  public function isIgnoredLogMessage($row) : bool {
     return
       // Ignore notices from the user module since we don't really care about
       // users logging in or being deleted, those conditions are part of test
