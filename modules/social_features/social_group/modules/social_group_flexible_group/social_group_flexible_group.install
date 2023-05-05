@@ -607,3 +607,22 @@ function social_group_flexible_group_update_11701(array &$sandbox): string {
     return '';
   }
 }
+
+/**
+ * Remove redundant views filter.
+ */
+function social_group_flexible_group_update_11801(): void {
+  $configurations = ['views.view.latest_topics', 'views.view.upcoming_events'];
+  foreach ($configurations as $configuration) {
+    $config = \Drupal::configFactory()->getEditable($configuration);
+
+    $displays = $config->get('display');
+    foreach ($displays as $id => $settings) {
+      unset($displays[$id]['display_options']['filters']['flexible_group_node_access']);
+    }
+
+    $config->set('display', $displays);
+    $config->save();
+  }
+}
+
