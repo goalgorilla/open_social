@@ -5,6 +5,7 @@
  * The social node module alterations.
  */
 
+use Drupal\node\NodeInterface;
 use Drupal\social_node\Entity\Node;
 use Drupal\social_node\SocialNodeForm;
 use Drupal\social_node\NodeViewBuilder;
@@ -40,4 +41,27 @@ function social_node_social_core_title(): array {
  */
 function social_node_social_tagging_type(): string {
   return 'node';
+}
+
+/**
+ * Implements hook_node_access_records_alter().
+ */
+function social_node_node_access_records_alter(array &$grants, NodeInterface $node): void {
+  if (
+    !$node->hasField('field_content_visibility') ||
+    $node->get('field_content_visibility')->isEmpty()
+  ) {
+    return;
+  }
+
+  $visibility = $node->get('field_content_visibility')->getString();
+
+  if ($visibility !== 'public') {
+    // Remove "view" realm for all visibility options except "public".
+    foreach ($grants as &$grant) {
+      if ($grant['realm'] === 'gnode_anonymous') {
+        $grant['grant_view'] = 0;
+      }
+    }
+  }
 }
