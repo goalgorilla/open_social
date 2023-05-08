@@ -1,5 +1,5 @@
 @api
-Feature: Pagination in search should properly handle different user actions
+Feature: Pagination in search for topics should properly handle different user actions
 
   Background:
     Given topics with non-anonymous author:
@@ -19,10 +19,10 @@ Feature: Pagination in search should properly handle different user actions
       | Topic thirteen         | -13 seconds | Shenanigans   | 1      | community                | news             |
     And Search indexes are up to date
 
-  Scenario: The first ten results are by relevancy first and then showing newest
+  Scenario Outline: The first ten results are by relevancy first and then showing newest
     Given I am logged in as a user with the verified role
 
-    When I search content for "Shenanigans"
+    When I search <view> for "Shenanigans"
 
     Then I should see "topic one"
     Then I should see "topic two"
@@ -38,20 +38,35 @@ Feature: Pagination in search should properly handle different user actions
     And I should not see "Topic twelve"
     And I should not see "Topic thirteen"
 
-  Scenario: The pager splits into pages of 10 results
+  Examples:
+    | view    |
+    | all     |
+    | content |
+
+  Scenario Outline: The pager splits into pages of 10 results
     Given I am logged in as a user with the verified role
 
-    When I search content for "Shenanigans"
+    When I search <view> for "Shenanigans"
     And I click "Next page"
 
     Then I should not see "Topic ten"
     And I should see "Topic eleven"
 
-  Scenario: New search queries start on the first page properly showing the results
+  Examples:
+    | view    |
+    | all     |
+    | content |
+
+  Scenario Outline: New search queries start on the first page properly showing the results
     Given I am logged in as a user with the verified role
 
-    When I search content for "Shenanigans"
+    When I search <view> for "Shenanigans"
     And I click "Next page"
-    And I search content for "four"
+    And I search <view> for "four"
 
     Then I should see "Topic four"
+
+  Examples:
+    | view    |
+    | all     |
+    | content |

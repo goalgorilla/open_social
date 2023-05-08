@@ -139,7 +139,7 @@ display:
           field: search_api_relevance
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'User sortable (Relevance)'
           plugin_id: search_api
           order: DESC
           expose:
@@ -152,12 +152,25 @@ display:
           field: profile_owner_created
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'User sortable (Created)'
           plugin_id: search_api
           order: DESC
           expose:
             label: ''
             field_identifier: created
+          exposed: false
+        fallback_created:
+          id: fallback_created
+          table: search_api_index_social_all
+          field: profile_owner_created
+          relationship: none
+          group_type: group
+          admin_label: 'Fallback sort (Owner » User » Created)'
+          plugin_id: search_api
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
           exposed: false
       arguments:
         search_api_fulltext:
