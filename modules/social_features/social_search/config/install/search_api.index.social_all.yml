@@ -26,6 +26,26 @@ name: 'Community Search'
 description: 'Contains all searchable community data for the platform (e.g. nodes, groups, and users).'
 read_only: false
 field_settings:
+  created:
+    label: Created
+    property_path: aggregated_field
+    type: date
+    configuration:
+      type: union
+      fields:
+          - entity:group/created
+          - entity:node/created
+          - entity:profile/uid:entity:created
+  label:
+    label: Label
+    property_path: aggregated_field
+    type: text
+    boost: !!float 21
+    configuration:
+      type: union
+      fields:
+        - entity:group/label
+        - entity:node/title
   event_date_end:
     label: End
     datasource_id: 'entity:node'
@@ -292,7 +312,9 @@ datasource_settings:
       selected: {  }
 processor_settings:
   add_url: {  }
-  aggregated_field: {  }
+  aggregated_field:
+    weights:
+      add_properties: 20
   auto_aggregated_fulltext_field: {  }
   blocked_users:
     weights:

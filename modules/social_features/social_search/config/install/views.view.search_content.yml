@@ -169,7 +169,7 @@ display:
           field: search_api_relevance
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'User sortable (Relevance)'
           plugin_id: search_api
           order: DESC
           expose:
@@ -182,7 +182,7 @@ display:
           field: node_created
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'User sortable (Created Date)'
           plugin_id: search_api
           order: DESC
           expose:
@@ -195,13 +195,39 @@ display:
           field: node_title
           relationship: none
           group_type: group
-          admin_label: ''
+          admin_label: 'User sortable (Title)'
           plugin_id: search_api
           order: ASC
           expose:
             label: Title
             field_identifier: title
           exposed: true
+        fallback_created:
+          id: fallback_created
+          table: search_api_index_social_all
+          field: node_created
+          relationship: none
+          group_type: group
+          admin_label: 'Fallback sort (Created Date)'
+          plugin_id: search_api
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+        fallback_title:
+          id: fallback_title
+          table: search_api_index_social_all
+          field: node_title
+          relationship: none
+          group_type: group
+          admin_label: 'Fallback sort (Title)'
+          plugin_id: search_api
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
       arguments:
         search_api_fulltext:
           id: search_api_fulltext

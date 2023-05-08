@@ -409,7 +409,7 @@ function social_search_update_12000() : void {
       'field_profile_interests_name' => 'profile_interests_name',
     ],
   ];
-  // Some fields didn't exist in any index so we must create them.
+  // Some fields didn't exist in any index, so we must create them.
   $add_fields = [
     'node_description' => [
       'label' => 'Description',
@@ -720,4 +720,18 @@ function social_search_update_12002() : void {
   foreach (Index::loadMultiple($indices) as $index) {
     $index->delete();
   }
+}
+
+/**
+ * Add fallback sorts to search views.
+ */
+function social_search_update_12003() : string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
