@@ -40,7 +40,7 @@ class ActivityCreatorBatchActivityDeletion {
    * @param array $context
    *   An array that may or may not contain placeholder variables.
    */
-  public static function updateProcess(array $items, array &$context) {
+  public static function updateProcess(array $items, array &$context): void {
     /** @var \Drupal\activity_creator\ActivityNotifications $activity_notification_service */
     $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
     $activity_storage = \Drupal::entityTypeManager()->getStorage('activity');
@@ -99,7 +99,7 @@ class ActivityCreatorBatchActivityDeletion {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, array $results, array $operations) {
+  public static function finishProcess($success, array $results, array $operations): void {
     $message = t('Number of activities deleted by batch: @count', [
       '@count' => $results['processed'],
     ]);
