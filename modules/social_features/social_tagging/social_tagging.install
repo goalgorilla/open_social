@@ -5,6 +5,7 @@
  * Installation file for Social Tagging.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
@@ -380,12 +381,63 @@ function social_tagging_update_12001() : void {
     }
   }
 
-  $content_block = \Drupal\block\Entity\Block::load("socialtagsblock");
-  $group_block = \Drupal\block\Entity\Block::load("socialgrouptagsblock");
+  // If the block doesn't exist we skip it, this means it was deleted
+  // consciously by a site builder.
+  $content_block = Block::load("socialtagsblock");
+  if ($content_block !== NULL) {
+    $content_block->set("plugin", "entity_view_block");
+    $content_block_settings = $content_block->get("settings");
+    $content_block_settings["id"] = "entity_view_block";
+    $content_block_settings["provider"] = "social_core";
+    $content_block_settings["view_mode"] = "social_tagging";
+    $content_block_settings["context_mapping"] = ["entity" => '@social_core.entity_route_context:canonical_content_entity'];
+    $content_block->set("settings", $content_block_settings);
+    $content_block->save();
+  }
 
-  // TODO: Create new block with settings
-  // TODO: Merge `request_path` visibility if available
-  // TODO: Remove old blocks
+  // Create the new block if the old one existed.
+  // If the old one doesn't exist then the current installation probably doesn't
+  // want the new one either.
+  $group_block = Block::load("socialgrouptagsblock");
+  if ($group_block !== NULL) {
+    $new_group_block = [
+      "dependencies" => [
+        "langcode" => "en",
+        "status" => TRUE,
+        "module" => [
+          "social_core",
+          "system",
+        ],
+        "theme" => [
+          "socialblue",
+        ],
+        "enforced" => [
+          "module" => [
+            "social_tagging",
+          ],
+        ],
+      ],
+      "id" => "socialblue_grouptagsblock",
+      "theme" => $group_block->get("theme"),
+      "region" => $group_block->get("region"),
+      "weight" => $group_block->get("weight"),
+      "plugin" => "entity_view_block",
+      "settings" => [
+        "id" => "entity_view_block",
+        "label" => 'Group Tags',
+        "label_display" => "visible",
+        "provider" => "social_core",
+        "view_mode" => "social_tagging",
+        "context_mapping" => [
+          "entity" => '@social_core.entity_route_context:canonical_content_entity',
+        ],
+      ],
+      "visibility" => $group_block->get("visibility"),
+    ];
+    $group_block->delete();
+    Block::create($new_group_block)->save();
+  }
+
 }
 
 
