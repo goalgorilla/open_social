@@ -54,12 +54,6 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    */
   private function shouldApplyOverrides(array $names): bool {
     $config_names = [
-      'views.view.search_content',
-      'views.view.search_groups',
-      'views.view.search_users',
-      'search_api.index.social_content',
-      'search_api.index.social_groups',
-      'search_api.index.social_users',
       'views.view.latest_topics',
       'views.view.upcoming_events',
       'views.view.topics',
