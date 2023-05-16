@@ -98,13 +98,37 @@ function _social_tagging_update_search_index_for_tagging(): void {
   $configuration['fields'] = array_unique($configuration['fields']);
   $field->setConfiguration($configuration);
 
-  // Ensure the aggregated field processor is there to actually fill our field.
-  if (!$index->isValidProcessor("aggregated_field")) {
-    $index->addProcessor(
-      \Drupal::getContainer()
+  // If the aggregated field is empty we remove it.
+  $is_empty = empty($configuration['fields']);
+  if ($is_empty) {
+    $index->removeField("social_tagging");
+  }
+  else {
+    // Ensure the aggregated field processor is there to actually fill our field.
+    if (!$index->isValidProcessor("aggregated_field")) {
+      $index->addProcessor(
+        \Drupal::getContainer()
+          ->get('search_api.plugin_helper')
+          ->createProcessorPlugin($index, "aggregated_field")
+      );
+    }
+
+    // The aggregated field must be treated as a hierarchy to ensure we can
+    // properly create our facet filter on it.
+    if ($index->isValidProcessor("hierarchy")) {
+      $hierarchy_processor = $index->getProcessor("hierarchy");
+    }
+    else {
+      $hierarchy_processor = \Drupal::getContainer()
         ->get('search_api.plugin_helper')
-        ->createProcessorPlugin($index, "aggregated_field")
-    );
+        ->createProcessorPlugin($index, "hierarchy");
+      $index->addProcessor($hierarchy_processor);
+    }
+    $hierarchy_configuration = $hierarchy_processor->getConfiguration();
+    if (!isset($hierarchy_configuration['fields']['social_tagging'])) {
+      $hierarchy_configuration['fields']['social_tagging'] = "taxonomy_term-parent";
+      $hierarchy_processor->setConfiguration($hierarchy_configuration);
+    }
   }
 
   $index->save();
@@ -141,9 +165,6 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     return;
   }
 
-  // Good morning! Hope you had a good weekend :D
-  // @todo Figure out a way to update the configuration based on profile/group etc.
-  // @todo Replace the config overrides with config/modify :)
 
   /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
   $term_storage = \Drupal::service("entity_type.manager")->getStorage("taxonomy_term");

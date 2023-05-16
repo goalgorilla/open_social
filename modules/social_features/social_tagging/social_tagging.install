@@ -440,9 +440,16 @@ function social_tagging_update_12001() : void {
 
 }
 
+/**
+ * Enable facets module.
+ */
+function social_tagging_update_12002() : string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
 
-// TODO: Move to fieldable field using config/optional for `group`/`node`/`profile`
-// TODO: Add an aggregated field to the search index which unions the term ID and name
-// TODO: Update the views to filter on this field.
-// TODO: Add update hooks for the above and migrate data from the current base field.
-// TODO: Check the term ID type
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_tagging', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
