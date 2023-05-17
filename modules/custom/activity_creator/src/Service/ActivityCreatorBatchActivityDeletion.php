@@ -72,7 +72,7 @@ class ActivityCreatorBatchActivityDeletion {
 
       $context['sandbox']['progress'] += count($current_ids);
 
-      $context['message'] = t('Now processing activties :progress of :count', [
+      $context['message'] = t('Now processing activities :progress of :count', [
         ':progress' => $context['sandbox']['progress'],
         ':count' => $context['sandbox']['max'],
       ]);
