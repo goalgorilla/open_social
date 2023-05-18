@@ -88,6 +88,26 @@ class LogContext implements Context {
   }
 
   /**
+   * I should see log message
+   *
+   * @Then I should see log message :value
+   */
+  public function iShouldSeeLogMessage($value) {
+    $log_messages = $this->getLogMessages();
+    $log_message_exist = FALSE;
+
+    foreach ($log_messages as $log_message) {
+      if ($log_message->message === $value) {
+        return TRUE;
+      }
+    }
+
+    if (!$log_message_exist) {
+      throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
+    }
+  }
+
+  /**
    * Drupal can produce a lot of log messages that are not actual problems.
    *
    * @param \StdClass $row
