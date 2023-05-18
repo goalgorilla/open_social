@@ -41,6 +41,7 @@ Feature: Comment on a Post
    Then I should see "This action cannot be undone."
         # Confirm delete
    When I press "Delete"
+    And I wait for the batch job to finish
    Then I should see "The comment and all its replies have been deleted."
 
   Given I am on the homepage
