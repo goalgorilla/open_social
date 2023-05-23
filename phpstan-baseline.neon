@@ -3176,11 +3176,6 @@ parameters:
 			path: modules/social_features/social_activity/modules/social_activity_filter/social_activity_filter.install
 
 		-
-			message: "#^Function _social_activity_filter_enable_filters\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_activity/modules/social_activity_filter/social_activity_filter.install
-
-		-
 			message: "#^Function _social_activity_filter_set_default_settings\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/modules/social_activity_filter/social_activity_filter.install
@@ -5767,7 +5762,7 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
+			count: 2
 			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
 
 		-
@@ -6329,6 +6324,11 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
 			count: 3
 			path: modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollService.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
+			count: 2
+			path: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php
 
 		-
 			message: "#^Method Drupal\\\\social_event_an_enroll\\\\Form\\\\EventAnEnrollActionForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
@@ -8316,6 +8316,11 @@ parameters:
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_request_or_invite_status\\.$#"
 			count: 1
+			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
+			count: 2
 			path: modules/social_features/social_event/src/Form/EnrollActionForm.php
 
 		-
@@ -16597,13 +16602,3 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
-
-		-
-			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$date\\.$#"
-			count: 4
-			path: modules/social_features/social_event/src/SocialEventTrait.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_core/src/ContentTranslationConfigOverrideBase.php
