@@ -25,7 +25,6 @@ function social_activity_filter_update_dependencies() {
 function social_activity_filter_install() {
   user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
   _social_activity_filter_set_default_settings();
-  _social_activity_filter_enable_filters();
 }
 
 /**
@@ -39,7 +38,14 @@ function social_activity_filter_update_8001() {
  * Add & enable tag filter in the stream blocks.
  */
 function social_activity_filter_update_8002() {
-  _social_activity_filter_enable_filters();
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity_filter', 'social_activity_filter_update_8002');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
 
 /**
@@ -76,20 +82,6 @@ function _social_activity_filter_set_default_settings() {
     $social_activity_filter_config->set('taxonomy_fields', ['social_tagging' => 'social_tagging']);
   }
   $social_activity_filter_config->save();
-}
-
-/**
- * Helper function to enable tag filters for activities blocks.
- */
-function _social_activity_filter_enable_filters() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_activity_filter', 'social_activity_filter_update_8002');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
 }
 
 /**

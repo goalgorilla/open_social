@@ -34,7 +34,22 @@ function social_follow_user_install(): void {
   user_role_grant_permissions('sitemanager', $permissions);
 
   // Add & apply user follow functionality.
-  _social_follow_user_config_update();
+  // Display hero & statistic block on the following users/followers pages.
+  $config_names = [
+    'block.block.socialblue_profile_hero_block',
+    'block.block.socialblue_profile_statistic_block',
+  ];
+  foreach ($config_names as $config_name) {
+    $config = \Drupal::configFactory()->getEditable($config_name);
+
+    if (!empty($config->getRawData())) {
+      $pages = $config->get('visibility.request_path.pages');
+      $pages .= "\r\n/user/*/following/users";
+      $pages .= "\r\n/user/*/followers";
+      $config->set('visibility.request_path.pages', $pages);
+      $config->save();
+    }
+  }
 
   // Add our settings field to the user settings form.
   $form_mode = EntityFormDisplay::load("user.user.default");
@@ -155,13 +170,6 @@ function social_follow_user_update_dependencies() : array {
  * Update profile view modes/block visibility rules.
  */
 function social_follow_user_update_11201(): void {
-  _social_follow_user_config_update();
-}
-
-/**
- * Helper callback to apply users follow config updates.
- */
-function _social_follow_user_config_update(): void {
   // Display hero & statistic block on the following users/followers pages.
   $config_names = [
     'block.block.socialblue_profile_hero_block',
