@@ -42,8 +42,12 @@ function social_group_flexible_group_social_group_types_alter(array &$social_gro
 
 /**
  * Implements hook_views_data_alter().
+ *
+ * @deprecated in social:11.9.0 and is removed from social:12.0.0.
+ *   Use views filter "node_access" from "node" module instead.
+ * @see https://www.drupal.org/project/social/issues/3358489
  */
-function social_group_flexible_group_views_data_alter(array &$data) {
+function social_group_flexible_group_views_data_alter(array &$data): void {
   $data['node_access']['flexible_group_node_access'] = [
     'title' => t('Filter nodes, with visibility group, placed in group you are not a member of.'),
     'filter' => [
