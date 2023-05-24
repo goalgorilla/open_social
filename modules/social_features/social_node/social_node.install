@@ -12,3 +12,24 @@ function social_node_install() {
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('node', 'activity');
 }
+
+/**
+ * Remove "gnode_anonymous" realm for nodes without "public" visibility.
+ */
+function social_node_update_11901(): void {
+  // Get all nodes with "public" visibility.
+  $nids = \Drupal::database()->select('node__field_content_visibility', 't')
+    ->fields('t', ['entity_id'])
+    ->condition('field_content_visibility_value', 'public', '<>')
+    ->execute()->fetchAllKeyed(0, 0);
+
+  if (empty($nids)) {
+    return;
+  }
+
+  // Remove anonymous realms from database for given nodes.
+  \Drupal::database()->delete('node_access')
+    ->condition('realm', 'gnode_anonymous')
+    ->condition('nid', $nids, 'IN')
+    ->execute();
+}

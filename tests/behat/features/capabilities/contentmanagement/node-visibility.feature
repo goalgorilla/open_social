@@ -40,6 +40,16 @@ Feature: Visibility
     Then I should not see "This is a topic for community"
     And I should see "Access denied."
 
+  # Check visibility on content overview pages.
+    Given I am logged in as an "verified"
+      And I am on the topic overview
+    Then I should see "This is a topic for public"
+      And I should see "This is a topic for community"
+    Given I logout
+      And I am on the topic overview
+    Then I should see "This is a topic for public"
+      And I should not see "This is a topic for community"
+
     # Check default visibility
     Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "public"
     Given topic content:

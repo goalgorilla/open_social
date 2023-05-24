@@ -12,26 +12,33 @@ use Drupal\views\Views;
  * @ingroup views_filter_handlers
  *
  * @ViewsFilter("flexible_group_node_access")
+ *
+ * @deprecated in social:11.9.0 and is removed from social:12.0.0.
+ *   Use views filter "node_access" from "node" module instead.
+ * @see https://www.drupal.org/project/social/issues/3358489
  */
 class FlexibleGroupNodeAccess extends FilterPluginBase {
 
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() {}
+  public function adminSummary(): void {}
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() {
+  public function canExpose(): bool {
     return FALSE;
   }
 
   /**
    * See _node_access_where_sql() for a non-views query based implementation.
    */
-  public function query() {
+  public function query(): void {
     $account = $this->view->getUser();
+    /** @var \Drupal\views\Plugin\views\query\Sql $query */
+    $query = $this->query;
+
     $group_access = NULL;
     if (!$account->hasPermission('administer nodes') && !$account->hasPermission('bypass node access')) {
       // Ensure we check for group content.
@@ -45,10 +52,12 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       ];
 
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-      $this->query->addRelationship('membership', $join, 'node_field_data');
+      // @phpstan-ignore-next-line
+      $query->addRelationship('membership', $join, 'node_field_data');
 
       // Add extra condition for Group Membership
       // related check in Flexible groups.
+      // @phpstan-ignore-next-line
       $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
       if (!empty($group_memberships) && !$account->isAnonymous()) {
         // OR content is GROUP.
@@ -66,7 +75,8 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       ];
 
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-      $this->query->addRelationship('field_visibility_relationship', $join, 'node__field_content_visibility');
+      // @phpstan-ignore-next-line
+      $query->addRelationship('field_visibility_relationship', $join, 'node__field_content_visibility');
 
       $group_visible = new Condition('OR');
       $group_visible->condition('field_content_visibility_value', 'public');
@@ -78,14 +88,14 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       }
 
       // And we should check for open / public.
-      $this->query->addWhere('visibility', $group_visible);
+      $query->addWhere('visibility', $group_visible);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
+  public function getCacheContexts(): array {
     $contexts = parent::getCacheContexts();
 
     $contexts[] = 'user.node_grants:view';

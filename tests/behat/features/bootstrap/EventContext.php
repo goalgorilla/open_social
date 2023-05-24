@@ -77,7 +77,7 @@ class EventContext extends RawMinkContext {
    * @Given I am on the event overview
    */
   public function viewEventOverview() : void {
-    $this->visitPath("/all-events");
+    $this->visitPath("/community-events");
   }
 
   /**

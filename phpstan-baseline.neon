@@ -9469,11 +9469,6 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
 		-
-			message: "#^Function social_group_flexible_group_views_data_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
-
-		-
 			message: "#^Function social_group_flexible_group_views_query_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
@@ -9547,36 +9542,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\ConditionInterface\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addRelationship\\(\\)\\.$#"
-			count: 2
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
-
-		-
-			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_flexible_group\\\\Plugin\\\\views\\\\filter\\\\FlexibleGroupNodeAccess\\:\\:adminSummary\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_flexible_group\\\\Plugin\\\\views\\\\filter\\\\FlexibleGroupNodeAccess\\:\\:canExpose\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
-
-		-
-			message: "#^Method Drupal\\\\social_group_flexible_group\\\\Plugin\\\\views\\\\filter\\\\FlexibleGroupNodeAccess\\:\\:query\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Plugin/views/filter/FlexibleGroupNodeAccess.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_flexible_group\\\\SocialGroupFlexibleGroupConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -12325,6 +12290,11 @@ parameters:
 
 		-
 			message: "#^Function social_node_install\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_node/social_node.install
+
+		-
+			message: "#^Cannot call method fetchAllKeyed\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_node/social_node.install
 
