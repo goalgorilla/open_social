@@ -15,4 +15,9 @@ Feature: Deleting a user with activities related to it
     And I wait for the queue to be empty
     And I am logged in as "BehatSiteManager"
     When I delete user "BehatUserToDelete" with method "user_cancel_delete"
+    # Thorough testing would require creating a test with a high number of activities
+    # to simulate real-world scenarios that would cause out of memory error without batch processing.
+    # Currently, we verify the need for batch processing by checking the logs that are
+    # triggered at the end of the batch process. However, this approach may change
+    # in the future as the when CI environment may become more like a production environment.
     Then I should see log message "Number of activities deleted by batch: 1"
