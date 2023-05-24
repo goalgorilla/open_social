@@ -118,7 +118,7 @@ class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
   /**
    * {@inheritdoc}
    */
-  public static function validateElement(array $element, FormStateInterface $form_state) {
+  public static function validateElement(array $element, FormStateInterface $form_state): void {
     /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $profile_tag_service */
     $profile_tag_service = \Drupal::service('social_profile.tag_service');
     if ($profile_tag_service->allowSplit()) {
