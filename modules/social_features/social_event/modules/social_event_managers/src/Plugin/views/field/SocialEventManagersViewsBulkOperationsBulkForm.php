@@ -405,10 +405,10 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       return trim($name);
     }
 
-    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-    $label = $profile->label();
+    /** @var \Drupal\user\UserInterface $owner */
+    $owner = $profile->getOwner();
 
-    return $label->getArguments()['@name'];
+    return $owner->getDisplayName();
   }
 
   /**
