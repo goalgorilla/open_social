@@ -7,11 +7,15 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Component\Utility\Crypt;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\Entity\Node\Event;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -474,6 +478,81 @@ class EventContext extends RawMinkContext {
         'field_enrollment_status' => '1',
         'field_account' => $user->uid,
       ])->save();
+    }
+  }
+
+  /**
+   * Add enrollees to event.
+   *
+   * Adds enrollees to a specific event
+   * | event    | user      |
+   * | My event | Jane Doe  |
+   * | ...      | ...       |
+   *
+   * @Given event enrollees:
+   */
+  public function createEventEnrollees(TableNode $eventEnrolleesTable) {
+
+    foreach ($eventEnrolleesTable->getHash() as $eventEnrolleesHash) {
+      $event_title = $eventEnrolleesHash['event'];
+      $event_id = $this->getEventIdFromTitle($event_title);
+      if ($event_id === NULL) {
+        throw new \Exception("Event '${event_title}' does not exist.");
+      }
+
+      $event = Event::load($event_id);
+      assert($event instanceof Node);
+
+      $user = User::load($this->drupalContext->getUserManager()->getUser($eventEnrolleesHash['user'])->uid);
+      assert($user instanceof UserInterface);
+      assert($user->id() !== null, "Enrollment of anonymous users is not allowed for '@Given event enrollees'. Please use '@Given anonymous event enrollees:' instead.");
+
+      EventEnrollment::create([
+        'user_id' => $user->id(),
+        'field_event' => $event_id,
+        'field_enrollment_status' => '1',
+        'field_account' => $user->id(),
+      ])->save();
+    }
+  }
+
+  /**
+   * Add anonymous enrollees to event.
+   *
+   * Adds anonymous enrollees to a specific event
+   * | event    | name | lastname | email               |
+   * | My event | Jane | Doe      | example@example.com |
+   * | ...      | ...  | ...      | ...                 |
+   *
+   * @Given anonymous event enrollees:
+   */
+  public function createAnonymousEventEnrollees(TableNode $eventAnonymousEnrolleesTable) {
+    foreach ($eventAnonymousEnrolleesTable->getHash() as $eventEnrolleesHash) {
+      $event_title = $eventEnrolleesHash['event'];
+      $event_id = $this->getEventIdFromTitle($event_title);
+      if ($event_id === NULL) {
+        throw new \Exception("Event '${event_title}' does not exist.");
+      }
+
+      $event = Event::load($event_id);
+      assert($event instanceof Node);
+
+      if ($event->field_event_an_enroll->value !== '1') {
+        throw new \Exception("Event '${event_title}' is not suitable to enroll anonymous users.");
+      }
+
+      $token = Crypt::randomBytesBase64();
+
+      $values['user_id'] = '0';
+      $values['field_account'] = '0';
+      $values['field_email'] = $eventEnrolleesHash['email'];
+      $values['field_enrollment_status'] = '1';
+      $values['field_event'] = $event_id;
+      $values['field_first_name'] = $eventEnrolleesHash['name'];
+      $values['field_last_name'] = $eventEnrolleesHash['lastname'];
+      $values['field_token'] = $token;
+
+      EventEnrollment::create($values)->save();
     }
   }
 
