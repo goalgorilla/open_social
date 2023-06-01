@@ -549,13 +549,14 @@ function social_group_flexible_group_update_11402(): string {
 function social_group_flexible_group_update_11701(array &$sandbox): string {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('group')
+      ->accessCheck(FALSE)
       ->condition('type', 'flexible_group')
       ->notExists('field_group_posts_enabled')
       ->count()
       ->execute();
 
     if (!$sandbox['total']) {
-      return t('No flexibe groups were updated.');
+      return t('No flexible groups were updated.');
     }
 
     $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('group', 'flexible_group');
@@ -573,6 +574,7 @@ function social_group_flexible_group_update_11701(array &$sandbox): string {
   }
 
   $entity_ids = \Drupal::entityQuery('group')
+    ->accessCheck(FALSE)
     ->condition('type', 'flexible_group')
     ->condition('id', $sandbox['current_id'], '>')
     ->notExists('field_group_posts_enabled')
