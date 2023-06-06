@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\social_follow_tag\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\social_tagging\Plugin\Field\FieldFormatter\TagSplitFormatter;
 use Drupal\taxonomy\TermInterface;
 
@@ -24,8 +25,28 @@ class FollowTagSplitFormatter extends TagSplitFormatter {
   /**
    * {@inheritdoc}
    */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = parent::viewElements($items, $langcode);
+    return [
+      '#type' => 'container',
+      '#attributes' => ['class' => 'social_follow_tax card__block'],
+      // As per https://www.drupal.org/project/drupal/issues/2908266.
+      // phpcs:ignore Squiz.Arrays.ArrayDeclaration.NoKeySpecified
+      ...$elements,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function viewHierarchy(TermInterface $parent, EntityReferenceFieldItemListInterface $items, string $langcode): array {
     $field = parent::viewHierarchy($parent, $items, $langcode);
+
+    $field['label'] = [
+      '#type' => 'inline_template',
+      '#template' => '<p><strong>{{label}}</strong></p>',
+      '#context' => ['label' => $field['label']['#plain_text']],
+    ];
 
     foreach ($field['items'] as $delta => $item) {
       $term = $items[$delta]->entity;
@@ -33,7 +54,16 @@ class FollowTagSplitFormatter extends TagSplitFormatter {
       if (social_follow_taxonomy_term_followed($term)) {
         $classes[] = "term-followed";
       }
+      $classes += [
+        'badge',
+        'badge-default',
+        'badge--large',
+        'badge--pill',
+        'btn-action__term',
+      ];
       $field['items'][$delta] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => 'group-action'],
         'link' => [
           '#type' => 'link',
           '#url' => $item['#url'],
@@ -65,6 +95,9 @@ class FollowTagSplitFormatter extends TagSplitFormatter {
         ],
       ];
     }
+
+    $field['items']['#type'] = 'container';
+    $field['items']['#attributes'] = ['class' => 'group-action-wrapper'];
 
     return $field;
   }
