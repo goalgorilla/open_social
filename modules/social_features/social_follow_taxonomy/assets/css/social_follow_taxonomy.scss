@@ -65,6 +65,11 @@
 }
 
 .social_follow_tax {
+  // Disable margin on containers.
+  &.form-group {
+    margin-bottom: 0;
+  }
+
   .card.teaser {
     margin-bottom: .75rem;
   }
@@ -73,11 +78,20 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
+
+    &.form-group:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .group-action {
     @media(min-width: 900px) {
       position: relative;
+    }
+
+    // Disable margin on containers.
+    &.form-group {
+      margin-bottom: 0;
     }
 
     .badge {
