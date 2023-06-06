@@ -47,4 +47,21 @@ Feature: Content Tagging
     Then I should see "Tags"
     And I should see "Pants"
 
-  # @todo Add coverage for profiles.
+  Scenario: View a tag on a profile
+    Given I enable the module social_profile
+    And users:
+      | name               | status | roles    |
+      | tjakka tagged user | 1      | verified |
+    # @todo replace this by a and Profiles step.
+    And I am logged in as a user with the sitemanager role
+    And I am on the profile of "tjakka tagged user"
+    And I click "Edit profile information"
+    And I select "Pants" from "Clothing"
+    And I press "Save"
+    And I am logged in as a user with the verified role
+
+    When I am on the profile of "tjakka tagged user"
+    And I click "Information"
+
+    Then I should see "Clothing"
+    And I should see "Pants"
