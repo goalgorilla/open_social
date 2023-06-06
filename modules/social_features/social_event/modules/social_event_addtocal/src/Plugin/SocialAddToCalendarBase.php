@@ -87,7 +87,7 @@ abstract class SocialAddToCalendarBase extends PluginBase implements SocialAddTo
     return [
       'title' => $node->getTitle(),
       'dates' => $this->getEventDates($node),
-      'timezone' => date_default_timezone_get() !== DateTimeItemInterface::STORAGE_TIMEZONE ? date_default_timezone_get() : '',
+      'timezone' => date_default_timezone_get(),
       'description' => $this->getEventDescription($node),
       'location' => $this->getEventLocation($node),
       'nid' => $node->id(),
