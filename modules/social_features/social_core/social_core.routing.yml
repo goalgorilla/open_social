@@ -113,6 +113,7 @@ social_core.secret_file_download:
   path: '/system/file/{hash}/{expires_at}/{filepath}'
   defaults:
     _controller: '\Drupal\social_core\Controller\SecretFileController::download'
+    _disable_route_normalizer: true
   requirements:
     expires_at: '\d+'
     filepath: .+
@@ -122,6 +123,7 @@ social_core.secret_file_download_dummy:
   path: '/system/file/{hash}/{expires_at}'
   defaults:
     _controller: '\Drupal\social_core\Controller\SecretFileController::download'
+    _disable_route_normalizer: true
   requirements:
     expires_at: '\d+'
     _access: 'TRUE'
