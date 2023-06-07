@@ -11,7 +11,7 @@
         var accordSvg = $accordTitle.find('svg use');
         var $accordText = $accordItem.find('.card__text-accord');
 
-        $accordItem.find('.card__title-accord').on('click', function () {
+        $accordItem.once('socialLandingPageAccordion').find('.card__title-accord').on('click', function () {
           var $currentTitle = $(this);
           var $currentText = $currentTitle.next();
           var $svg = $currentTitle.find('svg use');
