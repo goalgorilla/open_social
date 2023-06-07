@@ -266,6 +266,29 @@ class FeatureContext extends RawMinkContext {
     }
 
     /**
+     * @Then /^The image path in the body description should be secret/
+     */
+    public function imagePathInBodyDescriptionShouldBeSecret() {
+
+      $cssSelector = 'article .card__body .body-text img';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $src = $element->getAttribute('src');
+
+      if (strpos($src, '/system/file/inline-images') === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The image does not seem to be uploaded in the secret file system: "%s"', $src));
+      }
+    }
+
+    /**
      * @When I click admin link :text
      */
     public function clickAdminLink($text) {

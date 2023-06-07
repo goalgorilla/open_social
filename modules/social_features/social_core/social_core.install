@@ -398,7 +398,8 @@ function social_core_update_124001(): void {
 
   // If there are modules depending on admin_toolbar_tools, and it is enabled
   // we can't uninstall it.
-  $module_dependencies = \Drupal::service('extension.list.module')->get('lazy')->required_by ?? [];
+  $module_dependencies = \Drupal::service('extension.list.module')
+    ->get('lazy')->required_by ?? [];
   $has_dependency_enabled = FALSE;
   foreach ($module_dependencies as $module_name => $module_dependency) {
     if (\Drupal::moduleHandler()->moduleExists($module_name)) {
@@ -417,4 +418,47 @@ function social_core_update_124001(): void {
   // Remove configuration.
   $config = \Drupal::service('config.factory')->getEditable('lazy.settings');
   $config->delete()->save();
+}
+
+/**
+ * Migrate private file system to secret file system.
+ */
+function social_core_update_130002() : void {
+  $image_fields = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties(['type' => 'image']);
+
+  foreach ($image_fields as $field_storage) {
+    if ($field_storage->getSetting('uri_scheme') === 'private') {
+      $field_storage->setSetting('uri_scheme', 'secret');
+      $field_storage->save();
+    }
+  }
+
+  $file_fields = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties(['type' => 'file']);
+
+  foreach ($file_fields as $field_storage) {
+    if ($field_storage->getSetting('uri_scheme') === 'private') {
+      $field_storage->setSetting('uri_scheme', 'secret');
+      $field_storage->save();
+    }
+  }
+
+  $editors = \Drupal::entityTypeManager()
+    ->getStorage('editor')
+    ->loadMultiple();
+
+  foreach ($editors as $editor) {
+    $upload_settings = $editor->getImageUploadSettings();
+    if ($upload_settings['scheme'] === 'private') {
+      $upload_settings['scheme'] = 'secret';
+      $editor->setImageUploadSettings($upload_settings);
+      $editor->save();
+    }
+  }
+
+  // Update all managed files.
+  \Drupal::database()->query("UPDATE {file_managed} SET uri = REPLACE(uri, 'private://', 'secret://')");
 }
