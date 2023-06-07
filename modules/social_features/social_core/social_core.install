@@ -358,3 +358,47 @@ function social_core_update_123004(): void {
     }
   }
 }
+
+/**
+ * Migrate private file system to secret file system.
+ */
+function social_core_update_111203() : void {
+  $config_ids = [
+    'field.storage.node.field_book_image',
+    'field.storage.comment.field_comment_files',
+    'field.storage.block_content.field_hero_image',
+    'field.storage.node.field_event_image',
+    'field.storage.paragraph.field_featured_item_image',
+    'field.storage.group.field_group_image',
+    'field.storage.paragraph.field_hero_image',
+    'field.storage.paragraph.field_hero_small_image',
+    'field.storage.node.field_files',
+    'field.storage.node.field_page_image',
+    'field.storage.post.field_post_image',
+    'field.storage.profile.field_profile_banner_image',
+    'field.storage.profile.field_profile_image',
+    'field.storage.node.field_topic_image',
+  ];
+
+  foreach (FieldStorageConfig::loadMultiple($config_ids) as $config) {
+    if ($config->getSetting("uri_schema") === "private") {
+      $config->setSetting("uri_schema", "secret")->save();
+    }
+  }
+
+  $editor_ids = [
+    'editor.editor.basic_html',
+    'editor.editor.full_html',
+  ];
+
+  foreach ($editor_ids as $editor_id) {
+    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
+    // Skip editor configs that don't yet exist.
+    if ($editor_config->isNew()) {
+      continue;
+    }
+    if ($editor_config->get('image_upload.scheme') === "private") {
+      $editor_config->set('image_upload.scheme', 'secret')->save();
+    }
+  }
+}
