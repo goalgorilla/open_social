@@ -108,6 +108,26 @@ class SecretFileController extends ControllerBase {
     $hash = $request->attributes->get('hash');
     $expires_at = $request->attributes->get('expires_at');
     $target = $request->attributes->get('filepath');
+
+    // For some reason Drupal core is incorrect in how it invokes our
+    // SecretFiles path processor which can cause the 'filepath' attribute to be
+    // unset, in that case we just manually try to find it again here.
+    // Once Drupal finally allows arbitrary length arguments like Symfony does
+    // we can remove our PathProcessor and our workaround here and things should
+    // be reliably handled by Symfony for us.
+    if ($target === NULL) {
+      $path = $request->getPathInfo();
+      $prefix = "/system/file/$hash/$expires_at/";
+      if (!str_starts_with($path, $prefix)) {
+        throw new NotFoundHttpException();
+      }
+
+      $target = substr($path, strlen($prefix));
+      if ($target === '') {
+        throw new NotFoundHttpException();
+      }
+    }
+
     // Merge remaining path arguments into relative file path.
     $uri = 'secret://' . $target;
 
