@@ -8,17 +8,17 @@ Feature: Flexible groups are correctly ordered on views pages.
       | name   | status | pass    | roles    |
       | John   | 1      | secret  | verified |
     Given groups:
-      | label    | field_group_description | field_flexible_group_visibility | author | type            | created   |
-      | Group AAA  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group BBB  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group CCC  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group DDD  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group EEE  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group FFF  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group GGG  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group HHH  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group III  | John's group            | public                          | John   | flexible_group  | 999999999 |
-      | Group JJJ  | John's group            | public                          | John   | flexible_group  | 999999999 |
+      | label      | field_group_description | field_flexible_group_visibility | author | type            | created  |
+      | Group AAA  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group BBB  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group CCC  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group DDD  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group EEE  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group FFF  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group GGG  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group HHH  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group III  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
+      | Group JJJ  | Happy new 2001 year     | public                          | John   | flexible_group  | 01/01/01 |
 
     When I am logged in as John
     And I click "My groups"
