@@ -7,12 +7,19 @@ namespace Drupal\social_core\Controller;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
+use Drupal\image\Entity\ImageStyle;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
  * Handles serving of requests using the secret file system.
@@ -30,19 +37,43 @@ class SecretFileController extends ControllerBase {
   protected TimeInterface $time;
 
   /**
+   * The lock backend.
+   */
+  protected LockBackendInterface $lock;
+
+  /**
+   * The image factory.
+   */
+  protected ImageFactory $imageFactory;
+
+  /**
+   * A logger instance.
+   */
+  protected LoggerInterface $logger;
+
+  /**
    * FileDownloadController constructor.
    *
    * @param \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface $stream_wrapper_manager
    *   The stream wrapper manager.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The Drupal time service.
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
+   *   The lock backend.
+   * @param \Drupal\Core\Image\ImageFactory $image_factory
+   *   The image factory.
    */
   public function __construct(
     StreamWrapperManagerInterface $stream_wrapper_manager,
-    TimeInterface $time
+    TimeInterface $time,
+    LockBackendInterface $lock,
+    ImageFactory $image_factory
   ) {
     $this->streamWrapperManager = $stream_wrapper_manager;
     $this->time = $time;
+    $this->lock = $lock;
+    $this->imageFactory = $image_factory;
+    $this->logger = $this->getLogger('image');
   }
 
   /**
@@ -52,6 +83,8 @@ class SecretFileController extends ControllerBase {
     return new static(
       $container->get('stream_wrapper_manager'),
       $container->get("datetime.time"),
+      $container->get('lock'),
+      $container->get('image.factory')
     );
   }
 
@@ -90,7 +123,7 @@ class SecretFileController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    if ($this->streamWrapperManager->isValidScheme("secret") && is_file($uri)) {
+    if ($this->streamWrapperManager->isValidScheme("secret")) {
       // For details see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control.
       // Our image file on our secret URL can be cached by any intermediaries
       // from now until the link expiration time (`max-age`). After that time
@@ -102,11 +135,109 @@ class SecretFileController extends ControllerBase {
         "Cache-Control" => "max-age=$time_left, must-revalidate",
       ];
 
-      return new BinaryFileResponse(
-        $uri,
-        200,
-        $headers
-      );
+      if (is_file($uri)) {
+        return new BinaryFileResponse(
+          $uri,
+          200,
+          $headers
+        );
+      }
+
+      // We need a fall-back for image styles which only get created on-demand.
+      // When they exist they'll be handled by the previous block.
+      if (str_starts_with($target, "styles/")) {
+        // URIs for image styles are in the form of:
+        // /styles/{image_style}/{scheme}/{file}
+        // if we can't get the image style from the URL or we're passed on with
+        // an incorrect scheme then we abort.
+        $matches = [];
+        if (!preg_match("|styles/(\w+)/secret/(.+)|", $target, $matches)) {
+          throw new NotFoundHttpException();
+        }
+        [$_, $image_style, $source_target] = $matches;
+        $image_uri = "secret://$source_target";
+
+        // Normally the ImageStyleDownloadController requires a token to be
+        // verified to generate a derivative to prevent DoS attacks through
+        // derivative generation. However, our tamper-proof URLs for the secret
+        // file system already prevent this allowing us to just start generating
+        // the file knowing that it doesn't exist.
+        $image_style = ImageStyle::load($image_style);
+        if ($image_style === NULL) {
+          throw new NotFoundHttpException();
+        }
+
+        $derivative_uri = $image_style->buildUri($image_uri);
+
+        if (!file_exists($image_uri)) {
+          // If the image style converted the extension, it has been added to
+          // the original file, resulting in filenames like image.png.jpeg. So
+          // to find the actual source image, we remove the extension and check
+          // if that image exists.
+          /** @var string|false $filepath */
+          $filepath = StreamWrapperManager::getTarget($image_uri);
+          if ($filepath === FALSE) {
+            throw new NotFoundHttpException();
+          }
+          $path_info = pathinfo($filepath);
+          $converted_image_uri = sprintf('secret://%s%s', ($path_info['dirname'] ?? '.') === '.' ? '' : $path_info['dirname'] . DIRECTORY_SEPARATOR, $path_info['filename']);
+          if (!file_exists($converted_image_uri)) {
+            $this->logger->notice(
+              'Source image at %source_image_path not found while trying to generate derivative image at %derivative_path.',
+              [
+                '%source_image_path' => $image_uri,
+                '%derivative_path' => $derivative_uri,
+              ]
+            );
+            throw new NotFoundHttpException((string) $this->t('Error generating image, missing source file.'));
+          }
+          else {
+            // The converted file does exist, use it as the source.
+            $image_uri = $converted_image_uri;
+          }
+        }
+
+        // Don't start generating the image if the derivative already exists or
+        // if generation is in progress in another thread.
+        if (!file_exists($derivative_uri)) {
+          $lock_name = 'image_style_deliver:' . $image_style->id() . ':' . Crypt::hashBase64($image_uri);
+          $lock_acquired = $this->lock->acquire($lock_name);
+
+          if (!$lock_acquired) {
+            // Tell client to retry again in 3 seconds. Currently no browsers
+            // are known to support Retry-After.
+            throw new ServiceUnavailableHttpException(3, 'Image generation in progress. Try again shortly.');
+          }
+        }
+
+        // Try to generate the image, unless another thread just did it while we
+        // were acquiring the lock.
+        $success = file_exists($derivative_uri) || $image_style->createDerivative($image_uri, $derivative_uri);
+
+        if (!empty($lock_acquired)) {
+          assert(isset($lock_name), 'A lock may not be acquired without setting "$lock_name"');
+          $this->lock->release($lock_name);
+        }
+
+        if (!$success) {
+          $this->logger->notice('Unable to generate the derived image located at %path.', ['%path' => $derivative_uri]);
+          throw new HttpException(500, (string) $this->t('Error generating image.'));
+        }
+
+        $image = $this->imageFactory->get($derivative_uri);
+        $uri = $image->getSource();
+        $headers['Content-Type'] = $image->getMimeType();
+        $headers['Content-Length'] = $image->getFileSize();
+        // \Drupal\Core\EventSubscriber\FinishResponseSubscriber::onRespond()
+        // sets response as not cacheable if the Cache-Control header is not
+        // already modified. When $is_public is TRUE, the following sets the
+        // Cache-Control header to "public".
+        return new BinaryFileResponse(
+          $uri,
+          200,
+          $headers
+        );
+      }
     }
 
     throw new NotFoundHttpException();
