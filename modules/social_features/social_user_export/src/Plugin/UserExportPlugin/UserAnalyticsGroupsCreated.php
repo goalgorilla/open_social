@@ -28,7 +28,7 @@ class UserAnalyticsGroupsCreated extends UserExportPluginBase {
    */
   public function getValue(UserInterface $entity) {
     $user_id = $entity->id();
-    if (!is_int($user_id)) {
+    if (!$user_id) {
       return "0";
     }
 
