@@ -92,10 +92,10 @@ class UserGroupMemberships extends UserExportPluginBase {
    */
   public function getValue(UserInterface $entity) {
     $user_id = $entity->id();
-    if (!is_int($user_id)) {
+    if (!$user_id) {
       return "";
     }
-    $group_memberships = Group::loadMultiple($this->groupHelper->getAllGroupsForUser($user_id));
+    $group_memberships = Group::loadMultiple($this->groupHelper->getAllGroupsForUser((int) $user_id));
     $groups = [];
     foreach ($group_memberships as $group) {
       $groups[] = "{$group->label()} ({$group->id()})";
