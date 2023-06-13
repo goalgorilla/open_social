@@ -2,7 +2,6 @@
 
 namespace Drupal\social\Behat;
 
-use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
@@ -15,24 +14,36 @@ use Psr\Http\Message\ResponseInterface;
 class FileContext extends RawMinkContext {
 
   /**
-   * @param string $link
-   * @param string $filetype
-   * @param \Behat\Gherkin\Node\TableNode $contents
+   * @param string $link_text
+   *   The link url.
+   * @param string $contents
+   *   The expected text.
    *
    * @Then the file downloaded from :link_text should have contents:
    */
   public function fileDownloadedMatches(string $link_text, string $contents) : void {
-    $session = $this->getSession();
-    $link = $session->getPage()->find('named', ['link', $link_text]);
-    $url = $link->getAttribute('href');
-
-    $cookies = $this->getSession()->getDriver()->getCookies();
-    $response = $this->getUrlWithGuzzle($cookies, $url);
-
-    $actual = trim($response->getBody()->getContents());
+    $actual = $this->getDownloadedFileContent($link_text);
     $expected = trim($contents);
     if ($actual !== $expected) {
       throw new \RuntimeException("File does not match the expected contents. Received:\n$actual\n\nExpected:\n{$contents}");
+    }
+  }
+
+  /**
+   * @param string $link_text
+   *   The link url.
+   * @param string $contents
+   *   The expected text.
+   *
+   * @Then the file downloaded from :link_text should contain contents:
+   */
+  public function fileDownloadedContains(string $link_text, string $contents) : void {
+    $actual = $this->getDownloadedFileContent($link_text);
+    $expected = explode(PHP_EOL, trim($contents));
+    foreach ($expected as $word) {
+      if (strpos($actual, $word) === FALSE) {
+        throw new \RuntimeException("File does not contain the expected contents: {$word}");
+      }
     }
   }
 
@@ -61,6 +72,31 @@ class FileContext extends RawMinkContext {
     }
 
     return (new Client(['cookies' => $jar]))->get($url);
+  }
+
+  /**
+   * Allows getting content from downloaded file.
+   *
+   * @param string $link_text
+   *   The url of file.
+   *
+   * @return string
+   *   The content of the downloaded file.
+   */
+  private function getDownloadedFileContent(string $link_text): string {
+    $session = $this->getSession();
+    $link = $session->getPage()->find('named', ['link', $link_text]);
+    $url = $link->getAttribute('href');
+
+    $hostname = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+    if (strpos($url, $hostname) === FALSE) {
+      $url = $hostname . $url;
+    }
+
+    $cookies = $this->getSession()->getDriver()->getCookies();
+    $response = $this->getUrlWithGuzzle($cookies, $url);
+
+    return trim($response->getBody()->getContents());
   }
 
 }
