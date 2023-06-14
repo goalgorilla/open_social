@@ -7,9 +7,8 @@ Feature: Add event to calendar
   Background:
     Given I enable the module "social_event_addtocal"
 
-  @add-to-ical-calendar
   Scenario: LU with "UTC" timezone can add event to "iCal" calendar
-    Given "iCal" calendar is enabled
+    Given add to calendar is enabled for "iCal"
 
     Given users:
       | name               | mail             | status | timezone | roles    |
@@ -20,9 +19,7 @@ Feature: Add event to calendar
 
     When I am logged in as "regular_user"
     And I am viewing the event "Walking in the park"
-    And I press the "Add to calendar" button
-    Then I should see the link "iCal calendar"
-    And the file downloaded from "iCal calendar" should contain contents:
+    And the file downloaded from "iCal calendar" should contain individual lines:
       """
       BEGIN:VCALENDAR
       VERSION:2.0
@@ -46,7 +43,7 @@ Feature: Add event to calendar
       """
 
   Scenario: Anonymous enrolled to event can add event to "iCal" calendar
-    Given "iCal" calendar is enabled
+    Given add to calendar is enabled for "iCal"
     Given I enable the module "social_event_an_enroll"
 
     Given events with non-anonymous author:
@@ -64,8 +61,7 @@ Feature: Add event to calendar
       | Email address | john@doe.com |
     And I press "Enroll in event" in the "Modal"
     And I wait for AJAX to finish
-    Then I should see the link "iCal calendar"
-    And the file downloaded from "iCal calendar" should contain contents:
+    And the file downloaded from "iCal calendar" should contain individual lines:
       """
       BEGIN:VCALENDAR
       VERSION:2.0
