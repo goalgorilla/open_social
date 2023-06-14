@@ -22,7 +22,7 @@ class FileContext extends RawMinkContext {
    * @Then the file downloaded from :link_text should have contents:
    */
   public function fileDownloadedMatches(string $link_text, string $contents) : void {
-    $actual = $this->getDownloadedFileContent($link_text);
+    $actual = trim($this->getDownloadedFileContent($link_text));
     $expected = trim($contents);
     if ($actual !== $expected) {
       throw new \RuntimeException("File does not match the expected contents. Received:\n$actual\n\nExpected:\n{$contents}");
@@ -35,10 +35,10 @@ class FileContext extends RawMinkContext {
    * @param string $contents
    *   The expected text.
    *
-   * @Then the file downloaded from :link_text should contain contents:
+   * @Then the file downloaded from :link_text should contain individual lines:
    */
   public function fileDownloadedContains(string $link_text, string $contents) : void {
-    $actual = $this->getDownloadedFileContent($link_text);
+    $actual = trim($this->getDownloadedFileContent($link_text));
     $expected = explode(PHP_EOL, trim($contents));
     foreach ($expected as $word) {
       if (strpos($actual, $word) === FALSE) {
@@ -83,7 +83,7 @@ class FileContext extends RawMinkContext {
    * @return string
    *   The content of the downloaded file.
    */
-  private function getDownloadedFileContent(string $link_text): string {
+  protected function getDownloadedFileContent(string $link_text): string {
     $session = $this->getSession();
     $link = $session->getPage()->find('named', ['link', $link_text]);
     $url = $link->getAttribute('href');
@@ -96,7 +96,7 @@ class FileContext extends RawMinkContext {
     $cookies = $this->getSession()->getDriver()->getCookies();
     $response = $this->getUrlWithGuzzle($cookies, $url);
 
-    return trim($response->getBody()->getContents());
+    return $response->getBody()->getContents();
   }
 
 }

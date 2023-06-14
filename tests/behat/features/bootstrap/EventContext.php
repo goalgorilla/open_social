@@ -544,9 +544,9 @@ class EventContext extends RawMinkContext {
   /**
    * Enable the calendar button with a given calendar.
    *
-   * @Given ":calendar" calendar is enabled
+   * @Given add to calendar is enabled for :calendar
    */
-  public function iDisableVerifiedImmediately(string $calendar) {
+  public function enableCalendarOption(string $calendar) {
     if (!\Drupal::service('module_handler')->moduleExists('social_event_addtocal')) {
       throw new \Exception("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
     }
