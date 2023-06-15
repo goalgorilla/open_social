@@ -44,16 +44,16 @@
   height: 14px;
   fill: #555;
 }
-.card__activity-followed .activity-followed .flag,
-.card__activity-followed .activity-followed .flag > *,
-.card__activity-followed .activity-followed .flag.open > * {
+.card__activity-followed .activity-followed .flag-default,
+.card__activity-followed .activity-followed .flag-default > *,
+.card__activity-followed .activity-followed .flag-default.open > * {
   font-size: 0;
   margin: 0;
   padding: 0;
   border: none;
   background: transparent;
 }
-.card__activity-followed .activity-followed .flag {
+.card__activity-followed .activity-followed .flag-default {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -61,7 +61,7 @@
   left: 0;
   z-index: 1;
 }
-.card__activity-followed .activity-followed .flag button {
+.card__activity-followed .activity-followed .flag-default button {
   position: absolute;
   top: 0;
   left: 0;
@@ -69,23 +69,23 @@
   height: 100%;
   border-radius: 0;
 }
-.card__activity-followed .activity-followed .flag .caret {
+.card__activity-followed .activity-followed .flag-default .caret {
   display: none;
 }
-.card__activity-followed .activity-followed .flag .dropdown-menu {
+.card__activity-followed .activity-followed .flag-default .dropdown-menu {
   min-width: 175px;
   margin-top: 4px;
 }
 @media (max-width: 599px) {
-  .card__activity-followed .activity-followed .flag .dropdown-menu {
+  .card__activity-followed .activity-followed .flag-default .dropdown-menu {
     min-width: 100px;
     margin-top: 0;
   }
 }
-.card__activity-followed .activity-followed .flag .dropdown-menu a {
+.card__activity-followed .activity-followed .flag-default .dropdown-menu a {
   font-weight: 700;
 }
-.card__activity-followed .activity-followed .flag.open + svg {
+.card__activity-followed .activity-followed .flag-default.open + svg {
   transform: rotate(180deg);
 }
 

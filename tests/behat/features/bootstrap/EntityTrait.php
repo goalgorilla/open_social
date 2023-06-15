@@ -89,6 +89,11 @@ trait EntityTrait {
       if ($field_definition !== NULL && $field_definition->getType() === "datetime") {
         $values[$field_name] = date('Y-m-d\TH:i:s', strtotime($values[$field_name]));
       }
+      // Created and changed fields are stored as a normal timestamp but require
+      // the same human-readable input as datetime fields.
+      if ($field_definition !== NULL && in_array($field_definition->getType(), ["created", "changed"], TRUE)) {
+        $values[$field_name] = strtotime($values[$field_name]);
+      }
     }
   }
 

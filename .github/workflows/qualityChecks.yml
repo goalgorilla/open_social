@@ -31,7 +31,7 @@ jobs:
       # We check out the code in a separate folder since we want to use the
       # result of the merge rather than the pre-merged code.
       # A separate path is used to keep our working directory clean.
-      - name: Setup a temporariy repository
+      - name: Setup a temporary repository
         uses: actions/checkout@v3
         with:
           path: ${{ github.workspace }}/tmp/repository
@@ -146,3 +146,11 @@ jobs:
         run: $GITHUB_WORKSPACE/vendor/bin/phpunit -c $GITHUB_WORKSPACE/html/profiles/contrib/social/phpunit.xml.dist --log-junit $GITHUB_WORKSPACE/test-reports/phpunit.xml
         env:
           SIMPLETEST_DB: sqlite://tmp/db.sqlite
+
+  spellcheck:
+    name: Spell Check
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: streetsidesoftware/cspell-action@v2

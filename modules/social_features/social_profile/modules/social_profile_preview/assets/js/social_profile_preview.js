@@ -20,7 +20,7 @@
             }
           }
         })
-        .on('mouseover', function () {
+        .once('socialProfilePreview').on('mouseover', function () {
           var $element = $(this);
           var selector = $element.attr('id');
 
