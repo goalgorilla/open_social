@@ -138,7 +138,18 @@ class SecretFileController extends ControllerBase {
     }
 
     // The link must not have expired.
-    $time_left = $expires_at - $this->time->getRequestTime();
+    // @todo Since Drupal does not support adding cache metadata from
+    // StreamWrappers it can currently occur that we cache a link in a render
+    // cache longer than the link is valid which would cause viewers to be
+    // provided with broken links. To avoid this we currently just assume that
+    // a link with a valid hash is secret enough and thus always valid for some
+    // time in the future. There is no current path to adding cache context in
+    // StreamWrappers so there's no single issue to point to, but this is a
+    // combination of various cache API and file system improvements that
+    // people are discussing. Once fixed, uncomment the next line and remove
+    // the one after.
+    // $time_left = $expires_at - $this->time->getRequestTime();
+    $time_left = Settings::get("secret_file_bucket_time", 3600 /* = 1 hour */);
     if ($time_left <= 0) {
       throw new NotFoundHttpException();
     }

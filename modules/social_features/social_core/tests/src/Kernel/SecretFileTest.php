@@ -116,6 +116,9 @@ class SecretFileTest extends KernelTestBase {
    * Test that an expired URL causes a 404.
    */
   public function testOutdatedUrlCausesNotFound() : void {
+    // @todo Remove skipped when https://www.drupal.org/i/3358113 is fixed.
+    $this->markTestSkipped("Drupal does not currently support cache metadata from a stream-wrapper so validity checking is disabled until that is fixed. Re-enable this when re-implementing the validity limit.");
+
     /** @var \Drupal\Tests\social_core\Kernel\TestTimeService $time */
     $time = $this->container->get("datetime.time");
     $http_kernel = $this->container->get('http_kernel');
