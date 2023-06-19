@@ -23,6 +23,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialGroupSettings extends ConfigFormBase {
 
   /**
+   * Config settings.
+   *
+   * @var string
+   */
+  const SETTINGS = 'social_group.settings';
+
+  /**
    * The group content plugin manager.
    *
    * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
@@ -84,7 +91,7 @@ class SocialGroupSettings extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'social_group.settings',
+      self::SETTINGS,
     ];
   }
 
@@ -311,6 +318,30 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     return $options ?? [];
+  }
+
+  /**
+   * Returns group types IDs that LU can create.
+   *
+   * @return array
+   *   An array with group type IDs.
+   */
+  public static function getGroupTypeIdsUsersCanCreate(): array {
+    $settings = \Drupal::config(self::SETTINGS);
+
+    if (!$settings->get('allow_group_create')) {
+      return [];
+    }
+
+    $prefix = 'disallow_lu_create_groups_';
+    foreach ($settings->getRawData() as $key => $value) {
+      // Why enabled a group type key has value "FALSE"?
+      if (strpos($key, $prefix) !== FALSE && !$value) {
+        $group_type_ids[] = substr($key, strlen($prefix));
+      }
+    }
+
+    return $group_type_ids ?? [];
   }
 
 }

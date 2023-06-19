@@ -43,6 +43,7 @@ use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
+use Drupal\social_group\Form\SocialGroupSettings;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\social_group\SocialGroupInterface;
 use Drupal\user\Entity\Role;
@@ -1179,11 +1180,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Exposed Filter block on the all-groups overview.
-  if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
+  if (
+    $form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
-    $form['#id'] === 'views-exposed-form-search-groups-page') {
+    $form['#id'] === 'views-exposed-form-search-groups-page'
+  ) {
+    // If LU aren't allowed create more than one group type,
+    // we hide the filter.
+    if (count(SocialGroupSettings::getGroupTypeIdsUsersCanCreate()) <= 1) {
+      $form['type']['#access'] = FALSE;
+    }
+
     $account = \Drupal::currentUser();
-    if (!empty($form['type']['#options'])) {
+    if (Element::isVisibleElement($form['type']) && !empty($form['type']['#options'])) {
       foreach ($form['type']['#options'] as $type => $label) {
         // All / Any we can skip they are optional translatable options
         // and not group types.
