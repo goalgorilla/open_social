@@ -39,7 +39,7 @@ jobs:
     name: "Install previous Open Social major version"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-php7
+      image: ghcr.io/goalgorilla/open-social-dev-php:cli-7.4-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -140,7 +140,7 @@ jobs:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci
+      image: ghcr.io/goalgorilla/open-social-dev-php:cli-8.0-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -269,7 +269,7 @@ jobs:
     name: 'Tests'
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci
+      image: ghcr.io/goalgorilla/open-social-dev-php:fpm-8.0-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -286,7 +286,7 @@ jobs:
 
     services:
       web:
-        image: goalgorilla/open_social_docker:ci
+        image: ghcr.io/goalgorilla/open-social-dev-router:nginx-1.25.1-3.17
         env:
           DRUPAL_SETTINGS: production
         volumes:
