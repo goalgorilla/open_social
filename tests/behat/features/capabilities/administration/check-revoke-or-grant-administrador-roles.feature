@@ -11,6 +11,7 @@ Feature: Revoking or granting roles by permission
     When I select "Site manager" from "role"
       And I press "Filter"
       And I check the box "edit-views-bulk-operations-bulk-form-0"
+      And I wait for "1" seconds
       And I select "Add a role to the selected users" from "Action"
       And I press the "Apply to selected items" button
     Then I should not see the text "Administrator"
@@ -22,6 +23,7 @@ Feature: Revoking or granting roles by permission
     When I select "Administrator" from "role"
       And I press "Filter"
       And I check the box "edit-views-bulk-operations-bulk-form-0"
+      And I wait for "1" seconds
       And I select "Remove a role from the selected users" from "Action"
       And I press the "Apply to selected items" button
     Then I should not see the text "Administrator"
