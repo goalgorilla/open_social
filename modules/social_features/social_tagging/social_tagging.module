@@ -233,36 +233,10 @@ function social_tagging_to_machine_name($text) {
 }
 
 /**
- * Implements hook_preprocess_profile().
- */
-function social_tagging_preprocess_profile(array &$variables) {
-  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-  $tag_service = \Drupal::service('social_tagging.tag_service');
-
-  $variables['social_tagging_profile_active'] = FALSE;
-  if ($tag_service->active() && $tag_service->profileActive()) {
-    $variables['social_tagging_profile_active'] = TRUE;
-
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
-    $profile = $variables['profile'];
-
-    if (!$profile->get('social_tagging')->isEmpty()) {
-      $tags = $profile->get('social_tagging')->getValue();
-
-      $variables['social_tagging_allow_split'] = $tag_service->allowSplit();
-      $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_views_query_alter().
  */
 function social_tagging_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-  $tag_service = \Drupal::service('social_tagging.tag_service');
-
-  if ($tag_service->queryCondition() === 'OR') {
+  if (!\Drupal::configFactory()->get('social_tagging.settings')->get('use_and_condition')) {
     return;
   }
 

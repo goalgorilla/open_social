@@ -68,13 +68,6 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config("social_tagging.settings");
 
-    // We consider category split enabled when any display has it enabled. This
-    // form will always enable/disable them all but a user may accidentally
-    // overwrite a single instance.
-    $allow_category_split = $this->taggingManager->allowCategorySplit();
-    // The same goes for the usage of a parent.
-    $use_category_parent = $allow_category_split && $this->taggingManager->allowCategoryParentSelection();
-
     $form['enable_content_tagging'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow users to tag content in content'),
