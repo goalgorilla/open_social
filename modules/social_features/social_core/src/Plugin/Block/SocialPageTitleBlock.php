@@ -36,7 +36,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   /**
    * The route match.
    *
-   * @var \Drupal\social_tagging\SocialTaggingService
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
@@ -142,6 +142,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     }
 
     $request = $this->requestStack->getCurrentRequest();
+    assert($request !== NULL);
 
     if ($node instanceof NodeInterface) {
       // Landing pages have their own heroes. Usually we're not displayed for
