@@ -16,6 +16,7 @@ Feature: Edit my group as a group manager
     And I press "Continue"
     And I wait for AJAX to finish
     When I fill in "Title" with "Test open group"
+    And I wait for "1" seconds
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
@@ -31,7 +32,7 @@ Feature: Edit my group as a group manager
     Then I should see "Description text" in the "Main content"
 
     When I click "Edit group"
-    And I wait for AJAX to finish
+    And I wait for "1" seconds
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
     Then I should see "Test open group" in the "Main content"
@@ -58,6 +59,7 @@ Feature: Edit my group as a group manager
     And I click the xth "0" element with the css ".views-field-operations .btn-group--operations .dropdown-toggle"
     Then I should see the link "Remove"
     When I click "Edit"
+    And I wait for "1" seconds
     Then I should see "Group Manager One"
     And I should see "Group Manager"
     And I should see the button "Save"
@@ -89,6 +91,7 @@ Feature: Edit my group as a group manager
     And I click "Test open group"
     And I click "Topics"
     And I click "Create Topic"
+    And I wait for "1" seconds
     And I fill in the following:
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
