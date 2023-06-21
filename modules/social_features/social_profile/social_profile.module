@@ -5,7 +5,6 @@
  * The Social profile module.
  */
 
-use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -928,28 +927,6 @@ function social_profile_profile_access(EntityInterface $entity, $operation, Acco
   ) {
     return AccessResult::allowed();
   }
-}
-
-/**
- * Show exposed filters block only when tagging filters are enabled for profile.
- *
- * Implements hook_block_access().
- */
-function social_profile_block_access(Block $block, $operation, AccountInterface $account) {
-  if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:newest_users-page_newest_users')) {
-    $access = AccessResult::forbidden();
-    if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
-      /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
-      $tag_service = \Drupal::service('social_tagging.tag_service');
-      if ($tag_service->profileActive()) {
-        $access = AccessResult::allowed();
-      }
-    }
-    return $access;
-  }
-
-  // No opinion.
-  return AccessResult::neutral();
 }
 
 /**
