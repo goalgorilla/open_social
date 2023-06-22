@@ -12,20 +12,25 @@ jobs:
   setup:
     name: Project Setup
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php:
+          - 8.0
+          - 8.1
     steps:
       # We want to reuse our project setup to run different jobs at once.
       - uses: actions/cache@v3
         id: opensocial-project-build
         with:
           path: ./*
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ github.run_attempt }}
+          key: ${{ github.sha }}-${{ matrix.php }}
 
       # Set PHP {{ matrix.php }} as default.
       # https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: ${{ matrix.php }}
           coverage: none
 
       # We check out the code in a separate folder since we want to use the
@@ -62,19 +67,25 @@ jobs:
     needs: setup
     name: PHPStan check
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php:
+          - 8.0
+          - 8.1
     steps:
-      - uses: actions/cache@v3
-        id: opensocial-project-build
+      - uses: actions/cache/restore@v3
+        id: opensocial-project-build-load
         with:
           path: ./*
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ github.run_attempt }}
+          key: ${{ github.sha }}-${{ matrix.php }}
+          fail-on-cache-miss: true
 
       # Set PHP {{ matrix.php }} as default.
       # https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: ${{ matrix.php }}
           coverage: none
           tools: cs2pr
 
@@ -90,18 +101,19 @@ jobs:
     name: PHPCS check
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/cache@v3
-        id: opensocial-project-build
+      - uses: actions/cache/restore@v3
+        id: opensocial-project-build-load
         with:
           path: ./*
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ github.run_attempt }}
+          key: ${{ github.sha }}-8.1
+          fail-on-cache-miss: true
 
       # Set PHP {{ matrix.php }} as default.
       # https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           coverage: none
           tools: cs2pr
 
@@ -120,19 +132,25 @@ jobs:
     needs: setup
     name: PHPUnit Tests
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        php:
+          - 8.0
+          - 8.1
     steps:
-      - uses: actions/cache@v3
-        id: opensocial-project-build
+      - uses: actions/cache/restore@v3
+        id: opensocial-project-build-load
         with:
           path: ./*
-          key: ${{ github.sha }}-${{ matrix.php }}-${{ github.run_attempt }}
+          key: ${{ github.sha }}-${{ matrix.php }}
+          fail-on-cache-miss: true
 
       # Set PHP {{ matrix.php }} as default.
       # https://github.com/shivammathur/setup-php
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
+          php-version: ${{ matrix.php }}
           ini-values: zend.assertions=1
           coverage: none
           tools: cs2pr
