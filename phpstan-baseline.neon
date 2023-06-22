@@ -1546,6 +1546,11 @@ parameters:
 			path: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php
 
 		-
+			message: "#^Not allowed to call private function _options_values_in_use from module dropdown\\.$#"
+			count: 1
+			path: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php
+
+		-
 			message: "#^Method Drupal\\\\dropdown\\\\Plugin\\\\Field\\\\FieldWidget\\\\DropdownWidgetType\\:\\:sanitizeLabel\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/dropdown/src/Plugin/Field/FieldWidget/DropdownWidgetType.php
@@ -1611,6 +1616,16 @@ parameters:
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
 		-
+			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/custom/entity_access_by_field/entity_access_by_field.module
+
+		-
+			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has parameter \\$info with no type specified\\.$#"
+			count: 1
+			path: modules/custom/entity_access_by_field/entity_access_by_field.module
+
+		-
 			message: "#^Function entity_access_by_field_field_widget_single_element_form_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
@@ -1622,16 +1637,6 @@ parameters:
 
 		-
 			message: "#^Function entity_access_by_field_field_widget_single_element_form_alter\\(\\) has parameter \\$element with no type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/custom/entity_access_by_field/entity_access_by_field.module
-
-		-
-			message: "#^Function entity_access_by_field_field_widget_info_alter\\(\\) has parameter \\$info with no type specified\\.$#"
 			count: 1
 			path: modules/custom/entity_access_by_field/entity_access_by_field.module
 
@@ -2686,6 +2691,11 @@ parameters:
 			path: modules/custom/social_language/social_language.module
 
 		-
+			message: "#^Not allowed to call private function _content_translation_install_field_storage_definitions from module social_language\\.$#"
+			count: 1
+			path: modules/custom/social_language/social_language.module
+
+		-
 			message: "#^Variable \\$language_types in PHPDoc tag @var does not match assigned variable \\$language_negotiations\\.$#"
 			count: 1
 			path: modules/custom/social_language/social_language.module
@@ -2839,6 +2849,11 @@ parameters:
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/custom/social_magic_login/src/Service/MagicUrl.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_metatag\\.$#"
+			count: 1
+			path: modules/custom/social_metatag/social_metatag.module
 
 		-
 			message: "#^Function social_metatag_post_update_0001_fix_node_topic_defaults\\(\\) has no return type specified\\.$#"
@@ -3471,6 +3486,16 @@ parameters:
 			path: modules/social_features/social_activity/src/EmailTokenServices.php
 
 		-
+			message: "#^Not allowed to call private function _social_comment_get_summary from module social_activity\\.$#"
+			count: 2
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
+			message: "#^Not allowed to call private function _social_event_format_date from module social_activity\\.$#"
+			count: 1
+			path: modules/social_features/social_activity/src/EmailTokenServices.php
+
+		-
 			message: "#^Method Drupal\\\\social_activity\\\\Plugin\\\\ActivityEntityCondition\\\\GroupContentSingleActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_activity/src/Plugin/ActivityEntityCondition/GroupContentSingleActivityEntityCondition.php
@@ -3553,6 +3578,16 @@ parameters:
 		-
 			message: "#^Function social_album_update_8904\\(\\) has no return type specified\\.$#"
 			count: 1
+			path: modules/social_features/social_album/social_album.install
+
+		-
+			message: "#^Not allowed to call private function _social_core_blocks_paths from module social_album\\.$#"
+			count: 1
+			path: modules/social_features/social_album/social_album.install
+
+		-
+			message: "#^Not allowed to call private function _social_core_install_blocks from module social_album\\.$#"
+			count: 2
 			path: modules/social_features/social_album/social_album.install
 
 		-
@@ -4089,6 +4124,11 @@ parameters:
 			message: "#^Function social_book_social_user_account_header_create_links\\(\\) has parameter \\$context with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_book/social_book.module
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_book\\.$#"
+			count: 2
+			path: modules/social_features/social_book/src/Plugin/Block/GroupAddBookBlock.php
 
 		-
 			message: "#^Method Drupal\\\\social_book\\\\SocialBookConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -5926,11 +5966,6 @@ parameters:
 			path: modules/social_features/social_embed/social_embed.install
 
 		-
-			message: "#^Parameter \\#1 \\$format_id of function editor_load expects int, string given\\.$#"
-			count: 1
-			path: modules/social_features/social_embed/social_embed.post_update.php
-
-		-
 			message: "#^Function social_embed_update_10301\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_embed/social_embed.install
@@ -5941,9 +5976,19 @@ parameters:
 			path: modules/social_features/social_embed/social_embed.install
 
 		-
+			message: "#^Parameter \\#1 \\$format_id of function editor_load expects int, string given\\.$#"
+			count: 1
+			path: modules/social_features/social_embed/social_embed.post_update.php
+
+		-
 			message: "#^Unsafe access to private constant Drupal\\\\social_embed\\\\Form\\\\EmbedConsentForm\\:\\:SETTINGS through static\\:\\:\\.$#"
 			count: 3
 			path: modules/social_features/social_embed/src/Form/EmbedConsentForm.php
+
+		-
+			message: "#^Not allowed to call private function _filter_url_escape_comments from module social_embed\\.$#"
+			count: 2
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
 
 		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|null given\\.$#"
@@ -5954,6 +5999,11 @@ parameters:
 			message: "#^Parameter \\#3 \\$subject of function preg_replace_callback expects array\\|string, string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedConvertUrlToEmbedFilter.php
+
+		-
+			message: "#^Not allowed to call private function _filter_url from module social_embed\\.$#"
+			count: 1
+			path: modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlEmbedFilter.php
 
 		-
 			message: "#^Method Drupal\\\\social_embed\\\\SocialEmbedConfigOverride\\:\\:addEditorOverride\\(\\) has no return type specified\\.$#"
@@ -6287,6 +6337,16 @@ parameters:
 
 		-
 			message: "#^Function social_event_an_enroll_enrolments_export_update_dependencies\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.install
+
+		-
+			message: "#^Not allowed to call private function _enrolments_export_plugin_access from module social_event_an_enroll_enrolments_export\\.$#"
+			count: 3
+			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.install
+
+		-
+			message: "#^Not allowed to call private function _enrolments_export_plugin_mapping from module social_event_an_enroll_enrolments_export\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.install
 
@@ -6991,6 +7051,11 @@ parameters:
 
 		-
 			message: "#^Function social_event_managers_views_pre_view\\(\\) has parameter \\$display_id with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
+
+		-
+			message: "#^Not allowed to call private function _social_event_menu_local_tasks_routes from module social_event_managers\\.$#"
 			count: 1
 			path: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module
 
@@ -7964,6 +8029,11 @@ parameters:
 			path: modules/social_features/social_event/social_event.module
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_event\\.$#"
+			count: 1
+			path: modules/social_features/social_event/social_event.module
+
+		-
 			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\GroupInterface\\:\\:addMember\\(\\) expects Drupal\\\\user\\\\UserInterface, Drupal\\\\user\\\\Entity\\\\User\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_event/social_event.module
@@ -8709,6 +8779,11 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
 		-
+			message: "#^Not allowed to call private function _activity_basics_entity_action from module social_follow_tag\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
 			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorageInterface\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
@@ -8730,6 +8805,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_follow_tag\\\\Plugin\\\\ActivityContext\\\\FollowTagActivityContext\\:\\:getRecipientsWhoFollowTaxonomy\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_follow_tag\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
@@ -8934,6 +9014,11 @@ parameters:
 			path: modules/social_features/social_footer/social_footer.module
 
 		-
+			message: "#^Not allowed to call private function _editor_parse_file_uuids from module social_footer\\.$#"
+			count: 1
+			path: modules/social_features/social_footer/social_footer.module
+
+		-
 			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
 			count: 2
 			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
@@ -8945,6 +9030,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_footer\\\\Form\\\\FooterSettingsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
+
+		-
+			message: "#^Not allowed to call private function _editor_parse_file_uuids from module social_footer\\.$#"
 			count: 1
 			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
 
@@ -8999,6 +9089,11 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_default_route/src/RouteSubscriber/RouteSubscriber.php
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_flexible_group_book\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
+
+		-
 			message: "#^Offset 'bid' does not exist on Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/social_flexible_group_book.module
@@ -9037,6 +9132,11 @@ parameters:
 			message: "#^Result of && is always false\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/ActivityEntityCondition/BookParentOnlyActivityEntityCondition.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_flexible_group_book\\.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_book/src/Plugin/Block/GroupAddBookBlock.php
 
 		-
 			message: "#^Cannot call method clear\\(\\) on Drupal\\\\search_api\\\\Entity\\\\Index\\|null\\.$#"
@@ -9324,6 +9424,16 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
 		-
+			message: "#^Not allowed to call private function _social_group_cache_tags from module social_group_flexible_group\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_flexible_group\\.$#"
+			count: 3
+			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
+
+		-
 			message: "#^Parameter \\#2 \\$join of method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\Sql\\:\\:addRelationship\\(\\) expects Drupal\\\\views\\\\Plugin\\\\views\\\\join\\\\JoinPluginBase, object given\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
@@ -9339,12 +9449,22 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_flexible_group\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/src/Access/FlexibleGroupJoinPermissionAccessCheck.php
+
+		-
 			message: "#^Method Drupal\\\\social_group_flexible_group\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:checkForRedirection\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/EventSubscriber/RedirectSubscriber.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_flexible_group\\\\EventSubscriber\\\\RedirectSubscriber\\:\\:doRedirect\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_flexible_group/src/EventSubscriber/RedirectSubscriber.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_flexible_group\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_flexible_group/src/EventSubscriber/RedirectSubscriber.php
 
@@ -9435,6 +9555,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_group_gvbo\\\\Form\\\\SocialGroupViewsBulkOperationsConfigureAction\\:\\:submitForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfigureAction.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_gvbo\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfigureAction.php
 
@@ -9644,6 +9769,16 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_invite\\.$#"
+			count: 3
+			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_group_invite_value from module social_group_invite\\.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
+
+		-
 			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\Core\\\\Entity\\\\EntityViewBuilderInterface\\:\\:view\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityInterface, Drupal\\\\block\\\\Entity\\\\Block\\|null given\\.$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module
@@ -9729,8 +9864,23 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_invite\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_invite\\.$#"
+			count: 2
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php
+
+		-
 			message: "#^Method Drupal\\\\social_group_invite\\\\Plugin\\\\views\\\\field\\\\SocialGroupInviteViewsBulkOperationsBulkForm\\:\\:viewsFormValidate\\(\\) has parameter \\$form with no type specified\\.$#"
 			count: 1
+			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_invite\\.$#"
+			count: 2
 			path: modules/social_features/social_group/modules/social_group_invite/src/Plugin/views/field/SocialGroupInviteViewsBulkOperationsBulkForm.php
 
 		-
@@ -9984,6 +10134,11 @@ parameters:
 			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_request\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 2
 			path: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php
@@ -10067,6 +10222,11 @@ parameters:
 			message: "#^Property Drupal\\\\social_group_request\\\\Form\\\\GroupRequestMembershipRequestForm\\:\\:\\$group \\(Drupal\\\\group\\\\Entity\\\\GroupInterface\\) does not accept Drupal\\\\group\\\\Entity\\\\GroupInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_group_request\\.$#"
+			count: 1
+			path: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php
 
 		-
 			message: "#^Method Drupal\\\\social_group_request\\\\Routing\\\\SocialGroupRequestRouteSubscriber\\:\\:alterRoutes\\(\\) has no return type specified\\.$#"
@@ -10520,6 +10680,11 @@ parameters:
 
 		-
 			message: "#^Function social_group_update_dependencies\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.install
+
+		-
+			message: "#^Not allowed to call private function _social_event_views_update from module social_group\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.install
 
@@ -11949,16 +12114,6 @@ parameters:
 			path: modules/social_features/social_like/src/SocialLikeConfigOverride.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\symfony_mailer\\\\AddressInterface\\:\\:toString\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php
-
-		-
 			message: "#^Function _social_mentions_set_default_config\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/social_mentions.install
@@ -12687,6 +12842,11 @@ parameters:
 			path: modules/social_features/social_post/social_post.module
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_post\\.$#"
+			count: 1
+			path: modules/social_features/social_post/social_post.module
+
+		-
 			message: "#^Cannot call method fetchAll\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_post/social_post.post_update.php
@@ -12807,6 +12967,11 @@ parameters:
 			path: modules/social_features/social_post/src/Form/PostForm.php
 
 		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_post\\.$#"
+			count: 2
+			path: modules/social_features/social_post/src/Form/PostForm.php
+
+		-
 			message: "#^Parameter \\#1 \\$form_display of method Drupal\\\\Core\\\\Entity\\\\ContentEntityForm\\:\\:setFormDisplay\\(\\) expects Drupal\\\\Core\\\\Entity\\\\Display\\\\EntityFormDisplayInterface, Drupal\\\\Core\\\\Entity\\\\Entity\\\\EntityFormDisplay\\|null given\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Form/PostForm.php
@@ -12858,6 +13023,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Access\\\\AccessResultInterface\\:\\:addCacheContexts\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/Plugin/Block/PostGroupBlock.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_post\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/Plugin/Block/PostGroupBlock.php
 
@@ -13153,6 +13323,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_post\\\\PostAccessControlHandler\\:\\:checkDefaultAccess\\(\\) has parameter \\$operation with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_post/src/PostAccessControlHandler.php
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_post\\.$#"
 			count: 1
 			path: modules/social_features/social_post/src/PostAccessControlHandler.php
 
@@ -13865,6 +14040,11 @@ parameters:
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/Plugin/Validation/Constraint/UniqueNicknameValidator.php
 
 		-
+			message: "#^Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_fields\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_fields/src/Plugin/Validation/Constraint/UniqueNicknameValidator.php
+
+		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$address_line1\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_fields/src/SocialProfileFieldsBatch.php
@@ -13976,6 +14156,11 @@ parameters:
 
 		-
 			message: "#^Function social_profile_manager_notes_theme\\(\\) has parameter \\$type with no type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.module
+
+		-
+			message: "#^Not allowed to call private function _social_profile_get_profile_from_route from module social_profile_manager_notes\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.module
 
@@ -14713,17 +14898,17 @@ parameters:
 			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/CategorizedOptionsbuttonsWidget.php
 
 		-
-			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget\\:\\:setSocialProfileTagService\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\select2\\\\Plugin\\\\Field\\\\FieldWidget\\\\Select2EntityReferenceWidget\\:\\:setSocialProfileTagService\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
 
 		-
 			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget\\:\\:create\\(\\) should return Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget but returns Drupal\\\\select2\\\\Plugin\\\\Field\\\\FieldWidget\\\\Select2EntityReferenceWidget\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
+
+		-
+			message: "#^Method Drupal\\\\social_profile\\\\Plugin\\\\Field\\\\FieldWidget\\\\SocialProfileTagSplitWidget\\:\\:setSocialProfileTagService\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/SocialProfileTagSplitWidget.php
 
@@ -15163,9 +15348,34 @@ parameters:
 			path: modules/social_features/social_swiftmail/social_swiftmail.install
 
 		-
+			message: "#^Not allowed to call private function _addresses_to_string from module social_swiftmail\\.$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/social_swiftmail.module
+
+		-
+			message: "#^Not allowed to call private function _activity_send_email_default_template_items from module social_swiftmail\\.$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Form/SettingsForm.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/InlineCssEmailAdjuster.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\symfony_mailer\\\\AddressInterface\\:\\:toString\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_swiftmail/src/Plugin/EmailAdjuster/Reroute.php
+
+		-
 			message: "#^Method Drupal\\\\social_swiftmail\\\\Plugin\\\\Mail\\\\SocialSwiftMailer\\:\\:massageMessageBody\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_swiftmail/src/Plugin/Mail/SocialSwiftMailer.php
+
+		-
+			message: "#^Not allowed to call private function _social_profile_field_definitions_update from module social_tagging\\.$#"
+			count: 2
+			path: modules/social_features/social_tagging/social_tagging.install
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
@@ -15540,6 +15750,11 @@ parameters:
 		-
 			message: "#^Function social_topic_widget_alter\\(\\) has no return type specified\\.$#"
 			count: 1
+			path: modules/social_features/social_topic/social_topic.module
+
+		-
+			message: "#^Not allowed to call private function _social_group_get_current_group from module social_topic\\.$#"
+			count: 2
 			path: modules/social_features/social_topic/social_topic.module
 
 		-
@@ -16029,6 +16244,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_user\\\\Form\\\\SocialUserPasswordForm\\:\\:validateForm\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
+
+		-
+			message: "#^Not allowed to call private function _user_mail_notify from module social_user\\.$#"
 			count: 1
 			path: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php
 
