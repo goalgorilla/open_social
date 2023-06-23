@@ -122,10 +122,12 @@ jobs:
         run: cp $GITHUB_WORKSPACE/tmp/repository/phpcs.xml phpcs.xml
 
       - name: Run PHPCS checks
+        id: phpcs
         run: vendor/bin/phpcs  --report-full --report-checkstyle=./phpcs-report.xml
 
       # https://github.com/staabm/annotate-pull-request-from-checkstyle#using-php_codesniffer
       - name: Show PHPCS results in PR
+        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
         run: cs2pr ./phpcs-report.xml
 
   phpunit:
