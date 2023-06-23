@@ -146,8 +146,11 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
     if ($entity->getEntityTypeId() === 'node') {
       $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
-      if ($entity instanceof NodeInterface) {
-        $term_ids = social_follow_taxonomy_terms_list($entity);
+      if ($entity instanceof NodeInterface && $entity->hasField('field_social_tagging')) {
+        $term_ids = array_map(
+          fn (array $v) => $v['target_id'],
+          $entity->get('field_social_tagging')->getValue()
+        );
 
         foreach ($term_ids as $term_id) {
           $flag = $storage->loadByProperties([
@@ -175,8 +178,11 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
     if ($entity->getEntityTypeId() === 'post') {
       $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
-      if ($entity instanceof PostInterface) {
-        $term_ids = social_follow_taxonomy_terms_list($entity);
+      if ($entity instanceof PostInterface && $entity->hasField('field_social_tagging')) {
+        $term_ids = array_map(
+          fn (array $v) => $v['target_id'],
+          $entity->get('field_social_tagging')->getValue()
+        );
 
         foreach ($term_ids as $term_id) {
           $flag = $storage->loadByProperties([
@@ -314,24 +320,6 @@ function social_follow_taxonomy_related_entity_count(TermInterface $term, $field
     ->alter('social_follow_taxonomy_related_items', $items, $term);
 
   return count($items);
-}
-
-/**
- * Provide an array of terms related to entity.
- *
- * @param Drupal\Core\Entity\EntityInterface $entity
- *   Related entity.
- *
- * @return array
- *   List of term ids.
- */
-function social_follow_taxonomy_terms_list(EntityInterface $entity) {
-  $term_ids = [];
-
-  \Drupal::moduleHandler()
-    ->alter('social_follow_taxonomy_terms_list', $term_ids, $entity);
-
-  return $term_ids;
 }
 
 /**
