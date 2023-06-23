@@ -168,40 +168,44 @@ class ActivityLoggerFactory {
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $messagetype) {
-      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', NULL);
+      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
       $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
       $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
-      if (!empty($mt_entity_condition)
+      if ($mt_action !== $action) {
+        continue;
+      }
+
+      $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
+      if (!in_array($entity_bundle_name, $mt_entity_bundles, TRUE)) {
+        continue;
+      }
+
+      if (!$this->activityContextManager->hasDefinition($mt_context)) {
+        continue;
+      }
+
+      if (
+        !empty($mt_entity_condition)
         && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)
+        && !$this->activityEntityConditionManager->createInstance($mt_entity_condition)->isValidEntityCondition($entity)
       ) {
-        $entity_condition_plugin = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
-        $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
-      }
-      else {
-        $entity_condition = TRUE;
+        continue;
       }
 
-      if ($this->activityContextManager->hasDefinition($mt_context)) {
-        $context_plugin = $this->activityContextManager->createInstance($mt_context);
-
-        $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
-        if (in_array($entity_bundle_name, $mt_entity_bundles)
-          && $context_plugin->isValidEntity($entity)
-          && $entity_condition
-          && $action === $mt_action
-        ) {
-          $messagetypes[$key] = [
-            'messagetype' => $messagetype,
-            'bundle' => $entity_bundle_name,
-            'destinations' => $mt_destinations,
-            'context' => $mt_context,
-          ];
-        }
+      $context_plugin = $this->activityContextManager->createInstance($mt_context);
+      if ($context_plugin->isValidEntity($entity)) {
+        $messagetypes[$key] = [
+          'messagetype' => $messagetype,
+          'bundle' => $entity_bundle_name,
+          'destinations' => $mt_destinations,
+          'context' => $mt_context,
+        ];
       }
     }
+
     // Return the message types that belong to the requested action.
     return $messagetypes;
   }
