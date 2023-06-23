@@ -104,7 +104,8 @@ function _social_tagging_update_search_index_for_tagging(): void {
     $index->removeField("social_tagging");
   }
   else {
-    // Ensure the aggregated field processor is there to actually fill our field.
+    // Ensure the aggregated field processor is there to actually fill our
+    // field.
     if (!$index->isValidProcessor("aggregated_field")) {
       $index->addProcessor(
         \Drupal::getContainer()
@@ -164,7 +165,6 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   if (!\Drupal::configFactory()->get('social_tagging.settings')->get('enable_content_tagging')) {
     return;
   }
-
 
   /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
   $term_storage = \Drupal::service("entity_type.manager")->getStorage("taxonomy_term");

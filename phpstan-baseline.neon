@@ -5816,17 +5816,7 @@ parameters:
 			path: modules/social_features/social_core/src/InviteService.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\social_tagging\\\\SocialTaggingService\\:\\:getCurrentRequest\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php
-
-		-
 			message: "#^Parameter \\#1 \\$title of method Drupal\\\\Core\\\\Block\\\\Plugin\\\\Block\\\\PageTitleBlock\\:\\:setTitle\\(\\) expects array\\|string, array\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php
-
-		-
-			message: "#^Property Drupal\\\\social_core\\\\Plugin\\\\Block\\\\SocialPageTitleBlock\\:\\:\\$requestStack \\(Drupal\\\\social_tagging\\\\SocialTaggingService\\) does not accept Symfony\\\\Component\\\\HttpFoundation\\\\RequestStack\\.$#"
 			count: 1
 			path: modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php
 
@@ -8719,31 +8709,6 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.install
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function _social_follow_landing_page_entity_validate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function _social_follow_landing_page_entity_validate\\(\\) has parameter \\$element with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_preprocess_paragraph\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
-			message: "#^Function social_follow_landing_page_preprocess_paragraph\\(\\) has parameter \\$variables with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
-
-		-
 			message: "#^Function social_follow_landing_page_theme\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.module
@@ -8814,52 +8779,12 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
 
 		-
-			message: "#^Function social_follow_tag_entity_update\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
-			message: "#^Function social_follow_tag_preprocess_social_tagging_nosplit\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
-			message: "#^Function social_follow_tag_preprocess_social_tagging_nosplit\\(\\) has parameter \\$variables with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
-			message: "#^Function social_follow_tag_preprocess_social_tagging_split\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
-			message: "#^Function social_follow_tag_preprocess_social_tagging_split\\(\\) has parameter \\$variables with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
 			message: "#^Function social_follow_tag_theme\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
 		-
-			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorageInterface\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
-
-		-
 			message: "#^Cannot call method fetchCol\\(\\) on Drupal\\\\Core\\\\Database\\\\StatementInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
-
-		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
-
-		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
@@ -8874,9 +8799,24 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php
 
 		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			message: "#^\\#lazy_builder callback array\\{'Drupal\\\\\\\\social_follow_tag\\\\\\\\SocialFollowTagLazyBuilder', 'lazyBuild'\\} at key '0' is not callable\\.$#"
 			count: 1
-			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/Block/FollowTagBlock.php
+
+		-
+			message: "#^Cannot access property \\$entity on Drupal\\\\Core\\\\Field\\\\Plugin\\\\Field\\\\FieldType\\\\EntityReferenceItem\\<mixed\\>\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/Field/FieldFormatter/FollowTagSplitFormatter.php
+
+		-
+			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/Field/FieldFormatter/FollowTagSplitFormatter.php
+
+		-
+			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_term_followed expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/Field/FieldFormatter/FollowTagSplitFormatter.php
 
 		-
 			message: "#^Method Drupal\\\\social_follow_tag\\\\SocialFollowTagOverrides\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
@@ -9009,27 +8949,7 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
 		-
-			message: "#^Cannot call method getOwnerId\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
-
-		-
-			message: "#^Cannot call method id\\(\\) on Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
-
-		-
 			message: "#^Method Drupal\\\\social_follow_taxonomy\\\\Plugin\\\\ActivityContext\\\\FollowTaxonomyActivityContext\\:\\:getRecipientsWhoFollowTaxonomy\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
-
-		-
-			message: "#^Method Drupal\\\\social_follow_taxonomy\\\\Plugin\\\\ActivityContext\\\\FollowTaxonomyActivityContext\\:\\:taxonomyTermsList\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
-
-		-
-			message: "#^Method Drupal\\\\social_follow_taxonomy\\\\Plugin\\\\ActivityContext\\\\FollowTaxonomyActivityContext\\:\\:taxonomyTermsList\\(\\) has parameter \\$entity with no type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
@@ -14574,16 +14494,6 @@ parameters:
 			path: modules/social_features/social_profile/social_profile.module
 
 		-
-			message: "#^Function social_profile_block_access\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
-			message: "#^Function social_profile_block_access\\(\\) has parameter \\$operation with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_profile/social_profile.module
-
-		-
 			message: "#^Function social_profile_entity_base_field_info\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_profile/social_profile.module
@@ -15394,46 +15304,6 @@ parameters:
 			path: modules/social_features/social_swiftmail/src/Plugin/Mail/SocialSwiftMailer.php
 
 		-
-			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:get\\(\\)\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_entity_delete\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_overview_terms_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_overview_terms_alter\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_overview_terms_alter\\(\\) has parameter \\$form_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_term_social_tagging_form_alter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_term_social_tagging_form_alter\\(\\) has parameter \\$form with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_form_taxonomy_term_social_tagging_form_alter\\(\\) has parameter \\$form_id with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
 			message: "#^Function social_tagging_form_views_exposed_form_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
@@ -15459,54 +15329,9 @@ parameters:
 			path: modules/social_features/social_tagging/social_tagging.module
 
 		-
-			message: "#^Function social_tagging_preprocess_profile\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_theme\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_theme\\(\\) has parameter \\$existing with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_theme\\(\\) has parameter \\$path with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_theme\\(\\) has parameter \\$theme with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Function social_tagging_theme\\(\\) has parameter \\$type with no type specified\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
 			message: "#^Function social_tagging_views_query_alter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Delete\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int\\|string\\|null given\\.$#"
-			count: 2
-			path: modules/social_features/social_tagging/social_tagging.module
-
-		-
-			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
-			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
-
-		-
-			message: "#^Parameter \\#1 \\$tid of method Drupal\\\\taxonomy\\\\TermStorage\\:\\:loadParents\\(\\) expects int, int\\|string\\|null given\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 
 		-
 			message: "#^Function _social_topic_create_menu_links\\(\\) has no return type specified\\.$#"
