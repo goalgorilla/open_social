@@ -10,7 +10,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\TermInterface;
 
 /**
  * Implements hook_token_info().
@@ -95,17 +94,18 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                     $display_name = mb_strtolower((string) $node_type->label());
 
                     // Get the names of terms related to the content.
-                    $term_ids = social_follow_taxonomy_terms_list($entity);
+                    $term_ids = $entity->hasField('field_social_tagging') ? array_map(
+                      fn (array $v) => $v['target_id'],
+                      $entity->get('field_social_tagging')->getValue()
+                    ) : [];
+                    /** @var Drupal\taxonomy\TermInterface[] $terms */
+                    $terms = \Drupal::entityTypeManager()
+                      ->getStorage('taxonomy_term')
+                      ->loadMultiple($term_ids);
                     $term_names = [];
-                    foreach ($term_ids as $term_id) {
-                      /** @var \Drupal\taxonomy\TermInterface $term */
-                      $term = \Drupal::entityTypeManager()
-                        ->getStorage('taxonomy_term')
-                        ->load($term_id);
-                      if ($term instanceof TermInterface) {
-                        if (social_follow_taxonomy_term_followed($term)) {
-                          $term_names[] = $term->getName();
-                        }
+                    foreach ($terms as $term) {
+                      if (social_follow_taxonomy_term_followed($term)) {
+                        $term_names[] = $term->getName();
                       }
                     }
                   }
