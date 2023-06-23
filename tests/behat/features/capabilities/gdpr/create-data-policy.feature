@@ -21,6 +21,7 @@ Feature: Create data policy and view new policy
     Then I should see the link "Add new entity"
     When I click "Add new entity"
     Then I should be on "/admin/config/people/data-policy/add"
+    And I wait for "1" seconds
     And I should see the text "Name"
     And I should see the text "Description"
     And I fill in "Name" with "First version of the data policy"
@@ -34,6 +35,7 @@ Feature: Create data policy and view new policy
     And I click "Revisions" on the row containing "First version of the data policy"
     Then I should see the link "Add new revision"
     And I click "Add new revision"
+    And I wait for "1" seconds
     And I should see the text "Name"
     And I should see the text "Description"
     And I should see the text "Revision log message"
@@ -63,6 +65,7 @@ Feature: Create data policy and view new policy
     Then I click the xth "0" element with the css ".revisions.dropbutton-action a"
     And I should see the link "Add new revision"
     And I click "Add new revision"
+    And I wait for "1" seconds
     And I should see the text "Name"
     And I should see the text "Description"
     And I should see the text "Revision log message"
