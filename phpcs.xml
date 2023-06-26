@@ -29,6 +29,9 @@
         <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
         <!-- This was introduced in 8.3.16 and we have some _private functions that don't adhere to it -->
         <exclude name="Drupal.NamingConventions.ValidFunctionName.InvalidPrefix" />
+        <!-- We have some big refactors in flight for which fixing all the use-statements is prohibitively disruptive.
+        We push this backwards -->
+        <exclude name="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses.IncorrectlyOrderedUses" />
     </rule>
 
 </ruleset>
