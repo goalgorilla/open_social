@@ -133,7 +133,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   protected function getEntityIds() {
-    $query = $this->getStorage()->getQuery();
+    $query = $this->getStorage()->getQuery()->accessCheck();
 
     // Add table sorting functionality.
     $headers = $this->buildHeader();

@@ -42,7 +42,7 @@ class SocialGroupSelection extends DefaultSelection {
     $storage = $this->entityTypeManager->getStorage('group_type');
 
     if (!$all_group_types) {
-      $all_group_types = $storage->getQuery()->execute();
+      $all_group_types = $storage->getQuery()->accessCheck()->execute();
     }
 
     $excluded_group_types = [];

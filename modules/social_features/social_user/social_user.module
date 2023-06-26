@@ -380,11 +380,13 @@ function social_user_is_blocked($name_or_mail) {
   $is_blocked_name = (bool) \Drupal::entityQuery('user')
     ->condition('name', $name_or_mail)
     ->condition('status', 0)
+    ->accessCheck(FALSE)
     ->execute();
 
   $is_blocked_mail = (bool) \Drupal::entityQuery('user')
     ->condition('mail', $name_or_mail)
     ->condition('status', 0)
+    ->accessCheck(FALSE)
     ->execute();
 
   if ($is_blocked_name || $is_blocked_mail) {

@@ -21,6 +21,10 @@ use Drupal\search_api\Task\TaskInterface;
 
 /**
  * Activity statuses.
+ *
+ * We disable the constant naming convention because it would be a breaking
+ * change for our notification system.
+ * @phpcs:disable Drupal.Semantics.ConstantName.ConstConstantStart
  */
 const ACTIVITY_STATUS_RECEIVED = 1;
 const ACTIVITY_STATUS_SEEN = 2;

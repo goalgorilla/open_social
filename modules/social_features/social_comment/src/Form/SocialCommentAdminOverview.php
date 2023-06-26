@@ -171,6 +171,7 @@ class SocialCommentAdminOverview extends FormBase {
     ];
     $cids = $this->commentStorage->getQuery()
       ->condition('status', $status)
+      ->accessCheck()
       ->tableSort($header)
       ->pager(50)
       ->execute();

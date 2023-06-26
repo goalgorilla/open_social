@@ -65,6 +65,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
     return $this->storage->getQuery()
       ->condition('field_event', $node->id())
       ->condition('field_enrollment_status', 1)
+      ->accessCheck()
       ->count()
       ->execute();
   }

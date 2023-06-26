@@ -60,7 +60,8 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       // Get all the blocks from this custom block type.
       $storage = self::getBlockContent();
       $query = $storage->getQuery()
-        ->condition('type', 'custom_content_list');
+        ->condition('type', 'custom_content_list')
+        ->accessCheck();
       $ids = $query->execute();
 
       foreach ($ids as $id) {

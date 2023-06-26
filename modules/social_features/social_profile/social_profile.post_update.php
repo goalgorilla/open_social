@@ -19,7 +19,7 @@ function social_profile_post_update_10101_profile_names_update(&$sandbox) {
       ->condition('type', 'profile')
       ->accessCheck(FALSE);
     $sandbox['ids'] = $query->execute();
-    $sandbox['count'] = $query->count()->execute();
+    $sandbox['count'] = count($sandbox['ids']);
   }
 
   $ids = array_splice($sandbox['ids'], 0, 50);
