@@ -224,7 +224,7 @@ function social_tagging_update_12000() : void {
         // it's present.
         $field_group = $form_display->getThirdPartySetting(
           "field_group",
-          "group_social_tags",
+          "group_social_tagging",
           [
             "children" => [],
             "parent_name" => '',
@@ -244,7 +244,7 @@ function social_tagging_update_12000() : void {
         $field_group["region"] = "content";
         $field_group["children"][] = "field_social_tagging";
         $field_group["children"] = array_filter($field_group["children"], fn ($f) => $f !== "social_tagging");
-        $form_display->setThirdPartySetting("field_group", "group_social_tags", $field_group);
+        $form_display->setThirdPartySetting("field_group", "group_social_tagging", $field_group);
 
         $form_display->save();
       }
