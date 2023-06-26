@@ -360,6 +360,7 @@ function social_group_request_preprocess_page_title(&$variables) {
     ->condition('type', $contentTypeConfigId)
     ->condition('gid', $group->id())
     ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+    ->accessCheck()
     ->count()
     ->execute();
 

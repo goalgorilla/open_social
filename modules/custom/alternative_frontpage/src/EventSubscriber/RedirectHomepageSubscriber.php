@@ -271,6 +271,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     $entity = $this->entityTypeManager->getStorage('alternative_frontpage')
       ->getQuery()
       ->condition('roles_target_id', $role)
+      ->accessCheck()
       ->execute();
 
     return (string) key((array) $entity);

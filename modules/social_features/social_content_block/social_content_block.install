@@ -316,6 +316,7 @@ function social_content_block_update_8002(&$sandbox) {
     $sandbox['total'] = \Drupal::entityQuery('block_content')
       ->condition('type', 'custom_content_list')
       ->notExists('field_plugin_id')
+      ->accessCheck()
       ->count()
       ->execute();
 
@@ -337,6 +338,7 @@ function social_content_block_update_8002(&$sandbox) {
   $entity_ids = \Drupal::entityQuery('block_content')
     ->condition('type', 'custom_content_list')
     ->notExists('field_plugin_id')
+    ->accessCheck()
     ->sort('id')
     ->range(0, $sandbox['limit'])
     ->execute();

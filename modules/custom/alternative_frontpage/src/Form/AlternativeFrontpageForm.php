@@ -204,6 +204,7 @@ class AlternativeFrontpageForm extends EntityForm {
   public function exist($id): bool {
     $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()
       ->condition('id', $id)
+      ->accessCheck()
       ->execute();
     return (bool) $entity;
   }
@@ -223,6 +224,7 @@ class AlternativeFrontpageForm extends EntityForm {
     $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()
       ->condition('roles_target_id', $roles_target_id)
       ->condition('id', $id, '<>')
+      ->accessCheck()
       ->execute();
     return (bool) $entity;
   }

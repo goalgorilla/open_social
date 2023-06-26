@@ -41,6 +41,7 @@ class UserSelection extends UserSelectionBase {
     $uids = $this->entityTypeManager->getStorage('user')->getQuery()
       ->condition('roles', $rids, 'IN')
       ->condition('uid', $this->currentUser->id(), '<>')
+      ->accessCheck()
       ->execute();
 
     $query = parent::buildEntityQuery($match, $match_operator, $ids);

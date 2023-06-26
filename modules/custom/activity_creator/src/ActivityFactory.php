@@ -313,6 +313,7 @@ class ActivityFactory extends ControllerBase {
             ->getQuery();
           $comment_query->condition('entity_id', $commented_entity->id(), '=');
           $comment_query->condition('entity_type', $commented_entity->getEntityTypeId(), '=');
+          $comment_query->accessCheck();
           $comment_ids = $comment_query->execute();
         }
         // Get all activities provided by comments of commented entity.
@@ -324,6 +325,7 @@ class ActivityFactory extends ControllerBase {
           // destinations from aggregation.
           $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('isAggregatable', TRUE);
           $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
+          $activity_query->accessCheck();
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);

@@ -47,6 +47,7 @@ class EntityTypeCount extends ShareUsageDataPluginBase {
 
           $query = \Drupal::entityQuery($entity_type_id);
           $query->condition($bundle_key, $bundle_id);
+          $query->accessCheck();
           $query->count();
           $count = $query->execute();
 
@@ -61,6 +62,7 @@ class EntityTypeCount extends ShareUsageDataPluginBase {
 
       $storage = $this->entityTypeManager->getStorage($entity_type_id);
       $query = $storage->getAggregateQuery();
+      $query->accessCheck();
       $query->count();
       $count = $query->execute();
 

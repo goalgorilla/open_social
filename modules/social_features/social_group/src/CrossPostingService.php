@@ -84,6 +84,7 @@ class CrossPostingService {
       // Check access to groups.
       $gids = $this->groupStorage->getQuery()
         ->condition('id', $gids, 'IN')
+        ->accessCheck()
         ->execute();
     }
 
@@ -137,6 +138,7 @@ class CrossPostingService {
     if ($gids) {
       // Check access to groups.
       $gids = $this->groupStorage->getQuery()
+        ->accessCheck()
         ->condition('id', $gids, 'IN')
         ->execute();
     }
