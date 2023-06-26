@@ -255,6 +255,29 @@ function social_tagging_update_12000() : void {
       }
     }
 
+    // Tags on nodes are shown in a block on the side and for groups they're
+    // shown in a block at the bottom (we could show them as a field too, but
+    // we've followed what we did historically and leave the next improvement to
+    // someone else). Only for profiles do we need to make sure the field is
+    // shown on the profile display.
+    $profile_view_display = EntityViewDisplay::load("profile.profile.default");
+    if ($profile_view_display !== NULL) {
+      $profile_view_display->setComponent(
+        "field_social_tagging",
+        [
+          "type" => "social_tag_split",
+          "label" => "hidden",
+          "settings" => [
+            "link" => TRUE,
+          ],
+          "third_party_settings" => [],
+          "weight" => 6,
+          "region" => "content",
+        ]
+      );
+      $profile_view_display->save();
+    }
+
     // Migrate all the data from the old field directly in the database, this is
     // more performant than loading all the entities.
     // Security: This does not pose a SQL injection threat because the inserted
