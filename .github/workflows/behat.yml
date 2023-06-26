@@ -23,8 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: sudo apt-get install jq
-
       - name: Find feature files
         id: set-matrix
         run: |
@@ -39,7 +37,7 @@ jobs:
     name: "Install previous Open Social major version"
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/goalgorilla/open-social-dev-php:cli-7.4-3.16
+      image: ghcr.io/goalgorilla/open-social-ci-php:cli-7.4-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -84,7 +82,6 @@ jobs:
         run: |
           set -e
 
-          apt-get install -y jq
           # This gets all version info from composer for Open Social. We then
           # use jq to traverse and manipulate the JSON data to find ourselves
           # the last stable major version before the current stable major
@@ -140,7 +137,7 @@ jobs:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/goalgorilla/open-social-dev-php:cli-8.0-3.16
+      image: ghcr.io/goalgorilla/open-social-ci-php:cli-8.0-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -269,7 +266,7 @@ jobs:
     name: 'Tests'
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/goalgorilla/open-social-dev-php:fpm-8.0-3.16
+      image: ghcr.io/goalgorilla/open-social-ci-php:fpm-8.0-3.16
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -286,7 +283,7 @@ jobs:
 
     services:
       web:
-        image: ghcr.io/goalgorilla/open-social-dev-router:nginx-1.25.1-3.17
+        image: ghcr.io/goalgorilla/open-social-ci-router:nginx-1.25.1-3.17
         env:
           DRUPAL_SETTINGS: production
         volumes:
