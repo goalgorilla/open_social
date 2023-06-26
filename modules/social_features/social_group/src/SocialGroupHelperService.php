@@ -321,6 +321,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     /** @var array $group_types */
     $group_types = $this->entityTypeManager->getStorage('group_type')
       ->getQuery()
+      ->accessCheck()
       ->execute();
 
     // Get all available group types.

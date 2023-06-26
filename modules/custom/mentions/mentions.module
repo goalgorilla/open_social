@@ -106,6 +106,7 @@ function mentions_entity_delete(EntityInterface $entity): void {
   $mention_ids = \Drupal::entityQuery('mentions')
     ->condition('entity_id', $entity->id())
     ->condition('entity_type', $entity->getEntityTypeId())
+    ->accessCheck()
     ->execute();
 
   $storage_handler = \Drupal::entityTypeManager()->getStorage('mentions');
@@ -128,6 +129,7 @@ function mentions_crud_update(string $type, array $mentions, int $id, int $autho
   $mention_ids = \Drupal::entityQuery('mentions')
     ->condition('entity_type', $type)
     ->condition('entity_id', $id)
+    ->accessCheck()
     ->execute();
   foreach ($mentions_storage->loadMultiple($mention_ids) as $entity) {
     // Make sure the uid value is available.

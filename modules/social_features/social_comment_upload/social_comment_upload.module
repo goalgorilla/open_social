@@ -82,6 +82,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
           ->condition('entity_type', $comment->getCommentedEntityTypeId())
           ->condition('entity_id', $comment->getCommentedEntityId())
           ->condition('pid', $comment->id())
+          ->accessCheck()
           ->count()
           ->execute();
 

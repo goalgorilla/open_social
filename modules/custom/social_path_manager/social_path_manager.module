@@ -106,7 +106,7 @@ function social_path_manager_batch_alter(&$batch) {
  * @throws \Exception
  */
 function _social_path_manager_update_group_tab_aliases($id, $action) {
-  $group_ids = array_keys(\Drupal::entityQuery('group')->execute());
+  $group_ids = array_keys(\Drupal::entityQuery('group')->accessCheck()->execute());
   $created = 0;
 
   $groups = Group::loadMultiple($group_ids);

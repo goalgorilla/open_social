@@ -48,7 +48,7 @@ abstract class NotificationConfigEntityBase extends ConfigEntityBase implements 
       $this->set('created', \Drupal::time()->getRequestTime());
       // Set unique id.
       $storage = \Drupal::entityTypeManager()->getStorage($this->getEntityTypeId());
-      $ids = (array) \Drupal::entityQuery($this->getEntityTypeId())->execute();
+      $ids = (array) \Drupal::entityQuery($this->getEntityTypeId())->accessCheck()->execute();
       $list = $storage->loadMultiple($ids);
       $unique_ids = [0];
       foreach ($list as $entity) {

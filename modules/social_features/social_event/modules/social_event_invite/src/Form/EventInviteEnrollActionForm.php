@@ -177,7 +177,6 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
         $this->messenger()->deleteAll();
         // Accept the invite.
         $enrollment->field_enrollment_status->value = '1';
-        // @phpstan-ignore-next-line
         $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
 
         // If decline is chosen, set invite to declined.
@@ -185,7 +184,6 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
           // Delete any messages since it would show a 'successful enrollment'.
           $this->messenger()->deleteAll();
           $enrollment->field_enrollment_status->value = '0';
-          // @phpstan-ignore-next-line
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         }
         $enrollment->save();

@@ -144,6 +144,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       ->condition('type', $content_type_config_id)
       ->condition('gid', $this->group->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+      ->accessCheck()
       ->count()
       ->execute();
 

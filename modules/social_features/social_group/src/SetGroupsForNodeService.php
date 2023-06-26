@@ -62,6 +62,7 @@ class SetGroupsForNodeService {
     // moved.
     if ((empty($original_groups) || $original_groups != $groups_to_add)) {
       $entity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
+      $entity_query->accessCheck();
       $entity_query->condition('field_activity_entity.target_id', $node->id(), '=');
       $entity_query->condition('field_activity_entity.target_type', 'node', '=');
 

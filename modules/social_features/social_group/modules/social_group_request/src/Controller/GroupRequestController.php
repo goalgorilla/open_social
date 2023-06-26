@@ -133,6 +133,7 @@ class GroupRequestController extends ControllerBase {
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser()->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+      ->accessCheck()
       ->count()
       ->execute();
 
