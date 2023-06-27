@@ -226,10 +226,6 @@ jobs:
             composer require goalgorilla/open_social:dev-$BRANCH_NAME
           fi
 
-          ln -s /etc/opensocial-ci/settings.php /app/html/sites/default/settings.php
-          ln -s /etc/opensocial-ci/settings.docker.php /app/html/sites/default/settings.docker.php
-          mkdir -p /app/files_private
-
           rm -r tmp/
 
       - name: Update the previous major version to HEAD
@@ -247,6 +243,10 @@ jobs:
         if: ${{ matrix.update == '' }}
         run: |
           set -e
+
+          ln -s /etc/opensocial-ci/settings.php /app/html/sites/default/settings.php
+          ln -s /etc/opensocial-ci/settings.docker.php /app/html/sites/default/settings.docker.php
+          mkdir -p /app/files_private
 
           export OPTIONAL=""
           if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
