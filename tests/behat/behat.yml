@@ -56,14 +56,14 @@ default:
     Drupal\DrupalExtension:
       api_driver: 'drupal'
       drupal:
-        drupal_root: '/var/www/html'
+        drupal_root: '/app/html'
       drush:
         # We must specify the binary path because drush launcher outputs its own
         # version before the drush version when queried with `--version` which
         # causes the DrupalDriver to think we're using a version before 9
         # (see DrushDriver::isLegacyDrush).
-        binary: /var/www/vendor/bin/drush
-        root: '/var/www/html'
+        binary: /app/vendor/bin/drush
+        root: '/app/html'
       selectors:
         message_selector: '.alert'
         error_message_selector: '.alert.alert-danger'
