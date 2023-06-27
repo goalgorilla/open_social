@@ -215,7 +215,9 @@ jobs:
           cp tmp/tests/composer.json composer.json
 
           # Make the default folder writable if it exists so our update of composer works.
-          chmod -f +w html/sites/default
+          if [ -d "html/sites/default" ]; then
+            chmod -f +w html/sites/default
+          fi
 
           # Composer has special handling for "version-like" branch names
           if [[ $BRANCH_NAME =~ [0-9]+\.[0-9]+\.x ]]; then
