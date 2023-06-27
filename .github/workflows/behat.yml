@@ -273,9 +273,6 @@ jobs:
             drush sql:dump > behat-test-output/installation.sql
           fi
 
-      - name: Fix owner of web files
-        run: chown -R www-data:www-data /app
-
       - name: Package up site
         uses: actions/cache@v3
         with:
