@@ -293,7 +293,7 @@ jobs:
     name: 'Tests'
     runs-on: ubuntu-22.04
     container:
-      image: ghcr.io/goalgorilla/open-social-ci-php:fpm-8.0-3.16
+      image: ghcr.io/goalgorilla/open-social-ci-php:cli-8.0-3.16
       volumes:
         - ${{ github.workspace }}:/app
 
@@ -311,12 +311,14 @@ jobs:
     services:
       web:
         image: ghcr.io/goalgorilla/open-social-ci-router:nginx-1.25.1-3.17
-        env:
-          DRUPAL_SETTINGS: production
         volumes:
           - ${{ github.workspace }}:/app
         ports:
           - "80"
+      opensocial:
+        image: ghcr.io/goalgorilla/open-social-ci-php:fpm-8.0-3.16
+        volumes:
+          - ${{ github.workspace }}:/app
       db:
         image: mariadb:10.7
         env:
