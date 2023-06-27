@@ -15,6 +15,14 @@ on:
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
+  OPENSOCIAL_DATABASE: social
+  OPENSOCIAL_DATABASE_USERNAME: root
+  OPENSOCIAL_DATABASE_PASSWORD: root
+  OPENSOCIAL_DATABASE_HOST: db
+  OPENSOCIAL_DATABASE_PORT: 3306
+
+  OPENSOCIAL_PROJECT_ENTROPY: thisisnotrandom
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   feature_discovery:
@@ -95,7 +103,8 @@ jobs:
           # This is purposefully duplicated because we may change how
           # installation works between major versions, so this provides us the
           # flexibility to reflect that in the workflow.
-          cp tmp/tests/default.settings.php /app/html/sites/default/default.settings.php
+          ln -s /etc/opensocial-ci/settings.php /app/html/sites/default/settings.php
+          ln -s /etc/opensocial-ci/settings.docker.php /app/html/sites/default/settings.docker.php
           mkdir /app/files_private
 
           export OPTIONAL=""
@@ -103,7 +112,7 @@ jobs:
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
-          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+          drush site-install -y social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
 
           # Make sure swiftmailer is configured for our CI.
           drush cset -y swiftmailer.transport transport 'smtp'
@@ -190,6 +199,9 @@ jobs:
 
           cp tmp/tests/composer.json composer.json
 
+          # Make the default folder writable if it exists so our update of composer works.
+          chmod -f +w html/sites/default
+
           # Composer has special handling for "version-like" branch names
           if [[ $BRANCH_NAME =~ [0-9]+\.[0-9]+\.x ]]; then
             composer require goalgorilla/open_social:$BRANCH_NAME-dev
@@ -197,7 +209,8 @@ jobs:
             composer require goalgorilla/open_social:dev-$BRANCH_NAME
           fi
 
-          cp tmp/tests/default.settings.php /app/html/sites/default/default.settings.php
+          ln -s /etc/opensocial-ci/settings.php /app/html/sites/default/settings.php
+          ln -s /etc/opensocial-ci/settings.docker.php /app/html/sites/default/settings.docker.php
           mkdir -p /app/files_private
 
           rm -r tmp/
@@ -223,7 +236,7 @@ jobs:
             export OPTIONAL="social_module_configure_form.select_all='TRUE'"
           fi
 
-          drush site-install -y social --db-url=mysql://root:root@db:3306/social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
+          drush site-install -y social $OPTIONAL install_configure_form.update_status_module='array(FALSE,FALSE)' --site-name='Open Social';
 
           # Make sure swiftmailer is configured for our CI.
           drush cset -y swiftmailer.transport transport 'smtp'
