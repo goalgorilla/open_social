@@ -49,6 +49,9 @@ jobs:
       volumes:
         - ${{ github.workspace }}:/app
 
+    outputs:
+      previous-major-cache-key: ${{ steps.cache-key.outputs.value }}
+
     strategy:
       matrix:
         with_optional:
@@ -86,18 +89,35 @@ jobs:
         run: |
           cp tmp/tests/composer.json composer.json
 
-      - name: Set-up the previous major version of Open Social
+      - name: Determine previous Open Social version
+        id: previous-major
         run: |
-          set -e
-
           # This gets all version info from composer for Open Social. We then
           # use jq to traverse and manipulate the JSON data to find ourselves
           # the last stable major version before the current stable major
           # version.
           PREVIOUS_MAJOR=`composer info -a --format json goalgorilla/open_social | jq '.versions | map(select(contains("-") == false)) | map(split(".")[0] | tonumber) | unique | reverse | .[1]'`
-          echo "Setting up update test from Open Social $PREVIOUS_MAJOR"
+          echo "version=$PREVIOUS_MAJOR" >> "$GITHUB_OUTPUT"
 
-          composer require goalgorilla/open_social:^$PREVIOUS_MAJOR
+      - name: Cache key
+        id: cache-key
+        run: echo "value=${{ steps.previous-major.outputs.version }}-$_GITHUB_WORKFLOW_SHA-${{ hashFiles('composer.json') }}-previous-version" >> "$GITHUB_OUTPUT"
+
+      - name: Cache previous version
+        id: cache-previous
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ steps.cache-key.outputs.value }}-${{ matrix.with_optional }}
+
+      - if: ${{ steps.cache-previous.outputs.cache-hit != 'true' }}
+        name: Set-up the previous major version of Open Social
+        run: |
+          set -e
+
+          echo "Setting up update test from Open Social ${{ steps.previous-major.outputs.version }}"
+
+          composer require goalgorilla/open_social:^${{ steps.previous-major.outputs.version }}
 
           # Installation
           # This is purposefully duplicated because we may change how
@@ -134,11 +154,6 @@ jobs:
       - name: Clean up checkout
         run: rm -r tmp
 
-      - name: Package up previous version
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}
-          key: ${{ github.sha }}-previous-version-${{ matrix.with_optional }}
 
   install_open_social:
     needs: [install_previous_open_social]
@@ -183,11 +198,11 @@ jobs:
     steps:
       - name: Retrieve previous version
         if: ${{ matrix.update == 'update' }}
-        uses: actions/cache@v3
+        uses: actions/cache/restore@v3
         with:
           fail-on-cache-miss: true
           path: ${{ github.workspace }}
-          key: ${{ github.sha }}-previous-version-${{ matrix.with_optional }}
+          key: ${{ needs.install_previous_open_social.outputs.previous-major-cache-key }}-${{ matrix.with_optional }}
 
       - uses: actions/checkout@v3
         with:
