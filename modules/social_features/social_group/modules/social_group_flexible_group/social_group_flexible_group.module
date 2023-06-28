@@ -97,6 +97,29 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         ],
       ];
     }
+    if (!empty($form['field_group_type_target_id']) &&
+      !empty($form['type']['#options']) &&
+      $form['type']['#type'] !== 'hidden') {
+      $form['field_group_type_target_id']['#states'] = [
+        'visible' => [
+          ':input[name="type"]' => ['value' => 'flexible_group'],
+        ],
+      ];
+    }
+    // Hide the flexible group field group type if the setting for it to be
+    // required is disabled even if there are values in the vocabulary.
+    if (!empty($form['field_group_type_target_id']) &&
+      !\Drupal::config('social_group.settings')->get('social_group_type_required')) {
+      $form['field_group_type_target_id']['#type'] = 'hidden';
+    }
+    // Hide the flexible group field group type if there is only the
+    // "All / any" option we hide it as well.
+    if (!empty($form['field_group_type_target_id']) &&
+      !empty($form['field_group_type_target_id']['#options']) &&
+      count($form['field_group_type_target_id']['#options']) === 1 &&
+      array_key_exists('All', $form['field_group_type_target_id']['#options'])) {
+      $form['field_group_type_target_id']['#type'] = 'hidden';
+    }
   }
   // For adding or editing a flexible group, we alter the visibility fields.
   if ($form['#id'] === 'group-flexible-group-add-form' ||

@@ -1194,6 +1194,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
           unset($form['type']['#options'][$type]);
         }
       }
+      // If we determined the user can only see the All / Any option
+      // And perhaps one more group type, like flexible groups.
+      // this filter doesn't make sense, and we hide it.
+      // This also allows other filters, depending on the options to show up.
+      if (count($form['type']['#options']) === 2 &&
+        array_key_exists('All', $form['type']['#options'])) {
+        $form['type']['#type'] = 'hidden';
+      }
     }
   }
 
