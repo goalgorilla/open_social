@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\user\RoleInterface;
@@ -705,4 +706,62 @@ function social_search_update_12003() : string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Migrate to SOLR for our search back-end.
+ */
+function social_search_update_12004() : void {
+  \Drupal::service('module_installer')->install(["search_api_solr"]);
+
+  $new_server = Server::create([
+    'langcode' => 'en',
+    'status' => TRUE,
+    'dependencies' => [
+      'module' => [
+        'search_api_solr',
+      ],
+    ],
+    'id' => 'social_solr',
+    'name' => 'Social SOLR',
+    'description' => '',
+    'backend' => 'search_api_solr',
+    'backend_config' => [
+      'connector' => 'standard',
+      'connector_config' => [
+        'scheme' => 'http',
+        'host' => 'solr',
+        'port' => 8983,
+        'path' => '/',
+        'core' => 'drupal',
+        'timeout' => 5,
+        'index_timeout' => 5,
+        'optimize_timeout' => 10,
+        'finalize_timeout' => 30,
+        'commit_within' => 1000,
+        'solr_version' => '',
+        'http_method' => 'AUTO',
+        'jmx' => FALSE,
+        'solr_install_dir' => '/opt/solr',
+      ],
+      'disabled_field_types' => [],
+      'retrieve_data' => FALSE,
+      'highlight_data' => FALSE,
+      'skip_schema_check' => FALSE,
+      'server_prefix' => '',
+      'domain' => 'generic',
+      'optimize' => FALSE,
+      'site_hash' => FALSE,
+    ],
+  ]);
+  $new_server->save();
+
+  // social_all is required for Open Social to work.
+  $index = Index::load("social_all");
+  assert($index !== NULL);
+  $index->setServer($new_server)->save();
+
+  Server::load("social_database")?->delete();
+
+  \Drupal::service('module_installer')->uninstall(["search_api_db"], FALSE);
 }
