@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_solr
+id: social_solr
+name: 'Social SOLR'
+description: ''
+backend: search_api_solr
+backend_config:
+  connector: standard
+  connector_config:
+    scheme: http
+    host: solr
+    port: 8983
+    path: /
+    core: drupal
+    timeout: 5
+    index_timeout: 5
+    optimize_timeout: 10
+    finalize_timeout: 30
+    commit_within: 1000
+    solr_version: ''
+    http_method: AUTO
+    jmx: false
+    solr_install_dir: /opt/solr
+  disabled_field_types: {  }
+  retrieve_data: false
+  highlight_data: false
+  skip_schema_check: false
+  server_prefix: ''
+  domain: generic
+  optimize: false
+  site_hash: false
