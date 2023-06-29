@@ -5,6 +5,7 @@ services:
     default: true
     depends:
       - db
+      - solr
     commands:
       init:
         - composer config --global github-protocols https
@@ -79,3 +80,11 @@ services:
   # A database for storage of Open Social data.
   db:
     image: tugboatqa/mariadb:latest
+  solr:
+    image: ghcr.io/goalgorilla/ci-tugboat-solr:8.11
+    commands:
+      init:
+        - su -s /bin/sh -c "/opt/solr/bin/solr create_core -c drupal -force" solr
+      build:
+        - cd "/var/solr/data/drupal" && rm -rf conf
+        - cd "/var/solr/data/drupal" && ln -snf "/solr-conf/conf" conf
