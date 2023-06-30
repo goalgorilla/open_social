@@ -1184,6 +1184,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['#id'] === 'views-exposed-form-search-groups-page') {
     $account = \Drupal::currentUser();
     if (!empty($form['type']['#options'])) {
+      // Make sure we add cache tags so whenever a type is added/removed in the
+      // vocabulary this gets cleared.
+      $form['#cache']['tags'][] = 'taxonomy_term_list:group_type';
+
       foreach ($form['type']['#options'] as $type => $label) {
         // All / Any we can skip they are optional translatable options
         // and not group types.
