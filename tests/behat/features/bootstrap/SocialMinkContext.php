@@ -264,4 +264,45 @@ class SocialMinkContext extends MinkContext {
     return TRUE;
   }
 
+  /**
+   * Ensure a select field does not contain the following options.
+   *
+   * @Given /^the "(?P<locator>[^"]+)" select field should not contain the following options:$/
+   */
+  public function theSelectFieldShouldNotContainTheFollowingOptions(string $locator, TableNode $options): void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    foreach ($options->getHash() as $value) {
+      $option = $field->find('named', ['option', $value['options']]);
+
+      if ($option !== NULL) {
+        throw new \Exception("The field was supposed to not contain '$option' but it was an option in the select field.");
+      }
+    }
+  }
+
+  /**
+   * Ensure a select field does contain the following options.
+   *
+   * @Given /^the "(?P<locator>[^"]+)" select field should contain the following options:$/
+   */
+  public function theSelectFieldShouldContainTheFollowingOptions(string $locator, TableNode $options): void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    foreach ($options->getHash() as $value) {
+      $option = $field->find('named', ['option', $value['options']]);
+
+      if ($option === NULL) {
+        throw new \Exception("The field was supposed to contain '$option' but it was not an option in the select field.");
+      }
+    }
+  }
 }
