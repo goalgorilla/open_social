@@ -13,6 +13,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRole;
+use Drupal\group\Entity\GroupType;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
