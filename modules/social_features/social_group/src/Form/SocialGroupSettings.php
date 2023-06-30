@@ -233,6 +233,10 @@ class SocialGroupSettings extends ConfigFormBase {
     $config->set('social_group_type_required', $form_state->getValue('social_group_type_required'));
     $config->save();
 
+    if ($form['social_group_type_required']['#default_value'] !== (bool) $form_state->getValue('social_group_type_required')) {
+      Cache::invalidateTags(['config:block.block.exposed_form_newest_groups_page_all_groups']);
+    }
+
     Cache::invalidateTags(['group_view']);
   }
 
