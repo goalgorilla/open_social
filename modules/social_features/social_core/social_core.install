@@ -35,17 +35,6 @@ function social_core_requirements($phase) {
   $requirements = [];
 
   switch ($phase) {
-    case 'runtime':
-      if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
-        $requirements['social_file_private_module_check'] = [
-          'title' => t('Social Private Files'),
-          'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
-          'severity' => REQUIREMENT_WARNING,
-          'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-        ];
-      }
-      break;
-
     case 'update':
       // From 9.0 on-wards a site must update to 8.1 first to ensure that the
       // features removal update hooks have run that are no longer present in
@@ -414,17 +403,18 @@ function social_core_update_8005(&$sandbox) {
       ->condition('type', 'event')
       ->condition('type', 'topic')
       ->condition('type', 'page')
-      ->condition('type', 'book');
+      ->condition('type', 'book')
+      ->accessCheck(FALSE);
 
     /** @var array $sandbox['items']['node_ids'] */
     $sandbox['items']['node_ids'] = $query->execute();
     $sandbox['max'] = count($sandbox['items']['node_ids']);
 
-    $query = \Drupal::entityQuery('group');
+    $query = \Drupal::entityQuery('group')->accessCheck(FALSE);
     $sandbox['items']['group_ids'] = $query->execute();
     $sandbox['max'] += count($sandbox['items']['group_ids']);
 
-    $query = \Drupal::entityQuery('profile');
+    $query = \Drupal::entityQuery('profile')->accessCheck(FALSE);
     /** @var array $sandbox['items']['node_ids'] */
     $sandbox['items']['profile_ids'] = $query->execute();
     $sandbox['max'] += count($sandbox['items']['profile_ids']);
@@ -1644,6 +1634,34 @@ function social_core_update_11404(): void {
  * Update social_post exposed filter button name.
  */
 function social_core_update_11405(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Ajust popovers socialblue theme configs.
+ */
+function social_core_update_11801(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_core', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Enable the Config Modify module.
+ */
+function social_core_update_11900() : string {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 

@@ -1,0 +1,42 @@
+{
+  "version": "0.2",
+  "language": "en-US",
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": "./cspell.words.txt",
+      "addWords": true
+    },
+    {
+      "name": "project-baseline",
+      "path": "./cspell.baseline.txt",
+      "addWords": false
+    }
+  ],
+  "dictionaries": [
+    "project-words",
+    "project-baseline",
+    "softwareTerms"
+  ],
+  "overrides": [
+    {
+      "filename": "**/{*.inc,*.install,*.module}",
+      "languageId": "php"
+    },
+    {
+      "filename": "**/*.html.twig",
+      "languageId": "html,php"
+    }
+  ],
+  "ignorePaths": [
+    "/cspell.words.txt",
+    "node_modules",
+    "vendor",
+    ".github",
+    ".tugboat",
+    ".browserslistrc",
+    ".gitignore",
+    "**/{*.sql,*.po,*.pot,*.neon}",
+    "/translations.php"
+  ]
+}

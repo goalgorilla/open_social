@@ -52,21 +52,29 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
   public function loadOverrides($names) {
     $overrides = [];
 
-    foreach ($names as $name) {
-      if (strpos($name, 'block.block.') === 0) {
-        $config = $this->configFactory->getEditable($name);
+    $config_names = [
+      'block.block.socialblue_local_tasks',
+      'block.block.socialbase_local_tasks',
+    ];
 
-        if ($config->get('settings.id') == 'local_tasks_block') {
-          $visibility_paths = $config->get('visibility');
-          if (isset($visibility_paths['request_path']['pages'])) {
-            $overrides[$name] = [
-              'visibility' => [
-                'request_path' => [
-                  'pages' => $visibility_paths['request_path']['pages'] . "\r\n/group/*/membership-requests",
-                ],
+    // We only care about our own local tasks,
+    // other implementations have the Block UI.
+    // Also since it's an optional block, coming from social_core with a
+    // dependency on the theme, we can't do this on hook_install as we don't
+    // know when social_group_request will be installed and if the block already
+    // exists by then.
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $config = $this->configFactory->getEditable($config_name);
+        $visibility_paths = $config->get('visibility');
+        if (isset($visibility_paths['request_path']['pages'])) {
+          $overrides[$config_name] = [
+            'visibility' => [
+              'request_path' => [
+                'pages' => $visibility_paths['request_path']['pages'] . "\r\n/group/*/membership-requests",
               ],
-            ];
-          }
+            ],
+          ];
         }
       }
     }

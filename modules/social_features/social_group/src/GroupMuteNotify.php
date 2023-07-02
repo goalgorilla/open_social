@@ -3,7 +3,9 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
@@ -28,15 +30,26 @@ class GroupMuteNotify {
   protected $flagService;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * GroupMuteNotify constructor.
    *
    * @param \Drupal\flag\FlagServiceInterface $flag_service
    *   Flag service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
-    FlagServiceInterface $flag_service
+    FlagServiceInterface $flag_service,
+    EntityTypeManagerInterface $entity_type_manager
   ) {
     $this->flagService = $flag_service;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -51,9 +64,23 @@ class GroupMuteNotify {
    *   TRUE if a user muted notifications for a group.
    */
   public function groupNotifyIsMuted(GroupInterface $group, AccountInterface $account): bool {
-    $flaggings = $this->flagService->getAllEntityFlaggings($group, $account);
+    // Make sure we only check for the specific mute group flag.
+    /** @var \Drupal\flag\FlagInterface $flag */
+    $flag = $this->entityTypeManager->getStorage('flag')->load('mute_group_notifications');
+    $session_id = NULL;
+    // If the user is AN we need to provide a session id to the flagging
+    // service.
+    if ($account->isAnonymous()) {
+      $session_id = $this->flagService->getAnonymousSessionId();
+    }
+    $flags = $this->flagService->getFlagging($flag, $group, $account, $session_id);
 
-    return !empty($flaggings);
+    // If a user has the mute group flag set for a group we can return TRUE.
+    if ($flags instanceof FlaggingInterface) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
   /**

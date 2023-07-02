@@ -15,18 +15,21 @@ default:
       filters:
         tags: "~@disabled"
       contexts:
-        - Drupal\DrupalExtension\Context\BatchContext
-        - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\social\Behat\BookContext
-        - Drupal\social\Behat\CKEditorContext
+        # Our database context comes first since it also bootstraps the Drupal
+        # driver and should load the database first.
         - Drupal\social\Behat\DatabaseContext:
             - '%paths.base%/fixture'
+        - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\social\Behat\BookContext
+        - Drupal\social\Behat\CKEditorContext
+        - Drupal\social\Behat\ConfigContext
         - Drupal\social\Behat\EmailContext
         - Drupal\social\Behat\EventContext
         - Drupal\social\Behat\GroupContext
         - Drupal\social\Behat\GDPRContext
         - Drupal\social\Behat\PostContext
         - Drupal\social\Behat\FeatureContext
+        - Drupal\social\Behat\FileContext
         - Drupal\social\Behat\LogContext
         - Drupal\social\Behat\ModuleContext
         - Drupal\social\Behat\SearchContext
@@ -35,6 +38,7 @@ default:
         - Drupal\social\Behat\SocialMinkContext
         - Drupal\social\Behat\ThemeContext
         - Drupal\social\Behat\TopicContext
+        - Drupal\social\Behat\UserContext
   extensions:
     Drupal\social\Behat\Chrome\ChromeExtension: ~
     Drupal\MinkExtension:
@@ -78,6 +82,8 @@ default:
         'Sidebar second': 'aside[role=complementary]'
         'Modal': '#drupal-modal'
         'Modal footer': '.modal-footer'
+      subcontexts:
+        autoload: 0
     FriendsOfBehat\MinkDebugExtension:
       directory: '%paths.base%/logs'
       screenshot: true

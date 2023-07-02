@@ -17,6 +17,8 @@ use Drupal\DrupalExtension\Hook\Scope\EntityScope;
  */
 class SocialDrupalContext extends DrupalContext {
 
+  use AvoidCleanupTrait;
+
   /**
    * Prepares Big Pipe NOJS cookie if needed.
    *
@@ -249,6 +251,17 @@ class SocialDrupalContext extends DrupalContext {
    *   If set to TRUE, it doesn't process the items, but simply deletes them.
    */
   protected function processQueue($just_delete = FALSE) {
+    // This step is sometimes called after a cache clear which rebuilds the
+    // container and unloads all modules. Normally an HTTP request will ensure
+    // all modules are loaded again, but if the cache clear is directly
+    // preceding queue processing then that's not the case.
+    // Normally this wouldn't even be a problem, but in some tests we have those
+    // two steps AND we have something in the queue that calls `renderPlain`
+    // (e.g. a message token) which will cause the theme system to balk at
+    // unloaded modules. Thus, to fix this we must now make sure all modules
+    // are loaded.
+    \Drupal::moduleHandler()->loadAll();
+
     $workerManager = \Drupal::service('plugin.manager.queue_worker');
     /** @var Drupal\Core\Queue\QueueFactory; $queue */
     $queue = \Drupal::service('queue');
@@ -436,6 +449,5 @@ class SocialDrupalContext extends DrupalContext {
   public function iWaitForTheInstallerBatchJobToFinish() {
     $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
   }
-
 
 }

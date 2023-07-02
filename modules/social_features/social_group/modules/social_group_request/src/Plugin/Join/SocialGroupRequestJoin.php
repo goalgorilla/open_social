@@ -125,6 +125,7 @@ class SocialGroupRequestJoin extends JoinBase {
       ->condition('gid', $group->id())
       ->condition('entity_id', $this->currentUser->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+      ->accessCheck()
       ->range(0, 1)
       ->count()
       ->execute();

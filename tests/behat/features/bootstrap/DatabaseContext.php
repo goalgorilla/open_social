@@ -56,6 +56,8 @@ class DatabaseContext implements Context {
     if (!$drupal_context instanceof SocialDrupalContext) {
       throw new \RuntimeException("Expected " . SocialDrupalContext::class . " to be configured for Behat.");
     }
+    // Call getDriver without arguments to boostrap the default driver.
+    $drupal_context->getDriver();
     $driver = $drupal_context->getDriver("drush");
     if (!$driver instanceof DrushDriver) {
       throw new \RuntimeException("Could not load the Drush driver. Make sure the DrupalExtension is configured to enable it.");
@@ -138,18 +140,6 @@ class DatabaseContext implements Context {
     if ($database_file[0] !== DIRECTORY_SEPARATOR) {
       $database_file = $this->fixturePath . DIRECTORY_SEPARATOR . $database_file;
     }
-
-
-    $data = [
-      'pre-reset' => [
-        'dblog.settings' => \Drupal::config("dblog.settings")->getRawData(),
-        'core.extension' => \Drupal::config("core.extension")->getRawData(),
-      ],
-    ];
-
-    try {
-      $data['pre-reset']['database'] = \Drupal::database()->query("SELECT * FROM config WHERE name='core.extension';")->fetchAll();
-    } catch (\Exception $e) { $data['database'] = NULL; }
 
     if (!is_file($database_file)) {
       throw new \RuntimeException("Scaffold file '$database_file' does not exist.");

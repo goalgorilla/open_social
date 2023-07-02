@@ -15,7 +15,7 @@ class ModuleContext extends RawMinkContext {
   /**
    * The Open Social optional module manager.
    *
-   * @phpstan-var array<string, array>|null
+   * @var array<string, array>|null
    */
   private ?array $optionalModules = NULL;
 

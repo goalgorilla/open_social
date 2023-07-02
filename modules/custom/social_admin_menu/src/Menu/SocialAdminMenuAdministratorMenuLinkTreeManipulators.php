@@ -152,17 +152,12 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       ['callable' => 'toolbar_tools_menu_navigation_links'],
       ['callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'],
     ];
-    $tree = $this->toolbarMenuLinkTree->load(NULL, $parameters);
+    $tree = $this->toolbarMenuLinkTree->load('system.admin', $parameters);
     $tree = $this->toolbarMenuLinkTree->transform($tree, $manipulators);
     $element['toolbar_administration'] = [
       '#type' => 'container',
       '#attributes' => [
         'class' => ['toolbar-menu-administration'],
-      ],
-      '#cache' => [
-        'contexts' => [
-          'user.roles',
-        ],
       ],
       'administration_menu' => $this->toolbarMenuLinkTree->build($tree),
     ];

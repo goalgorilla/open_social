@@ -38,9 +38,6 @@ class EmailContext implements Context {
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'native');
     $swiftmailer_config->save();
-
-    // Clean up emails after us.
-    $this->purgeSpool();
   }
 
   /**
@@ -87,7 +84,7 @@ class EmailContext implements Context {
    *   The path where the spooled emails are stored.
    */
   protected function getSpoolDir() {
-    $path = \Drupal::service('extension.list.profile')->getPath('social') . '/tests/behat/features/swiftmailer-spool';
+    $path = \Drupal::service('extension.list.profile')->getPath('social') . '/tests/behat/mail-spool';
     if (!file_exists($path)) {
       mkdir($path, 0777, true);
     }

@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database @stability-2 @post-comments
+@api @post @javascript @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database @stability-2 @post-comments
 Feature: Comment on a Post
   Benefit: In order to give my opinion on a post
   Role: As a Verified
@@ -41,6 +41,7 @@ Feature: Comment on a Post
    Then I should see "This action cannot be undone."
         # Confirm delete
    When I press "Delete"
+    And I wait for the batch job to finish
    Then I should see "The comment and all its replies have been deleted."
 
   Given I am on the homepage

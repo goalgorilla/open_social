@@ -8,6 +8,7 @@
 use Drupal\activity_creator\Plugin\ActivityActionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 
@@ -75,9 +76,14 @@ function activity_basics_social_group_move(NodeInterface $node): void {
  *   The instance.
  */
 function _activity_basics_entity_action(EntityInterface $entity, $instance): void {
-  $plugin_mananger = \Drupal::service('plugin.manager.activity_action.processor');
-  if ($plugin_mananger->hasDefinition($instance)) {
-    $plugin = $plugin_mananger->createInstance($instance);
+  // During migration activities should not be created as this may flood stream.
+  if ($entity instanceof SynchronizableInterface && $entity->isSyncing()) {
+    return;
+  }
+
+  $plugin_manager = \Drupal::service('plugin.manager.activity_action.processor');
+  if ($plugin_manager->hasDefinition($instance)) {
+    $plugin = $plugin_manager->createInstance($instance);
     assert($plugin instanceof ActivityActionInterface);
     $plugin->create($entity);
   }

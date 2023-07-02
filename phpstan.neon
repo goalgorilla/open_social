@@ -1,6 +1,9 @@
 includes:
   - phpstan-baseline.neon
 
+rules:
+  - Drupal\social\PHPStan\Rules\CorrectUpdateHelperUsage
+
 parameters:
   level: 8
   paths:
@@ -16,6 +19,10 @@ parameters:
       - translations/
     analyse:
       - *SocialProfileTrait.php
+      - modules/custom/social_graphql/src/GraphQL/Violation.php
+  # Not sure we can specify generic types properly with Drupal coding standards
+  # yet, disable for now.
+  checkGenericClassInNonGenericObjectType: false
   drupal:
       drupal_root: %currentWorkingDirectory%/html/core
       entityMapping:
@@ -59,8 +66,5 @@ parameters:
   # See https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type
   checkMissingIterableValueType: false
   ignoreErrors:
-      - '#Unsafe usage of new static\(\)#'
       # See - https://github.com/mglaman/drupal-check/pull/187
-      # The accessCheck test seems to be horribly broken and providing false positives
-      # Disable until https://github.com/mglaman/phpstan-drupal/issues/396 is fixed.
-      - "#^Missing explicit access check on entity query\\.$#"
+      - '#Unsafe usage of new static\(\)#'

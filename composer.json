@@ -22,6 +22,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Drupal\\Tests\\social\\PHPStan\\": "tests/phpstan/src",
             "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap",
             "Drupal\\social\\": "src"
         }
@@ -41,29 +42,27 @@
             "drupal/ajax_comments": {
                 "Fix display mode issue": "https://www.drupal.org/files/issues/2022-09-26/3311816-reroll-ajax-comments-patch-with-permission-check-2.patch"
             },
-            "drupal/coder": {
-                "Allow class property types instead of @var comments": "https://www.drupal.org/files/issues/2021-09-21/coder-3123282-3.patch"
-            },
             "drupal/core": {
                 "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/2019-05-10/2528214-54.patch",
                 "Optimize getCommentedEntity()": "https://www.drupal.org/files/issues/2018-12-28/2580551-72.patch",
-                "#states cannot check/uncheck 'radios' and 'checkboxes' elements": "https://www.drupal.org/files/issues/drupal-994360-74-states-checkboxes-checked.patch",
-                "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2021-01-06/3007424-108.patch",
+                "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2023-01-05/3007424-146-9.5.x.patch",
                 "Default role id causes issues with validation on VBO": "https://www.drupal.org/files/issues/2018-05-24/2974925-default-rid-config-causes-illegal-error.patch",
                 "Ensure views exposed form in a form block keeps contextual arguments (Updated)": "https://www.drupal.org/files/issues/2020-06-17/views-exposed-form-block-args-2821962-39-8.9-notest.patch",
-                "Display Bug when using #states (Forms API) with Ajax Request": "https://www.drupal.org/files/issues/2021-11-05/1091852-150.patch",
+                "Display Bug when using #states (Forms API) with Ajax Request": "https://www.drupal.org/files/issues/2023-01-30/1091852-172.patch",
                 "Can't specify the language in TermStorage::loadTree": "https://www.drupal.org/files/issues/2022-06-01/drupal-termstorage-loadTree-lang-3123561-13_0.patch",
                 "Issue #3188258: Aggregation queries fail across entity references": "https://www.drupal.org/files/issues/2020-12-18/drupal-3188258-aggregation-across-entity-reference-fail-2.patch",
                 "Pagination does not work correctly for comment fields that are rendered using #lazy_builder": "https://www.drupal.org/files/issues/2020-12-22/pagination-does-not-work-with-lazy-builder-3189538-2.patch",
                 "Providing default route value for entity forms is not possible": "https://www.drupal.org/files/issues/2020-12-29/2921093-18.patch",
                 "Selecting the same day in a date between filter returns no results": "https://www.drupal.org/files/issues/2020-07-06/2842409-15.patch",
                 "Broken title in modal dialog when title is a render array": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
-                "Flood MemoryBackend::events[] key of micro time cannot guarantee uniqueness": "https://www.drupal.org/files/issues/2022-02-14/2910000-mr-1451-d93--floodmemorybackend-time-local.diff",
+                "Flood MemoryBackend::events[] key of micro time cannot guarantee uniqueness": "https://www.drupal.org/files/issues/2023-04-07/2910000-mr-1451-d95--floodmemorybackend-time-local_0.diff",
                 "Issue #1236098: Notice: Undefined index: 'base' in _color_rewrite_stylesheet()": "https://www.drupal.org/files/issues/undefined-index-in-_color_rewrite_stylesheet-1236098-37.patch",
                 "Issue #3251856: Incorrect typehint for FieldConfig::loadByName": "https://www.drupal.org/files/issues/2021-12-12/drupal9-incorrect_typehint-3251856-7.patch",
                 "Issue #2998390: Cache is not invalidated when comment deleted": "https://www.drupal.org/files/issues/2022-02-07/2998390-8.patch",
-                "Issue #3282073: Comment the \"user_post_update_update_roles\" that was added in Drupal 9.3": "https://www.drupal.org/files/issues/2022-05-24/social-comment_the_user_post_update_update_roles-3282073-2.patch",
-                "Image derivative generation does not work if effect \"Convert\" in use and file stored in private filesystem": "https://www.drupal.org/files/issues/2022-09-23/2786735-39.patch"
+                "Issue #3282073: Comment the \"user_post_update_update_roles\" that was added in Drupal 9.3": "https://www.drupal.org/files/issues/2023-04-07/social-comment_the_user_post_update_update_roles-3282073_d95.diff",
+                "Image derivative generation does not work if effect \"Convert\" in use and file stored in private filesystem": "https://www.drupal.org/files/issues/2022-09-23/2786735-39.patch",
+                "Issue #2107455: Image field default value not shown when upload destination set to private file storage": "https://www.drupal.org/files/issues/2022-06-24/2107455-75.patch",
+                "Issue #3052115: Mark an entity as 'syncing' during a migration update": "https://www.drupal.org/files/issues/2023-02-01/3052115-59.patch"
             },
             "drupal/config_update": {
                 "3248161: Symfony 4.4 event dispatcher parameter order change": "https://www.drupal.org/files/issues/2021-11-08/symfony-4-4-event-dispatcher-parameter-order-change-3248161-3.patch"
@@ -83,15 +82,12 @@
                 "Issue #3191622: Remove leaked cache metadata check until Open Social properly avoids leaking cache metadata in entity query connections": "https://www.drupal.org/files/issues/2022-11-01/3191622-Implement-cache-metadata-for-ConnectionQueryHelperInterface-3.patch"
             },
             "drupal/group": {
-                "Add computed field for Group reference": "https://www.drupal.org/files/issues/2022-06-10/group-computed-fields-2718195-62.patch",
+                "Add computed field for Group reference": "https://www.drupal.org/files/issues/2022-07-07/group-computed-fields-2718195-65.patch",
                 "Ability to use group tokens in node context": "https://www.drupal.org/files/issues/2021-03-11/group-gnode_tokens-2774827-75.patch",
                 "Group: Don't try to re-save deleted entities": "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch",
                 "Rely on toUrl defaults for Entity url link": "https://www.drupal.org/files/issues/2019-12-04/group-3098675-2.patch",
                 "Missing config schema for condition.plugin.group_type": "https://www.drupal.org/files/issues/2018-12-14/group-group_type_condition_plugin_config_schema-3020554-2.patch",
                 "gnode access checks revert for D9 so we dont cause major regression": "https://www.drupal.org/files/issues/2021-11-30/bring-back-node-access-grants-3162511-69.patch"
-            },
-            "drupal/like_and_dislike": {
-                "As LU+ I can not like any content": "https://www.drupal.org/files/issues/2021-11-10/3247929-like_and_dislike-5.patch"
             },
             "drupal/paragraphs": {
                 "Integrity constraint violation: 1048 Column 'langcode' cannot be null": "https://www.drupal.org/files/issues/2019-07-10/paragraphs-set_langcode_widgets-2901390-29.patch"
@@ -103,7 +99,9 @@
             "drupal/url_embed": {
                 "Translate dialog title": "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch",
                 "Improve how the module deals with non-embeddable URLs & WSODs (See: https://www.drupal.org/project/social/issues/2930457#comment-13973067)": "https://www.drupal.org/files/issues/2021-01-22/urlembed-non-embeddable-urls-2761187-opensocial-combined-21.patch",
-                "Support for Facebook/Instagram API changes - add access token settings": "https://www.drupal.org/files/issues/2021-07-14/url_embed-add-facebook-access-token-config-3177860-opensocial-2.patch"
+                "Support for Facebook/Instagram API changes - add access token settings": "https://www.drupal.org/files/issues/2021-07-14/url_embed-add-facebook-access-token-config-3177860-opensocial-2.patch",
+                "Embed Preview throws 403 forbidden": "https://www.drupal.org/files/issues/2023-03-17/url_embed-preview-403-3285139-10.patch",
+                "3360661 - preg_split in _filter_url breaks for long html tags" :"https://www.drupal.org/files/issues/2023-05-16/3360661-url_embed-preg-split.patch"
             },
             "drupal/views_infinite_scroll" : {
                 "Headers in table format repeat on load more instead of adding rows (v1.8)": "https://www.drupal.org/files/issues/2021-02-11/2899705-35.patch"
@@ -118,14 +116,15 @@
         "composer/installers": "~1.0 || ~2.0",
         "cweagans/composer-patches": "^1.6.0",
         "drupal/address": "1.11.0",
-        "drupal/admin_toolbar": "3.3.0",
+        "drupal/admin_toolbar": "3.4.1",
         "drupal/advancedqueue": "1.0.0-rc7",
         "drupal/ajax_comments": "1.0-beta4",
         "drupal/better_exposed_filters": "6.0.3",
         "drupal/block_field": "1.0.0-rc4",
+        "drupal/config_modify": "^1",
         "drupal/config_update": "1.7",
-        "drupal/core-recommended": "~9.4.8",
-        "drupal/core-composer-scaffold": "~9.4.8",
+        "drupal/core-recommended": "~9.5.3",
+        "drupal/core-composer-scaffold": "~9.5.3",
         "drupal/crop": "2.3.0",
         "drupal/csv_serialization": "2.1.0",
         "drupal/ctools": "3.11",
@@ -134,10 +133,10 @@
         "drupal/editor_advanced_link": "2.1.1",
         "drupal/entity": "1.4.0",
         "drupal/entity_reference_revisions": "1.10.0",
-        "drupal/exif_orientation": "1.1",
+        "drupal/exif_orientation": "1.2.0",
         "drupal/field_group": "3.2.0",
         "drupal/flag": "4.0.0-beta4",
-        "drupal/gin": "3.0.0-rc1",
+        "drupal/gin": "3.0-rc3",
         "drupal/gin_toolbar": "1.0.0-rc1",
         "drupal/ginvite": "2.1.0",
         "drupal/graphql": "4.4.0",
@@ -147,22 +146,22 @@
         "drupal/image_widget_crop": "2.4.0",
         "drupal/jquery_ui_accordion": "2.0.0",
         "drupal/lazy": "3.11.0",
-        "drupal/like_and_dislike": "1.0-beta2",
+        "drupal/like_and_dislike": "1.0-beta3",
         "drupal/message": "1.4.0",
         "drupal/metatag": "1.22.0",
-        "drupal/override_node_options": "2.6.0",
+        "drupal/override_node_options": "2.7.0",
         "drupal/paragraphs": "1.15.0",
         "drupal/pathauto": "1.11.0",
         "drupal/private_message": "3.0.0-beta2",
         "drupal/profile": "1.4.0",
-        "drupal/r4032login": "2.2.0",
+        "drupal/r4032login": "2.2.1",
         "drupal/redirect": "1.8.0",
         "drupal/role_delegation": "1.2.0",
         "drupal/search_api": "1.28.0",
         "drupal/select2": "1.13.0",
         "drupal/shariff": "1.7",
         "drupal/social_tour": "1.0.0-alpha2",
-        "drupal/socialblue": "~2.4.2",
+        "drupal/socialblue": "~2.5.0",
         "drupal/swiftmailer": "2.3.0",
         "drupal/token": "1.11.0",
         "drupal/ultimate_cron": "2.0.0-alpha6",

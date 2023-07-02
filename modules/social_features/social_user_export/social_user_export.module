@@ -25,7 +25,7 @@ function social_user_export_file_download(string $uri) {
   }
 
   // Get the file to see who the owner is.
-  $query = \Drupal::entityQuery('file');
+  $query = \Drupal::entityQuery('file')->accessCheck();
   $query->condition('uri', $uri);
   $fid = $query->execute();
 

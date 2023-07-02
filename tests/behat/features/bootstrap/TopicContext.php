@@ -31,15 +31,14 @@ class TopicContext extends RawMinkContext {
    * the ID if we already have it in the step or the title otherwise. We avoid
    * looking up the topic because a user may be testing an error state.
    *
-   * @var array
-   * @phpstan-var array<int|string>
+   * @var array<int|string>
    */
   private array $created = [];
 
   /**
    * Topic data that was changed in a previous step.
    *
-   * @phpstan-var array<string, mixed>
+   * @var array<string, mixed>
    */
   private array $updatedTopicData = [];
 
@@ -120,6 +119,64 @@ class TopicContext extends RawMinkContext {
    */
   public function createTopics(TableNode $topicsTable) : void {
     foreach ($topicsTable->getHash() as $topicHash) {
+      $topic = $this->topicCreate($topicHash);
+      $this->created[] = $topic->id();
+    }
+  }
+
+  /**
+   * Create multiple topics at the start of a test.
+   *
+   * Creates topics provided in the form:
+   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given topics with non-anonymous author:
+   */
+  public function createTopicsWithAuthor(TableNode $topicsTable) : void {
+    // Create a new random user to own the content, this ensures the author
+    // isn't anonymous.
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => "authenticated",
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+
+    foreach ($topicsTable->getHash() as $topicHash) {
+      if (isset($topicHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'topics with non-anonymous owner:' step, use 'topics:' instead.");
+      }
+
+      $topicHash['author'] = $user->name;
+
+      $topic = $this->topicCreate($topicHash);
+      $this->created[] = $topic->id();
+    }
+  }
+
+  /**
+   * Create multiple topics at the start of a test.
+   *
+   * Creates topics provided in the form:
+   * | title    | body            | field_content_visibility | field_topic_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given topics authored by current user:
+   */
+  public function createTopicsAuthoredByCurrentUser(TableNode $topicsTable) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    foreach ($topicsTable->getHash() as $topicHash) {
+      if (isset($topicHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'topics authored by current user:' step, use 'topics:' instead.");
+      }
+
+      $topicHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
+
       $topic = $this->topicCreate($topicHash);
       $this->created[] = $topic->id();
     }
@@ -308,22 +365,6 @@ class TopicContext extends RawMinkContext {
   }
 
   /**
-   * Clean up any topics created in this scenario.
-   *
-   * @AfterScenario
-   */
-  public function cleanUpTopics() : void {
-    foreach ($this->created as $idOrTitle) {
-      // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
-      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getTopicIdFromTitle($idOrTitle);
-      // Ignore already deleted nodes, they may have been deleted in the test.
-      if ($nid !== NULL) {
-        Node::load($nid)?->delete();
-      }
-    }
-  }
-
-  /**
    * Create a topic.
    *
    * @return \Drupal\node\Entity\Node
@@ -331,18 +372,14 @@ class TopicContext extends RawMinkContext {
    */
   private function topicCreate($topic) : Node {
     if (!isset($topic['author'])) {
-      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $topic['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      throw new \Exception("You must specify an `author` when creating a topic. Specify the `author` field if using `@Given topics:` or use one of `@Given topics with non-anonymous author:` or `@Given topics authored by current user:` instead.");
     }
-    else {
-      $account = user_load_by_name($topic['author']);
-      if ($account->id() !== 0) {
-        $topic['uid'] = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
-      }
+
+    $account = user_load_by_name($topic['author']);
+    if ($account === FALSE) {
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $topic['author']));
     }
+    $topic['uid'] = $account->id();
     unset($topic['author']);
 
     if (isset($topic['group'])) {
@@ -354,14 +391,6 @@ class TopicContext extends RawMinkContext {
     }
 
     $topic['type'] = 'topic';
-
-    if (isset($topic['field_topic_type'])) {
-      $type_id = $this->getTopicTypeIdFromLabel($topic['field_topic_type']);
-      if ($type_id === NULL) {
-        throw new \Exception("Topic Type with label '{$topic['field_topic_type']}' does not exist.");
-      }
-      $topic['field_topic_type'] = $type_id;
-    }
 
     $this->validateEntityFields("node", $topic);
     $topic_object = Node::create($topic);
@@ -396,36 +425,6 @@ class TopicContext extends RawMinkContext {
    */
   private function getTopicIdFromTitle(string $topic_title) : ?int {
     return $this->getNodeIdFromTitle("topic", $topic_title);
-  }
-
-  /**
-   * Get the Term ID for a topic type from its label.
-   *
-   * @param string $label
-   *   The label.
-   *
-   * @return int|null
-   *   The topic type ID or NULL if it can't be found.
-   */
-  private function getTopicTypeIdFromLabel(string $label) : ?int {
-    $query = \Drupal::entityQuery('taxonomy_term')
-      ->accessCheck(FALSE)
-      ->condition('vid', 'topic_types')
-      ->condition('name', $label);
-
-    $term_ids = $query->execute();
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($term_ids);
-
-    if (count($terms) !== 1) {
-      return NULL;
-    }
-
-    $term_id = reset($terms)->id();
-    if ($term_id !== 0) {
-      return $term_id;
-    }
-
-    return NULL;
   }
 
 }

@@ -5,6 +5,7 @@ namespace Drupal\activity_send_email\Plugin\EmailFrequency;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Mail\MailManagerInterface;
@@ -53,6 +54,13 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
   protected RendererInterface $renderer;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -61,12 +69,14 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
           $plugin_definition,
     ConfigLanguageManager $config_language_manager,
     MailManagerInterface $mail_manager,
-    RendererInterface $renderer
+    RendererInterface $renderer,
+    EntityTypeManagerInterface $entity_type_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configLanguageManager = $config_language_manager;
     $this->mailManager = $mail_manager;
     $this->renderer = $renderer;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -79,7 +89,8 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
       $plugin_definition,
       $container->get('social_core.config_language_manager'),
       $container->get('plugin.manager.mail'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -102,7 +113,11 @@ class Immediately extends EmailFrequencyBase implements ContainerFactoryPluginIn
 
       $subject = '';
       // If configured grab the email subject.
-      $template = $message->getTemplate();
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+      $storage = $this->entityTypeManager->getStorage('message_template');
+      /** @var \Drupal\message\MessageTemplateInterface $template */
+      $template = $storage->load($message->bundle());
+
       if ($template !== NULL) {
         $settings = $template->getThirdPartySettings('activity_logger');
         if ($settings['email_subject']) {

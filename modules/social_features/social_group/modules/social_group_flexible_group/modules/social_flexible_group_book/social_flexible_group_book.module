@@ -295,30 +295,6 @@ function social_flexible_group_book_block_access(Block $block, string $operation
     $block->setVisibilityConfig('request_path', $request_path);
   }
 
-  $group = _social_group_get_current_group();
-  if ($group instanceof GroupInterface) {
-    $is_books_enabled = !$group->hasField('enable_books') || (bool) $group->get('enable_books')->getString();
-
-    if ($block->getPluginId() === 'group_add_book_block' && !$is_books_enabled) {
-      return AccessResult::forbidden();
-    }
-
-    if (
-      (!$is_books_enabled || !$group->access('view', $account)) &&
-      in_array($block->getPluginId(), [
-        'group_hero_block',
-        'group_statistic_block',
-        'social_page_title_block',
-      ]) &&
-      // We need to hide the block on "view.group_books.page_group_books" route
-      // but due to this moment user gets "access denied" and previous route is
-      // unavailable.
-      \Drupal::routeMatch()->getRouteName() === 'system.403'
-    ) {
-      return AccessResult::forbidden();
-    }
-  }
-
   return AccessResult::neutral();
 }
 

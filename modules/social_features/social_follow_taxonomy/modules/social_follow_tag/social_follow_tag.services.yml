@@ -1,7 +1,7 @@
 services:
   social_follow_tag.overrider:
     class: Drupal\social_follow_tag\SocialFollowTagOverrides
-    arguments: ['@config.factory']
+    arguments: ['@config.factory', '@module_handler']
     tags:
       - {name: config.factory.override, priority: 10}
 

@@ -7,11 +7,15 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Component\Utility\Crypt;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\group\Entity\Group;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\Entity\Node\Event;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -32,15 +36,14 @@ class EventContext extends RawMinkContext {
    * the ID if we already have it in the step or the title otherwise. We avoid
    * looking up the event because a user may be testing an error state.
    *
-   * @var array
-   * @phpstan-var array<int|string>
+   * @var array<int|string>
    */
   private array $created = [];
 
   /**
    * Event data that was changed in a previous step.
    *
-   * @phpstan-var array<string, mixed>
+   * @var array<string, mixed>
    */
   private array $updatedEventData = [];
 
@@ -78,7 +81,7 @@ class EventContext extends RawMinkContext {
    * @Given I am on the event overview
    */
   public function viewEventOverview() : void {
-    $this->visitPath("/all-events");
+    $this->visitPath("/community-events");
   }
 
   /**
@@ -152,6 +155,64 @@ class EventContext extends RawMinkContext {
    */
   public function createEvents(TableNode $eventsTable) : void {
     foreach ($eventsTable->getHash() as $eventHash) {
+      $event = $this->eventCreate($eventHash);
+      $this->created[] = $event->id();
+    }
+  }
+
+  /**
+   * Create multiple events at the start of a test.
+   *
+   * Creates events provided in the form:
+   * | title    | body            | field_content_visibility | field_event_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given events with non-anonymous author:
+   */
+  public function createEventsWithAuthor(TableNode $eventsTable) : void {
+    // Create a new random user to own the content, this ensures the author
+    // isn't anonymous.
+    $user = (object) [
+      'name' => $this->drupalContext->getRandom()->name(8),
+      'pass' => $this->drupalContext->getRandom()->name(16),
+      'role' => "authenticated",
+    ];
+    $user->mail = "{$user->name}@example.com";
+
+    $this->drupalContext->userCreate($user);
+
+    foreach ($eventsTable->getHash() as $eventHash) {
+      if (isset($groupHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'events with non-anonymous owner:' step, use 'events:' instead.");
+      }
+
+      $eventHash['author'] = $user->name;
+
+      $event = $this->eventCreate($eventHash);
+      $this->created[] = $event->id();
+    }
+  }
+
+  /**
+   * Create multiple events at the start of a test.
+   *
+   * Creates events provided in the form:
+   * | title    | body            | field_content_visibility | field_event_type | language  | status |
+   * | My title | My description  | public                   | News             | en        | 1         |
+   * | ...      | ...             | ...                      | ...              | ...       |
+   *
+   * @Given events authored by current user:
+   */
+  public function createEventsAuthoredByCurrentUser(TableNode $eventsTable) : void {
+    $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
+    foreach ($eventsTable->getHash() as $eventHash) {
+      if (isset($eventHash['author'])) {
+        throw new \Exception("Can not specify an author when using the 'events authored by current user:' step, use 'events:' instead.");
+      }
+
+      $eventHash['author'] = (is_object($current_user) ? $current_user->name : NULL) ?? 'anonymous';
+
       $event = $this->eventCreate($eventHash);
       $this->created[] = $event->id();
     }
@@ -364,24 +425,9 @@ class EventContext extends RawMinkContext {
       throw new \RuntimeException("Field 'field_event_managers' not found, make sure you have the social_event_managers module enabled.");
     }
 
-    $event->get('field_event_managers')->appendItem(['target_id' => $current_user->uid]);
+    $event->get('field_event_managers')
+      ->appendItem(['target_id' => $current_user->uid]);
     $event->save();
-  }
-
-  /**
-   * Clean up any events created in this scenario.
-   *
-   * @AfterScenario
-   */
-  public function cleanUpEvents() : void {
-    foreach ($this->created as $idOrTitle) {
-      // Drupal's `id` method can return integers typed as string (e.g. `"1"`).
-      $nid = is_numeric($idOrTitle) ? $idOrTitle : $this->getEventIdFromTitle($idOrTitle);
-      // Ignore already deleted nodes, they may have been deleted in the test.
-      if ($nid !== NULL) {
-        Node::load($nid)?->delete();
-      }
-    }
   }
 
   /**
@@ -421,6 +467,106 @@ class EventContext extends RawMinkContext {
   }
 
   /**
+   * Add enrollees to event.
+   *
+   * Adds enrollees to a specific event
+   * | event    | user      |
+   * | My event | Jane Doe  |
+   * | ...      | ...       |
+   *
+   * @Given event enrollees:
+   */
+  public function createEventEnrollees(TableNode $eventEnrolleesTable) {
+
+    foreach ($eventEnrolleesTable->getHash() as $eventEnrolleesHash) {
+      $event_title = $eventEnrolleesHash['event'];
+      $event_id = $this->getEventIdFromTitle($event_title);
+      if ($event_id === NULL) {
+        throw new \Exception("Event '${event_title}' does not exist.");
+      }
+
+      $event = Event::load($event_id);
+      assert($event instanceof Node);
+
+      $user = User::load($this->drupalContext->getUserManager()->getUser($eventEnrolleesHash['user'])->uid);
+      assert($user instanceof UserInterface);
+      assert($user->id() !== null, "Enrollment of anonymous users is not allowed for '@Given event enrollees'. Please use '@Given anonymous event enrollees:' instead.");
+
+      EventEnrollment::create([
+        'user_id' => $user->id(),
+        'field_event' => $event_id,
+        'field_enrollment_status' => '1',
+        'field_account' => $user->id(),
+      ])->save();
+    }
+  }
+
+  /**
+   * Add anonymous enrollees to event.
+   *
+   * Adds anonymous enrollees to a specific event
+   * | event    | name | lastname | email               |
+   * | My event | Jane | Doe      | example@example.com |
+   * | ...      | ...  | ...      | ...                 |
+   *
+   * @Given anonymous event enrollees:
+   */
+  public function createAnonymousEventEnrollees(TableNode $eventAnonymousEnrolleesTable) {
+    foreach ($eventAnonymousEnrolleesTable->getHash() as $eventEnrolleesHash) {
+      $event_title = $eventEnrolleesHash['event'];
+      $event_id = $this->getEventIdFromTitle($event_title);
+      if ($event_id === NULL) {
+        throw new \Exception("Event '${event_title}' does not exist.");
+      }
+
+      $event = Event::load($event_id);
+      assert($event instanceof Node);
+
+      if ($event->field_event_an_enroll->value !== '1') {
+        throw new \Exception("Event '${event_title}' is not suitable to enroll anonymous users.");
+      }
+
+      $token = Crypt::randomBytesBase64();
+
+      $values['user_id'] = '0';
+      $values['field_account'] = '0';
+      $values['field_email'] = $eventEnrolleesHash['email'];
+      $values['field_enrollment_status'] = '1';
+      $values['field_event'] = $event_id;
+      $values['field_first_name'] = $eventEnrolleesHash['name'];
+      $values['field_last_name'] = $eventEnrolleesHash['lastname'];
+      $values['field_token'] = $token;
+
+      EventEnrollment::create($values)->save();
+    }
+  }
+
+  /**
+   * Enable the calendar button with a given calendar.
+   *
+   * @Given add to calendar is enabled for :calendar
+   */
+  public function enableCalendarOption(string $calendar) {
+    if (!\Drupal::service('module_handler')->moduleExists('social_event_addtocal')) {
+      throw new \Exception("Could not enable calendar button because the Social Event Add To Calendar module is disabled.");
+    }
+
+    $calendar = strtolower($calendar);
+
+    $available_calendars = (array) \Drupal::configFactory()
+      ->get('social_event_addtocal.settings')
+      ->get('allowed_calendars');
+
+    // Enable given calendar.
+    $available_calendars[$calendar] = $calendar;
+
+    \Drupal::configFactory()->getEditable('social_event_addtocal.settings')
+      ->set('enable_add_to_calendar', TRUE)
+      ->set('allowed_calendars', $available_calendars)
+      ->save();
+  }
+
+  /**
    * Create a event.
    *
    * @return \Drupal\node\Entity\Node
@@ -428,18 +574,14 @@ class EventContext extends RawMinkContext {
    */
   private function eventCreate($event) : Node {
     if (!isset($event['author'])) {
-      $current_user = $this->drupalContext->getUserManager()->getCurrentUser();
-      $event['uid'] = is_object($current_user) ? $current_user->uid ?? 0 : 0;
+      throw new \Exception("You must specify an `author` when creating an event. Specify the `author` field if using `@Given events:` or use one of `@Given events with non-anonymous author:` or `@Given events authored by current user:` instead.");
     }
-    else {
-      $account = user_load_by_name($event['author']);
-      if ($account->id() !== 0) {
-        $event['uid'] = $account->id();
-      }
-      else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
-      }
+
+    $account = user_load_by_name($event['author']);
+    if ($account === FALSE) {
+      throw new \Exception(sprintf("User with username '%s' does not exist.", $event['author']));
     }
+    $event['uid'] = $account->id();
     unset($event['author']);
 
     if (isset($event['group'])) {

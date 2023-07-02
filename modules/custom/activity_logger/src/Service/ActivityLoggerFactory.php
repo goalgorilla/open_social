@@ -4,6 +4,7 @@ namespace Drupal\activity_logger\Service;
 
 use Drupal\activity_creator\Plugin\ActivityContextManager;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionManager;
+use Drupal\activity_logger\Entity\NotificationConfigEntityInterface;
 use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -78,7 +79,7 @@ class ActivityLoggerFactory {
    * @param string $action
    *   Action string. Defaults to 'create'.
    */
-  public function createMessages(EntityBase $entity, $action) {
+  public function createMessages(EntityBase $entity, $action): void {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
     // Loop through those message types and create messages.
@@ -97,20 +98,12 @@ class ActivityLoggerFactory {
       // Set the values.
       $new_message['template'] = $message_type;
 
-      // The flagging entity does not implement getCreatedTime().
-      if ($entity->getEntityTypeId() === 'flagging') {
-        $new_message['created'] = $entity->get('created')->value;
-      }
-      else {
-        $new_message['created'] = $entity->getCreatedTime();
-      }
-
       // Get the owner or default to anonymous.
       if ($entity instanceof EntityOwnerInterface && $entity->getOwner() !== NULL) {
-        $new_message['uid'] = $entity->getOwner()->id();
+        $new_message['uid'] = (string) $entity->getOwner()->id();
       }
       else {
-        $new_message['uid'] = 0;
+        $new_message['uid'] = '0';
       }
 
       // This is performed in an assert so that the code doesn't run in
@@ -121,10 +114,26 @@ class ActivityLoggerFactory {
       $new_message['field_message_context'] = $mt_context;
       $new_message['field_message_destination'] = $destinations;
 
-      $new_message['field_message_related_object'] = [
-        'target_type' => $entity->getEntityTypeId(),
-        'target_id' => $entity->id(),
-      ];
+      if ($entity instanceof NotificationConfigEntityInterface) {
+        $new_message['field_message_related_object'] = [
+          'target_type' => $entity->getEntityTypeId(),
+          'target_id' => $entity->getUniqueId(),
+        ];
+        $new_message['created'] = $entity->getCreatedTime();
+      }
+      else {
+        $new_message['field_message_related_object'] = [
+          'target_type' => $entity->getEntityTypeId(),
+          'target_id' => $entity->id(),
+        ];
+        // The flagging entity does not implement getCreatedTime().
+        if ($entity->getEntityTypeId() === 'flagging') {
+          $new_message['created'] = $entity->get('created')->value;
+        }
+        else {
+          $new_message['created'] = $entity->getCreatedTime();
+        }
+      }
 
       // Create the message only if it doesn't exist.
       if (!$this->checkIfMessageExist($new_message['template'], $new_message['field_message_context'], $new_message['field_message_destination'], $new_message['field_message_related_object'], $new_message['uid'])) {
@@ -159,40 +168,44 @@ class ActivityLoggerFactory {
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $messagetype) {
-      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', NULL);
+      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
       $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
       $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
-      if (!empty($mt_entity_condition)
+      if ($mt_action !== $action) {
+        continue;
+      }
+
+      $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
+      if (!in_array($entity_bundle_name, $mt_entity_bundles, TRUE)) {
+        continue;
+      }
+
+      if (!$this->activityContextManager->hasDefinition($mt_context)) {
+        continue;
+      }
+
+      if (
+        !empty($mt_entity_condition)
         && $this->activityEntityConditionManager->hasDefinition($mt_entity_condition)
+        && !$this->activityEntityConditionManager->createInstance($mt_entity_condition)->isValidEntityCondition($entity)
       ) {
-        $entity_condition_plugin = $this->activityEntityConditionManager->createInstance($mt_entity_condition);
-        $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
-      }
-      else {
-        $entity_condition = TRUE;
+        continue;
       }
 
-      if ($this->activityContextManager->hasDefinition($mt_context)) {
-        $context_plugin = $this->activityContextManager->createInstance($mt_context);
-
-        $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
-        if (in_array($entity_bundle_name, $mt_entity_bundles)
-          && $context_plugin->isValidEntity($entity)
-          && $entity_condition
-          && $action === $mt_action
-        ) {
-          $messagetypes[$key] = [
-            'messagetype' => $messagetype,
-            'bundle' => $entity_bundle_name,
-            'destinations' => $mt_destinations,
-            'context' => $mt_context,
-          ];
-        }
+      $context_plugin = $this->activityContextManager->createInstance($mt_context);
+      if ($context_plugin->isValidEntity($entity)) {
+        $messagetypes[$key] = [
+          'messagetype' => $messagetype,
+          'bundle' => $entity_bundle_name,
+          'destinations' => $mt_destinations,
+          'context' => $mt_context,
+        ];
       }
     }
+
     // Return the message types that belong to the requested action.
     return $messagetypes;
   }
@@ -255,8 +268,7 @@ class ActivityLoggerFactory {
       !$field_message_context->status() ||
       $field_message_context->getType() !== 'list_string' ||
       $field_message_context->isRequired() ||
-      $field_message_context->isTranslatable() ||
-      $field_message_context->language()->getId() !== "en"
+      $field_message_context->isTranslatable()
     ) {
       return FALSE;
     }
@@ -269,8 +281,7 @@ class ActivityLoggerFactory {
       !$field_message_destination->status() ||
       $field_message_destination->getType() !== 'list_string' ||
       $field_message_destination->isRequired() ||
-      $field_message_destination->isTranslatable() ||
-      $field_message_destination->language()->getId() !== "en"
+      $field_message_destination->isTranslatable()
     ) {
       return FALSE;
     }
@@ -283,8 +294,7 @@ class ActivityLoggerFactory {
       !$field_message_related_object->status() ||
       $field_message_related_object->getType() !== 'dynamic_entity_reference' ||
       $field_message_related_object->isRequired() ||
-      $field_message_related_object->isTranslatable() ||
-      $field_message_related_object->language()->getId() !== "en"
+      $field_message_related_object->isTranslatable()
     ) {
       return FALSE;
     }
@@ -356,22 +366,19 @@ class ActivityLoggerFactory {
    * @param string $uid
    *   The uid of the message.
    *
-   * @return int
+   * @return bool
    *   Returns true if the message exists.
    */
-  public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid) {
+  public function checkIfMessageExist(string $message_type, string $context, array $destination, array $related_object, string $uid): bool {
     $exists = FALSE;
-
     $query = $this->entityTypeManager->getStorage('message')->getQuery();
     $query->condition('template', $message_type);
     $query->condition('field_message_related_object.target_id', $related_object['target_id']);
     $query->condition('field_message_related_object.target_type', $related_object['target_type']);
     $query->condition('field_message_context', $context);
     $query->condition('uid', $uid);
-    if (is_array($destination)) {
-      foreach ($destination as $delta => $dest_value) {
-        $query->condition('field_message_destination.' . $delta . '.value', $dest_value['value']);
-      }
+    foreach ($destination as $delta => $dest_value) {
+      $query->condition('field_message_destination.' . $delta . '.value', $dest_value['value']);
     }
     $query->accessCheck(FALSE);
 

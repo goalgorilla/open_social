@@ -342,6 +342,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
     $enrollments_count = $storage->getQuery()
       ->condition('field_event', $nid)
       ->condition('field_enrollment_status', 1)
+      ->accessCheck()
       ->count()
       ->execute();
 
@@ -364,6 +365,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       ->condition('field_event_date', $date, '<=')
       ->condition('field_event_date_end', $date, '>=')
       ->condition('nid', $nid)
+      ->accessCheck()
       ->count()
       ->execute();
     if ($ongoing) {
@@ -1122,7 +1124,8 @@ function social_event_preprocess_page(array &$variables) {
       // has already requested or is already invited.
       $query = \Drupal::entityTypeManager()
         ->getStorage('event_enrollment')
-        ->getQuery();
+        ->getQuery()
+        ->accessCheck();
       $query
         ->condition('field_event.target_id', $node->id())
         ->condition('field_account.target_id', $uid)
@@ -1429,7 +1432,7 @@ function social_event_social_core_title_alter(array &$titles): void {
  * Implements hook_social_tagging_type_alter().
  */
 function social_event_social_tagging_type_alter(array &$items): void {
-  $items['node'][] = 'event';
+  $items['node']['sets'][0]['bundles'][] = 'event';
 }
 
 /**

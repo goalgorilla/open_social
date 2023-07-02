@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_profile_tag",
  *  label = @Translation("Profile tag"),
  *  weight = -270,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_profile_tag",
+ *    },
+ *  )
  * )
  */
 class UserProfileTag extends UserExportPluginBase {

@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_address_postal_code",
  *  label = @Translation("Postal code"),
  *  weight = -360,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_address",
+ *    },
+ *  )
  * )
  */
 class UserAddressPostalCode extends UserExportPluginBase {

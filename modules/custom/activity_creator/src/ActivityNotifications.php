@@ -101,6 +101,7 @@ class ActivityNotifications extends ControllerBase {
     if ($entity instanceof UserInterface || $entity instanceof GroupInterface) {
       $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
       $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
+      $entity_query->accessCheck();
       $ids = $entity_query->execute();
     }
     elseif ($entity instanceof GroupContentInterface) {
@@ -116,6 +117,7 @@ class ActivityNotifications extends ControllerBase {
         $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
         $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
         $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
+        $entity_query->accessCheck();
         $ids = $entity_query->execute();
       }
     }
@@ -123,6 +125,7 @@ class ActivityNotifications extends ControllerBase {
       $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
       $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
       $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
+      $entity_query->accessCheck();
       $ids = $entity_query->execute();
     }
 

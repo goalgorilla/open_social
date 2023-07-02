@@ -124,8 +124,6 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
 
     if (
       $read_cache &&
-      is_array($this->cache) &&
-      is_array($this->cache[$cache_type]) &&
       isset($this->cache[$cache_type][$cache_id])
     ) {
       return $this->cache[$cache_type][$cache_id];
@@ -323,6 +321,7 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
     /** @var array $group_types */
     $group_types = $this->entityTypeManager->getStorage('group_type')
       ->getQuery()
+      ->accessCheck()
       ->execute();
 
     // Get all available group types.

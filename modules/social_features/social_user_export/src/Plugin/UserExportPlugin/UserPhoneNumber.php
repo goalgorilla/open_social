@@ -12,6 +12,11 @@ use Drupal\user\UserInterface;
  *  id = "user_phone_number",
  *  label = @Translation("Phone number"),
  *  weight = -330,
+ *  dependencies = @PluginDependency(
+ *    config = {
+ *      "field.field.profile.profile.field_profile_phone_number",
+ *    },
+ *  )
  * )
  */
 class UserPhoneNumber extends UserExportPluginBase {

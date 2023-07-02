@@ -13,7 +13,9 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
@@ -81,30 +83,37 @@ function social_profile_install() {
  * Function to set default profile image if not set already.
  */
 function _social_profile_add_default_profile_image() {
-  // Add default image.
-  $config_factory = \Drupal::configFactory();
-  $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
-  $default_image = $field_image_config->get('settings.default_image');
+  $field_image_config = FieldConfig::load('profile.profile.field_profile_image');
+  assert($field_image_config !== NULL, "Trying to set default image for missing field, this is an error in Open Social.");
+  $field_image_config_uuid = $field_image_config->uuid();
+  assert($field_image_config_uuid !== NULL, "Field config that was loaded is unsaved.");
 
-  $uri = Drupal::service('file_system')
-    ->copy(\Drupal::service('extension.list.module')->getPath('social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FileSystemInterface::EXISTS_REPLACE);
+  // Copy the file from our module to the file system. File::create also accepts
+  // a URI directly in our module but that might cause the image to be deleted
+  // from our module which means we have to make a copy.
+  $file_system = \Drupal::service('file_system');
+  $scheme = $field_image_config->getFieldStorageDefinition()->getSetting("uri_scheme");
+  $directory = "$scheme://default_images/";
+  $file_system->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
+  $uri = $file_system->copy(
+    \Drupal::service('extension.list.module')->getPath('social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png',
+    // The image must be in `default_images/` since this folder is
+    // special-cased to still allow viewing when in the private filesystem.
+    "{$directory}default-profile-picture.png",
+    FileSystemInterface::EXISTS_REPLACE
+  );
 
+  // Create a file with the UUID that was used in the configuration so the field
+  // config actually works.
   $media = File::create([
+    'uuid' => $field_image_config->getSetting('default_image')['uuid'],
     'uri' => $uri,
+    'status' => FileInterface::STATUS_PERMANENT,
   ]);
-  $media->uuid = '4eb1d927-28f4-402a-8c87-017e637f434a';
-  $media->status = 1;
   $media->save();
 
-  $default_image['uuid'] = $media->uuid();
-  $default_image['alt'] = 'Default profile image';
-  $default_image['title'] = 'Default profile image';
-  $default_image['height'] = 200;
-  $default_image['width'] = 200;
-
-  $field_image_config->set('settings.default_image', $default_image)
-    ->save(TRUE);
-  drupal_flush_all_caches();
+  // Ensure Drupal tracks whether the file is still needed.
+  \Drupal::service('file.usage')->add($media, 'image', 'default_image', $field_image_config_uuid);
 }
 
 /**
@@ -442,6 +451,20 @@ function social_profile_update_11301(array &$sandbox): string {
  * Update exposed filter button name.
  */
 function social_profile_update_11401(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Fix missed filter block on the all-members page.
+ */
+function social_profile_update_11701(): string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

@@ -48,8 +48,7 @@ services:
     arguments: ['@database']
   social_group.group_mute_notify:
     class: Drupal\social_group\GroupMuteNotify
-    arguments:
-      - '@flag'
+    arguments: ['@flag', '@entity_type.manager']
   cache_context.social_group_join_method:
     class: Drupal\social_group\CacheContext\SocialGroupJoinMethodCacheContext
     arguments: []

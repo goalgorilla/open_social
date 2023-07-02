@@ -316,6 +316,7 @@ function social_content_block_update_8002(&$sandbox) {
     $sandbox['total'] = \Drupal::entityQuery('block_content')
       ->condition('type', 'custom_content_list')
       ->notExists('field_plugin_id')
+      ->accessCheck()
       ->count()
       ->execute();
 
@@ -337,6 +338,7 @@ function social_content_block_update_8002(&$sandbox) {
   $entity_ids = \Drupal::entityQuery('block_content')
     ->condition('type', 'custom_content_list')
     ->notExists('field_plugin_id')
+    ->accessCheck()
     ->sort('id')
     ->range(0, $sandbox['limit'])
     ->execute();
@@ -576,4 +578,18 @@ function social_content_block_update_10501(): void {
     // Make sure we clear cached definitions for the fields.
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
   }
+}
+
+/**
+ * Make the subtitle field optional.
+ */
+function social_content_block_update_11801(): string {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

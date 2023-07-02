@@ -289,3 +289,58 @@ function social_tagging_update_11501(): void {
     _social_tagging_add_base_field($entity_type);
   }
 }
+
+/**
+ * Add a new field to social tagging.
+ */
+function social_tagging_update_11801(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_tagging') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+
+  // Create field storages.
+  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $data = $source->read('field.storage.taxonomy_term.field_term_page_url_11801');
+  if (is_array($data)) {
+    /** @var \Drupal\Core\Field\FieldItemInterface $class */
+    $class = $field_type_manager->getPluginClass($data['type']);
+    if (is_null($field_storage_config_storage->load($data['id']))) {
+      $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+      $field_storage_config_storage->create($data)->save();
+    }
+  }
+
+  // Create field settings.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $data = $source->read('field.field.taxonomy_term.social_tagging.field_term_page_url_11801');
+  if (is_array($data) && is_null($field_config_storage->load($data['id']))) {
+    $field_config_storage->create($data)->save();
+  }
+
+  // Create/update a form/view display for the 'Social tagging' terms.
+  $displays = [
+    'entity_form_display',
+    'entity_view_display',
+  ];
+
+  foreach ($displays as $display) {
+    $display_storage = $entity_type_manager->getStorage($display);
+    $data = $source->read("core.$display.taxonomy_term.social_tagging.default_11801");
+    if (is_array($data)) {
+      if (is_null($display_storage->load($data['id']))) {
+        $display_storage->create($data)->save();
+      }
+      else {
+        /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $view_display */
+        $view_display = $display_storage->load($data['id']);
+        $view_display->setComponent('field_term_page_url', $data['content']['field_term_page_url']);
+        $view_display->save();
+      }
+    }
+  }
+}

@@ -70,7 +70,14 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
       if ($storage !== NULL) {
         if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-          $replacements['[message:author:display-name]'] .= rtrim(' ' . social_profile_organization_tag_fetch($user_profile, FALSE));
+          $organization = social_profile_organization_tag_fetch($user_profile, FALSE);
+          if ($organization->count() !== 0) {
+            $replacements['[message:author:display-name]']
+              = new FormattableMarkup('@displayName @organization', [
+                '@displayName' => $replacements['[message:author:display-name]'],
+                '@organization' => $organization,
+              ]);
+          }
         }
       }
     }
@@ -86,7 +93,7 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
 /**
  * Function that fetches the extra organizational info for a profile.
  */
-function social_profile_organization_tag_fetch(Profile $profile, $return_html = TRUE) {
+function social_profile_organization_tag_fetch(Profile $profile, $return_html = TRUE): FormattableMarkup {
   if (!$profile->get('field_profile_organization_tag')->isEmpty()) {
     $organization_tag = $profile->get('field_profile_organization_tag');
     $organization_tag_entities = $organization_tag->referencedEntities();
@@ -114,5 +121,5 @@ function social_profile_organization_tag_fetch(Profile $profile, $return_html = 
       }
     }
   }
-  return '';
+  return new FormattableMarkup('', []);
 }

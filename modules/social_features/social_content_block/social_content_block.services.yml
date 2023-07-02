@@ -18,9 +18,11 @@ services:
   social_content_block.content_builder:
     class: Drupal\social_content_block\ContentBuilder
     arguments:
+      - '@current_user'
       - '@entity_type.manager'
       - '@database'
       - '@string_translation'
+      - '@language_manager'
       - '@plugin.manager.content_block'
       - '@entity.repository'
       - '@datetime.time'

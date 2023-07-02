@@ -88,6 +88,26 @@ class LogContext implements Context {
   }
 
   /**
+   * I should see log message
+   *
+   * @Then I should see log message :value
+   */
+  public function iShouldSeeLogMessage($value) {
+    $log_messages = $this->getLogMessages();
+    $log_message_exist = FALSE;
+
+    foreach ($log_messages as $log_message) {
+      if ($log_message->message === $value) {
+        return TRUE;
+      }
+    }
+
+    if (!$log_message_exist) {
+      throw new \Exception('The log message with value "' . $value . '" was not found in logs.');
+    }
+  }
+
+  /**
    * Drupal can produce a lot of log messages that are not actual problems.
    *
    * @param \StdClass $row
@@ -96,7 +116,7 @@ class LogContext implements Context {
    * @return bool
    *   Whether to ignore this message.
    */
-  private function isIgnoredLogMessage($row) : bool {
+  protected function isIgnoredLogMessage($row) : bool {
     return
       // Ignore notices from the user module since we don't really care about
       // users logging in or being deleted, those conditions are part of test

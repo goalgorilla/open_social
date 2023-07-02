@@ -4,6 +4,7 @@ namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_group\SocialGroupHelperService;
@@ -176,6 +177,8 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $and_wrapper->condition('activity__field_activity_entity.field_activity_entity_target_type', $hide_from_view, 'NOT IN');
     }
 
+    $this->alter($or);
+
     // Lets add all the or conditions to the Views query.
     if (!empty($or->conditions()[0])) {
       $and_wrapper->condition($or);
@@ -215,6 +218,14 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $filter_query->addWhere('visibility', $and_wrapper);
     }
   }
+
+  /**
+   * Inserts extra rules.
+   *
+   * @param \Drupal\Core\Database\Query\ConditionInterface $conditions
+   *   The query conditions.
+   */
+  protected function alter(ConditionInterface $conditions): void {}
 
   /**
    * {@inheritdoc}

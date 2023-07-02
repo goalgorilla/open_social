@@ -12,7 +12,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -27,6 +30,13 @@ class ContentBuilder implements ContentBuilderInterface {
   use StringTranslationTrait;
 
   /**
+   * User account entity.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected AccountInterface $account;
+
+  /**
    * The entity type manager.
    */
   protected EntityTypeManagerInterface $entityTypeManager;
@@ -35,6 +45,13 @@ class ContentBuilder implements ContentBuilderInterface {
    * The current active database's master connection.
    */
   protected Connection $connection;
+
+  /**
+   * Language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
 
   /**
    * The content block manager.
@@ -55,16 +72,20 @@ class ContentBuilder implements ContentBuilderInterface {
    * {@inheritdoc}
    */
   public function __construct(
+    AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     TranslationInterface $string_translation,
+    LanguageManagerInterface $language_manager,
     ContentBlockManagerInterface $content_block_manager,
     EntityRepositoryInterface $entity_repository,
     TimeInterface $time
   ) {
+    $this->account = $account;
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->setStringTranslation($string_translation);
+    $this->languageManager = $language_manager;
     $this->contentBlockManager = $content_block_manager;
     $this->entityRepository = $entity_repository;
     $this->time = $time;
@@ -125,13 +146,16 @@ class ContentBuilder implements ContentBuilderInterface {
       /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
       $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
+      $langcode = $this->languageManager->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+
       $table = $entity_type->getDataTable();
       if (!empty($table) && is_string($table)) {
         $query = $this->connection->select($table, 'base_table')
           ->addTag('social_content_block')
           ->addTag($entity_type->id() . '_access')
           ->addMetaData('block_content', $block_content)
-          ->fields('base_table', [$entity_type->getKey('id')]);
+          ->fields('base_table', [$entity_type->getKey('id')])
+          ->condition('base_table.langcode', $langcode);
 
         if (isset($definition['bundle'])) {
           $query->condition(
@@ -162,6 +186,13 @@ class ContentBuilder implements ContentBuilderInterface {
             ->loadMultiple($entities);
 
           foreach ($entities as $key => $entity) {
+            // @todo Better to move to entity query check but
+            // it doesn't work correctly for flexible groups.
+            if (!$entity->access('view', $this->account)) {
+              unset($entities[$key]);
+              continue;
+            }
+
             $entities[$key] = $this->entityRepository->getTranslationFromContext($entity);
           }
 
