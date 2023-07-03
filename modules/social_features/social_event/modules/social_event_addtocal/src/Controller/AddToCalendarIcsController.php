@@ -63,6 +63,11 @@ class AddToCalendarIcsController extends ControllerBase {
     $dates = $this->request->get('dates');
     $timezone = $this->request->get('timezone');
 
+    // Generate DTSTAMP, which needs to be the time the ICS object created.
+    // https://icalendar.org/iCalendar-RFC-5545/3-6-1-event-component.html
+    $now = new \DateTime('now', new \DateTimezone('UTC'));
+    $dtstamp = $now->format('Ymd\THis\Z');
+
     // Create ICS filename.
     $name = md5(serialize($this->request->query->all()));
     $filename = $name . '.ics';
@@ -72,27 +77,30 @@ class AddToCalendarIcsController extends ControllerBase {
 
     // Generate data for ICS file if it not exists.
     if (!file_exists($file)) {
-      // Set initial data.
+      // Set initial data for identifying the event.
       $file_data = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
+        'PRODID:Event ' . $this->request->get('nid') . " - " . $this->request->get('title'),
         'METHOD:PUBLISH',
-        'BEGIN:VEVENT',
-        'UID:' . $name,
-        'SUMMARY:' . $this->request->get('title'),
       ];
 
       // Generate the VTIMEZONE.
       $timezone_components = [];
-
       $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['start'], $timezone);
       $timezone_components[$timezone] = $this->generateTimezoneComponent($dates['end'], $timezone);
 
       $componentFactory = new TimeZoneFactory();
       $timezone_elements = $componentFactory->createComponents($timezone_components);
       foreach ($timezone_elements as $el) {
-        $file_data[] = $el->__toString();
+        $file_data[] = rtrim($el->__toString());
       }
+
+      // Begin the event data.
+      $file_data[] = 'BEGIN:VEVENT';
+      $file_data[] = 'SUMMARY:' . $this->request->get('title');
+      $file_data[] = 'UID:' . $name;
+      $file_data[] = 'TRANSP:OPAQUE';
 
       // Set start and end datetime for event.
       if ($dates['all_day']) {
@@ -104,18 +112,20 @@ class AddToCalendarIcsController extends ControllerBase {
         $file_data[] = 'DTEND;TZID=' . $dates['end'];
       }
 
-      // Set location.
-      if ($this->request->get('description')) {
-        $file_data[] = 'DESCRIPTION:' . $this->request->get('description');
-      }
+      // Add the DTSTAMP.
+      $file_data[] = 'DTSTAMP:' . $dtstamp;
 
-      // Set description.
+      // Set location.
       if ($this->request->get('location')) {
         $file_data[] = 'LOCATION:' . $this->request->get('location');
       }
 
+      // Set description.
+      if ($this->request->get('description')) {
+        $file_data[] = 'DESCRIPTION:' . $this->request->get('description');
+      }
+
       // Set end of file.
-      $file_data[] = 'TRANSP:OPAQUE';
       $file_data[] = 'END:VEVENT';
       $file_data[] = 'END:VCALENDAR';
 
