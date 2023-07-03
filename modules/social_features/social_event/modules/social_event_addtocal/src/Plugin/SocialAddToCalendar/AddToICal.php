@@ -14,7 +14,7 @@ use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
  *   label = @Translation("iCal"),
  *   url = "social_event_addtocal.add_to_calendar_ics",
  *   dateFormat = "e:Ymd\THis",
- *   utcDateFormat = "e:Ymd\THis\Z"
+ *   utcDateFormat = "e:Ymd\THis"
  * )
  */
 class AddToICal extends SocialAddToCalendarBase {
