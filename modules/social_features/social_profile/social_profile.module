@@ -1344,6 +1344,12 @@ function social_profile_get_default_image() {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function social_profile_social_user_name_display_suggestions(AccountInterface $account): array {
+  // We don't have any suggestions for the anonymous user since its name is
+  // governed by different rules.
+  if ($account->isAnonymous()) {
+    return [];
+  }
+
   $suggestions = [];
 
   $entityTypeManager = \Drupal::entityTypeManager();
