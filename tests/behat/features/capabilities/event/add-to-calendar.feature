@@ -23,6 +23,7 @@ Feature: Add event to calendar
       """
       BEGIN:VCALENDAR
       VERSION:2.0
+      PRODID:Event
       METHOD:PUBLISH
       BEGIN:VEVENT
       SUMMARY:Walking in the park
@@ -35,8 +36,8 @@ Feature: Add event to calendar
       TZOFFSETFROM:+0000
       END:STANDARD
       END:VTIMEZONE
-      DTSTART;TZID=UTC:21000101T100000Z
-      DTEND;TZID=UTC:21000101T120000Z
+      DTSTART;TZID=UTC:21000101T100000
+      DTEND;TZID=UTC:21000101T120000
       TRANSP:OPAQUE
       END:VEVENT
       END:VCALENDAR
@@ -65,6 +66,7 @@ Feature: Add event to calendar
       """
       BEGIN:VCALENDAR
       VERSION:2.0
+      PRODID:Event
       METHOD:PUBLISH
       BEGIN:VEVENT
       SUMMARY:Walking in the park
@@ -77,8 +79,8 @@ Feature: Add event to calendar
       TZOFFSETFROM:+0000
       END:STANDARD
       END:VTIMEZONE
-      DTSTART;TZID=UTC:21000101T100000Z
-      DTEND;TZID=UTC:21000101T120000Z
+      DTSTART;TZID=UTC:21000101T100000
+      DTEND;TZID=UTC:21000101T120000
       TRANSP:OPAQUE
       END:VEVENT
       END:VCALENDAR
