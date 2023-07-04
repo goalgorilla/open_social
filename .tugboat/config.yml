@@ -82,6 +82,7 @@ services:
     image: tugboatqa/mariadb:latest
   solr:
     image: ghcr.io/goalgorilla/ci-tugboat-solr:8.11
+    expose: 8983
     commands:
       init:
         - su -s /bin/sh -c "/opt/solr/bin/solr create_core -c drupal -force" solr
