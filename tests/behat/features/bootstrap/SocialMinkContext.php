@@ -236,4 +236,32 @@ class SocialMinkContext extends MinkContext {
     }
   }
 
+  /**
+   * Checks, that (?P<num>\d+) text exist in a selector on the page
+   * Example: Then I should see "text" 5 times in ".teaser__title"
+   * Example: And I should see "text" 1 time in "h4"
+   *
+   * @Then /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" (?P<num>\d+) time(s?) in "(?P<selector>(?:[^"]|\\")*)"$/
+   */
+  public function assertNumTextCss($num, $text, $selector) {
+    $session = $this->getSession();
+    $elements = $session->getPage()->findAll('css', $selector);
+    $regex = '/' . preg_quote($text, '/') . '/ui';
+
+    $count = 0;
+    foreach ($elements as $element) {
+      $element_text = $element->getText();
+      $actual = preg_replace('/\s+/u', ' ', $element_text);
+      preg_match($regex, $actual, $matches);
+
+      $count += count($matches);
+    }
+
+    if ($count !== (int) $num) {
+      throw new \Exception(sprintf('The text %s was not found %d time(s) in the text of the current page.', $text, $num));
+    }
+
+    return TRUE;
+  }
+
 }
