@@ -51,9 +51,18 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
     ];
     $default_value = $entity->get('field_album')->target_id;
     if ($entity->isNew() || !isset($options[$default_value])) {
-      // To attach to the existing Album, "Post" should be added using
-      // button on the Album page.
-      return $empty_options;
+      $new_options = [
+        '_none' => $empty_options['_none'],
+      ];
+
+      // Existing albums.
+      foreach ($options as $key => $value) {
+        $new_options[$key] = $value;
+      }
+
+      $new_options['_add'] = $empty_options['_add'];
+
+      return $new_options;
     }
     // Return only default (previously saved album) and helper options.
     return $empty_options + [$default_value => $options[$default_value]];
@@ -125,6 +134,14 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       }
       else {
         $element['#value'] = '_none';
+      }
+    }
+    elseif ($element['#value'] !== '_none' && $has_images) {
+      /** @var \Drupal\node\NodeInterface|null $node */
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($element['#value']);
+      if ($node) {
+        $element['#value'] = $node->id();
+        $form_state->set('album', TRUE);
       }
     }
     elseif ($element['#value'] !== '_none' && !$has_images) {
