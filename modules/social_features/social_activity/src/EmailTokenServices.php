@@ -6,6 +6,7 @@ use Drupal\comment\Entity\Comment;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -255,6 +256,7 @@ class EmailTokenServices {
       '#profile_name' => $user->getDisplayName(),
       '#profile_home' => Url::fromRoute('entity.user.canonical', ['user' => $user->id()]),
       '#profile_image' => $image_url ?? NULL,
+      '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? 'no-lazy' : '',
       '#profile_function' => $profile->getFieldValue('field_profile_function', 'value'),
       '#profile_organization' => $profile->getFieldValue('field_profile_organization', 'value'),
       '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? $this->config->get('lazy.settings')->get('skipClass') : '',
