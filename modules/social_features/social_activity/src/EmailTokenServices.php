@@ -3,12 +3,15 @@
 namespace Drupal\social_activity;
 
 use Drupal\comment\Entity\Comment;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\group\Entity\Group;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\message\Entity\Message;
@@ -48,6 +51,21 @@ class EmailTokenServices {
   protected GroupStatistics $groupStatistics;
 
   /**
+   * The module handler.
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
+   * The stream wrapper manager.
+   */
+  protected StreamWrapperManagerInterface $streamWrapperManager;
+
+  /**
+   * The configfactory.
+   */
+  protected ConfigFactory $config;
+
+  /**
    * Constructs a EmailTokenServices object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -56,15 +74,27 @@ class EmailTokenServices {
    *   DateFormatter object.
    * @param \Drupal\social_group\GroupStatistics $group_statistics
    *   GroupStatistics object.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
+   * @param \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface $stream_wrapper_manager
+   *   The stream wrapper manager.
+   * @param \Drupal\Core\Config\ConfigFactory $config
+   *   The config factory service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatter $date_formatter,
-    GroupStatistics $group_statistics
+    GroupStatistics $group_statistics,
+    ModuleHandlerInterface $module_handler,
+    StreamWrapperManagerInterface $stream_wrapper_manager,
+    ConfigFactory $config
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
     $this->groupStatistics = $group_statistics;
+    $this->moduleHandler = $module_handler;
+    $this->streamWrapperManager = $stream_wrapper_manager;
+    $this->config = $config;
   }
 
   /**
@@ -202,8 +232,15 @@ class EmailTokenServices {
     // Add the profile image.
     /** @var \Drupal\image\Entity\ImageStyle $image_style */
     $image_style = ImageStyle::load('social_medium');
-    if (!empty($profile->field_profile_image->entity)) {
-      $image_url = $image_style->buildUrl($profile->field_profile_image->entity->getFileUri());
+
+    /** @var \Drupal\file\FileInterface $image */
+    $image = !$profile->get('field_profile_image')->isEmpty() ? $profile->get('field_profile_image')->entity : '';
+
+    if (
+      $image instanceof FileInterface &&
+      $this->streamWrapperManager->getScheme($image->getFileUri()) !== 'private'
+    ) {
+      $image_url = $image_style->buildUrl($image->getFileUri());
     }
     elseif ($default_image = social_profile_get_default_image()) {
       // Add default image.
@@ -220,6 +257,7 @@ class EmailTokenServices {
       '#profile_image' => $image_url ?? NULL,
       '#profile_function' => $profile->getFieldValue('field_profile_function', 'value'),
       '#profile_organization' => $profile->getFieldValue('field_profile_organization', 'value'),
+      '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? $this->config->get('lazy.settings')->get('skipClass') : '',
     ];
 
     return $preview_info;
