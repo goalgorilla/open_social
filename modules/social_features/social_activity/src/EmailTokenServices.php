@@ -5,6 +5,7 @@ namespace Drupal\social_activity;
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -48,6 +49,11 @@ class EmailTokenServices {
   protected GroupStatistics $groupStatistics;
 
   /**
+   * The module handler.
+   */
+  protected ModuleHandlerInterface $moduleHandler;
+
+  /**
    * Constructs a EmailTokenServices object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -56,15 +62,19 @@ class EmailTokenServices {
    *   DateFormatter object.
    * @param \Drupal\social_group\GroupStatistics $group_statistics
    *   GroupStatistics object.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     DateFormatter $date_formatter,
-    GroupStatistics $group_statistics
+    GroupStatistics $group_statistics,
+    ModuleHandlerInterface $module_handler
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
     $this->groupStatistics = $group_statistics;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -218,6 +228,7 @@ class EmailTokenServices {
       '#profile_name' => $user->getDisplayName(),
       '#profile_home' => Url::fromRoute('entity.user.canonical', ['user' => $user->id()]),
       '#profile_image' => $image_url ?? NULL,
+      '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? 'no-lazy' : '',
       '#profile_function' => $profile->getFieldValue('field_profile_function', 'value'),
       '#profile_organization' => $profile->getFieldValue('field_profile_organization', 'value'),
     ];
