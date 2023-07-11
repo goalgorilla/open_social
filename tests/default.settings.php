@@ -805,5 +805,12 @@ if ($drupal_settings === 'development' && file_exists($app_root . '/' . $site_pa
 }
 
 /**
+ * Load docker specific settings provided through environment variables.
+ *
+ * We don't check for an existence because our CI fails if this isn't present.
+ */
+require __DIR__ . '/settings.docker.php';
+
+/**
  * Everything after here is added by the installation process.
  */
