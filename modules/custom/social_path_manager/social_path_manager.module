@@ -251,7 +251,7 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             $entity_language = $entity->language()->getId();
 
             // Prevent adding alias for default tab.
-            $source_parts = explode('/', $path['source']);
+            $source_parts = explode('/', $path['source'] ?? "");
             if (end($source_parts) === $suffix) {
               continue;
             }

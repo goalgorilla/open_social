@@ -24,7 +24,7 @@ class SocialPostAlbumManagedFile extends ManagedFile {
    */
   public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
     $response = parent::uploadAjaxCallback($form, $form_state, $request);
-    $parents = explode('/', $request->query->get('element_parents'));
+    $parents = explode('/', $request->query->get('element_parents') ?? "");
 
     return $response->addCommand(new InvokeCommand(
       '#edit-' . str_replace('_', '-', $parents[0]) . '-wrapper',

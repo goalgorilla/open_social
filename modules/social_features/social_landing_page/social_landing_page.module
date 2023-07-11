@@ -75,7 +75,7 @@ function social_landing_page_field_widget_block_field_default_form_alter(&$eleme
 
   // Grab the id.
   $id = $block_settings['#attributes']['id'];
-  $items = explode('-', $id);
+  $items = explode('-', $id ?? "");
 
   // Generate the new state name.
   // We use block id, to get all the parent names
