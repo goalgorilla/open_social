@@ -502,7 +502,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   List of emails to invite .
    */
   private function getSubmittedEmails(FormStateInterface $form_state) {
-    return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address')))));
+    return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address') ?? ""))));
   }
 
   /**

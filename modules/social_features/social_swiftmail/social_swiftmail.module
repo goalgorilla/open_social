@@ -30,7 +30,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $secondary = $colors['brand-secondary'];
   $accent = $colors['brand-accent'];
   $link = $colors['brand-link'];
-  $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id));
+  $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id) ?? "");
 
   // Add variables to send to the html template.
   $variables['logo'] = $logo;
@@ -117,7 +117,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     }
 
     $disabled_greeting_keys = $social_swiftmail_config->get("disabled_user_greeting_keys");
-    $disabled_greeting_keys = explode("\r\n", $disabled_greeting_keys);
+    $disabled_greeting_keys = explode("\r\n", $disabled_greeting_keys ?? "");
     $replace = [
       '@display_name' => $display_name,
     ];
