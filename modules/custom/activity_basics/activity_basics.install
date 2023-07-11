@@ -55,7 +55,7 @@ function activity_basics_update_8103() : void {
     $activity_bundle_entity = $config->get('third_party_settings.activity_logger.activity_bundle_entity');
     $config->clear('third_party_settings.activity_logger.activity_bundle_entity');
 
-    $bundle_entity = explode('.', $activity_bundle_entity);
+    $bundle_entity = explode('.', $activity_bundle_entity ?? "");
     $activity_bundle_entity_new = $bundle_entity[0] . '-' . $bundle_entity[1];
     $activity_bundle_entities = [$activity_bundle_entity_new => $activity_bundle_entity_new];
 

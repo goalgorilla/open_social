@@ -60,7 +60,7 @@ trait SocialProfileTrait {
       case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
         if ($this->useFullName()) {
-          $strings = explode(' ', $name);
+          $strings = explode(' ', $name ?? "");
 
           if (count($strings) > 1) {
             $query->where("CONCAT(TRIM(fn.field_profile_first_name_value), ' ', TRIM(ln.field_profile_last_name_value)) LIKE :full_name", [

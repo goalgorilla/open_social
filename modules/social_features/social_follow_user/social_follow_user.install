@@ -113,7 +113,7 @@ function social_follow_user_uninstall(): void {
 
     if (!empty($config->getRawData())) {
       $pages = $config->get('visibility.request_path.pages');
-      $pages = explode("\r\n", $pages);
+      $pages = explode("\r\n", $pages ?? "");
 
       foreach ($pages as $delta => $page) {
         if (in_array($page, $paths)) {

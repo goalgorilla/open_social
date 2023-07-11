@@ -47,7 +47,7 @@ function download_count_file_access(EntityInterface $entity, $operation, Account
     }
 
     // Validate file has extension that should be counted, if not return.
-    $extensions = explode(' ', mb_strtolower(trim($config->get('download_count_excluded_file_extensions'))));
+    $extensions = explode(' ', mb_strtolower(trim($config->get('download_count_excluded_file_extensions') ?? "")));
     $extension = mb_strtolower(pathinfo($entity->getFilename(), PATHINFO_EXTENSION));
     if (in_array($extension, $extensions, TRUE)) {
       return;
