@@ -173,6 +173,11 @@ function social_profile_update_dependencies() {
     'social_core' => 11002,
   ];
 
+  // Add variationcache hook update from group as required to fix update path.
+  $dependencies['social_profile'][11002] = [
+    'group' => 8020,
+  ];
+
   return $dependencies;
 }
 
