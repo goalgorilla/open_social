@@ -5,7 +5,11 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
@@ -137,6 +141,10 @@ function social_event_update_dependencies() {
   // New image style change should run after the new image style is imported.
   $dependencies['social_event'][8915] = [
     'social_core' => 8908,
+  ];
+
+  $dependencies['social_event'][11401] = [
+    'social_core' => 11401,
   ];
 
   return $dependencies;
@@ -2112,28 +2120,46 @@ function social_event_update_10311(): string {
  * Add new field to Event node type; Add new message template.
  */
 function social_event_update_11401(): void {
-  $config_files = [
-    'core.entity_view_display.node.event.email_card' => 'core.entity_view_display.node.event.email_card_11401',
-    'message.template.user_was_enrolled_to_event' => 'message.template.user_was_enrolled_to_event_11401',
-  ];
+  try {
+    $content = file_get_contents(\Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/core.entity_view_display.node.event.email_card_11401.yml');
+    if (is_string($content)) {
+      $yml = Yaml::parse($content);
+      EntityViewDisplay::create($yml)->save();
+    }
 
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static';
-  $source = new FileStorage($config_path);
+    // Prepare the path.
+    $path = \Drupal::service('extension.list.module')->getPath('social_event') . '/config/static/message.template.user_was_enrolled_to_event_11401.yml';
 
-  foreach ($config_files as $origin_name => $update_name) {
-    $config_storage->write($origin_name, (array) $source->read($update_name));
+    // Retrieves the configuration factory.
+    $config_factory = \Drupal::configFactory();
+
+    // Create new message template.
+    if (is_file($path)) {
+      $file_content = file_get_contents($path);
+      $settings = Yaml::parse($file_content === FALSE ? '' : $file_content);
+      if (is_array($settings)) {
+        $config = $config_factory->getEditable('message.template.user_was_enrolled_to_event');
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+
+    $source = new FileStorage(\Drupal::service('extension.list.module')->getPath('social_event') . '/config/static');
+
+    // Create a new field from the yaml configuration and save.
+    \Drupal::entityTypeManager()->getStorage('field_storage_config')
+      ->create((array) $source->read('field.storage.node.field_event_send_confirmation_11401'))
+      ->save();
+
+    // Create a new field instance from the yaml configuration and save.
+    \Drupal::entityTypeManager()->getStorage('field_config')
+      ->create((array) $source->read('field.field.node.event.field_event_send_confirmation_11401'))
+      ->save();
+
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_event')->error($e->getMessage());
   }
 
-  // Create a new field from the yaml configuration and save.
-  \Drupal::entityTypeManager()->getStorage('field_storage_config')
-    ->create((array) $source->read('field.storage.node.field_event_send_confirmation_11401'))
-    ->save();
-
-  // Create a new field instance from the yaml configuration and save.
-  \Drupal::entityTypeManager()->getStorage('field_config')
-    ->create((array) $source->read('field.field.node.event.field_event_send_confirmation_11401'))
-    ->save();
 }
 
 /**
@@ -2222,4 +2248,40 @@ function social_event_update_11902(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Fix configs that don't have UUIDs.
+ */
+function social_event_update_11903(): void {
+
+  try {
+    /** @var \Drupal\Core\Entity\EntityInterface $email_card_view_display */
+    $email_card_view_display = EntityViewDisplay::load('node.event.email_card');
+    if ($email_card_view_display->uuid() === NULL || empty($email_card_view_display->uuid())) {
+      $site = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.event.email_card');
+      $site->set('uuid', \Drupal::service('uuid')->generate());
+      $site->save(TRUE);
+    }
+
+    /** @var \Drupal\Core\Entity\EntityInterface $email_card_view_mode */
+    $email_card_view_mode = EntityViewMode::load('node.email_card');
+    if ($email_card_view_mode->uuid() === NULL || empty($email_card_view_mode->uuid())) {
+      $site = \Drupal::configFactory()
+        ->getEditable('core.entity_view_mode.node.email_card');
+      $site->set('uuid', \Drupal::service('uuid')->generate());
+      $site->save(TRUE);
+    }
+
+    /** @var \Drupal\Core\Config\Config $config */
+    $config = \Drupal::service('config.factory')->getEditable('message.template.user_was_enrolled_to_event');
+    $config->set('uuid', \Drupal::service('uuid')->generate());
+    $config->save();
+
+  }
+  catch (ConfigException $e) {
+    \Drupal::logger('social_event')->error($e->getMessage());
+  }
+
 }
