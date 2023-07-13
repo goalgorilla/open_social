@@ -36,8 +36,16 @@ trait SocialEventTrait {
       return FALSE;
     }
 
-    // The event has finished if the end date is smaller than the current date.
-    return $current_time->getTimestamp() > $check_end_date->getTimestamp();
+    // Check if is activated all_day checkbox.
+    $check_all_day = !$node->get('field_event_all_day')->isEmpty()
+      ? $node->get('field_event_all_day')->getString()
+      : NULL;
+
+    // The event has finished if the end date is smaller than the current date,
+    // and if the all day checkbox isn't activated,
+    // and the end date is not equal to the current date.
+    return $current_time->getTimestamp() > $check_end_date->getTimestamp() &&
+      !($check_all_day && $check_end_date->format('Y-m-d') === $current_time->format('Y-m-d'));
   }
 
 }
