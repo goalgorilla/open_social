@@ -1572,7 +1572,6 @@ function social_core_update_11301(): void {
  * Add a new view mode for nodes - Email card.
  */
 function social_core_update_11401(): void {
-
   try {
     $content = file_get_contents(\Drupal::service('extension.list.module')->getPath('social_core') . '/config/static/core.entity_view_mode.node.email_card_11401.yml');
     if (is_string($content)) {
@@ -1583,7 +1582,6 @@ function social_core_update_11401(): void {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_core')->error($e->getMessage());
   }
-
 }
 
 /**

@@ -2163,7 +2163,6 @@ function social_event_update_11401(): void {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_event')->error($e->getMessage());
   }
-
 }
 
 /**
@@ -2258,7 +2257,6 @@ function social_event_update_11902(): string {
  * Fix configs that don't have UUIDs.
  */
 function social_event_update_11903(): void {
-
   try {
     /** @var \Drupal\Core\Entity\EntityInterface $email_card_view_display */
     $email_card_view_display = EntityViewDisplay::load('node.event.email_card');
@@ -2278,14 +2276,22 @@ function social_event_update_11903(): void {
       $site->save(TRUE);
     }
 
-    /** @var \Drupal\Core\Config\Config $config */
-    $config = \Drupal::service('config.factory')->getEditable('message.template.user_was_enrolled_to_event');
-    $config->set('uuid', \Drupal::service('uuid')->generate());
-    $config->save();
+    // List of broken or NULL UUIDs.
+    $config_list = [
+      'message.template.user_was_enrolled_to_event',
+      'views.view.event_manage_enrollments',
+      'views.view.group_manage_members',
+      'views.view.user_admin_people',
+    ];
 
+    foreach ($config_list as $config_name) {
+      /** @var \Drupal\Core\Config\Config $config */
+      $config = \Drupal::service('config.factory')->getEditable($config_name);
+      $config->set('uuid', \Drupal::service('uuid')->generate());
+      $config->save();
+    }
   }
   catch (ConfigException $e) {
     \Drupal::logger('social_event')->error($e->getMessage());
   }
-
 }
