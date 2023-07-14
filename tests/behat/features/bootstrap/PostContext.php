@@ -49,7 +49,7 @@ class PostContext extends RawMinkContext {
    *
    * @Given posts with non-anonymous owner:
    */
-  public function createGroupsWithOwner(TableNode $postsTable) {
+  public function createPostWithOwner(TableNode $postsTable) {
     // Create a new random user to own our groups, this ensures the author
     // isn't anonymous.
     $user = (object) [
@@ -70,6 +70,27 @@ class PostContext extends RawMinkContext {
       // `postCreate` will load the user by name.
       $postHash['author'] = $user->name;
 
+      $post = $this->postCreate($postHash);
+      $this->posts[$post->id()] = $post;
+    }
+  }
+
+  /**
+   * Create multiple posts at the start of a test with defined users as
+   * authors.
+   *
+   * Creates post of a given type provided in the form:
+   * | field_post     |  author | type | field_visibility | status | langcode
+   * | My description |  Mark   | post | 0                | 1      | en
+   * | ...            | ...     | ...              | ...    | ...
+   *
+   * @Given posts:
+   */
+  public function createPosts(TableNode $postsTable) {
+    foreach ($postsTable->getHash() as $postHash) {
+      if (!isset($postHash['author'])) {
+        throw new \Exception("User is not specified as author when using the 'posts with defined author' step.");
+      }
       $post = $this->postCreate($postHash);
       $this->posts[$post->id()] = $post;
     }

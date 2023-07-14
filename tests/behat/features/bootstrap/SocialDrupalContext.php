@@ -17,6 +17,9 @@ use Drupal\DrupalExtension\Hook\Scope\EntityScope;
  */
 class SocialDrupalContext extends DrupalContext {
 
+  use AvoidCleanupTrait;
+  use NodeTrait;
+
   /**
    * Prepares Big Pipe NOJS cookie if needed.
    *
@@ -448,5 +451,49 @@ class SocialDrupalContext extends DrupalContext {
     $this->getSession()->wait(1800000, 'jQuery("#updateprogress").length === 0');
   }
 
+  /**
+   * Add likes to node at the start of a test with existing users as authors.
+   *
+   * Creates like provided in the form:
+   * | title    | bundle | user      |
+   * | My event | event  | Jane Doe  |
+   * | ...      | ...    | ...       |
+   *
+   * @Given likes node:
+   */
+  public function createNodeLikes(TableNode $nodesTable): void {
+
+    $entity_manager = \Drupal::service('entity_type.manager');
+    /** @var \Drupal\votingapi\VoteTypeInterface $vote_type */
+    $vote_type = $entity_manager->getStorage('vote_type')->load('like');
+
+    /** @var \Drupal\votingapi\VoteStorageInterface $vote_storage */
+    $vote_storage = \Drupal::entityTypeManager()->getStorage('vote');
+
+    foreach ($nodesTable->getHash() as $nodeHash) {
+      if (!isset($nodeHash['author'])) {
+        throw new \Exception("User is not specified as author when using the 'like node with defined author:' step.");
+      }
+
+      $owner = user_load_by_name($nodeHash['author']);
+      if ($owner === FALSE) {
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $nodeHash['author']));
+      }
+
+      $node_id = $this->getNodeIdFromTitle($nodeHash['bundle'], $nodeHash['title']);
+      if ($node_id === NULL) {
+        throw new \Exception("Node '%s' does not exist.", $nodeHash['title']);
+      }
+
+      /** @var \Drupal\votingapi\VoteInterface $vote */
+      $vote = $vote_storage->create(['type' => 'like']);
+      $vote->setVotedEntityId($node_id);
+      $vote->setVotedEntityType('node');
+      $vote->setValueType($vote_type->getValueType());
+      $vote->setValue(1);
+      $vote->setOwnerId($owner->id());
+      $vote->save();
+    }
+  }
 
 }
