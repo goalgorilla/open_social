@@ -17,7 +17,6 @@ use Drupal\DrupalExtension\Hook\Scope\EntityScope;
  */
 class SocialDrupalContext extends DrupalContext {
 
-  use AvoidCleanupTrait;
   use NodeTrait;
 
   /**
