@@ -256,7 +256,6 @@ class EmailTokenServices {
       '#profile_name' => $user->getDisplayName(),
       '#profile_home' => Url::fromRoute('entity.user.canonical', ['user' => $user->id()]),
       '#profile_image' => $image_url ?? NULL,
-      '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? 'no-lazy' : '',
       '#profile_function' => $profile->getFieldValue('field_profile_function', 'value'),
       '#profile_organization' => $profile->getFieldValue('field_profile_organization', 'value'),
       '#profile_class' => $this->moduleHandler->moduleExists('lazy') ? $this->config->get('lazy.settings')->get('skipClass') : '',
