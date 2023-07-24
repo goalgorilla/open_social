@@ -136,37 +136,6 @@ class PostContext extends RawMinkContext {
   }
 
   /**
-   * Clean up posts created in scenarios.
-   *
-   * @AfterScenario
-   */
-  public function cleanupPost(AfterScenarioScope $scope) {
-    if (!empty($this->posts)) {
-      foreach ($this->posts as $post) {
-        $post->delete();
-      }
-    }
-
-    $query = \Drupal::entityQuery('post')
-      ->condition(
-        'field_post',
-        [
-          'This is a public post.',
-          'This is a community post.',
-        ],
-        'IN'
-      );
-
-    $post_ids = $query->execute();
-
-    $posts = \Drupal::entityTypeManager()->getStorage('post')->loadMultiple($post_ids);
-
-    foreach ($posts as $post) {
-      $post->delete();
-    }
-  }
-
-  /**
    * Create a post.
    *
    * @param array $post

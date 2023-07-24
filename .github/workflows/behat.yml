@@ -335,6 +335,10 @@ jobs:
           # this makes local reproduction easier.
           cp `pwd`/installation.sql $OUTPUT_FOLDER/
 
+          # Dump the database with the state of the test failure to allow for
+          # local inspection.
+          drush sql-dump > $OUTPUT_FOLDER/at-test-failure.sql
+
       - name: Upload Behat Test Output
         if: failure()
         uses: actions/upload-artifact@v3
