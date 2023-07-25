@@ -153,17 +153,17 @@ display:
             link_to_item: false
             multi_separator: ', '
       filters:
-        search_api_language:
-          id: search_api_language
+        language_with_fallback:
+          id: language_with_fallback
           table: search_api_index_social_all
-          field: search_api_language
+          field: language_with_fallback
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: search_api_language
           operator: in
           value:
             '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
-            und: und
           group: 1
           exposed: false
           expose:
@@ -193,7 +193,6 @@ display:
             default_group: All
             default_group_multiple: { }
             group_items: { }
-          plugin_id: search_api_language
       sorts:
         search_api_relevance:
           id: search_api_relevance
