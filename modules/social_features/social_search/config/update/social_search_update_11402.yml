@@ -1,0 +1,224 @@
+search_api.index.social_all:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        language_with_fallback:
+          label: 'Language (with fallback)'
+          property_path: language_with_fallback
+          type: string
+search_api.index.social_content:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        language_with_fallback:
+          label: 'Language (with fallback)'
+          property_path: language_with_fallback
+          type: string
+    change:
+      processor_settings:
+        ignorecase:
+          fields:
+            - language_with_fallback
+            - rendered_item
+            - title
+            - type
+        transliteration:
+          plugin_id: transliteration
+          all_fields: true
+          fields:
+            - language_with_fallback
+            - rendered_item
+            - title
+            - type
+search_api.index.social_groups:
+  expected_config: {  }
+  update_actions:
+    add:
+      field_settings:
+        language_with_fallback:
+          label: 'Language (with fallback)'
+          property_path: language_with_fallback
+          type: string
+
+    change:
+      processor_settings:
+        ignorecase:
+          fields:
+            - field_group_description
+            - label
+            - language_with_fallback
+            - name
+            - rendered_item
+            - type
+        transliteration:
+          fields:
+            - field_group_description
+            - label
+            - language_with_fallback
+            - name
+            - rendered_item
+            - type
+views.view.search_groups:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              search_api_language:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              language_with_fallback:
+                id: language_with_fallback
+                table: search_api_index_social_groups
+                field: language_with_fallback
+                relationship: none
+                group_type: group
+                admin_label: ''
+                plugin_id: search_api_language
+                operator: in
+                value:
+                  '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+views.view.search_all:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              search_api_language:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              language_with_fallback:
+                id: language_with_fallback
+                table: search_api_index_social_all
+                field: language_with_fallback
+                relationship: none
+                group_type: group
+                admin_label: ''
+                plugin_id: search_api_language
+                operator: in
+                value:
+                  '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
+views.view.search_content:
+  expected_config: {  }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              search_api_language:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              language_with_fallback:
+                id: language_with_fallback
+                table: search_api_index_social_content
+                field: language_with_fallback
+                relationship: none
+                group_type: group
+                admin_label: ''
+                plugin_id: search_api_language
+                operator: in
+                value:
+                  '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
+                group: 1
+                exposed: false
+                expose:
+                  operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
+                  operator_limit_selection: false
+                  operator_list: { }
+                  identifier: ''
+                  required: false
+                  remember: false
+                  multiple: false
+                  remember_roles:
+                    authenticated: authenticated
+                  reduce: false
+                is_grouped: false
+                group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
+                  default_group: All
+                  default_group_multiple: { }
+                  group_items: { }
