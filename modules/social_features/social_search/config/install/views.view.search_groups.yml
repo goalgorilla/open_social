@@ -172,13 +172,14 @@ display:
             group_items: {  }
           reduce_duplicates: false
           plugin_id: search_api_options
-        search_api_language:
-          id: search_api_language
+        language_with_fallback:
+          id: language_with_fallback
           table: search_api_index_social_groups
-          field: search_api_language
+          field: language_with_fallback
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: search_api_language
           operator: in
           value:
             '***LANGUAGE_language_interface***': '***LANGUAGE_language_interface***'
@@ -191,7 +192,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {  }
+            operator_list: { }
             identifier: ''
             required: false
             remember: false
@@ -209,9 +210,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: search_api_language
+            default_group_multiple: { }
+            group_items: { }
       sorts:
         search_api_relevance:
           id: search_api_relevance
