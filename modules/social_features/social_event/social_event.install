@@ -2223,3 +2223,75 @@ function social_event_update_11902(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Fix configs that don't have UUIDs.
+ */
+function social_event_update_11903(): void {
+  try {
+    /** @var \Drupal\Core\Entity\EntityInterface $email_card_view_display */
+    $email_card_view_display = EntityViewDisplay::load('node.event.email_card');
+    if ($email_card_view_display->uuid() === NULL || empty($email_card_view_display->uuid())) {
+      $site = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.event.email_card');
+      $site->set('uuid', \Drupal::service('uuid')->generate());
+      $site->save(TRUE);
+    }
+
+    /** @var \Drupal\Core\Entity\EntityInterface $email_card_view_mode */
+    $email_card_view_mode = EntityViewMode::load('node.email_card');
+    if ($email_card_view_mode->uuid() === NULL || empty($email_card_view_mode->uuid())) {
+      $site = \Drupal::configFactory()
+        ->getEditable('core.entity_view_mode.node.email_card');
+      $site->set('uuid', \Drupal::service('uuid')->generate());
+      $site->save(TRUE);
+    }
+
+    // List of broken or NULL UUIDs.
+    $config_list = [
+      'message.template.user_was_enrolled_to_event',
+      'views.view.event_manage_enrollments',
+      'views.view.group_manage_members',
+      'views.view.user_admin_people',
+    ];
+
+    foreach ($config_list as $config_name) {
+      /** @var \Drupal\Core\Config\Config $config */
+      $config = \Drupal::service('config.factory')->getEditable($config_name);
+      $config->set('uuid', \Drupal::service('uuid')->generate());
+      $config->save();
+    }
+  }
+  catch (ConfigException $e) {
+    \Drupal::logger('social_event')->error($e->getMessage());
+  }
+}
+
+/**
+ * Update the views that are associated with enrolling in an event.
+ *
+ * To prevent duplication of users.
+ */
+function social_event_update_11904(): void {
+  $configs = [
+    'event_enrollments',
+    'event_manage_enrollments',
+    'manage_enrollments',
+    'event_manage_enrollment_invites',
+    'event_manage_enrollment_requests',
+    'managers',
+  ];
+
+  // Updating views that are responsible for receiving users,
+  // who have enrolled for an event or are the organisers of this event.
+  foreach ($configs as $config_name) {
+    $config_value = \Drupal::configFactory()->getEditable('views.view.' . $config_name);
+    if ($config_value !== NULL) {
+      $data = $config_value->getRawData();
+      if (isset($data['display']['default']['display_options']['query']['options']['distinct'])) {
+        $data['display']['default']['display_options']['query']['options']['distinct'] = TRUE;
+        $config_value->setData($data)->save();
+      }
+    }
+  }
+}
