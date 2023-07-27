@@ -5,6 +5,7 @@ namespace Drupal\social\Behat;
 
 use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Behat\Gherkin\Node\TableNode;
 
 /**
  * Defines application features from the specific context.

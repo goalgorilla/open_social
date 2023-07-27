@@ -5,7 +5,11 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
