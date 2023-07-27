@@ -2295,3 +2295,32 @@ function social_event_update_11903(): void {
     \Drupal::logger('social_event')->error($e->getMessage());
   }
 }
+
+/**
+ * Update the views that are associated with enrolling in an event.
+ *
+ * To prevent duplication of users.
+ */
+function social_event_update_11904(): void {
+  $configs = [
+    'event_enrollments',
+    'event_manage_enrollments',
+    'manage_enrollments',
+    'event_manage_enrollment_invites',
+    'event_manage_enrollment_requests',
+    'managers',
+  ];
+
+  // Updating views that are responsible for receiving users,
+  // who have enrolled for an event or are the organisers of this event.
+  foreach ($configs as $config_name) {
+    $config_value = \Drupal::configFactory()->getEditable('views.view.' . $config_name);
+    if ($config_value !== NULL) {
+      $data = $config_value->getRawData();
+      if (isset($data['display']['default']['display_options']['query']['options']['distinct'])) {
+        $data['display']['default']['display_options']['query']['options']['distinct'] = TRUE;
+        $config_value->setData($data)->save();
+      }
+    }
+  }
+}
