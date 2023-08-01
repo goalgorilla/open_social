@@ -117,14 +117,15 @@ function social_mentions_preprocess_mentions(array &$variables): void {
  */
 function social_mentions_comment_links_alter(array &$links, CommentInterface $entity, array &$context): void {
   $field_name = $entity->getFieldName();
-  /** @var \Drupal\comment\CommentInterface $commented_entity */
+  /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
   $commented_entity = $entity->getCommentedEntity();
-  /** @var \Drupal\comment\CommentFieldItemList $commented_field */
-  $commented_field = $commented_entity->get($field_name);
+  $commented_field = $commented_entity->$field_name->getValue();
+  $commented_field = end($commented_field);
+
   if (
     $entity->hasParentComment() &&
-    property_exists($commented_field, 'status') &&
-    $commented_field->status == CommentItemInterface::OPEN &&
+    isset($commented_field['status']) &&
+    $commented_field['status'] == CommentItemInterface::OPEN &&
     \Drupal::currentUser()->isAuthenticated()
   ) {
     /** @var \Drupal\Core\Session\AccountInterface $account */
