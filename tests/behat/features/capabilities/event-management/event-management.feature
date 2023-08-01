@@ -4,6 +4,10 @@ Feature: Event Management
   Role: As a Verified
   Goal/desire: I want to assign event organiser
 
+  Background:
+    Given I enable the module "social_language"
+    And I enable the module "social_content_translation"
+
   @verified @perfect @critical
   Scenario: Successfully assign event organiser
     Given I enable the module "social_event_managers"
@@ -93,3 +97,55 @@ Feature: Event Management
       | Topic regression test   | Description   |
     And I open the "topic" node with title "Topic regression test"
     Then I should not see "Organisers"
+
+
+  Scenario: Ensure, that if we have several translations of the event, the enrollees and organisers are not duplicated
+   # Add Dutch language.
+    Given I am logged in as an "administrator"
+    And I turn off translations import
+    And I am on "/admin/config/regional/language"
+    And I click the xth "0" element with the css ".local-actions .button--action"
+    And I select "Dutch" from "Language name"
+    And I press "Add language"
+    And I wait for AJAX to finish
+
+    Given I am viewing my event:
+      | title                    | My awesome event |
+      | body                     | Body text        |
+      | field_event_date         | +7 days          |
+      | field_event_date_end     | +7 days          |
+      | status                   | 1                |
+      | field_content_visibility | public           |
+
+    And users:
+      | name         | pass            | mail                        | status | roles        |
+      | Ryan Gosling | event_organiser | event_organiser@example.com | 1      | verified     |
+
+    When I am editing the event "My awesome event"
+    And I expand the "Additional information" section
+    And I fill in "Ryan Gosling" for "field_event_managers[0][target_id]"
+    And I press "Save"
+
+    # Enroll for event
+    When I press the "Enroll" button
+    And I wait for AJAX to finish
+    Then I should see the text "Meetup: My awesome event" in the "Modal"
+    And I press the "Close" button
+
+    # Add translation for this event.
+    And I should see "Translate"
+    When I click "Translate"
+    Then I should see "Dutch"
+    And I should see "Not translated"
+    And I should see "Add"
+    And I click "Add"
+    And I press "Create event (this translation)"
+
+    # Check if enrollees aren't duplicated.
+    And I should see "1 people have enrolled"
+    When I click "Manage enrollments"
+    Then I should see "1 Enrollees"
+    # Check if organisers aren't duplicated.
+    When I click "Organisers"
+    Then I should see "Ryan Gosling" exactly "1" times
+
