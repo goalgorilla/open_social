@@ -306,4 +306,15 @@ class SocialMinkContext extends MinkContext {
       }
     }
   }
+
+  /**
+   * @Then /^I should see "([^"]*)" exactly "([^"]*)" times$/
+   */
+  public function iShouldSeeTheTextCertainNumberTimes($text, $expectedNumber): void {
+    $allText = $this->getSession()->getPage()->getText();
+    $numberText = substr_count($allText, $text);
+    if ($expectedNumber != $numberText) {
+      throw new \Exception('Found '.$numberText.' times of "'.$text.'" when expecting '.$expectedNumber);
+    }
+  }
 }
