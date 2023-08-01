@@ -236,4 +236,84 @@ class SocialMinkContext extends MinkContext {
     }
   }
 
+  /**
+   * Checks, that (?P<num>\d+) text exist in a selector on the page
+   * Example: Then I should see "text" 5 times in ".teaser__title"
+   * Example: And I should see "text" 1 time in "h4"
+   *
+   * @Then /^(?:|I )should see "(?P<text>(?:[^"]|\\")*)" (?P<num>\d+) time(s?) in "(?P<selector>(?:[^"]|\\")*)"$/
+   */
+  public function assertNumTextCss($num, $text, $selector) {
+    $session = $this->getSession();
+    $elements = $session->getPage()->findAll('css', $selector);
+    $regex = '/' . preg_quote($text, '/') . '/ui';
+
+    $count = 0;
+    foreach ($elements as $element) {
+      $element_text = $element->getText();
+      $actual = preg_replace('/\s+/u', ' ', $element_text);
+      preg_match($regex, $actual, $matches);
+
+      $count += count($matches);
+    }
+
+    if ($count !== (int) $num) {
+      throw new \Exception(sprintf('The text %s was not found %d time(s) in the text of the current page.', $text, $num));
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Ensure a select field does not contain the following options.
+   *
+   * @Given /^the "(?P<locator>[^"]+)" select field should not contain the following options:$/
+   */
+  public function theSelectFieldShouldNotContainTheFollowingOptions(string $locator, TableNode $options): void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    foreach ($options->getHash() as $value) {
+      $option = $field->find('named', ['option', $value['options']]);
+
+      if ($option !== NULL) {
+        throw new \Exception("The field was supposed to not contain '$option' but it was an option in the select field.");
+      }
+    }
+  }
+
+  /**
+   * Ensure a select field does contain the following options.
+   *
+   * @Given /^the "(?P<locator>[^"]+)" select field should contain the following options:$/
+   */
+  public function theSelectFieldShouldContainTheFollowingOptions(string $locator, TableNode $options): void {
+    $field = $this->getSession()->getPage()->findField($locator);
+
+    if (NULL === $field) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value', $locator);
+    }
+
+    foreach ($options->getHash() as $value) {
+      $option = $field->find('named', ['option', $value['options']]);
+
+      if ($option === NULL) {
+        throw new \Exception("The field was supposed to contain '$option' but it was not an option in the select field.");
+      }
+    }
+  }
+
+  /**
+   * @Then /^I should see "([^"]*)" exactly "([^"]*)" times$/
+   */
+  public function iShouldSeeTheTextCertainNumberTimes($text, $expectedNumber): void {
+    $allText = $this->getSession()->getPage()->getText();
+    $numberText = substr_count($allText, $text);
+    if ($expectedNumber != $numberText) {
+      throw new \Exception('Found '.$numberText.' times of "'.$text.'" when expecting '.$expectedNumber);
+    }
+  }
 }
