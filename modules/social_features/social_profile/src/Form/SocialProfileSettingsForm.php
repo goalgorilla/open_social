@@ -36,6 +36,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * contains only the default 'profile' profile type which is what Open Social
  * supports out of the box.
  *
+ * @todo This form currently contains a lot of logic that is ideally moved to a
+ * service and make it available in API contexts. That step has been omitted
+ * due to time constraints.
+ *
  * @see \Drupal\social_profile\ProfileFieldsPermissionProvider
  * @see \social_profile_entity_field_access()
  */
@@ -734,6 +738,24 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     // Must run after submitFieldsFieldset because it's dependent on the status.
     $this->submitNicknameFieldset($form, $form_state);
     $this->submitAddressFieldset($form, $form_state);
+
+    // Most settings in this form are applied to search at run-time. However, in
+    // case the visibility of a field has changed for users that can not control
+    // their own visibility then we must re-index those profiles. We could be
+    // cleverer here but that's more complex than time currently allows so we
+    // just mark every profile for re-indexing.
+    // We only do this if search is enabled since it's not a mandatory module
+    // for profile functionality to work.
+    // @todo This should probably be some kind of event that our social_search
+    // module can respond to for proper decoupling.
+    if ($this->entityTypeManager->hasDefinition("search_api_index")) {
+      $indexes = $this->entityTypeManager->getStorage("search_api_index")->loadMultiple();
+      foreach ($indexes as $index) {
+        $index->getTrackerInstance()->trackAllItemsUpdated("entity:profile");
+      }
+
+      $this->messenger()->addStatus(new TranslatableMarkup("Profile data has been scheduled for re-indexing in search to reflect the updated configuration."));
+    }
 
     parent::submitForm($form, $form_state);
   }
