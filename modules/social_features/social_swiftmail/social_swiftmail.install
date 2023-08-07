@@ -98,3 +98,30 @@ function social_swiftmail_update_11001(): void {
   $settings = \Drupal::configFactory()->getEditable('social_swiftmail.settings');
   $settings->set('disabled_user_greeting_key', 'register_no_approval_required')->save();
 }
+
+/**
+ * Update the disabled user greetings key to set a default.
+ */
+function social_swiftmail_update_11002(): void {
+  $settings = \Drupal::configFactory()->getEditable('social_swiftmail.settings');
+  $disabled_greeting_keys = $settings->get("disabled_user_greeting_keys");
+  $disabled_greeting_keys = array_filter(explode("\r\n", $disabled_greeting_keys));
+
+  $new_disable_greeting_keys = [
+    'register_admin_created',
+    'register_pending_approval',
+    'register_pending_approval_admin',
+    'register_no_approval_required',
+    'status_activated',
+    'status_blocked',
+    'cancel_confirm',
+    'status_canceled',
+    'password_reset',
+  ];
+  $new_disable_greeting_keys = array_diff($new_disable_greeting_keys, $disabled_greeting_keys);
+  foreach ($new_disable_greeting_keys as $new_key) {
+    $disabled_greeting_keys[] = $new_key;
+  }
+
+  $settings->set('disabled_user_greeting_keys', implode("\r\n", $disabled_greeting_keys))->save();
+}
