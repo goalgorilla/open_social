@@ -42,6 +42,14 @@ function social_user_install() {
     ]
   );
   user_role_grant_permissions(
+    "contentmanager",
+    [
+      // Add the list user permission too so this role can do their job even if
+      // they're not yet verified.
+      'list user',
+    ]
+  );
+  user_role_grant_permissions(
     'sitemanager',
     [
       'access user profiles',
@@ -52,6 +60,9 @@ function social_user_install() {
       'assign sitemanager role',
       'assign verified role',
       'view blocked user',
+      // Add the list user permission too so this role can do their job even if
+      // they're not yet verified.
+      'list user',
     ]
   );
 }
@@ -241,4 +252,8 @@ function social_user_update_12001() : void {
       'list user',
     ]
   );
+  // Add the list user permission too so these roles can do their job even if
+  // they're not yet verified.
+  user_role_grant_permissions('contentmanager', ['list user']);
+  user_role_grant_permissions('sitemanager', ['list user']);
 }
