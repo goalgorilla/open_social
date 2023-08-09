@@ -79,12 +79,8 @@ class ProfileReindexSubscriber implements EventSubscriberInterface {
   public function configSave(ConfigCrudEvent $event) : void {
     $config_name = $event->getConfig()->getName();
 
-    // We reindex if the `limit_name_display` setting changes.
-    if ($config_name === "social_profile.settings" && $event->isChanged("limit_name_display")) {
-      $this->invalidateSearchIndices();
-    }
     // We must also re-index if a profile field changes status.
-    elseif (str_starts_with($config_name, "field.field.profile.profile.") && $event->isChanged("status")) {
+    if (str_starts_with($config_name, "field.field.profile.profile.") && $event->isChanged("status")) {
       $this->invalidateSearchIndices();
     }
   }

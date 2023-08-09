@@ -436,15 +436,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
   private function buildNicknameFieldset() : array {
     $config = $this->config('social_profile.settings');
 
-    // The roles that can be configured to always see the real name.
-    $realname_roles = array_filter(
-      Role::loadMultiple(),
-      fn (RoleInterface $role) => !in_array(
-        $role->id(),
-        ['anonymous', 'authenticated', 'administrator']
-      ),
-    );
-
     $fields = [
       '#type' => 'fieldset',
       '#title' => new TranslatableMarkup('Nickname'),
@@ -460,34 +451,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         '#title' => $this->t('Unique nicknames'),
         '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
         '#default_value' => $config->get('nickname_unique_validation'),
-      ],
-
-      // Add setting to hide Full Name for users without the `social profile
-      // privacy always show full name` permission.
-      'limit_name_display' => [
-        '#type' => 'checkbox',
-        '#title' => t('Hide real name behind nickname'),
-        '#description' => t("When enabled, the real name will be hidden for users who have filled in a nickname. For users without a nickname filled in their real name will be shown as normal."),
-        '#default_value' => $config->get('limit_name_display'),
-      ],
-
-      'allow_viewing_real_name' => [
-        '#type' => 'checkboxes',
-        '#title' => t('Always show full name'),
-        '#options' => array_map(
-          fn (RoleInterface $role) => new TranslatableMarkup('<span class="visually-hidden">Allow</span> :role <span class="visually-hidden">to view a hidden real name.</span>', [':role' => $role->label()]),
-          $realname_roles
-        ),
-        '#default_value' => array_keys(array_filter(
-          $realname_roles,
-          fn (RoleInterface $role) => $role->hasPermission("social profile always show full name")
-        )),
-        '#states' => [
-          'visible' => [
-            ':input[name="limit_name_display"]' => ['checked' => TRUE],
-          ],
-        ],
-        '#after_build' => [[$this, "alwaysShowFullNameAfterBuild"]],
       ],
     ];
 
@@ -716,7 +679,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('social_profile.settings')
-      ->set('limit_name_display', $form_state->getValue('limit_name_display'))
       ->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'))
       ->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'))
       ->set('allow_category_split', $form_state->getValue('allow_category_split'))
@@ -736,7 +698,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     $this->submitFieldsFieldset($form, $form_state);
 
     // Must run after submitFieldsFieldset because it's dependent on the status.
-    $this->submitNicknameFieldset($form, $form_state);
     $this->submitAddressFieldset($form, $form_state);
 
     // Most settings in this form are applied to search at run-time. However, in
@@ -927,38 +888,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     }
 
     parent::submitForm($form, $form_state);
-  }
-
-  /**
-   * Submit the nickname configuration values.
-   *
-   * This is split out into a separate function to make it easier to find all
-   * the other settings this form stores.
-   *
-   * @param array $form
-   *   The settings form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   */
-  private function submitNicknameFieldset(array &$form, FormStateInterface $form_state) : void {
-    $allow_viewing_real = $form_state->getValue('allow_viewing_real_name', []);
-    $roles = Role::loadMultiple(array_keys($allow_viewing_real));
-
-    foreach ($allow_viewing_real as $role_id => $checked) {
-      assert(isset($roles[$role_id]), "Role '$role_id' was present in the profile form but doesn't exist.");
-
-      $shouldHave = $checked || $role_id === 'sitemanager';
-      if ($shouldHave && !$roles[$role_id]->hasPermission("social profile always show full name")) {
-        $roles[$role_id]
-          ->grantPermission("social profile always show full name")
-          ->save();
-      }
-      elseif (!$shouldHave && $roles[$role_id]->hasPermission("social profile always show full name")) {
-        $roles[$role_id]
-          ->revokePermission("social profile always show full name")
-          ->save();
-      }
-    }
   }
 
   /**

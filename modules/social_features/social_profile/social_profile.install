@@ -14,6 +14,8 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityFormMode;
+use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
+use Drupal\Core\Entity\Sql\TableMappingInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -115,7 +117,6 @@ function social_profile_install() {
       'administer profile settings',
       'view profile email',
       'view profile language',
-      'social profile always show full name',
     ]
   );
   social_profile_setup_per_profile_field_permissions();
@@ -1896,4 +1897,72 @@ function social_profile_update_12022() : void {
   }
 
   $index->save();
+}
+
+/**
+ * Remove the "Hide real name behind nickname" functionality.
+ */
+function social_profile_update_12023() : void {
+  // With our changes to search for the profile visibility settings we can no
+  // longer support the "Hide real name behind nickname" functionality. However
+  // the same can be achieved with the visibilities for first-name/last-name
+  // and nickname alone.
+  // To make sure we don't accidentally surprise platforms who had this setting
+  // enabled we make a few changes for their migration:
+  // - Allow anyone to edit the visibility for the first name/last name field.
+  // - Set the visibility of the name for anyone that has a nickname filled in
+  //   to private.
+  $profile_settings = \Drupal::configFactory()
+    ->getEditable('social_profile.settings');
+  $is_enabled = $profile_settings->get("limit_name_display");
+  $profile_settings->clear("limit_name_display")->save();
+  if (!$is_enabled) {
+    return;
+  }
+
+  $profile_storage = \Drupal::entityTypeManager()->getStorage("profile");
+  if (!$profile_storage instanceof SqlEntityStorageInterface) {
+    \Drupal::logger("social_profile")->error("Can not migrate real-name field visibility for non-SQL storage back-ends.");
+    return;
+  }
+
+  $fields = [
+    // field_first_name visibility.
+    "vis_32785136480d615c3c4094e52fd0",
+    // field_last_name visibility.
+    "vis_41e45bfd9baa40f1fb7f60e2e284",
+  ];
+
+  $authenticated_role = Role::load(RoleInterface::AUTHENTICATED_ID);
+  assert($authenticated_role !== NULL);
+  foreach ($fields as $field) {
+    $authenticated_role->grantPermission("edit own $field profile profile field");
+  }
+  $authenticated_role->save();
+
+  $profiles_with_nickname = \Drupal::entityTypeManager()
+    ->getStorage("profile")
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition("type", "profile")
+    ->condition("field_profile_nick_name", "", "<>")
+    ->execute();
+
+  if ($profiles_with_nickname === []) {
+    return;
+  }
+
+  $table_mapping = $profile_storage->getTableMapping();
+  if (!$table_mapping instanceof TableMappingInterface) {
+    return;
+  }
+  foreach ($fields as $field) {
+    foreach ($table_mapping->getAllFieldTableNames($field) as $tableName) {
+      \Drupal::database()
+        ->update($tableName)
+        ->fields(["{$field}_value" => SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE])
+        ->condition("entity_id", $profiles_with_nickname, "IN")
+        ->execute();
+    }
+  }
 }

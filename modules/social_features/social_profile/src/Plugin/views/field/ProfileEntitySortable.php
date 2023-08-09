@@ -163,19 +163,10 @@ class ProfileEntitySortable extends RenderedEntity {
 
         // The display for this field in views is the user's display name. This
         // is controlled by various permissions and privacy settings in
-        // social_user_user_format_name_alter. This runs in code so we don't
+        // social_user_user_format_name_alter. This runs in code, so we don't
         // have access to its value in the database. For sorting we try to apply
         // the default Open Social logic to sort based on what we expect the
         // outcome to be.
-        //
-        // We'll craft the following two possible sort orders:
-        // - First name + Last name + Nickname + Username (If
-        //   limit_name_display is enabled and user can bypass this or
-        //   limit_name_display is disabled)
-        // - Nickname + First name + Last name + Username (If
-        //   limit_name_display is enabled, protecting the first name and
-        //   last name by the nickname but falling back to real name in case
-        //   nickname is NULL)
         //
         // Username is added to both sort orders in case a user hasn't filled
         // out any of the other profile fields.
@@ -183,45 +174,21 @@ class ProfileEntitySortable extends RenderedEntity {
         // shown to the user which could be just a last name, so the sort field
         // is treated as a single string containing whatever is filled in.
         //
-        // While the order is dictated by the limit_name_display setting
-        // with the related permission, the visibility of individual fields
-        // within that order is dictated by profile field settings.
-        //
-        // We don't handle the case where limit_name_display protects
-        // the users real name with a nickname but the user has removed access
-        // for others to their nickname. In such a case their full name is
-        // visible anyway. This can be solved by forcing a nickname to be
-        // public but that's out of the scope of the work being done here.
-        // @phpstan-ignore-next-line
-        $limit_name_display = \Drupal::config('social_profile_privacy.settings')
-          ->get('limit_name_display');
+        // If a user can view any field then we can sort by the first non-empty
+        // value. Otherwise we need to construct a more complex query that takes
+        // visibility permissions into account.
         if ($view_any) {
-          if (!$limit_name_display || $this->currentUser->hasPermission('social profile always show full name')) {
-            $sort = "
-              TRIM(CONCAT(
-                COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
-                ' ',
-                COALESCE(profile__field_profile_last_name.field_profile_last_name_value, ''),
-                ' ',
-                COALESCE(profile__field_profile_nick_name.field_profile_nick_name_value, ''),
-                ' ',
-                users_field_data.name
-              ))
-            ";
-          }
-          else {
-            $sort = "
-              TRIM(CONCAT(
-                COALESCE(profile__field_profile_nick_name.field_profile_nick_name_value, ''),
-                ' ',
-                COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
-                ' ',
-                COALESCE(profile__field_profile_last_name.field_profile_last_name_value, ''),
-                ' ',
-                users_field_data.name
-              ))
-            ";
-          }
+          $sort = "
+            TRIM(CONCAT(
+              COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
+              ' ',
+              COALESCE(profile__field_profile_last_name.field_profile_last_name_value, ''),
+              ' ',
+              COALESCE(profile__field_profile_nick_name.field_profile_nick_name_value, ''),
+              ' ',
+              users_field_data.name
+            ))
+          ";
         }
         // While the below uses variables in unfiltered SQL the value of the
         // variables comes from thirdPartySettings in FieldStorageConfig
@@ -239,34 +206,17 @@ class ProfileEntitySortable extends RenderedEntity {
             ? "'" . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . "', '" . SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC . "'"
             : "'" . SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC . "'";
 
-          // Below is the same as for any field except that the field is set to
-          // NULL based on the configured visibility value.
-          if (!$limit_name_display || $this->currentUser->hasPermission('social profile always show full name')) {
-            $sort = "
-              TRIM(CONCAT(
-                COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
-                ' ',
-                COALESCE(IF($last_name_visibility IN ($allowed_visibility), $last_name_profile, NULL), ''),
-                ' ',
-                COALESCE(IF($nick_name_visibility IN ($allowed_visibility), $nick_name_profile, NULL), ''),
-                ' ',
-                users_field_data.name
-              ))
-            ";
-          }
-          else {
-            $sort = "
-              TRIM(CONCAT(
-                COALESCE(IF($nick_name_visibility IN ($allowed_visibility), $nick_name_profile, NULL), ''),
-                ' ',
-                COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
-                ' ',
-                COALESCE(IF($nick_name_visibility IN ($allowed_visibility), $nick_name_profile, NULL), ''),
-                ' ',
-                users_field_data.name
-              ))
-            ";
-          }
+          $sort = "
+            TRIM(CONCAT(
+              COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
+              ' ',
+              COALESCE(IF($last_name_visibility IN ($allowed_visibility), $last_name_profile, NULL), ''),
+              ' ',
+              COALESCE(IF($nick_name_visibility IN ($allowed_visibility), $nick_name_profile, NULL), ''),
+              ' ',
+              users_field_data.name
+            ))
+          ";
         }
 
         $this->field_alias = 'profile_sort_by_name';
