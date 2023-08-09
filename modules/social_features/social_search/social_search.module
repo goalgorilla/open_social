@@ -9,6 +9,43 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Query\QueryInterface;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_search_api_query_alter().
+ */
+function social_search_search_api_query_alter(QueryInterface $query) : void {
+  _social_search_enforce_list_user_access_check($query);
+}
+
+/**
+ * Ensures users aren't showing up in search if the user is not allowed to.
+ *
+ * To protect privacy on a platform we limit who can list users. Search is one
+ * such way to list users, so in case a user is not allowed to list users on the
+ * platform we make sure they can't search for users.
+ *
+ * @param \Drupal\search_api\Query\QueryInterface $query
+ *   The query being performed.
+ */
+function _social_search_enforce_list_user_access_check(QueryInterface $query) : void {
+  // If the query is opted out of access checking then we don't make any
+  // adjustments.
+  if ($query->getOption('search_api_bypass_access')) {
+    return;
+  }
+
+  $account = $query->getOption('search_api_access_account', \Drupal::currentUser());
+  if (is_numeric($account)) {
+    $account = User::load($account);
+  }
+  assert($account !== NULL, "Invalid UID provided for `search_api_access_content` option.");
+
+  if (!$account->hasPermission("list user")) {
+    $query->addCondition('search_api_datasource', 'entity:profile', '<>');
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
