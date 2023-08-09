@@ -13,6 +13,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
+use Drupal\filter\FilterPluginManager;
 use Drupal\group\Entity\Group;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\message\Entity\Message;
@@ -29,7 +30,6 @@ use Drupal\user\Entity\User;
  */
 class EmailTokenServices {
   use StringTranslationTrait;
-
   /**
    * Entity type manager services.
    *
@@ -67,6 +67,13 @@ class EmailTokenServices {
   protected ConfigFactory $config;
 
   /**
+   * The filter plugin manager service.
+   *
+   * @var \Drupal\filter\FilterPluginManager
+   */
+  protected $filterPluginManager;
+
+  /**
    * Constructs a EmailTokenServices object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -81,6 +88,8 @@ class EmailTokenServices {
    *   The stream wrapper manager.
    * @param \Drupal\Core\Config\ConfigFactory $config
    *   The config factory service.
+   * @param \Drupal\filter\FilterPluginManager $filter_plugin_manager
+   *   FilterPluginManager object.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -88,7 +97,8 @@ class EmailTokenServices {
     GroupStatistics $group_statistics,
     ModuleHandlerInterface $module_handler,
     StreamWrapperManagerInterface $stream_wrapper_manager,
-    ConfigFactory $config
+    ConfigFactory $config,
+    FilterPluginManager $filter_plugin_manager
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->dateFormatter = $date_formatter;
@@ -96,6 +106,7 @@ class EmailTokenServices {
     $this->moduleHandler = $module_handler;
     $this->streamWrapperManager = $stream_wrapper_manager;
     $this->config = $config;
+    $this->filterPluginManager = $filter_plugin_manager;
   }
 
   /**
@@ -134,10 +145,11 @@ class EmailTokenServices {
 
     if ($comment->hasField('field_comment_body') && !$comment->get('field_comment_body')->isEmpty()) {
       if ($summary = _social_comment_get_summary($comment->getFieldValue('field_comment_body', 'value'))) {
+        $processed_text = $this->processMentionsPreview($summary, $comment->language()->getId());
         // Prepare the preview information.
         $preview_info = [
           '#theme' => 'message_post_comment_preview',
-          '#summary' => $summary,
+          '#summary' => !empty($processed_text) ? $processed_text : $summary,
         ];
       }
     }
@@ -200,10 +212,11 @@ class EmailTokenServices {
     // Get the summary of the comment.
     if ($post->hasField('field_post') && !$post->get('field_post')->isEmpty()) {
       if ($summary = _social_comment_get_summary($post->getFieldValue('field_post', 'value'))) {
+        $processed_text = $this->processMentionsPreview($summary, $post->language()->getId());
         // Prepare the preview information.
         $preview_info = [
           '#theme' => 'message_post_comment_preview',
-          '#summary' => $summary,
+          '#summary' => !empty($processed_text) ? $processed_text : $summary,
         ];
       }
     }
@@ -303,6 +316,39 @@ class EmailTokenServices {
       '#link' => $url,
       '#text' => $text,
     ];
+  }
+
+  /**
+   * Process mentions in text, if the Social Mentions module exists.
+   *
+   * @param string $text
+   *   Text we need to process.
+   * @param string $language_id
+   *   Langcode of entity.
+   *
+   * @return \Drupal\filter\FilterProcessResult|string
+   *   Result with processed text.
+   */
+  public function processMentionsPreview(string $text, string $language_id) {
+    $result = '';
+    if ($this->moduleHandler->moduleExists('social_mentions')) {
+      /** @var \Drupal\filter\Plugin\FilterInterface $mentions_filter */
+      $mentions_filter = $this->filterPluginManager->createInstance(
+        'filter_mentions',
+         [
+           'settings' => [
+             'mentions_filter' => [
+               'ProfileMention' => 1,
+               'UserMention' => 1,
+             ],
+           ],
+         ],
+      );
+      $result = $mentions_filter->process(
+        $text, $language_id
+      );
+    }
+    return $result;
   }
 
 }
