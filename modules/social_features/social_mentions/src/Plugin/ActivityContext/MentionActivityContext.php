@@ -94,7 +94,7 @@ class MentionActivityContext extends ActivityContextBase {
       else {
         $entity_storage = $this->entityTypeManager->getStorage($related_object['target_type']);
         $entity = $entity_storage->load($related_object['target_id']);
-        if ($entity !== NULL) {
+        if ($entity instanceof EntityInterface) {
           $mentions = $this->getMentionsFromRelatedEntity($entity);
         }
       }
