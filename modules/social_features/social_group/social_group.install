@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the social_group module.
  */
 
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\field\FieldStorageConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
@@ -184,4 +187,297 @@ function social_group_update_12101(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update old group types to flexible groups.
+ */
+function social_group_update_13000() : void {
+  // Make sure the flexible group is installed.
+  \Drupal::service("module_installer")->install(["social_group_flexible_group"]);
+
+  $group_type_mapping = [
+    'public_group' => [
+      'fields' => [
+        'field_flexible_group_visibility' => ['public'],
+        'field_group_allowed_visibility' => ['public', 'community', 'group'],
+        'field_group_allowed_join_method' => ['direct'],
+      ],
+    ],
+    'open_group' => [
+      'fields' => [
+        'field_flexible_group_visibility' => ['community'],
+        'field_group_allowed_visibility' => ['community', 'group'],
+        'field_group_allowed_join_method' => ['direct'],
+      ],
+    ],
+    'closed_group' => [
+      'fields' => [
+        'field_flexible_group_visibility' => ['community'],
+        'field_group_allowed_visibility' => ['group'],
+        // The join method can be 'request' depending on
+        // groups_field_data.allow_request.
+        'field_group_allowed_join_method' => ['added'],
+      ],
+    ],
+    'secret_group' => [
+      'fields' => [
+        'field_flexible_group_visibility' => ['members'],
+        'field_group_allowed_visibility' => ['group'],
+        'field_group_allowed_join_method' => ['added'],
+      ],
+    ],
+  ];
+
+  // If the secret group module isn't enabled we don't need to migrate secret
+  // groups.
+  if (!\Drupal::moduleHandler()->moduleExists("social_group_secret")) {
+    unset($group_type_mapping["secret_group"]);
+  }
+
+  $database = \Drupal::database();
+  $transaction = $database->startTransaction("group-type-migration");
+
+  $group_storage = \Drupal::entityTypeManager()->getStorage("group");
+  if (!$group_storage instanceof SqlContentEntityStorage) {
+    \Drupal::logger("social_group")->error("Can not migrate group types for non-SQL storage back-ends.");
+    return;
+  }
+  $group_table_mapping = $group_storage->getTableMapping();
+
+  $group_base_table = $group_storage->getBaseTable();
+  $group_revision_table = $group_storage->getRevisionTable();
+  $group_data_table = $group_storage->getDataTable();
+  $group_revision_data_table = $group_storage->getRevisionDataTable();
+  assert($group_data_table !== FALSE, "The group entity type should support a data table.");
+  assert($group_revision_table !== FALSE, "The group entity type should support revisions.");
+  assert($group_revision_data_table !== FALSE, "The group entity type should support revision data.");
+
+  $group_content_storage = \Drupal::entityTypeManager()->getStorage("group_content");
+  if (!$group_content_storage instanceof SqlContentEntityStorage) {
+    \Drupal::logger("social_group")->error("Can not migrate group types for non-SQL storage back-ends.");
+    return;
+  }
+  $group_content_table_mapping = $group_content_storage->getTableMapping();
+
+  $group_content_base_table = $group_content_storage->getBaseTable();
+  $group_content_data_table = $group_content_storage->getDataTable();
+  assert($group_content_data_table !== FALSE, "The group content entity should support a data table.");
+
+  /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $group_content_enabler_manager */
+  $group_content_enabler_manager = \Drupal::service("plugin.manager.group_content_enabler");
+  /** @var array<string, string[]> $group_type_content_plugins */
+  $group_type_content_plugins = $group_content_enabler_manager->getGroupTypePluginMap();
+  $group_type_content_plugin_replacement = [];
+
+  // Ensure all old group type plugins are supported in flexible groups.
+  foreach (array_keys($group_type_mapping) as $old_group_type) {
+    $missing_plugins = array_diff(
+      $group_type_content_plugins[$old_group_type],
+      $group_type_content_plugins["flexible_group"]
+    );
+    if (count($missing_plugins) !== 0) {
+      throw new \Exception("Flexible group does not support plugins needed for $old_group_type: " . implode(", ", $missing_plugins));
+    }
+
+    foreach ($group_type_content_plugins[$old_group_type] as $plugin_name) {
+      $old_id = $old_group_type . '-' . str_replace(':', '-', $plugin_name);
+      $new_id = "flexible_group" . '-' . str_replace(':', '-', $plugin_name);
+
+      // Return a hashed ID if the readable ID would exceed the maximum length.
+      if (strlen($old_id) > EntityTypeInterface::BUNDLE_MAX_LENGTH) {
+        $hashed_id = 'group_content_type_' . md5($old_id);
+        $old_id = substr($hashed_id, 0, EntityTypeInterface::BUNDLE_MAX_LENGTH);
+      }
+      if (strlen($new_id) > EntityTypeInterface::BUNDLE_MAX_LENGTH) {
+        $hashed_id = 'group_content_type_' . md5($new_id);
+        $new_id = substr($hashed_id, 0, EntityTypeInterface::BUNDLE_MAX_LENGTH);
+      }
+
+      $group_type_content_plugin_replacement[$old_group_type][$old_id] = $new_id;
+    }
+  }
+
+  // Ensure all roles for our old groups exist for flexible groups.
+  $group_roles = \Drupal::entityTypeManager()->getStorage("group_role")->loadMultiple();
+  $group_roles_by_type = [];
+  foreach ($group_roles as $group_role_id => $role) {
+    foreach ([...array_keys($group_type_mapping), "flexible_group"] as $group_type) {
+      if (str_starts_with($group_role_id, "$group_type-")) {
+        $group_roles_by_type[$group_type][] = str_replace("$group_type-", "", $group_role_id);
+        break;
+      }
+    }
+  }
+  foreach (array_keys($group_type_mapping) as $old_group_type) {
+    $missing_roles = array_diff($group_roles_by_type[$old_group_type], $group_roles_by_type["flexible_group"]);
+    if (count($missing_roles) !== 0) {
+      throw new \Exception("Flexible group does not support roles needed for $old_group_type: " . implode(", ", $missing_roles));
+    }
+  }
+
+  $fsc_storage = \Drupal::entityTypeManager()->getStorage("field_storage_config");
+
+  try {
+    // @todo If the "require group types" setting is set then we should probably
+    //   make sure the group type taxonomy terms exist and use those in the
+    //   migration.
+    // The below code transfers our visibility and access settings from the old
+    // group types to the new group types. Those access settings are stored in
+    // fields on the flexible group bundle. The mapping is provided above.
+    // We work based on the group revision table to ensure that the data in the
+    // database is consistent. The group type is not revisionable but is
+    // constant throughout it's lifetime (from a group module perspective), so
+    // when we change the group type we must pretend it always had that type.
+    foreach ($group_type_mapping as $group_type => $mapping) {
+      foreach ($mapping['fields'] as $field_name => $field_values) {
+        $field_storage = $fsc_storage->load("group.$field_name");
+        assert($field_storage instanceof FieldStorageConfigInterface, "Missing group field $field_name");
+        foreach ($group_table_mapping->getAllFieldTableNames($field_name) as $tableName) {
+          foreach ($field_values as $delta => $value) {
+            // Revision tables need all revisions with an extra inner select.
+            if (str_contains($tableName, "_revision__") || str_contains($tableName, "_r__")) {
+              $group_id_query = $database->select($group_base_table, "group");
+              $group_id_query->addField("group", "id", "id");
+              $group_id_query->condition("type", $group_type);
+
+              $from = $database->select($group_revision_table, "from");
+              $from->condition("id", $group_id_query, "IN");
+            }
+            // Normal value tables only have the latest value.
+            else {
+              $from = $database->select($group_base_table, "from");
+              $from->condition("type", $group_type);
+            }
+
+            $from->addField("from", "revision_id");
+            $from->addField("from", "id", "entity_id");
+            $from->addField("from", "langcode", "langcode");
+            $from->addExpression("'flexible_group'", "bundle");
+            $from->addExpression($delta, "delta");
+            $from->addExpression("'$value'", $group_table_mapping->getFieldColumnName($field_storage, "value"));
+
+            $database->insert($tableName)
+              ->from($from)
+              ->execute();
+          }
+        }
+      }
+
+      // Map all the group content plugins to their flexible_group counterpart.
+      foreach ($group_type_content_plugin_replacement[$group_type] as $old_id => $new_id) {
+        $database
+          ->update($group_content_base_table)
+          ->fields(["type" => $new_id])
+          ->condition("type", $old_id)
+          ->execute();
+
+        $database
+          ->update($group_content_data_table)
+          ->fields(["type" => $new_id])
+          ->condition("type", $old_id)
+          ->execute();
+
+        foreach ($group_content_table_mapping->getTableNames() as $tableName) {
+          // Skip tables with a different field name we already had.
+          if ($tableName === $group_content_base_table || $tableName === $group_content_data_table) {
+            continue;
+          }
+
+          $database
+            ->update($tableName)
+            ->fields(["bundle" => $new_id])
+            ->condition("bundle", $old_id)
+            ->execute();
+        }
+      }
+
+      // Map all the group roles to the flexible group counterpart.
+      $group_role_field_storage = $fsc_storage->load("group_content.group_roles");
+      assert($group_role_field_storage instanceof FieldStorageConfigInterface, "Missing group content field group_roles");
+      $group_role_column_name = $group_content_table_mapping->getFieldColumnName($group_role_field_storage, "target_id");
+      foreach ($group_content_table_mapping->getAllFieldTableNames("group_roles") as $tableName) {
+        foreach ($group_roles_by_type[$group_type] as $role) {
+          $database
+            ->update($tableName)
+            ->fields([$group_role_column_name => "flexible_group-$role"])
+            ->condition($group_role_column_name, "$group_type-$role")
+            ->execute();
+        }
+      }
+    }
+
+    // Insert 1 into group__field_group_posts_enabled /
+    // group_revision__field_group_posts_enabled.
+    $posts_enabled_field_storage = $fsc_storage->load("group.field_group_posts_enabled");
+    assert($posts_enabled_field_storage instanceof FieldStorageConfigInterface);
+    foreach ($group_table_mapping->getAllFieldTableNames("field_group_posts_enabled") as $tableName) {
+      // Revision tables need all revisions with an extra inner select.
+      if (str_contains($tableName, "_revision__") || str_contains($tableName, "_r__")) {
+        $group_id_query = $database->select($group_base_table, "group");
+        $group_id_query->addField("group", "id", "id");
+        $group_id_query->condition("type", array_keys($group_type_mapping), "IN");
+
+        $from = $database->select($group_revision_table, "from");
+        $from->condition("id", $group_id_query, "IN");
+      }
+      // Normal value tables only have the latest value.
+      else {
+        $from = $database->select($group_base_table, "from");
+        $from->condition("type", array_keys($group_type_mapping), "IN");
+      }
+
+      $from->addField("from", "revision_id");
+      $from->addField("from", "id", "entity_id");
+      $from->addField("from", "langcode", "langcode");
+      $from->addExpression("'flexible_group'", "bundle");
+      $from->addExpression(0, "delta");
+      $from->addExpression(1, $group_table_mapping->getFieldColumnName($posts_enabled_field_storage, "value"));
+
+      $database->insert($tableName)
+        ->from($from)
+        ->execute();
+    }
+
+    // There's a base `allow_request` field that affects the value
+    // "field_group_allowed_join_method" for closed groups.
+    $join_method_field_storage = $fsc_storage->load("group.field_group_allowed_join_method");
+    assert($join_method_field_storage instanceof FieldStorageConfigInterface);
+    foreach ($group_table_mapping->getAllFieldTableNames("field_group_allowed_join_method") as $tableName) {
+      $group_id_query = $database->select($group_base_table, "group");
+      $group_id_query->addField("group", "id", "id");
+      $group_id_query->condition("type", "closed_group");
+
+      $revision_id_query = $database->select($group_revision_data_table, "revision_data");
+      $revision_id_query->addField("revision_data", "revision_id", "revision_id");
+      $revision_id_query->condition("id", $group_id_query, "IN");
+      $revision_id_query->condition("allow_request", "1");
+
+      $database->update($tableName)
+        ->condition("revision_id", $revision_id_query, "IN")
+        ->condition($group_table_mapping->getFieldColumnName($join_method_field_storage, "value"), "added")
+        ->fields([
+          $group_table_mapping->getFieldColumnName($join_method_field_storage, "value") => "request",
+        ])
+        ->execute();
+    }
+
+    // Change the actual types of the group now that all the dependent data is
+    // completed.
+    \Drupal::database()->update($group_base_table)
+      ->fields(['type' => "flexible_group"])
+      ->condition("type", array_keys($group_type_mapping), "IN")
+      ->execute();
+    \Drupal::database()->update($group_data_table)
+      ->fields(['type' => "flexible_group"])
+      ->condition("type", array_keys($group_type_mapping), "IN")
+      ->execute();
+  }
+  catch (\Exception $e) {
+    $transaction->rollBack();
+    throw $e;
+  }
+
+  // Commit our group-type-migration transaction.
+  unset($transaction);
 }
