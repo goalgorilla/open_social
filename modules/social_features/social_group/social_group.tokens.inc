@@ -190,7 +190,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                 case 'join_to_group':
                   if (isset($context['tokens']['cta_button'])) {
                     $link = Url::fromRoute('view.group_members.page_group_members', ['group' => $group_content->getGroup()->id()]);
-                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members'));
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members', [], $context['options']));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }
