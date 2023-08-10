@@ -1162,12 +1162,30 @@ function social_group_update_13000() : void {
   $group_content_enabler_manager = \Drupal::service("plugin.manager.group_content_enabler");
   /** @var array<string, string[]> $group_type_content_plugins */
   $group_type_content_plugins = $group_content_enabler_manager->getGroupTypePluginMap();
+  $group_type_content_plugin_replacement = [];
 
   // Ensure all plugins for our old group types are supported in flexible groups.
   foreach (array_keys($group_type_mapping) as $old_group_type) {
     $missing_plugins = array_diff($group_type_content_plugins[$old_group_type], $group_type_content_plugins["flexible_group"]);
     if (count($missing_plugins) !== 0) {
       throw new \Exception("Flexible group does not support plugins needed for $old_group_type: " . join(", ", $missing_plugins));
+    }
+
+    foreach ($group_type_content_plugins[$old_group_type] as $plugin_name) {
+      $old_id = $old_group_type . '-' . str_replace(':', '-', $plugin_name);
+      $new_id = "flexible_group" . '-' . str_replace(':', '-', $plugin_name);
+
+      // Return a hashed ID if the readable ID would exceed the maximum length.
+      if (strlen($old_id) > EntityTypeInterface::BUNDLE_MAX_LENGTH) {
+        $hashed_id = 'group_content_type_' . md5($old_id);
+        $old_id = substr($hashed_id, 0, EntityTypeInterface::BUNDLE_MAX_LENGTH);
+      }
+      if (strlen($new_id) > EntityTypeInterface::BUNDLE_MAX_LENGTH) {
+        $hashed_id = 'group_content_type_' . md5($new_id);
+        $new_id = substr($hashed_id, 0, EntityTypeInterface::BUNDLE_MAX_LENGTH);
+      }
+
+      $group_type_content_plugin_replacement[$old_group_type][$old_id] = $new_id;
     }
   }
 
@@ -1240,17 +1258,17 @@ function social_group_update_13000() : void {
       }
 
       // Map all the group content plugins to their flexible_group counterpart.
-      foreach ($group_type_content_plugins[$group_type] as $plugin) {
+      foreach ($group_type_content_plugin_replacement[$group_type] as $old_id => $new_id) {
         $database
           ->update($group_content_base_table)
-          ->fields(["type" => "flexible_group-{$plugin}"])
-          ->condition("type", "{$group_type}-{$plugin}")
+          ->fields(["type" => $new_id])
+          ->condition("type", $old_id)
           ->execute();
 
         $database
           ->update($group_content_data_table)
-          ->fields(["type" => "flexible_group-{$plugin}"])
-          ->condition("type", "{$group_type}-{$plugin}")
+          ->fields(["type" => $new_id])
+          ->condition("type", $old_id)
           ->execute();
 
         foreach ($group_content_table_mapping->getTableNames() as $tableName) {
@@ -1261,8 +1279,8 @@ function social_group_update_13000() : void {
 
           $database
             ->update($tableName)
-            ->fields(["bundle" => "flexible_group-{$plugin}"])
-            ->condition("bundle", "{$group_type}-{$plugin}")
+            ->fields(["bundle" => $new_id])
+            ->condition("bundle",  $old_id)
             ->execute();
         }
       }
