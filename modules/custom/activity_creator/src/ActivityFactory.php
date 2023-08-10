@@ -505,8 +505,12 @@ class ActivityFactory extends ControllerBase {
 
     $token_options = $message_template->getSetting('token options', []);
     if (!empty($token_options['token replace'])) {
+      $options = [
+        'langcode' => !empty($langcode) ? $langcode : '',
+        'clear' => !empty($token_options['clear']),
+      ];
       // Token should be processed.
-      $output = $this->processTokens($output, !empty($token_options['clear']), $message);
+      $output = $this->processTokens($output, $options, $message);
     }
 
     return $output;
@@ -559,8 +563,8 @@ class ActivityFactory extends ControllerBase {
    *
    * @param array $output
    *   The templated text to be replaced.
-   * @param bool $clear
-   *   Determine if unused token should be cleared.
+   * @param array $options
+   *   Token options.
    * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
@@ -568,11 +572,7 @@ class ActivityFactory extends ControllerBase {
    *   The output with placeholders replaced with the token value,
    *   if there are indeed tokens.
    */
-  protected function processTokens(array $output, $clear, Message $message) {
-    $options = [
-      'clear' => $clear,
-    ];
-
+  protected function processTokens(array $output, array $options, Message $message) {
     $bubbleable_metadata = new BubbleableMetadata();
     foreach ($output as $key => $value) {
       if (is_string($value)) {
