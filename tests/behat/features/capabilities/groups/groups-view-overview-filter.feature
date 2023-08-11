@@ -1,4 +1,4 @@
-@api @javascript @group @group-overview
+@api @javascript
 Feature: All group overview filters
 
   Background:
@@ -19,17 +19,12 @@ Feature: All group overview filters
       | Public group    |
       | - Any -         |
 
-#  @TODO when Flexible groups is our only group type this should work. For now it doesnt, as we have public and flexible
-#  as group types enabled by default. In order to create a setup step for this test to run we would either need to
-#  uninstall a group type, or remove permissions for AN / outsiders to not be able to view published group of type as
-#  group permission. This doesn't help us in our confidence to do the group migration, so we can revisit this later.
-#
-#  Scenario: As user I can not filter on group types on the group overview if there is only one group type
-#    Given I am an anonymous user
-#
-#    When I am viewing the groups overview
-#
-#    Then I should not see "Group type" in the "Sidebar second"
+  Scenario: As user I can not filter on group types on the group overview if there is only one group type
+    Given I am an anonymous user
+
+    When I am viewing the groups overview
+
+    Then I should not see "Group type" in the "Sidebar second"
 
   Scenario: As user I can not filter on the field group type if there are no types added
     Given I am an anonymous user
