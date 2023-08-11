@@ -193,6 +193,14 @@ function social_group_update_12101(): string {
  * Update old group types to flexible groups.
  */
 function social_group_update_13000() : void {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get("social_group_group_type_migration_opt_out", FALSE)) {
+    \Drupal::logger("social_group")->info("Platform has opted out of group migration.");
+    return;
+  }
+
   // Make sure the flexible group is installed.
   \Drupal::service("module_installer")->install(["social_group_flexible_group"]);
 
@@ -480,4 +488,11 @@ function social_group_update_13000() : void {
 
   // Commit our group-type-migration transaction.
   unset($transaction);
+}
+
+/**
+ * Clean up any group migration opt-out that might be enabled.
+ */
+function social_group_update_13002() : void {
+  \Drupal::state()->delete("social_group_group_type_migration_opt_out");
 }
