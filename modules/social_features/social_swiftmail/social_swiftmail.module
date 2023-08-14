@@ -5,7 +5,6 @@
  * Module file for  Social Swiftmailer.
  */
 
-use Drupal\Component\Utility\Xss;
 use Drupal\file\Entity\File;
 use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 use Drupal\Core\Url;
@@ -30,7 +29,6 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $secondary = $colors['brand-secondary'];
   $accent = $colors['brand-accent'];
   $link = $colors['brand-link'];
-  $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id) ?? "");
 
   // Add variables to send to the html template.
   $variables['logo'] = $logo;
@@ -38,7 +36,6 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $variables['secondary'] = $secondary;
   $variables['accent'] = $accent;
   $variables['link'] = $link;
-  $variables['border_radius'] = $border_radius;
 
   // Check if custom e-mail setting for branding removal is enabled.
   $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
