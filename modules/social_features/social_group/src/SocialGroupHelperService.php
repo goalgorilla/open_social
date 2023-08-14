@@ -190,6 +190,8 @@ class SocialGroupHelperService implements SocialGroupHelperServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Deprecate this in 11.x and remove.
    */
   public static function getCurrentGroupMembers() {
     $cache = &drupal_static(__FUNCTION__, []);
