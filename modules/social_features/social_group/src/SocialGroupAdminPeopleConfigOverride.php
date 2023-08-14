@@ -41,11 +41,7 @@ class SocialGroupAdminPeopleConfigOverride implements ConfigFactoryOverrideInter
     // Add all available group types on the platform here, so they can all
     // make use of the new manage members overview.
     if (in_array($config_name, $names, TRUE)) {
-      $social_group_types = [
-        'open_group',
-        'closed_group',
-        'public_group',
-      ];
+      $social_group_types = [];
       $this->moduleHandler->alter('social_group_types', $social_group_types);
       // Loop over all group types.
       foreach ($social_group_types as $group_type) {
