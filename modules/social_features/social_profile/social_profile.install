@@ -373,12 +373,16 @@ function social_profile_update_dependencies() {
     'group' => 8020,
   ];
 
+  // We need to make sure we've migrated to SOLR so that we don't run into any
+  // index issues for the number of fields that we're adding to search.
+  $dependencies['social_profile'][12001] = [
+    'social_search' => 12004,
+  ];
+
   // Before we start migrating the profile structure we need to ensure the
   // allow_follow_user field is moved if it exists.
   if (\Drupal::moduleHandler()->moduleExists('social_follow_user')) {
-    $dependencies['social_profile'][12001] = [
-      'social_follow_user' => 11406,
-    ];
+    $dependencies['social_profile'][12001]['social_follow_user'] = 11406;
   }
 
   return $dependencies;
