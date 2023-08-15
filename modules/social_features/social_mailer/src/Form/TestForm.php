@@ -2,6 +2,7 @@
 
 namespace Drupal\social_mailer\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -24,12 +25,22 @@ class TestForm extends FormBase {
   protected LanguageManagerInterface $languageManager;
 
   /**
+   * The config factory.
+   *
+   * Defined as var because of the base class in formbase.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('plugin.manager.mail'),
-      $container->get('language_manager')
+      $container->get('language_manager'),
+      $container->get('config.factory')
     );
   }
 
@@ -41,9 +52,10 @@ class TestForm extends FormBase {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    */
-  public function __construct(MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager) {
+  public function __construct(MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory) {
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -90,11 +102,16 @@ class TestForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $params = [
+      'site_name' => $this->configFactory->get('system.site')->get('name'),
+    ];
+
     $this->mailManager->mail(
       'social_mailer',
       'test',
       $form_state->getValue(['test', 'recipient']),
-      $this->languageManager->getDefaultLanguage()->getId()
+      $this->languageManager->getDefaultLanguage()->getId(),
+      $params
     );
     $this->messenger()->addMessage($this->t('An attempt has been made to send an e-mail to @email.', [
       '@email' => $form_state->getValue(['test', 'recipient']),

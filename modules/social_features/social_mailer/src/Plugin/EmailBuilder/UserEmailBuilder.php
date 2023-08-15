@@ -5,7 +5,7 @@ namespace Drupal\social_mailer\Plugin\EmailBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\symfony_mailer\EmailInterface;
-use Drupal\symfony_mailer_bc\Plugin\EmailBuilder\UserEmailBuilder as UserEmailBuilderBase;
+use Drupal\symfony_mailer\Plugin\EmailBuilder\UserEmailBuilder as UserEmailBuilderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
