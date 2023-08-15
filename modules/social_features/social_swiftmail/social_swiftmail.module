@@ -30,7 +30,8 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $secondary = $colors['brand-secondary'];
   $accent = $colors['brand-accent'];
   $link = $colors['brand-link'];
-  $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id) ?? "");
+  $card_radius = Xss::filter(theme_get_setting('card_radius', $theme_id) ?? '');
+  $button_radius = Xss::filter(theme_get_setting('button_radius', $theme_id) ?? '');
 
   // Add variables to send to the html template.
   $variables['logo'] = $logo;
@@ -38,7 +39,8 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $variables['secondary'] = $secondary;
   $variables['accent'] = $accent;
   $variables['link'] = $link;
-  $variables['border_radius'] = $border_radius;
+  $variables['border_radius'] = $card_radius;
+  $variables['button_border_radius'] = $button_radius;
 
   // Check if custom e-mail setting for branding removal is enabled.
   $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
