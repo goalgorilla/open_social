@@ -8,6 +8,8 @@ use Drupal\Core\Database\Query\SelectInterface;
  * Trait SocialProfileTrait.
  *
  * @package Drupal\social_profile
+ * @deprecated SocialProfileTrait is deprecated in 11.10.0 and will be marked as internal in 12.0.0. After 12.0.0 is might be removed without warning.
+ * @see https://www.drupal.org/project/social/issues/3381156.
  */
 trait SocialProfileTrait {
 
