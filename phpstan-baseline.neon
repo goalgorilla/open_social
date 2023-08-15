@@ -12184,6 +12184,14 @@ parameters:
 			path: modules/social_features/social_mentions/src/Controller/AutocompleteController.php
 
 		-
+			message: """
+				#^Usage of deprecated trait Drupal\\\\social_profile\\\\SocialProfileTrait in class Drupal\\\\social_mentions\\\\Controller\\\\AutocompleteController\\:
+				SocialProfileTrait is deprecated in 11\\.10\\.0 and will be marked as internal in 12\\.0\\.0\\. After 12\\.0\\.0 is might be removed without warning\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_mentions/src/Controller/AutocompleteController.php
+
+		-
 			message: "#^Method Drupal\\\\social_mentions\\\\Plugin\\\\ActivityEntityCondition\\\\MentionCommentActivityEntityCondition\\:\\:isValidEntityCondition\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/social_features/social_mentions/src/Plugin/ActivityEntityCondition/MentionCommentActivityEntityCondition.php
@@ -13729,6 +13737,14 @@ parameters:
 			path: modules/social_features/social_private_message/src/Mapper/PrivateMessageMapper.php
 
 		-
+			message: """
+				#^Usage of deprecated trait Drupal\\\\social_profile\\\\SocialProfileTrait in class Drupal\\\\social_private_message\\\\Mapper\\\\PrivateMessageMapper\\:
+				SocialProfileTrait is deprecated in 11\\.10\\.0 and will be marked as internal in 12\\.0\\.0\\. After 12\\.0\\.0 is might be removed without warning\\.$#
+			"""
+			count: 1
+			path: modules/social_features/social_private_message/src/Mapper/PrivateMessageMapper.php
+
+		-
 			message: "#^Cannot call method hasPermission\\(\\) on Drupal\\\\user\\\\Entity\\\\Role\\|null\\.$#"
 			count: 1
 			path: modules/social_features/social_private_message/src/Plugin/EntityReferenceSelection/UserSelection.php
@@ -14825,6 +14841,14 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Drupal\\\\social_profile\\\\Plugin\\\\EntityReferenceSelection\\\\UserSelection\\:\\:getUserIdsFromName\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/social_features/social_profile/src/Plugin/EntityReferenceSelection/UserSelection.php
+
+		-
+			message: """
+				#^Usage of deprecated trait Drupal\\\\social_profile\\\\SocialProfileTrait in class Drupal\\\\social_profile\\\\Plugin\\\\EntityReferenceSelection\\\\UserSelection\\:
+				SocialProfileTrait is deprecated in 11\\.10\\.0 and will be marked as internal in 12\\.0\\.0\\. After 12\\.0\\.0 is might be removed without warning\\.$#
+			"""
 			count: 1
 			path: modules/social_features/social_profile/src/Plugin/EntityReferenceSelection/UserSelection.php
 
