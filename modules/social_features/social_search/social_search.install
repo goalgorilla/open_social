@@ -18,11 +18,12 @@ use Drupal\views\Entity\View;
  * Implements hook_update_dependencies().
  */
 function social_search_update_dependencies() {
-  // Necessary because we delete a view with geolocation filter.
-  // Needs to be done before system_update_8200 and social_group_update_8005.
-  $dependencies['social_group'][8005] = [
-    'social_search' => 8102,
+  // We must ensure variation cache is installed before we run any update hooks
+  // that might trigger group code.
+  $dependencies['social_search'][11401] = [
+    'group' => 8020,
   ];
+
   return $dependencies;
 }
 
