@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_tagging\Plugin\Field\FieldFormatter;
+namespace Drupal\social_tag_split\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -16,6 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A formatter that uses the top taxonomy level as categories for split fields.
+ *
+ * This allows users who don't have access to the Field UI to create
+ * multiple related taxonomy fields on an entity. This happens by pretending
+ * that one field is multiple fields, splitting them no the top taxonomy level.
  *
  * @FieldFormatter(
  *   id = "social_tag_split",
