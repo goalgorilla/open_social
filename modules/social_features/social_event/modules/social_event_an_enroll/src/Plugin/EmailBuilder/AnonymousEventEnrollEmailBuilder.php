@@ -1,35 +1,39 @@
 <?php
 
-namespace Drupal\activity_send_email\Plugin\EmailBuilder;
+namespace Drupal\social_event_an_enroll\Plugin\EmailBuilder;
 
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Utility\Token;
 use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
- * Defines the Email Builder plugin for the activity_send_email module.
+ * Defines the Email Builder plugin for the social_event_an_enroll module.
  *
  * @EmailBuilder(
- *   id = "activity_send_email",
+ *   id = "social_event_an_enroll",
  *   sub_types = {
- *     "activity_send_email" = @Translation("Activity notification")
+ *     "social_event_an_enroll" = @Translation("Anonymous Enrollment notification")
  *   },
  *   common_adjusters = {},
- *   import = @Translation("Activity notification"),
+ *   import = @Translation("Anonymous Enrollment notification"),
  * )
  */
-class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
-
-  use StringTranslationTrait;
+class AnonymousEventEnrollEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
    */
   protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * The token service.
+   */
+  protected Token $token;
 
   /**
    * {@inheritdoc}
@@ -39,12 +43,13 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('token'),
     );
   }
 
   /**
-   * Constructs an ActivitySendEmailBuilder object.
+   * Constructs an EventInviteEmailBuilder object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -54,30 +59,33 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    array $configuration,
+          $plugin_id,
+          $plugin_definition,
+    ConfigFactoryInterface $config_factory,
+    Token $token
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
+    $this->token = $token;
   }
 
   /**
    * {@inheritdoc}
    */
   public function preRender(EmailInterface $email): void {
-    $params = $email->getParam('params');
-    if ($subject = $params['subject']) {
-      $email->setSubject(strip_tags($subject));
-    }
-    else {
-      $site_name = $this->configFactory->get('system.site')->get('name');
-      $email->setSubject($this->t('Notification from %site_name', [
-        '%site_name' => $site_name,
-      ], [
-        'langcode' => $email->getLangcode(),
-      ]));
-    }
+    $config = $this->configFactory->getEditable('social_event_an_enroll.settings');
+    $subject = $config->get('event_an_enroll_email_subject');
+    $body = $config->get('event_an_enroll_email_body');
 
-    $email->setBody($params['body']);
+    $params = $email->getParam('params');
+
+    $email->setSubject($this->token->replace($subject, $params));
+    $email->setBody(Markup::create($this->token->replace($body, $params)));
   }
 
   /**
