@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\social_tagging\Plugin\Field\FieldWidget;
+namespace Drupal\social_tag_split\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsWidgetBase;
@@ -11,6 +11,10 @@ use Drupal\taxonomy\Entity\Term;
 
 /**
  * A widget that uses the top taxonomy level as categories for split fields.
+ *
+ * This allows users who don't have access to the Field UI to create
+ * multiple related taxonomy fields on an entity. This happens by pretending
+ * that one field is multiple fields, splitting them no the top taxonomy level.
  *
  * @FieldWidget(
  *   id = "social_tag_split",

@@ -6,7 +6,7 @@ namespace Drupal\social_follow_tag\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\social_tagging\Plugin\Field\FieldFormatter\TagSplitFormatter;
+use Drupal\social_tag_split\Plugin\Field\FieldFormatter\TagSplitFormatter;
 use Drupal\taxonomy\TermInterface;
 
 /**
