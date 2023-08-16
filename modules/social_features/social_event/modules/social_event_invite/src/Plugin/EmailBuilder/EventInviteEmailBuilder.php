@@ -2,8 +2,9 @@
 
 namespace Drupal\social_event_invite\Plugin\EmailBuilder;
 
+use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
-use Drupal\symfony_mailer\Processor\EmailProcessorBase;
+use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,7 +26,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
  *   }
  * )
  */
-class EventInviteEmailBuilder extends EmailProcessorBase implements ContainerFactoryPluginInterface {
+class EventInviteEmailBuilder extends EmailBuilderBase implements ContainerFactoryPluginInterface {
 
   /**
    * The config factory.
@@ -98,13 +99,43 @@ class EventInviteEmailBuilder extends EmailProcessorBase implements ContainerFac
     $subject = $config->get('invite_subject');
     $body = $config->get('invite_message');
 
-    $params = $email->getParams();
+    $params = $email->getParam('params');
     unset($params['existing_user']);
 
     $email->setSubject($this->token->replace($subject, $params));
     $email->setBody(Markup::create($this->token->replace($body, $params)));
 
     $this->languageManager->setConfigOverrideLanguage($original_language);
+  }
+
+  /**
+   * Saves the parameters for a newly created email.
+   *
+   * @param \Drupal\symfony_mailer\EmailInterface $email
+   *   The email to modify.
+   * @param mixed $params
+   *   The params containing the site name
+   * @param mixed $to
+   *   The to addresses, see Address::convert().
+   *
+   */
+  public function createParams(EmailInterface $email, $params = NULL, $to = NULL) {
+    $email->setParam('params', $params);
+    $email->setParam('to', $to);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fromArray(EmailFactoryInterface $factory, array $message) {
+    return $factory->newTypedEmail($message['module'], $message['key'], $message['params'], $message['to']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function build(EmailInterface $email) {
+    $email->setTo($email->getParam('to'));
   }
 
 }
