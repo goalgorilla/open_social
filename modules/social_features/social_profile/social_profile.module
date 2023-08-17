@@ -32,7 +32,6 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\social_profile\FieldManager;
-use Drupal\social_profile\Plugin\views\filter\SocialSearchApiSplitProfileTerms;
 use Drupal\social_profile\SocialProfileUserFormAlter;
 use Drupal\user\Entity\Role;
 use Drupal\user\EntityOwnerInterface;
@@ -1530,13 +1529,6 @@ function social_profile_profile_access(ProfileInterface $profile, string $operat
   }
 
   return AccessResult::neutral();
-}
-
-/**
- * Implements hook_views_plugins_filter_alter().
- */
-function social_profile_views_plugins_filter_alter(array &$plugins) {
-  $plugins['search_api_term']['class'] = SocialSearchApiSplitProfileTerms::class;
 }
 
 /**
