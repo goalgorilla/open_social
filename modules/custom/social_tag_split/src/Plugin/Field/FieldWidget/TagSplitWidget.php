@@ -68,6 +68,11 @@ class TagSplitWidget extends OptionsWidgetBase {
     $default_value = $this->getSelectedOptions($items);
     $terms = Term::loadMultiple($term_ids);
 
+    // The element will be the container which can't be required, but we must
+    // make the sub-fields required if it's requested.
+    $required = $element['#required'] ?? FALSE;
+    unset($element['#required']);
+
     $element += [
       '#type' => 'details',
       '#open' => TRUE,
@@ -86,6 +91,7 @@ class TagSplitWidget extends OptionsWidgetBase {
           '#title' => $term->label(),
           '#multiple' => TRUE,
           '#default_value' => $default_value,
+          '#required' => $required,
           // Don't overwrite the options if a child already started filling it
           // out.
           '#options' => $element["tagging_${term_id}"]['#options'] ?? [],
