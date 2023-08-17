@@ -19,6 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  *   multiple_values = TRUE
  * )
+ *
+ * @deprecated in social:12.0.0 and will be removed in social:13.0.0. Use `social_tag_split` instead.
+ * @see \Drupal\social_tag_split\Plugin\Field\FieldWidget\TagSplitWidget
  */
 class SocialProfileTagSplitWidget extends Select2EntityReferenceWidget {
 

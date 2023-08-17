@@ -35,6 +35,7 @@ class UserAccessCheckTest extends BaseUserAccessCheckTest {
     "lazy",
     "image_widget_crop",
     "crop",
+    "social_tag_split",
     // Needed for the admin people view schema.
     'variationcache',
     'group',

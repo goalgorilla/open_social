@@ -38,6 +38,7 @@ abstract class ProfileKernelTestBase extends KernelTestBase {
     "lazy",
     "image_widget_crop",
     "crop",
+    "social_tag_split",
     // Needed for the admin people view schema.
     'group',
     'views_bulk_operations',

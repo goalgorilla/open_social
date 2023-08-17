@@ -104,10 +104,11 @@ Feature: Users can edit profiles
     Then I should be denied access
 
   Scenario: Enabled fields show on the edit form
-    # Profile tag field only shows when there's at least one tag.
+    # Profile tag field only shows when there are tags in a hierarchy.
     Given profile_tag terms:
-      | name | parent |
-      | Foo  |        |
+      | name        | parent      |
+      | Profile tag |             |
+      | Foo         | Profile tag |
     And the profile fields are enabled:
       | Field name         |
       | Address            |
@@ -171,10 +172,11 @@ Feature: Users can edit profiles
     And I logout
 
   Scenario: Disabled fields don't show on the edit form
-    # Profile tag field only shows when there's at least one tag.
+    # Profile tag field only shows when there are tags in a hierarchy.
     Given profile_tag terms:
-      | name | parent |
-      | Foo  |        |
+      | name        | parent      |
+      | Profile tag |             |
+      | Foo         | Profile tag |
     And the profile fields are disabled:
       | Field name         |
       | Address            |

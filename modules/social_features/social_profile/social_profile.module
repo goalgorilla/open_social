@@ -8,7 +8,6 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -19,7 +18,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Link;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -800,16 +798,6 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_groups'] = \Drupal::service('social_group.helper_service')
       ->countGroupMembershipsForUser($user->id());
   }
-
-  /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $tag_service */
-  $tag_service = \Drupal::service('social_profile.tag_service');
-  $variables['profile_tagging_active'] = $tag_service->isActive();
-  $variables['profile_tagging_allow_split'] = $tag_service->allowSplit();
-
-  if (!$profile->get('field_profile_profile_tag')->isEmpty()) {
-    $tags = $profile->get('field_profile_profile_tag')->getValue();
-    $variables['profile_tagging_hierarchy'] = $tag_service->buildHierarchy($tags);
-  }
 }
 
 /**
@@ -1542,46 +1530,6 @@ function social_profile_profile_access(ProfileInterface $profile, string $operat
   }
 
   return AccessResult::neutral();
-}
-
-/**
- * Implements hook_entity_form_display_alter().
- */
-function social_profile_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
-  if ($form_display->id() === 'profile.profile.default') {
-    $content = $form_display->get('content');
-    if (isset($content['field_profile_profile_tag'])) {
-      $content['field_profile_profile_tag']['type'] = 'social_profile_tag_split';
-      $form_display->set('content', $content);
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_profile_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (\Drupal::service('social_profile.tag_service')->allowSplit()) {
-    $storage = $form_state->getStorage();
-    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
-    $vocabulary = $storage['taxonomy']['vocabulary'];
-
-    if ($vocabulary->id() === 'profile_tag') {
-      // Remove edit/delete links.
-      foreach (Element::children($form['terms']) as $name) {
-        unset($form['terms'][$name]['weight']);
-      }
-
-      // Hide Save button.
-      $form['actions']['submit']['#access'] = FALSE;
-
-      // Remove tableDrag.
-      unset($form['terms']['#tabledrag']);
-
-      // Remove Weight column.
-      unset($form['terms']['#header'][1]);
-    }
-  }
 }
 
 /**
