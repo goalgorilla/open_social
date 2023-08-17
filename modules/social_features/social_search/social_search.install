@@ -48,24 +48,6 @@ function social_search_install() {
       'access group search',
     ]
   );
-  user_role_grant_permissions(
-    'verified',
-    [
-      'access users search',
-    ]
-  );
-  user_role_grant_permissions(
-    'contentmanager',
-    [
-      'access users search',
-    ]
-  );
-  user_role_grant_permissions(
-    'sitemanager',
-    [
-      'access users search',
-    ]
-  );
 }
 
 /**
@@ -765,4 +747,18 @@ function social_search_update_12004() : void {
   Server::load("social_database")?->delete();
 
   \Drupal::service('module_installer')->uninstall(["search_api_db"], FALSE);
+}
+
+/**
+ * Update permissions for user search.
+ */
+function social_search_update_12005() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_search', 'social_search_update_12005');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
 }
