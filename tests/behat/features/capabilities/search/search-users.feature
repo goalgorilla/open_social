@@ -173,20 +173,14 @@ Feature: Search people
 
   Scenario: Users can filter by Profile tag
     Given profile_tag terms:
-      | name      |
-      | eCommerce |
+      | name        | parent      |
+      | Profile tag |             |
+      | eCommerce   | Profile tag |
     And users:
-      | name               | status | roles    |
-      | tjakka tagged user | 1      | verified |
-    # @todo Replace all this
-    And I am logged in as a user with the sitemanager role
-    And I am on the profile of "tjakka tagged user"
-    And I click "Edit profile information"
-    And I fill in "Profile tag" with "eCommerce"
-    And I press "Save"
-    # with this
-    # And user "tjakka tagged user" has a profile filled with:
-    #   | field_profile_profile_tag | eCommerce |
+      | name               | mail                     | status | roles    |
+      | tjakka tagged user | tjakka@example.localhsot | 1      | verified |
+    And user "tjakka tagged user" has a profile filled with:
+      | field_profile_profile_tag | eCommerce |
     And Search indexes are up to date
     And I am logged in as a user with the verified role
 
@@ -202,18 +196,14 @@ Feature: Search people
   Scenario: Users can filter by Tags
     Given I enable the module social_tagging
     And social_tagging terms:
-      | name      |
-      | eCommerce |
+      | name      | parent |
+      | Tags      |        |
+      | eCommerce | Tags   |
     And users:
-      | name               | status | roles    |
-      | tjakka tagged user | 1      | verified |
-    # We can't use the profile field shortcut here because tags are added with a
-    # form alter hook.
-    And I am logged in as a user with the sitemanager role
-    And I am on the profile of "tjakka tagged user"
-    And I click "Edit profile information"
-    And I fill in "Tags" with "eCommerce"
-    And I press "Save"
+      | name               | mail                     | status | roles    |
+      | tjakka tagged user | tjakka@example.localhsot | 1      | verified |
+    And user "tjakka tagged user" has a profile filled with:
+      | field_social_tagging | eCommerce |
     And Search indexes are up to date
     And I am logged in as a user with the verified role
 

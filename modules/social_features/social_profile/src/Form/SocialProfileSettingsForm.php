@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManager;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
@@ -156,9 +155,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
     $form['nickname'] = $this->buildNicknameFieldset();
 
     $form['address'] = $this->buildAddressFieldset();
-
-    // Profile tagging settings.
-    $form['tagging'] = $this->buildTaggingFieldset();
 
     return parent::buildForm($form, $form_state);
   }
@@ -609,80 +605,10 @@ class SocialProfileSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * The fieldset to control tagging settings.
-   *
-   * @return array
-   *   The form fields for the tagging configuration.
-   */
-  private function buildTaggingFieldset() : array {
-    $config = $this->config('social_profile.settings');
-
-    $tagging = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Profile Tags'),
-      '#open' => TRUE,
-    ];
-
-    // Get profile vocabulary overview page link.
-    $profile_tags = Link::createFromRoute('profile tags', 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'profile_tag']);
-
-    $tagging['enable_profile_tagging'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow profile tagging for content managers'),
-      '#required' => FALSE,
-      '#default_value' => $config->get('enable_profile_tagging'),
-      '#description' => $this->t('Determine whether content managers are allowed to add @profile_tags terms to the users profile.',
-        [
-          '@profile_tags' => $profile_tags->toString(),
-        ]),
-    ];
-
-    $tagging['allow_tagging_for_lu'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow profile tagging for regular users'),
-      '#default_value' => $config->get('allow_tagging_for_lu'),
-      '#required' => FALSE,
-      '#description' => $this->t("Determine whether regular users are allowed to add profile tags to their own profile."),
-      '#states' => [
-        'visible' => [
-          ':input[name="enable_profile_tagging"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-
-    $tagging['allow_category_split'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow category split'),
-      '#default_value' => $config->get('allow_category_split'),
-      '#required' => FALSE,
-      '#description' => $this->t("Determine if the main categories of the vocabulary will be used as separate tag fields or as a single tag field when using tags on profile."),
-    ];
-
-    $tagging['use_category_parent'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow parents to be used as tag'),
-      '#default_value' => $config->get('use_category_parent'),
-      '#required' => FALSE,
-      '#description' => $this->t("Determine if the parent of categories will be used with children tags."),
-      '#states' => [
-        'visible' => [
-          ':input[name="allow_category_split"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-
-    return $tagging;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('social_profile.settings')
-      ->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'))
-      ->set('allow_tagging_for_lu', $form_state->getValue('allow_tagging_for_lu'))
-      ->set('allow_category_split', $form_state->getValue('allow_category_split'))
-      ->set('use_category_parent', $form_state->getValue('use_category_parent'))
       ->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'))
       ->save();
 

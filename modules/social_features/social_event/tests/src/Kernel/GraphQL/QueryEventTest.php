@@ -41,6 +41,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'image',
     // Profile fields.
     'telephone',
+    'social_tag_split',
     // For the comment functionality.
     'social_comment',
     'comment',

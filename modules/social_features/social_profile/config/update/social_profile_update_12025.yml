@@ -1,0 +1,102 @@
+__global_actions:
+  install_modules:
+    - social_tag_split
+core.entity_form_display.profile.profile.default:
+  expected_config:
+    content:
+      field_profile_profile_tag: { }
+  update_actions:
+    change:
+      content:
+        field_profile_profile_tag:
+          settings:
+            display_title: false
+          type: social_tag_split
+core.entity_view_display.profile.profile.default:
+  expected_config:
+    content:
+      field_profile_profile_tag:
+        type: entity_reference_label
+  update_actions:
+    change:
+      content:
+        field_profile_profile_tag:
+          settings:
+            link: true
+          type: social_tag_split
+social_profile.settings:
+  expected_config: { }
+  update_actions:
+    delete:
+      enable_profile_tagging:
+      allow_category_split:
+      use_category_parent:
+      allow_tagging_for_lu:
+views.view.user_admin_people:
+  expected_config:
+    display:
+      default:
+        display_options:
+          filters:
+            social_split_profile_terms: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              social_split_profile_terms:
+    add:
+      display:
+        default:
+          display_options:
+            filters:
+              field_profile_profile_tag:
+                admin_label: ''
+                expose:
+                  description: ''
+                  identifier: field_profile_profile_tag
+                  label: 'Profile tags'
+                  multiple: false
+                  operator: field_profile_profile_tag_target_id_op
+                  operator_id: field_profile_profile_tag_op
+                  operator_limit_selection: false
+                  operator_list: {  }
+                  reduce: false
+                  remember: false
+                  remember_roles:
+                    administrator: '0'
+                    anonymous: '0'
+                    authenticated: '0'
+                    contentmanager: '0'
+                    sitemanager: '0'
+                    verified: '0'
+                  required: false
+                  use_operator: true
+                exposed: true
+                field: field_profile_profile_tag_target_id
+                group: 1
+                group_info:
+                  default_group: All
+                  default_group_multiple: {  }
+                  description: ''
+                  group_items: {  }
+                  identifier: ''
+                  label: ''
+                  multiple: false
+                  optional: true
+                  remember: false
+                  widget: select
+                group_type: group
+                hierarchy: false
+                id: field_profile_profile_tag
+                is_grouped: false
+                limit: true
+                operator: or
+                plugin_id: taxonomy_index_tid
+                reduce_duplicates: true
+                relationship: profile
+                table: profile__field_profile_profile_tag
+                type: textfield
+                value: {  }
+                vid: profile_tag

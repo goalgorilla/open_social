@@ -1970,3 +1970,69 @@ function social_profile_update_12023() : void {
     }
   }
 }
+
+/**
+ * Migrate to split vocabulary.
+ */
+function social_profile_update_12024(array &$sandbox) : void {
+  // Permissions have already been moved in social_profile_update_12009.
+  // In case the field is currently not using splitting we must add a top level
+  // taxonomy term.
+  if (!isset($sandbox['tids'])) {
+    $profile_settings = \Drupal::configFactory()->getEditable("social_profile.settings");
+    // If category split is already allowed then we're done.
+    if ($profile_settings->get("allow_category_split")) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+
+    // Otherwise we must move all the terms that are not currently under a
+    // parent under the "Profile tags" parent.
+    $sandbox['tids'] = \Drupal::entityQuery("taxonomy_term")
+      ->accessCheck(FALSE)
+      ->condition("vid", "profile_tag")
+      ->condition("parent", 0)
+      ->execute();
+    $sandbox['total'] = count($sandbox['tids']);
+
+    // If there are currently no tags then there's nothing for us to do.
+    if ($sandbox['total'] === 0) {
+      $sandbox['#finished'] = 1;
+      return;
+    }
+
+    $parent = Term::create([
+      "vid" => "profile_tag",
+      "langcode" => "en",
+      "name" => "Profile Tag",
+      "status" => 1,
+    ]);
+    $parent->save();
+    $sandbox['parent_id'] = $parent->id();
+  }
+
+  $tids = array_splice($sandbox['tids'], 0, Settings::get('entity_update_batch_size', 50));
+  foreach (Term::loadMultiple($tids) as $term) {
+    $term->set("parent", $sandbox['parent_id'])->save();
+  }
+
+  $sandbox['#finished'] = ($sandbox['total'] - count($sandbox['tids'])) / $sandbox['total'];
+}
+
+/**
+ * Move field_profile_profile_tag to new widget set-up.
+ */
+function social_profile_update_12025() : string {
+  // To finish the profile tagging changes after the permission change in
+  // social_profile_update_12009 and the vocabulary change in
+  // social_profile_update_12024 we must now change the field widgets and clean
+  // up old settings.
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_profile', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
