@@ -45,7 +45,7 @@ Feature: Users can be found in searched based on viewable profile information
       | vis_32785136480d615c3c4094e52fd0 | <visibility> |
       | field_profile_last_name          | Doe          |
       | vis_41e45bfd9baa40f1fb7f60e2e284 | <visibility> |
-    And I am logged in as a user with the "access users search,view any profile profile<permission>" permissions
+    And I am logged in as a user with the "list user,view any profile profile<permission>" permissions
     And Search indexes are up to date
 
     When I search users for "Jane Doe"
@@ -77,7 +77,7 @@ Feature: Users can be found in searched based on viewable profile information
     And user target has a profile filled with:
       | field_profile_first_name         | Jane         |
       | field_profile_last_name          | Doe          |
-    And I am logged in as a user with the "access users search,view any profile profile<permission>" permissions
+    And I am logged in as a user with the "list user,view any profile profile<permission>" permissions
     And Search indexes are up to date
 
     When I search users for "Jane Doe"
