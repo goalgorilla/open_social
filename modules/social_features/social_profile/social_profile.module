@@ -50,6 +50,27 @@ const SOCIAL_PROFILE_FIELD_VISIBILITY_FRIENDS = 'friends';
 const SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE = 'private';
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function social_profile_module_implements_alter(array &$implementations, string $hook) : void {
+  // Make sure profile and social_profile run before everything else. This is
+  // needed to make sure that hook_user_insert is run before other contrib
+  // modules so that modules (such as `ginvite` that respond to a user being
+  // created have a profile). This is needed until
+  // https://www.drupal.org/project/drupal/issues/1729812 or a related issue is
+  // fixed providing us with better hook control.
+  if ($hook === "user_insert") {
+    $profile = $implementations['profile'];
+    $social_profile = $implementations['social_profile'];
+    unset($implementations['profile'], $implementations['social_profile']);
+    $implementations = [
+      'profile' => $profile,
+      'social_profile' => $social_profile,
+    ] + $implementations;
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_profile_field_storage_config_insert(FieldStorageConfigInterface $field_storage_config) : void {
@@ -1337,23 +1358,36 @@ function social_profile_social_user_name_display_suggestions(AccountInterface $a
     return [];
   }
 
-  $suggestions = [];
-
-  $entityTypeManager = \Drupal::entityTypeManager();
-  $settings = \Drupal::config('social_profile.settings');
-
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = $entityTypeManager->getStorage('profile');
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
   assert($storage instanceof ProfileStorageInterface);
 
   $profile = $storage->loadByUser($account, 'profile');
-
   // We expect all users to have a profile, not having one means Open Social is
   // incorrectly installed. However, we can't continue without one.
   if ($profile === NULL) {
-    \Drupal::logger('social_profile')->error("Missing default 'profile' profile for user ({$account->id()}).");
-    return $suggestions;
+    \Drupal::logger('social_profile')->error(
+      "Missing default 'profile' profile for user ({$account->id()}) \n" .
+      // Provide a backtrace to make debugging easier.
+      implode("\n", array_map(
+        function (array $call) {
+          $class = $call['class'] ?? "";
+          $type = $call['type'] ?? "";
+          $position = implode(
+            ":",
+            array_filter([$call['file'] ?? NULL, $call['line'] ?? NULL])
+          );
+          if ($position !== "") {
+            $position = " in $position";
+          }
+          return "{$class}{$type}{$call['function']}{$position}";
+        },
+        debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)
+      ))
+    );
+    return [];
   }
+
+  $suggestions = [];
 
   // Full name.
   $first_name_field = $profile->get('field_profile_first_name');
