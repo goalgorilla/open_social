@@ -118,7 +118,7 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
       '#rows' => 2,
       '#title' => $this->t('Skip email rerouting for email addresses:'),
       '#default_value' => $this->configuration['allowed'] ?? '',
-      '#description' => $this->t('Provide a line-delimited list of email addresses to pass through. All emails to addresses from this list will not be rerouted.<br/>A patterns like "*@example.com" and "myname+*@example.com" can be used to add all emails by its domain or the pattern.'),
+      '#description' => $this->t('Provide a line-delimited list of email addresses to pass through. All emails to addresses from this list will not be rerouted.<br/>A patterns like "*@example.com" and "name+*@example.com" can be used to add all emails by its domain or the pattern.'),
       '#element_validate' => [
         [$this, 'validateEmails'],
       ],
