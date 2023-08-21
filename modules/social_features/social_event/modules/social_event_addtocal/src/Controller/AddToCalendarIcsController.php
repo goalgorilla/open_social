@@ -63,7 +63,7 @@ class AddToCalendarIcsController extends ControllerBase {
     $dates = $this->request->get('dates');
     $timezone = $this->request->get('timezone');
 
-    // Generate DTSTAMP, which needs to be the time the ICS object created.
+    // Generate timestamp, which needs to be the time the ICS object created.
     // https://icalendar.org/iCalendar-RFC-5545/3-6-1-event-component.html
     $now = new \DateTime('now', new \DateTimezone('UTC'));
     $dateTimeStamp = $now->format('Ymd\THis\Z');

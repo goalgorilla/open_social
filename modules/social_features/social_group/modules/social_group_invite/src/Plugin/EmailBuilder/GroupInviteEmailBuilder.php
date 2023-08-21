@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group_invite\Plugin\EmailBuilder;
 
+use Drupal\Core\TempStore\SharedTempStore;
+use Drupal\Core\TempStore\SharedTempStoreFactory;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_group_invite\Plugin\Action\SocialGroupInviteResend;
 use Drupal\symfony_mailer\EmailFactoryInterface;
@@ -46,6 +48,11 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
   protected LanguageManagerInterface $languageManager;
 
   /**
+   * Stores the shared tempstore.
+   */
+  protected SharedTempStore $tempStore;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
@@ -56,6 +63,7 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       $container->get('config.factory'),
       $container->get('token'),
       $container->get('language_manager'),
+      $container->get('tempstore.shared'),
     );
   }
 
@@ -74,6 +82,8 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    *   The token service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\TempStore\SharedTempStoreFactory $temp_store_factory
+   *   The factory for the temp store object.
    */
   public function __construct(
     array $configuration,
@@ -81,12 +91,14 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     $plugin_definition,
     ConfigFactoryInterface $config_factory,
     Token $token,
-    LanguageManagerInterface $language_manager
+    LanguageManagerInterface $language_manager,
+    SharedTempStoreFactory $temp_store_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
     $this->token = $token;
     $this->languageManager = $language_manager;
+    $this->tempStore = $temp_store_factory->get('social_group_invite');
   }
 
   /**
@@ -94,8 +106,8 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    */
   public function preRender(EmailInterface $email): void {
     $params = $email->getParam('params');
-    $token_service = \Drupal::token();
-    $language_manager = \Drupal::languageManager();
+    $token_service = $this->token;
+    $language_manager = $this->languageManager;
 
     $langcode = $email->getLangcode();
 
@@ -104,12 +116,11 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     $language_manager->setConfigOverrideLanguage($language);
 
     // Load group invite configuration.
-    $group_config = \Drupal::config('social_group.settings');
+    $group_config = $this->configFactory->getEditable('social_group.settings');
     $invite_settings = $group_config->get('group_invite');
 
     // The mail params list should contain group content entity.
     /* @see ginvite_group_content_insert() */
-    /** @var \Drupal\group\Entity\GroupContentInterface $invite */
     $invite = $params['group_content'] ?? NULL;
 
     // Alter message and subject if it configured.
@@ -120,8 +131,7 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       // Check if the invitation is resent and site managers decided to change
       // the invitation email text.
       if ($invite_settings['invite_resend_message']) {
-        $tempstore = \Drupal::service('tempstore.shared')->get('social_group_invite');
-        $resent_invites = (array) $tempstore->get(SocialGroupInviteResend::TEMP_STORE_ID);
+        $resent_invites = (array) $this->tempStore->get(SocialGroupInviteResend::TEMP_STORE_ID);
         if (!empty($resent_invites)) {
 
           if (
@@ -131,7 +141,7 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
             $overridden_body = $invite_settings['invite_resend_message'];
             // Remove handled resent invite from list.
             unset($resent_invites[$params['group_content']->uuid()]);
-            $tempstore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
+            $this->tempStore->set(SocialGroupInviteResend::TEMP_STORE_ID, $resent_invites);
           }
         }
       }
@@ -139,7 +149,6 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       if ($invite instanceof GroupContentInterface) {
         // Allows to have different invite message per group type by replacing
         // default global message.
-        /** @var Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation $group_content_plugin */
         $group_content_plugin = $invite->getContentPlugin();
 
         if ($group_content_plugin->getPluginId() === 'group_invitation') {
@@ -172,12 +181,11 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    * @param \Drupal\symfony_mailer\EmailInterface $email
    *   The email to modify.
    * @param mixed $params
-   *   The params containing the site name
+   *   The params containing the site name.
    * @param mixed $to
    *   The to addresses, see Address::convert().
-   *
    */
-  public function createParams(EmailInterface $email, $params = NULL, $to = NULL) {
+  public function createParams(EmailInterface $email, $params = NULL, $to = NULL): void {
     $email->setParam('params', $params);
     $email->setParam('to', $to);
   }
@@ -185,14 +193,14 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
   /**
    * {@inheritdoc}
    */
-  public function fromArray(EmailFactoryInterface $factory, array $message) {
+  public function fromArray(EmailFactoryInterface $factory, array $message): EmailInterface {
     return $factory->newTypedEmail($message['module'], $message['key'], $message['params'], $message['to']);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function build(EmailInterface $email) {
+  public function build(EmailInterface $email): void {
     $email->setTo($email->getParam('to'));
   }
 

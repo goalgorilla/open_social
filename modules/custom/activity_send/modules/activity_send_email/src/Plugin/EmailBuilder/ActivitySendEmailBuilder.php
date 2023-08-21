@@ -86,12 +86,11 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
    * @param \Drupal\symfony_mailer\EmailInterface $email
    *   The email to modify.
    * @param mixed $params
-   *   The params containing the site name
+   *   The params containing the site name.
    * @param mixed $to
    *   The to addresses, see Address::convert().
-   *
    */
-  public function createParams(EmailInterface $email, $params = NULL, $to = NULL) {
+  public function createParams(EmailInterface $email, $params = NULL, $to = NULL): void {
     $email->setParam('params', $params);
     $email->setParam('to', $to);
   }
@@ -99,14 +98,14 @@ class ActivitySendEmailBuilder extends EmailBuilderBase implements ContainerFact
   /**
    * {@inheritdoc}
    */
-  public function fromArray(EmailFactoryInterface $factory, array $message) {
+  public function fromArray(EmailFactoryInterface $factory, array $message): EmailInterface {
     return $factory->newTypedEmail($message['module'], $message['key'], $message['params'], $message['to']);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function build(EmailInterface $email) {
+  public function build(EmailInterface $email): void {
     $email->setTo($email->getParam('to'));
   }
 

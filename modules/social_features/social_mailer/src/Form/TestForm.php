@@ -27,7 +27,7 @@ class TestForm extends FormBase {
   /**
    * The config factory.
    *
-   * Defined as var because of the base class in formbase.
+   * Defined as var because of the base class in form base class.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
@@ -51,6 +51,8 @@ class TestForm extends FormBase {
    *   The mail manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
   public function __construct(MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory) {
     $this->mailManager = $mail_manager;
