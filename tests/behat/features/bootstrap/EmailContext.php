@@ -387,7 +387,6 @@ class EmailContext implements Context {
    *   A deserialized email.
    */
   protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {
-    assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
     return unserialize(file_get_contents($file), ["allowed_classes" => [
       DrupalSymfonyEmail::class,
       Headers::class,

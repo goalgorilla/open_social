@@ -24,12 +24,11 @@ class SocialMailerEmailBuilder extends EmailBuilderBase {
    * @param \Drupal\symfony_mailer\EmailInterface $email
    *   The email to modify.
    * @param mixed $params
-   *   The params containing the site name
+   *   The params containing the site name.
    * @param mixed $to
    *   The to addresses, see Address::convert().
-   *
    */
-  public function createParams(EmailInterface $email, $params = NULL, $to = NULL) {
+  public function createParams(EmailInterface $email, $params = NULL, $to = NULL): void {
     $email->setParam('to', $to);
     $email->setParam('site_name', $params['site_name']);
   }
@@ -37,21 +36,19 @@ class SocialMailerEmailBuilder extends EmailBuilderBase {
   /**
    * {@inheritdoc}
    */
-  public function fromArray(EmailFactoryInterface $factory, array $message) {
+  public function fromArray(EmailFactoryInterface $factory, array $message): EmailInterface {
     return $factory->newTypedEmail($message['module'], $message['key'], $message['params'], $message['to']);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function build(EmailInterface $email) {
+  public function build(EmailInterface $email): void {
     $email->setTo($email->getParam('to'));
     $email->setSubject($this->t('Social Mailer has been successfully configured!'));
 
     $text[] = '<h3>' . $this->t('Hello,') . '</h3>';
-    $text[] = '<p>' . $this->t('This e-mail has been sent from @site by the Social Mailer module. The module has been successfully configured.', [
-        '@site' => $email->getParam('site_name'),
-      ]) . '</p>';
+    $text[] = '<p>' . $this->t('This e-mail has been sent from @site by the Social Mailer module. The module has been successfully configured.', ['@site' => $email->getParam('site_name')]) . '</p>';
     $text[] = $this->t('Kind regards') . '<br /><br />';
     $text[] = $this->t('The Social Mailer module');
     $email->setBody(Markup::create(implode(PHP_EOL, $text)));
