@@ -95,6 +95,8 @@ Feature: Users can edit profiles
       | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
       | First name         | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
       | Last name          | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
+    # We must disable access to the profile tag editing because it's allowed in our upgrade path to provide continuity.
+      | Profile tag        | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
     And I am logged in as a user with the contentmanager role
 
     When I try to edit the profile of janedoe
