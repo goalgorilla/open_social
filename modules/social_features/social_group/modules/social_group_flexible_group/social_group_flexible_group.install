@@ -641,3 +641,12 @@ function social_group_flexible_group_update_11901(): string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Disable revisions for flexible group.
+ */
+function social_group_flexible_group_update_11902(): void {
+  $config = \Drupal::configFactory()->getEditable("group.type.flexible_group");
+  $config->set("new_revision", FALSE);
+  $config->save();
+}
