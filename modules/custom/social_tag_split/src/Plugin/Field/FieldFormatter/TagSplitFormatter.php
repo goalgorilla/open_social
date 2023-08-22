@@ -119,7 +119,30 @@ class TagSplitFormatter extends EntityReferenceLabelFormatter {
   protected function viewHierarchy(TermInterface $parent, EntityReferenceFieldItemListInterface $items, string $langcode) : array {
     return [
       'label' => ["#plain_text" => $parent->label()],
-      'items' => parent::viewElements($items, $langcode),
+      'items' => array_map(
+        function (array $element) {
+          // Move any '#options.attributes' to '#attributes' which makes for a
+          // more ergonomic DX for extending formatters.
+          $element['#attributes'] = $element['#options']['attributes'] ?? [];
+          unset($element['#options']['attributes']);
+
+          if (!isset($element['#attributes']['class'])) {
+            $element['#attributes']['class'] = [];
+          }
+
+          // In Open Social our tags are shown as pills, so we add the badge
+          // classes that allow styling this way.
+          $element['#attributes']['class'] += [
+            'badge',
+            'badge-default',
+            'badge--large',
+            'badge--pill',
+          ];
+
+          return $element;
+        },
+        parent::viewElements($items, $langcode)
+      ),
     ];
   }
 
