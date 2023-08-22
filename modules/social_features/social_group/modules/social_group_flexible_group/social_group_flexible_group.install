@@ -669,3 +669,13 @@ function social_group_flexible_group_update_111101(): void {
     }
   }
 }
+
+/**
+ * Disable revisions for flexible group.
+ */
+function social_group_flexible_group_update_111102(): void {
+  $config = \Drupal::configFactory()->getEditable("group.type.flexible_group");
+  $config->set("new_revision", FALSE);
+  $config->save();
+}
+}
