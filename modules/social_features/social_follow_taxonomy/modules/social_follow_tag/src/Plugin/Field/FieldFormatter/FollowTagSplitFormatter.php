@@ -54,13 +54,7 @@ class FollowTagSplitFormatter extends TagSplitFormatter {
       if (social_follow_taxonomy_term_followed($term)) {
         $classes[] = "term-followed";
       }
-      $classes += [
-        'badge',
-        'badge-default',
-        'badge--large',
-        'badge--pill',
-        'btn-action__term',
-      ];
+      $classes[] = 'btn-action__term';
       $field['items'][$delta] = [
         '#type' => 'container',
         '#attributes' => ['class' => 'group-action'],

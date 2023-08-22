@@ -2036,3 +2036,21 @@ function social_profile_update_12025() : string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Ensure profile tag labels are displayed inline.
+ */
+function social_profile_update_12026() : string {
+  // The profile tag field is shown as individual fields but they respect the
+  // label display set on the parent (even though the label itself is never
+  // rendered). Thus the label must be inline to ensure that happens for every
+  // individual "subfield".
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_profile', 'social_profile_update_12026');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
