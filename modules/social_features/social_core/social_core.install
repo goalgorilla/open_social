@@ -1688,3 +1688,29 @@ function social_core_update_11900() : string {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Make "Verified user" label uniform.
+ */
+function social_core_update_12001() : void {
+  // Originally in social_core_update_11001 we introduced the verified user role
+  // with the label "Verified User" even though on new installs it is
+  // "Verified user". We should not use Title Case, but want to standardise on
+  // "Verified user", which also ensures derivative field labels which are
+  // clicked in tests work identically.
+  // We update the label of the role here in case it wasn't changed.
+  $role = Role::load("verified");
+  // If the role was deleted then there's nothing to do.
+  if ($role === NULL) {
+    return;
+  }
+
+  // If the label is already correct or the label was changed to something else
+  // completely then there's no update to be done.
+  if ($role->label() !== "Verified User") {
+    return;
+  }
+
+  $role->set("label", "Verified user");
+  $role->save();
+}
