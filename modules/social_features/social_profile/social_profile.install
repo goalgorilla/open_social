@@ -1720,30 +1720,32 @@ function social_profile_update_12018() : void {
 
   $settings = \Drupal::config('social_profile_fields.settings');
 
-  // If the field is enabled we use the default address behaviour (no override),
-  // if the field was disabled then we hide it always.
-  if ($settings->get('profile_address_field_city')) {
+  // If the field is enabled, or the setting doesn't exist (e.g. the
+  // social_profile_fields module isn't enabled), we use the default address
+  // behaviour (no override),
+  // If the field was disabled then we hide it always.
+  if ($settings->get('profile_address_field_city') ?? TRUE) {
     unset($field_overrides[AddressField::LOCALITY]);
   }
   else {
     $field_overrides[AddressField::LOCALITY] = FieldOverride::HIDDEN;
   }
 
-  if ($settings->get('profile_address_field_address')) {
+  if ($settings->get('profile_address_field_address') ?? TRUE) {
     unset($field_overrides[AddressField::ADDRESS_LINE1]);
   }
   else {
     $field_overrides[AddressField::ADDRESS_LINE1] = FieldOverride::HIDDEN;
   }
 
-  if ($settings->get('profile_address_field_postalcode')) {
+  if ($settings->get('profile_address_field_postalcode') ?? TRUE) {
     unset($field_overrides[AddressField::POSTAL_CODE]);
   }
   else {
     $field_overrides[AddressField::POSTAL_CODE] = FieldOverride::HIDDEN;
   }
 
-  if ($settings->get('profile_address_field_administrative_area')) {
+  if ($settings->get('profile_address_field_administrative_area') ?? TRUE) {
     unset($field_overrides[AddressField::ADMINISTRATIVE_AREA]);
   }
   else {
