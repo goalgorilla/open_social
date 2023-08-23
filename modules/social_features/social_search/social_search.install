@@ -291,3 +291,35 @@ function social_search_update_11402(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Revert search_api_language filter name/id change.
+ */
+function social_search_update_11403() : void {
+  // In social_search_update_11402
+  // (https://github.com/goalgorilla/open_social/pull/3470/) we changed the
+  // search_api_language filter to a language_with_fallback filter to ensure
+  // that users could find matching content in different languages if no version
+  // in their own language was available. However, this also changed the IDs of
+  // the filter which can break existing sites that might rely on that filter.
+  // Below we go through the views and change the filter back to the ID it had,
+  // just with the new field added to the index.
+  $views = [
+    "views.view.search_all",
+    "views.view.search_content",
+    "views.view.search_group",
+  ];
+
+  foreach ($views as $view) {
+    $config = \Drupal::configFactory()->getEditable($view);
+    $display = $config->get("display");
+
+    $filter = $display['default']['display_options']['filters']['language_with_fallback'];
+    $filter['id'] = "search_api_language";
+    $display['default']['display_options']['filters']["search_api_language"] = $filter;
+    unset($display['default']['display_options']['filters']['language_with_fallback']);
+
+    $config->set('display', $display);
+    $config->save(TRUE);
+  }
+}
