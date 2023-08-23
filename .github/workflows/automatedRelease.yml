@@ -1,0 +1,69 @@
+########################################################################################################################
+# Automated release process for the Open Social distribution.                                                          #
+#                                                                                                                      #
+# This workflow requires manual dispatching, but will produce a release for a given branch and tag, sync this to       #
+# Drupal.org and ensure it gets released to Packagist.                                                                 #
+########################################################################################################################
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+      drupal_org_branch:
+        description: "Synced Drupal.org branch"
+        required: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ input.version }}
+      DRUPAL_ORG_BRANCH: ${{ input.drupal_org_branch }}
+      DRUPAL_ORG_REPO: "git@git.drupal.org:project/social.git"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate version
+        run: |
+          REGEX='^[0-9]+\.[0-9]+\.[0-9]+$'
+          if [[ ! $VERSION =~ $REGEX ]]; then
+            echo "Version '$VERSION' should match x.y.z"
+            exit 1
+          fi
+
+      - name: Validate status of Drupal.org branch
+        run: |
+          git remote add drupal $DRUPAL_ORG_REPO
+          REMOTE_AHEAD=`git rev-list --count $GITHUB_REF..drupal/$DRUPAL_ORG_BRANCH`
+          # Remote branch should not exist or should not be ahead of our local branch.
+          if [[ $? -ne 0 || $REMOTE_AHEAD -ne 0 ]]; then
+            echo "Remote Drupal.org branch is ahead of GitHub branch by $REMOTE_AHEAD commits, can not safely push from GitHub to GitLab."
+            exit 2
+          fi
+
+      - name: Update info.yml
+        run: |
+          sed 's/^version:.*/version: "$VERSION"' social.info.yml
+
+      - name: Commit version update
+        run: |
+          git config user.name 'Open Social Release Manager'
+          git config user.email 'noreply@getopensocial.com'
+          git add social.info.yml
+          git commit -m "Update to $VERSION"
+
+      - name: Create tag
+        run: |
+          git tag $VERSION
+
+      - name: Push to GitHub
+        run: |
+          git push
+          git push $VERSION
+
+      - name: Sync to GitLab
+        run: |
+          git push drupal $GITHUB_REF:$DRUPAL_ORG_BRANCH
+          git push drupal $VERSION
