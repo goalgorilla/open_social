@@ -392,6 +392,11 @@ jobs:
             mv html/profiles/contrib/social/tests/behat/logs/* $OUTPUT_FOLDER/
           fi
 
+          # Move files from the mail spool to the output folder if they exist
+          if (shopt -s nullglob; f=(html/profiles/contrib/social/tests/behat/mail-spool/*); ((${#f[@]}))); then
+            mv html/profiles/contrib/social/tests/behat/mail-spool/* $OUTPUT_FOLDER/
+          fi
+
           # Dump the database with the state of the test failure to allow for
           # local inspection.
           drush sql-dump > $OUTPUT_FOLDER/at-test-failure.sql
