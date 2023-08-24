@@ -31,7 +31,7 @@ Feature: Search Everything
   Scenario: Empty state
     Given I am an anonymous user
 
-    When I search all for "notinindex"
+    When I search all for "not in index"
 
     Then I should see "No results found"
 

@@ -31,7 +31,7 @@ Feature: Search Content
   Scenario: Empty state
     Given I am logged in as a user with the verified role
 
-    When I search content for "notinindex"
+    When I search content for "not in index"
 
     Then I should see "No results found"
 

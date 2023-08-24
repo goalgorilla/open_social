@@ -31,7 +31,7 @@ Feature: Search Groups
   Scenario: Empty state
     Given I am logged in as a user with the verified role
 
-    When I search groups for "notinindex"
+    When I search groups for "not in index"
 
     Then I should see "No results found"
 

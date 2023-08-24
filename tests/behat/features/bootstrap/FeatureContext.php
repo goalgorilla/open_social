@@ -109,7 +109,7 @@ class FeatureContext extends RawMinkContext {
       throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $label);
     }
     // File type fields rely on server side validation, so we can't check the
-    // attribute. Similarly textarea's replaced by a WISYWYG don't have a
+    // attribute. Similarly textarea's replaced by a WYSIWYG don't have a
     // required at attribute.
     if (($field->getAttribute("type") !== "file" && $field->getTagName() !== "textarea") && !$field->hasAttribute("required")) {
       throw new \RuntimeException("Found field '$label' but it was not required when it should be.");
