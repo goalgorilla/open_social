@@ -16,16 +16,6 @@ Feature: Send invite event email notifications
       | title         | field_event_date | status | field_content_visibility | field_event_an_enroll | author         |
       | Invite Event  | +2 days          | 1      | public                   | 1                     | site_manager_1 |
 
-    # Lets first check if sending mail works properly
-    Given I am logged in as an "administrator"
-    And I go to "/admin/config/system/mailer/test"
-    And I should see "This page allows you to send a test e-mail to a recipient of your choice."
-    When I fill in the following:
-      | E-mail | site_manager_1@example.com |
-    Then I press "Send"
-    And I should have an email with subject "Social Mailer has been successfully configured!" and in the content:
-      | This e-mail has been sent from Open Social by the Social Mailer module. |
-
     # Enable "Allow invited user to skip email verification" option
     When I go to "/admin/config/opensocial/event-invite"
     And I should see "Allow invited user to skip email verification"

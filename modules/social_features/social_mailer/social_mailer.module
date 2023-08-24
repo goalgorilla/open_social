@@ -127,24 +127,17 @@ function social_mailer_preprocess_email(array &$variables): void {
 
   if ($to = $email->getHeaders()->getHeaderBody('X-Rerouted-Original-to')) {
     $mail = $to;
-    print("hier");
   }
   else {
-    $mail = $email->getAccount()->getEmail();
-    print("of hier");
+    $to = $email->getTo();
+    $mail = isset($to[0]) ? _addresses_to_string($to)[0] : FALSE;
   }
 
-  print($mail);
-  print("hoi");
-
   if ($mail && ($user = user_load_by_mail($mail)) instanceof UserInterface) {
-    print("maar hier dan?");
     $display_name = $user->getDisplayName();
   }
   elseif (!empty($context['display_name'])) {
-    print("hoe dan");
     $display_name = $context['display_name'];
-    print($display_name);
   }
   else {
     return;
@@ -155,6 +148,21 @@ function social_mailer_preprocess_email(array &$variables): void {
   ], [
     'langcode' => $email->getLangcode(),
   ]);
+}
+
+/**
+ * Render array of addresses as array of strings.
+ *
+ * @param \Drupal\symfony_mailer\AddressInterface[] $addresses
+ *   An array of Address objects.
+ *
+ * @return array
+ *   An array of strings.
+ */
+function _addresses_to_string(array $addresses): array {
+  return array_map(function (AddressInterface $address) {
+    return $address->getEmail();
+  }, $addresses);
 }
 
 /**
