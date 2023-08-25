@@ -47,7 +47,6 @@ function social_page_install() {
       'view page revisions',
       'delete page revisions',
       'revert page revisions',
-      'override page revision log entry',
       'override page authored by option',
       'override page published option',
       'override page authored on option',
@@ -69,7 +68,6 @@ function social_page_install() {
       'view page revisions',
       'delete page revisions',
       'revert page revisions',
-      'override page revision log entry',
       'override page authored by option',
       'override page published option',
       'override page authored on option',
@@ -237,4 +235,26 @@ function social_page_update_10301() {
 function social_page_update_10302() {
   $config = \Drupal::configFactory()->getEditable('core.entity_view_display.node.page.small_teaser');
   $config->set('third_party_settings', [])->save();
+}
+
+/**
+ * Remove deprecated permission "override page revision log entry".
+ */
+function social_page_update_111201(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'override page revision log entry',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
+      }
+    }
+  }
 }
