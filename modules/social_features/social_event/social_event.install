@@ -65,7 +65,6 @@ function social_event_install() {
       'revert event revisions',
       'delete event revisions',
       'view event revisions',
-      'override event revision log entry',
       'override event authored by option',
       'override event authored on option',
       'override event promote to front page option',
@@ -89,7 +88,6 @@ function social_event_install() {
       'revert event revisions',
       'delete event revisions',
       'view event revisions',
-      'override event revision log entry',
       'override event authored by option',
       'override event authored on option',
       'override event promote to front page option',
@@ -2320,6 +2318,28 @@ function social_event_update_11904(): void {
       if (isset($data['display']['default']['display_options']['query']['options']['distinct'])) {
         $data['display']['default']['display_options']['query']['options']['distinct'] = TRUE;
         $config_value->setData($data)->save();
+      }
+    }
+  }
+}
+
+/**
+ * Remove deprecated permission "override event revision log entry".
+ */
+function social_event_update_111201(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'override event revision log entry',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
       }
     }
   }

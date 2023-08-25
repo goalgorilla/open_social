@@ -62,7 +62,6 @@ function social_topic_install() {
       'revert topic revisions',
       'delete topic revisions',
       'view topic revisions',
-      'override topic revision log entry',
       'override topic authored by option',
       'override topic authored on option',
       'override topic promote to front page option',
@@ -86,7 +85,6 @@ function social_topic_install() {
       'revert topic revisions',
       'delete topic revisions',
       'view topic revisions',
-      'override topic revision log entry',
       'override topic authored by option',
       'override topic authored on option',
       'override topic promote to front page option',
@@ -513,4 +511,26 @@ function social_topic_update_11401(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove deprecated permission "override topic revision log entry".
+ */
+function social_topic_update_111201(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'override topic revision log entry',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
+      }
+    }
+  }
 }

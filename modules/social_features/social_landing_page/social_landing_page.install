@@ -50,11 +50,9 @@ function social_landing_page_install() {
       'view landing_page revisions',
       'delete landing_page revisions',
       'revert landing_page revisions',
-      'override landing_page revision log entry',
       'override landing_page authored by option',
       'override landing_page published option',
       'override landing_page authored on option',
-      'override landing_page promote to front landing_page option',
       'override landing_page revision option',
       'override landing_page sticky option',
       'view node.landing_page.field_content_visibility:group content',
@@ -73,11 +71,9 @@ function social_landing_page_install() {
       'view landing_page revisions',
       'delete landing_page revisions',
       'revert landing_page revisions',
-      'override landing_page revision log entry',
       'override landing_page authored by option',
       'override landing_page published option',
       'override landing_page authored on option',
-      'override landing_page promote to front landing_page option',
       'override landing_page revision option',
       'override landing_page sticky option',
       'view node.landing_page.field_content_visibility:group content',
@@ -777,4 +773,33 @@ function social_landing_page_update_11401(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove deprecated permissions:
+ * "override landing_page revision log entry",
+ * "override landing_page promote to front landing_page option".
+ */
+function social_landing_page_update_111201(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'override landing_page revision log entry',
+    // Permission below does not exist because it has a typo. It should be
+    // 'override landing_page promote to front page option'. The permission
+    // with typo is not replaced with correct one, because we want to remove
+    // the permission anyway.
+    'override landing_page promote to front landing_page option',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
+      }
+    }
+  }
 }
