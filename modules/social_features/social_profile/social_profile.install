@@ -32,10 +32,8 @@ function social_profile_install() {
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
     [
-      'add own profile profile',
       'update own profile profile',
       'view own profile profile',
-      'view profile',
     ]
   );
   user_role_grant_permissions(
@@ -48,7 +46,6 @@ function social_profile_install() {
     'contentmanager',
     [
       'view any profile profile',
-      'add any profile profile',
       'update any profile profile',
       'edit profile tags',
     ]
@@ -57,7 +54,6 @@ function social_profile_install() {
     'sitemanager',
     [
       'view any profile profile',
-      'add any profile profile',
       'update any profile profile',
       'edit profile tags',
       'delete terms in profile_tag',
@@ -466,4 +462,31 @@ function social_profile_update_11701(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove deprecated permissions:
+ * "add own profile profile",
+ * "view profile",
+ * "add any profile profile".
+ */
+function social_profile_update_111201(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $deprecated_permissions = [
+    'add own profile profile',
+    'view profile',
+    'add any profile profile',
+  ];
+
+  foreach ($deprecated_permissions as $deprecated_permission) {
+    foreach ($roles as $role) {
+      if ($role->hasPermission($deprecated_permission)) {
+        $role->revokePermission($deprecated_permission);
+        $role->save();
+      }
+    }
+  }
 }
