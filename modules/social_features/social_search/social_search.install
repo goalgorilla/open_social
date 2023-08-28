@@ -307,7 +307,6 @@ function social_search_update_11403() : void {
   $views = [
     "views.view.search_all",
     "views.view.search_content",
-    "views.view.search_group",
   ];
 
   foreach ($views as $view) {
@@ -321,5 +320,35 @@ function social_search_update_11403() : void {
 
     $config->set('display', $display);
     $config->save(TRUE);
+  }
+}
+
+/**
+ * Revert search_api_language filter name/id change for groups view.
+ */
+function social_search_update_11404() : void {
+  // There was a typo in the view name of social_search_update_11403 which
+  // caused the groups view not to be updated, so we must do it again here.
+  $views = [
+    "views.view.search_groups",
+  ];
+
+  foreach ($views as $view) {
+    $config = \Drupal::configFactory()->getEditable($view);
+    $display = $config->get("display");
+
+    $filter = $display['default']['display_options']['filters']['language_with_fallback'];
+    $filter['id'] = "search_api_language";
+    $display['default']['display_options']['filters']["search_api_language"] = $filter;
+    unset($display['default']['display_options']['filters']['language_with_fallback']);
+
+    $config->set('display', $display);
+    $config->save(TRUE);
+  }
+
+  // Clean up the config created in our erroneous version of 11403.
+  $incorrect_view = \Drupal::configFactory()->getEditable("views.view.search_group");
+  if (!$incorrect_view->isNew()) {
+    $incorrect_view->delete();
   }
 }
