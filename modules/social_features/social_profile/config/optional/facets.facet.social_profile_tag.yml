@@ -1,0 +1,72 @@
+uuid: eeb3a59c-ce7c-4880-aa28-04cc80fc646c
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.index.social_all
+    - views.view.search_users
+  module:
+    - search_api
+id: social_profile_tag
+name: 'Profile tag'
+weight: 0
+min_count: 1
+missing: true
+missing_label: '<No Profile Tags>'
+url_alias: profile_tag
+facet_source_id: 'search_api:views_page__search_users__page'
+field_identifier: profile_profile_tag
+query_operator: and
+hard_limit: 0
+exclude: false
+use_hierarchy: true
+keep_hierarchy_parents_active: true
+hierarchy:
+  type: taxonomy
+  config: {  }
+expand_hierarchy: false
+enable_parent_when_child_gets_disabled: true
+widget:
+  type: checkbox
+  config:
+    show_numbers: false
+    soft_limit: 20
+    show_reset_link: false
+    reset_text: 'Show all'
+    hide_reset_when_no_selection: false
+    soft_limit_settings:
+      show_less_label: 'Show less'
+      show_more_label: 'Show more'
+empty_behavior:
+  behavior: none
+only_visible_when_facet_source_is_visible: false
+show_only_one_result: false
+show_title: false
+processor_configs:
+  display_value_widget_order:
+    processor_id: display_value_widget_order
+    weights:
+      sort: 40
+    settings:
+      sort: ASC
+  hide_non_narrowing_result_processor:
+    processor_id: hide_non_narrowing_result_processor
+    weights:
+      build: 40
+    settings: {  }
+  hierarchy_processor:
+    processor_id: hierarchy_processor
+    weights:
+      build: 100
+    settings: {  }
+  translate_entity:
+    processor_id: translate_entity
+    weights:
+      build: 5
+    settings: {  }
+  url_processor_handler:
+    processor_id: url_processor_handler
+    weights:
+      pre_query: 50
+      build: 15
+    settings: {  }

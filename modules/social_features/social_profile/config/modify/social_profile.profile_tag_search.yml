@@ -1,0 +1,71 @@
+dependencies:
+  config:
+    - facets.facet.social_profile_tag
+items:
+  search_api.index.social_all:
+    expected_config:
+      field_settings:
+        profile_profile_tag: { }
+    update_actions:
+      add:
+        processor_settings:
+          hierarchy:
+            weights:
+              preprocess_index: -45
+            fields:
+              profile_profile_tag: taxonomy_term-parent
+  views.view.search_users:
+    expected_config:
+      display:
+        default:
+          display_options: { }
+    update_actions:
+      add:
+        dependencies:
+          module:
+            - facets
+        display:
+          default:
+            display_options:
+              filters:
+                facets_profile_tag:
+                  id: facets_profile_tag
+                  table: search_api_index_social_all
+                  field: facets
+                  relationship: none
+                  group_type: group
+                  admin_label: ''
+                  plugin_id: facets_filter
+                  operator: '='
+                  value: ''
+                  group: 1
+                  exposed: true
+                  expose:
+                    operator_id: ''
+                    label: ''
+                    description: ''
+                    use_operator: false
+                    operator: ''
+                    operator_limit_selection: false
+                    operator_list: { }
+                    identifier: facet_c8b6uca8
+                    required: false
+                    remember: false
+                    multiple: false
+                    remember_roles:
+                      authenticated: authenticated
+                  is_grouped: false
+                  group_info:
+                    label: ''
+                    description: ''
+                    identifier: ''
+                    optional: true
+                    widget: select
+                    multiple: false
+                    remember: false
+                    default_group: All
+                    default_group_multiple: { }
+                    group_items: { }
+                  facets:
+                    social_profile_tag: social_profile_tag
+                  label_display: 0

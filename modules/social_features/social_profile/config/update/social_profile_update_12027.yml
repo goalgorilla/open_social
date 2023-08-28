@@ -1,0 +1,22 @@
+# We enable the facets module which will automatically trigger our config/optional
+# creation of our profile tag facets. Additionally it will trigger our config_modify
+# update that inserts the field into our search view.
+# All we need to do in the update action is remove the old profile tag field from
+# search.
+__global_actions:
+  install_modules:
+    - facets
+views.view.search_users:
+  expected_config:
+    display:
+      default:
+        display_options:
+          filters:
+            field_profile_profile_tag: { }
+  update_actions:
+    delete:
+      display:
+        default:
+          display_options:
+            filters:
+              field_profile_profile_tag:
