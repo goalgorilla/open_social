@@ -171,27 +171,5 @@ Feature: Search people
     And I should not see "blocked user"
     And I should see "tjakka tagged user"
 
-  Scenario: Users can filter by Profile tag
-    Given profile_tag terms:
-      | name        | parent      |
-      | Profile tag |             |
-      | eCommerce   | Profile tag |
-    And users:
-      | name               | mail                     | status | roles    |
-      | tjakka tagged user | tjakka@example.localhsot | 1      | verified |
-    And user "tjakka tagged user" has a profile filled with:
-      | field_profile_profile_tag | eCommerce |
-    And Search indexes are up to date
-    And I am logged in as a user with the verified role
-
-    When I search users for "tjakka"
-    And I select "eCommerce" from "Profile tag"
-    And I press "Filter"
-
-    Then I should not see "tjakka new user"
-    And I should not see "tjakka verified user"
-    And I should not see "blocked user"
-    And I should see "tjakka tagged user"
-
   Scenario: Search only shows results for profile of the type 'profile'
     # @todo Implement this to ensure search doesn't show non-user profiles.
