@@ -125,4 +125,53 @@ Feature: Filtering search with content tags
     And I should not see "Event with another tag"
     And I should not see "Event without a tag"
 
-  # @todo Add coverage for profiles when the ProfileContext from that PR lands.
+
+  Scenario: Find a user by a parent category of a tag
+    Given I enable the module social_group_flexible_group
+    And users:
+      | username         | status | roles    |
+      | with_target_tag  | 1      | verified |
+      | with_another_tag | 1      | verified |
+      | without_tag      | 1      | verified |
+    And user with_target_tag has a profile filled with:
+      | field_social_tagging     | Pants |
+    And user with_another_tag has a profile filled with:
+      | field_social_tagging | Shoes |
+    And user without_tag has a profile filled with:
+      | field_social_tagging | Shoes |
+    And Search indexes are up to date
+    And I am logged in as a user with the verified role
+
+    When I search users for ""
+    And I check the box Clothing
+    And I press "Filter"
+
+    Then I should see "with_target_tag"
+    And I should see "with_another_tag"
+    And I should not see "without_tag"
+
+  Scenario: Find a user by its specific tag
+    Given I enable the module social_group_flexible_group
+    And users:
+      | username         | status | roles    |
+      | with_target_tag  | 1      | verified |
+      | with_another_tag | 1      | verified |
+      | without_tag      | 1      | verified |
+    And user with_target_tag has a profile filled with:
+      | field_social_tagging     | Pants |
+    And user with_another_tag has a profile filled with:
+      | field_social_tagging | Shoes |
+    And user without_tag has a profile filled with:
+      | field_social_tagging | Shoes |
+    And Search indexes are up to date
+    And I am logged in as a user with the verified role
+
+    When I search content for ""
+    And I check the box Clothing
+    And I press "Filter"
+    And I check the box Pants
+    And I press "Filter"
+
+    Then I should see "with_target_tag"
+    And I should not see "without_target_tag"
+    And I should not see "without_tag"
