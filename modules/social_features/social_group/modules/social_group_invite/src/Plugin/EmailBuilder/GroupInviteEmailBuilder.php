@@ -10,11 +10,13 @@ use Drupal\symfony_mailer\EmailFactoryInterface;
 use Drupal\symfony_mailer\EmailInterface;
 use Drupal\symfony_mailer\Processor\EmailBuilderBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Utility\Token;
+use Drupal\user\UserStorageInterface;
+use Drupal\Core\Render\Markup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Render\Markup;
+use Drupal\Core\Utility\Token;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Defines the Email Builder plugin for the social_group_invite module.
@@ -53,6 +55,16 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
   protected SharedTempStore $tempStore;
 
   /**
+   * The current user service.
+   */
+  protected AccountInterface $currentUser;
+
+  /**
+   * The user storage.
+   */
+  protected UserStorageInterface $userStorage;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
@@ -64,6 +76,8 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       $container->get('token'),
       $container->get('language_manager'),
       $container->get('tempstore.shared'),
+      $container->get('current_user'),
+      $container->get('entity_type.manager')->getStorage('user')
     );
   }
 
@@ -84,6 +98,10 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    *   The language manager.
    * @param \Drupal\Core\TempStore\SharedTempStoreFactory $temp_store_factory
    *   The factory for the temp store object.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user service.
+   * @param \Drupal\user\UserStorageInterface $user_storage
+   *   The user storage.
    */
   public function __construct(
     array $configuration,
@@ -92,36 +110,52 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     ConfigFactoryInterface $config_factory,
     Token $token,
     LanguageManagerInterface $language_manager,
-    SharedTempStoreFactory $temp_store_factory
+    SharedTempStoreFactory $temp_store_factory,
+    AccountInterface $current_user,
+    UserStorageInterface $user_storage
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
     $this->token = $token;
     $this->languageManager = $language_manager;
     $this->tempStore = $temp_store_factory->get('social_group_invite');
+    $this->languageManager = $language_manager;
+    $this->tempStore = $temp_store_factory->get('social_group_invite');
+    $this->currentUser = $current_user;
+    $this->userStorage = $user_storage;
   }
 
   /**
    * {@inheritdoc}
    */
   public function preRender(EmailInterface $email): void {
-    $params = $email->getParam('params');
-    $token_service = $this->token;
+    $params = $email->getParams();
     $language_manager = $this->languageManager;
-
     $langcode = $email->getLangcode();
-
     $language = $language_manager->getLanguage($langcode);
     $original_language = $language_manager->getConfigOverrideLanguage();
     $language_manager->setConfigOverrideLanguage($language);
 
-    // Load group invite configuration.
+    // Load configuration.
     $group_config = $this->configFactory->getEditable('social_group.settings');
     $invite_settings = $group_config->get('group_invite');
 
     // The mail params list should contain group content entity.
     /* @see ginvite_group_content_insert() */
     $invite = $params['group_content'] ?? NULL;
+
+    // If nothing custom has been configured just proceed with default.
+    if (is_null($invite_settings)) {
+      $group_content_plugin = $invite->getContentPlugin();
+      if ($group_content_plugin->getPluginId() === 'group_invitation') {
+        $configuration = $group_content_plugin->getConfiguration('group_invitation');
+        $invitation_subject = (!$params['existing_user']) ? $configuration['invitation_subject'] : $configuration['existing_user_invitation_subject'];
+        $invitation_body = (!$params['existing_user']) ? $configuration['invitation_body'] : $configuration['existing_user_invitation_body'];
+
+        $email->setSubject($this->token->replace($invitation_subject, $params));
+        $email->setBody(Markup::create($this->token->replace($invitation_body, $params)));
+      }
+    }
 
     // Alter message and subject if it configured.
     if (
@@ -166,8 +200,6 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
       $invitation_subject = $invite_settings['invite_subject'];
       $invitation_body = $overridden_body ?? $invite_settings['invite_message'];
 
-      unset($params['existing_user']);
-
       $email->setSubject($this->token->replace($invitation_subject, $params));
       $email->setBody(Markup::create($this->token->replace($invitation_body, $params)));
 
@@ -186,7 +218,9 @@ class GroupInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    *   The to addresses, see Address::convert().
    */
   public function createParams(EmailInterface $email, $params = NULL, $to = NULL): void {
-    $email->setParam('params', $params);
+    // Override the user parameter with the current user for token replacement.
+    $params['user'] = $this->userStorage->load($this->currentUser->id());
+    $email->setParams($params);
     $email->setParam('to', $to);
   }
 
