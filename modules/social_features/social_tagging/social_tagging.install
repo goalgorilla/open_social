@@ -65,6 +65,19 @@ function social_tagging_update_last_removed() : int {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_tagging_update_dependencies() : array {
+  $dependencies['social_tagging'][12000] = [
+    // The 12.x updates rely on config modify not excluding newly
+    // introduced modifications, so the module must be enabled first.
+    'social_core' => 11900,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Update hook removed.
  */
 function social_tagging_update_8005(): void {
