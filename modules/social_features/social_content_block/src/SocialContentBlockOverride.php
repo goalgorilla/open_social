@@ -55,7 +55,12 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $config = $this->configFactory->getEditable($config_name);
 
-      $settings = $config->getOriginal('settings', FALSE)['selection_settings']['plugin_ids'];
+      // We initialize to an empty array because this code might run during
+      // updates which changed the block config schema (the selection_settings
+      // nesting didn't exist before). In that case a post-update cache clear
+      // will have the correct config override so there should be no
+      // repercussions for the empty array we're adding here.
+      $settings = $config->getOriginal('settings', FALSE)['selection_settings']['plugin_ids'] ?? [];
 
       // Get all the blocks from this custom block type.
       $storage = self::getBlockContent();
