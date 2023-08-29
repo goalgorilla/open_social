@@ -242,3 +242,59 @@ function social_group_invite_update_11502(): void {
 
   $settings->set('disabled_user_greeting_keys', implode("\r\n", $disabled_greeting_keys))->save();
 }
+
+/**
+ * Update email invitation messages with new token for the symfony mailer.
+ *
+ * After introducing the symfony mailer the steps in building an email changed
+ * giving us issues with replacing the current-user in the invitation batch,
+ * resulting in anonymous. We replace this with the user token where we set
+ * the correct data in the symfony email builder for group invitations.
+ */
+function social_group_invite_update_11503(): void {
+  $config_factory = \Drupal::configFactory();
+
+  // Update default invite configuration.
+  $configuration = $config_factory->getEditable('social_group.settings');
+  if (!empty($configuration->get('group_invite.invite_subject'))) {
+    $subject = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('group_invite.invite_subject'));
+    $configuration->set('group_invite.invite_subject', $subject);
+    $configuration->save();
+  }
+  if (!empty($configuration->get('group_invite.invite_message'))) {
+    $body = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('group_invite.invite_message'));
+    $configuration->set('group_invite.invite_message', $body);
+    $configuration->save();
+  }
+
+  // Update the group content specific invite configuration.
+  $configurations = [
+    'group.content_type.closed_group-group_invitation',
+    'group.content_type.flexible_group-group_invitation',
+    'group.content_type.open_group-group_invitation',
+    'group.content_type.public_group-group_invitation',
+    'group.content_type.secret_group-group_invitation',
+  ];
+
+  foreach ($configurations as $name) {
+    $configuration = $config_factory->getEditable($name);
+
+    if ($configuration->isNew()) {
+      // Skip if the configuration doesn't exist.
+      continue;
+    }
+
+    // Set email subject text.
+    if (!empty($configuration->get('plugin_config.invitation_subject'))) {
+      $subject = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('plugin_config.invitation_subject'));
+      $configuration->set('plugin_config.invitation_subject', $subject);
+      $configuration->save();
+    }
+    // Set email body text.
+    if (!empty($configuration->get('plugin_config.invitation_body'))) {
+      $body = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('plugin_config.invitation_body'));
+      $configuration->set('plugin_config.invitation_body', $body);
+      $configuration->save();
+    }
+  }
+}

@@ -593,8 +593,8 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     ->accessCheck(FALSE)
     ->execute();
 
-  $default_subject = '[current-user:display-name] has invited you to join a group on [site:name].';
-  $default_message = "Hi,<br /><br /> I would like to invite you to join my group [group:title] on [site:name].<br /><br />Kind regards,<br />[current-user:display-name]<br /><br />\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[group_content:register_link]\">View group</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>";
+  $default_subject = '[user:display-name] has invited you to join a group on [site:name].';
+  $default_message = "Hi,<br /><br /> I would like to invite you to join my group [group:title] on [site:name].<br /><br />Kind regards,<br />[user:display-name]<br /><br />\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[group_content:register_link]\">View group</a></td>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[site:url]\">About [site:name]</a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>";
 
   foreach ($configurations as $name) {
     $config = \Drupal::configFactory()->getEditable("group.content_type.$name");
