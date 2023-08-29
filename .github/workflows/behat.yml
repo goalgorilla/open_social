@@ -208,13 +208,30 @@ jobs:
       - name: Update the previous major version to HEAD
         if: ${{ matrix.update == 'update' }}
         run: |
+          set -e
+
           if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
             drush sqlc < behat-test-output/pre-update-with-optional.sql
           else
             drush sqlc < behat-test-output/pre-update.sql
           fi
 
-          vendor/bin/drush updb -y
+          vendor/bin/drush updb -y 2> >(tee update.log >&2)
+
+          # Ensure there are no warnings in the update.log
+          if grep -E '^>\s+\[warning\]\s' update.log 1>/dev/null; then
+            # Move the update.log with warnings and status messages to the test output. The text is viewable on GitHub
+            # too but some people might find it easier to just download the artifact and get digging.
+            if [[ "${{ matrix.with_optional }}" == "with-optional" ]]; then
+              mv update.log behat-test-output/update-with-optional.log
+            else
+              mv update.log behat-test-output/update.log
+            fi
+
+            # Abort our testing until the warning is fixed and let our user know why we stopped.
+            echo "The drush output should not contain any warnings"
+            exit 1
+          fi
 
       - name: Set-up a new Open Social installation at HEAD
         if: ${{ matrix.update == '' }}
