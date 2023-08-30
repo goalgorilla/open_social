@@ -197,3 +197,28 @@ function social_event_invite_update_11401(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Update email invitation messages with new token for the symfony mailer.
+ *
+ * After introducing the symfony mailer the steps in building an email changed
+ * giving us issues with replacing the current-user in the invitation batch,
+ * resulting in anonymous. We replace this with the user token where we set
+ * the correct data in the symfony email builder for group invitations.
+ */
+function social_event_invite_update_11402(): void {
+  $config_factory = \Drupal::configFactory();
+
+  // Update default invite configuration.
+  $configuration = $config_factory->getEditable('social_event_invite.settings');
+  if (!empty($configuration->get('invite_subject'))) {
+    $subject = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('invite_subject'));
+    $configuration->set('invite_subject', $subject);
+    $configuration->save();
+  }
+  if (!empty($configuration->get('invite_message'))) {
+    $body = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('invite_message'));
+    $configuration->set('invite_message', $body);
+    $configuration->save();
+  }
+}

@@ -99,7 +99,7 @@ class EventInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
     $subject = $config->get('invite_subject');
     $body = $config->get('invite_message');
 
-    $params = $email->getParam('params');
+    $params = $email->getParams();
     unset($params['existing_user']);
 
     $email->setSubject($this->token->replace($subject, $params));
@@ -119,7 +119,7 @@ class EventInviteEmailBuilder extends EmailBuilderBase implements ContainerFacto
    *   The to addresses, see Address::convert().
    */
   public function createParams(EmailInterface $email, $params = NULL, $to = NULL): void {
-    $email->setParam('params', $params);
+    $email->setParams($params);
     $email->setParam('to', $to);
   }
 
