@@ -7,6 +7,13 @@ Feature: Users can edit profiles
   Background:
     Given I disable that the registered users to be verified immediately
 
+  Scenario: As an anonymous user I can not edit my profile
+    Given I am an anonymous user
+
+    When I try to edit the profile of anonymous
+
+    Then I should be asked to login
+
   Scenario: As an authenticated user I can edit my own profile
     Given I am logged in as a user with the authenticated role
     And I am viewing my profile
@@ -39,20 +46,39 @@ Feature: Users can edit profiles
     And I should see "Lviv oblast"
     And I should see "Self intro text"
 
-  Scenario: As an anonymous user I can not edit my profile
-    Given I am an anonymous user
+  Scenario: As an authenticated user I can not edit my profile through the profile menu if all fields are disabled
+    Given all profile fields are disabled
+    And I am logged in as a user with the authenticated role
 
-    When I try to edit the profile of anonymous
+    # @todo This button does not have an accessible label!
+    When I click the element with css selector ".profile.dropdown .dropdown-toggle"
 
-    Then I should be asked to login
+    Then I should see "Settings"
+    And I should not see "Edit profile"
+
+  Scenario: As an authenticated user I am not offered to edit my profile if all fields are disabled
+    Given all profile fields are disabled
+    And I am logged in as a user with the authenticated role
+
+    When I am viewing my profile
+
+    Then I should not see "Edit profile information"
+
+  Scenario: As an authenticated user I can not edit my own profile if all fields are disabled
+    Given all profile fields are disabled
+    And I am logged in as a user with the authenticated role
+
+    When I try to edit my profile
+
+    Then I should be denied access
 
   Scenario: As a sitemanager I can edit the profile of another user
     Given users:
       | name    | status | roles    |
-      | janedoe | 1      | verified |
+      | JaneDoe | 1      | verified |
     And I am logged in as a user with the sitemanager role
 
-    When I try to edit the profile of janedoe
+    When I try to edit the profile of JaneDoe
     And I fill in the following:
       | First name   | Jane        |
       | Last name    | Doe         |
@@ -68,14 +94,14 @@ Feature: Users can edit profiles
   Scenario: A content manager can edit fields on another user's profile if configured
     Given users:
       | name    | status | roles    |
-      | janedoe | 1      | verified |
+      | JaneDoe | 1      | verified |
     And the profile field settings:
       | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
       | First name         | true                | Community  | false                    | false                           | false                         | true                             | false                          | true                 | true     |
       | Last name          | true                | Community  | false                    | false                           | false                         | true                             | false                          | true                 | true     |
     And I am logged in as a user with the contentmanager role
 
-    When I try to edit the profile of janedoe
+    When I try to edit the profile of JaneDoe
     And I fill in the following:
       | First name   | Jane        |
       | Last name    | Doe         |
@@ -90,7 +116,7 @@ Feature: Users can edit profiles
   Scenario: A content manager can not edit fields on another user's profile if configured
     Given users:
       | name    | status | roles    |
-      | janedoe | 1      | verified |
+      | JaneDoe | 1      | verified |
     And the profile field settings:
       | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
       | First name         | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
@@ -99,7 +125,7 @@ Feature: Users can edit profiles
       | Profile tag        | true                | Community  | false                    | false                           | false                         | false                            | false                          | true                 | true     |
     And I am logged in as a user with the contentmanager role
 
-    When I try to edit the profile of janedoe
+    When I try to edit the profile of JaneDoe
 
     # When a user can't edit any fields they should be denied access to the
     # entire page.
@@ -173,29 +199,18 @@ Feature: Users can edit profiles
     # Until https://github.com/jhedstrom/drupalextension/issues/641
     And I logout
 
-  Scenario: Disabled fields don't show on the edit form
+  # We must test this one-by-one because if all fields are disabled then the profile edit form is not accessible as seen
+  # by "As an authenticated user I can not edit my profile through the profile menu if all fields are disabled".
+  Scenario Outline: Disabled fields don't show on the edit form
     # Profile tag field only shows when there are tags in a hierarchy.
     Given profile_tag terms:
       | name        | parent      |
       | Profile tag |             |
       | Foo         | Profile tag |
+    And all profile fields are enabled
     And the profile fields are disabled:
       | Field name         |
-      | Address            |
-      | Banner Image       |
-      | Expertise          |
-      | First name         |
-      | Function           |
-      | Profile Image      |
-      | Interests          |
-      | Last name          |
-      | Nationality        |
-      | Nickname           |
-      | Organization       |
-      | Phone number       |
-      | Profile tag        |
-      | Self introduction  |
-      | Summary            |
+      | <test_field>       |
     And the profile field settings:
       | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
       | Address            | true                | Private    | false                    | false                           | false                         | false                            | false                          | true                 | true     |
@@ -217,24 +232,25 @@ Feature: Users can edit profiles
 
     When I am editing my profile
 
-    Then I should not see the text "Country"
-    And I should not see the text "Street address"
-    And I should not see the text "City"
-    And I should not see the text "Postal code"
-    And I should not see the text "Banner Image"
-    And I should not see the text "Expertise"
-    And I should not see the text "First Name"
-    And I should not see the text "Function"
-    And I should not see the text "Profile Image"
-    And I should not see the text "Interests"
-    And I should not see the text "Last name"
-    And I should not see the text "Nationality"
-    And I should not see the text "Nickname"
-    And I should not see the text "Organization"
-    And I should not see the text "Phone number"
-    And I should not see the text "Profile tag"
-    And I should not see the text "Self introduction"
-    And I should not see the text "Summary"
+    Then I should not see a field labeled "<test_field>"
 
     # Until https://github.com/jhedstrom/drupalextension/issues/641
     And I logout
+
+  Examples:
+    | test_field        |
+    | Address           |
+    | Banner Image      |
+    | Expertise         |
+    | First name        |
+    | Function          |
+    | Profile Image     |
+    | Interests         |
+    | Last name         |
+    | Nationality       |
+    | Nickname          |
+    | Organization      |
+    | Phone number      |
+    | Profile tag       |
+    | Self introduction |
+    | Summary           |

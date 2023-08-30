@@ -96,6 +96,20 @@ class FeatureContext extends RawMinkContext {
   }
 
   /**
+   * Should not see a field with a specific label.
+   *
+   * @param string $label
+   *   The field label
+   *
+   * @Then I should not see a field labeled :label
+   */
+  public function shouldNotSeeFieldLabeled(string $label) : void {
+    if ($this->getSession()->getPage()->hasField($label)) {
+      throw new \RuntimeException("Found a form field with id|name|label|value|placeholder of $label but this should not be on the page.");
+    }
+  }
+
+  /**
    * Should see a required field with a specific label.
    *
    * @param string $label

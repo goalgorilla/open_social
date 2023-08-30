@@ -1521,21 +1521,38 @@ function social_profile_user_role_presave(RoleInterface $role) : void {
   // can't edit any of the managed fields on a process. This prevents the user
   // from seeing an empty form page. This is done in a presave hook to ensure
   // the permission stays in sync regardless of how the field level permissions
-  // were updated.
+  // were updated. Updating the entity permission is also more performance than
+  // checking every field in hook_profile_access.
+  // We must check both whether a user can edit any field (including their own)
+  // and separately for whether they can edit their own profile.
   $can_edit_any = FALSE;
+  $can_edit_own = FALSE;
   foreach (\Drupal::service("social_profile.field_manager")->getManagedProfileFieldDefinitions() as $field_name => $field_config) {
-    $can_edit_any = $role->hasPermission("edit any ${field_name} profile profile field");
+    // Since we don't break on `$can_edit_own`, if it's true, we must keep it
+    // TRUE but continue to check if any field has `$can_edit_any`.
+    $can_edit_own = $can_edit_own || ($field_config->status() && $role->hasPermission("edit own ${field_name} profile profile field"));
+    $can_edit_any = $field_config->status() && $role->hasPermission("edit any ${field_name} profile profile field");
+    // If there is a single field that the role can edit on any profile then
+    // we're done because they'll always need permissions for the entity.
+    // Otherwise, we must loop through all the fields.
     if ($can_edit_any) {
       break;
     }
   }
 
+  // There's no need to change the "create" permission because a profile is
+  // always created for a user by the system.
+  if ($can_edit_own || $can_edit_any) {
+    $role->grantPermission("update own profile profile");
+  }
+  else {
+    $role->revokePermission("update own profile profile");
+  }
+
   if ($can_edit_any) {
-    $role->grantPermission('add any profile profile');
     $role->grantPermission('update any profile profile');
   }
   else {
-    $role->revokePermission('add any profile profile');
     $role->revokePermission('update any profile profile');
   }
 }

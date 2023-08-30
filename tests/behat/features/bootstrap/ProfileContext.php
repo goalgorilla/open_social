@@ -145,10 +145,14 @@ class ProfileContext extends RawMinkContext {
    * Go to the profile edit page for the specified user.
    *
    * @When I try to edit the profile of :user
+   * @When I try to edit my profile
    */
-  public function amEditingProfileOf(string $user) : void {
-    if ($user === 'anonymous') {
-      $user_ids = [0];
+  public function amEditingProfileOf(?string $user = NULL) : void {
+    if ($user === NULL) {
+      $user_id = $this->drupalContext->getUserManager()->getCurrentUser()->uid;
+    }
+    elseif ($user === 'anonymous') {
+      $user_id = 0;
     }
     else {
       $user_ids = \Drupal::entityQuery('user')
@@ -159,9 +163,10 @@ class ProfileContext extends RawMinkContext {
       if (count($user_ids) !== 1) {
         throw new \InvalidArgumentException("Could not find user with username `$user'.");
       }
+
+      $user_id = reset($user_ids);
     }
 
-    $user_id = reset($user_ids);
     $this->visitPath("/user/$user_id/profile");
   }
 
@@ -447,6 +452,33 @@ class ProfileContext extends RawMinkContext {
   }
 
   /**
+   * Enable or disable all fields in the profile fields configuration.
+   *
+   * @Given all profile fields are :action
+   */
+  public function setAllProfileFieldsStatus(string $action) : void {
+    assert($action === "enabled" || $action === "disabled", ":action must be one of 'enabled' or 'disabled' (got '$action')");
+    $field_manager = \Drupal::service("social_profile.field_manager");
+    assert($field_manager instanceof FieldManager);
+    foreach (FieldConfig::loadMultiple() as $fieldConfig) {
+      if ($field_manager::isOptedOutOfFieldAccessManagement($fieldConfig)) {
+        continue;
+      }
+
+      $fieldConfig->setStatus($action === "enabled")->save();
+    }
+
+    // We must trigger a role update here for tests to work.
+    // @todo This proves that we need to move the config changes to a service
+    // that can do this. This workaround works as long as site managers change
+    // config through the profile form, which will save all roles regardless of
+    // what was changed, but that won't work through the API.
+    foreach (Role::loadMultiple() as $role) {
+      $role->save();
+    }
+  }
+
+  /**
    * Enable or disable fields in the profile fields configuration.
    *
    * the profile fields are disabled:
@@ -475,6 +507,15 @@ class ProfileContext extends RawMinkContext {
         $config->setStatus(TRUE);
       }
       $config->save();
+    }
+
+    // We must trigger a role update here for tests to work.
+    // @todo This proves that we need to move the config changes to a service
+    // that can do this. This workaround works as long as site managers change
+    // config through the profile form, which will save all roles regardless of
+    // what was changed, but that won't work through the API.
+    foreach (Role::loadMultiple() as $role) {
+      $role->save();
     }
   }
 
@@ -665,7 +706,7 @@ class ProfileContext extends RawMinkContext {
    *   The table node as provided by behat.
    *
    * @return array
-   *   A row representation of the tabe node.
+   *   A row representation of the table node.
    */
   private function parseFieldSettingsTableNode(TableNode $rawFields) : array {
     $fields = [];
