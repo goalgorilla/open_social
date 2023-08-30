@@ -16,8 +16,9 @@ Feature: Send invite group email notifications
     Given groups:
       | label             | field_group_description        | author          | type           | langcode | field_flexible_group_visibility |
       | Test-invite-group | Something that wanted share..  | site_manager_1  | flexible_group | en       | public                          |
-    
+
     # Enable "Allow invited user to skip email verification" option for groups
+    Given I am logged in as an "administrator"
     When I go to "/admin/config/opensocial/social-group"
     Then I click the element with css selector "#edit-group-invite"
     And I should see "Allow invited user to skip email verification"
