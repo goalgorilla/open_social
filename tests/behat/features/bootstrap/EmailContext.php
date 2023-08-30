@@ -3,12 +3,12 @@
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\ultimate_cron\Entity\CronJob;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Provides helpful test steps around the handling of e-mails.
@@ -47,6 +47,45 @@ class EmailContext implements Context {
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'native');
     $swiftmailer_config->save();
+  }
+
+  /**
+   * Extract all .message files into metadata, html and text.
+   *
+   * To help developers debug, in case a scenario failed we parse the serialized
+   * email into its text contents, html contents, and the header metadata. This
+   * is written in 3 files to the mail spool folder. This makes it easier for a
+   * developer to examine the contents of an email.
+   *
+   * @AfterScenario @email-spool
+   */
+  public function extractSentEmails(AfterScenarioScope $afterScenario) : void {
+    if ($afterScenario->getTestResult()->isPassed()) {
+      return;
+    }
+
+    $exts = [
+      "text/html" => "html",
+      "text/plain" => "txt",
+    ];
+
+    $spool_directory = $this->getSpoolDir();
+    $emails = $this->getSpooledEmails();
+    foreach ($emails as $serialized) {
+      $path = $spool_directory . DIRECTORY_SEPARATOR . $serialized->getBasename($serialized->getExtension());
+
+      $email = $this->getEmailContent($serialized);
+      assert($email instanceof \Swift_Message);
+
+      foreach ($email->getChildren() as $i => $part) {
+        file_put_contents($path . ($exts[$part->getContentType()] ?? "{$i}.unknown"), $part->getBody());
+      }
+
+      // The primary (preferred) body is not considered to be a child, so we
+      // must treat it separately.
+      file_put_contents($path . ($exts[$email->getBodyContentType()] ?? "unknown"), $email->getBody());
+      file_put_contents($path . "metadata", $email->getHeaders()->toString());
+    }
   }
 
   /**
@@ -253,7 +292,7 @@ class EmailContext implements Context {
     $filesystem = new Filesystem();
     $finder = $this->getSpooledEmails();
 
-    /** @var File $file */
+    /** @var \Symfony\Component\Finder\SplFileInfo $file */
     foreach ($finder as $file) {
       $filesystem->remove($file->getRealPath());
     }
@@ -304,7 +343,10 @@ class EmailContext implements Context {
     $spoolDir = $this->getSpoolDir();
 
     try {
-      return $finder->files()->name("*.message")->in($spoolDir);
+      // We don't provide a filter on extension here because we use the same
+      // finder in our purgeSpool function. extractSentEmails does create files
+      // with other extensions, but that should always happen last.
+      return $finder->files()->in($spoolDir);
     }
     catch (\InvalidArgumentException $exception) {
       throw new \Exception("The e-mail spool directory does not exist or is incorrectly configured, expected '{$spoolDir}' to exist.");
