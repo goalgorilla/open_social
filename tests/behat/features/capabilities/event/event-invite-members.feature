@@ -17,6 +17,7 @@ Feature: Send invite event email notifications
       | Invite Event  | +2 days          | 1      | public                   | 1                     | site_manager_1 |
 
     # Enable "Allow invited user to skip email verification" option
+    Given I am logged in as an "administrator"
     When I go to "/admin/config/opensocial/event-invite"
     And I should see "Allow invited user to skip email verification"
     Then I check the box "email_verification"
