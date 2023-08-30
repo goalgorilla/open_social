@@ -77,6 +77,7 @@ Feature: Move content after creation
     And I wait for AJAX to finish
     And I press "Save"
     And I run cron
+    And I wait for AJAX to finish
     Then I should not see "Motorboats"
     And I should not see "Kayaking"
 
