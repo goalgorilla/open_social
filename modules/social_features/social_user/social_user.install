@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -256,4 +257,16 @@ function social_user_update_12001() : void {
   // they're not yet verified.
   user_role_grant_permissions('contentmanager', ['list user']);
   user_role_grant_permissions('sitemanager', ['list user']);
+}
+
+/**
+ * Reassign weights for built-in roles.
+ */
+function social_user_update_12002() : void {
+  // We're now showing roles in multiple places so we want to make sure they're
+  // ordered from least permissive to most permissive. To ensure other roles can
+  // be slotted in between we use non-consecutive values.
+  Role::load("verified")?->setWeight(1)?->save();
+  Role::load("contentmanager")?->setWeight(10)?->save();
+  Role::load("sitemanager")?->setWeight(20)?->save();
 }

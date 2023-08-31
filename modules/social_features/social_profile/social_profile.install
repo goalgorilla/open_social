@@ -93,8 +93,6 @@ function social_profile_install() {
   user_role_grant_permissions(
     RoleInterface::AUTHENTICATED_ID,
     [
-      'add own profile profile',
-      'update own profile profile',
       'view any profile profile',
       'view own profile profile',
       'view profile',
@@ -109,8 +107,6 @@ function social_profile_install() {
   user_role_grant_permissions(
     'sitemanager',
     [
-      'add any profile profile',
-      'update any profile profile',
       'edit profile tags',
       'delete terms in profile_tag',
       'edit terms in profile_tag',
@@ -356,7 +352,7 @@ function social_profile_update_last_removed() : int {
 /**
  * Implements hook_update_dependencies().
  */
-function social_profile_update_dependencies() {
+function social_profile_update_dependencies() : array {
   // Run the config update after the update_helper module is enabled.
   $dependencies['social_profile'][8808] = [
     'social_core' => 8805,
@@ -373,10 +369,13 @@ function social_profile_update_dependencies() {
     'group' => 8020,
   ];
 
-  // We need to make sure we've migrated to SOLR so that we don't run into any
-  // index issues for the number of fields that we're adding to search.
   $dependencies['social_profile'][12001] = [
+    // We need to make sure we've migrated to SOLR so that we don't run into any
+    // index issues for the number of fields that we're adding to search.
     'social_search' => 12004,
+    // The 12.x updates rely on config modify not excluding newly
+    // introduced modifications, so the module must be enabled first.
+    'social_core' => 11900,
   ];
 
   // Before we start migrating the profile structure we need to ensure the
@@ -2052,6 +2051,20 @@ function social_profile_update_12026() : string {
 
   // Execute configuration update definitions with logging of success.
   $updater->executeUpdate('social_profile', 'social_profile_update_12026');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Replace profile tag field in search.
+ */
+function social_profile_update_12027() : string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_profile', __FUNCTION__);
 
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();

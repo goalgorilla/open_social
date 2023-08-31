@@ -1,20 +1,21 @@
+uuid: eeb3a59c-ce7c-4880-aa28-04cc80fc646c
 langcode: en
 status: true
 dependencies:
   config:
     - search_api.index.social_all
-    - views.view.search_groups
+    - views.view.search_users
   module:
     - search_api
-id: social_tagging_groups
-name: Tags
+id: social_profile_tag
+name: 'Profile tag'
 weight: 0
 min_count: 1
 missing: true
-missing_label: '<No Content Tags>'
-url_alias: social_tagging
-facet_source_id: 'search_api:views_page__search_groups__page'
-field_identifier: social_tagging
+missing_label: '<No Profile Tags>'
+url_alias: profile_tag
+facet_source_id: 'search_api:views_page__search_users__page'
+field_identifier: profile_profile_tag
 query_operator: and
 hard_limit: 0
 exclude: false
@@ -52,14 +53,14 @@ processor_configs:
     processor_id: hide_non_narrowing_result_processor
     weights:
       build: 40
-    settings: { }
+    settings: {  }
   hierarchy_processor:
     processor_id: hierarchy_processor
     weights:
       build: 100
     settings: {  }
-  translate_entity_aggregated_fields:
-    processor_id: translate_entity_aggregated_fields
+  translate_entity:
+    processor_id: translate_entity
     weights:
       build: 5
     settings: {  }

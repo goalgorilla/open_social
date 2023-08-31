@@ -60,6 +60,25 @@ class TagSplitWidget extends OptionsWidgetBase {
   /**
    * {@inheritdoc}
    */
+  public function form(FieldItemListInterface $items, array &$form, FormStateInterface $form_state, $get_delta = NULL) {
+    $field_widget_complete_form = parent::form($items, $form, $form_state, $get_delta);
+
+    // If the widget in the element (built with formElement) has any subfields
+    // then we return the widget.
+    foreach ($field_widget_complete_form['widget'] as $key => $prop_or_child) {
+      if ($key[0] !== "#") {
+        return $field_widget_complete_form;
+      }
+    }
+
+    // If we only have properties for the container and no subfields we want to
+    // make sure there's no wrapper to render.
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     assert($this->getFieldSetting('target_type') === "taxonomy_term", "The " . __CLASS__ . " widget should not be used for entity reference fields that don't reference taxonomy terms.");
@@ -81,12 +100,14 @@ class TagSplitWidget extends OptionsWidgetBase {
       unset($element['#title'], $element['#description']);
     }
 
+    $subfields = [];
+
     /** @var \Drupal\taxonomy\TermInterface $term */
     // This widget assumes that only 1 or 2 levels of nesting can be made and
     // that this is enforced elsewhere.
     foreach ($terms as $term_id => $term) {
       if ((int) $term->get('parent')->target_id === 0) {
-        $element["tagging_${term_id}"] = [
+        $subfields["tagging_${term_id}"] = [
           '#type' => 'select2',
           '#title' => $term->label(),
           '#multiple' => TRUE,
@@ -94,22 +115,30 @@ class TagSplitWidget extends OptionsWidgetBase {
           '#required' => $required,
           // Don't overwrite the options if a child already started filling it
           // out.
-          '#options' => $element["tagging_${term_id}"]['#options'] ?? [],
+          '#options' => $subfields["tagging_${term_id}"]['#options'] ?? [],
         ];
       }
       else {
         $parent_id = $term->get('parent')->target_id;
-        $element["tagging_${parent_id}"]['#options'][$term_id] = $term->label();
+        $subfields["tagging_${parent_id}"]['#options'][$term_id] = $term->label();
       }
     }
 
     // Filter out any fields that don't have children options.
     // Also keep any of the `details` configuration (`#<string>`).
-    $element = array_filter(
-      $element,
-      fn ($el, $key) => $key[0] === '#' || !empty($el['#options']),
-      ARRAY_FILTER_USE_BOTH
+    $subfields = array_filter(
+      $subfields,
+      fn ($el) => !empty($el['#options'])
     );
+
+    // Make sure we don't return an empty wrapper if we don't have any options
+    // to render.
+    if (empty($subfields)) {
+      return [];
+    }
+
+    // Merge our actual fields as children into the container.
+    $element += $subfields;
 
     return $element;
   }

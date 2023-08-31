@@ -1,7 +1,19 @@
 dependencies:
   config:
-    - facets.facet.social_tagging_users
+    - facets.facet.social_profile_tag
 items:
+  search_api.index.social_all:
+    expected_config:
+      field_settings:
+        profile_profile_tag: { }
+    update_actions:
+      add:
+        processor_settings:
+          hierarchy:
+            weights:
+              preprocess_index: -45
+            fields:
+              profile_profile_tag: taxonomy_term-parent
   views.view.search_users:
     expected_config:
       display:
@@ -16,8 +28,8 @@ items:
           default:
             display_options:
               filters:
-                facets_content_tagging:
-                  id: facets_content_tagging
+                facets_profile_tag:
+                  id: facets_profile_tag
                   table: search_api_index_social_all
                   field: facets
                   relationship: none
@@ -36,7 +48,7 @@ items:
                     operator: ''
                     operator_limit_selection: false
                     operator_list: { }
-                    identifier: facet_y7wzdJtr
+                    identifier: facet_c8b6uca8
                     required: false
                     remember: false
                     multiple: false
@@ -55,5 +67,5 @@ items:
                     default_group_multiple: { }
                     group_items: { }
                   facets:
-                    social_tagging_users: social_tagging_users
-                  label_display: visible
+                    social_profile_tag: social_profile_tag
+                  label_display: 0

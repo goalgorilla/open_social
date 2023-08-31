@@ -659,9 +659,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
    *   The form state.
    */
   private function submitFieldsFieldset(array &$form, FormStateInterface $form_state) : void {
-    // Keep track of changed roles so we can only save once.
-    $modified_roles = [];
-
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|NULL $registration_profile_form_display */
     $registration_profile_form_display = EntityFormDisplay::load("profile.profile.register");
     // This should be created by the install or update hook. If this does not
@@ -733,8 +730,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         else {
           $roles[$role_id]->revokePermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_PRIVATE . " ${field_name} profile profile fields");
         }
-
-        $modified_roles[$role_id] = $roles[$role_id];
       }
 
       // Allow editing.
@@ -747,8 +742,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       else {
         $roles['authenticated']->revokePermission("edit own ${field_name} profile profile field");
       }
-
-      $modified_roles['authenticated'] = $roles['authenticated'];
 
       $allow_editing_roles = $form_state->getValue(
         ["fields", "list", $field_name, "allow_editing", "other"]
@@ -766,8 +759,6 @@ class SocialProfileSettingsForm extends ConfigFormBase {
         else {
           $roles[$role_id]->revokePermission("edit any ${field_name} profile profile field");
         }
-
-        $modified_roles[$role_id] = $roles[$role_id];
       }
 
       // Show during registration.
@@ -809,7 +800,10 @@ class SocialProfileSettingsForm extends ConfigFormBase {
 
     $registration_profile_form_display->save();
 
-    foreach ($modified_roles as $role) {
+    // We must always save all roles, even if permissions weren't changed. It's
+    // possible that field status was changed which can also affect whether
+    // users can edit and create profiles.
+    foreach ($roles as $role) {
       $role->save();
     }
 

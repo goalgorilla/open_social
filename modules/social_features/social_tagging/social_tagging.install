@@ -60,8 +60,49 @@ function _social_tagging_remove_fields_search_api(): void {
  * Implements hook_update_last_removed().
  */
 function social_tagging_update_last_removed() : int {
-  // Removed all update hooks that tried to install the old field type.
-  return 11501;
+  // Removed all update hooks before 11.x.
+  return 8004;
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_tagging_update_dependencies() : array {
+  $dependencies['social_tagging'][12000] = [
+    // The 12.x updates rely on config modify not excluding newly
+    // introduced modifications, so the module must be enabled first.
+    'social_core' => 11900,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Update hook removed.
+ */
+function social_tagging_update_8005(): void {
+  // This update hook updated search indexes and was marked as a pre-11.x update
+  // hook but was actually introduced in 11.0, so we need to keep it around
+  // until we can remove those update hooks.
+}
+
+/**
+ * Update hook removed.
+ */
+function social_tagging_update_11201(): void {
+  // This update hook used to change language settings for a field that's being
+  // removed in 11801. The update hook itself is kept because update testing
+  // from 10.x fails if we remove 11.x update hooks already.
+}
+
+/**
+ * Update hook removed.
+ */
+function social_tagging_update_11401(): void {
+  // This update hook used to add a field to the media entity if it existed, but
+  // this field is being removed in 11801 and the code that used to add it no
+  // longer exists. The update hook itself is kept because update testing from
+  // 10.x fails if we remove 11.x update hooks already.
 }
 
 /**
@@ -120,9 +161,23 @@ function social_tagging_update_11801(): void {
 }
 
 /**
+ * Enable social_tag_split module.
+ */
+function social_tagging_update_12000() : string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_tagging', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Move social_tagging field to a Field API field.
  */
-function social_tagging_update_12000() : void {
+function social_tagging_update_12001() : void {
   $settings = \Drupal::configFactory()->getEditable("social_tagging.settings");
 
   // We've decided that as of 12.0.0 we will always enable category splitting
@@ -332,7 +387,7 @@ function social_tagging_update_12000() : void {
 /**
  * Create new view modes, display configurations and blocks.
  */
-function social_tagging_update_12001() : void {
+function social_tagging_update_12002() : void {
   // Should match list in social_tagging_update_12000.
   $entity_types = [
     'node' => [
@@ -406,8 +461,10 @@ function social_tagging_update_12001() : void {
 
   // If the block doesn't exist we skip it, this means it was deleted
   // consciously by a site builder.
-  $content_block = Block::load("socialtagsblock");
-  if ($content_block !== NULL) {
+  // We need to use config directly here because the old plugin has been removed
+  // so using the block entity causes an error.
+  $content_block = \Drupal::configFactory()->getEditable("block.block.socialtagsblock");
+  if (!$content_block->isNew()) {
     $content_block->set("plugin", "entity_view_block");
     $content_block_settings = $content_block->get("settings");
     $content_block_settings["id"] = "entity_view_block";
@@ -421,8 +478,8 @@ function social_tagging_update_12001() : void {
   // Create the new block if the old one existed.
   // If the old one doesn't exist then the current installation probably doesn't
   // want the new one either.
-  $group_block = Block::load("socialgrouptagsblock");
-  if ($group_block !== NULL) {
+  $group_block = \Drupal::configFactory()->getEditable("block.block.socialgrouptagsblock");
+  if (!$group_block->isNew()) {
     $new_group_block = [
       "dependencies" => [
         "langcode" => "en",
@@ -465,20 +522,6 @@ function social_tagging_update_12001() : void {
 
 /**
  * Enable facets module.
- */
-function social_tagging_update_12002() : string {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_tagging', __FUNCTION__);
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
-}
-
-/**
- * Enable social_tag_split module.
  */
 function social_tagging_update_12003() : string {
   /** @var \Drupal\update_helper\Updater $updateHelper */
