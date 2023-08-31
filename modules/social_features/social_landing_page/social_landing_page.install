@@ -774,9 +774,11 @@ function social_landing_page_update_11401(): string {
 }
 
 /**
- * Remove deprecated permissions:
- * "override landing_page revision log entry",
- * "override landing_page promote to front landing_page option".
+ * Remove deprecated permissions.
+ *
+ * Deprecated permissions:
+ * - "override landing_page revision log entry",
+ * - "override landing_page promote to front landing_page option".
  */
 function social_landing_page_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
@@ -803,8 +805,10 @@ function social_landing_page_update_111201(): void {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "translate landing_page node".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "translate landing_page node".
  */
 function social_landing_page_update_111202(): void {
   $entity_type_manager = \Drupal::entityTypeManager();

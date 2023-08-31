@@ -1688,8 +1688,10 @@ function social_core_update_11900() : string {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "access contextual links".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "access contextual links".
  */
 function social_core_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
