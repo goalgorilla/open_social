@@ -641,8 +641,10 @@ function social_group_flexible_group_update_11901(): string {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "translate flexible_group group".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "translate flexible_group group".
  */
 function social_group_flexible_group_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();

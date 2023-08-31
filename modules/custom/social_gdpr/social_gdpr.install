@@ -47,8 +47,10 @@ function social_gdpr_update_8902() {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "translate data_policy".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "translate data_policy".
  */
 function social_gdpr_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();

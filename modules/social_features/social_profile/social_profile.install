@@ -477,10 +477,12 @@ function social_profile_update_11701(): string {
 }
 
 /**
- * Remove deprecated permissions:
- * "add own profile profile",
- * "view profile",
- * "add any profile profile".
+ * Remove deprecated permissions.
+ *
+ * Deprecated permissions:
+ * - "add own profile profile",
+ * - "view profile",
+ * - "add any profile profile".
  */
 function social_profile_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
