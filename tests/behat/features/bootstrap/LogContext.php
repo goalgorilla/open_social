@@ -155,6 +155,8 @@ class LogContext implements Context {
       // Ignore an existing bug.
       // @todo https://www.drupal.org/project/social/issues/3320117
       || ($row->type === 'php' && (int) $row->severity === RfcLogLevel::WARNING && (str_contains($row->variables, 'Undefined array key "#comment_display_mode"') || str_contains($row->variables, 'Undefined array key "#comment_type"')))
+      // Ignore update notices.
+      || ($row->type === 'update' && (int) $row->severity === RfcLogLevel::NOTICE)
       ;
   }
 
