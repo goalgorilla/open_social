@@ -271,6 +271,7 @@ class EmailContext implements Context {
     $emails = [];
     foreach ($finder as $file) {
       $email = $this->getEmailContent($file);
+      assert($email instanceof \Swift_Message);
 
       if ($email->getSubject() === $subject) {
         $emails[] = $email;
@@ -324,7 +325,7 @@ class EmailContext implements Context {
    * @return \Drupal\symfony_mailer\Email
    *   A deserialized email.
    */
-  protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {    assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
+  protected function getEmailContent(SplFileInfo $file) : DrupalSymfonyEmail {
     assert($file->getExtension() === "message", "File passed to " . __FUNCTION__ . " must be a serialized .message file.");
     return unserialize(file_get_contents($file), ["allowed_classes" => [
       DrupalSymfonyEmail::class,
