@@ -14,12 +14,15 @@ theme: socialblue
 region: complementary_top
 weight: 0
 provider: null
-plugin: social_tags_block
+plugin: entity_view_block
 settings:
-  id: social_tags_block
+  id: entity_view_block
   label: Tags
-  provider: social_tagging
   label_display: visible
+  provider: social_core
+  view_mode: social_tagging
+  context_mapping:
+    entity: '@social_core.entity_route_context:canonical_content_entity'
 visibility:
   request_path:
     id: request_path

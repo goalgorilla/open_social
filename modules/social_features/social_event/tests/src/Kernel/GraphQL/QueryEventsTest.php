@@ -37,6 +37,9 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'filter',
     'file',
     'image',
+    // Profile fields.
+    'telephone',
+    'social_tag_split',
     // For the comment functionality.
     'social_comment',
     'comment',
@@ -56,6 +59,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
     'file_mdm',
     'group_core_comments',
     'views',
+    'views_bulk_operations',
     'group',
     'datetime',
     'address',
@@ -72,6 +76,8 @@ class QueryEventsTest extends SocialGraphQLTestBase {
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile_type');
+    $this->installEntitySchema('profile');
 
     $this->installSchema('comment', 'comment_entity_statistics');
     $this->installConfig([
@@ -80,6 +86,7 @@ class QueryEventsTest extends SocialGraphQLTestBase {
       'social_node',
       'social_event',
       'filter',
+      'social_profile',
     ]);
   }
 

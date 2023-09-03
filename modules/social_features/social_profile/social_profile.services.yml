@@ -9,13 +9,22 @@ services:
   social_profile.tag_service:
     class: Drupal\social_profile\SocialProfileTagService
     arguments: ['@entity_type.manager', '@config.factory', '@language_manager']
-  social_profile.name_service:
-    class: Drupal\social_profile\SocialProfileNameService
-    arguments:
-      - '@entity_type.manager'
-      - '@module_handler'
   social_profile.translation_defaults:
     class: Drupal\social_profile\ContentTranslationDefaultsConfigOverride
     arguments: ['@module_handler']
     tags:
       - { name: config.factory.override, priority: 5 }
+  social_profile.profile_fields_permission_provider:
+    class: Drupal\social_profile\ProfileFieldsPermissionProvider
+    arguments: ['@entity_type.manager', '@social_profile.field_manager']
+  social_profile.field_manager:
+    class: Drupal\social_profile\FieldManager
+    arguments: ['@entity_field.manager']
+  social_profile.profile_reindex_subscriber:
+    class: Drupal\social_profile\EventSubscriber\ProfileReindexSubscriber
+    arguments:
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@logger.factory'
+    tags:
+      - { name: 'event_subscriber' }

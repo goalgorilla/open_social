@@ -49,6 +49,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
       'expertise',
       'interests',
       'profile_tag',
+      'nationality',
     ];
 
     foreach ($vocabularies as $vocabulary) {

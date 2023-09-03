@@ -1,100 +1,57 @@
-@api @profile @user @members @stability @YANG-5091 @stability-4 @profile-tag
-Feature: Add profile tags to the user profiles
-  Benefit: In order to add profile tags
-  Role: CM
-  Goal/desire: I want to be able to add profile tags
+@api
+Feature:  Profile tagging
+  Depending on the profile field configuration users and/or site managers are able to
+  add tags to profiles in fields configured through a site-manager defined taxonomy hierarchy.
 
-  Scenario: Disable access to add profile tags
+  Background:
     Given users:
-      | name   | status | uid | roles    |
-      | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
-    And I go to "/admin/config/people/social-profile"
-    And I uncheck the box "Allow profile tagging for content managers"
-    And I press "Save configuration"
-    And I go to "/user/999/profile"
-    Then I should not see the text "Profile tag"
+      | name   | status | roles    |
+      | Member | 1      | verified |
+    And the profile field settings:
+      | Field name         | User can edit value | Visibility | User can edit visibility | Always show for Content manager | Always show for Verified user | Allow editing by Content manager | Allow editing by verified user | Show at registration | Required |
+      | Profile tag        | false               | Community  | false                    | false                           | false                         | true                             | false                          | false                | false    |
 
-  Scenario: Enable profile tags without split
+  Scenario: Enable profile tags with a single field
     Given "profile_tag" terms:
-      | name                | parent |
-      | Behat Profile tag 1 |        |
-      | Behat Profile tag 2 |        |
-    Given users:
-      | name   | status | uid | roles    |
-      | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
-    And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profile tagging for content managers"
-    And I uncheck the box "Allow category split"
-    And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
-    And I go to "/user/999/profile"
-    And I select "Behat Profile tag 1" from "Profile tag"
-    And I additionally select "Behat Profile tag 2" from "Profile tag"
+      | name        | parent      |
+      | Profile tag |             |
+      | Behat tag 1 | Profile tag |
+      | Behat tag 2 | Profile tag |
+
+    When I am logged in as an "contentmanager"
+    And I try to edit the profile of "Member"
+    And I select "Behat tag 1" from "Profile tag"
+    And I additionally select "Behat tag 2" from "Profile tag"
     And I press "Save"
-    And I go to "/user/999/information"
-    Then I should see "Profile tags"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 2"
+
+    Then I should see "The profile has been saved"
+    And I should see "Profile tag"
+    And I should see "Behat tag 1"
+    And I should see "Behat tag 2"
 
   Scenario: Enable profile tag split
     Given "profile_tag" terms:
-      | name                  | parent              |
-      | Behat Profile tag 1   |                     |
-      | Behat Profile tag 1.1 | Behat Profile tag 1 |
-      | Behat Profile tag 1.2 | Behat Profile tag 1 |
-      | Behat Profile tag 2   |                     |
-      | Behat Profile tag 2.1 | Behat Profile tag 2 |
-      | Behat Profile tag 2.2 | Behat Profile tag 2 |
-    Given users:
-      | name   | status | uid | roles    |
-      | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
-    And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profile tagging for content managers"
-    And I check the box "Allow category split"
-    And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
-    And I go to "/user/999/profile"
-    And I select "Behat Profile tag 1.1" from "Behat Profile tag 1"
-    And I additionally select "Behat Profile tag 1.2" from "Behat Profile tag 1"
-    And I select "Behat Profile tag 2.1" from "Behat Profile tag 2"
-    And I additionally select "Behat Profile tag 2.2" from "Behat Profile tag 2"
-    And I press "Save"
-    And I go to "/user/999/information"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 1.1"
-    Then I should see "Behat Profile tag 1.2"
-    Then I should see "Behat Profile tag 2"
-    Then I should see "Behat Profile tag 2.1"
-    Then I should see "Behat Profile tag 2.2"
+      | name          | parent      |
+      | Behat tag 1   |             |
+      | Behat tag 1.1 | Behat tag 1 |
+      | Behat tag 1.2 | Behat tag 1 |
+      | Behat tag 2   |             |
+      | Behat tag 2.1 | Behat tag 2 |
+      | Behat tag 2.2 | Behat tag 2 |
 
-  Scenario: Allow to select parents
-    Given "profile_tag" terms:
-      | name                  | parent              |
-      | Behat Profile tag 1   |                     |
-      | Behat Profile tag 1.1 | Behat Profile tag 1 |
-      | Behat Profile tag 2   |                     |
-      | Behat Profile tag 2.1 | Behat Profile tag 2 |
-    Given users:
-      | name   | status | uid | roles    |
-      | Member | 1      | 999 | verified |
-    Then I am logged in as an "sitemanager"
-    And I go to "/admin/config/people/social-profile"
-    And I check the box "Allow profile tagging for content managers"
-    And I check the box "Allow category split"
-    And I check the box "Allow parents to be used as tag"
-    And I press "Save configuration"
-    Then I am logged in as an "contentmanager"
-    And I go to "/user/999/profile"
-    And I select "Behat Profile tag 1" from "Behat Profile tag 1"
-    And I additionally select "Behat Profile tag 1.1" from "Behat Profile tag 1"
-    And I select "Behat Profile tag 2" from "Behat Profile tag 2"
-    And I additionally select "Behat Profile tag 2.1" from "Behat Profile tag 2"
+    When I am logged in as an "contentmanager"
+    And I try to edit the profile of "Member"
+    And I select "Behat tag 1.1" from "Behat tag 1"
+    And I additionally select "Behat tag 1.2" from "Behat tag 1"
+    And I select "Behat tag 2.1" from "Behat tag 2"
+    And I additionally select "Behat tag 2.2" from "Behat tag 2"
     And I press "Save"
-    And I go to "/user/999/information"
-    Then I should see "Behat Profile tag 1"
-    Then I should see "Behat Profile tag 1.1"
-    Then I should see "Behat Profile tag 2"
-    Then I should see "Behat Profile tag 2.1"
+
+    Then I should see "The profile has been saved"
+    And I should not see "Profile tag"
+    And I should see "Behat tag 1"
+    And I should see "Behat tag 1.1"
+    And I should see "Behat tag 1.2"
+    And I should see "Behat tag 2"
+    And I should see "Behat tag 2.1"
+    And I should see "Behat tag 2.2"

@@ -1,0 +1,131 @@
+core.entity_form_display.profile.profile.default:
+  expected_config: { }
+  update_actions:
+    add:
+      content:
+        field_profile_nationality:
+          region: content
+          settings:
+            match_limit: 10
+            match_operator: CONTAINS
+            placeholder: ''
+            size: 60
+          third_party_settings: {  }
+          type: entity_reference_autocomplete_tags
+          weight: 8
+        field_profile_nick_name:
+          region: content
+          settings:
+            placeholder: ''
+            size: 60
+          third_party_settings: {  }
+          type: string_textfield
+          weight: 0
+      third_party_settings:
+        field_group:
+          group_profile_contact_info:
+            children:
+              - field_profile_nationality
+    change:
+      third_party_settings:
+        field_group:
+          group_profile_names_image:
+            children:
+              - field_profile_first_name
+              - field_profile_last_name
+              - field_profile_banner_image
+              - field_profile_image
+      hidden:
+        field_profile_email: true
+        field_profile_preferred_language: true
+core.entity_view_display.profile.profile.default:
+  expected_config:
+    content:
+      field_profile_address:
+        label: visually_hidden
+      field_profile_expertise:
+        label: visually_hidden
+      field_profile_interests:
+        label: visually_hidden
+      field_profile_phone_number:
+        label: visually_hidden
+      field_profile_profile_tag:
+        weight: 1
+      field_profile_self_introduction:
+        label: visually_hidden
+  update_actions:
+    add:
+      content:
+        field_profile_email:
+          label: inline
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          type: email_mailto
+          weight: 1
+        field_profile_preferred_language:
+          label: inline
+          region: content
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          type: string
+          weight: 4
+      hidden:
+        field_profile_nationality: true
+        field_profile_nick_name: true
+      third_party_settings:
+        field_group:
+          group_contact_information:
+            children:
+              - field_profile_phone_number
+              - field_profile_address
+              - field_profile_email
+              - field_profile_preferred_language
+            format_settings:
+              attributes: ''
+              classes: ''
+              effect: none
+              element: div
+              id: ''
+              label_element: h4
+              label_element_classes: ''
+              show_label: true
+              speed: fast
+            format_type: html_element
+            label: 'Contact information'
+            parent_name: ''
+            region: content
+            weight: -1
+    change:
+      content:
+        field_profile_address:
+          label: inline
+        field_profile_expertise:
+          label: above
+        field_profile_interests:
+          label: above
+        field_profile_phone_number:
+          label: inline
+        field_profile_profile_tag:
+          weight: 6
+        field_profile_self_introduction:
+          label: above
+field.field.profile.profile.field_profile_email:
+  expected_config:
+    field_type: string
+  update_actions:
+    change:
+      field_type: email
+field.field.profile.profile.field_profile_nick_name:
+  expected_config:
+    status: true
+  update_actions:
+    change:
+      status: false
+profile.type.profile:
+  expected_config:
+    registration: false
+  update_actions:
+    change:
+      registration: true

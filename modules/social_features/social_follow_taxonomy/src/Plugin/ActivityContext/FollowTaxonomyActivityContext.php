@@ -8,9 +8,11 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\social_group\SocialGroupHelperService;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -127,15 +129,6 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   }
 
   /**
-   * List of taxonomy terms.
-   */
-  public function taxonomyTermsList($entity) {
-    $term_ids = social_follow_taxonomy_terms_list($entity);
-
-    return $term_ids;
-  }
-
-  /**
    * Returns recipients from followed taxonomies.
    */
   public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
@@ -144,13 +137,18 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
 
-    if (!empty($entity)) {
-      $tids = $this->taxonomyTermsList($entity);
-    }
-
-    if (empty($tids)) {
+    if (!$entity instanceof FieldableEntityInterface || !$entity instanceof EntityOwnerInterface) {
       return [];
     }
+
+    if (!$entity->hasField('field_social_tagging') || $entity->get('field_social_tagging')->isEmpty()) {
+      return [];
+    }
+
+    $tids = array_map(
+      fn (array $v) => $v['target_id'],
+      $entity->get('field_social_tagging')->getValue()
+    );
 
     // Get followers.
     $uids = $this->connection->select('flagging', 'f')
@@ -231,7 +229,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    */
   public function getListOfTagsFields() {
     $fields_to_check = [
-      'social_tagging',
+      'field_social_tagging',
     ];
     $this->moduleHandler->alter('social_follow_taxonomy_fields', $fields_to_check);
     return $fields_to_check;

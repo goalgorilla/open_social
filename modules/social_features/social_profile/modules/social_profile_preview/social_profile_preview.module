@@ -75,8 +75,7 @@ function social_profile_preview_preprocess_profile__profile__name_raw(array &$va
     \Drupal::service('social_profile_preview.helper')
       ->alter($profile, $variables, 'temp_attributes');
 
-    $profile_name = \Drupal::service('social_profile.name_service')
-      ->getProfileName($profile);
+    $profile_name = $profile->getOwner()->getDisplayName();
 
     // Override profile name to display modal window on hover.
     if (isset($variables['temp_attributes'])) {

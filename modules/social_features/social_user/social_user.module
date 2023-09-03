@@ -5,6 +5,8 @@
  * The social user module alterations.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -23,6 +25,20 @@ use Drupal\user\Plugin\Action\BlockUser;
 use Drupal\user\UserInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\social_user\SocialUserSearchContentBlockAlter;
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_user_user_access(UserInterface $user, string $operation, AccountInterface $account) : AccessResultInterface {
+  // By default blocked users may not be viewed (AccessResultNeutral is returned
+  // in \Drupal\user\UserAccessControlHandler). To counteract this we explicitly
+  // allow viewing a blocked user if a user has the permission.
+  if ($operation === 'view' && $user->isBlocked()) {
+    return AccessResult::allowedIfHasPermission($account, "view blocked user");
+  }
+
+  return AccessResult::neutral();
+}
 
 /**
  * Implements hook_entity_type_alter().
@@ -268,10 +284,10 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
     // So it's actually the first time the user logs in and we can do our
     // redirect.
     $user = \Drupal::routeMatch()->getParameter('user');
+    assert($user instanceof UserInterface, "The user parameter should be automatically upcast by Drupal, check the route configuration.");
 
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = $storage->loadByUser($user, 'profile');
 
     if (!($profile instanceof ProfileInterface)) {

@@ -34,3 +34,9 @@ services:
   social_core.config_language_manager:
     class:  Drupal\social_core\Service\ConfigLanguageManager
     arguments: ['@language_manager']
+
+  social_core.entity_route_context:
+    class: 'Drupal\social_core\ContextProvider\EntityRouteContext'
+    arguments: ['@current_route_match', '@entity_type.manager', '@string_translation']
+    tags:
+      - { name: 'context_provider' }

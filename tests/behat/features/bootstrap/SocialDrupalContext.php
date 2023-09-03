@@ -307,42 +307,6 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * I enable the nickname field on profiles
-   *
-   * @When /^(?:|I )enable the nickname field on profiles/
-   */
-  public function iEnableNicknameField() {
-    if (!\Drupal::service('module_handler')->moduleExists("social_profile_fields")) {
-      throw new \Exception("Could not enable nickname field for profile because the Social Profile Fields module is disabled.");
-    }
-
-    \Drupal::configFactory()->getEditable('social_profile_fields.settings')->set("profile_profile_field_profile_nick_name", TRUE)->save();
-  }
-
-  /**
-   * I restrict real name usage
-   *
-   * @When /^(?:|I )(un)?restrict real name usage/
-   */
-  public function iRestrictRealNameUsage($restrict = TRUE) {
-    if (!\Drupal::service('module_handler')->moduleExists("social_profile_privacy")) {
-      throw new \Exception("Could not restrict real name usage because the Social Profile Privacy module is disabled.");
-    }
-
-    // Convert our negative match to a boolean.
-    if ($restrict === "un") {
-      $restrict = FALSE;
-    }
-
-    // TODO: Remove debug.
-    if ($restrict !== FALSE && $restrict !== TRUE) {
-      throw  new \Exception("Restrict has unknown value " . print_r($restrict, true));
-    }
-
-    \Drupal::configFactory()->getEditable('social_profile_privacy.settings')->set("limit_search_and_mention", $restrict)->save();
-  }
-
-  /**
    * Allow platforms that re-use the Open Social platform a chance to fill in
    * custom form fields that are not present in the distribution but may lead to
    * validation errors (e.g. because a field is required).

@@ -15,6 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Field handler to sort rendered profile entity in views.
  *
+ * Sorts profile entities in views based on the name of the user and the access
+ * levels of the current viewer.
+ *
  * @ingroup views_field_handlers
  *
  * @ViewsField("profile_entity_sortable")
@@ -109,112 +112,154 @@ class ProfileEntitySortable extends RenderedEntity {
     if (isset($this->field_alias)) {
       // If we want to sort on the profile name, add the correct alias.
       if ($this->table === 'profile' && $this->field === 'profile_entity_sortable') {
-        /** @var \Drupal\views\Plugin\views\query\Sql $query */
-        $query = $this->query;
+        $view_any = $this->currentUser->hasPermission('view any profile fields') || $this->currentUser->hasPermission('view any profile profile fields');
+        $view_community = $this->currentUser->hasPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile fields") || $this->currentUser->hasPermission("view " . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . " profile profile fields");
 
-        // Get a field list that will be used for sorting.
-        $order_by_fields = $this->orderByFields();
-
-        // Add relationship for necessary fields.
-        foreach ($order_by_fields as $sort_field) {
+        // Add the joins to the fields containing profile name information.
+        $name_fields = [
+          'field_profile_first_name',
+          'field_profile_last_name',
+          'field_profile_nick_name',
+        ];
+        $visibility_fields = [];
+        foreach ($name_fields as $name_field) {
           $definition = [
-            'table' => 'profile__' . $sort_field,
+            'table' => 'profile__' . $name_field,
             'field' => 'entity_id',
             'left_table' => $this->relationship,
             'left_field' => 'profile_id',
           ];
 
           $join = $this->joinManager->createInstance('standard', $definition);
-          $query->addRelationship($definition['table'], $join, $this->relationship);
+          $this->query->addRelationship($definition['table'], $join, $this->relationship);
+
+          // If the user can't see all fields then we must add joins to the
+          // tables containing the visibility data.
+          if (!$view_any) {
+            $visibility_fields[$name_field] = $visibility_field = $this->getVisibilityFieldName($name_field);
+
+            $definition = [
+              'table' => 'profile__' . $visibility_field,
+              'field' => 'entity_id',
+              'left_table' => $this->relationship,
+              'left_field' => 'profile_id',
+            ];
+
+            $join = $this->joinManager->createInstance('standard', $definition);
+            $this->query->addRelationship($definition['table'], $join, $this->relationship);
+          }
         }
 
-        // If we have more than one field for sort then use Firstname, Lastname,
-        // and Nickname fields.
-        if (count($order_by_fields) > 1) {
-          $this->field_alias = 'profile_full_name';
-          // We will have different expressions depending on is the Nickname
-          // field provided or not.
-          // Members will be sort by next queue:
-          // - Nickname
-          // - Firstname + Lastname (if Nickname is NULL)
-          // - Firstname (if Nickname and Lastname are NULL)
-          // - Lastname (if Nickname and Firstname are NULL)
-          // - Username (if all Name fields are NULL)
-          $field = in_array('field_profile_nick_name', $order_by_fields) ?
-            "CASE WHEN
-              profile__field_profile_nick_name.field_profile_nick_name_value IS NOT NULL
-            THEN
-              TRIM(profile__field_profile_nick_name.field_profile_nick_name_value)
-            WHEN
-              (profile__field_profile_nick_name.field_profile_nick_name_value IS NULL) AND ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
-            THEN
-              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
-            ELSE
-              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
-            END" :
-            "CASE WHEN
-              ((profile__field_profile_first_name.field_profile_first_name_value IS NOT NULL) OR (profile__field_profile_last_name.field_profile_last_name_value IS NOT NULL))
-            THEN
-              CONCAT(TRIM(COALESCE(profile__field_profile_first_name.field_profile_first_name_value, '')), ' ', TRIM(COALESCE(profile__field_profile_last_name.field_profile_last_name_value, '')))
-            ELSE
-              TRIM(" . $this->view->relationship['profile']->tableAlias . ".name)
-            END";
-          $query->addField(
-            NULL,
-            $field,
-            $this->field_alias
-          );
+        // Add the join to the table containing the username.
+        $definition = [
+          'table' => 'users_field_data',
+          'field' => 'uid',
+          'left_table' => $this->relationship,
+          'left_field' => 'uid',
+        ];
+
+        $join = $this->joinManager->createInstance('standard', $definition);
+        $this->query->addRelationship($definition['table'], $join, $this->relationship);
+
+        // The display for this field in views is the user's display name. This
+        // is controlled by various permissions and privacy settings in
+        // social_user_user_format_name_alter. This runs in code, so we don't
+        // have access to its value in the database. For sorting we try to apply
+        // the default Open Social logic to sort based on what we expect the
+        // outcome to be.
+        //
+        // Username is added to both sort orders in case a user hasn't filled
+        // out any of the other profile fields.
+        // Concatenation is used because we want to sort by the expected string
+        // shown to the user which could be just a last name, so the sort field
+        // is treated as a single string containing whatever is filled in.
+        //
+        // If a user can view any field then we can sort by the first non-empty
+        // value. Otherwise we need to construct a more complex query that takes
+        // visibility permissions into account.
+        if ($view_any) {
+          $sort = "
+            TRIM(CONCAT(
+              COALESCE(profile__field_profile_first_name.field_profile_first_name_value, ''),
+              ' ',
+              COALESCE(profile__field_profile_last_name.field_profile_last_name_value, ''),
+              ' ',
+              COALESCE(profile__field_profile_nick_name.field_profile_nick_name_value, ''),
+              ' ',
+              users_field_data.name
+            ))
+          ";
         }
-        // If we have only one field for sort then use the Profile name field.
-        elseif (count($order_by_fields) === 1) {
-          $this->field_alias = $definition['table'] . '.profile_name_value';
+        // While the below uses variables in unfiltered SQL the value of the
+        // variables comes from thirdPartySettings in FieldStorageConfig
+        // entities which is system controlled and not user input so this is
+        // still safe and not a SQL injection opportunity.
+        else {
+          $first_name_visibility = "profile__{$visibility_fields['field_profile_first_name']}.{$visibility_fields['field_profile_first_name']}_value";
+          $first_name_profile = "profile__field_profile_first_name.field_profile_first_name_value";
+          $last_name_visibility = "profile__{$visibility_fields['field_profile_last_name']}.{$visibility_fields['field_profile_last_name']}_value";
+          $last_name_profile = "profile__field_profile_last_name.field_profile_last_name_value";
+          $nick_name_visibility = "profile__{$visibility_fields['field_profile_nick_name']}.{$visibility_fields['field_profile_nick_name']}_value";
+          $nick_name_profile = "profile__field_profile_nick_name.field_profile_nick_name_value";
+
+          $allowed_visibility = $view_community
+            ? "'" . SOCIAL_PROFILE_FIELD_VISIBILITY_COMMUNITY . "', '" . SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC . "'"
+            : "'" . SOCIAL_PROFILE_FIELD_VISIBILITY_PUBLIC . "'";
+
+          $sort = "
+            TRIM(CONCAT(
+              COALESCE(IF($first_name_visibility IN ($allowed_visibility), $first_name_profile, NULL), ''),
+              ' ',
+              COALESCE(IF($last_name_visibility IN ($allowed_visibility), $last_name_profile, NULL), ''),
+              ' ',
+              COALESCE(IF($nick_name_visibility IN ($allowed_visibility), $nick_name_profile, NULL), ''),
+              ' ',
+              users_field_data.name
+            ))
+          ";
         }
+
+        $this->field_alias = 'profile_sort_by_name';
+        $this->query->addField(
+          NULL,
+          $sort,
+          $this->field_alias
+        );
+
+        // Since fields should always have themselves already added, just
+        // add a sort on the field.
+        $params = $this->options['group_type'] !== 'group' ? ['function' => $this->options['group_type']] : [];
+        $this->query->addOrderBy(NULL, NULL, $order, $this->field_alias, $params);
       }
-      // Since fields should always have themselves already added, just
-      // add a sort on the field.
-      $params = $this->options['group_type'] != 'group' ? ['function' => $this->options['group_type']] : [];
-      $this->query->addOrderBy(NULL, NULL, $order, $this->field_alias, $params);
     }
   }
 
   /**
-   * Get the list of fields that will be used for sorting.
+   * Get the name of the field that stores visibility data for a field.
    *
-   * @return string[]
-   *   List of fields.
+   * @param string $for_field
+   *   The field to get the visibility data field for.
+   *
+   * @return string
+   *   The name of the field that stores visibility data.
    */
-  private function orderByFields(): array {
-    // Set default sort fields.
-    $fields = [
-      'profile_name',
-    ];
+  private function getVisibilityFieldName(string $for_field) : string {
+    /** @var \Drupal\field\FieldStorageConfigInterface|NULL $field_storage_config */
+    $field_storage_config = $this->entityTypeManager
+      ->getStorage('field_storage_config')
+      ->load("profile.${for_field}");
 
-    // If social_profile_privacy module is not enabled then we sort users by
-    // default sort field.
-    if (!$this->moduleHandler->moduleExists('social_profile_privacy')) {
-      return $fields;
+    if ($field_storage_config === NULL) {
+      throw new \InvalidArgumentException("Field '${for_field}' does not exist on profile entity.");
     }
 
-    // If the user has no access to view hidden fields then we sort users by
-    // default sort fields.
-    if (!$this->currentUser->hasPermission('social profile privacy view hidden fields')) {
-      return $fields;
+    $visibility_field = $field_storage_config->getThirdPartySetting('social_profile', 'visibility_stored_by');
+
+    if ($visibility_field === NULL) {
+      throw new \RuntimeException("Field '${for_field}' does not have a visibility field configured.");
     }
 
-    // In the case where the user has access to view hidden fields, we need to
-    // sort profiles by Firstname and Lastname.
-    $fields = [
-      'field_profile_first_name',
-      'field_profile_last_name',
-    ];
-
-    // If module social_profile_fields is enabled then also need to sort
-    // profiles by Nickname.
-    if ($this->moduleHandler->moduleExists('social_profile_fields')) {
-      $fields[] = 'field_profile_nick_name';
-    }
-
-    return $fields;
+    return $visibility_field;
   }
 
 }

@@ -25,8 +25,8 @@ Feature: Create Mention in a Comment
     Then I logout
     And I am on "/all-topics"
     And I click "Mention in a comment test topic 2"
-    And I should not see the link "user_2"
-    And I should not see the link "user_3"
     And I should see "user_2, user_3, see my comment." in the "Main content"
+    And I should see the link "user_2"
+    And I should see the link "user_3"
 #    Then I should see "Albert Einstein mentioned Stephen Hawking in a comment"
 #    And I should see "user_2, user_3, see my comment."

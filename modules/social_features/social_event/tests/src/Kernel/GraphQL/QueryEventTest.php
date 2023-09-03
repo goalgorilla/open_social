@@ -39,6 +39,9 @@ class QueryEventTest extends SocialGraphQLTestBase {
     'filter',
     'file',
     'image',
+    // Profile fields.
+    'telephone',
+    'social_tag_split',
     // For the comment functionality.
     'social_comment',
     'comment',
@@ -81,6 +84,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
   protected static $configSchemaCheckerExclusions = [
     'social_event_managers.settings',
     'views.view.event_manage_enrollments',
+    'views.view.user_admin_people',
   ];
 
   /**
@@ -93,6 +97,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('comment');
     $this->installEntitySchema('file');
+    $this->installEntitySchema('profile_type');
     $this->installEntitySchema('profile');
 
     $this->installSchema('comment', 'comment_entity_statistics');
@@ -106,6 +111,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'filter',
       'comment',
       'social_comment',
+      'social_profile',
     ]);
   }
 
@@ -138,6 +144,7 @@ class QueryEventTest extends SocialGraphQLTestBase {
       'skip comment approval',
       'access comments',
       'view node.event.field_content_visibility:public content',
+      'access user profiles',
     ], $this->userPermissions()));
 
     $comment = Comment::create([

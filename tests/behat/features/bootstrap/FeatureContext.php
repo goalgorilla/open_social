@@ -7,6 +7,7 @@ use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Session;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
@@ -79,6 +80,41 @@ class FeatureContext extends RawMinkContext {
       $page->hasContent("Access Denied. You must log in to view this page.");
 
     }
+
+  /**
+   * Should see a field with a specific label.
+   *
+   * @param string $label
+   *  The field label.
+   *
+   * @Then I should see a field labeled :label
+   */
+  public function shouldSeeFieldLabeled(string $label) : void {
+    if (!$this->getSession()->getPage()->hasField($label)) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $label);
+    }
+  }
+
+  /**
+   * Should see a required field with a specific label.
+   *
+   * @param string $label
+   *  The field label.
+   *
+   * @Then I should see a required field labeled :label
+   */
+  public function shouldSeeRequiredFieldLabeled(string $label) : void {
+    $field = $this->getSession()->getPage()->findField($label);
+    if ($field === NULL) {
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $label);
+    }
+    // File type fields rely on server side validation, so we can't check the
+    // attribute. Similarly textarea's replaced by a WYSIWYG don't have a
+    // required at attribute.
+    if (($field->getAttribute("type") !== "file" && $field->getTagName() !== "textarea") && !$field->hasAttribute("required")) {
+      throw new \RuntimeException("Found field '$label' but it was not required when it should be.");
+    }
+  }
 
     /**
      * @Then I should see :text in the :heading block
@@ -865,11 +901,11 @@ class FeatureContext extends RawMinkContext {
       $row->clickLink($link_name);
     }
 
-  /**
-   * Expand a details area.
-   *
-   * @When I expand the :label section
-   */
+    /**
+     * Expand a details area.
+     *
+     * @When I expand the :label section
+     */
     public function iExpandDetailsSection(string $label) : void {
       $elements = array_filter(
         $this->getSession()->getPage()->findAll("css", "summary"),
@@ -901,6 +937,37 @@ class FeatureContext extends RawMinkContext {
 
       // Expand the details element.
       $summary->click();
+    }
+
+    /**
+     * Checks that the URL of an image with a certain alt-text is loaded.
+     *
+     * @param string $alt
+     *   The alt attribute of the image to find.
+     *
+     * @Then the image :title should be loaded
+     */
+    public function imageShouldBeLoaded(string $alt) : void {
+      $session = $this->getSession();
+      $locator  = "img[alt=\"$alt\"]";
+      $img = $session->getPage()->find('css', $locator);
+      if ($img === NULL) {
+        throw new ElementNotFoundException($session->getDriver(), "img", "css", $locator);
+      }
+
+      $src = $img->getAttribute("src");
+      if ($src === NULL) {
+        throw new \RuntimeException("Image with alt '$alt' has no 'src' attribute.");
+      }
+
+      // Load the image in a new session to not disrupt our current test.
+      $img_session = new Session($session->getDriver());
+      $img_session->visit($this->locatePath($src));
+      $img_status_code = $img_session->getStatusCode();
+      $img_session->stop();
+      if ($img_status_code !== 200) {
+        throw new \RuntimeException("Loaded image at '$src', expected status code 200 but got $img_status_code");
+      }
     }
 
 }

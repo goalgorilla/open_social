@@ -47,7 +47,6 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     // Routes for which needs to disable access if the user is blocked.
     $disable_access_for = [
-      'view.user_information.user_information',
       'view.events.events_overview',
       'view.topics.page_profile',
     ];
@@ -55,7 +54,13 @@ class RouteSubscriber extends RouteSubscriberBase {
     // Add custom access to routes.
     foreach ($disable_access_for as $route_name) {
       if ($route = $collection->get($route_name)) {
-        $route->setRequirement('_custom_access', '\Drupal\social_user\Controller\SocialUserController::accessUsersPages');
+        $route->setRequirement('_entity_access', 'user.view');
+
+        // Ensure parameter upcasting until
+        // https://www.drupal.org/project/drupal/issues/2528166 is fixed.
+        $parameters = $route->getOption('parameters') ?? [];
+        $parameters['user']['type'] = 'entity:user';
+        $route->setOption('parameters', $parameters);
       }
     }
   }

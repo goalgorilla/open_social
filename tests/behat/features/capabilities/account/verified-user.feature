@@ -4,7 +4,7 @@ Feature: User is Verified
   Role: As a Verified
   Goal/desire: New registered users get the "verified user & authenticated" role when they are registered.
 
-  @verified-immediately-enabled
+  @verified-immediately-enabled @email-spool
   Scenario: "Registered users are verified immediately" is enabled.
     # User registration.
     Given I am on the homepage
@@ -31,7 +31,7 @@ Feature: User is Verified
       And I click "Edit account"
       And I should see checked the box "Verified user"
 
-  @verified-immediately-disable
+  @verified-immediately-disable @email-spool
   Scenario: "Registered users are verified immediately" is disable.
     # Be sure that "Registered users are verified immediately" is disable.
     Given I am logged in as an "sitemanager"

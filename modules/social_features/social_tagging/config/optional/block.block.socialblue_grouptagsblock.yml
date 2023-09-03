@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_core
+    - system
+  theme:
+    - socialblue
+  enforced:
+    module:
+      - social_tagging
+id: socialblue_grouptagsblock
+theme: socialblue
+region: content
+weight: 0
+provider: null
+plugin: entity_view_block
+settings:
+  id: entity_view_block
+  label: 'Group Tags'
+  label_display: visible
+  provider: social_core
+  view_mode: social_tagging
+  context_mapping:
+    entity: '@social_core.entity_route_context:canonical_content_entity'
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '/group/*/about'
