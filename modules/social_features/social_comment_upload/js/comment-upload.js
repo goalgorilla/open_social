@@ -1,4 +1,4 @@
-(function ($, once) {
+(function (Drupal, $, once) {
 
   'use strict';
 
@@ -63,7 +63,7 @@
           image[index].src = value['src'];
         });
 
-        $pic.once('ClickItemFromGallery').on('click', 'a.photoswipe-item', function(event) {
+        $(once('ClickItemFromGallery', $pic)).on('click', 'a.photoswipe-item', function(event) {
           event.preventDefault();
 
           // Get the index of our parent which is part of the grid.
@@ -91,4 +91,4 @@
     }
   };
 
-})(jQuery, once);
+})(Drupal, jQuery, once);
