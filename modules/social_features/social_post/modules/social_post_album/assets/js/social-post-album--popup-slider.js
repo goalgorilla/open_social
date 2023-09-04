@@ -1,4 +1,4 @@
-(function ($, Drupal) {
+(function (Drupal, $, once) {
   Drupal.behaviors.socialPostAlbumPopupSlider = {
     attach: function (context) {
 
@@ -6,7 +6,7 @@
       $(window).on('dialog:aftercreate', function (dialog, $element, settings) {
         var albumSlider = $(context).find('.social-post-album--popup-slider-wrapper');
 
-        albumSlider.once('socialPostAlbumPopupSlider').each(function () {
+        $(once('socialPostAlbumPopupSlider', albumSlider)).each(function () {
           var el = $(this),
               albumPopup = el.closest('.social-post-album--popup'),
               slickInitClass = '.slick-initialized';
@@ -100,4 +100,4 @@
       });
     }
   };
-})(jQuery, Drupal);
+})(Drupal, jQuery, once);
