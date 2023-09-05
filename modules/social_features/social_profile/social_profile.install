@@ -68,7 +68,20 @@ function social_profile_install() {
     ]
   );
   // Add some links.
-  _social_profile_create_menu_links();
+  $parents = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['menu_name' => 'main', 'title' => 'Explore', 'expanded' => TRUE]);
+  $parent = reset($parents);
+  if ($parent !== FALSE) {
+    MenuLinkContent::create([
+      'title' => t('All members'),
+      'link' => ['uri' => 'internal:/all-members'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 50,
+      'parent' => 'menu_link_content:' . $parent->uuid(),
+    ])->save();
+  }
+
   // Add default profile image.
   _social_profile_add_default_profile_image();
 
@@ -114,31 +127,6 @@ function _social_profile_add_default_profile_image() {
 
   // Ensure Drupal tracks whether the file is still needed.
   \Drupal::service('file.usage')->add($media, 'image', 'default_image', $field_image_config_uuid);
-}
-
-/**
- * Function to create some menu items.
- */
-function _social_profile_create_menu_links() {
-  $menu_links = MenuLinkContent::loadMultiple();
-  $parent = NULL;
-  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
-  foreach ($menu_links as $menu_link) {
-    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
-      $parent = 'menu_link_content:' . $menu_link->uuid();
-    }
-  }
-
-  if (!is_null($parent)) {
-    MenuLinkContent::create([
-      'title' => t('All members'),
-      'link' => ['uri' => 'internal:/all-members'],
-      'menu_name' => 'main',
-      'expanded' => FALSE,
-      'weight' => 50,
-      'parent' => $parent,
-    ])->save();
-  }
 }
 
 /**

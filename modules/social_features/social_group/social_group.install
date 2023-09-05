@@ -124,7 +124,19 @@ function social_group_install() {
     ]
   );
   // Add menu items.
-  _social_group_create_menu_links();
+  $parents = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['menu_name' => 'main', 'title' => 'Explore', 'expanded' => TRUE]);
+  $parent = reset($parents);
+  if ($parent !== FALSE) {
+    MenuLinkContent::create([
+      'title' => t('All groups'),
+      'link' => ['uri' => 'internal:/all-groups'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 20,
+      'parent' => 'menu_link_content:' . $parent->uuid(),
+    ])->save();
+  }
 
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('group', 'stream');
@@ -225,31 +237,6 @@ function _social_group_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
-}
-
-/**
- * Function to create some menu items.
- */
-function _social_group_create_menu_links() {
-  $menu_links = MenuLinkContent::loadMultiple();
-  $parent = NULL;
-  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
-  foreach ($menu_links as $menu_link) {
-    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
-      $parent = 'menu_link_content:' . $menu_link->uuid();
-    }
-  }
-
-  if (!is_null($parent)) {
-    MenuLinkContent::create([
-      'title' => t('All groups'),
-      'link' => ['uri' => 'internal:/all-groups'],
-      'menu_name' => 'main',
-      'expanded' => FALSE,
-      'weight' => 20,
-      'parent' => $parent,
-    ])->save();
-  }
 }
 
 /**
