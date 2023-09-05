@@ -93,7 +93,19 @@ function social_topic_install() {
     ]
   );
   // Add some links.
-  _social_topic_create_menu_links();
+  $parents = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['menu_name' => 'main', 'title' => 'Explore', 'expanded' => TRUE]);
+  $parent = reset($parents);
+  if ($parent !== FALSE) {
+    MenuLinkContent::create([
+      'title' => t('All topics'),
+      'link' => ['uri' => 'internal:/all-topics'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 40,
+      'parent' => 'menu_link_content:' . $parent->uuid(),
+    ])->save();
+  }
 
   // Create some default taxonomy terms.
   $terms = [
@@ -122,31 +134,6 @@ function social_topic_install() {
       'field_topic_type_icon' => $term['icon'],
     ]);
     $term->save();
-  }
-}
-
-/**
- * Function to create some menu items.
- */
-function _social_topic_create_menu_links() {
-  $menu_links = MenuLinkContent::loadMultiple();
-  $parent = NULL;
-  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
-  foreach ($menu_links as $menu_link) {
-    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
-      $parent = 'menu_link_content:' . $menu_link->uuid();
-    }
-  }
-
-  if (!is_null($parent)) {
-    MenuLinkContent::create([
-      'title' => t('All topics'),
-      'link' => ['uri' => 'internal:/all-topics'],
-      'menu_name' => 'main',
-      'expanded' => FALSE,
-      'weight' => 40,
-      'parent' => $parent,
-    ])->save();
   }
 }
 
