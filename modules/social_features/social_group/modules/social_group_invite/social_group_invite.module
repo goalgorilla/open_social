@@ -54,6 +54,38 @@ function social_group_invite_theme(): array {
 }
 
 /**
+ * Implements hook_config_schema_info_alter().
+ */
+function social_group_invite_config_schema_info_alter(array &$definitions): void {
+  $definitions['social_group.settings']['mapping']['group_invite'] = [
+    'type' => 'mapping',
+    'label' => 'Group invite settings',
+    'mapping' => [
+      'invite_subject' => [
+        'type' => 'text',
+        'label' => 'Invite subject',
+      ],
+      'invite_message' => [
+        'type' => 'text',
+        'label' => 'Invite message',
+      ],
+      'invite_resend_message' => [
+        'type' => 'text',
+        'label' => 'Invite resend message',
+      ],
+      'email_verification' => [
+        'type' => 'boolean',
+        'label' => 'Email verification status',
+      ],
+      'invite_by_members' => [
+        'type' => 'boolean',
+        'label' => 'Invite by members status',
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_menu_local_tasks_alter().
  */
 function social_group_invite_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
