@@ -119,14 +119,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
               switch ($message_template_id) {
                 case 'activity_on_events_im_organizing':
                   $link = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $event->id()]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments'));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments', [], $context['options']));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
 
                 case 'request_event_enrollment':
                   $link = Url::fromRoute('view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $event->id()]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests'));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests', [], $context['options']));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
@@ -134,14 +134,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                 case 'member_added_by_event_organiser':
                 case 'event_request_approved':
                   $link = $event->toUrl('canonical');
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event'));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event', [], $context['options']));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
 
                 case 'user_was_enrolled_to_event':
                   $link = $event->toUrl();
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details'));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details', [], $context['options']));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;

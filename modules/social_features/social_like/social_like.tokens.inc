@@ -177,7 +177,7 @@ function social_like_tokens_alter(array &$replacements, array $context, Bubbleab
                   $commented_entity = $voted_entity->getCommentedEntity();
                   $link = $commented_entity->toUrl('canonical', $url_options);
                 }
-                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all likes'));
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all likes', [], $context['options']));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

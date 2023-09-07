@@ -176,7 +176,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
               switch ($message_template_id) {
                 case 'approve_request_join_group':
                   if (isset($context['tokens']['cta_button'])) {
-                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group'));
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group', [], $context['options']));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }

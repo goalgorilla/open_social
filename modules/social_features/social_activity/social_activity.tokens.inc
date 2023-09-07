@@ -78,7 +78,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           $preview_info = $email_token_services->getPostPreview($entity);
 
           // Prepare CTA button information.
-          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment'));
+          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment', [], $options));
 
           // This is for token deprecated token 'additional_information'.
           $additional_information = [
@@ -99,7 +99,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $link = $node->toUrl('canonical', ['absolute' => TRUE]);
 
             // Prepare the CTA button markup.
-            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more'));
+            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more', [], $options));
 
             // This is for token deprecated token 'additional_information'.
             $additional_information = [
