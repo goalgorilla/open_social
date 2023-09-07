@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 
 /**
  * Implements hook_help().
@@ -20,4 +21,48 @@ function social_footer_help($route_name, RouteMatchInterface $route_match) {
   }
 
   return $output;
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function social_footer_file_download(string $uri): ?array {
+  $scheme = StreamWrapperManager::getScheme($uri);
+  $target = StreamWrapperManager::getTarget($uri);
+
+  // Don't act if its not an inline-image.
+  if ($scheme != "private" || !str_contains((string) $target, "inline-images/")) {
+    return NULL;
+  }
+
+  $block_settings = \Drupal::configFactory()->getEditable('block.block.socialblue_footer_powered');
+  $block_settings = $block_settings->get("settings");
+  $block_settings_text = $block_settings["text"];
+
+  if (!$block_settings_text || empty($block_settings_text['value'])) {
+    return NULL;
+  }
+
+  // Grab all uuid within the text and get their paths.
+  $inline_images_uuids = _editor_parse_file_uuids($block_settings_text['value']);
+  $inline_images_paths = [];
+  foreach ($inline_images_uuids as $uuid) {
+    /** @var \Drupal\file\FileInterface|NULL $file */
+    $file = \Drupal::service('entity.repository')->loadEntityByUuid('file', $uuid);
+    if (!$file) {
+      continue;
+    }
+
+    $inline_images_paths[] = $file->getFileUri();
+  }
+
+  // If the file uri matches one of the paths, then we allow the user
+  // access.
+  if (in_array($uri, $inline_images_paths)) {
+    return [
+      'Content-disposition' => 'attachment; filename="' . basename((string) $target) . '"',
+    ];
+  }
+
+  return NULL;
 }
