@@ -98,7 +98,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
                 if (isset($context['tokens']['cta_button'])) {
                   $link = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group->id()],
                     ['absolute' => TRUE]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests'));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests', [], $context['options']));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                 }

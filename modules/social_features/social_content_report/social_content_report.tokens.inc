@@ -100,7 +100,7 @@ function social_content_report_tokens_alter(array &$replacements, array $context
             // Replace the preview token.
             if (isset($context['tokens']['cta_button'])) {
               $link = Url::fromRoute('view.report_overview.overview');
-              $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents'));
+              $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents', [], $context['options']));
               $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
             }
 
