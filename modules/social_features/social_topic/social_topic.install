@@ -514,7 +514,7 @@ function social_topic_update_11401(): string {
 /**
  * Remove deprecated permission "override topic revision log entry".
  */
-function social_topic_update_111201(): void {
+function social_topic_update_111101(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   /** @var \Drupal\user\RoleInterface[] $roles */
   $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
@@ -539,7 +539,7 @@ function social_topic_update_111201(): void {
  * Permissions to check:
  * - "translate topic node".
  */
-function social_topic_update_111202(): void {
+function social_topic_update_111102(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
   /** @var \Drupal\user\RoleInterface[] $roles */
