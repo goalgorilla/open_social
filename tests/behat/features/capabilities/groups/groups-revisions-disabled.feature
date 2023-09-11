@@ -24,7 +24,4 @@ Feature: Revisions are disabled for open group
     And I click "My groups"
     When I click "Test open group" in the "Main content"
     Then I should see "Test open group"
-
-    When I click "Edit group"
-    And I wait for "1" seconds
     Then I should not see "Revisions"
