@@ -1019,3 +1019,21 @@ function social_group_update_11901(): string {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Disable revisions for groups.
+ */
+function social_group_update_11902(): void {
+  $types = [
+    "closed_group",
+    "open_group",
+    "public_group",
+  ];
+
+  foreach ($types as $type) {
+    $config = \Drupal::configFactory()->getEditable("group.type." . $type);
+    $config->set("new_revision", FALSE);
+    $config->save();
+  }
+
+}
