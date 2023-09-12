@@ -564,7 +564,11 @@ class ActivityFactory extends ControllerBase {
    * @param array $output
    *   The templated text to be replaced.
    * @param array $options
-   *   Token options.
+   *   A keyed array of token options. Supported options are:
+   *   - langcode: A language code to be used when generating locale-sensitive
+   *     tokens.
+   *   - clear: A boolean flag indicating that tokens should be removed from the
+   *     final text if no replacement value can be generated.
    * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
