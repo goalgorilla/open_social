@@ -151,7 +151,7 @@ class EventAnEnrollController extends ControllerBase {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return \Drupal\Core\Access\AccessResult
+   * @return \Drupal\Core\Access\AccessResultInterface
    *   Check standard and custom permissions.
    */
   public function enrollManageAccess(AccountInterface $account) {
