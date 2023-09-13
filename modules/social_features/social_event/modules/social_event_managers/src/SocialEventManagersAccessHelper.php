@@ -2,61 +2,87 @@
 
 namespace Drupal\social_event_managers;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
 
 /**
  * Helper class for checking update access on event managers nodes.
+ *
+ * @todo Check: probably, these access rules should be applied only for events
+ *   with not empty "field_event_managers" field.
  */
 class SocialEventManagersAccessHelper {
 
   /**
+   * Neutral status.
+   */
+  const NEUTRAL = 0;
+
+  /**
+   * Forbidden status.
+   */
+  const FORBIDDEN = 1;
+
+  /**
+   * Allowed status.
+   */
+  const ALLOW = 2;
+
+  /**
    * NodeAccessCheck for given operation, node and user account.
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
-    if ($op === 'update') {
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
+    if ($op !== 'update') {
+      return static::NEUTRAL;
+    }
 
-      // Only for events.
-      if ($node->getType() === 'event') {
-        if ($account->hasPermission('administer nodes')
-          || $account->hasPermission('bypass node access')) {
-          return 2;
-        }
-        // Only continue if the user has access to view the event.
-        if ($node->access('view', $account)) {
-          // The owner has access.
-          if ($account->id() === $node->getOwnerId()) {
-            return 2;
-          }
+    // Only for events.
+    if ($node->bundle() !== 'event') {
+      return static::NEUTRAL;
+    }
 
-          $event_managers = $node->get('field_event_managers')->getValue();
+    if ($account->hasPermission('administer nodes')
+      || $account->hasPermission('bypass node access')) {
+      return static::ALLOW;
+    }
 
-          foreach ($event_managers as $event_manager) {
-            if (isset($event_manager['target_id']) && $account->id() === $event_manager['target_id']) {
-              return 2;
-            }
-          }
+    // Only continue if the user has access to view the event.
+    if ($node->access('view', $account)) {
+      // The owner has access.
+      if ($account->id() === $node->getOwnerId()) {
+        return static::ALLOW;
+      }
 
-          // No hits, so we assume the user is not an event manager.
-          return 1;
+      $event_managers = $node->get('field_event_managers')->getValue();
+
+      foreach ($event_managers as $event_manager) {
+        if (isset($event_manager['target_id']) && $account->id() === $event_manager['target_id']) {
+          return static::ALLOW;
         }
       }
+
+      // No hits, so we assume the user is not an event manager and returns
+      // "neutral" access result to make possible to apply others
+      // access rules.
+      return static::NEUTRAL;
     }
-    return 0;
+
+    return static::NEUTRAL;
   }
 
   /**
    * Gets the Entity access for the given node.
    */
-  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account): AccessResultInterface {
     $access = self::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {
-      case 2:
+      case static::ALLOW:
         return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($node);
 
-      case 1:
+      case static::FORBIDDEN:
         return AccessResult::forbidden();
     }
 
