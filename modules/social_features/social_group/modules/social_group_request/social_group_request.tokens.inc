@@ -76,6 +76,11 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
  */
 function social_group_request_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    // Translate hook_tokens options to the options for TranslatableMarkup.
+    $translation_options = [
+      'langcode' => $context['options']['langcode'] ?? NULL,
+    ];
+
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];
 
@@ -98,7 +103,7 @@ function social_group_request_tokens_alter(array &$replacements, array $context,
                 if (isset($context['tokens']['cta_button'])) {
                   $link = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group->id()],
                     ['absolute' => TRUE]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests', [], $context['options']));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View the requests', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                 }

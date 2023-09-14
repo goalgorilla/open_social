@@ -78,6 +78,11 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
  */
 function social_content_report_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    // Translate hook_tokens options to the options for TranslatableMarkup.
+    $translation_options = [
+      'langcode' => $context['options']['langcode'] ?? NULL,
+    ];
+
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];
 
@@ -100,7 +105,7 @@ function social_content_report_tokens_alter(array &$replacements, array $context
             // Replace the preview token.
             if (isset($context['tokens']['cta_button'])) {
               $link = Url::fromRoute('view.report_overview.overview');
-              $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents', [], $context['options']));
+              $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Check the reported contents', [], $translation_options));
               $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')->renderPlain($cta_button);
             }
 

@@ -99,6 +99,11 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
  */
 function social_event_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    // Translate hook_tokens options to the options for TranslatableMarkup.
+    $translation_options = [
+      'langcode' => $context['options']['langcode'] ?? NULL,
+    ];
+
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];
 
@@ -119,14 +124,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
               switch ($message_template_id) {
                 case 'activity_on_events_im_organizing':
                   $link = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $event->id()]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments', [], $context['options']));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollments', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
 
                 case 'request_event_enrollment':
                   $link = Url::fromRoute('view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $event->id()]);
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests', [], $context['options']));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('View enrollment requests', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
@@ -134,14 +139,14 @@ function social_event_tokens_alter(array &$replacements, array $context, Bubblea
                 case 'member_added_by_event_organiser':
                 case 'event_request_approved':
                   $link = $event->toUrl('canonical');
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event', [], $context['options']));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See the event', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
 
                 case 'user_was_enrolled_to_event':
                   $link = $event->toUrl();
-                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details', [], $context['options']));
+                  $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See event details', [], $translation_options));
                   $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                     ->renderPlain($cta_button);
                   break;
