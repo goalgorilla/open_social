@@ -175,6 +175,11 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
  */
 function social_mentions_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
   if ($context['type'] == 'message' && !empty($context['data']['message'])) {
+    // Translate hook_tokens options to the options for TranslatableMarkup.
+    $translation_options = [
+      'langcode' => $context['options']['langcode'] ?? NULL,
+    ];
+
     /** @var Drupal\message\Entity\Message $message */
     $message = $context['data']['message'];
 
@@ -240,7 +245,7 @@ function social_mentions_tokens_alter(array &$replacements, array $context, Bubb
                 }
 
                 $link = $entity->toUrl('canonical', $options);
-                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment', [], $context['options']));
+                $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Reply to this comment', [], $translation_options));
                 $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                   ->renderPlain($cta_button);
               }

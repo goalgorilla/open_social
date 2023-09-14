@@ -156,6 +156,11 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
     // Alter the [message:cta_button] and [message:preview] token, and
     // replace it with the rendered content with new text and link.
     if (isset($context['tokens']['cta_button'])|| isset($context['tokens']['preview'])) {
+      // Translate hook_tokens options to the options for TranslatableMarkup.
+      $translation_options = [
+        'langcode' => $context['options']['langcode'] ?? NULL,
+      ];
+
       /** @var Drupal\message\Entity\Message $message */
       $message = $context['data']['message'];
 
@@ -176,7 +181,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
               switch ($message_template_id) {
                 case 'approve_request_join_group':
                   if (isset($context['tokens']['cta_button'])) {
-                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group', [], $context['options']));
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Explore the group', [], $translation_options));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }
@@ -190,7 +195,7 @@ function social_group_tokens_alter(array &$replacements, array $context, Bubblea
                 case 'join_to_group':
                   if (isset($context['tokens']['cta_button'])) {
                     $link = Url::fromRoute('view.group_members.page_group_members', ['group' => $group_content->getGroup()->id()]);
-                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members', [], $context['options']));
+                    $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('See all members', [], $translation_options));
                     $replacements[$context['tokens']['cta_button']] = \Drupal::service('renderer')
                       ->renderPlain($cta_button);
                   }
