@@ -51,6 +51,11 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
   $replacements = [];
 
   if ($type === 'message' && !empty($data['message'])) {
+    // Translate hook_tokens options to the options for TranslatableMarkup.
+    $translation_options = [
+      'langcode' => $options['langcode'] ?? NULL,
+    ];
+
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -78,7 +83,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
           $preview_info = $email_token_services->getPostPreview($entity);
 
           // Prepare CTA button information.
-          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment', [], $options));
+          $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Leave a comment', [], $translation_options));
 
           // This is for token deprecated token 'additional_information'.
           $additional_information = [
@@ -99,7 +104,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $link = $node->toUrl('canonical', ['absolute' => TRUE]);
 
             // Prepare the CTA button markup.
-            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more', [], $options));
+            $cta_button = $email_token_services->getCtaButton($link, new TranslatableMarkup('Read more', [], $translation_options));
 
             // This is for token deprecated token 'additional_information'.
             $additional_information = [
