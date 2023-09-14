@@ -39,7 +39,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    *
    * @var \Drupal\Core\Action\ActionManager
    */
-  protected $pluginActionManager;
+  protected $actionManager;
 
   /**
    * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
@@ -83,7 +83,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
 
     $this->entityTypeManager = $entity_type_manager;
-    $this->pluginActionManager = $pluginActionManager;
+    $this->actionManager = $pluginActionManager;
   }
 
   /**
@@ -108,7 +108,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions(): array {
+  public function getBulkOptions() {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'event_manage_enrollments') {
@@ -136,7 +136,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsForm(array &$form, FormStateInterface $form_state): void {
+  public function viewsForm(array &$form, FormStateInterface $form_state) {
     $this->view->setExposedInput(['status' => TRUE]);
 
     parent::viewsForm($form, $form_state);
@@ -198,8 +198,6 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     }
     // Add the Event ID to the data.
     $tempstoreData['event_id'] = $event->id();
-
-    /** @var array $tempstoreData */
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
@@ -227,9 +225,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Render select all results checkbox.
     if (!empty($wrapper['select_all'])) {
-      $total_results = is_array($this->tempStoreData) ? $this->tempStoreData['total_results'] : 0;
       $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count members across all the pages', [
-        '@count' => ' ' . $total_results,
+        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
       ]);
       // Styling attributes for the select box.
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
@@ -343,7 +340,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  public function viewsFormSubmit(array &$form, FormStateInterface $form_state): void {
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
     parent::viewsFormSubmit($form, $form_state);
 
     if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'event_manage_enrollments') {
@@ -417,7 +414,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   /**
    * {@inheritdoc}
    */
-  protected function getTempstoreData($view_id = NULL, $display_id = NULL): ?array {
+  protected function getTempstoreData($view_id = NULL, $display_id = NULL) {
     $data = parent::getTempstoreData($view_id, $display_id);
 
     if (is_array($data) && $data) {

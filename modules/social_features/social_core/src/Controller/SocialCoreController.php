@@ -197,7 +197,6 @@ class SocialCoreController extends ControllerBase {
         break;
     }
 
-    /** @var array $view_data */
     $this->setTempstoreData($view_data);
 
     $count = empty($view_data['exclude_mode'])
