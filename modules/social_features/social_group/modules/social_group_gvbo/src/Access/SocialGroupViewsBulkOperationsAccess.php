@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_gvbo\Access;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\views_bulk_operations\Access\ViewsBulkOperationsAccess;
@@ -14,7 +15,7 @@ class SocialGroupViewsBulkOperationsAccess extends ViewsBulkOperationsAccess {
   /**
    * {@inheritdoc}
    */
-  public function access(AccountInterface $account, RouteMatch $routeMatch) {
+  public function access(AccountInterface $account, RouteMatch $routeMatch): AccessResult {
     $parameters = [
       'view_id' => 'group_manage_members',
       'display_id' => 'page_group_manage_members',

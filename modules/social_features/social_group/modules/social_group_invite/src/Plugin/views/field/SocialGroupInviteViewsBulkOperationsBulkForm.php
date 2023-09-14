@@ -21,7 +21,7 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions() {
+  public function getBulkOptions(): array {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'social_group_invitations') {
@@ -85,6 +85,7 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
       $tempstoreData['group_id'] = $group->id();
     }
 
+    /** @var array $tempstoreData */
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
@@ -104,8 +105,9 @@ class SocialGroupInviteViewsBulkOperationsBulkForm extends ViewsBulkOperationsBu
 
     // Render select all results checkbox.
     if (!empty($wrapper['select_all'])) {
+      $total_results = is_array($this->tempStoreData) ? $this->tempStoreData['total_results'] : 0;
       $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count invites across all the pages', [
-        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+        '@count' => ' ' . $total_results,
       ]);
       // Styling attributes for the select box.
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
