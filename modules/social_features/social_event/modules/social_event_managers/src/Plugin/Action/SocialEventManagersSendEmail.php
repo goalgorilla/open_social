@@ -115,7 +115,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state): array {
+  public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state) {
     return $form;
   }
 
