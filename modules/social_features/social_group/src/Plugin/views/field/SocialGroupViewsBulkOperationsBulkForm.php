@@ -20,7 +20,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function getBulkOptions() {
+  public function getBulkOptions(): array {
     $bulk_options = parent::getBulkOptions();
 
     if ($this->view->id() !== 'group_manage_members') {
@@ -67,7 +67,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsForm(array &$form, FormStateInterface $form_state) {
+  public function viewsForm(array &$form, FormStateInterface $form_state): void {
     $this->view->setExposedInput(['status' => TRUE]);
 
     parent::viewsForm($form, $form_state);
@@ -118,6 +118,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       $tempstoreData['group_id'] = $group->id();
     }
 
+    /** @var array $tempstoreData */
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
@@ -137,8 +138,9 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     // Render select all results checkbox.
     if (!empty($wrapper['select_all'])) {
+      $total_results = is_array($this->tempStoreData) ? $this->tempStoreData['total_results'] : 0;
       $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count members across all the pages', [
-        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+        '@count' => ' ' . $total_results,
       ]);
       // Styling attributes for the select box.
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
@@ -259,7 +261,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   /**
    * {@inheritdoc}
    */
-  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state): void {
     parent::viewsFormSubmit($form, $form_state);
 
     if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'group_manage_members') {
