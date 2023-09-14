@@ -31,7 +31,8 @@ function social_mailer_get_logo(string $theme_id): string {
     $file = File::load($email_logo[0]);
 
     if ($file instanceof FileInterface) {
-      $logo = file_create_url($file->getFileUri());
+      $file_url_generator = \Drupal::service('file_url_generator');
+      $logo = $file_url_generator->generateAbsoluteString($file->getFileUri());
     }
   }
 
