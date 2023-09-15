@@ -344,3 +344,63 @@ function social_tagging_update_11801(): void {
     }
   }
 }
+
+/**
+ * Add Placement field to Content tags.
+ */
+function social_tagging_update_11802(): void {
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_tagging') . '/config/static';
+  $source = new FileStorage($config_path);
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  // Create field storages.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+  $data = $source->read('field.storage.taxonomy_term.field_category_usage_11802');
+  if (!is_array($data)) {
+    throw new \Exception('Could not load config file: field.storage.taxonomy_term.field_category_usage_11802');
+  }
+  $field_storage_config_storage->create($data)->save();
+
+  // Create field settings.
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $data = $source->read('field.field.taxonomy_term.social_tagging.field_category_usage_11802');
+  if (!is_array($data)) {
+    throw new \Exception('Could not load config file: field.field.taxonomy_term.social_tagging.field_category_usage_11802');
+  }
+  $field_config_storage->create($data)->save();
+}
+
+/**
+ * Update a form and view display for the 'Social tagging' terms.
+ */
+function social_tagging_update_11803(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_tagging', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}
+
+/**
+ * Fill content to field_category_usage field.
+ */
+function social_tagging_update_11804(): void {
+  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
+  $helper = \Drupal::service('social_tagging.tag_service');
+  $options = $helper->getKeyValueOptions();
+  // Option contains key=>value array where values are a label.
+  // Get keys, and serialize like in TaggingUsageWidget.
+  $values = array_keys($options);
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'vid' => 'social_tagging',
+    'parent' => '0',
+  ]);
+  foreach ($terms as $term) {
+    $term->set('field_category_usage', serialize($values))->save();
+  }
+}
