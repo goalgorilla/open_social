@@ -351,9 +351,9 @@ function social_follow_tag_form_alter(array &$form, FormStateInterface $form_sta
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function social_follow_tag_field_widget_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
+function social_follow_tag_field_widget_single_element_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getName() == 'field_term_page_url') {

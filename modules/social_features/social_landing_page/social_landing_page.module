@@ -41,7 +41,7 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  *
  * When rendering the block form inside paragraphs, the #states will not
  * work due to different name parameter, since it's nested inside the paragraph
@@ -49,7 +49,7 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
  * html markup provided by paragraph. We only do this for
  * 'Override title' field.
  */
-function social_landing_page_field_widget_block_field_default_form_alter(&$element, &$form_state, $context) {
+function social_landing_page_field_widget_single_element_block_field_default_form_alter(&$element, &$form_state, $context) {
   // Make sure we are inside a paragraph.
   $form = $context['form'];
   $entity_type = $form['#entity_type'];

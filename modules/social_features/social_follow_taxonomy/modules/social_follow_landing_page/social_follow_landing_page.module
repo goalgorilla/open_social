@@ -95,9 +95,9 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ * Implements hook_field_widget_single_element_WIDGET_TYPE_form_alter().
  */
-function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
+function social_follow_landing_page_field_widget_single_element_entity_reference_paragraphs_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
   $subform = FALSE;
   $entity_type_manager = \Drupal::entityTypeManager();
   if (isset($element['subform']['field_tag'])) {
