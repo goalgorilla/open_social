@@ -132,6 +132,11 @@ interface SocialTaggingServiceInterface {
   public function getCategories(): array;
 
   /**
+   * Check if given term is allowed to use and see for given entities.
+   */
+  public function termIsVisibleForEntities(string $term_name, array $placement_filter_keys): bool;
+
+  /**
    * Returns the children of any level term items.
    *
    * @param int $category
@@ -172,5 +177,13 @@ interface SocialTaggingServiceInterface {
    *   The keys are entity type identifiers. The values are arrays of bundles.
    */
   public function types(bool $short = FALSE): array;
+
+  /**
+   * Get key values array.
+   *
+   * @return array
+   *   Where key is unique and value is a label.
+   */
+  public function getKeyValueOptions(): array;
 
 }
