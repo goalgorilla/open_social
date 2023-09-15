@@ -2,12 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.social_tagging.field_category_usage
     - field.field.taxonomy_term.social_tagging.field_term_page_url
     - taxonomy.vocabulary.social_tagging
   module:
     - link
-    - path
-    - text
+    - social_tagging
   enforced:
     module:
       - social_tagging
@@ -16,41 +16,35 @@ targetEntityType: taxonomy_term
 bundle: social_tagging
 mode: default
 content:
-  description:
-    type: text_textfield
+  field_category_usage:
+    type: social_tagging_usage
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_term_page_url:
+    type: link_default
+    weight: 2
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  name:
+    type: string_textfield
     weight: 0
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_term_page_url:
-    weight: 1
-    settings:
-      placeholder_url: ''
-      placeholder_title: ''
-    third_party_settings: {  }
-    type: link_default
-    region: content
-  name:
-    type: string_textfield
-    weight: -5
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 3
+    region: content
     settings:
       display_label: true
-    weight: 100
-    region: content
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  description: true
+  path: true

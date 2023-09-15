@@ -4,10 +4,13 @@ namespace Drupal\social_tagging;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\social_core\Service\MachineNameInterface;
@@ -17,6 +20,8 @@ use Drupal\taxonomy\TermInterface;
  * Provides a custom tagging service.
  */
 class SocialTaggingService implements SocialTaggingServiceInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The name of the hook provides supported entity types.
@@ -98,6 +103,26 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     // Get the main categories.
     $categories = $this->getCategories();
 
+    // Placement keys.
+    $keys = array_keys($this->getKeyValueOptions());
+    $filter_key = NULL;
+    foreach ($keys as $key) {
+      // Check if form ID is one of keys to filter.
+      if (str_contains((string) $form['#id'], $key) || str_contains((string) $form['#id'], str_replace('_', '-', $key))) {
+        $filter_key = $key;
+      }
+    }
+    if ($filter_key) {
+      foreach ($categories as $tid => $category) {
+        if ($this->termIsVisibleForEntities($category, [$filter_key])) {
+          continue;
+        }
+        // Unset category as it is disables for current form.
+        unset($categories[$tid]);
+      }
+    }
+
+    // Build form field.
     if ($default_value !== NULL) {
       // Loop over the categories.
       foreach ($categories as $tid => $category) {
@@ -226,6 +251,23 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
    */
   public function getCategories(): array {
     return $this->getChildren(0);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function termIsVisibleForEntities(string $term_name, array $placement_filter_keys): bool {
+    $term = $this->entityTypeManager->getStorage('taxonomy_term')->loadByProperties(['name' => $term_name]);
+    $term = reset($term);
+    if (!$term instanceof TermInterface) {
+      return FALSE;
+    }
+    $usage = unserialize($term->get('field_category_usage')->value ?? '');
+    // Check if category enabled for given entities.
+    if (is_array($usage) && !empty(array_intersect($placement_filter_keys, $usage))) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -457,6 +499,58 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     }
 
     return $short ? array_keys($items) : $items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getKeyValueOptions(): array {
+    $types = $this->types();
+    ksort($types);
+    asort($types);
+    $settings = $this->configFactory->get('social_tagging.settings');
+    $options = [];
+    foreach ($types as $entity_type => $item) {
+      $definition = $this->entityTypeManager->getDefinition($entity_type);
+      if (!$definition instanceof EntityTypeInterface) {
+        continue;
+      }
+      $item = array_filter($item);
+      // Empty value means there is no bundles.
+      // For groups there is only one option as well.
+      if (empty($item) || $entity_type == 'group') {
+        // Filter entities that are not enabled for the platform.
+        if (!empty($settings->get("tag_type_$entity_type"))) {
+          $options[$entity_type] = $definition->getLabel();
+        }
+        continue;
+      }
+      foreach ($item as $value) {
+        $bundle_entity_type = $definition->getBundleEntityType();
+        if (!isset($value['bundles']) || empty($bundle_entity_type)) {
+          continue;
+        }
+        // Special label for nodes.
+        $label = $entity_type === 'node' ? $this->t('Node') : $definition->getLabel();
+        // Go foreach bundle to get key and label.
+        foreach ($value['bundles'] as $bundle) {
+          $bundle_entity = $this->entityTypeManager->getStorage($bundle_entity_type)->load($bundle);
+          if (!$bundle_entity instanceof EntityInterface) {
+            continue;
+          }
+          $title = $this->t('@entity_type type: @bundle', [
+            '@entity_type' => $label,
+            '@bundle' => $bundle_entity->label(),
+          ]);
+          // Filter entities that are not enabled for the platform.
+          if (!empty($settings->get("tag_{$entity_type}_type_$bundle"))) {
+            // Key now contains type and bundle.
+            $options[$entity_type . '_' . $bundle] = $title;
+          }
+        }
+      }
+    }
+    return $options;
   }
 
 }
