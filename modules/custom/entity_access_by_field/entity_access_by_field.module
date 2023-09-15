@@ -250,9 +250,9 @@ function entity_access_by_field_post_presave(PostInterface $post) {
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function entity_access_by_field_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function entity_access_by_field_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() !== 'entity_access_field' && $field_definition->getName() !== 'field_visibility') {

@@ -711,9 +711,9 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_core_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() === 'path') {
