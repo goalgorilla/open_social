@@ -16,7 +16,7 @@ use Drupal\taxonomy\TermInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialTaggingSettingsForm.
+ * Class Social Tagging Settings Form.
  *
  * @package Drupal\social_tagging\Form
  */
