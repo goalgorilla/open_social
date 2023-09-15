@@ -121,7 +121,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
         }
 
         // When there are email addresses configured.
-        if ($data['user_mail_addresses']) {
+        if (isset($data['user_mail_addresses']) && $data['user_mail_addresses']) {
           foreach ($data['user_mail_addresses'] as $mail_address) {
             if ($this->emailValidator->isValid($mail_address['email_address'])) {
               // Attempt sending mail.
