@@ -200,9 +200,9 @@ function social_event_max_enroll_node_presave(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function social_event_max_enroll_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_event_max_enroll_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
   $field_definition = $context['items']->getFieldDefinition();
   if ($field_definition->getName() === 'field_event_max_enroll_num') {
     $element['value']['#title_display'] = 'none';

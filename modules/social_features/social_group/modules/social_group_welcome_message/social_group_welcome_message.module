@@ -216,9 +216,9 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
 }
 
 /**
- * Implements hook_field_widget_form_alter().
+ * Implements hook_field_widget_single_element_form_alter().
  */
-function social_group_welcome_message_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_group_welcome_message_field_widget_single_element_form_alter(&$element, FormStateInterface $form_state, $context) {
   // Maps field names to an array containing a single format.
   $map = [
     'private_message_body' => ['basic_html'],
