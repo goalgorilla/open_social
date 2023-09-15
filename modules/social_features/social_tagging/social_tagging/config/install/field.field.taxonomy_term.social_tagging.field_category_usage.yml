@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_category_usage
+    - taxonomy.vocabulary.social_tagging
+id: taxonomy_term.social_tagging.field_category_usage
+field_name: field_category_usage
+entity_type: taxonomy_term
+bundle: social_tagging
+label: Placement
+description: 'Where this term will be available within the platform'
+required: false
+translatable: false
+default_value:
+  -
+    value: 'a:6:{s:21:"tag_type_organization";i:0;s:16:"tag_type_profile";i:0;s:19:"tag_node_type_event";i:0;s:18:"tag_node_type_page";i:0;s:19:"tag_node_type_topic";i:0;s:14:"tag_type_group";i:0;}'
+default_value_callback: ''
+settings: {  }
+field_type: string_long

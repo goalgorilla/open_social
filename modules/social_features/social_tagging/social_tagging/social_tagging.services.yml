@@ -1,0 +1,21 @@
+services:
+  social_tagging.tag_service:
+    class: Drupal\social_tagging\SocialTaggingService
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@language_manager'
+      - '@module_handler'
+      - '@social_core.machine_name'
+
+  social_tagging.overrider:
+    class: Drupal\social_tagging\SocialTaggingOverrides
+    arguments: ['@config.factory', '@social_core.machine_name']
+    tags:
+      - { name: config.factory.override, priority: 5 }
+
+  social_tagging.translation_defaults:
+    class: Drupal\social_tagging\ContentTranslationDefaultsConfigOverride
+    arguments: ['@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }
