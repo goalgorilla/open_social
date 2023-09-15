@@ -19,6 +19,11 @@ jobs:
       - name: Install Gettext tools
         run: sudo apt-get install gettext
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+
       - name: Configure Git
         run: |
           git config --global user.email "noreply@getopensocial.com"
@@ -99,10 +104,10 @@ jobs:
           echo "$PR_BODY" > "${RUNNER_TEMP}/CHANGES.md"
 
       - name: Create Pull Request
-        uses: goalgorilla/create-pull-request@patched-2022-08-30
+        uses: peter-evans/create-pull-request@v5
         with:
           branch: automation/translations-source-extraction
           delete-branch: true
           title: Updated source translations
-          body-file: ${{ runner.temp }}/CHANGES.md
+          body-path: ${{ runner.temp }}/CHANGES.md
           labels: automated,translations
