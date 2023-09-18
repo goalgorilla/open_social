@@ -61,7 +61,7 @@ class JoinManager extends DefaultPluginManager implements JoinManagerInterface {
       $old_types = $new_types = array_unique($old_types);
 
       $this->moduleHandler->alterDeprecated(
-        'Deprecated in social:11.2.0 and is removed from social:12.0.0. Use hook_social_group_join_method_usage instead. See https://www.drupal.org/node/3254715',
+        'Deprecated in social:11.2.0 and is removed from social:13.0.0. Use hook_social_group_join_method_usage instead. See https://www.drupal.org/node/3254715',
         'social_group_request',
         $new_types,
       );

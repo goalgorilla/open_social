@@ -311,7 +311,7 @@ class ActivityLoggerFactory {
    *   The data to insert in the field instances.
    */
   protected function createFieldInstances($message_type, array $fields) {
-    @trigger_error(__METHOD__ . ' is deprecated in social:11.7.0 and is removed from social:12.0.0. Create the fields using `config/install` instead. See https://www.drupal.org/node/3232246', E_USER_DEPRECATED);
+    @trigger_error(__METHOD__ . ' is deprecated in social:11.7.0 and is removed from social:13.0.0. Create the fields using `config/install` instead. See https://www.drupal.org/node/3232246', E_USER_DEPRECATED);
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = $this->entityTypeManager

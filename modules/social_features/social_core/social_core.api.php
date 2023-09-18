@@ -72,7 +72,7 @@ function hook_social_core_title_alter(array &$titles) {
  * @param array $node_types
  *   The filter format that is default.
  *
- * @deprecated in social:11.4.0 and is removed from social:12.0.0. Use
+ * @deprecated in social:11.4.0 and is removed from social:13.0.0. Use
  *   hook_social_core_title_alter instead.
  *
  * @see https://www.drupal.org/node/3285045

@@ -13,7 +13,7 @@ use Drupal\views\Views;
  *
  * @ViewsFilter("flexible_group_node_access")
  *
- * @deprecated in social:11.9.0 and is removed from social:12.0.0.
+ * @deprecated in social:11.9.0 and is removed from social:13.0.0.
  *   Use views filter "node_access" from "node" module instead.
  * @see https://www.drupal.org/project/social/issues/3358489
  */
