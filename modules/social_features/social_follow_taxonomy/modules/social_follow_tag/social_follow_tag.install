@@ -160,14 +160,19 @@ function _social_follow_tag_update_existing_messages(array &$sandbox): void {
     // Get all message IDs than should be updated.
     $query = $message_storage->getQuery()
       ->condition('template', 'create_node_following_tag_stream');
-    $mids = $query->execute();
+    $mids = $query
+      ->accessCheck()
+      ->execute();
     if (empty($mids)) {
       $sandbox['#finished'] = 1;
       return;
     }
 
     // Set default params.
-    $sandbox['total'] = $query->count()->execute();
+    $sandbox['total'] = $query
+      ->count()
+      ->accessCheck()
+      ->execute();
     $sandbox['processed'] = 0;
     $sandbox['mids'] = $mids;
   }
