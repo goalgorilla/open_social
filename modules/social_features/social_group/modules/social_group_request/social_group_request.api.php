@@ -16,7 +16,7 @@
  * @param array $group_types
  *   List of group types used in open social.
  *
- * @deprecated in social:11.4.0 and is removed from social:12.0.0. Use
+ * @deprecated in social:11.4.0 and is removed from social:13.0.0. Use
  *   hook_social_group_join_method_usage instead.
  *
  * @see https://www.drupal.org/node/3254715
