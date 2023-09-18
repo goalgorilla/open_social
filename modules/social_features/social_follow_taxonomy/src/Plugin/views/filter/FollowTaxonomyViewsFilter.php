@@ -171,7 +171,11 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
         }
         $terms = $this->entityTypeManager
           ->getStorage('taxonomy_term')
-          ->loadMultiple($query->execute());
+          ->loadMultiple(
+            $query
+              ->accessCheck()
+              ->execute()
+          );
 
         foreach ($terms as $term) {
           $options[$term->id()] = $this->entityRepository
