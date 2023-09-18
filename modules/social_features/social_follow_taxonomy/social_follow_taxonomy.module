@@ -295,7 +295,7 @@ function social_follow_taxonomy_related_entity_count(TermInterface $term, $field
         ->addTag('node_access')
         ->addMetaData('base_table', 'node')
         ->addMetaData('op', 'view')
-        ->accessCheck()
+        ->accessCheck(TRUE)
         ->execute();
       break;
 
@@ -304,7 +304,7 @@ function social_follow_taxonomy_related_entity_count(TermInterface $term, $field
         ->getStorage('group')
         ->getQuery()
         ->condition($field_id, $term->id())
-        ->accessCheck()
+        ->accessCheck(TRUE)
         ->execute();
       break;
 
