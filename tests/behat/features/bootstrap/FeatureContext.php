@@ -602,7 +602,7 @@ class FeatureContext extends RawMinkContext {
       $query = \Drupal::entityQuery('user')
         ->condition('name', $username);
       $uid = $query
-        ->accessCheck()
+        ->accessCheck(TRUE)
         ->execute();
 
       if (!empty($uid) && count($uid) === 1) {
@@ -653,7 +653,7 @@ class FeatureContext extends RawMinkContext {
       $query = \Drupal::entityQuery('user')
         ->condition('name', $username);
       $uid = $query
-        ->accessCheck()
+        ->accessCheck(TRUE)
         ->execute();
 
       if (!empty($uid) && count($uid) === 1) {
