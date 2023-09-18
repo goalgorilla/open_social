@@ -34,7 +34,7 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
    * {@inheritdoc}
    */
   public function isEnabled(NodeInterface $node) {
-    @trigger_error(__METHOD__ . '() is deprecated in social:11.5.0 and is removed from social:12.0.0. Use bundled node object itself `$event->isEnrollmentEnabled()` instead. See https://www.drupal.org/project/social/issues/3306568', E_USER_DEPRECATED);
+    @trigger_error(__METHOD__ . '() is deprecated in social:11.5.0 and is removed from social:13.0.0. Use bundled node object itself `$event->isEnrollmentEnabled()` instead. See https://www.drupal.org/project/social/issues/3306568', E_USER_DEPRECATED);
     return $node instanceof Event &&
       $node->isEnrollmentEnabled();
   }
