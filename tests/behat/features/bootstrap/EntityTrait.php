@@ -73,6 +73,7 @@ trait EntityTrait {
               $term_ids = $taxonomy_storage->getQuery()
                 ->condition("vid", $allowed_bundles, "IN")
                 ->condition("name", $id_or_name)
+                ->accessCheck()
                 ->execute();
 
               if (!is_array($term_ids) || empty($term_ids)) {
