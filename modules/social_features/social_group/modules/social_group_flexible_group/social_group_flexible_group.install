@@ -547,10 +547,10 @@ function social_group_flexible_group_update_11402(): string {
 function social_group_flexible_group_update_11701(array &$sandbox): string {
   if (!isset($sandbox['total'])) {
     $sandbox['total'] = \Drupal::entityQuery('group')
-      ->accessCheck(FALSE)
       ->condition('type', 'flexible_group')
       ->notExists('field_group_posts_enabled')
       ->count()
+      ->accessCheck(FALSE)
       ->execute();
 
     if (!$sandbox['total']) {
@@ -572,12 +572,12 @@ function social_group_flexible_group_update_11701(array &$sandbox): string {
   }
 
   $entity_ids = \Drupal::entityQuery('group')
-    ->accessCheck(FALSE)
     ->condition('type', 'flexible_group')
     ->condition('id', $sandbox['current_id'], '>')
     ->notExists('field_group_posts_enabled')
     ->sort('id')
     ->range(0, $sandbox['limit'])
+    ->accessCheck(FALSE)
     ->execute();
 
   $storage = \Drupal::entityTypeManager()->getStorage('group');

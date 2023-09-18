@@ -173,7 +173,7 @@ class FollowTaxonomyViewsFilter extends TaxonomyIndexTid {
           ->getStorage('taxonomy_term')
           ->loadMultiple(
             $query
-              ->accessCheck()
+              ->accessCheck(TRUE)
               ->execute()
           );
 
