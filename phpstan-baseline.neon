@@ -11999,16 +11999,6 @@ parameters:
 			path: modules/social_features/social_like/src/SocialLikeConfigOverride.php
 
 		-
-			message: """
-				#^Call to deprecated function file_create_url\\(\\)\\:
-				in drupal\\:9\\.3\\.0 and is removed from drupal\\:10\\.0\\.0\\.
-				  Use the appropriate method on \\\\Drupal\\\\Core\\\\File\\\\FileUrlGeneratorInterface
-				  instead\\.$#
-			"""
-			count: 1
-			path: modules/social_features/social_mailer/social_mailer.module
-
-		-
 			message: "#^Call to an undefined method Drupal\\\\symfony_mailer\\\\AddressInterface\\:\\:toString\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_mailer/src/Plugin/EmailAdjuster/Reroute.php
