@@ -8,53 +8,56 @@
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
+ * Implements hook_requirements().
+ */
+function social_file_private_requirements(string $phase) : array {
+  $requirements = [];
+
+  switch ($phase) {
+    case 'runtime':
+      $requirements['social_file_private'] = [
+        'title' => t('Social File Private'),
+        'value' => t('Installed'),
+        'description' => t("The Social File Private module is abandoned and should be uninstalled, run database updates or uninstall the module manually."),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+      break;
+
+    case 'install':
+      $requirements['social_file_private'] = [
+        'title' => t('Social File Private'),
+        'value' => t('Abandoned'),
+        'description' => t("The Social File Private module is abandoned and may not be installed."),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+      break;
+
+    case 'update':
+      // Prevent updates if there's any module depending on this one since it
+      // may also uninstall that other module.
+      $dependency_info = \Drupal::moduleHandler()->buildModuleDependencies(
+        \Drupal::moduleHandler()->getModuleList()
+      );
+      if (!empty($dependency_info['social_file_private']->required_by)) {
+        $requirements['social_file_private_uninstall'] = [
+          'title' => t('Uninstall Social File Private'),
+          'value' => t('Blocked'),
+          'description' => t("The Social File Private module can not be uninstalled because it's required by: @modules.", ['@modules' => implode(", ", $dependency_info['social_file_private']->required_by)]),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+      break;
+  }
+
+  return $requirements;
+}
+
+/**
  * Implements hook_install().
  */
 function social_file_private_install() : void {
-  $config_ids = [
-    'field.storage.block_content.field_hero_image',
-    'field.storage.comment.field_comment_files',
-    'field.storage.group.field_group_image',
-    'field.storage.node.field_book_image',
-    'field.storage.node.field_event_image',
-    'field.storage.node.field_files',
-    'field.storage.node.field_page_image',
-    'field.storage.node.field_topic_image',
-    'field.storage.post.field_post_image',
-    'field.storage.profile.field_profile_image',
-    'field.storage.profile.field_profile_banner_image',
-    'field.storage.paragraph.field_hero_image',
-    'field.storage.paragraph.field_hero_small_image',
-  ];
-
-  foreach ($config_ids as $config_id) {
-    $storage = FieldStorageConfig::load($config_id);
-    // No need to update fields that aren't installed.
-    if ($storage === NULL) {
-      continue;
-    }
-    // Only update fields that aren't already private.
-    if ($storage->getSetting("uri_schema") === "public") {
-      $storage->setSetting("uri_schema", "private")->save();
-    }
-  }
-
-  $editor_ids = [
-    'editor.editor.basic_html',
-    'editor.editor.full_html',
-  ];
-
-  foreach ($editor_ids as $editor_id) {
-    $editor_config = \Drupal::configFactory()->getEditable($editor_id);
-    // Skip editor configs that don't yet exist.
-    if ($editor_config->isNew()) {
-      continue;
-    }
-    // Only update config that isn't already private.
-    if ($editor_config->get('image_upload.scheme') === "public") {
-      $editor_config->set('image_upload.scheme', 'private')->save();
-    }
-  }
+  // Uninstall the module if someone tries to install it.
+  \Drupal::service('module_installer')->uninstall(["social_file_private"]);
 }
 
 /**
@@ -105,4 +108,12 @@ function social_file_private_update_11001() : void {
       $editor_config->set('image_upload.scheme', 'private')->save();
     }
   }
+}
+
+/**
+ * Uninstall social_file_private.
+ */
+function social_file_private_update_12001() : void {
+  // Uninstall the module which is no longer supported.
+  \Drupal::service('module_installer')->uninstall(["social_file_private"]);
 }
