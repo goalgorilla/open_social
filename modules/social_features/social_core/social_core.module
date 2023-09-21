@@ -63,6 +63,25 @@ function social_core_theme() {
 }
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function social_core_module_implements_alter(array &$implementations, string $hook): void {
+  switch ($hook) {
+    // See field_group_module_implements_alter()
+    // They are forcing the form_alter() to be executed last, Open Social
+    // has multiple form_alters that relies on #fieldgroup attribute so its very
+    // important that the field_group_form_alter() is executed before them.
+    case 'form_alter':
+      $altered_implementations = [
+        'field_group' => FALSE,
+      ];
+      unset($implementations['field_group']);
+      $implementations = array_merge($altered_implementations, $implementations);
+      break;
+  }
+}
+
+/**
  * Implements hook_modules_installed().
  */
 function social_core_modules_installed($modules) {
