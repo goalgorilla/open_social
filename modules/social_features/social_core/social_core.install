@@ -1736,3 +1736,10 @@ function social_core_update_111201() : void {
   // uninstaller double-check just in case).
   \Drupal::service("module_installer")->uninstall(["admin_toolbar_tools"], FALSE);
 }
+
+/**
+ * Set field_group module weight on top.
+ */
+function social_core_update_111202(): void {
+  module_set_weight("field_group", -1);
+}

@@ -1170,7 +1170,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
           }
         }
 
-        $field['#default_value'] = $default_join_method ?? reset($join_method);
+        $field['#default_value'] = $default_join_method ?? $join_method;
       }
       elseif (isset($field['#default_value']) && is_array($field['#default_value'])) {
         $field['#default_value'] = reset($field['#default_value']);
