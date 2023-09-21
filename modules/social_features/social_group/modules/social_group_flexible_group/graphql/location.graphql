@@ -1,0 +1,145 @@
+
+"""
+A physical location in the world.
+"""
+# One of the things to discuss is whether we want to combine the human readable location
+# name (e.g. "Open Social Enschede Office") with the physical address, or keep them separate.
+type Location {
+  """
+  The human readable name of the location.
+  """
+  label: String
+  """
+  The address that corresponds to the location.
+  """
+  address: Address
+}
+
+"""
+A country as a two-letter code according to ISO-3166-2
+
+See https://en.wikipedia.org/wiki/ISO_3166-2 for a complete list.
+"""
+scalar Country
+
+"""
+
+"""
+# This needs a description. The fields on the type are taken from
+# the `address` module which was designed to work with global addresses.
+# The address contains name fields because it can also be used in commerce
+# situations (e.g. a billing or shipping address).
+# One option would be to create an address interface and clear out fields that will
+# never be filled. Then a CommerceAddress type could be made for billing/shipping addresses.
+type Address {
+  """
+  The two-letter country code.
+  """
+  countryCode: Country
+  """
+  The top-level administrative subdivision of the country.
+  """
+  administrativeArea: String
+  """
+  The locality (i.e. city).
+  """
+  locality: String
+  """
+  The dependent locality (i.e. neighbourhood).
+  """
+  dependentLocality: String
+  """
+  The postal code.
+  """
+  postalCode: String
+  """
+  The sorting code.
+  """
+  sortingCode: String
+  """
+  The first line of the address block.
+  """
+  addressLine1: String
+  """
+  The second line of the address block.
+  """
+  addressLine2: String
+  """
+  The organization.
+  """
+  organization: String
+  """
+  The given name.
+  """
+  givenName: String
+  """
+  The additional name.
+  """
+  additionalName: String
+  """
+  The family name.
+  """
+  familyName: String
+}
+
+input LocationInput {
+  """
+  The human readable name of the location.
+  """
+  label: String
+  """
+  The address that corresponds to the location.
+  """
+  address: AddressInput
+}
+
+input AddressInput {
+  """
+  The two-letter country code.
+  """
+  countryCode: Country
+  """
+  The top-level administrative subdivision of the country.
+  """
+  administrativeArea: String
+  """
+  The locality (i.e. city).
+  """
+  locality: String
+  """
+  The dependent locality (i.e. neighbourhood).
+  """
+  dependentLocality: String
+  """
+  The postal code.
+  """
+  postalCode: String
+  """
+  The sorting code.
+  """
+  sortingCode: String
+  """
+  The first line of the address block.
+  """
+  addressLine1: String
+  """
+  The second line of the address block.
+  """
+  addressLine2: String
+  """
+  The organization.
+  """
+  organization: String
+  """
+  The given name.
+  """
+  givenName: String
+  """
+  The additional name.
+  """
+  additionalName: String
+  """
+  The family name.
+  """
+  familyName: String
+}

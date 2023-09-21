@@ -1,0 +1,405 @@
+"""
+A group within Open Social allows members to organize around a shared interest.
+
+Groups can have members and contain content such as topics, events, and posts.
+Members of a group have roles (admin, manager, member) which gives them access to various actions.
+Group managers can control the group metadata such as title and image as well as group
+access such as group visibility, join method, and content visibility.
+"""
+type Group implements Node @allowUser(requiredScopes: ["group.read"]) @allowBot(requiredScopes: ["group.read.public"]) @allowBot(requiredScopes: ["group.read.community"]) @allowBot(requiredScopes: ["group.read.private"]) {
+  id: ID!
+  type: GroupType
+  # I've chosen the `href` name here to mirror the value of the `link` HTML element
+  # choosing `links` might be confusing with user generated links.
+  # I'm unsure about the type of this field though (and debating between absolute and
+  # relative links, also with mobile navigation in mind).
+  href: GroupHref!
+  """
+  The human readable name of the group.
+  """
+  title: String!
+  """
+  The location of the group.
+
+  Only filled if the group belongs to a physical place (e.g. a specific department of an organization).
+  """
+  location: Location
+  """
+  The image of the group.
+
+  On the platform this is used for teasers the banner on the group page.
+  """
+  image: Image
+  """
+  A description of the group to provide (potential) members with information about the group's purpose.
+  """
+  description: Html!
+  """
+  The group visibility decides who is allowed to see a group.
+  """
+  groupVisibility: GroupVisibility!
+  """
+  The content visibility decides what visibility content is allowed to be created within the group.
+  """
+  contentVisibility: [ContentVisibility!]!
+  """
+  The join methods decide how users are allowed to join.
+  """
+  joinMethod: GroupJoinMethods!
+  """
+  The members of a group.
+
+  Optionally filtered by role.
+  """
+  members(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    # TODO: We probably want to create sorting here.
+    # """Sort the underlying list by the given key."""
+    # sortKey: ChatParticipantSortKeys = ROLE
+    """
+    Only get members of a specific role.
+    """
+    # One thing up for discussion is whether we want to add this filter, or whether we want to
+    # make separate fields since the roles are predictable (e.g. managers, and normal members).
+    # If we add a single field here for filtering then what happens if we need to add another filter?
+    # We don't have a good pattern for how we handle filters yet.
+    role: GroupRole
+  ): GroupMemberConnection!
+
+}
+
+"""
+Group types give meaning to the specific sorts of groups that are on a platform.
+
+The configured group types are specific to a platform.
+"""
+type GroupType implements Node {
+  id: ID!
+  """
+  The human readable label of the group type.
+  """
+  label: String!
+}
+
+"""
+"""
+interface Href {
+  canonical: Url!
+}
+
+type GroupHref implements Href {
+  canonical: Url!
+}
+
+"""
+The group visibility decides who is allowed to see a group.
+"""
+enum GroupVisibility {
+  """
+  A public group can be seen by anyone, even unauthenticated users.
+  """
+  PUBLIC
+  """
+  A community group can only be seen by authenticated users.
+
+  Platform settings dictate whether community visibility requires an authenticated user to be verified.
+  """
+  COMMUNITY
+  """
+  A group with group visibility can only be seen by members of the group.
+  """
+  # I've chosen "GROUP" here over "SECRET" for the parallel with content visibility.
+  GROUP
+}
+
+"""
+The content visibility decides what visibility content is allowed to be created within the group.
+"""
+enum ContentVisibility {
+  """
+  Public content can be seen by anyone, even unauthenticated users.
+  """
+  PUBLIC
+  """
+  Community content can only be seen by authenticated users.
+
+  Platform settings dictate whether community visibility requires an authenticated user to be verified.
+  """
+  COMMUNITY
+  """
+  Group content can only be seen by members of the group the content is posted in.
+  """
+  # There's a challenge here because content posted outside of the group can never have
+  # group visibility, which makes this enum not applicable to all content.
+  GROUP
+}
+"""
+The join methods decide how users are allowed to join.
+"""
+# It's unclear here which users can invite others.
+# The UI says "Group managers can always add members directly, regardless of the chosen join method."
+# but then it seems like that should also be a join method which would disable invites.
+enum GroupJoinMethods {
+  INVITE_ONLY
+  REQUEST_TO_JOIN
+  OPEN_TO_JOIN
+}
+
+"""
+The group role.
+
+This controls what a user is able to do within a group.
+"""
+# Are these roles enough here or do we need to have a different permission system
+# for groups? What if we want to control who can view vs post in a group?
+enum GroupRole {
+  """
+  A group manager.
+
+  A group manager has the ability to add and remove members from the group.
+  Additionally they may be able to change group and content visibility settings for the group.
+  """
+  MANAGER
+  """
+  A normal member of the group can see the group and its content and create new content.
+  """
+  MEMBER
+}
+
+"""
+User membership of a group.
+"""
+# We choose `GroupMember` here because in the future we may have other
+# types of relationships between "Group" and "User" that are not membership
+# (e.g. open invites).
+type GroupMemberEdge implements Edge {
+  cursor: Cursor!
+  node: User!
+  """
+  The role of the user within the group.
+  """
+  role: GroupRole
+}
+
+type GroupMemberConnection implements Connection {
+  edges: [GroupMemberEdge!]!
+  nodes: [Group!]!
+  pageInfo: PageInfo!
+}
+
+type GroupEdge implements Edge {
+  cursor: Cursor!
+  node: Group!
+}
+
+type GroupConnection implements Connection {
+  edges: [GroupEdge!]!
+  nodes: [Group!]!
+  pageInfo: PageInfo!
+}
+
+input AddMemberToGroupInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The user to add to the group.
+  """
+  user: ID!
+  """
+  The group to add the user to.
+  """
+  group: ID!
+  """
+  The role to give the user in the group.
+
+  Defaults to `MEMBER` if not provided.
+  """
+  role: GroupRole
+}
+
+"""
+The payload of an attempt to add a member to a group.
+"""
+# This has individual fields for group, user, role but I think ideally
+# we might return a GroupMemberEdge which contains all the needed data
+# and could be added to lists the client already has. However an open
+# challenge is how to generate the cursor that's required on that type.
+type AddMemberToGroupPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered during the mutation.
+
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+  """
+  The modified group.
+  """
+  group: Group
+  """
+  The affected user.
+  """
+  user: User
+  """
+  The role the user was assigned.
+  """
+  # We give back the role here because it may be auto-assigned.
+  role: GroupRole
+}
+
+input RemoveMemberFromGroupInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The user to remove from the group.
+  """
+  user: ID!
+  """
+  The group to remove the user from.
+  """
+  group: ID!
+}
+
+type RemoveMemberFromGroupPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered during the mutation.
+
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+  """
+  The modified group.
+  """
+  group: Group
+  """
+  The affected user.
+  """
+  user: User
+}
+
+input ChangeMemberRoleInGroupInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The user to change the role for.
+  """
+  user: ID!
+  """
+  The group to change the role in.
+  """
+  group: ID!
+  """
+  The new role to give the user in the group.
+  """
+  role: GroupRole!
+}
+
+type ChangeMemberRoleInGroupPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered during the mutation.
+
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+  """
+  The modified group.
+  """
+  group: Group
+  """
+  The affected user.
+  """
+  user: User
+  """
+  The new role the user has.
+  """
+  role: GroupRole
+}
+
+input CreateGroupInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  The type the new group should have.
+  """
+  type: ID
+  """
+  The human readable name of the group.
+  """
+  title: String!
+  """
+  The physical location of the group.
+  """
+  location: LocationInput
+  """
+  The image of the group.
+
+  On the platform this is used for teasers the banner on the group page.
+  """
+  # @todo Create ImageInput!
+  image: Image
+  """
+  A description of the group to provide (potential) members with information about the group's purpose.
+  """
+  # @todo This requires solving the input problem!
+  description: Html!
+  """
+  The group visibility decides who is allowed to see a group.
+  """
+  groupVisibility: GroupVisibility!
+  """
+  The content visibility decides what visibility content is allowed to be created within the group.
+  """
+  contentVisibility: [ContentVisibility!]!
+  """
+  The join methods decide how users are allowed to join.
+  """
+  joinMethod: GroupJoinMethods!
+
+  # @todo Add a way to add initial members.
+}
+
+type CreateGroupPayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: UUIDv4
+  """
+  Errors that were encountered during the mutation.
+
+  NULL or an array of violations.
+  """
+  errors: [Violation!]
+  """
+  The created group.
+  """
+  group: Group
+
+}

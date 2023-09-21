@@ -1,7 +1,50 @@
+interface ProfileField {
+  isEnabled: Boolean!
+  viewerCanEdit: Boolean!
+}
+
+type ProfileString implements ProfileField {
+  isEnabled: Boolean!
+  viewerCanEdit: Boolean!
+  """
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  value: String
+}
+
+type ProfileImage implements ProfileField {
+  isEnabled: Boolean!
+  viewerCanEdit: Boolean!
+  """
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  value: Image
+}
+
+type ProfileFormattedText implements ProfileField {
+  isEnabled: Boolean!
+  viewerCanEdit: Boolean!
+  """
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  value: FormattedText
+}
+
+type ProfilePhoneNumber implements ProfileField {
+  isEnabled: Boolean!
+  viewerCanEdit: Boolean!
+  """
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  value: PhoneNumber
+}
+
 """
 Profile information for an Open Social user.
-
-Unless noted otherwise profile information can be filled out by a user.
 """
 type Profile {
   """
@@ -10,34 +53,35 @@ type Profile {
   Can be null if the user has not filled in the field or if the user/application
   making the request is not allowed to view this field.
   """
-  firstName: String
+  firstName: ProfileString!
+
   """
   The last name of the user
 
   Can be null if the user has not filled in the field or if the user/application
   making the request is not allowed to view this field.
   """
-  lastName: String
+  lastName: ProfileString!
   """
   Avatar
 
   A profile image for the user.
   """
-  avatar: Image
+  avatar: ProfileImage!
   """
   An introduction for the user
   """
-  introduction: FormattedText
+  introduction: ProfileFormattedText!
   """
   A phone number for the user
   """
-  phone: PhoneNumber
+  phone: ProfilePhoneNumber!
   """
   The function the user has at their organization.
   """
-  function: String
+  function: ProfileString!
   """
   The name of the organization a user belongs to.
   """
-  organization: String
+  organization: ProfileString!
 }

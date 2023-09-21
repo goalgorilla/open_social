@@ -5,5 +5,5 @@ extend type User {
   """
   Profile data for the user.
   """
-  profile: Profile!
+  profile: Profile! @allowAll(requiredScopes: ["user.profile"])
 }

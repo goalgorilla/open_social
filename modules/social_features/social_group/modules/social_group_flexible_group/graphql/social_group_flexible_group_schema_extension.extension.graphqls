@@ -1,0 +1,80 @@
+extend type User {
+  """
+  List of all groups the user is a member of.
+
+  Results are limited to what the current viewer has access to.
+  """
+  groups(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    # """Sort the underlying list by the given key."""
+    # sortKey: ChatParticipantSortKeys = ROLE
+  ): UserGroupConnection! # TODO: Figure out name for group memberships.
+}
+
+extend type Query {
+  """
+  Fetch data for a specific group.
+  """
+  group(
+    """
+    The id of the group to load.
+    """
+    id: ID!
+  ) : Group
+
+  """
+  List of all groups on the platform.
+
+  Results are limited to what the current viewer has access to.
+  """
+  groups(
+    """Returns the elements that come after the specified cursor."""
+    after: Cursor
+    """Returns the elements that come before the specified cursor."""
+    before: Cursor
+    """Returns up to the first `n` elements from the list."""
+    first: Int
+    """Returns up to the last `n` elements from the list."""
+    last: Int
+    """Reverse the order of the underlying list."""
+    reverse: Boolean = false
+    # """Sort the underlying list by the given key."""
+    # sortKey: ChatParticipantSortKeys = ROLE
+  ): GroupConnection!
+}
+
+extend type Mutation {
+  """
+  Add a member to a group with a given role.
+  """
+  addMemberToGroup(input: AddMemberToGroupInput!) : AddMemberToGroupPayload @allowAll(requiredScopes: ["group.manage"])
+  """
+  Remove a member from a group.
+  """
+  removeMemberFromGroup(input: RemoveMemberFromGroupInput) : RemoveMemberFromGroupPayload @allowAll(requiredScopes: ["group.manage"])
+  """
+  Change the role a member of a group has in that group.
+  """
+  changeMemberRoleInGroup(input: ChangeMemberRoleInGroupInput) : ChangeMemberRoleInGroupPayload @allowAll(requiredScopes: ["group.manage"])
+  """
+  Create a new group.
+  """
+  createGroup(input: CreateGroupInput ) : CreateGroupPayload @allowAll(requiredScopes: ["group.write"])
+  # @todo Ideas for further mutations
+  # - publish/unpublish groups (possibly in an extension?) -- write
+  # - edit group metadata  -- write
+  # - delete group  --- write
+  # - for [content in open-social-entities]; createGroup[content]
+  #     Topic : createTopicInGroup ---- topic.write + read access to the group in question
+  # - Send notification to all group members -- group.notify + group.read
+  # - Manage group monetization -- manage
+}

@@ -1,0 +1,136 @@
+# #Discussion topic:
+# ## Depending on who gives access to the API the app has fewer or more priviliges
+# If a normal user gives an app `group.manage` permisions then the damage for a malicious might be limited to
+# creating lots of group owned by the user.
+# If a site manager provides access to `group.manage` then a malicious application might delete all the groups on a
+# platform
+# Decision: this is a normal way for these kinds of authentication systems to operate and SM must be more careful
+# Mitigation: Think about malicious access patterns, e.g. an app deleting a lot of groups at once or in quick succession
+
+## FOUND BUGS
+# SIMPLE OAUTH oauth2_scopes has no schema that can be picked up by POTX!
+
+# Scope philosophy decision:
+#   We allow applications access to public information and the ability to list things in general. Scopes are only needed
+#   in case more hidden information needs to be accessed.
+#   In general we do not mind an application listing all objects they can access. The only limitation is made for users
+#   because we do not want every application to get a full overview of all the public user information available.
+#
+#   This philosophy works because as a baseline we want every application that accesses the API to be registered with
+#   the community. Either because a user provided access using an authorization_code or because the site manager
+#   installed the application on the platform with client_credentials.
+
+
+# Guiding between "write" and "manage"
+# - Write is used for those actions where the current user might be affected but no other users can be harmed
+#   (e.g. create/delete)
+# - Manage is used for actions that might impact other users than the user that has authorized the application
+#   (e.g. add member to group change member role; change monetization settings)
+#
+# We move `notify` to a separate scope so that applications can be created to help in notifying without being able to
+# alter the group
+#
+# This can also be applied to other hierarchies.
+
+group
+  group.notify
+  group.manage
+    group.write
+      group.read
+        group.read.community
+          # group.read.public does not exist because it's implied for everyone
+
+"group":
+  description:
+  umbrella: true
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.notify":
+  parent: group
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.manage":
+  parent: group
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.write":
+  parent: group.manage
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.read":
+  parent: group.write
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.read.community":
+  parent: group.read
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"group.read.private":
+  parent: group.read
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # Bot
+    client_credentials:
+      status: true
+      description: ''

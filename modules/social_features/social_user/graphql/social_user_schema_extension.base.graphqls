@@ -4,6 +4,9 @@
 """
 An Open Social user.
 """
+# This has no scopes on purpose because we believe that applications should always be able to access some amount of user
+# data to fulfill their role. Things like `displayName` are also created specifically to be viewable depending on the
+# access levels of the user and the application (i.e. what profile information they can see).
 type User implements Node & Actor {
   """
   The Universally Unique Identifier for the user.
@@ -22,7 +25,7 @@ type User implements Node & Actor {
   Can be null if the user has not filled in an e-mail or if the user/application
   making the request is not allowed to view this user's e-mail.
   """
-  mail: Email
+  mail: Email @allowAll(requiredScopes: ["viewer.email"]) @allowAll(requiredScopes: ["user.profile"])
   """
   The timestamp indicating when the user was created.
   """

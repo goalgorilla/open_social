@@ -1,0 +1,162 @@
+# With the below structure in mind we want to move `mail` to the `Profile` type to match how we use it in the platform.
+# An application working on behalf of a user (e.g. a calendar app that wants to send notifications) can get the e-mail
+# for the current user through the `Viewer` type with the `viewer.email` permission.
+# @todo Add examples of different applications for the two types and what permissions they might need.
+
+# To differentiate between "my own profile information" and "any user's profile information".
+# For the viewer we want to create scopes per category of profile information (e.g. name, email, address). This allows a
+# user to provide an application access to the information of the authorizing user that it needs to do its job (e.g. an
+# email address to send notifications), without exposing information for other users.
+# These permissions do not make sense if the application is not acting on behalf of a user.
+
+# Hierarchy for the viewer scopes
+# A viewer always has access to the information on the `User` object itself to provide displayName, ID etc.
+viewer
+  viewer.profile
+  viewer.email
+  viewer.phone
+  viewer.address
+
+"viewer":
+  # User
+  authorization_code:
+    status: true
+    description: ''
+"viewer.profile":
+  parent: viewer
+  description: Provides access to basic profile information such as name, avatar and introduction.
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+"viewer.email":
+  parent: viewer
+  description: Provides access to a user's e-mail.
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+"viewer.phone":
+  parent: viewer
+  description: Provides access to a user's phone number.
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+"viewer.address":
+  parent: viewer
+  description: Provides access to a user's address information.
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+
+# We've not created a separate permission for registration but instead decided that "user.write" allows creating users
+# as well
+# Hierarchy for the permissions below
+user
+  user.list
+  user.write
+    user.read
+    user.profile
+      user.profile.community
+        # user.read.public does not exist because it's implied for everyone
+
+# The "user" permissions are for access to "any other profile information" that the current user might have access to.
+# These respect the visibility settings for the users (e.g. an application may only view public data).
+# These scopes also work for applications that work without a user (e.g. CRM integrations) that must access information
+# for all users.
+"user":
+  description:
+  umbrella: true
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"user.list":
+  parent:
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"user.write":
+  parent: group
+  description: Provides the ability to manage all user and profile data on the platform, this includes creating new users.
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+"user.read":
+  parent: group
+  description:
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # User
+    authorization_code:
+      status: true
+      description: ''
+    # Bot
+    client_credentials:
+      status: true
+      description: ''
+# This doesn't work with run-time configured fields, so we might need
+# PublicField | CommunityField | PrivateField unions with a `value` field.
+# We also need a way to communicate:
+# - Field enabled
+# - Field editable
+# - Field viewable? (unless we don't want to differentiate between empty and denied)
+"user.profile":
+  parent: user
+  description: Access to all profile information on the platform.
+  umbrella: true
+"user.profile.community":
+  parent: user.profile
+  description: Access to community profile information
+  umbrella: false
+  granularity: permission
+  permission:
+  grant_types:
+    # Bot
+    client_credentials:
+      status: true
+      description: ''

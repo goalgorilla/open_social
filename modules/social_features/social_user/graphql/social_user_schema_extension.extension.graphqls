@@ -17,7 +17,7 @@ extend type Query {
     reverse: Boolean = false
     """Sort the underlying list by the given key."""
     sortKey: UserSortKeys = CREATED_AT
-  ): UserConnection!
+  ): UserConnection! @allowAll(requiredScopes: "user.list")
   """
   Fetch data for a specific user.
   """
