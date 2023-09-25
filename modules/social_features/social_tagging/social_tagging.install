@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\search_api\Item\Field;
-use Drupal\taxonomy\TermInterface;
 
 /**
  * Install the module.
@@ -344,69 +343,4 @@ function social_tagging_update_11801(): void {
       }
     }
   }
-}
-
-/**
- * Add Placement field to Content tags.
- */
-function social_tagging_update_11803(): void {
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_tagging') . '/config/static';
-  $source = new FileStorage($config_path);
-  $entity_type_manager = \Drupal::entityTypeManager();
-
-  // Create field storages.
-  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
-  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
-  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
-  $data = $source->read('field.storage.taxonomy_term.field_category_usage_11802');
-  if (!is_array($data)) {
-    throw new \Exception('Could not load config file: field.storage.taxonomy_term.field_category_usage_11802');
-  }
-  /** @var \Drupal\Core\Field\FieldItemInterface $class */
-  $class = $field_type_manager->getPluginClass($data['type']);
-  $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
-  $field_storage_config_storage->create($data)->save();
-
-  // Create field settings.
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_config_storage */
-  $field_config_storage = $entity_type_manager->getStorage('field_config');
-  $data = $source->read('field.field.taxonomy_term.social_tagging.field_category_usage_11802');
-  if (!is_array($data)) {
-    throw new \Exception('Could not load config file: field.field.taxonomy_term.social_tagging.field_category_usage_11802');
-  }
-  $field_config_storage->create($data)->save();
-
-  // Update a form and view display for the 'Social tagging' terms.
-  $config_files = [
-    'core.entity_form_display.taxonomy_term.social_tagging.default',
-    'core.entity_view_display.taxonomy_term.social_tagging.default',
-  ];
-  foreach ($config_files as $file) {
-    $data = $source->read($file . '_11802');
-    if (!is_array($data)) {
-      throw new \Exception('Could not load config file: ' . $file . '_11802');
-    }
-    $config = \Drupal::configFactory()->getEditable($file);
-    $config->setData($data)->save(TRUE);
-  }
-
-  // Fill new field with data.
-  /** @var \Drupal\social_tagging\SocialTaggingServiceInterface $helper */
-  $helper = \Drupal::service('social_tagging.tag_service');
-  $options = $helper->getKeyValueOptions();
-  // Option contains key=>value array where values are a label.
-  // Get keys, and serialize like in TaggingUsageWidget.
-  $values = array_keys($options);
-  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
-    'vid' => 'social_tagging',
-    'parent' => '0',
-  ]);
-  foreach ($terms as $term) {
-    if (!$term instanceof TermInterface) {
-      continue;
-    }
-    $term->set('field_category_usage', serialize($values))->save();
-  }
-
 }

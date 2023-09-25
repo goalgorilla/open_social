@@ -55,9 +55,7 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
   $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
   // Remove these fields.
-  $form['path']['#access'] = FALSE;
   $form['relations']['#access'] = FALSE;
-  $form['description']['#access'] = FALSE;
 
   // Move it outside the details.
   $form['parent'] = $form['relations']['parent'];
@@ -65,17 +63,35 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
 
   // Make some changes.
   $form['weight']['#access'] = FALSE;
-  $form['parent']['#title'] = t('Placement');
+  $form['parent']['#title'] = t('Location');
+  $form['parent']['#required'] = TRUE;
+  $form['parent']['#description'] = t('Integrate this term into an existing category or establish new one');
+  $form['parent']['#description_display'] = 'before';
 
   // Fetch all top level items.
   $options = $tag_service->getCategories();
   // Add the 0 option for a new toplevel item.
-  $options[0] = t('Main category');
+  $options[0] = t('New category');
   // Sort the array.
   ksort($options);
   // Add it to the select.
   $form['parent']['#options'] = $options;
 
+  // Add states for tagging usage.
+  $form['field_category_usage']['#states'] = [
+    'visible' => [
+      'select[name="parent[]"]' => ['value' => ['0']],
+    ],
+  ];
+  $form['actions']['submit']['#submit'][] = '_social_tagging_form_taxonomy_term_social_tagging_submit';
+}
+
+/**
+ * Custom submit for social tagging form.
+ */
+function _social_tagging_form_taxonomy_term_social_tagging_submit(array $form, FormStateInterface $form_state): void {
+  // Clear cache to see updated lists.
+  \Drupal::service('cache.render')->invalidateAll();
 }
 
 /**
@@ -499,24 +515,24 @@ function social_tagging_theme($existing, $type, $theme, $path) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form_ids = [
-    'views-exposed-form-search-content-page-no-value',
-    'views-exposed-form-search-content-page',
-    'views-exposed-form-search-groups-page-no-value',
-    'views-exposed-form-search-groups-page',
-    'views-exposed-form-search-users-page-no-value',
-    'views-exposed-form-search-users-page',
-    'views-exposed-form-latest-topics-page-latest-topics',
-    'views-exposed-form-upcoming-events-page-community-events',
-    'views-exposed-form-topics-page-profile',
-    'views-exposed-form-events-events-overview',
-    'views-exposed-form-group-topics-page-group-topics',
-    'views-exposed-form-group-events-page-group-events',
-    'views-exposed-form-group-books-page-group-books',
-    'views-exposed-form-newest-groups-page-all-groups',
-    'views-exposed-form-newest-users-page-newest-users',
+  $keys = [
+    'views-exposed-form-search-content-page-no-value' => ['node_page', 'node_event', 'node_topic'],
+    'views-exposed-form-search-content-page' => ['node_page', 'node_event', 'node_topic'],
+    'views-exposed-form-search-groups-page-no-value' => ['group'],
+    'views-exposed-form-search-groups-page' => ['group'],
+    'views-exposed-form-search-users-page-no-value' => ['profile'],
+    'views-exposed-form-search-users-page' => ['profile'],
+    'views-exposed-form-latest-topics-page-latest-topics' => ['node_topic'],
+    'views-exposed-form-upcoming-events-page-community-events' => ['node_event'],
+    'views-exposed-form-topics-page-profile' => ['node_topic'],
+    'views-exposed-form-events-events-overview' => ['node_event'],
+    'views-exposed-form-group-topics-page-group-topics' => ['node_topic'],
+    'views-exposed-form-group-events-page-group-events' => ['node_event'],
+    'views-exposed-form-group-books-page-group-books' => ['node_topic'],
+    'views-exposed-form-newest-groups-page-all-groups' => ['group'],
+    'views-exposed-form-newest-users-page-newest-users' => ['profile'],
   ];
-
+  $form_ids = array_keys($keys);
   // Must be either one of these form_ids.
   if (!in_array($form['#id'], $form_ids)) {
     return;
@@ -532,7 +548,10 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     foreach ($tag_service->getCategories() as $tid => $term_name) {
       $label = \Drupal::service('social_core.machine_name')->transform($term_name);
 
-      if (isset($form[$label])) {
+      if (!isset($form[$label])) {
+        continue;
+      }
+      if ($tag_service->termIsVisibleForEntities($term_name, $keys[$form['#id']])) {
         $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
 
@@ -562,6 +581,10 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         if ($query->has($label)) {
           $form[$label]['#value'] = $query->get($label);
         }
+      }
+      else {
+        // Otherwise, we should not see tag on a form.
+        $form[$label]['#access'] = FALSE;
       }
     }
   }
@@ -595,13 +618,13 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
  * @return mixed|string
  *   A machine name so it can be used programmatically.
  *
- * @deprecated in social:11.3.10 and is removed from social:13.0.0. Use
+ * @deprecated in social:11.3.10 and is removed from social:12.0.0. Use
  *   \Drupal::service('social_core.machine_name')->transform() instead.
  *
  * @see https://www.drupal.org/node/3306214
  */
 function social_tagging_to_machine_name($text) {
-  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.3.10 and is removed from social:13.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
+  @trigger_error('social_tagging_to_machine_name() is deprecated in social:11.3.10 and is removed from social:12.0.0. Use "\Drupal::service(\'social_core.machine_name\')->transform()" instead. See https://www.drupal.org/node/3306214', E_USER_DEPRECATED);
   return preg_replace('@[^a-z0-9-]+@', '_', strtolower($text));
 }
 
