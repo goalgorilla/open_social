@@ -563,10 +563,6 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
           $form[$label]['#value'] = $query->get($label);
         }
       }
-      else {
-        // Otherwise, we should not see tag on a form.
-        $form[$label]['#access'] = FALSE;
-      }
     }
   }
   else {
