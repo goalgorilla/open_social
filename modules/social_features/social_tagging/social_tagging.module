@@ -77,21 +77,6 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
   // Add it to the select.
   $form['parent']['#options'] = $options;
 
-  // Add states for tagging usage.
-  $form['field_category_usage']['#states'] = [
-    'visible' => [
-      'select[name="parent[]"]' => ['value' => ['0']],
-    ],
-  ];
-  $form['actions']['submit']['#submit'][] = '_social_tagging_form_taxonomy_term_social_tagging_submit';
-}
-
-/**
- * Custom submit for social tagging form.
- */
-function _social_tagging_form_taxonomy_term_social_tagging_submit(array $form, FormStateInterface $form_state): void {
-  // Clear cache to see updated lists.
-  \Drupal::service('cache.render')->invalidateAll();
 }
 
 /**
