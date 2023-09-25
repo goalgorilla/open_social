@@ -548,10 +548,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     foreach ($tag_service->getCategories() as $tid => $term_name) {
       $label = \Drupal::service('social_core.machine_name')->transform($term_name);
 
-      if (!isset($form[$label])) {
-        continue;
-      }
-      if ($tag_service->termIsVisibleForEntities($term_name, $keys[$form['#id']])) {
+      if (isset($form[$label])) {
         $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
 
@@ -581,10 +578,6 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         if ($query->has($label)) {
           $form[$label]['#value'] = $query->get($label);
         }
-      }
-      else {
-        // Otherwise, we should not see tag on a form.
-        $form[$label]['#access'] = FALSE;
       }
     }
   }
