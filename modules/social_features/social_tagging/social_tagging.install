@@ -355,17 +355,12 @@ function social_tagging_update_11803(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
 
   // Create field storages.
-  /** @var \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager */
-  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
   /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $field_storage_config_storage */
   $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
   $data = $source->read('field.storage.taxonomy_term.field_category_usage_11802');
   if (!is_array($data)) {
     throw new \Exception('Could not load config file: field.storage.taxonomy_term.field_category_usage_11802');
   }
-  /** @var \Drupal\Core\Field\FieldItemInterface $class */
-  $class = $field_type_manager->getPluginClass($data['type']);
-  $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
   $field_storage_config_storage->create($data)->save();
 
   // Create field settings.
@@ -388,7 +383,7 @@ function social_tagging_update_11803(): void {
       throw new \Exception('Could not load config file: ' . $file . '_11802');
     }
     $config = \Drupal::configFactory()->getEditable($file);
-    //$config->setData($data)->save(TRUE);
+    $config->setData($data)->save(TRUE);
   }
 
   // Fill new field with data.
