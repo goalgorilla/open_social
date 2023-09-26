@@ -388,7 +388,7 @@ function social_tagging_update_11803(): void {
       throw new \Exception('Could not load config file: ' . $file . '_11802');
     }
     $config = \Drupal::configFactory()->getEditable($file);
-    $config->setData($data)->save(TRUE);
+    //$config->setData($data)->save(TRUE);
   }
 
   // Fill new field with data.
@@ -406,7 +406,7 @@ function social_tagging_update_11803(): void {
     if (!$term instanceof TermInterface) {
       continue;
     }
-    //$term->set('field_category_usage', serialize($values))->save();
+    $term->set('field_category_usage', serialize($values))->save();
   }
 
 }
