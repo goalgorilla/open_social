@@ -211,8 +211,9 @@ function social_event_invite_update_11402(): void {
 
   // Update default invite configuration.
   $configuration = $config_factory->getEditable('social_event_invite.settings');
-  if (!empty($configuration->get('invite_subject'))) {
-    $subject = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('invite_subject'));
+  $subject = $configuration->getOriginal('invite_subject');
+  if (!empty($subject)) {
+    $subject = str_replace('[current-user:display-name]', '[user:display-name]', $subject);
     $configuration->set('invite_subject', $subject);
     $configuration->save();
   }
