@@ -50,6 +50,9 @@ class EventDate extends InOperator {
       return;
     }
     $this->ensureMyTable();
+    // Get base table, this filter is in several views,
+    // and base table can be different, e.g. - for group events (group_content).
+    $base_table = $this->relationship ?: $this->view->storage->get('base_table');
     $now = $this->query->getDateFormat('NOW()', DateTimeItemInterface::DATETIME_STORAGE_FORMAT, TRUE);
     // Get the time at past midnight and next midnight time.
     $past_midnight = $this->query->getDateFormat('NOW()', 'Y-m-d\T00:00:00', TRUE);
@@ -58,25 +61,25 @@ class EventDate extends InOperator {
     $configuration = [
       'table' => 'node__field_event_date_end',
       'field' => 'entity_id',
-      'left_table' => '',
+      'left_table' => $base_table,
       'left_field' => 'nid',
     ];
 
     $configuration_all_day = [
       'table' => 'node__field_event_all_day',
       'field' => 'entity_id',
-      'left_table' => '',
+      'left_table' => $base_table,
       'left_field' => 'nid',
     ];
 
     $join = Views::pluginManager('join')
       ->createInstance('standard', $configuration);
-    $alias = $this->query->addRelationship($configuration['table'], $join, 'node_field_data');
+    $alias = $this->query->addRelationship($configuration['table'], $join, $base_table);
     $field_end = $this->query->getDateFormat($alias . '.field_event_date_end_value', DateTimeItemInterface::DATETIME_STORAGE_FORMAT, TRUE);
 
     $all_day_join = Views::pluginManager('join')
       ->createInstance('standard', $configuration_all_day);
-    $all_day_alias = $this->query->addRelationship($configuration_all_day['table'], $all_day_join, 'node_field_data');
+    $all_day_alias = $this->query->addRelationship($configuration_all_day['table'], $all_day_join, $base_table);
     $all_day = $all_day_alias . '.field_event_all_day_value';
 
     $field = "{$this->tableAlias}.{$this->realField}";
