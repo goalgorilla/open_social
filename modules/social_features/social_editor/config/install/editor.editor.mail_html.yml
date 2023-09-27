@@ -4,36 +4,34 @@ dependencies:
   config:
     - filter.format.mail_html
   module:
-    - ckeditor
+    - ckeditor5
 format: mail_html
-editor: ckeditor
+editor: ckeditor5
 settings:
   toolbar:
-    rows:
-      -
-        -
-          name: Formatting
-          items:
-            - Bold
-            - Italic
-            - Underline
-        -
-          name: Links
-          items:
-            - DrupalLink
-            - DrupalUnlink
-        -
-          name: Alignment
-          items:
-            - JustifyBlock
-            - JustifyLeft
-            - JustifyCenter
-            - JustifyRight
+    items:
+      - bold
+      - italic
+      - underline
+      - '|'
+      - link
+      - '|'
+      - alignment
+      - '|'
   plugins:
-    language:
-      language_list: un
-    stylescombo:
-      styles: ''
+    ckeditor5_alignment:
+      enabled_alignments:
+        - left
+        - center
+        - right
+        - justify
+    editor_advanced_link_link:
+      enabled_attributes:
+        - class
+        - id
+        - rel
+        - target
+        - title
 image_upload:
   status: false
   scheme: public
