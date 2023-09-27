@@ -217,8 +217,9 @@ function social_event_invite_update_11402(): void {
     $configuration->set('invite_subject', $subject);
     $configuration->save();
   }
-  if (!empty($configuration->get('invite_message'))) {
-    $body = str_replace('[current-user:display-name]', '[user:display-name]', $configuration->get('invite_message'));
+  $body = configuration->getOriginal('invite_message');
+  if (!empty($body)) {
+    $body = str_replace('[current-user:display-name]', '[user:display-name]', $body);
     $configuration->set('invite_message', $body);
     $configuration->save();
   }
