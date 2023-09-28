@@ -5,6 +5,8 @@
  * Contains install and update hooks.
  */
 
+use Drupal\Core\Config\FileStorage;
+
 /**
  * Enable editor advanced link module.
  */
@@ -61,17 +63,21 @@ function social_editor_update_9001() {
   \Drupal::service('module_installer')->install(['ckeditor5']);
 }
 
-
 /**
  * Switch text formats to use ckeditor5
  */
 function social_editor_update_9002() {
-  /** @var \Drupal\update_helper\Updater $updater */
-  $updater = \Drupal::service('update_helper.updater');
+  // Install new configs.
+  $config_files = [
+    'editor.editor.basic_html' => 'editor.editor.basic_html_9002',
+    'editor.editor.full_html' => 'editor.editor.full_html_9002',
+    'editor.editor.mail_html' => 'editor.editor.mail_html_9002',
+  ];
 
-  // Execute configuration update definitions with logging of success.
-  $updater->executeUpdate('social_editor', 'social_editor_update_9002');
-
-  // Output logged messages to related channel of update execution.
-  return $updater->logger()->output();
+  $config_storage = \Drupal::service('config.storage');
+  $config_path = \Drupal::service('extension.list.module')->getPath('social_editor') . '/config/static/';
+  $source = new FileStorage($config_path);
+  foreach ($config_files as $origin_name => $update_name) {
+    $config_storage->write($origin_name, $source->read($update_name));
+  }
 }
