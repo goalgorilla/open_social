@@ -15,11 +15,11 @@ Feature: Give user consent
     And data_policies:
       | name               | field_description       |
       | Terms & Conditions | No rights in this test  |
-    And I set the GDPR Consent Text to "I agree with the [id:1]"
+    And I set the GDPR Consent Text to "I read and consent to the [id:1]"
     And I am logged in as "behatuser1"
 
     Then I should be on the homepage
-    And I should see the success message "We published a new version of the data policy. You can review the data policy here."
+    And I should see the success message "We published a new version of the data protection statement. You can review the data protection statement here."
 
     When I click "here"
     Then I should be on "data-policy-agreement"
@@ -33,7 +33,7 @@ Feature: Give user consent
     # We changed the behavior. So now if a user visited the agreement page and leave it in the case when data policy
     # is not required, then we still display a status link that we published a new version of data policy until the
     # user saves the form.
-    Then I should see the success message "We published a new version of the data policy. You can review the data policy here."
+    Then I should see the success message "We published a new version of the data protection statement. You can review the data protection statement here."
     When I am on "data-policy-agreement"
     And I press "Save"
     Then I should be on the homepage
@@ -47,7 +47,7 @@ Feature: Give user consent
     And I check the box "edit-data-policy-data-policy-1"
     And I press "Save"
     Then I should be on the homepage
-    Then I should not see the success message "We published a new version of the data policy. You can review the data policy here."
+    Then I should not see the success message "We published a new version of the data protection statement. You can review the data protection statement here."
 
     When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
@@ -104,5 +104,5 @@ Feature: Give user consent
 
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy/settings"
-    Then the response should contain "I agree with the [id:1]"
-    And I fill in "Consent text" with "I agree with the [id:1*]"
+    Then the response should contain "I read and consent to the [id:1]"
+    And I fill in "Consent text" with "I read and consent to the [id:1*]"
