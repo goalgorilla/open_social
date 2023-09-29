@@ -17,17 +17,17 @@ class SocialEventManagersAccessHelper {
   /**
    * Neutral status.
    */
-  const NEUTRAL = 0;
+  protected const NEUTRAL = 0;
 
   /**
    * Forbidden status.
    */
-  const FORBIDDEN = 1;
+  protected const FORBIDDEN = 1;
 
   /**
    * Allowed status.
    */
-  const ALLOW = 2;
+  protected const ALLOW = 2;
 
   /**
    * NodeAccessCheck for given operation, node and user account.
