@@ -57,7 +57,7 @@ Feature: Create data policy and view new policy
     # Add mandatory checkbox.
     When I am on "admin/config/people/data-policy/settings"
     Then I should see "Consent text"
-    And I fill in "Consent text" with "I agree with the [id:1*]"
+    And I fill in "Consent text" with "I read and consent to the [id:1*]"
     And I press "Save configuration"
 
     # Create a new revision for the first entity, it can be our created entity or some existing entity.
@@ -87,11 +87,11 @@ Feature: Create data policy and view new policy
     Given I am logged in as "behatuser"
     Then I should be on "data-policy-agreement?destination=/stream"
 
-    And I should see the text "Our data policy has been updated on"
-    And I should see the text "Agreement to the data policy is required for continue using this platform. If you do not agree with the data policy, you will be guided to"
+    And I should see the text "Our data protection statement has been updated on"
+    And I should see the text "Consent to the data protection statement(s) is required for continuing using this platform. If you do not consent, you will be guided to"
     And I should see the link "the account cancellation"
     And I should see the text "process."
-    And I should see the text "I agree with the"
+    And I should see the text "I read and consent to the"
     And I should see the link "third version of the data policy"
     And I should see "Save"
 
@@ -105,7 +105,7 @@ Feature: Create data policy and view new policy
 
     When I logout
     And I am on "user/register"
-    Then I should see the text "I agree with the"
+    Then I should see the text "I read and consent to the"
     And I should see the link "third version of the data policy"
 
     When I click "third version of the data policy"

@@ -149,7 +149,7 @@ class MagicLoginController extends ControllerBase {
         // Set a different text when the user still needs to comply to
         // the data policy.
         $link = Link::createFromRoute($this->t('here'), 'data_policy.data_policy.agreement', [], ['query' => ["destination" => $destination]]);
-        $message_set_password = $this->t('We published a new version of the data policy. You can review the data policy @url.', [
+        $message_set_password = $this->t('We published a new version of the data protection statement. You can review the data protection statement @url.', [
           '@url' => $link->toString(),
         ]);
       }
