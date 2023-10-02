@@ -643,36 +643,6 @@ function social_group_flexible_group_update_11901(): string {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles.
- *
- * Permissions to check:
- * - "translate flexible_group group".
- */
-function social_group_flexible_group_update_111101(): void {
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
-  /** @var \Drupal\user\RoleInterface[] $roles */
-  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
-
-  $permissions_to_check = [
-    'translate flexible_group group',
-  ];
-
-  // If permission is not valid (is not on the list of all permissions),
-  // we need to revoke it from all existing roles.
-  foreach ($permissions_to_check as $permission_to_check) {
-    if (!in_array($permission_to_check, $all_permissions)) {
-      foreach ($roles as $role) {
-        if ($role->hasPermission($permission_to_check)) {
-          $role->revokePermission($permission_to_check);
-          $role->save();
-        }
-      }
-    }
-  }
-}
-
-/**
  * Disable revisions for flexible group.
  */
 function social_group_flexible_group_update_111102(): void {
