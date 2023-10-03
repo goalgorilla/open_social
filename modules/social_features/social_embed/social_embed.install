@@ -199,13 +199,20 @@ function social_embed_update_11004(): void {
 function social_embed_update_11005(): void {
   // Add the embed button to the toolbar.
   $config_factory = \Drupal::configFactory();
-  $configuration = $config_factory->getEditable('editor.editor.full_html');
-  $toolbar_items = $configuration->getOriginal('settings.toolbar.items');
+  $text_formats = [
+    'editor.editor.full_html',
+    'editor.editor.basic_html',
+  ];
 
-  // Only add the embed button when it is not on the toolbar yet.
-  if (!empty($toolbar_items) && !in_array('urlembed', $toolbar_items, TRUE)) {
-    $toolbar_items[] = 'urlembed';
-    $configuration->set('settings.toolbar.items', $toolbar_items);
-    $configuration->save();
+  foreach ($text_formats as $text_format) {
+    $configuration = $config_factory->getEditable($text_format);
+    $toolbar_items = $configuration->getOriginal('settings.toolbar.items');
+
+    // Only add the embed button when it is not on the toolbar yet.
+    if (!empty($toolbar_items) && !in_array('urlembed', $toolbar_items, TRUE)) {
+      $toolbar_items[] = 'urlembed';
+      $configuration->set('settings.toolbar.items', $toolbar_items);
+      $configuration->save();
+    }
   }
 }
