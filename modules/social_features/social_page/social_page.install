@@ -238,7 +238,7 @@ function social_page_update_10302() {
 /**
  * Remove deprecated permission "override page revision log entry".
  */
-function social_page_update_111101(): void {
+function social_page_update_120001(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   /** @var \Drupal\user\RoleInterface[] $roles */
   $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
@@ -263,7 +263,7 @@ function social_page_update_111101(): void {
  * Permissions to check:
  * - "translate page node".
  */
-function social_page_update_111102(): void {
+function social_page_update_120002(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
   /** @var \Drupal\user\RoleInterface[] $roles */

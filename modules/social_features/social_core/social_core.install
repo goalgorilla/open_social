@@ -1693,7 +1693,7 @@ function social_core_update_11900() : string {
  * Permissions to check:
  * - "access contextual links".
  */
-function social_core_update_111101(): void {
+function social_core_update_120001(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
   $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
   /** @var \Drupal\user\RoleInterface[] $roles */
@@ -1720,7 +1720,7 @@ function social_core_update_111101(): void {
 /**
  * Uninstall admin_toolbar_tools if nothing uses it.
  */
-function social_core_update_111201() : void {
+function social_core_update_120002() : void {
   // Nothing to do if the module is not installed.
   if (!\Drupal::moduleHandler()->moduleExists("admin_toolbar_tools")) {
     return;
