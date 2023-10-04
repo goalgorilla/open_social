@@ -22,9 +22,23 @@ class CKEditorContext extends RawMinkContext {
       throw new ElementNotFoundException($this->getSession()->getDriver(), 'form field', 'id|name|label|value|placeholder', $locator);
     }
 
-    $id = $field->getAttribute('id');
-    $instance = $this->getWysiwygInstance($id);
-    $this->getSession()->executeScript("$instance.setData(\"$text\");");
+    $id = str_replace('edit-', '', $field->getAttribute('id'));
+    $editor = "div.js-form-item-" . $id . " .ck-editor__editable";
+    $this->getSession()
+      ->executeScript(
+        "
+        const domEditableElement = document.querySelector(\"$editor\");
+        if (domEditableElement.ckeditorInstance) {
+          const editorInstance = domEditableElement.ckeditorInstance;
+          if (editorInstance) {
+            editorInstance.setData(\"$text\");
+          } else {
+            throw new Exception('Could not get the editor instance!');
+          }
+        } else {
+          throw new Exception('Could not find the element!');
+        }
+        ");
   }
 
   /**
@@ -33,15 +47,15 @@ class CKEditorContext extends RawMinkContext {
    * @When /^I click on the embed icon in the WYSIWYG editor$/
    */
   public function clickEmbedIconInWysiwygEditor() {
-    $cssSelector = 'a.cke_button__social_embed';
+    $name = 'Url Embed';
 
     $session = $this->getSession();
     $element = $session->getPage()->find(
       'xpath',
-      $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      "//button[span[text()='$name']]"
     );
     if (NULL === $element) {
-      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      throw new \InvalidArgumentException(sprintf('Could not evaluate ckeditor button: "%s"', $name));
     }
 
     $element->click();
