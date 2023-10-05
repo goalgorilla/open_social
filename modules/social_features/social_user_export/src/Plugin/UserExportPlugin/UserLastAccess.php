@@ -10,7 +10,7 @@ use Drupal\user\UserInterface;
  *
  * @UserExportPlugin(
  *  id = "user_last_access",
- *  label = @Translation("Last access"),
+ *  label = @Translation("Last activity"),
  *  weight = -420,
  * )
  */
@@ -20,7 +20,7 @@ class UserLastAccess extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getHeader() {
-    return $this->t('Last access');
+    return $this->t('Last activity');
   }
 
   /**
