@@ -26,10 +26,10 @@ Feature: View users as site manager
       And I should see an "#edit-created-min" element
       And I should see an "#edit-created-max" element
       # Check Last login block filter
-      And I should see "Last login"
-      And I should see an "#edit-login-op" element
-      And I should see an "#edit-login-min" element
-      And I should see an "#edit-login-max" element
+      And I should see "Last activity"
+      And I should see an "#edit-access-op" element
+      And I should see an "#edit-access-min" element
+      And I should see an "#edit-access-max" element
       # Check filter buttons
       And I should see an "#edit-submit-user-admin-people" element
 
@@ -38,7 +38,7 @@ Feature: View users as site manager
       And I should see "Status"
       And I should see "Roles"
       And I should see "Member for"
-      And I should see "Last access"
+      And I should see "Last activity"
       And I should see "Operation"
       And I should see an "#edit-views-bulk-operations-bulk-form-0" element
 
