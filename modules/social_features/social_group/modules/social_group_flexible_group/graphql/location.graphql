@@ -5,10 +5,7 @@ A physical location in the world.
 # One of the things to discuss is whether we want to combine the human readable location
 # name (e.g. "Open Social Enschede Office") with the physical address, or keep them separate.
 type Location {
-  """
-  The human readable name of the location.
-  """
-  label: String
+
   """
   The address that corresponds to the location.
   """
@@ -22,6 +19,22 @@ See https://en.wikipedia.org/wiki/ISO_3166-2 for a complete list.
 """
 scalar Country
 
+interface Foo {
+  value: String
+}
+
+type Bar implements Foo {
+  value: String!
+}
+
+interface Baz {
+  value: String!
+}
+
+type Fish implements Baz {
+  value: String
+}
+
 """
 
 """
@@ -32,6 +45,12 @@ scalar Country
 # One option would be to create an address interface and clear out fields that will
 # never be filled. Then a CommerceAddress type could be made for billing/shipping addresses.
 type Address {
+  """
+  The human readable name for this address.
+
+  For example "Billing Address"; "Home"; "Open Social HQ".
+  """
+  label: String
   """
   The two-letter country code.
   """

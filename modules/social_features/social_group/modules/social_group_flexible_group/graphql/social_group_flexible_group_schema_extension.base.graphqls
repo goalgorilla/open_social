@@ -121,27 +121,24 @@ enum GroupVisibility {
   GROUP
 }
 
-"""
-The content visibility decides what visibility content is allowed to be created within the group.
-"""
-enum ContentVisibility {
-  """
-  Public content can be seen by anyone, even unauthenticated users.
-  """
-  PUBLIC
-  """
-  Community content can only be seen by authenticated users.
+union GroupVisibility = PublicVisibility | CommunityVisibility | GroupVisibility
+union ContentVisibility = PublicVisibility | CommunityVisibility | GroupVisibility
 
-  Platform settings dictate whether community visibility requires an authenticated user to be verified.
-  """
-  COMMUNITY
-  """
-  Group content can only be seen by members of the group the content is posted in.
-  """
-  # There's a challenge here because content posted outside of the group can never have
-  # group visibility, which makes this enum not applicable to all content.
-  GROUP
+type PublicVisibility {
+  label: String!
 }
+
+type CommunityVisibility {
+  label: String!
+}
+
+type GroupVisibility {
+  label: String!
+  group: Group!
+}
+
+
+
 """
 The join methods decide how users are allowed to join.
 """
