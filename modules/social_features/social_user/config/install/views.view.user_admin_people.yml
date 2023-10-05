@@ -538,7 +538,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Last access'
+          label: 'Last activity'
           exclude: false
           alter:
             alter_text: false
@@ -1195,10 +1195,10 @@ display:
           entity_type: user
           entity_field: created
           plugin_id: date
-        login:
-          id: login
+        access:
+          id: access
           table: users_field_data
-          field: login
+          field: access
           relationship: none
           group_type: group
           admin_label: ''
@@ -1211,17 +1211,17 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: login_op
-            label: 'Last login'
+            operator_id: access_op
+            label: 'Last activity'
             description: ''
             use_operator: true
-            operator: login_op
+            operator: access_op
             operator_limit_selection: true
             operator_list:
               '<': '<'
               '>': '>'
               between: between
-            identifier: login
+            identifier: access
             required: false
             remember: false
             multiple: false
@@ -1248,7 +1248,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           entity_type: user
-          entity_field: login
+          entity_field: access
           plugin_id: date
         social_split_profile_terms:
           id: social_split_profile_terms
