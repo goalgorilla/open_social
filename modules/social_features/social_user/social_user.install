@@ -208,3 +208,45 @@ function social_user_update_11402() : void {
   ]);
   $form_mode->save();
 }
+
+/**
+ * Update 'views.view.user_admin_people'.
+ *
+ * Replace the login filter to last access and change label of access field.
+ */
+function social_user_update_12001(array &$sandbox): void {
+  $config = \Drupal::configFactory()
+    ->getEditable('views.view.user_admin_people');
+
+  $data = $config->getRawData();
+
+  // Replace the login filter to last access.
+  if (isset($data['display']['default']['display_options']['filters']['login'])) {
+    $filters = $data['display']['default']['display_options']['filters'];
+    $filters['login']['id'] = 'access';
+    $filters['login']['field'] = 'access';
+    $filters['login']['entity_field'] = 'access';
+
+    if (isset($filters['login']['expose'])) {
+      $filters['login']['expose']['operator_id'] = 'access_op';
+      $filters['login']['expose']['label'] = 'Last activity';
+      $filters['login']['expose']['operator'] = 'access_op';
+      $filters['login']['expose']['identifier'] = 'access';
+    }
+
+    // Replace key 'login' to 'access'.
+    $keys = array_keys($filters);
+    $keys[array_search('login', $keys)] = 'access';
+    $filters_updated = array_combine($keys, $filters);
+
+    // Set updated filters.
+    $data['display']['default']['display_options']['filters'] = $filters_updated;
+  }
+
+  // Change label of access field.
+  if (isset($data['display']['default']['display_options']['fields']['access'])) {
+    $data['display']['default']['display_options']['fields']['access']['label'] = 'Last activity';
+  }
+
+  $config->setData($data)->save(TRUE);
+}
