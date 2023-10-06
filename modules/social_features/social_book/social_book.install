@@ -289,8 +289,10 @@ function social_book_update_11401(): string {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "translate book node".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "translate book node".
  */
 function social_book_update_111201(): void {
   $entity_type_manager = \Drupal::entityTypeManager();

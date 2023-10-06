@@ -2331,8 +2331,10 @@ function social_event_update_111201(): void {
 }
 
 /**
- * Search for invalid permission(s) and remove them from existing roles:
- * "translate event node".
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "translate event node".
  */
 function social_event_update_111202(): void {
   $entity_type_manager = \Drupal::entityTypeManager();
