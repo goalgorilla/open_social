@@ -1743,3 +1743,10 @@ function social_core_update_111201() : void {
 function social_core_update_111202(): void {
   module_set_weight("field_group", -1);
 }
+
+/**
+ * Uninstall social_lazy_loading_images module, since its deprecated.
+ */
+function social_core_update_111203(): void {
+  \Drupal::service('module_installer')->uninstall(['social_lazy_loading_images']);
+}
