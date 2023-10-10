@@ -40,6 +40,7 @@ default:
         - Drupal\social\Behat\ThemeContext
         - Drupal\social\Behat\TopicContext
         - Drupal\social\Behat\UserContext
+        - Drupal\social\Behat\TaggingContext
   extensions:
     Drupal\social\Behat\Chrome\ChromeExtension: ~
     Drupal\MinkExtension:
@@ -53,6 +54,7 @@ default:
           chrome:
             api_url: "http://chrome:9222"
             validate_certificate: false
+            socket_timeout: 60
     Drupal\DrupalExtension:
       api_driver: 'drupal'
       drupal:
