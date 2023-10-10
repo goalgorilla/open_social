@@ -17,6 +17,8 @@ Feature: Follow Tags
       | Category 2   |            |
       | Category 2.1 | Category 2 |
       | Category 2.2 | Category 2 |
+    And I enable content tag "Category 1" for all entities
+    And I enable content tag "Category 2" for all entities
     And users:
       | name            | mail                      | status | roles          | field_profile_first_name | field_profile_last_name |
       | follower        | follower@test.user        | 1      | verified       | Jack                     | Richer                  |
