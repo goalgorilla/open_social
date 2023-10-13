@@ -14,6 +14,7 @@ Feature: Create data policy and view new policy
       | behatuser        | behatuser@example.com        | 1      | verified    |
 
     Given I enable the module "social_gdpr"
+    Given I turn off ckeditor
     Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy"
 
@@ -25,7 +26,7 @@ Feature: Create data policy and view new policy
     And I should see the text "Name"
     And I should see the text "Description"
     And I fill in "Name" with "First version of the data policy"
-    When I fill in the "Description" WYSIWYG editor with "Description for the first version of the data policy"
+    When I fill in "Description" with "Description for the first version of the data policy"
     And I press "Save"
 
     # Create a new revision for the new data policy entity.
@@ -40,7 +41,7 @@ Feature: Create data policy and view new policy
     And I should see the text "Description"
     And I should see the text "Revision log message"
     And I fill in "Name" with "Second version of the data policy"
-    When I fill in the "Description" WYSIWYG editor with "Description for the second version of the data policy"
+    When I fill in "Description" with "Description for the second version of the data policy"
     And I press "Save"
 
     # Active this new revision.
@@ -70,7 +71,7 @@ Feature: Create data policy and view new policy
     And I should see the text "Description"
     And I should see the text "Revision log message"
     And I fill in "Name" with "Third version of the data policy"
-    When I fill in the "Description" WYSIWYG editor with "Description for the third version of the data policy"
+    When I fill in "Description" with "Description for the third version of the data policy"
     And I press "Save"
 
     # Active this new revision for the first entity.

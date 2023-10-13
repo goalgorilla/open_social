@@ -10,6 +10,20 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class CKEditorContext extends RawMinkContext {
 
+
+  /**
+   * Turn off ckeditor.
+   *
+   * @Given I turn off ckeditor
+   */
+  public function turnOffCkeditor()
+  {
+    // Disable ckeditor for basic and full html.
+    \Drupal::configFactory()->getEditable('editor.editor.basic_html')->delete();
+    \Drupal::configFactory()->getEditable('editor.editor.full_html')->delete();
+
+  }
+
   /**
    * Allow typing in the CKEditor.
    *
