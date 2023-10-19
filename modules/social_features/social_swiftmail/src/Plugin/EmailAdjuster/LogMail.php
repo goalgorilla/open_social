@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_mailer\Plugin\EmailAdjuster;
+namespace Drupal\social_swiftmail\Plugin\EmailAdjuster;
 
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Form\FormStateInterface;

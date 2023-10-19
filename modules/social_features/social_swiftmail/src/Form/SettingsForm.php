@@ -3,68 +3,39 @@
 namespace Drupal\social_swiftmail\Form;
 
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
-use Drupal\Component\Utility\Html as HtmlUtility;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 
 /**
- * Class SocialSwiftmailSettingsForm.
- *
- * @package Drupal\social_swiftmail\Form
+ * Configuration form for the module.
  */
-class SocialSwiftmailSettingsForm extends ConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * The 'email' activity destination plugin.
-   *
-   * @var \Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination
    */
-  protected $emailActivityDestination;
+  protected EmailActivityDestination $emailActivityDestination;
 
   /**
    * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * The batch builder.
-   *
-   * @var \Drupal\Core\Batch\BatchBuilder
    */
-  protected $batchBuilder;
-
-  /**
-   * SocialSwiftmailSettingsForm constructor.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activity_destination_manager
-   *   The activity destination manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
-   */
-  public function __construct(
-    ConfigFactoryInterface $config_factory,
-    ActivityDestinationManager $activity_destination_manager,
-    ModuleHandlerInterface $module_handler
-  ) {
-    parent::__construct($config_factory);
-
-    $this->emailActivityDestination = $activity_destination_manager->createInstance('email');
-    $this->batchBuilder = new BatchBuilder();
-    $this->moduleHandler = $module_handler;
-  }
+  protected BatchBuilder $batchBuilder;
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.activity_destination.processor'),
@@ -73,9 +44,30 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Constructs a SettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activity_destination_manager
+   *   The activity destination manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, ActivityDestinationManager $activity_destination_manager, ModuleHandlerInterface $module_handler) {
+    parent::__construct($config_factory);
+
+    if (($plugin = $activity_destination_manager->createInstance('email')) instanceof EmailActivityDestination) {
+      $this->emailActivityDestination = $plugin;
+    }
+
+    $this->batchBuilder = new BatchBuilder();
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
     return [
       'social_swiftmail.settings',
     ];
@@ -84,14 +76,14 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
-    return 'social_swiftmail_form';
+  public function getFormId(): string {
+    return 'social_swiftmail_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('social_swiftmail.settings');
 
     $form['notification'] = [
@@ -129,9 +121,11 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
 
     foreach ($items as $item_id => $item) {
       $rows = [];
+
       foreach ($item['templates'] as $template) {
         $rows[] = $this->buildRow($template, $notification_options, $template_frequencies);
       }
+
       $form['notification'][$item_id] = [
         '#type' => 'table',
         '#caption' => [
@@ -151,8 +145,8 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $form['template']['template_header'] = [
       '#title' => $this->t('Template header'),
       '#type' => 'text_format',
-      '#default_value' => $template_header['value'] ?: '',
-      '#format' => $template_header['format'] ?: 'mail_html',
+      '#default_value' => $template_header['value'] ?? '',
+      '#format' => $template_header['format'] ?? 'mail_html',
       '#allowed_formats' => [
         'mail_html',
       ],
@@ -163,8 +157,8 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $form['template']['template_footer'] = [
       '#title' => $this->t('Template footer'),
       '#type' => 'text_format',
-      '#default_value' => $template_footer['value'] ?: '',
-      '#format' => $template_footer['format'] ?: 'mail_html',
+      '#default_value' => $template_footer['value'] ?? '',
+      '#format' => $template_footer['format'] ?? 'mail_html',
       '#allowed_formats' => [
         'mail_html',
       ],
@@ -181,15 +175,8 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     $form['do_not_send_emails_new_users'] = [
       '#type' => 'checkbox',
       '#title' => $this->t("Don't send email notifications to users who have never logged in"),
-      '#description' => $this->t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification center within the community.'),
+      '#description' => $this->t('When this setting is enabled, users who have never logged in will not receive email notifications, they still receive notifications via the notification centre within the community.'),
       '#default_value' => $config->get('do_not_send_emails_new_users'),
-    ];
-
-    $form['disabled_user_greeting_keys'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Disabled email message keys with user greeting'),
-      '#description' => $this->t("Each email comes with a user greeting on top, in some cases we don't want that, so any message key listed here(one per line) will not include the greeting."),
-      '#default_value' => $config->get('disabled_user_greeting_keys'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -198,27 +185,24 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     parent::submitForm($form, $form_state);
 
-    // Save config.
     $config = $this->config('social_swiftmail.settings');
-    $config->set('remove_open_social_branding', $form_state->getValue('remove_open_social_branding'));
-    $config->set('do_not_send_emails_new_users', $form_state->getValue('do_not_send_emails_new_users'));
-    $config->set('disabled_user_greeting_keys', $form_state->getValue('disabled_user_greeting_keys'));
+    $config
+      ->set('remove_open_social_branding', $form_state->getValue('remove_open_social_branding'))
+      ->set('do_not_send_emails_new_users', $form_state->getValue('do_not_send_emails_new_users'))
+      ->set('template_header', $form_state->getValue('template_header'))
+      ->set('template_footer', $form_state->getValue('template_footer'));
 
-    // Set notification settings.
     $templates = $this->emailActivityDestination->getSendEmailMessageTemplates();
-    $user_inputs = $form_state->getUserInput();
+    $user_input = $form_state->getUserInput();
+
     foreach (array_keys($templates) as $template) {
-      if (isset($user_inputs[$template])) {
-        $config->set('template_frequencies.' . $template, $user_inputs[$template]);
+      if (isset($user_input[$template])) {
+        $config->set('template_frequencies.' . $template, $user_input[$template]);
       }
     }
-
-    // Set the template header and footer settings.
-    $config->set('template_header', $form_state->getValue('template_header'));
-    $config->set('template_footer', $form_state->getValue('template_footer'));
 
     $config->save();
   }
@@ -232,16 +216,15 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
    *   Array of options.
    * @param array $template_frequencies
    *   Frequencies for all templates from config.
-   *
-   * @return array[]
-   *   Row.
    */
-  private function buildRow($template, array $notification_options, array $template_frequencies) {
+  private function buildRow($template, array $notification_options, array $template_frequencies): array {
     $email_message_templates = $this->emailActivityDestination->getSendEmailMessageTemplates();
     $row = [
       [
         'width' => '50%',
-        'data' => ['#plain_text' => $email_message_templates[$template]],
+        'data' => [
+          '#plain_text' => $email_message_templates[$template],
+        ],
       ],
     ];
 
@@ -256,7 +239,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
           '#return_value' => $notification_id,
           '#value' => $default_value === $notification_id ? $notification_id : FALSE,
           '#name' => $template,
-          '#id' => HtmlUtility::getUniqueId('edit-' . implode('-', $parents_for_id)),
+          '#id' => Html::getUniqueId('edit-' . implode('-', $parents_for_id)),
         ],
       ];
     }
