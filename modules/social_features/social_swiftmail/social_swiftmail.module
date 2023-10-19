@@ -6,54 +6,75 @@
  */
 
 use Drupal\Component\Utility\Xss;
-use Drupal\file\Entity\File;
-use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
+use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
+use Drupal\symfony_mailer\AddressInterface;
+use Drupal\user\UserInterface;
+use Drupal\symfony_mailer\EmailInterface;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 /**
- * Preprocess swift template.
+ * Gets a logo for emails from the theme.
+ *
+ * @param string $theme_id
+ *   The theme id.
  */
-function social_swiftmail_preprocess_swiftmailer(array &$variables) {
+function social_swiftmail_get_logo(string $theme_id): string {
+  global $base_url;
+
+  $email_logo = theme_get_setting('email_logo', $theme_id);
+
+  if (!empty($email_logo[0])) {
+    $file = File::load($email_logo[0]);
+
+    if ($file instanceof FileInterface) {
+      $file_url_generator = \Drupal::service('file_url_generator');
+      $logo = $file_url_generator->generateAbsoluteString($file->getFileUri());
+    }
+  }
+
+  return $logo ?? $base_url . theme_get_setting('logo.url', $theme_id);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_swiftmail_preprocess_email(array &$variables): void {
   // Load default theme (not active).
   $theme_id = \Drupal::config('system.theme')->get('default');
 
+  $logo = social_swiftmail_get_logo($theme_id);
+  $variables['logo'] = $logo;
+
   // Need to check this, since otherwise site-install will fail.
   if (\Drupal::service('module_handler')->moduleExists('color')) {
-    // Load the colors.
     $colors = color_get_palette($theme_id);
+    $variables['primary'] = $colors['brand-primary'];
+    $variables['secondary'] = $colors['brand-secondary'];
+    $variables['accent'] = $colors['brand-accent'];
+    $variables['link'] = $colors['brand-link'];
   }
 
-  // Set variables from theme.
-  $logo = social_swiftmail_get_logo($theme_id);
-  $primary = $colors['brand-primary'];
-  $secondary = $colors['brand-secondary'];
-  $accent = $colors['brand-accent'];
-  $link = $colors['brand-link'];
   $card_radius = Xss::filter(theme_get_setting('card_radius', $theme_id) ?? '');
   $button_radius = Xss::filter(theme_get_setting('button_radius', $theme_id) ?? '');
-
-  // Add variables to send to the html template.
-  $variables['logo'] = $logo;
-  $variables['primary'] = $primary;
-  $variables['secondary'] = $secondary;
-  $variables['accent'] = $accent;
-  $variables['link'] = $link;
   $variables['border_radius'] = $card_radius;
   $variables['button_border_radius'] = $button_radius;
 
   // Check if custom e-mail setting for branding removal is enabled.
-  $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
-  if ($social_swiftmail_config->get('remove_open_social_branding') === TRUE) {
+  $email_config = \Drupal::config('social_swiftmail.settings');
+
+  if ($email_config->get('remove_open_social_branding') === TRUE) {
     $site_config = \Drupal::config('system.site');
     // When branding should be removed, check if the default site settings are
     // set and override variables.
-    if (!$site_config->isNew()) {
-      $variables['site_link'] = TRUE;
-      $variables['site_name'] = $site_config->get('name');
-      if ($site_config->get('slogan')) {
-        $variables['site_slogan'] = $site_config->get('slogan');
-      }
+    $variables['site_link'] = TRUE;
+    $variables['site_name'] = $site_config->get('name');
+
+    if ($site_config->get('slogan')) {
+      $variables['site_slogan'] = $site_config->get('slogan');
     }
   }
   else {
@@ -69,115 +90,86 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
         'target' => '_blank',
       ],
     ];
-    $variables['site_name'] = Link::fromTextAndUrl(t('Open Social'), $url = Url::fromUri('https://www.getopensocial.com/', $options));
+    $variables['site_name'] = Link::fromTextAndUrl(t('Open Social'), Url::fromUri('https://www.getopensocial.com/', $options));
     $variables['site_slogan'] = '"' . t('Create digital spaces that empower your members to share') . '"';
-    $variables['site_sub_slogan'] = Link::fromTextAndUrl(t('#MadeToShare'), $url = Url::fromUri('https://twitter.com/search?q=%23MadeToShare%20%23opensocial'));
+    $variables['site_sub_slogan'] = Link::fromTextAndUrl(t('#MadeToShare'), Url::fromUri('https://twitter.com/search?q=%23MadeToShare%20%23opensocial'));
   }
+
+  /** @var \Drupal\Core\Render\RendererInterface $renderer */
+  $renderer = \Drupal::service('renderer');
 
   // Check if a custom e-mail header is set and apply the configuration
   // to the render array.
-  if (($header_config = $social_swiftmail_config->get('template_header'))
+  if (($header_config = $email_config->get('template_header'))
     && (!empty($header_config['value']) && !empty($header_config['format']))) {
     $header_markup = [
       '#type' => 'processed_text',
       '#text' => $header_config['value'],
       '#format' => $header_config['format'],
     ];
-    $variables['header'] = \Drupal::service('renderer')->renderRoot($header_markup);
+    $variables['header'] = $renderer->renderRoot($header_markup);
   }
 
   // Check if a custom e-mail footer is set and apply the configuration
   // to the render array.
-  if (($footer_config = $social_swiftmail_config->get('template_footer'))
+  if (($footer_config = $email_config->get('template_footer'))
     && (!empty($footer_config['value']) && !empty($footer_config['format']))) {
     $footer_markup = [
       '#type' => 'processed_text',
       '#text' => $footer_config['value'],
       '#format' => $footer_config['format'],
     ];
-    $variables['footer'] = \Drupal::service('renderer')->renderRoot($footer_markup);
+    $variables['footer'] = $renderer->renderRoot($footer_markup);
   }
 
-  $user = FALSE;
-  $message = &$variables['message'];
+  /** @var \Drupal\symfony_mailer\EmailInterface $email */
+  $email = $variables['email'];
+  $context = $email->getParam('context');
 
-  if (!empty($message['to'])) {
-    $user = user_load_by_mail($message['to']);
-  }
-
-  // Try to add a heading message.
-  if ($user || !empty($message['params']['context']['display_name'])) {
-    $options = [
-      'langcode' => $message['langcode'],
-    ];
-
-    if ($user) {
-      $display_name = $user->getDisplayName();
-    }
-    else {
-      $display_name = $message['params']['context']['display_name'];
-    }
-
-    $disabled_greeting_keys = $social_swiftmail_config->get("disabled_user_greeting_keys");
-    $disabled_greeting_keys = explode("\r\n", $disabled_greeting_keys ?? "");
-    $replace = [
-      '@display_name' => $display_name,
-    ];
-
-    if (isset($message['key'])) {
-      if (!in_array($message['key'], $disabled_greeting_keys)) {
-        $variables['heading'] = t('Hi <strong>@display_name</strong>', $replace, $options);
-      }
-      return;
-    }
-
-    $variables['heading'] = t('Hi <strong>@display_name</strong>', $replace, $options);
-  }
-}
-
-/**
- * Implements hook_mail_alter().
- */
-function social_swiftmail_mail_alter(&$message) {
-  // Get the site settings.
-  $site_settings = \Drupal::config('system.site');
-
-  // If there is something set as 'from' sender, we append the site name.
-  if (isset($message['from'])) {
-    $message['from'] = $site_settings->get('name') . ' <' . $message['from'] . '>';
+  if ($to = $email->getHeaders()->getHeaderBody('X-Rerouted-Original-to')) {
+    $mail = $to;
   }
   else {
-    $message['from'] = $site_settings->get('name') . ' <' . $site_settings->get('mail') . '>';
+    $to = $email->getTo();
+    $mail = isset($to[0]) ? _addresses_to_string($to)[0] : FALSE;
   }
+
+  if ($mail && ($user = user_load_by_mail($mail)) instanceof UserInterface) {
+    $display_name = $user->getDisplayName();
+  }
+  elseif (!empty($context['display_name'])) {
+    $display_name = $context['display_name'];
+  }
+  else {
+    return;
+  }
+
+  $variables['heading'] = t('Hi <strong>@display_name</strong>', [
+    '@display_name' => $display_name,
+  ], [
+    'langcode' => $email->getLangcode(),
+  ]);
 }
 
 /**
- * Function the fetches the logo.
+ * Render array of addresses as array of strings.
+ *
+ * @param \Drupal\symfony_mailer\AddressInterface[] $addresses
+ *   An array of Address objects.
+ *
+ * @return array
+ *   An array of strings.
  */
-function social_swiftmail_get_logo($theme_id) {
-  global $base_url;
-  // Default we use the logo image.
-  $logo = $base_url . theme_get_setting('logo.url', $theme_id);
-
-  // It could be overridden here.
-  $email_logo = theme_get_setting('email_logo', $theme_id);
-
-  // Must be a non-empty array.
-  if (is_array($email_logo) && !empty($email_logo)) {
-    $file = File::load($email_logo[0]);
-
-    if ($file instanceof File) {
-      $logo = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
-    }
-  }
-
-  return $logo;
+function _addresses_to_string(array $addresses): array {
+  return array_map(function (AddressInterface $address) {
+    return $address->getEmail();
+  }, $addresses);
 }
 
 /**
  * Implements hook_element_info_alter().
  */
-function social_swiftmail_element_info_alter(array &$info) {
+function social_swiftmail_element_info_alter(array &$info): void {
   if (isset($info['text_format'])) {
     if (!isset($info['text_format']['#process'])) {
       $info['text_format']['#process'] = [];
@@ -187,5 +179,30 @@ function social_swiftmail_element_info_alter(array &$info) {
       SocialSwiftmailTextFormat::class,
       'process',
     ];
+  }
+}
+
+/**
+ * Implements hook_mailer_builder_info_alter().
+ */
+function social_swiftmail_mailer_builder_info_alter(array &$email_builders): void {
+  if (isset($email_builders['user'])) {
+    $email_builders['user']['class'] = 'Drupal\social_swiftmail\Plugin\EmailBuilder\UserEmailBuilder';
+  }
+}
+
+/**
+ * Implements hook_mailer_post_render().
+ */
+function social_swiftmail_mailer_post_render(EmailInterface $email): void {
+  $css_inliner = new CssToInlineStyles();
+  $body = (string) $email->getHtmlBody();
+  $email->setHtmlBody($css_inliner->convert(check_markup($body, 'full_html')));
+
+  $dsn = $email->getTransportDSN();
+
+  if (strpos($dsn, 'null://file-spool:/') === 0) {
+    $email->addTextHeader('X-Transport', 'FileSpool');
+    $email->addTextHeader('X-Spool-Directory', substr($dsn, 19));
   }
 }

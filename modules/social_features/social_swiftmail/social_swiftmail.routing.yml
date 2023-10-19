@@ -1,7 +1,14 @@
 social_swiftmail.settings:
-  path: '/admin/config/opensocial/swiftmail'
+  path: '/admin/config/opensocial/mail'
   defaults:
-    _form: 'Drupal\social_swiftmail\Form\SocialSwiftmailSettingsForm'
+    _form: 'Drupal\social_swiftmail\Form\SettingsForm'
     _title: 'Email notification settings'
+  requirements:
+    _permission: 'administer social swiftmail'
+social_swiftmail.test:
+  path: '/admin/config/system/mailer/test'
+  defaults:
+    _form: '\Drupal\social_swiftmail\Form\TestForm'
+    _title: 'Test'
   requirements:
     _permission: 'administer social swiftmail'
