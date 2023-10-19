@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_mailer\Plugin\EmailBuilder;
+namespace Drupal\social_swiftmail\Plugin\EmailBuilder;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Custom email builder plugin for the user module.
  *
- * @see social_mailer_mailer_builder_info_alter()
+ * @see social_swiftmail_mailer_builder_info_alter()
  */
 class UserEmailBuilder extends UserEmailBuilderBase implements ContainerFactoryPluginInterface {
 

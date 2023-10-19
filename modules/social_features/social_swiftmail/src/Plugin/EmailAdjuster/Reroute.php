@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_mailer\Plugin\EmailAdjuster;
+namespace Drupal\social_swiftmail\Plugin\EmailAdjuster;
 
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -58,7 +58,7 @@ class Reroute extends EmailAdjusterBase implements ContainerFactoryPluginInterfa
       $container->get('config.factory'),
       $container->get('entity_type.manager')->getStorage('user_role'),
       $container->get('email.validator'),
-      $container->get('logger.factory')->get('social_mailer')
+      $container->get('logger.factory')->get('social_swiftmail')
     );
   }
 

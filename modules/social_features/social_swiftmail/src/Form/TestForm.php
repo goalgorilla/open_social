@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_mailer\Form;
+namespace Drupal\social_swiftmail\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
@@ -64,7 +64,7 @@ class TestForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId(): string {
-    return 'social_mailer_test_form';
+    return 'social_swiftmail_test_form';
   }
 
   /**
@@ -109,7 +109,7 @@ class TestForm extends FormBase {
     ];
 
     $this->mailManager->mail(
-      'social_mailer',
+      'social_swiftmail',
       'test',
       $form_state->getValue(['test', 'recipient']),
       $this->languageManager->getDefaultLanguage()->getId(),

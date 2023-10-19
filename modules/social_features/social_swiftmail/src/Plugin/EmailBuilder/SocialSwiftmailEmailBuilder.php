@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_mailer\Plugin\EmailBuilder;
+namespace Drupal\social_swiftmail\Plugin\EmailBuilder;
 
 use Drupal\Core\Render\Markup;
 use Drupal\symfony_mailer\EmailFactoryInterface;
@@ -11,12 +11,12 @@ use Drupal\symfony_mailer\Processor\EmailBuilderBase;
  * Defines the Email Builder plug-in for user module.
  *
  * @EmailBuilder(
- *   id = "social_mailer",
+ *   id = "social_swiftmail",
  *   sub_types = { "test" = @Translation("Test email") },
  *   common_adjusters = {"email_subject", "email_body"},
  * )
  */
-class SocialMailerEmailBuilder extends EmailBuilderBase {
+class SocialSwiftmailEmailBuilder extends EmailBuilderBase {
 
   /**
    * Saves the parameters for a newly created email.

@@ -874,10 +874,13 @@ function social_core_update_8024() {
 }
 
 /**
- * Empty hook.
+ * Install social_swiftmail module.
  */
 function social_core_update_8025() {
-  // Emptied in https://www.drupal.org/project/social/issues/3232848
+  $modules = [
+    'social_swiftmail',
+  ];
+  \Drupal::service('module_installer')->install($modules);
 }
 
 /**
