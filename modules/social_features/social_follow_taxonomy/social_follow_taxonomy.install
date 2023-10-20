@@ -13,6 +13,13 @@
 function social_follow_taxonomy_install() {
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
+    'authenticated',
+    [
+      'flag follow_term',
+      'unflag follow_term',
+    ]
+  );
+  user_role_grant_permissions(
     'verified',
     [
       'flag follow_term',
