@@ -102,7 +102,7 @@ class ActivitySendEmailJobType extends JobTypeBase implements ContainerFactoryPl
     $this->frequencyManager = $frequency_manager;
     $this->database = $connection;
     $this->activityNotifications = $activity_notifications;
-    $this->socialMailerSettings = $config_factory->get('social_mailer.settings');
+    $this->socialMailerSettings = $config_factory->get('social_swiftmail.settings');
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
     $this->languageManager = $language_manager;
