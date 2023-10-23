@@ -144,7 +144,7 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool @login
   Scenario: User is able to get no emails for activities if he doesn't login at lease once.
-    Given I set the configuration item "social_mailer.settings" with key "do_not_send_emails_new_users" to 1
+    Given I set the configuration item "social_swiftmail.settings" with key "do_not_send_emails_new_users" to 1
     And I set the configuration item "system.site" with key "name" to "Open Social"
     And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
@@ -157,7 +157,7 @@ Feature: Receive email notifications and choose frequency
     And I wait for the queue to be empty
     Then I should not have an email with subject "You have been mentioned" and "Cathy Willis mentioned you" in the body
 
-    Given I set the configuration item "social_mailer.settings" with key "do_not_send_emails_new_users" to 0
+    Given I set the configuration item "social_swiftmail.settings" with key "do_not_send_emails_new_users" to 0
     And I am logged in as "user2"
     And I am on the homepage
     And I fill in "Say something to the Community" with "You're going to be notified of this [~user1]!"
