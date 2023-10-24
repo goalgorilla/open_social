@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         php:
-          - 8.0
           - 8.1
     steps:
       # We want to reuse our project setup to run different jobs at once.
@@ -70,7 +69,6 @@ jobs:
     strategy:
       matrix:
         php:
-          - 8.0
           - 8.1
     steps:
       - uses: actions/cache/restore@v3
@@ -137,7 +135,6 @@ jobs:
     strategy:
       matrix:
         php:
-          - 8.0
           - 8.1
     steps:
       - uses: actions/cache/restore@v3
