@@ -218,6 +218,14 @@ jobs:
 
           vendor/bin/drush updb -y 2> >(tee update.log >&2)
 
+          # Make sure symfony_mailer is configured for our CI.
+          # Set config after updates when the config exist.
+          drush cset symfony_mailer.mailer_transport.sendmail plugin 'smtp' -y
+          drush cset symfony_mailer.mailer_transport.sendmail configuration.user '' -y
+          drush cset symfony_mailer.mailer_transport.sendmail configuration.pass '' -y
+          drush cset symfony_mailer.mailer_transport.sendmail configuration.host 'mailcatcher' -y
+          drush cset symfony_mailer.mailer_transport.sendmail configuration.port '1025' -y
+
           # Ensure there are no warnings in the update.log
           if grep -E '^>\s+\[warning\]\s' update.log 1>/dev/null; then
             # Move the update.log with warnings and status messages to the test output. The text is viewable on GitHub
