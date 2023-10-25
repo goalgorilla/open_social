@@ -134,7 +134,7 @@ interface SocialTaggingServiceInterface {
   /**
    * Check if given term is allowed to use and see for given entities.
    */
-  public function termIsVisibleForEntities(string $term_name, array $placement_filter_keys): bool;
+  public function termIsVisibleForEntities(int $tid, array $placement_filter_keys): bool;
 
   /**
    * Returns the children of any level term items.

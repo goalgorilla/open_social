@@ -552,7 +552,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
       if (!isset($form[$label])) {
         continue;
       }
-      if ($tag_service->termIsVisibleForEntities($term_name, $keys[$form['#id']])) {
+      if ($tag_service->termIsVisibleForEntities($tid, $keys[$form['#id']])) {
         $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
 
