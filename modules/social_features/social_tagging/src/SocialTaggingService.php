@@ -114,7 +114,7 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
     }
     if ($filter_key) {
       foreach ($categories as $tid => $category) {
-        if ($this->termIsVisibleForEntities($category, [$filter_key])) {
+        if ($this->termIsVisibleForEntities($tid, [$filter_key])) {
           continue;
         }
         // Unset category as it is disables for current form.
@@ -256,10 +256,13 @@ class SocialTaggingService implements SocialTaggingServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function termIsVisibleForEntities(string $term_name, array $placement_filter_keys): bool {
-    $term = $this->entityTypeManager->getStorage('taxonomy_term')->loadByProperties(['name' => $term_name]);
-    $term = reset($term);
+  public function termIsVisibleForEntities(int $tid, array $placement_filter_keys): bool {
+    $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
     if (!$term instanceof TermInterface) {
+      return FALSE;
+    }
+    // Make sure that field_category_usage still exist.
+    if (!$term->hasField('field_category_usage')) {
       return FALSE;
     }
     $usage = unserialize($term->get('field_category_usage')->value ?? '');
