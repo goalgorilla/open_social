@@ -133,7 +133,7 @@ function social_swiftmail_update_11003(): void {
   $module_installer->uninstall(['swiftmailer', 'mailsystem']);
 
   // Install the Symfony mailer.
-  $module_installer->install(['symfony_mailer', 'mailsystem']);
+  $module_installer->install(['symfony_mailer']);
   // Remove unnecessary mailer policies and set the correct theme to the default
   // policy.
   $config_factory = \Drupal::configFactory();
