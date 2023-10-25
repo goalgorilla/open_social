@@ -122,3 +122,33 @@ function social_swiftmail_update_11002(): void {
 
   $settings->set('disabled_user_greeting_keys', implode("\r\n", $disabled_greeting_keys))->save();
 }
+
+/**
+ * Migrate from Swiftmailer to Symfony mailer.
+ */
+function social_swiftmail_update_11003(): void {
+  // Uninstall the Swiftmailer.
+  /** @var \Drupal\Core\Extension\ModuleInstallerInterface $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall(['swiftmailer', 'mailsystem']);
+
+  // Install the Symfony mailer.
+  $module_installer->install(['symfony_mailer', 'mailsystem']);
+  // Remove unnecessary mailer policies and set the correct theme to the default
+  // policy.
+  $config_factory = \Drupal::configFactory();
+  $keys = $config_factory->listAll('symfony_mailer.mailer_policy.');
+
+  foreach ($keys as $key) {
+    $config = $config_factory->getEditable($key);
+
+    if ($key === 'symfony_mailer.mailer_policy._') {
+      $config
+        ->set('configuration.email_theme.theme', '_default')
+        ->save();
+    }
+    else {
+      $config->delete();
+    }
+  }
+}
