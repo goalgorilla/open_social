@@ -61,7 +61,7 @@ function social_embed_install(bool $is_syncing) {
  *
  * Remove embed button from the toolbar.
  */
-function social_embed_uninstall() :void {
+function social_embed_uninstall() {
   $config_factory = \Drupal::configFactory();
   $configuration = $config_factory->getEditable('editor.editor.full_html');
   $toolbar_items = $configuration->getOriginal('settings.toolbar.items');

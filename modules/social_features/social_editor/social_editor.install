@@ -78,6 +78,6 @@ function social_editor_update_9002(): void {
   $config_path = \Drupal::service('extension.list.module')->getPath('social_editor') . '/config/static/';
   $source = new FileStorage($config_path);
   foreach ($config_files as $origin_name => $update_name) {
-    $config_storage->write($origin_name, (array) $source->read($update_name));
+    $config_storage->write($origin_name, $source->read($update_name));
   }
 }
