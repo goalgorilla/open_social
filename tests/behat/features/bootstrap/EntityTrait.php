@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social\Behat;
 
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -88,7 +89,10 @@ trait EntityTrait {
       // Allow date time fields to be provided as an offset to the current day
       // (e.g. "+1 day" or "-5 days").
       if ($field_definition !== NULL && $field_definition->getType() === "datetime") {
-        $values[$field_name] = date('Y-m-d\TH:i:s', strtotime($values[$field_name]));
+        // Make sure we store them as UTC, so we don't have any scenarios where
+        // system time influences behat test.
+        $date = new DrupalDateTime($values[$field_name], 'UTC');
+        $values[$field_name] = $date->format('Y-m-d\TH:i:s');
       }
       // Created and changed fields are stored as a normal timestamp but require
       // the same human-readable input as datetime fields.
