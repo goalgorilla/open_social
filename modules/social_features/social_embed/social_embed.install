@@ -15,6 +15,8 @@ use Drupal\field\Entity\FieldStorageConfig;
  * Perform actions related to the installation of social_embed.
  */
 function social_embed_install(bool $is_syncing) {
+  // Create the social_embed icon.
+  _social_embed_create_media_button();
   // Grant the default permissions for this feature.
   user_role_grant_permissions(
     'anonymous',
@@ -46,8 +48,7 @@ function social_embed_install(bool $is_syncing) {
  */
 function social_embed_update_8001() {
   // Create the social_embed icon.
-  // Removed code as the functionality behind it has been removed.
-  // We don't use our own embed icon anymore.
+  _social_embed_create_media_button();
 }
 
 /**
