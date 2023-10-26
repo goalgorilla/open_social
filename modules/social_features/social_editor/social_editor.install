@@ -59,14 +59,14 @@ function social_editor_update_9000(): string {
 /**
  * Enable ckeditor5 module.
  */
-function social_editor_update_9001(): void {
+function social_editor_update_9001() {
   \Drupal::service('module_installer')->install(['ckeditor5']);
 }
 
 /**
- * Switch text formats to use ckeditor5.
+ * Switch text formats to use ckeditor5
  */
-function social_editor_update_9002(): void {
+function social_editor_update_9002() {
   // Install new configs.
   $config_files = [
     'editor.editor.basic_html' => 'editor.editor.basic_html_9002',
