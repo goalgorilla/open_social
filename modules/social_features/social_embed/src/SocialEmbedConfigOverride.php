@@ -137,6 +137,46 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    *   An override configuration.
    */
   protected function addEditorOverride($text_format, array &$overrides) {
+    $config_name = 'editor.editor.' . $text_format;
+    /** @var \Drupal\Core\Config\Config $config */
+    $config = $this->configFactory->getEditable($config_name);
+    $settings = $config->get('settings');
+
+    // Ensure we have an existing row that the button can be added to.
+    if (empty($settings) || !isset($settings['toolbar']['rows']) || !is_array($settings['toolbar']['rows'])) {
+      return;
+    }
+
+    $button_exists = FALSE;
+
+    foreach ($settings['toolbar']['rows'] as $row) {
+      foreach ($row as $group) {
+        foreach ($group['items'] as $button) {
+          if ($button === 'social_embed') {
+            $button_exists = TRUE;
+            break 3;
+          }
+        }
+      }
+    }
+
+    // If the button already exists we change nothing.
+    if (!$button_exists) {
+      $row_array_keys = array_keys($settings['toolbar']['rows']);
+      $last_row_key = end($row_array_keys);
+      // Ensure we add our button at the end of the row.
+      // We use count to avoid issues when keys are non-numeric (even though
+      // that shouldn't happen). This will break if the keys are non-consecutive
+      // (which should also never happen).
+      $group_key = count($settings['toolbar']['rows'][$last_row_key]) + 1;
+
+      // Add the button as a new group to the bottom row as the last item.
+      $group = [
+        'name' => 'Embed',
+        'items' => ['social_embed'],
+      ];
+      $overrides[$config_name]['settings']['toolbar']['rows'][$last_row_key][$group_key] = $group;
+    }
   }
 
   /**
