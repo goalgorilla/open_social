@@ -92,6 +92,8 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
     $roles = &$entity->get('group_roles');
 
+    $group_manager_role = $entity->getGroup()->getGroupType()->id() . '-group_manager';
+
     if ($roles->isEmpty() && $is_member) {
       $update = FALSE;
     }
@@ -100,6 +102,23 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
       foreach ($value as $item) {
         if ($item['target_id'] === $role) {
+          if (array_search($item, $value) == 0) {
+            if ($role === $group_manager_role) {
+              // Set role 'Group Manager' only if user chosen 'Group Manager'.
+              $entity->set('group_roles', [0 => $item])->save();
+            }
+          }
+          else {
+            // Set role 'Group Manager' only if user chosen 'Group Manager'.
+            if ($role === $group_manager_role) {
+              $entity->set('group_roles', [0 => $item])->save();
+            }
+            // Add role 'Group Admin' if user chosen 'Group Admin'.
+            else {
+              $entity->set('group_roles', array_reverse($value))->save();
+            }
+          }
+
           $update = FALSE;
           break;
         }
@@ -108,7 +127,16 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
     if ($update) {
       if (!$is_member) {
-        $value[] = ['target_id' => $role];
+        $new_value = ['target_id' => $role];
+
+        // Set role 'Group Manager' only if user chosen 'Group Manager'.
+        if ($role === $group_manager_role) {
+          $value = $new_value;
+        }
+        // Add role 'Group Admin' if user chosen 'Group Admin'.
+        else {
+          array_unshift($value, $new_value);
+        }
       }
 
       $entity->set('group_roles', $value)->save();
