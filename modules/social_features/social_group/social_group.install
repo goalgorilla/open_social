@@ -1025,3 +1025,17 @@ function social_group_update_11902(): void {
   }
 
 }
+
+/**
+ * Cancel limit of outputted roles in views.view.group_manage_members.
+ */
+function social_group_update_12001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

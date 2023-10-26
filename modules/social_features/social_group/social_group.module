@@ -2807,11 +2807,12 @@ function _social_group_action_batch_finish($success, array $results, array $oper
     return;
   }
 
-  $operations = array_count_values($results['operations']);
-  $results_count = 0;
-
-  foreach ($operations as $count) {
-    $results_count += $count;
+  // Count changed entities.
+  if (is_array($results['operations'][0]) && $results['operations'][0]['count']) {
+    $results_count = $results['operations'][0]['count'];
+  }
+  else {
+    $results_count = count($results['operations']);
   }
 
   $hook = 'social_group_action_' . $results['action'] . '_finish';
