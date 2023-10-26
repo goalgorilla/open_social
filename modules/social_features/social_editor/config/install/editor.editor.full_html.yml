@@ -4,90 +4,68 @@ dependencies:
   config:
     - filter.format.full_html
   module:
-    - ckeditor5
+    - ckeditor
 format: full_html
-editor: ckeditor5
+editor: ckeditor
 settings:
   toolbar:
-    items:
-      - bold
-      - italic
-      - strikethrough
-      - superscript
-      - subscript
-      - removeFormat
-      - '|'
-      - alignment
-      - '|'
-      - link
-      - '|'
-      - bulletedList
-      - numberedList
-      - '|'
-      - blockQuote
-      - drupalInsertImage
-      - insertTable
-      - horizontalLine
-      - '|'
-      - heading
-      - codeBlock
-      - style
-      - '|'
-      - sourceEditing
+    rows:
+      -
+        -
+          name: Formatting
+          items:
+            - Bold
+            - Italic
+            - Strike
+            - Superscript
+            - Subscript
+            - '-'
+            - RemoveFormat
+        -
+          name: Alignment
+          items:
+            - JustifyLeft
+            - JustifyCenter
+            - JustifyRight
+            - JustifyBlock
+        -
+          name: Linking
+          items:
+            - DrupalLink
+            - DrupalUnlink
+        -
+          name: Lists
+          items:
+            - BulletedList
+            - NumberedList
+        -
+          name: Media
+          items:
+            - Blockquote
+            - DrupalImage
+            - Table
+            - HorizontalRule
+        -
+          name: 'Block Formatting'
+          items:
+            - Format
+            - Styles
+        -
+          name: Tools
+          items:
+            - ShowBlocks
+            - Source
+            - Maximize
   plugins:
-    ckeditor5_heading:
-      enabled_headings:
-        - heading2
-        - heading3
-        - heading4
-        - heading5
-        - heading6
-    ckeditor5_style:
-      styles:
-        -
-          label: 'Default link'
-          element: '<a class="btn btn-default">'
-        -
-          label: 'Primary link'
-          element: '<a class="btn btn-primary">'
-        -
-          label: 'Accent link'
-          element: '<a class="btn btn-accent">'
-        -
-          label: 'Primary badge'
-          element: '<span class="badge badge-primary">'
-        -
-          label: 'Secondary badge'
-          element: '<span class="badge badge-secondary">'
-        -
-          label: 'Pill badge'
-          element: '<span class="badge badge--pill badge-default">'
-    ckeditor5_sourceEditing:
-      allowed_tags: {  }
-    ckeditor5_list:
-      reversed: true
-      startIndex: true
-    ckeditor5_alignment:
-      enabled_alignments:
-        - left
-        - center
-        - right
-        - justify
-    ckeditor5_imageResize:
-      allow_resize: true
-    editor_advanced_link_link:
-      enabled_attributes:
-        - aria-label
-        - class
-        - id
-        - rel
-        - target
-        - title
+    language:
+      language_list: un
+    stylescombo:
+      styles: "a.btn.btn-default|Default link\r\na.btn.btn-primary|Primary link\r\na.btn.btn-accent|Accent link\r\nspan.badge.badge-primary|Primary badge\r\nspan.badge.badge-secondary|Secondary badge\r\nspan.badge.badge--pill.badge-default|Pill badge"
 image_upload:
   status: true
   scheme: private
   directory: inline-images
   max_size: ''
   max_dimensions:
-    width: 0
-    height: 0
+    width: null
+    height: null
