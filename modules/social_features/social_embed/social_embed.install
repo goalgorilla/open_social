@@ -39,39 +39,6 @@ function social_embed_install(bool $is_syncing) {
     social_embed_update_11003();
     social_embed_update_11004();
   }
-
-  // Add the embed button to the toolbar.
-  $config_factory = \Drupal::configFactory();
-  $configuration = $config_factory->getEditable('editor.editor.full_html');
-  $toolbar_items = $configuration->getOriginal('settings.toolbar.items');
-
-  // Make sure our url_embed is installed, so we can add it to the toolbar.
-  \Drupal::service('module_installer')->install(['url_embed']);
-
-  // Only add the embed button when it is not on the toolbar yet.
-  if (!empty($toolbar_items) && !in_array('urlembed', $toolbar_items, TRUE)) {
-    $toolbar_items[] = 'urlembed';
-    $configuration->set('settings.toolbar.items', $toolbar_items);
-    $configuration->save();
-  }
-}
-
-/**
- * Implements hook_uninstall().
- *
- * Remove embed button from the toolbar.
- */
-function social_embed_uninstall() {
-  $config_factory = \Drupal::configFactory();
-  $configuration = $config_factory->getEditable('editor.editor.full_html');
-  $toolbar_items = $configuration->getOriginal('settings.toolbar.items');
-
-  // Only remove the embed button when it can be found on the toolbar.
-  if (!empty($toolbar_items) && $key = array_search('urlembed', $toolbar_items, TRUE)) {
-    unset($toolbar_items[$key]);
-    $configuration->set('settings.toolbar.items', $toolbar_items);
-    $configuration->save();
-  }
 }
 
 /**
@@ -190,22 +157,5 @@ function social_embed_update_11004(): void {
     ];
 
     field_group_group_save($new_group);
-  }
-}
-
-/**
- * Add urlembed icon to the toolbar as we removed it from the config override.
- */
-function social_embed_update_11005(): void {
-  // Add the embed button to the toolbar.
-  $config_factory = \Drupal::configFactory();
-  $configuration = $config_factory->getEditable('editor.editor.full_html');
-  $toolbar_items = $configuration->getOriginal('settings.toolbar.items');
-
-  // Only add the embed button when it is not on the toolbar yet.
-  if (!empty($toolbar_items) && !in_array('urlembed', $toolbar_items, TRUE)) {
-    $toolbar_items[] = 'urlembed';
-    $configuration->set('settings.toolbar.items', $toolbar_items);
-    $configuration->save();
   }
 }
