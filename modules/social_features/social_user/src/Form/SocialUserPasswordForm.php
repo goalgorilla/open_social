@@ -80,7 +80,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
       $langcode = $this->languageManager->getCurrentLanguage()->getId();
 
       // Mail one time login URL and instructions using current language.
-      $mail = _user_mail_notify('password_reset', $account, $langcode);
+      $mail = _user_mail_notify('password_reset', $account);
       if (!empty($mail)) {
         $this->logger('user')
           ->notice('Password reset instructions mailed to %name at %email.', [
