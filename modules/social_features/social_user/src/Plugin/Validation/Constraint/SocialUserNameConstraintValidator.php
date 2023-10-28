@@ -39,7 +39,7 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate(mixed $items, Constraint $constraint): void {
     if (is_null($items)) {
       return;
     }

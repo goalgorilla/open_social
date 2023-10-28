@@ -14,7 +14,7 @@ class SocialAnLinkAccessValidator extends LinkAccessConstraintValidator {
   /**
    * {@inheritdoc}
    */
-  public function validate($value, Constraint $constraint) {
+  public function validate(mixed $value, Constraint $constraint): void {
     // When we try to add some link to the 'field_button_link_an' field in the
     // Hero block on the landing page to which have access only AN users,
     // for example 'user/register', we received error that we do not have access
