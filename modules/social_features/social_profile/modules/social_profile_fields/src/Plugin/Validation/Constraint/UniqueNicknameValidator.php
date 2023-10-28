@@ -42,7 +42,7 @@ class UniqueNicknameValidator extends ConstraintValidator implements ContainerIn
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate(mixed $items, Constraint $constraint) {
     foreach ($items as $item) {
       // Next check if the value is unique.
       if (!$this->isUnique($item->value)) {
