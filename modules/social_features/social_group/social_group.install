@@ -320,6 +320,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update the field settings.
   $field_id = "{$entity}.{$bundle}.$field_name";
+  /** @var \Drupal\field\Entity\FieldConfig $field */
   $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($field_id);
   $new_field = $field->toArray();
   $new_field['field_type'] = 'text_long';
