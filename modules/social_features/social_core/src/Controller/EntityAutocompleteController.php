@@ -3,7 +3,6 @@
 namespace Drupal\social_core\Controller;
 
 use Drupal\system\Controller\EntityAutocompleteController as EntityAutocompleteControllerBase;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Utility\Tags;
 use Drupal\Component\Utility\Crypt;

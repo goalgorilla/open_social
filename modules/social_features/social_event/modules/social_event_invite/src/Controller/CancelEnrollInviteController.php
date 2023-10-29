@@ -9,7 +9,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
