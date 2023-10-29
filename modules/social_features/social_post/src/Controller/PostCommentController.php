@@ -18,6 +18,9 @@ class PostCommentController extends SocialCommentController {
     $account = $this->currentUser();
 
     // The user is not just previewing a comment.
+    $element_parents = \Drupal::request()->request->get('element_parents');
+    assert(is_string($element_parents), new \InvalidArgumentException());
+
     if ($request->request->get('op') != $this->t('Preview')) {
       // $pid indicates that this is a reply to a comment.
       if ($pid) {
