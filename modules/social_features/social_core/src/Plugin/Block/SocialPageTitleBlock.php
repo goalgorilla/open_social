@@ -184,7 +184,13 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     }
     else {
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
-        $this->setTitle($this->titleResolver->getTitle($request, $route));
+        $title = $this->titleResolver->getTitle($request, $route);
+
+        // Deal with different return types for getTitle().
+        if (is_null($title)) {
+          $title = '';
+        }
+        $this->setTitle($title);
       }
       else {
         $this->setTitle('');
