@@ -2,6 +2,7 @@
 
 namespace Drupal\social_lets_connect_usage\Plugin\ShareUsageDataPlugin;
 
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\social_lets_connect_usage\Plugin\ShareUsageDataPluginBase;
 
 /**
@@ -52,7 +53,7 @@ class ModulesInstalled extends ShareUsageDataPluginBase {
    */
   private function getExtensionsInfo(array $projects): array {
     $value = [];
-    uasort($projects, 'system_sort_modules_by_info_name');
+    uasort($projects, [ModuleExtensionList::class, 'sortByName']);
     foreach ($projects as $project) {
       $name = $project->getName();
       $value[$name] = [
