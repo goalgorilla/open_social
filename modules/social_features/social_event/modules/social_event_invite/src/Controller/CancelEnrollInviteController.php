@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -77,7 +78,7 @@ class CancelEnrollInviteController extends ControllerBase {
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');
-
+    assert(is_string($destination));
     return new RedirectResponse($destination);
   }
 
