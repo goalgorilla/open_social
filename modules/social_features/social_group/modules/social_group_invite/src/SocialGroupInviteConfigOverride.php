@@ -92,7 +92,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
         $invitee_mail = $request->query->get('invitee_mail', '');
         $destination = $request->query->get('destination', '');
-
+        assert(is_string($invitee_mail) && is_string($destination));
         $is_valid = $this->validateInviteData($invitee_mail, $destination);
 
         if ($is_valid) {
