@@ -11,7 +11,6 @@ use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\url_embed\UrlEmbed;
-use ECSPrefix20211002\Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
