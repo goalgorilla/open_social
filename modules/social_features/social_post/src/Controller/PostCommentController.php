@@ -21,7 +21,6 @@ class PostCommentController extends SocialCommentController {
     $element_parents = \Drupal::request()->request->get('element_parents');
     assert(is_string($element_parents), new \InvalidArgumentException());
 
-    // @phpstan-ignore-next-line
     if ($request->request->get('op') != $this->t('Preview')) {
       // $pid indicates that this is a reply to a comment.
       if ($pid) {
