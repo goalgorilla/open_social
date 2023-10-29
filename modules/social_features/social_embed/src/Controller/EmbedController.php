@@ -11,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\url_embed\UrlEmbed;
+use ECSPrefix20211002\Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -90,8 +91,9 @@ class EmbedController extends ControllerBase {
     // Get unique identifier for the button which was clicked.
     $uuid = $request->query->get('uuid');
 
-    // If $url or $uuid is not present, then request is malformed.
-    if ($url === NULL && Uuid::isValid($uuid) !== FALSE) {
+    // If $url or $uuid is not present or not valid, then request is malformed.
+    assert(is_string($url) && is_string($uuid), new \InvalidArgumentException());
+    if (Uuid::isValid($uuid) === FALSE) {
       throw new NotFoundHttpException();
     }
 
