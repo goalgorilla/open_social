@@ -44,6 +44,7 @@ class SocialDate extends SearchApiDate {
     if ($operator === NULL && $this->realField === 'created') {
       // Check if we have it in the query.
       $operatorfromurl = \Drupal::request()->query->get('created_op');
+      assert(is_string($operatorfromurl), new \InvalidArgumentException());
       if (!empty($operatorfromurl)) {
         $this->operator = $operatorfromurl;
         $input['created_op'] = $operatorfromurl;
