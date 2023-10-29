@@ -122,7 +122,10 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Registers the home page redirect as kernel request event.
+   *
+   * @return array
+   *   An array of event listener definitions.
    */
   public static function getSubscribedEvents(): array {
     // 280 priority is higher than the dynamic and static page cache.
