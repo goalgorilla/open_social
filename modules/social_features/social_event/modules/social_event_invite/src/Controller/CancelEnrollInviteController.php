@@ -78,7 +78,7 @@ class CancelEnrollInviteController extends ControllerBase {
 
     // Get the redirect destination we're given in the request for the response.
     $destination = $this->requestStack->getCurrentRequest()->query->get('destination');
-    assert(is_string($destination));
+    assert(is_string($destination), new \InvalidArgumentException());
     return new RedirectResponse($destination);
   }
 
