@@ -200,7 +200,7 @@ function social_post_album_comment_redirect($form, FormStateInterface $form_stat
 
   if (!$module_handler->moduleExists('social_ajax_comments') || !$module_handler->moduleExists('ajax_comments')) {
     $redirect_after_save = \Drupal::request()->request->get('redirect_after_save');
-    if (strpos($redirect_after_save, '/open/images/') !== FALSE) {
+    if (is_string($redirect_after_save) && strpos($redirect_after_save, '/open/images/') !== FALSE) {
       /** @var \Drupal\comment\CommentInterface $comment */
       $comment = $form_state->getFormObject()->getEntity();
       /** @var \Drupal\social_post\Entity\PostInterface $post */
