@@ -44,14 +44,9 @@ class SocialGroupSelectorWidget extends Select2EntityReferenceWidget implements 
   use StringTranslationTrait;
 
   /**
-   * The list of options.
-   *
-   * @var mixed
-   *
-   * @todo Should be removed after merging patch in the core:
-   * https://www.drupal.org/files/issues/2923353-5.patch
+   * The list of options for the widget.
    */
-  protected $options;
+  protected array $options;
 
   /**
    * The config factory.
