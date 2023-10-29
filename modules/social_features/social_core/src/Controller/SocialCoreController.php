@@ -156,22 +156,21 @@ class SocialCoreController extends ControllerBase {
     }
 
     // All borrowed from ViewsBulkOperationsController.php.
-    $list = $request->request->get('list');
+    $parameters = $request->request->all();
 
-    $op = $request->request->get('op', 'check');
     // Reverse operation when in exclude mode.
     if (!empty($view_data['exclude_mode'])) {
-      if ($op === 'add') {
-        $op = 'remove';
+      if ($parameters['op'] === 'add') {
+        $parameters['op'] = 'remove';
       }
-      elseif ($op === 'remove') {
-        $op = 'add';
+      elseif ($parameters['op'] === 'remove') {
+        $parameters['op'] = 'add';
       }
     }
 
-    switch ($op) {
+    switch ($parameters['op']) {
       case 'add':
-        foreach ($list as $bulkFormKey) {
+        foreach ($parameters['list'] as $bulkFormKey) {
           if (!isset($view_data['list'][$bulkFormKey])) {
             $view_data['list'][$bulkFormKey] = $this->getListItem($bulkFormKey);
           }
@@ -179,7 +178,7 @@ class SocialCoreController extends ControllerBase {
         break;
 
       case 'remove':
-        foreach ($list as $bulkFormKey) {
+        foreach ($parameters['list'] as $bulkFormKey) {
           if (isset($view_data['list'][$bulkFormKey])) {
             unset($view_data['list'][$bulkFormKey]);
           }
@@ -197,12 +196,9 @@ class SocialCoreController extends ControllerBase {
         break;
     }
 
-    /** @var array $view_data */
     $this->setTempstoreData($view_data);
 
-    $count = empty($view_data['exclude_mode'])
-      ? count($view_data['list'])
-      : $view_data['total_results'] - count($view_data['list']);
+    $count = empty($view_data['exclude_mode']) ? \count($view_data['list']) : $view_data['total_results'] - \count($view_data['list']);
 
     return (new AjaxResponse())
       ->setData([
