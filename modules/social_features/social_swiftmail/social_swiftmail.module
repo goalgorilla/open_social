@@ -190,19 +190,3 @@ function social_swiftmail_mailer_builder_info_alter(array &$email_builders): voi
     $email_builders['user']['class'] = 'Drupal\social_swiftmail\Plugin\EmailBuilder\UserEmailBuilder';
   }
 }
-
-/**
- * Implements hook_mailer_post_render().
- */
-function social_swiftmail_mailer_post_render(EmailInterface $email): void {
-  $css_inliner = new CssToInlineStyles();
-  $body = (string) $email->getHtmlBody();
-  $email->setHtmlBody($css_inliner->convert(check_markup($body, 'full_html')));
-
-  $dsn = $email->getTransportDSN();
-
-  if (strpos($dsn, 'null://file-spool:/') === 0) {
-    $email->addTextHeader('X-Transport', 'FileSpool');
-    $email->addTextHeader('X-Spool-Directory', substr($dsn, 19));
-  }
-}
