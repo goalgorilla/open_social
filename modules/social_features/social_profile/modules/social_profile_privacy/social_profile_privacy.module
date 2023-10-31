@@ -310,6 +310,7 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
 
   $profiles = \Drupal::entityQuery('profile')
     ->condition('uid', $uid)
+    ->accessCheck(TRUE)
     ->execute();
 
   if ($profiles) {
