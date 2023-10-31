@@ -13,8 +13,6 @@ use Drupal\file\FileInterface;
 use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 use Drupal\symfony_mailer\AddressInterface;
 use Drupal\user\UserInterface;
-use Drupal\symfony_mailer\EmailInterface;
-use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 /**
  * Gets a logo for emails from the theme.
@@ -126,6 +124,9 @@ function social_swiftmail_preprocess_email(array &$variables): void {
   $email = $variables['email'];
   $context = $email->getParam('context');
 
+  // In our Symfony Mailer we have the EmailAdjuster reroute plugin.
+  // If this is being applied to the emails we need a different way of getting
+  // the email address correctly.
   if ($to = $email->getHeaders()->getHeaderBody('X-Rerouted-Original-to')) {
     $mail = $to;
   }

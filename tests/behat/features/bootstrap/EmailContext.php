@@ -271,7 +271,6 @@ class EmailContext implements Context {
     $emails = [];
     foreach ($finder as $file) {
       $email = $this->getEmailContent($file);
-      assert($email instanceof \Swift_Message);
 
       if ($email->getSubject() === $subject) {
         $emails[] = $email;
