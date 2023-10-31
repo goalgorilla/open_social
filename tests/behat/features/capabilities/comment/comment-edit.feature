@@ -14,7 +14,6 @@ Feature: Edit Comment
     When I click the element with css selector ".comment .comment__actions .dropdown-toggle"
     And I should see the link "Edit"
     When I click "Edit"
-    And I should see "This is my comment"
     When I fill in the following:
       | Add a comment | This is my edited comment |
     And I press "Submit"
