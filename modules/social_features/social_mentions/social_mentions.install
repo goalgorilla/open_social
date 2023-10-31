@@ -111,3 +111,12 @@ function social_mentions_update_11001() : string {
   // Output logged messages to related channel of update execution.
   return $updater->logger()->output();
 }
+
+/**
+ * Enable the jquery_ui_autocomplete module.
+ */
+function social_mentions_update_12001(): void {
+  if (!\Drupal::service('module_handler')->moduleExists('jquery_ui_autocomplete')) {
+    \Drupal::service('module_installer')->install(['jquery_ui_autocomplete']);
+  }
+}
