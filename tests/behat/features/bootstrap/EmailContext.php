@@ -1,9 +1,9 @@
 <?php
-// @codingStandardsIgnoreFile
 
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\ultimate_cron\Entity\CronJob;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,6 +15,15 @@ use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\UnstructuredHeader;
 use Drupal\symfony_mailer\Address;
 
+/**
+ * Provides helpful test steps around the handling of e-mails.
+ *
+ * To enable email collection for one or more scenario's add the @email-spool
+ * annotation to the scenario or to an entire feature. Email collection in the
+ * mail-spool directory will automatically happen for annotated tests.
+ *
+ * Steps exist to check that a certain email was or was not sent.
+ */
 class EmailContext implements Context {
 
   /**
@@ -22,7 +31,6 @@ class EmailContext implements Context {
    *
    * @BeforeScenario @email-spool
    */
-
   public function enableEmailSpool() : void {
     // Set transport to null to stop sending out emails.
     $config = \Drupal::configFactory()
@@ -67,18 +75,18 @@ class EmailContext implements Context {
   }
 
   /**
-   * Get a list of spooled emails.
+   * Extract all .message files into metadata, html and text.
    *
-   * @return Finder|null
-   *   Returns a Finder if the directory exists.
-   * @throws Exception
+   * To help developers debug, in case a scenario failed we parse the serialized
+   * email into its text contents, html contents, and the header metadata. This
+   * is written in 3 files to the mail spool folder. This makes it easier for a
+   * developer to examine the contents of an email.
+   *
+   * @AfterScenario @email-spool
    */
-  public function getSpooledEmails() {
-    $finder = new Finder();
-    $spoolDir = $this->getSpoolDir();
-
-    if(empty($spoolDir)) {
-      throw new \Exception('Could not retrieve the spool directory, or the directory does not exist.');
+  public function extractSentEmails(AfterScenarioScope $afterScenario) : void {
+    if ($afterScenario->getTestResult()->isPassed()) {
+      return;
     }
 
     $spool_directory = $this->getSpoolDir();
@@ -94,63 +102,11 @@ class EmailContext implements Context {
   }
 
   /**
-   * Find an email with the given subject and body.
-   *
-   * @param string $subject
-   *   The subject of the email.
-   * @param array $body
-   *   Text that should be in the email.
-   *
-   * @return bool
-   *   Email was found or not.
-   * @throws Exception
-   */
-  protected function findSubjectAndBody($subject, $body) {
-    $finder = $this->getSpooledEmails();
-
-    $found_email = FALSE;
-
-    if ($finder) {
-      /** @var File $file */
-      foreach ($finder as $file) {
-        /** @var Swift_Message $email */
-        $email = $this->getEmailContent($file);
-        $email_subject = $email->getSubject();
-        $email_body = $email->getBody();
-
-        // Make it a traversable HTML doc.
-        $doc = new \DOMDocument();
-        @$doc->loadHTML($email_body);
-        $xpath = new \DOMXPath($doc);
-        // Find the post header and email content in the HTML file.
-        $content = $xpath->evaluate('string(//*[contains(@class,"postheader")])');
-        $content .= $xpath->evaluate('string(//*[contains(@class,"main")])');
-        $content_found = 0;
-
-        foreach ($body as $string) {
-          if (strpos($content, $string)) {
-            $content_found++;
-          }
-        }
-
-        if ($email_subject == $subject && $content_found === count($body)) {
-          $found_email = TRUE;
-        }
-      }
-    }
-    else {
-      throw new \Exception('There are no email messages.');
-    }
-
-    return $found_email;
-  }
-
-  /**
    * I run the digest cron.
    *
    * @Then I run the :arg1 digest cron
    */
-  public function iRunTheDigestCron($frequency) {
+  public function iRunTheDigestCron(string $frequency) : void {
     // Update the timings in the digest table.
     $query =  \Drupal::database()->update('user_activity_digest');
     $query->fields(['timestamp' => 1]);
@@ -177,12 +133,8 @@ class EmailContext implements Context {
    *
    * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
    */
-  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
-    $found_email = $this->findSubjectAndBody($subject, [$body]);
-
-    if (!$found_email) {
-      throw new \Exception('There is no email with that subject and body.');
-    }
+  public function iShouldHaveAnEmailWithTitleAndBody(string $subject, string $body) : void {
+    $this->assertEmailWithSubjectAndBody($subject, [$body]);
   }
 
   /**
@@ -190,17 +142,44 @@ class EmailContext implements Context {
    *
    * @Then I should have an email with subject :arg1 and in the content:
    */
-  public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+  public function iShouldHaveAnEmailWithTitleAndBodyMulti(string $subject, TableNode $table) : void {
     $body = [];
     $hash = $table->getHash();
     foreach ($hash as $row) {
       $body[] = $row['content'];
     }
 
-    $found_email = $this->findSubjectAndBody($subject, $body);
+    $this->assertEmailWithSubjectAndBody($subject, $body);
+  }
 
-    if (!$found_email) {
-      throw new \Exception('There is no email with that subject and body.');
+  /**
+   * No emails have been sent.
+   *
+   * @Then no emails have been sent
+   */
+  public function noEmailsHaveBeenSent() : void {
+    $finder = $this->getSpooledEmails();
+
+    $count = $finder->count();
+    if ($count !== 0) {
+      throw new \Exception("No email messages should have been sent, but found $count.");
+    }
+  }
+
+  /**
+   * I do not have an email with a specific subject.
+   *
+   * Can be used in case you don't want an email to be sent regardless of the
+   * body.
+   *
+   * @Then should not have an email with subject :subject
+   * @Then I should not have an email with subject :subject
+   */
+  public function iShouldNotHaveAnEmailWithSubject(string $subject) : void {
+    $emails = $this->findEmailsWithSubject($subject);
+    $email_count = count($emails);
+    if ($email_count !== 0) {
+      throw new \Exception("Expected no emails with subject '$subject' but found $email_count");
     }
   }
 
@@ -209,12 +188,8 @@ class EmailContext implements Context {
    *
    * @Then /^(?:|I )should not have an email with subject "([^"]*)" and "([^"]*)" in the body$/
    */
-  public function iShouldNotHaveAnEmailWithTitleAndBody($subject, $body) {
-    $found_email = $this->findSubjectAndBody($subject, [$body]);
-
-    if ($found_email) {
-      throw new \Exception('There is an email with that subject and body.');
-    }
+  public function iShouldNotHaveAnEmailWithTitleAndBody(string $subject, string $body) : void {
+    $this->assertNoEmailWithSubjectAndBody($subject, [$body]);
   }
 
   /**
@@ -222,17 +197,104 @@ class EmailContext implements Context {
    *
    * @Then I should not have an email with subject :arg1 and in the content:
    */
-  public function iShouldNotHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+  public function iShouldNotHaveAnEmailWithTitleAndBodyMulti(string $subject, TableNode $table) : void {
     $body = [];
     $hash = $table->getHash();
     foreach ($hash as $row) {
       $body[] = $row['content'];
     }
 
-    $found_email = $this->findSubjectAndBody($subject, $body);
+    $this->assertNoEmailWithSubjectAndBody($subject, $body);
+  }
 
-    if ($found_email) {
-      throw new \Exception('There is an email with that subject and body.');
+  /**
+   * Ensure at least one email exists matching the provided subject and body.
+   *
+   * @param string $subject
+   *   The exact subject the email should have.
+   *
+   * @param list<string> $expected_lines
+   *   A list of lines that should all be present in the body of the e-mail.
+   *
+   * @throws \Exception
+   *   An exception that details to the developer what was wrong (e.g. no
+   *   matching subject, no matching lines, or missing a specific line match).
+   */
+  protected function assertEmailWithSubjectAndBody(string $subject, array $expected_lines) : void {
+    $emails = $this->findEmailsWithSubject($subject);
+
+    // If no emails with the subject exist then we want to report that so a
+    // developer knows that may be the cause of their failure.
+    $subject_match_count = count($emails);
+    if ($subject_match_count === 0) {
+      throw new \Exception("No emails with subject '$subject' were found.");
+    }
+
+    $partial_matches = [];
+    $count_expected = count($expected_lines);
+    foreach ($emails as $email) {
+      $matched_lines = $this->getMatchingLinesForEmail($expected_lines, $email);
+
+      $count_matched = count($matched_lines);
+      // If we have a complete match then we're done.
+      if ($count_matched === $count_expected) {
+        return;
+      }
+
+      if ($count_matched > 0) {
+        $partial_matches[] = $matched_lines;
+      }
+    }
+
+    $partial_match_count = count($partial_matches);
+    // If we had no partial matches then we can provide a simplified error message.
+    if ($partial_match_count === 0) {
+      $message = $subject_match_count === 1
+        ? "One email with the subject '$subject' was found but none of the expected lines were found in the body of the email."
+        : "$subject_match_count emails with the subject '$subject' were found but none of the expected lines were found in the body of the email.";
+      throw new \Exception($message);
+    }
+    // If we had a single partial match then we tell the developer and there's
+    // probably a simple typo in the email or test.
+    if ($partial_match_count === 1) {
+      $missing_lines = array_diff($expected_lines, $partial_matches[0]);
+      $message = "One email was found which matched the subject and some lines but the following lines were missing from the e-mail: \n  " . implode("\n  ", $missing_lines);
+      throw new \Exception($message);
+    }
+    // With multiple partial matches we want to provide the developer as much
+    // information as possible.
+    $message = "$partial_match_count emails were found that matched the subject but all of them were missing some expected lines from the email:\n";
+    foreach ($partial_matches as $i => $partial_match) {
+      $missing_lines = array_diff($expected_lines, $partial_match);
+      $message .= "------- Partial match $i --------\n  " . implode("\n  ", $missing_lines);
+    }
+    throw new \Exception($message);
+  }
+
+  /**
+   * Ensure there's no emails with the specified subject and body.
+   *
+   * @param string $subject
+   *   The subject to match against.
+   * @param list<string> $expected_lines
+   *   An array of strings that match the body's contents. For an email to be
+   *   considered a match, all lines in the array must match.
+   *
+   * @throws \Exception
+   *   In case an email was found matching the subject and all expected lines of
+   *   text.
+   */
+  protected function assertNoEmailWithSubjectAndBody(string $subject, array $expected_lines) : void {
+    $emails = $this->findEmailsWithSubject($subject);
+
+    $count_expected = count($expected_lines);
+    foreach ($emails as $email) {
+      $matched_lines = $this->getMatchingLinesForEmail($expected_lines, $email);
+
+      $count_matched = count($matched_lines);
+      if ($count_matched === $count_expected) {
+        throw new \Exception("An email exists with the specified subject and body.");
+      }
     }
   }
 
@@ -368,5 +430,6 @@ class EmailContext implements Context {
 
     return $matched_lines;
   }
+
 
 }
