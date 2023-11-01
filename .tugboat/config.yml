@@ -14,6 +14,7 @@ services:
       # individual steps are executed in separate shell instances.
       update: |
         set -e
+        git config --global --add safe.directory /var/www/html/profiles/contrib/social
         # Docroot for the PHP image points to /var/www/html so we set-up Open
         # Social one folder up so that our web files are in the html folder.
         cd $DOCROOT/..
