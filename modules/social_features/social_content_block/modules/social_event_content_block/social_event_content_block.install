@@ -168,3 +168,14 @@ function social_event_content_block_update_11501(): void {
 
   $event_date_storage->set('settings.allowed_values', $allowed_values)->save();
 }
+
+/**
+ * Add "flexible" group type to the field_event_group settings.
+ */
+function social_event_content_block_update_11502(): void {
+  $event_field_group_storage = \Drupal::configFactory()->getEditable('field.field.block_content.custom_content_list.field_event_group');
+  $handler_settings = $event_field_group_storage->get('settings.handler_settings');
+  $handler_settings['target_bundles']['flexible_group'] = "flexible_group";
+
+  $event_field_group_storage->set('settings.handler_settings', $handler_settings)->save();
+}
