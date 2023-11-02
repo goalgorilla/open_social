@@ -1764,3 +1764,10 @@ function social_core_update_111204(): void {
     }
   }
 }
+
+/**
+ * Set field_group module weight on top again after cherry picking wrongly.
+ */
+function social_core_update_111205(): void {
+  module_set_weight("field_group", -1);
+}
