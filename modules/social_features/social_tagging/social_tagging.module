@@ -577,10 +577,9 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
           ];
         }
 
-        /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
-        $query = \Drupal::request()->query;
-        if ($query->has($label)) {
-          $form[$label]['#value'] = $query->get($label);
+        $request_params = \Drupal::request()->request->all();
+        if (!empty($request_params[$label])) {
+          $form[$label]['#value'] = $request_params[$label];
         }
       }
       else {
@@ -596,10 +595,9 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     $form['tag']['#type'] = 'select2';
     $form['tag']['#size'] = NULL;
 
-    /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
-    $query = \Drupal::request()->query;
-    if ($query->has('tag')) {
-      $form['tag']['#value'] = $query->get('tag');
+    $request_params = \Drupal::request()->request->all();
+    if (!empty($request_params['tag'])) {
+      $form['tag']['#value'] = $request_params['tag'];
     }
 
     foreach ($tag_service->getCategories() as $tid => $label) {
