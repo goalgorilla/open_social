@@ -1,0 +1,20 @@
+dependencies:
+  module:
+    - content_translation
+    - social_content_translation
+    - social_book
+items:
+  user.role.contentmanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate book node'
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate book node'
