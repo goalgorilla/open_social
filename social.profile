@@ -145,6 +145,7 @@ function social_install_demo_content(array &$install_state) {
 
   $batch['operations'][] = [
     '_social_index_demo_content',
+    [],
   ];
 
   return $batch;
