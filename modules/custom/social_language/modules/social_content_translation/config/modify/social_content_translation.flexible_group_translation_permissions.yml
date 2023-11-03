@@ -1,0 +1,20 @@
+dependencies:
+  module:
+    - content_translation
+    - social_content_translation
+    - social_group_flexible_group
+items:
+  user.role.contentmanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate flexible_group group'
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate flexible_group group'

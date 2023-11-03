@@ -1,0 +1,13 @@
+dependencies:
+  module:
+    - content_translation
+    - social_content_translation
+    - data_policy
+items:
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate data_policy'

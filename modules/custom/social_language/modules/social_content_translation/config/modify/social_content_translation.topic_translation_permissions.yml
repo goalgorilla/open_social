@@ -1,0 +1,20 @@
+dependencies:
+  module:
+    - content_translation
+    - social_content_translation
+    - social_topic
+items:
+  user.role.contentmanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate topic node'
+  user.role.sitemanager:
+    expected_config:
+      permissions: { }
+    update_actions:
+      add:
+        permissions:
+          - 'translate topic node'
