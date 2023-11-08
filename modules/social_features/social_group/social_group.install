@@ -91,7 +91,6 @@ function social_group_install() {
       'create public_group group',
       'bypass create group access',
       'manage all groups',
-      'view node.book.field_content_visibility:group content',
       'view node.event.field_content_visibility:group content',
       'view node.topic.field_content_visibility:group content',
       'view node.page.field_content_visibility:group content',
@@ -112,7 +111,6 @@ function social_group_install() {
       'create public_group group',
       'bypass create group access',
       'manage all groups',
-      'view node.book.field_content_visibility:group content',
       'view node.event.field_content_visibility:group content',
       'view node.topic.field_content_visibility:group content',
       'view node.page.field_content_visibility:group content',
@@ -219,7 +217,6 @@ function _social_group_get_permissions($role) {
   $permissions['contentmanager'] = array_merge($permissions['verified'], [
     'bypass create group access',
     'manage all groups',
-    'view node.book.field_content_visibility:group content',
     'view node.event.field_content_visibility:group content',
     'view node.topic.field_content_visibility:group content',
     'view node.page.field_content_visibility:group content',
@@ -1038,4 +1035,34 @@ function social_group_update_12001(): string {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Search for invalid permission(s) and remove them from existing roles.
+ *
+ * Permissions to check:
+ * - "view node.book.field_content_visibility:group content".
+ */
+function social_group_update_12002(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $all_permissions = array_keys(\Drupal::service('user.permissions')->getPermissions());
+  /** @var \Drupal\user\RoleInterface[] $roles */
+  $roles = $entity_type_manager->getStorage('user_role')->loadMultiple();
+
+  $permissions_to_check = [
+    'view node.book.field_content_visibility:group content',
+  ];
+
+  // If permission is not valid (is not on the list of all permissions),
+  // we need to revoke it from all existing roles.
+  foreach ($permissions_to_check as $permission_to_check) {
+    if (!in_array($permission_to_check, $all_permissions)) {
+      foreach ($roles as $role) {
+        if ($role->hasPermission($permission_to_check)) {
+          $role->revokePermission($permission_to_check);
+          $role->save();
+        }
+      }
+    }
+  }
 }
