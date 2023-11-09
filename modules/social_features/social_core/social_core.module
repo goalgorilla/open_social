@@ -28,6 +28,7 @@ use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\block\BlockInterface;
 
@@ -1089,8 +1090,10 @@ function _social_core_created_date_validation(array $form, FormStateInterface $f
   }
 
   $date = end($created);
-  /** @var \Drupal\Core\Datetime\DrupalDateTime $date */
   $date = $date['value'];
+  if (!$date instanceof DrupalDateTime) {
+    return;
+  }
 
   if ($date->getTimestamp() > time()) {
     $form_state->setErrorByName('created', t('The created date cannot be in the future.'));
