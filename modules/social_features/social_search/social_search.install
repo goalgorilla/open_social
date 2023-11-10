@@ -352,3 +352,23 @@ function social_search_update_11404() : void {
     $incorrect_view->delete();
   }
 }
+
+/**
+ * Add access check on groups for search_api.index.social_groups.
+ */
+function social_search_update_12001(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+
+  // Reindex items in social_groups index.
+  $index = Index::load('social_groups');
+  if ($index !== NULL && $index->status()) {
+    $index->indexItems();
+  }
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
