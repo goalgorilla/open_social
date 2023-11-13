@@ -3,6 +3,7 @@
 namespace Drupal\activity_creator\Service;
 
 use Drupal\Core\Batch\BatchBuilder;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class ActivityCreatorBatchActivityDeletion.
@@ -99,12 +100,19 @@ class ActivityCreatorBatchActivityDeletion {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public static function finishProcess($success, array $results, array $operations): void {
+  public static function finishProcess($success, array $results, array $operations): ?RedirectResponse {
     $message = t('Number of activities deleted by batch: @count', [
       '@count' => $results['processed'],
     ]);
 
     \Drupal::logger('activity_creator')->info($message);
+
+    $batch = &batch_get();
+    if (isset($batch) && !empty($batch['batch_redirect'])) {
+      return new RedirectResponse($batch['batch_redirect']->toString());
+    }
+
+    return NULL;
   }
 
 }
