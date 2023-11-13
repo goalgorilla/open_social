@@ -2,8 +2,11 @@
 
 namespace Drupal\social_ajax_comments\Controller;
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -252,6 +255,71 @@ class AjaxCommentsController extends ContribController {
     $parameters['pid'] = $this->pid;
 
     return $comment_display;
+  }
+
+  /**
+   * Builds ajax response for deleting a new comment.
+   *
+   * This is copied from AjaxCommentsController::delete because we need to add
+   * a redirect to batch page to delete comment and their dependencies.
+   *
+   * The only change here is the redirect to batch page is placed before
+   * the return.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request object.
+   * @param \Drupal\comment\CommentInterface $comment
+   *   The comment entity.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The Ajax response.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
+   */
+  public function socialDelete(Request $request, CommentInterface $comment): AjaxResponse {
+    $response = new AjaxResponse();
+
+    // Store the selectors from the incoming request, if applicable.
+    // If the selectors are not in the request, the stored ones will
+    // not be overwritten.
+    $this->tempStore->getSelectors($request, $overwrite = TRUE);
+
+    $response->addCommand(new CloseModalDialogCommand());
+
+    // Rebuild the form to trigger form submission.
+    $this->entityFormBuilder()->getForm($comment, 'delete');
+
+    // Build the updated comment field and insert into a replaceWith response.
+    // Also prepend any status messages in the response.
+    $response = $this->buildCommentFieldResponse(
+          $request,
+          $response,
+          $comment->getCommentedEntity(),
+          $comment->get('field_name')->value
+      );
+
+    // Calling $this->buildCommentFieldResponse() updates the stored selectors.
+    $selectors = $this->tempStore->getSelectors($request);
+    $wrapper_html_id = $selectors['wrapper_html_id'];
+
+    $response = $this->addMessages(
+          $request,
+          $response,
+          $wrapper_html_id
+      );
+
+    // Clear out the tempStore variables.
+    $this->tempStore->deleteAll();
+
+    // Get currently batch and add redirect if exist any batch.
+    $batch = &batch_get();
+    if ($batch) {
+      $batch_response = batch_process($comment->getCommentedEntity()->toUrl());
+      $redirect_command = new RedirectCommand($batch_response->getTargetUrl());
+      $response->addCommand($redirect_command);
+    }
+
+    return $response;
   }
 
 }

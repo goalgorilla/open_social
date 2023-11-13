@@ -33,6 +33,14 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_controller'] = '\Drupal\social_ajax_comments\Controller\AjaxCommentsController::socialAdd';
       $route->setDefaults($defaults);
     }
+
+    // Replace "ajax_comments.delete" with our implementation.
+    // We need this custom implementation to add redirect to batch page.
+    if ($route = $collection->get('ajax_comments.delete')) {
+      $defaults = $route->getDefaults();
+      $defaults['_controller'] = '\Drupal\social_ajax_comments\Controller\AjaxCommentsController::socialDelete';
+      $route->setDefaults($defaults);
+    }
   }
 
 }
