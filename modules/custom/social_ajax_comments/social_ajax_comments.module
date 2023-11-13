@@ -255,3 +255,19 @@ function social_ajax_comments_form_comment_form_alter(array &$form, FormStateInt
     unset($form['actions']['submit']['#ajax']);
   }
 }
+
+/**
+ * Implements hook_batch_alter().
+ */
+function social_ajax_comments_batch_alter(&$batch) {
+  /** @var \Drupal\Core\Form\FormStateInterface|null $form_state */
+  $form_state = $batch['form_state'];
+
+  if ((isset($form_state) && $form_state->getValue('form_id') != 'comment_comment_delete_form') || !empty($batch['batch_redirect'])) {
+    return;
+  }
+
+  $form_state->disableRedirect(FALSE);
+  $batch['batch_redirect'] = $form_state->getRedirect();
+  $form_state->disableRedirect();
+}
