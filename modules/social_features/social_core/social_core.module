@@ -1451,3 +1451,15 @@ function _social_core_install_blocks(array $items, callable $function = NULL): v
     }
   }
 }
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_core_menu_local_actions_alter(&$local_actions): void {
+  // Remove "Add vocabulary" button for all roles except administrator role.
+  if (!in_array('administrator', \Drupal::currentUser()->getRoles(), TRUE)) {
+    if (isset($local_actions['entity.taxonomy_vocabulary.add_form'])) {
+      unset($local_actions['entity.taxonomy_vocabulary.add_form']);
+    }
+  }
+}
