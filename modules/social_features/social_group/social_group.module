@@ -3272,3 +3272,51 @@ function social_group_social_core_title(): array {
 function social_group_social_tagging_type(): string {
   return 'group';
 }
+
+/**
+ * Implements hook_form_form_ID_alter().
+ */
+function social_group_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  if ($form['#id'] === 'views-exposed-form-group-manage-members-page-group-manage-members') {
+    $form['actions']['submit']['#submit'][] = '_views_manage_members_exposed_form_submit';
+  }
+}
+
+/**
+ * Submission handler for social_group_form_views_exposed_form_alter().
+ */
+function _views_manage_members_exposed_form_submit(array $form, FormStateInterface $form_state): void {
+  // Currently, only user input includes actual items_per_page value.
+  $values = $form_state->getUserInput();
+
+  // Check if items_per_page value has been changed.
+  if (isset($values['items_per_page'])) {
+    $items_per_page = $values['items_per_page'];
+
+    /** @var  \Drupal\user\UserDataInterface $userData */
+    $userData = \Drupal::service('user.data');
+
+    // Save selected specific number of items on the page for current user.
+    $userData->set('social_group', \Drupal::currentUser()->id(), 'items_per_page', $items_per_page);
+  }
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_group_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
+  if ($display_id === 'page_group_manage_members') {
+    // Get default pager options.
+    $default_pager_options = $view->display_handler->getOption('pager');
+
+    /** @var  \Drupal\user\UserDataInterface $userData */
+    $userData = \Drupal::service('user.data');
+
+    // Check if user selected specific number of items on the page and override
+    // default one.
+    if ($items_per_page = $userData->get('social_group', \Drupal::currentUser()->id(), 'items_per_page')) {
+      $default_pager_options['options']['items_per_page'] = $items_per_page;
+      $view->display_handler->setOption('pager', $default_pager_options);
+    }
+  }
+}
