@@ -289,24 +289,27 @@ class AjaxCommentsController extends ContribController {
     // Rebuild the form to trigger form submission.
     $this->entityFormBuilder()->getForm($comment, 'delete');
 
+    /** @var \Drupal\Core\Entity\EntityInterface $commented_entity */
+    $commented_entity = $comment->getCommentedEntity();
+
     // Build the updated comment field and insert into a replaceWith response.
     // Also prepend any status messages in the response.
     $response = $this->buildCommentFieldResponse(
-          $request,
-          $response,
-          $comment->getCommentedEntity(),
-          $comment->get('field_name')->value
-      );
+      $request,
+      $response,
+      $commented_entity,
+      $comment->get('field_name')->value
+    );
 
     // Calling $this->buildCommentFieldResponse() updates the stored selectors.
     $selectors = $this->tempStore->getSelectors($request);
     $wrapper_html_id = $selectors['wrapper_html_id'];
 
     $response = $this->addMessages(
-          $request,
-          $response,
-          $wrapper_html_id
-      );
+      $request,
+      $response,
+      $wrapper_html_id
+    );
 
     // Clear out the tempStore variables.
     $this->tempStore->deleteAll();
@@ -314,7 +317,12 @@ class AjaxCommentsController extends ContribController {
     // Get currently batch and add redirect if exist any batch.
     $batch = &batch_get();
     if ($batch) {
-      $batch_response = batch_process($comment->getCommentedEntity()->toUrl());
+      /** @var \Drupal\Core\Entity\FieldableEntityInterface $commented_entity */
+      $commented_entity = $comment->getCommentedEntity();
+
+      /** @var \Symfony\Component\HttpFoundation\RedirectResponse $batch_response */
+      $batch_response = batch_process($commented_entity->toUrl());
+
       $redirect_command = new RedirectCommand($batch_response->getTargetUrl());
       $response->addCommand($redirect_command);
     }
