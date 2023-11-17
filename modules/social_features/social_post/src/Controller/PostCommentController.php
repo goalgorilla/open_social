@@ -17,10 +17,6 @@ class PostCommentController extends SocialCommentController {
   public function getReplyForm(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
     $account = $this->currentUser();
 
-    // The user is not just previewing a comment.
-    $element_parents = \Drupal::request()->request->get('element_parents');
-    assert(is_string($element_parents), new \InvalidArgumentException());
-
     // @phpstan-ignore-next-line
     if ($request->request->get('op') != $this->t('Preview')) {
       // $pid indicates that this is a reply to a comment.
