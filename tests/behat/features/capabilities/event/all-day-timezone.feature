@@ -44,3 +44,18 @@ Feature: All day event for different timezones
     And I should see "THIS IS A TEST EVENT - EDIT"
     And I should not see "11:00"
     And I should not see "31 Dec '24"
+
+  Scenario: Successfully create an all day event with two event days in GMT - 8
+    Given events with non-anonymous author:
+      | title                   | body                   | field_event_all_day | field_event_date | field_event_date_end | field_content_visibility |
+      | Test for all day events | Body description text. | 1                   | 2035-01-01       | 2035-01-02           | public                   |
+
+    And I am logged in as a user with the verified role
+    When I am viewing the event "Test for all day events"
+    Then I should see "1 January 2035 - 2 January 2035"
+
+    # Check all events
+    When I am on "community-events"
+    Then I should see "Test for all day events"
+    And I should see "1 Jan '35 - 2 Jan '35"
+

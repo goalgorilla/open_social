@@ -60,3 +60,23 @@ Feature: Create Event
     Then I should see "Access denied"
       And I should see "You are not authorized to access this page."
       And I enable that the registered users to be verified immediately
+
+  Scenario: Successfully create event with same day and two days event with time
+    Given events with non-anonymous author:
+      | title                   | body                   | field_event_date    | field_event_date_end | field_content_visibility |
+      | Test event with 2 days  | Body description text. | 2035-01-01T11:00:00 | 2035-01-02T18:00:00  | public                   |
+      | This event with 1 day   | Body description text. | 2035-01-01T11:00:00 | 2035-01-01T18:00:00  | public                   |
+
+    And I am logged in as a user with the verified role
+    When I am viewing the event "Test event with 2 days"
+    Then I should see "1 January 2035 11:00 - 2 January 2035 18:00"
+
+    And I am logged in as a user with the verified role
+    When I am viewing the event "This event with 1 day"
+    Then I should see "1 January 2035 11:00 - 18:00"
+
+    When I am on "community-events"
+    Then I should see "Test event with 2 days"
+    And I should see "1 Jan '35 11:00 - 2 Jan '35 18:00"
+    And I should see "This event with 1 day"
+    And I should see "1 Jan '35 11:00 - 18:00"
