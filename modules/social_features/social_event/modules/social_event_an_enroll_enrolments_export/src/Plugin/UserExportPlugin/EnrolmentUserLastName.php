@@ -20,7 +20,7 @@ class EnrolmentUserLastName extends UserLastName {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    if ($entity->isAnonymous()) {
+    if ($entity->isAnonymous() && isset($this->configuration['entity'])) {
       $entity = &$this->configuration['entity'];
 
       if (!$entity->field_last_name->isEmpty()) {
