@@ -20,7 +20,7 @@ class EnrolmentUserEmail extends UserEmail {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    if ($entity->isAnonymous()) {
+    if ($entity->isAnonymous() && isset($this->configuration['entity'])) {
       return $this->configuration['entity']->field_email->value;
     }
 

@@ -79,7 +79,7 @@ class EnrolmentUserDisplayName extends UserDisplayName {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    if ($entity->isAnonymous()) {
+    if ($entity->isAnonymous() && isset($this->configuration['entity'])) {
       $value = $this->socialEventAnEnrollManager->getGuestName($this->configuration['entity'], FALSE);
 
       return $value ?: $this->t('Guest');
