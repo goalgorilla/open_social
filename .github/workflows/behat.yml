@@ -146,7 +146,7 @@ jobs:
     name: "Install Open Social"
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-d9.5-php8.1-v2
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -302,7 +302,7 @@ jobs:
     name: 'Tests'
     runs-on: ubuntu-22.04
     container:
-      image: goalgorilla/open_social_docker:ci-d9.5-php8.1-v2
+      image: goalgorilla/open_social_docker:ci-drupal10-php8.1
       volumes:
         - ${{ github.workspace }}:/var/www
 
@@ -319,7 +319,7 @@ jobs:
 
     services:
       web:
-        image: goalgorilla/open_social_docker:ci-d9.5-php8.1-v2
+        image: goalgorilla/open_social_docker:ci-drupal10-php8.1
         env:
           DRUPAL_SETTINGS: production
         volumes:
