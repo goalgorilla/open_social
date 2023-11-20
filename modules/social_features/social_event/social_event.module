@@ -359,30 +359,58 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       ];
     }
 
-    // Check if ongoing.
     // Get user current date and time.
     $user_time = new DateTime(
       date(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
       new DateTimeZone(date_default_timezone_get())
     );
-    // Convert to UTC.
+
+    // Convert datetime value to UTC timestamp.
     $user_time->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
-    $date = $user_time->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-    $ongoing = $node_storage->getQuery()
-      ->condition('field_event_date', $date, '<=')
-      ->condition('field_event_date_end', $date, '>=')
-      ->condition('nid', $nid)
-      ->accessCheck()
-      ->count()
-      ->execute();
-    if ($ongoing) {
-      $build['ongoing'] = [
-        '#type' => '#text_field',
-        '#markup' => t('Ongoing'),
-      ];
+    $current_date = (int) $user_time->format('U');
+
+    // Get event start date.
+    $event_start_date = new DateTime(
+      $entity->get('field_event_date')->getString(),
+      new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE)
+    );
+    // Convert datetime value to UTC timestamp.
+    $event_start_date = $event_start_date->format('U');
+
+    // Check if 'field_event_date_end' value is exist.
+    // @todo Remove this check if we going to make this field required.
+    if ($entity->get('field_event_date_end')->getString() != NULL) {
+      // Get event end date.
+      $event_end_date = new DateTime(
+        $entity->get('field_event_date_end')->getString(),
+        new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE)
+      );
+      // Convert datetime value to UTC timestamp.
+      $event_end_date = $event_end_date->format('U');
     }
 
+    $ongoing_field = [
+      '#type' => '#text_field',
+      '#markup' => t('Ongoing'),
+    ];
+
+    // Check if event is ongoing.
+    // Output 'Ongoing' label.
+    // Set max-age cache for ongoing event.
+    if ($current_date < $event_start_date) {
+      $build['#cache']['max-age'] = $event_start_date - $current_date;
+    }
+    else {
+      // @todo Remove this check if 'field_event_date_end' is required.
+      if (isset($event_end_date) && $current_date <= $event_end_date) {
+        $build['ongoing'] = $ongoing_field;
+        $build['#cache']['max-age'] = $event_end_date - $current_date;
+      }
+      // @todo Remove this check if 'field_event_date_end' is required.
+      elseif (!isset($event_end_date)) {
+        $build['ongoing'] = $ongoing_field;
+      }
+    }
   }
 }
 
