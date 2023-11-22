@@ -549,3 +549,17 @@ function social_topic_update_111102(): void {
     }
   }
 }
+
+/**
+ * Add sort identifier to exposed sorts.
+ */
+function social_topic_update_120001(): string {
+  /** @var \Drupal\update_helper\Updater $updater */
+  $updater = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updater->executeUpdate('social_topic', 'social_topic_update_120001');
+
+  // Output logged messages to related channel of update execution.
+  return $updater->logger()->output();
+}

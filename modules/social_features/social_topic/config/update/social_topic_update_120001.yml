@@ -1,0 +1,34 @@
+views.view.latest_topics:
+  expected_config:
+    display:
+      page_latest_topics:
+        display_options:
+          sorts:
+            created:
+              exposed: true
+  update_actions:
+    add:
+      display:
+        page_latest_topics:
+          display_options:
+            sorts:
+              created:
+                expose:
+                  field_identifier: created
+views.view.topics:
+  expected_config:
+    display:
+      default:
+        display_options:
+          sorts:
+            created:
+              exposed: true
+  update_actions:
+    add:
+      display:
+        default:
+          display_options:
+            sorts:
+              created:
+                expose:
+                  field_identifier: created
