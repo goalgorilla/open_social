@@ -133,6 +133,7 @@ class EntityAccessHelper {
             return self::NEUTRAL;
           }
           elseif (
+            !$entity->isNew() &&
             !$account->hasPermission($permission) &&
             $entity instanceof ContentEntityInterface
           ) {
