@@ -31,7 +31,7 @@ Feature: I want to be able to make nick names unique
 
     When I fill in "Nickname" with "Susan"
     And I press "Save"
-    Then I should see the error message "Susan is already taken."
+    Then I should see the error message "This name is already taken, please try another one."
 
     When I fill in "Nickname" with "Carl"
     And I press "Save"
