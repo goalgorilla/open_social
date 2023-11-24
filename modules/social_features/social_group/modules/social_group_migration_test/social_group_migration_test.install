@@ -1,0 +1,269 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\Core\Site\Settings;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
+
+define('GROUP_MIGRATE_TEST_NUMBER_OF_USERS', 500);
+define('GROUP_MIGRATE_TEST_GROUPS_PER_TYPE', 50);
+define('GROUP_MIGRATE_TEST_MEMBERS_PER_GROUP', 50);
+define('GROUP_MIGRATE_TEST_TOPICS_PER_GROUP', 5);
+
+assert(GROUP_MIGRATE_TEST_MEMBERS_PER_GROUP < GROUP_MIGRATE_TEST_NUMBER_OF_USERS, "Enough users must exist to have members of types");
+
+/**
+ * Implements hook_install().
+ */
+function social_group_migration_test_install(bool $is_syncing) {
+  // We want set the module's schema to before our update hook. This allows the
+  // module to be enabled in fixtures while still having a hook that runs before
+  // the upgrade that we can customise without having to rebuild the fixture.
+  /** @var \Drupal\Core\Update\UpdateHookRegistry $update_hook_registry */
+  $update_hook_registry = \Drupal::service('update.update_hook_registry');
+  $update_hook_registry->setInstalledVersion('social_group_migration_test', 13000);
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_migration_test_update_dependencies() : array {
+  // Ensure the group migration runs after our test set-up.
+  $dependencies['social_group'][13000] = [
+    'social_group_migration_test' => 13001,
+  ];
+
+  // Ensure our test verification runs after the group migration has completed.
+  $dependencies['social_group_migration_test'][13002] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Create a load of groups using the old group types.
+ */
+function social_group_migration_test_update_13001(array &$sandbox) : string {
+  $number_of_users = GROUP_MIGRATE_TEST_NUMBER_OF_USERS;
+  $groups_per_type = GROUP_MIGRATE_TEST_GROUPS_PER_TYPE;
+  $members_per_group = GROUP_MIGRATE_TEST_MEMBERS_PER_GROUP;
+  $topics_per_group = GROUP_MIGRATE_TEST_TOPICS_PER_GROUP;
+
+  $types = [
+    'closed_group' => ['group'],
+    'open_group' => ['community', 'group'],
+    'public_group' => ['public', 'community', 'group'],
+  ];
+
+  if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
+    $types['secret_group'] = ['group'];
+  }
+
+  if (empty($sandbox)) {
+    $sandbox['processed'] = 0;
+    $sandbox['expected_total'] = $number_of_users + $groups_per_type * count($types) * (1 + $members_per_group + $topics_per_group);
+    $sandbox['time_elapsed'] = 0;
+    $sandbox['created_uids'] = [];
+    $sandbox['batch_size'] = Settings::get('entity_update_batch_size', 50);
+    foreach ($types as $type => $visibilities) {
+      $sandbox['created_groups'][$type] = 0;
+    }
+  }
+
+  $start_time_ms = hrtime(true) / 1000000;
+
+  $news_tid = array_keys(\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'name' => 'News',
+  ]))[0];
+
+  $batch_count=0;
+  for ($user_n=count($sandbox['created_uids']); $user_n<$number_of_users&&$batch_count<$sandbox['batch_size']; $user_n++,$batch_count++) {
+    $user = User::create([
+      'name' => "user $user_n",
+      'mail' => "user$user_n@example.com",
+      'status' => 1,
+    ]);
+    $user->save();
+    $sandbox['created_uids'][] = $user->id();
+    $sandbox['processed']++;
+  }
+
+  foreach ($types as $type => $allowed_content_visibilities) {
+    for ($group_n=$sandbox['created_groups'][$type]; $group_n<$groups_per_type&&$batch_count<5; $group_n++,$batch_count++) {
+      $group = Group::create([
+        'type' => $type,
+        'label' => "$type $group_n",
+        'field_group_description' => "Description for $type $group_n",
+        // @todo Should we try different langcodes in our test?
+        'langcode' => 'en',
+      ]);
+      $group->save();
+      $sandbox['processed']++;
+
+      // Add a bunch of random members to the group.
+      shuffle($sandbox['created_uids']);
+      $member_ids = array_slice($sandbox['created_uids'], 0, $members_per_group);
+      foreach (User::loadMultiple($member_ids) as $member) {
+        $group->addMember($member);
+        $sandbox['processed']++;
+      }
+
+      for ($topic_n=0;$topic_n < $topics_per_group; $topic_n++) {
+        $visibility = $allowed_content_visibilities[rand(0, count($allowed_content_visibilities)-1)];
+        $uid = $sandbox['created_uids'][rand(0,count($sandbox['created_uids'])-1)];
+        $node = Node::create([
+          'uid' => $uid,
+          'type' => "topic",
+          'title' => "$type $group_n topic $topic_n",
+          'field_topic_type' => $news_tid,
+          'body' => "Body for group $group_n topic $topic_n with visibility $visibility and owner $uid",
+          'langcode' => 'en',
+          'field_content_visibility' => $visibility,
+        ]);
+        $node->save();
+        $group->addContent($node, 'group_node:topic');
+        $sandbox['processed']++;
+      }
+
+      $sandbox['created_groups'][$type]++;
+    }
+  }
+
+  $end_time_ms = hrtime(true) / 1000000;
+
+  $sandbox['time_elapsed'] += $end_time_ms - $start_time_ms;
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['expected_total'];
+
+  $time_elapsed = formatMilliseconds($sandbox['time_elapsed']);
+  $expected_time = formatMilliseconds($sandbox['time_elapsed'] / $sandbox['processed'] * $sandbox['expected_total']);
+
+  return "Processed {$sandbox['processed']} out of {$sandbox['expected_total']} tasks (" . round($sandbox['#finished'] * 100) . "%). Ran for $time_elapsed out of expected $expected_time.";
+}
+
+function formatMilliseconds(float $milliseconds) : string {
+  $seconds = floor($milliseconds / 1000);
+  $minutes = floor($seconds / 60);
+  $hours = floor($minutes / 60);
+  $milliseconds = $milliseconds % 1000;
+  $seconds = $seconds % 60;
+  $minutes = $minutes % 60;
+
+  $format = '%u:%02u:%02u.%03u';
+  $time = sprintf($format, $hours, $minutes, $seconds, $milliseconds);
+  return rtrim($time, '0');
+}
+
+/**
+ * Verify the results of our update.
+ */
+function social_group_migration_test_update_13002(array &$sandbox) : string {
+  $groups_per_type = GROUP_MIGRATE_TEST_GROUPS_PER_TYPE;
+  $members_per_group = GROUP_MIGRATE_TEST_MEMBERS_PER_GROUP;
+  $topics_per_group = GROUP_MIGRATE_TEST_TOPICS_PER_GROUP;
+
+  // requireAssertions errors if it' not called without being passed `TRUE`
+  // before, but it's only called with `TRUE` if assertions are enabled which
+  // allows us to ensure assertions are enabled.
+  assert(requireAssertions(TRUE));
+  requireAssertions();
+
+  $types = [
+    'closed_group' => ['group'],
+    'open_group' => ['community', 'group'],
+    'public_group' => ['public', 'community', 'group'],
+  ];
+
+  if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
+    $types['secret_group'] = ['group'];
+  }
+
+  if (empty($sandbox)) {
+    $sandbox['processed'] = 0;
+    $sandbox['expected_total'] = $groups_per_type * count($types);
+    $sandbox['time_elapsed'] = 0;
+    $sandbox['batch_size'] = Settings::get('entity_update_batch_size', 50);
+    foreach ($types as $type => $visibilities) {
+      $sandbox['verified_groups'][$type] = 0;
+    }
+  }
+
+  $group_storage = \Drupal::entityTypeManager()->getStorage('group');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $news_tid = array_keys(\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'name' => 'News',
+  ]))[0];
+
+  $start_time_ms = hrtime(true) / 1000000;
+
+  $batch_count = 0;
+  foreach ($types as $type => $allowed_content_visibilities) {
+    for ($group_n=$sandbox['verified_groups'][$type]; $group_n<$groups_per_type&&$batch_count<$sandbox['batch_size']; $group_n++,$batch_count++) {
+      $groups = $group_storage->loadByProperties([
+        'label' => "$type $group_n"
+      ]);
+      if (count($groups) !== 1) {
+        throw new \RuntimeException("Expected 1 group for $type $group_n but got " . count($groups));
+      }
+      $group = reset($groups);
+      assert($group instanceof GroupInterface);
+
+      assert($group->getGroupType()->id() === "flexible_group", "Group $type $group_n was not converted to Flexible Group: {$group->getGroupType()->id()}");
+      assert($group->label() === "$type $group_n", "Incorrect label for $type $group_n");
+      $expected_description = "Description for $type $group_n";
+      assert($group->get('field_group_description')->value === $expected_description, "Incorrect group expected '$expected_description' got '{$group->field_group_description->value}'");
+
+      // The creator of the group becomes a member too so we have 1 more member
+      // per group than we manually added.
+      $expected_count = $members_per_group + 1;
+      $member_count = count($group->getMembers());
+      assert($member_count === $expected_count, "Expected $expected_count members in group $type $group_n but got $member_count");
+
+      for ($topic_n=0;$topic_n < $topics_per_group; $topic_n++) {
+        $topics = $group->getContentEntities('group_node:topic', [
+          'entity_id.entity.title' => "$type $group_n topic $topic_n",
+        ]);
+        if (count($topics) !== 1) {
+          throw new \RuntimeException("Expected 1 topic with title 'Group $group_n Topic $topic_n' to be part of the group but got " . count($topics));
+        }
+        $topic = reset($topics);
+        assert($topic instanceof NodeInterface);
+
+        // The body has the settings configured in it.
+        assert($topic->getType() === "topic", "Expected type topic but got '{$topic->getType()}'");
+        $expected = "Body for group $group_n topic $topic_n with visibility {$topic->field_content_visibility->value} and owner {$topic->getOwnerId()}";
+        assert($topic->body->value === $expected, "Expected node body of '$expected' but got '{$topic->body->value}'.");
+        assert((int)$topic->field_topic_type->target_id === (int)$news_tid, "Topic was not of type news {$topic->field_topic_type->target_id} - $news_tid.");
+      }
+
+      $sandbox['processed']++;
+    }
+  }
+
+  $end_time_ms = hrtime(true) / 1000000;
+
+  $sandbox['time_elapsed'] += $end_time_ms - $start_time_ms;
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['expected_total'];
+
+  $time_elapsed = formatMilliseconds($sandbox['time_elapsed']);
+  $expected_time = formatMilliseconds($sandbox['time_elapsed'] / $sandbox['processed'] * $sandbox['expected_total']);
+
+  return "Verified {$sandbox['processed']} out of {$sandbox['expected_total']} groups (" . round($sandbox['#finished'] * 100) . "%). Ran for $time_elapsed out of expected $expected_time.";
+}
+
+function requireAssertions(bool $in_assertion = FALSE) : bool {
+  static $has_assertions = FALSE;
+
+  if ($in_assertion) {
+    $has_assertions = TRUE;
+  }
+  elseif (!$has_assertions) {
+    throw new \RuntimeException("Assertions are not enabled.");
+  }
+
+  return TRUE;
+}
