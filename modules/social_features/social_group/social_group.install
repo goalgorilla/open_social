@@ -326,6 +326,20 @@ function social_group_update_13000() : void {
 
   $fsc_storage = \Drupal::entityTypeManager()->getStorage("field_storage_config");
 
+  // Ensure all fields used on the old group types are available on
+  // flexible_groups too.
+  $missing_fields = [];
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $flexible_group_fields = array_keys($entity_field_manager->getFieldDefinitions('group', 'flexible_group'));
+  foreach (array_keys($group_type_mapping) as $old_group_type) {
+    $missing_fields[] = array_keys($entity_field_manager->getFieldDefinitions('group', $old_group_type));
+  }
+  $missing_fields = array_diff(array_unique(array_merge(...$missing_fields)), $flexible_group_fields);
+  if (count($missing_fields) > 0) {
+    throw new \Exception("Flexible group is missing the following fields which are present on one of the old group types, remove them from the old group types or create them on flexible_group: " . implode(", ", $missing_fields));
+  }
+
   try {
     // @todo If the "require group types" setting is set then we should probably
     //   make sure the group type taxonomy terms exist and use those in the
@@ -369,6 +383,34 @@ function social_group_update_13000() : void {
               ->from($from)
               ->execute();
           }
+        }
+      }
+
+      // The below code maps all the field data from the old group types to
+      // flexible_groups except for the mapped fields related to visibility
+      // which required inserting values. We again pretend the group type was
+      // the same regardless of any revisions.
+      foreach ($entity_field_manager->getFieldDefinitions('group', $group_type) as $field_name => $definition) {
+        // We only care about fieldable fields because the other fields are
+        // stored in the base table.
+        if ($definition->getFieldStorageDefinition()->isBaseField()) {
+          continue;
+        }
+        // Skip visibility fields which we set to pre-determined values in a
+        // previous query. Open Social should not have these fields on the old
+        // group types and we don't support installs adding them manually.
+        if (array_key_exists($field_name, $mapping['fields'])) {
+          continue;
+        }
+
+        $field_storage = $fsc_storage->load("group.$field_name");
+        assert($field_storage instanceof FieldStorageConfigInterface, "Missing group storage for field $field_name");
+        foreach ($group_table_mapping->getAllFieldTableNames($field_name) as $tableName) {
+          $database
+            ->update($tableName)
+            ->fields(['bundle' => "flexible_group"])
+            ->condition("bundle", $group_type)
+            ->execute();
         }
       }
 
@@ -488,6 +530,12 @@ function social_group_update_13000() : void {
 
   // Commit our group-type-migration transaction.
   unset($transaction);
+
+  // We must clear the entity caches in case other update hooks want to load
+  // groups or group content. Changes that were done directly in the database
+  // don't go through the Entity API to clear caches normally.
+  \Drupal::service('cache.entity')->deleteAll();
+  \Drupal::service('entity.memory_cache')->deleteAll();
 }
 
 /**
