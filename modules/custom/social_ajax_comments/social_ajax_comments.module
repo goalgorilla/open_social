@@ -112,9 +112,16 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
     $wrapper_id = Html::getId(
       $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
     );
-    $links['comment']['#links']['comment-edit']['attributes']['data-wrapper-html-id'] = $wrapper_id;
-    $links['comment']['#links']['comment-unpublish']['attributes']['data-wrapper-html-id'] = $wrapper_id;
-    $links['comment']['#links']['comment-delete']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+
+    if (!empty($links['comment']['#links']['comment-edit'])) {
+      $links['comment']['#links']['comment-edit']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+    }
+    if (!empty($links['comment']['#links']['comment-unpublish'])) {
+      $links['comment']['#links']['comment-unpublish']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+    }
+    if (!empty($links['comment']['#links']['comment-delete'])) {
+      $links['comment']['#links']['comment-delete']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+    }
   }
 }
 
