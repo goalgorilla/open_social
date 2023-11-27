@@ -274,7 +274,7 @@ class SocialCoreController extends ControllerBase {
       ($label = $entity_type->label()) !== NULL
     ) {
       return $this->t('Create @article @name', [
-        '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? 'a',
+        '@article' => $titles[$entity_type_id]['bundles'][$entity_type->id()] ?? $this->t('a'),
         '@name' => mb_strtolower($label),
       ])->render();
     }
