@@ -5,9 +5,8 @@ dependencies:
     - core.entity_view_mode.profile.table
     - field.storage.group_content.group_roles
     - field.storage.profile.field_profile_organization
-    - group.content_type.closed_group-group_membership
-    - group.content_type.open_group-group_membership
-    - group.content_type.public_group-group_membership
+    - group.content_type.flexible_group-group_membership
+    - group.type.flexible_group
   module:
     - group
     - profile
@@ -504,9 +503,7 @@ display:
           admin_label: ''
           operator: in
           value:
-            closed_group-group_membership: closed_group-group_membership
-            open_group-group_membership: open_group-group_membership
-            public_group-group_membership: public_group-group_membership
+            flexible_group-group_membership: flexible_group-group_membership
           group: 1
           exposed: false
           expose:

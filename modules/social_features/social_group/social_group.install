@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_group module.
  */
 
+use Drupal\block\BlockInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\DefaultTableMapping;
@@ -12,6 +13,7 @@ use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\views\ViewEntityInterface;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\FileStorage;
 
@@ -282,38 +284,7 @@ function social_group_update_10307() {
  * Set the default group configuration for cross-posting settings.
  */
 function social_group_update_10308() {
-  $config = \Drupal::configFactory()->getEditable('social_group.settings');
-  $config->set('cross_posting.status', FALSE);
-  $config->set('cross_posting.content_types', []);
-  $config->save();
-
-  // Grand roles to use cross-posting feature.
-  foreach (['sitemanager', 'contentmanager'] as $role_id) {
-    user_role_grant_permissions($role_id, ['access cross-group posting']);
-  }
-
-  // Install new configs.
-  $config_files = [
-    'core.entity_view_mode.group_content.activity' => 'core.entity_view_mode.group_content.activity_10308',
-    'core.entity_view_display.group_content.closed_group-group_node-event.activity' => 'core.entity_view_display.group_content.closed_group-group_node-event.activity_10308',
-    'core.entity_view_display.group_content.closed_group-group_node-topic.activity' => 'core.entity_view_display.group_content.closed_group-group_node-topic.activity_10308',
-    'core.entity_view_display.group_content.open_group-group_node-event.activity' => 'core.entity_view_display.group_content.open_group-group_node-event.activity_10308',
-    'core.entity_view_display.group_content.open_group-group_node-topic.activity' => 'core.entity_view_display.group_content.open_group-group_node-topic.activity_10308',
-    'core.entity_view_display.group_content.public_group-group_node-event.activity' => 'core.entity_view_display.group_content.public_group-group_node-event.activity_10308',
-    'core.entity_view_display.group_content.public_group-group_node-topic.activity' => 'core.entity_view_display.group_content.public_group-group_node-topic.activity_10308',
-  ];
-
-  $config_storage = \Drupal::service('config.storage');
-  $config_path = \Drupal::service('extension.list.module')->getPath('social_group') . '/config/static';
-  $source = new FileStorage($config_path);
-
-  foreach ($config_files as $origin_name => $update_name) {
-    // Add new message templates.
-    $config_storage->write($origin_name, $source->read($update_name));
-  }
-
-  // Set display mode for group content to display on stream.
-  activity_creator_set_entity_view_mode('group_content', 'activity');
+  // Removed as redundant.
 }
 
 /**
@@ -421,18 +392,7 @@ function social_group_update_11901(): string {
  * Disable revisions for groups.
  */
 function social_group_update_11902(): void {
-  $types = [
-    "closed_group",
-    "open_group",
-    "public_group",
-  ];
-
-  foreach ($types as $type) {
-    $config = \Drupal::configFactory()->getEditable("group.type." . $type);
-    $config->set("new_revision", FALSE);
-    $config->save();
-  }
-
+  // Removed as redundant.
 }
 
 /**
@@ -866,8 +826,30 @@ function social_group_update_13001() : void {
 }
 
 /**
+ * Remove deprecated group types.
+ */
+function social_group_update_13002(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Clean up any group migration opt-out that might be enabled.
  */
-function social_group_update_13002() : void {
+function social_group_update_13003() : void {
   \Drupal::state()->delete("social_group_group_type_migration_opt_out");
 }

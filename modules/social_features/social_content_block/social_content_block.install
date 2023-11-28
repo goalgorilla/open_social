@@ -12,6 +12,18 @@ use Drupal\Core\Field\FieldConfigInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_content_block_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_content_block'][13000] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Implements hook_modules_installed().
  */
 function social_content_block_modules_installed() {
@@ -592,4 +604,26 @@ function social_content_block_update_11801(): string {
 
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_content_block_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_content_block', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

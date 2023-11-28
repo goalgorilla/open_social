@@ -199,7 +199,6 @@ function social_group_preprocess_group(array &$variables) {
 
   $variables['title'] = $group->label();
   $variables['joined'] = FALSE;
-  $variables['closed_group'] = FALSE;
   $variables['cta'] = '';
   $variables['closed_group_lock'] = $variables['secret_group_shield'] = FALSE;
 
@@ -308,17 +307,6 @@ function social_group_preprocess_group(array &$variables) {
 function social_group_preprocess_group__hero(array &$variables) {
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
-  $account = \Drupal::currentUser();
-
-  if ($group->bundle() == 'public_group' && $account->isAnonymous()) {
-    $variables['group_operations_url'] = Url::fromRoute('user.register', [], [
-      'query' => [
-        'destination' => Url::fromRoute('entity.group.join', [
-          'group' => $group->id(),
-        ])->toString(),
-      ],
-    ])->toString();
-  }
 
   // Render the group settings help, gear icon with popover.
   $group_settings_help = _social_group_render_group_settings_hero($group);
@@ -872,7 +860,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['delete'])) {
+  if (in_array($form_id, $group_forms['add'] ?? []) || in_array($form_id, $group_forms['edit'] ?? []) || in_array($form_id, $group_forms['delete'] ?? [])) {
     // Add custom submit handler just for redirect purposes.
     $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
 
@@ -1079,7 +1067,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  if (in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['add'])) {
+  if (in_array($form_id, $group_forms['edit'] ?? []) || in_array($form_id, $group_forms['add'] ?? [])) {
     // Move the Published status to group settings with a new wrapper.
     if (!empty($form['status']) && Element::isVisibleElement($form['status'])) {
       // Add an details element to status.
@@ -1616,31 +1604,6 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Get the Group object from the route.
   $group = \Drupal::routeMatch()->getParameter('group');
 
-  if (
-    $group instanceof SocialGroupInterface &&
-    // Check if it's a closed group.
-    $group->getGroupType()->id() === 'closed_group' &&
-    // And if the user is not user 1.
-    $account->id() !== 1
-  ) {
-    if ($account->hasPermission('manage all groups')) {
-      return;
-    }
-
-    // If the user is not an member of this group.
-    if (!$group->hasMember($account)) {
-      // Disable these local tasks.
-      $data['tabs'][0]['group.view'] = [];
-
-      if (!$group->hasPermission('administer members', $account)) {
-        $data['tabs'][0]['group.content'] = [];
-      }
-
-      $data['tabs'][0]['social_group.events'] = [];
-      $data['tabs'][0]['social_group.topics'] = [];
-    }
-  }
-
   // We don't want to display the "Nodes" tab on groups anymore. Before, we
   // just disabled the view on hook update, but sometimes it is back to us,
   // this is the reason why we want to hide the tab. Also, we don't want to
@@ -1924,28 +1887,6 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     return AccessResult::neutral();
   }
 
-  $group = _social_group_get_current_group();
-  $user = Drupal::currentUser();
-  // Check if there is a group set and if its an closed group.
-  if ($group && $group->getGroupType()
-    ->id() == 'closed_group' && $account->id() != 1) {
-    if ($account->hasPermission('manage all groups')) {
-      return AccessResult::neutral();
-    }
-    elseif (!$group->hasMember($user)) {
-      // If it is closed and the current user is not an member of this group,
-      // then it is not allowed to see these blocks.
-      $forbidden_blocks = [
-        'views_block:upcoming_events-upcoming_events_group',
-        'views_block:latest_topics-group_topics_block',
-      ];
-      foreach ($forbidden_blocks as $forbidden_block) {
-        if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
-          return AccessResult::forbidden();
-        }
-      }
-    }
-  }
   // Check if we're alloweed to view the joined groups block.
   if ($operation === 'view' && $block->getPluginId() === 'views_block:groups-block_user_groups') {
     // Here we're going to assume by default access is not granted.
@@ -2028,24 +1969,6 @@ function _social_group_delete_group() {
     ];
     batch_set($batch);
   }
-}
-
-/**
- * Get all public groups.
- *
- * @deprecated public groups have been removed.
- */
-function social_group_get_all_public_groups(): array {
-  return [];
-}
-
-/**
- * Get all open groups.
- *
- * @deprecated open groups have been removed.
- */
-function social_group_get_all_open_groups() {
-  return [];
 }
 
 /**

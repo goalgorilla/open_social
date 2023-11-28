@@ -9,10 +9,10 @@ Feature: Search
       | name             | mail                     | status |
       | Group search One | group_user_1@example.com | 1      |
     Given groups:
-      | label                    | field_group_description | author           | type        | langcode |
-      | Behat test group title 1 | My Behat description    | Group search One | open_group  | en       |
-      | Behat test group title 2 | My Behat description 2  | Group search One | open_group  | en       |
-      | Behat test group title 3 | No Behat descr          | Group search One | open_group  | en       |
+      | label                    | field_group_description | author           | type           | field_flexible_group_visibility | langcode |
+      | Behat test group title 1 | My Behat description    | Group search One | flexible_group | public                          | en       |
+      | Behat test group title 2 | My Behat description 2  | Group search One | flexible_group | public                          | en       |
+      | Behat test group title 3 | No Behat descr          | Group search One | flexible_group | public                          | en       |
     And Search indexes are up to date
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header

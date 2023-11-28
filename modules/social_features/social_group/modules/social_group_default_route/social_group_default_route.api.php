@@ -14,9 +14,7 @@
  */
 function hook_social_group_default_route_types_alter(array $types) {
   // Enable functionality for secret groups.
-  $types[] = 'secret_group';
-  // Disable functionality for closed groups.
-  unset($types['closed_group']);
+  $types[] = 'my_custom_group';
 }
 
 /**

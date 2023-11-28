@@ -3,12 +3,8 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.group_content.teaser
-    - group.content_type.closed_group-group_node-event
-    - group.content_type.open_group-group_node-event
-    - group.content_type.public_group-group_node-event
-    - group.type.closed_group
-    - group.type.open_group
-    - group.type.public_group
+    - group.content_type.flexible_group-group_node-event
+    - group.type.flexible_group
   module:
     - datetime
     - group
@@ -149,9 +145,7 @@ display:
           table: group_content_field_data
           field: type
           value:
-            open_group-group_node-event: open_group-group_node-event
-            closed_group-group_node-event: closed_group-group_node-event
-            public_group-group_node-event: public_group-group_node-event
+            flexible_group-group_node-event: flexible_group-group_node-event
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
@@ -326,9 +320,7 @@ display:
           validate_options:
             access: false
             bundles:
-              closed_group: closed_group
-              open_group: open_group
-              public_group: public_group
+              flexible_group: flexible_group
             multiple: 0
             operation: view
           break_phrase: false

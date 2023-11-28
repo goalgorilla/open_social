@@ -126,7 +126,7 @@ class SocialGroupAddForm extends FormBase {
     $element = [
       '#type' => 'radios',
       '#title' => $this->t('Group type'),
-      '#default_value' => 'open_group',
+      '#default_value' => 'flexible_group',
       '#required' => TRUE,
       '#cache' => [
         'tags' => $this->entityTypeManager->getDefinition('group_type')
@@ -187,7 +187,7 @@ class SocialGroupAddForm extends FormBase {
           ],
           '#key_column' => "value",
           '#type' => "radios",
-          '#default_value' => 'open_group',
+          '#default_value' => 'flexible_group',
           '#options' => $group_types_options,
           '#after_build' => [
             [

@@ -47,10 +47,15 @@ function activity_creator_schema() {
 /**
  * Implements hook_update_dependencies().
  */
-function activity_creator_update_dependencies() {
+function activity_creator_update_dependencies(): array {
   // New config changes should run after the Update Helper module is enabled.
   $dependencies['activity_creator'][8801] = [
     'social_core' => 8805,
+  ];
+
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['activity_creator'][13000] = [
+    'social_group' => 13002,
   ];
 
   return $dependencies;
@@ -146,4 +151,26 @@ function activity_creator_update_8801() {
  */
 function activity_creator_update_8802(&$sandbox) {
   // Removed in https://www.drupal.org/project/social/issues/3171563.
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function activity_creator_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('activity_creator', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
 }

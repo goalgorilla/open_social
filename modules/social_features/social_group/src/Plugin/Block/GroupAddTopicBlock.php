@@ -27,13 +27,7 @@ class GroupAddTopicBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if (is_object($group)) {
-      if ($group->hasPermission('create group_node:topic entity', $account)&& $account->hasPermission("create topic content")) {
-        if ($group->getGroupType()->id() === 'public_group') {
-          $config = \Drupal::config('entity_access_by_field.settings');
-          if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
-            return AccessResult::forbidden();
-          }
-        }
+      if ($group->hasPermission('create group_node:topic entity', $account)&& $account->hasPermission('create topic content')) {
         return AccessResult::allowed();
       }
     }

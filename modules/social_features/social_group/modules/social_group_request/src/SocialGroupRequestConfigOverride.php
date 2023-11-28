@@ -79,11 +79,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
       }
     }
 
-    $social_group_types = [
-      'open_group',
-      'closed_group',
-      'public_group',
-    ];
+    $social_group_types = [];
 
     $this->moduleHandler->alter('social_group_types', $social_group_types);
 

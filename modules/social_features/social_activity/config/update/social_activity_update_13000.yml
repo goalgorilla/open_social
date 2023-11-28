@@ -1,0 +1,59 @@
+message.template.create_content_in_joined_group:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-closed_group-group_node-event: {  }
+            group_content-closed_group-group_node-topic: {  }
+            group_content-open_group-group_node-event: {  }
+            group_content-open_group-group_node-topic: {  }
+            group_content-public_group-group_node-event: {  }
+            group_content-public_group-group_node-topic: {  }
+    add:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-flexible_group-group_node-event: group_content-flexible_group-group_node-event
+            group_content-flexible_group-group_node-topic: group_content-flexible_group-group_node-topic
+
+message.template.create_event_gc:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-closed_group-group_node-event: {  }
+            group_content-open_group-group_node-event: {  }
+            group_content-public_group-group_node-event: {  }
+            group_content-secret_group-group_node-event: {  }
+
+message.template.create_topic_gc:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-closed_group-group_node-topic: {  }
+            group_content-open_group-group_node-topic: {  }
+            group_content-public_group-group_node-topic: {  }
+            group_content-secret_group-group_node-topic: {  }
+
+message.template.join_to_group:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-closed_group-group_membership: {  }
+            group_content-open_group-group_membership: {  }
+            group_content-public_group-group_membership: {  }
+    add:
+      third_party_settings:
+        activity_logger:
+          activity_bundle_entities:
+            group_content-flexible_group-group_membership: group_content-flexible_group-group_membership

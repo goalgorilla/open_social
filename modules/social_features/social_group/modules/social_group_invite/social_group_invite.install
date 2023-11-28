@@ -24,6 +24,18 @@ function social_group_invite_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_group_invite_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_group_invite'][13000] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Set helper text of invite mail on the preview page for Groups.
  */
 function social_group_invite_update_8001() {
@@ -62,11 +74,7 @@ function social_group_invite_update_8002() {
  */
 function social_group_invite_update_8005() {
   $configs = [
-    'group.content_type.closed_group-group_invitation',
     'group.content_type.flexible_group-group_invitation',
-    'group.content_type.open_group-group_invitation',
-    'group.content_type.public_group-group_invitation',
-    'group.content_type.secret_group-group_invitation',
   ];
 
   foreach ($configs as $config) {
@@ -196,11 +204,7 @@ function social_group_invite_update_11501(): void {
   $invite_settings = $group_config->get('group_invite');
 
   $configurations = [
-    'group.content_type.closed_group-group_invitation',
     'group.content_type.flexible_group-group_invitation',
-    'group.content_type.open_group-group_invitation',
-    'group.content_type.public_group-group_invitation',
-    'group.content_type.secret_group-group_invitation',
   ];
 
   foreach ($configurations as $name) {
@@ -269,11 +273,7 @@ function social_group_invite_update_11503(): void {
 
   // Update the group content specific invite configuration.
   $configurations = [
-    'group.content_type.closed_group-group_invitation',
     'group.content_type.flexible_group-group_invitation',
-    'group.content_type.open_group-group_invitation',
-    'group.content_type.public_group-group_invitation',
-    'group.content_type.secret_group-group_invitation',
   ];
 
   foreach ($configurations as $name) {
@@ -297,4 +297,26 @@ function social_group_invite_update_11503(): void {
       $configuration->save();
     }
   }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_group_invite_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_invite', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

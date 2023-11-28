@@ -13,12 +13,18 @@ use Drupal\user\RoleInterface;
 /**
  * Implements hook_update_dependencies().
  */
-function social_search_update_dependencies() {
+function social_search_update_dependencies(): array {
   // Necessary because we delete a view with geolocation filter.
   // Needs to be done before system_update_8200 and social_group_update_8005.
   $dependencies['social_group'][8005] = [
     'social_search' => 8102,
   ];
+
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_search'][13000] = [
+    'social_group' => 13002,
+  ];
+
   return $dependencies;
 }
 
@@ -351,4 +357,26 @@ function social_search_update_11404() : void {
   if (!$incorrect_view->isNew()) {
     $incorrect_view->delete();
   }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_search_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

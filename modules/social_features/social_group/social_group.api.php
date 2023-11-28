@@ -304,7 +304,7 @@ function hook_social_group_join_method_info_alter(
     isset($items['added']) &&
     $entity !== NULL &&
     $entity->getEntityTypeId() === 'group' &&
-    $entity->bundle() === 'secret_group'
+    $entity->bundle() === 'my_custom_group'
   ) {
     $items['added']['weight'] = 90;
   }
@@ -350,7 +350,7 @@ function hook_social_group_join_method_usage_alter(array &$items) {
     if (
       $item['entity_type'] === 'group' &&
       isset($item['bundle']) &&
-      $item['bundle'] === 'closed_group' &&
+      $item['bundle'] === 'flexible_group' &&
       !isset($item['field'])
     ) {
       $item['field'] = 'field_group_allowed_join_method';

@@ -70,14 +70,7 @@ function social_group_request_entity_base_field_info(EntityTypeInterface $entity
  * Implements hook_social_group_join_method_usage().
  */
 function social_group_request_social_group_join_method_usage(): array {
-  return [
-    [
-      'entity_type' => 'group',
-      'bundle' => 'closed_group',
-      'field' => 'allow_request',
-      'method' => 'request',
-    ],
-  ];
+  return [];
 }
 
 /**
@@ -211,11 +204,7 @@ function social_group_request_activity_send_email_notifications_alter(array &$it
  * Implements hook_form_alter().
  */
 function social_group_request_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
-  $social_group_types = [
-    'open_group',
-    'closed_group',
-    'public_group',
-  ];
+  $social_group_types = [];
 
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
 

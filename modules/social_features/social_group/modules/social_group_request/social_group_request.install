@@ -19,17 +19,25 @@ function social_group_request_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_group_request_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_group_request'][13000] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Assign group request permission for closed and flexible group types.
  */
 function _social_group_request_set_permissions() {
-
   if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
     $group_type = GroupType::load('flexible_group');
     $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
   }
-
-  $group_type = GroupType::load('closed_group');
-  $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
 }
 
 /**
@@ -62,4 +70,35 @@ function social_group_request_update_10301() {
       }
     }
   }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_group_request_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  $configurations = [
+    'core.entity_view_display.group_content.group_content_type_c8bae2527294c.default',
+    'field.field.group_content.group_content_type_c8bae2527294c.grequest_status',
+    'field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by',
+    'group.content_type.group_content_type_c8bae2527294c',
+  ];
+
+  foreach ($configurations as $name) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->delete();
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+  $updateHelper->executeUpdate('social_group_request', __FUNCTION__);
+  return $updateHelper->logger()->output();
 }

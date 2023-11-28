@@ -80,6 +80,18 @@ function social_landing_page_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_landing_page_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_landing_page'][130000] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Enable the Social Featured Items module.
  */
 function social_landing_page_update_8801() {
@@ -669,12 +681,7 @@ function social_landing_page_update_8809() {
  * Enable helper modules if secret group is enabled.
  */
 function social_landing_page_update_8810() {
-  // If we have secret groups enabled, we want to enable the helper module
-  // social_secret_group_featured which provides a featured view mode to be
-  // used on landing pages.
-  if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
-    \Drupal::service('module_installer')->install(['social_secret_group_featured']);
-  }
+  // Removed.
 }
 
 /**
@@ -832,4 +839,26 @@ function social_landing_page_update_111102(): void {
       }
     }
   }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_landing_page_update_130000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

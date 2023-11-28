@@ -2,9 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.content_type.closed_group-group_membership
-    - group.content_type.open_group-group_membership
-    - group.content_type.public_group-group_membership
+    - group.content_type.flexible_group-group_membership
+    - group.type.flexible_group
   module:
     - group
 id: group_members
@@ -145,9 +144,7 @@ display:
           table: group_content_field_data
           field: type
           value:
-            open_group-group_membership: open_group-group_membership
-            closed_group-group_membership: closed_group-group_membership
-            public_group-group_membership: public_group-group_membership
+            flexible_group-group_membership: flexible_group-group_membership
           entity_type: group_content
           entity_field: type
           plugin_id: bundle

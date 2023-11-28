@@ -16,8 +16,8 @@ Feature: Event Management
       | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      | verified |
       | event_organiser_2 | eo_2@example.com | Drupal                     | 1      | verified |
     And groups:
-      | label                                    | field_group_description | author            | type        | langcode |
-      | Springfield local business collaboration | Description text        | event_organiser_1 | open_group  | en       |
+      | label                                    | field_group_description | author            | type           | field_flexible_group_visibility | langcode |
+      | Springfield local business collaboration | Description text        | event_organiser_1 | flexible_group | public                          | en       |
     And I am logged in as an "verified"
     And I am on "user"
     And I click "Events"

@@ -33,6 +33,18 @@ function social_activity_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_activity_update_dependencies() : array {
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_activity'][13000] = [
+    'social_group' => 13002,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Update all existing Message Templates to work with newest Message version.
  */
 function social_activity_update_8002() {
@@ -385,6 +397,28 @@ function social_activity_update_11401(): string {
  * Fix duplicated names of "Activity Stream: Homepage stream block".
  */
 function social_activity_update_11701(): string {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', __FUNCTION__);
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_activity_update_13000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 

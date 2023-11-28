@@ -80,7 +80,7 @@ function social_page_install() {
 /**
  * Implements hook_update_dependencies().
  */
-function social_page_update_dependencies() {
+function social_page_update_dependencies(): array {
   // New config changes should run after the update helper module is enabled.
   $dependencies['social_page'][8801] = [
     'social_core' => 8805,
@@ -89,6 +89,11 @@ function social_page_update_dependencies() {
   // New image style change should run after the new image style is imported.
   $dependencies['social_page'][8907] = [
     'social_core' => 8908,
+  ];
+
+  // Ensure configurations updates runs after the group migration has completed.
+  $dependencies['social_page'][130000] = [
+    'social_group' => 13002,
   ];
 
   return $dependencies;
@@ -285,4 +290,26 @@ function social_page_update_111102(): void {
       }
     }
   }
+}
+
+/**
+ * Remove deprecated group types.
+ */
+function social_page_update_130000(): ?string {
+  // Allow platforms to opt out of the group migration, for example if they want
+  // to build it themselves and take more scenario's into account than common
+  // Open Social installations will have.
+  if (\Drupal::state()->get('social_group_group_type_migration_opt_out', FALSE)) {
+    \Drupal::logger('social_group')->info('Platform has opted out of group migration.');
+    return NULL;
+  }
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_page', __FUNCTION__);
+
+  // Output logged messages to a related channel of update execution.
+  return $updateHelper->logger()->output();
 }
